@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-import 'package:fluttersdk_wind/wind.dart';
 import 'pages/backgrounds/background_color.dart';
 import 'pages/borders/border_color.dart';
 import 'pages/borders/border_radius.dart';

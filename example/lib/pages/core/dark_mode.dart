@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/wind.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 class DarkMode extends StatefulWidget {
   const DarkMode({super.key});

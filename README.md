@@ -36,7 +36,7 @@ Start using Wind utilities in your Flutter widgets:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:wind/wind.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 class MyApp extends StatelessWidget {
   @override

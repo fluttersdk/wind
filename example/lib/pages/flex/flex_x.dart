@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/wind.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 class FlexX extends StatelessWidget {
   const FlexX({super.key});
