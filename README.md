@@ -21,7 +21,7 @@ Or manually add it to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  fluttersdk_wind: ^0.0.1
+  fluttersdk_wind: ^0.0.2
 ```
 
 Then, fetch dependencies:
