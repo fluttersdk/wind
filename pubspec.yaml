@@ -1,6 +1,6 @@
 name: fluttersdk_wind
 description: "A Flutter plugin designed with a utility-first approach, inspired by Tailwind CSS, for building responsive, modular, and efficient UI components."
-version: 0.0.1
+version: 0.0.2
 homepage: https://wind.fluttersdk.com
 
 environment:
