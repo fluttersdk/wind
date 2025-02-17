@@ -25,12 +25,17 @@ String classNameParser(dynamic className, {List<String> states = const []}) {
   return parsedClassName.replaceAll(RegExp(r'\s{2,}'), ' ');
 }
 
+bool hasClassName(dynamic className, String name) {
+  List<String> parsedClassNames = toClassName(className).split(' ');
+  return parsedClassNames.contains(name);
+}
+
 bool hasDebugClassName(dynamic className) {
-  return toClassName(className).contains('debug');
+  return hasClassName(className, 'debug');
 }
 
 bool hasDebugWidgetClassName(dynamic className) {
-  return toClassName(className).contains('log-widget');
+  return hasClassName(className, 'log-widget');
 }
 
 String classNameState(String className, {List<String> states = const []}) {

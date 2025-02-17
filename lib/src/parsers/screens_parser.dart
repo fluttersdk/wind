@@ -5,6 +5,8 @@ import '../helpers.dart';
 
 /// Parses screen classes and returns boolean
 /// Example: sm:w-full, md:w-full, lg:w-full, xl:w-full
+/// Example: dark:w-full, light:w-full
+/// Example: ios:w-full, android:w-full
 class ScreensParser {
   static bool canApply(BuildContext context, String className) {
     List<String> split = className.split(':');
