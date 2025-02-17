@@ -11,3 +11,4 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^6.2.1
+  platform_info: ^4.0.2

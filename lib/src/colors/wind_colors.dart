@@ -26,7 +26,7 @@ class WindColors {
     800: Color(0xff1f2937),
     900: Color(0xff111827),
   });
-  static const int _grayPrimaryValue = 0xff6b7280;
+  static const int _grayPrimaryValue = 0xff1f2937;
   static const MaterialColor zinc = MaterialColor(_zincPrimaryValue, {
     50: Color(0xfffafafa),
     100: Color(0xfff4f4f5),
@@ -300,6 +300,18 @@ class WindColors {
     900: Color(_blackPrimaryValue),
   });
   static const int _blackPrimaryValue = 0xff000000;
+  static const MaterialColor realBlack = MaterialColor(_blackPrimaryValue, {
+    50: Color(_blackPrimaryValue),
+    100: Color(_blackPrimaryValue),
+    200: Color(_blackPrimaryValue),
+    300: Color(_blackPrimaryValue),
+    400: Color(_blackPrimaryValue),
+    500: Color(_blackPrimaryValue),
+    600: Color(_blackPrimaryValue),
+    700: Color(_blackPrimaryValue),
+    800: Color(_blackPrimaryValue),
+    900: Color(_blackPrimaryValue),
+  });
   static const MaterialColor white = MaterialColor(_whitePrimaryValue, {
     50: Color(_whitePrimaryValue),
     100: Color(_whitePrimaryValue),
@@ -313,4 +325,29 @@ class WindColors {
     900: Color(_whitePrimaryValue),
   });
   static const int _whitePrimaryValue = 0xffffffff;
+  static const MaterialColor realWhite = MaterialColor(_whitePrimaryValue, {
+    50: Color(_whitePrimaryValue),
+    100: Color(_whitePrimaryValue),
+    200: Color(_whitePrimaryValue),
+    300: Color(_whitePrimaryValue),
+    400: Color(_whitePrimaryValue),
+    500: Color(_whitePrimaryValue),
+    600: Color(_whitePrimaryValue),
+    700: Color(_whitePrimaryValue),
+    800: Color(_whitePrimaryValue),
+    900: Color(_whitePrimaryValue),
+  });
+  static const MaterialColor whiteDark = MaterialColor(_whiteDarkPrimaryValue, {
+    50: Color(_whiteDarkPrimaryValue),
+    100: Color(_whiteDarkPrimaryValue),
+    200: Color(_whiteDarkPrimaryValue),
+    300: Color(_whiteDarkPrimaryValue),
+    400: Color(_whiteDarkPrimaryValue),
+    500: Color(_whiteDarkPrimaryValue),
+    600: Color(_whiteDarkPrimaryValue),
+    700: Color(_whiteDarkPrimaryValue),
+    800: Color(_whiteDarkPrimaryValue),
+    900: Color(_whiteDarkPrimaryValue),
+  });
+  static const int _whiteDarkPrimaryValue = 0xff111827;
 }

@@ -8,6 +8,7 @@ import '../parsers/border_parser.dart';
 import '../parsers/flex_parser.dart';
 import '../parsers/margin_parser.dart';
 import '../parsers/padding_parser.dart';
+import '../parsers/shadow_parser.dart';
 import '../parsers/size_parser.dart';
 
 /// A utility-first container widget that provides customizable styling using
@@ -86,13 +87,14 @@ class WContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final String parsedClassName = classNameParser(className);
 
-    return FlexParser.applyFlexible(context, parsedClassName, Container(
+    var widget = FlexParser.applyFlexible(context, parsedClassName, Container(
       alignment: alignment ?? AlignmentParser.applyAlignment(context, parsedClassName),
       padding: padding ?? PaddingParser.applyGeometry(context, parsedClassName),
       decoration: decoration ?? BoxDecoration(
         color: color ?? BackgroundColorParser.applyColor(context, parsedClassName),
         borderRadius: BorderParser.applyBorderRadiusGeometry(context, parsedClassName),
         border: BorderParser.applyBoxBorder(context, parsedClassName),
+        boxShadow: ShadowParser.applyBoxShadows(context, parsedClassName) ?? [],
       ),
       foregroundDecoration: foregroundDecoration,
       width: width ?? SizeParser.applyWidth(context, parsedClassName),
@@ -104,5 +106,11 @@ class WContainer extends StatelessWidget {
       clipBehavior: clipBehavior,
       child: child,
     ));
+
+    if (hasDebugWidgetClassName(className)) {
+      print(widget.toStringDeep());
+    }
+
+    return widget;
   }
 }

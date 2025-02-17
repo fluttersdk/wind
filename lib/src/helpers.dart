@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'decorations/winput_decoration.dart';
 import 'painting/wtext_style.dart';
 import 'theme/wind_theme.dart';
 
-String classNameParser(dynamic className, { List<String> states = const [] }) {
+String classNameParser(dynamic className, {List<String> states = const []}) {
   String parsedClassName = toClassName(className);
 
   parsedClassName = classNameState(parsedClassName, states: states);
@@ -12,15 +11,29 @@ String classNameParser(dynamic className, { List<String> states = const [] }) {
   // Remove class names with "$x:` syntax
   for (var name in parsedClassName.split(' ')) {
     var split = name.split(':');
-    if (split.length > 1 && !WindTheme.hasScreen(split[0])) {
+    if (split.length > 1 &&
+        !WindTheme.hasScreenOrModeOrOperatingSystem(split[0])) {
       parsedClassName = parsedClassName.replaceAll(name, '');
     }
   }
 
-  return parsedClassName;
+  if (hasDebugClassName(className)) {
+    print(
+        'Parsed class name: $parsedClassName with states: $states from: $className');
+  }
+
+  return parsedClassName.replaceAll(RegExp(r'\s{2,}'), ' ');
 }
 
-String classNameState(String className, { List<String> states = const [] }) {
+bool hasDebugClassName(dynamic className) {
+  return toClassName(className).contains('debug');
+}
+
+bool hasDebugWidgetClassName(dynamic className) {
+  return toClassName(className).contains('log-widget');
+}
+
+String classNameState(String className, {List<String> states = const []}) {
   String parsedClassName = className;
 
   if (states.isNotEmpty) {
@@ -56,11 +69,13 @@ TextStyle wTextStyle(BuildContext context, dynamic className,
   return const WTextStyle().className(context, className).merge(textStyle);
 }
 
-InputDecoration wInputDecoration(BuildContext context, dynamic className) {
-  return const WInputDecoration().className(context, className);
-}
+Color wColor(String name,
+    {int shade = 500, String? darkName = null, int? darkShade = null}) {
+  if (WindTheme.getType() == Brightness.dark) {
+    name = darkName ?? name;
+    shade = darkShade ?? shade;
+  }
 
-Color wColor(String name, {int shade = 500}) {
   final match = RegExp(r'^(?<color>[^-]+)-(?<shade>[0-9]+)').firstMatch(name);
   if (match != null) {
     name = match.namedGroup('color')!;
@@ -68,4 +83,29 @@ Color wColor(String name, {int shade = 500}) {
   }
 
   return WindTheme.getColor(name, shade: shade);
+}
+
+bool wScreen(BuildContext context, String screen) {
+  final Size deviceSize = MediaQuery.of(context).size;
+  final int screenSize = WindTheme.getScreenValue(screen);
+
+  return deviceSize.width >= screenSize;
+}
+
+bool wScreenOnly(BuildContext context, String screen) {
+  final Size deviceSize = MediaQuery.of(context).size;
+  final int screenSize = screen == 'sm' ? 0 : WindTheme.getScreenValue(screen);
+  final int nextScreenSize = WindTheme.getScreenValue(screen, next: true);
+
+  return deviceSize.width >= screenSize && deviceSize.width < nextScreenSize;
+}
+
+bool wAnyScreenOnly(BuildContext context, List<String> screens) {
+  for (var screen in screens) {
+    if (wScreenOnly(context, screen)) {
+      return true;
+    }
+  }
+
+  return false;
 }

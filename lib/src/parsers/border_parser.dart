@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 import '../theme/wind_theme.dart';
 import 'screens_parser.dart';
 
 /// Parses the border from a class name
-/// Example: border-2 or border[4]
+/// Example: border-2 or border-y-[4]
 /// Example: border-red-500 or border-[#ff0000]
 /// Example: rounded-lg or rounded-[12]
 class BorderParser {
@@ -13,15 +14,15 @@ class BorderParser {
   static final RegExp roundedRegExpDynamic =
       RegExp(r'^(?:[a-zA-Z0-9]+:)?rounded-\[(?<size>[0-9]+)\]$');
 
-  static final RegExp widthRegExp =
-      RegExp(r'^(?:[a-zA-Z0-9]+:)?border-?(?<size>[0-9]*)$');
-  static final RegExp widthRegExpDynamic =
-      RegExp(r'^(?:[a-zA-Z0-9]+:)?border-\[(?<size>[0-9]+)\]$');
+  static final RegExp widthRegExp = RegExp(
+      r'^(?:[a-zA-Z0-9]+:)?border(?:-(?<position>[a-z]{0,1}))?-?(?<size>[0-9]*)$');
+  static final RegExp widthRegExpDynamic = RegExp(
+      r'^(?:[a-zA-Z0-9]+:)?border(?:-(?<position>[a-z]{0,1}))?-\[(?<size>[0-9]+)\]$');
 
   static final RegExp colorRegExp = RegExp(
       r'^(?:[a-zA-Z0-9]+:)?border-(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})$');
-  static final RegExp colorRegExpDynamic = RegExp(
-      r'^(?:[a-zA-Z0-9]+:)?border-\[#(?<code>[a-zA-Z0-9]+)\]$');
+  static final RegExp colorRegExpDynamic =
+      RegExp(r'^(?:[a-zA-Z0-9]+:)?border-\[#(?<code>[a-zA-Z0-9]+)\]$');
 
   static ShapeBorder? applyBorder(BuildContext context, String className) {
     OutlinedBorder? border;
@@ -79,7 +80,8 @@ class BorderParser {
       } else {
         final matchColor = colorRegExpDynamic.firstMatch(name);
         if (matchColor != null && ScreensParser.canApply(context, name)) {
-          borderColor = WindTheme.hexToColor('#' + matchColor.namedGroup('code')!);
+          borderColor =
+              WindTheme.hexToColor('#' + matchColor.namedGroup('code')!);
         }
       }
     }
@@ -104,7 +106,8 @@ class BorderParser {
     return border;
   }
 
-  static BorderRadiusGeometry? applyBorderRadiusGeometry(BuildContext context, String className) {
+  static BorderRadiusGeometry? applyBorderRadiusGeometry(
+      BuildContext context, String className) {
     double? radius;
 
     for (var name in className.split(' ')) {
@@ -131,7 +134,8 @@ class BorderParser {
     return null;
   }
 
-  static BorderRadius? applyBorderRadius(BuildContext context, String className) {
+  static BorderRadius? applyBorderRadius(
+      BuildContext context, String className) {
     double? radius;
 
     for (var name in className.split(' ')) {
@@ -160,23 +164,78 @@ class BorderParser {
 
   static BoxBorder? applyBoxBorder(BuildContext context, String className) {
     BoxBorder? border;
-    double? borderWidth;
+    double? topWidth, rightWidth, bottomWidth, leftWidth;
     Color? borderColor;
 
     for (var name in className.split(' ')) {
-      final matchWidth = widthRegExp.firstMatch(name);
-      if (matchWidth != null && ScreensParser.canApply(context, name)) {
-        final size = matchWidth.namedGroup('size')!.isEmpty
-            ? '1'
-            : matchWidth.namedGroup('size')!;
-        borderWidth = double.parse(size);
-      } else {
-        final matchWidth = widthRegExpDynamic.firstMatch(name);
-        if (matchWidth != null && ScreensParser.canApply(context, name)) {
-          String size = matchWidth.namedGroup('size')!;
+      final match = widthRegExp.firstMatch(name);
+      if (match != null && ScreensParser.canApply(context, name)) {
+        String position = match.namedGroup('position') ?? '';
+        String size = match.namedGroup('size') ?? '1';
 
-          if (double.tryParse(size) != null) {
-            borderWidth = double.parse(size);
+        double? width = double.tryParse(size) ?? 1;
+        switch (position) {
+          case 't':
+            topWidth = width;
+            break;
+          case 'r':
+            rightWidth = width;
+            break;
+          case 'b':
+            bottomWidth = width;
+            break;
+          case 'l':
+            leftWidth = width;
+            break;
+          case 'x':
+            leftWidth = rightWidth = width;
+            break;
+          case 'y':
+            topWidth = bottomWidth = width;
+            break;
+          default:
+            topWidth = rightWidth = bottomWidth = leftWidth = width;
+        }
+
+        // if (hasDebugClassName(className)) {
+        //   print('----------');
+        //   print('className: $name');
+        //   print('position: $position');
+        //   print('size: $size');
+        //   print('topWidth: $topWidth');
+        //   print('rightWidth: $rightWidth');
+        //   print('bottomWidth: $bottomWidth');
+        //   print('leftWidth: $leftWidth');
+        //   print('----------');
+        // }
+      } else {
+        final match = widthRegExpDynamic.firstMatch(name);
+        if (match != null && ScreensParser.canApply(context, name)) {
+          String position = match.namedGroup('position') ?? '';
+          String size = match.namedGroup('size') ?? '1';
+
+          double? width = double.tryParse(size) ?? 1;
+          switch (position) {
+            case 't':
+              topWidth = width;
+              break;
+            case 'r':
+              rightWidth = width;
+              break;
+            case 'b':
+              bottomWidth = width;
+              break;
+            case 'l':
+              leftWidth = width;
+              break;
+            case 'x':
+              leftWidth = rightWidth = width;
+              break;
+            case 'y':
+              topWidth = bottomWidth = width;
+              break;
+            default:
+              topWidth = rightWidth = bottomWidth = leftWidth = width;
           }
         }
       }
@@ -193,16 +252,39 @@ class BorderParser {
       } else {
         final matchColor = colorRegExpDynamic.firstMatch(name);
         if (matchColor != null && ScreensParser.canApply(context, name)) {
-          borderColor = WindTheme.hexToColor('#' + matchColor.namedGroup('code')!);
+          borderColor =
+              WindTheme.hexToColor('#' + matchColor.namedGroup('code')!);
         }
       }
     }
 
-    if (borderWidth != null || borderColor != null) {
-      border = Border.all(
-        color: borderColor ?? Colors.transparent,
-        width: borderWidth ?? 1,
+    if (topWidth != null ||
+        rightWidth != null ||
+        bottomWidth != null ||
+        leftWidth != null) {
+      border = Border(
+        top: topWidth != null ? BorderSide(
+          color: borderColor ?? Colors.transparent,
+          width: topWidth,
+        ) : BorderSide.none,
+        right: rightWidth != null ? BorderSide(
+          color: borderColor ?? Colors.transparent,
+          width: rightWidth,
+        ) : BorderSide.none,
+        bottom: bottomWidth != null ? BorderSide(
+          color: borderColor ?? Colors.transparent,
+          width: bottomWidth,
+        ) : BorderSide.none,
+        left: leftWidth != null ? BorderSide(
+          color: borderColor ?? Colors.transparent,
+          width: leftWidth,
+        ) : BorderSide.none,
       );
+    }
+
+    if (hasDebugClassName(className)) {
+      print('BorderParser: $border topWidth: $topWidth, rightWidth: $rightWidth, '
+          'bottomWidth: $bottomWidth, leftWidth: $leftWidth, borderColor: $borderColor from $className');
     }
 
     return border;
@@ -242,7 +324,8 @@ class BorderParser {
       } else {
         final matchColor = colorRegExpDynamic.firstMatch(name);
         if (matchColor != null && ScreensParser.canApply(context, name)) {
-          borderColor = WindTheme.hexToColor('#' + matchColor.namedGroup('code')!);
+          borderColor =
+              WindTheme.hexToColor('#' + matchColor.namedGroup('code')!);
         }
       }
     }

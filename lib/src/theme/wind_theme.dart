@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platform_info/platform_info.dart';
 
 import '../colors/wind_colors.dart';
 
@@ -28,24 +29,32 @@ class WindTheme {
     'fuchsia': WindColors.fuchsia,
     'pink': WindColors.pink,
     'black': WindColors.black,
+    'realBlack': WindColors.realBlack,
     'white': WindColors.white,
+    'realWhite': WindColors.realBlack,
     'primary': WindColors.indigo,
     'secondary': WindColors.slate,
   };
 
+  /// Original colors
+  static final Map<String, MaterialColor> _originalColors = {};
+
+  /// Darken colors
+  static final Map<String, MaterialColor> _darkenColors = {};
+
   /// Static colors that should not be darkened
   static final List<String> _nonDarkenColors = [
-    'primary',
-    'secondary',
+    'realBlack'
+        'realWhite',
   ];
 
   /// Static screen sizes
   static final Map<String, int> _screens = {
-    'sm': 768,
-    'md': 1024,
-    'lg': 1280,
-    'xl': 1536,
-    '2xl': 3072,
+    'sm': 640,
+    'md': 768,
+    'lg': 1024,
+    'xl': 1280,
+    '2xl': 1536,
   };
 
   /// Static rounded sizes
@@ -129,6 +138,17 @@ class WindTheme {
     'loose': 2,
   };
 
+  /// Static operating systems
+  static final List<String> _operatingSystems = [
+    'ios',
+    'android',
+    'fuchsia',
+    'linux',
+    'macos',
+    'windows',
+    'web',
+  ];
+
   /// Static pixel factor
   static double _pixelFactor = 4.0;
 
@@ -144,69 +164,59 @@ class WindTheme {
   /// Helper function to check if a color is dark
   static bool _darkColorsGenerated = false;
 
-  /// Generate darken colors for dark theme
   static void generateDarkenColors() {
-    if (_type == Brightness.light && _darkColorsGenerated) {
+    if (WindTheme.getType() == Brightness.light && _darkColorsGenerated) {
       _darkColorsGenerated = false;
-
       for (String color in _colors.keys) {
-        if (_nonDarkenColors.contains(color)) {
-          continue;
-        } else if (color == 'black') {
-          addColor(color, WindColors.black);
-        } else if (color == 'white') {
-          addColor(color, WindColors.white);
-        } else {
-          // Invert material color palette
-          MaterialColor invertedColor =
-              MaterialColor(_colors[color]!.value, <int, Color>{
-            50: _colors[color]!.shade50,
-            100: _colors[color]!.shade100,
-            200: _colors[color]!.shade200,
-            300: _colors[color]!.shade300,
-            400: _colors[color]!.shade400,
-            500: _colors[color]!.shade500,
-            600: _colors[color]!.shade600,
-            700: _colors[color]!.shade700,
-            800: _colors[color]!.shade800,
-            900: _colors[color]!.shade900,
-          });
-
-          addColor(color, invertedColor);
-        }
+        addColor(
+            color,
+            _originalColors.containsKey(color)
+                ? _originalColors[color]!
+                : _colors[color]!);
       }
     }
 
-    if (_type == Brightness.dark && !_darkColorsGenerated) {
+    if (WindTheme.getType() == Brightness.dark && !_darkColorsGenerated) {
       _darkColorsGenerated = true;
 
       for (String color in _colors.keys) {
-        if (_nonDarkenColors.contains(color)) {
-          continue;
+        if (_darkenColors.containsKey(color)) {
+          addOriginalColor(color, _colors[color]!);
+          addColor(color, _darkenColors[color]!);
         } else if (color == 'black') {
+          // Nightwind benzeri şekilde ters çevirme
+          addOriginalColor(color, WindColors.black);
           addColor(color, WindColors.white);
         } else if (color == 'white') {
-          addColor(color, WindColors.black);
+          addOriginalColor(color, WindColors.white);
+          addColor(color, WindColors.whiteDark);
         } else {
-          // Invert material color palette
-          MaterialColor invertedColor =
-              MaterialColor(_colors[color]!.value, <int, Color>{
-            50: _colors[color]!.shade900,
-            100: _colors[color]!.shade800,
-            200: _colors[color]!.shade700,
-            300: _colors[color]!.shade600,
-            400: _colors[color]!.shade500,
-            500: _colors[color]!.shade400,
-            600: _colors[color]!.shade300,
-            700: _colors[color]!.shade200,
-            800: _colors[color]!.shade100,
-            900: _colors[color]!.shade50,
-          });
-
-          addColor(color, invertedColor);
+          // **Nightwind gibi renk skalası dönüşümü**
+          addOriginalColor(color, _colors[color]!);
+          addColor(color, invertMaterialColor(_colors[color]!));
         }
       }
     }
+  }
+
+  /// **📌 Nightwind'e benzer bir şekilde MaterialColor'ı tersine çevirme**
+  static MaterialColor invertMaterialColor(MaterialColor color) {
+    return MaterialColor(color.toARGB32(), <int, Color>{
+      50: color.shade900,
+      100: color.shade800,
+      200: color.shade700,
+      300: color.shade600,
+      400: color.shade500,
+      500: color.shade400,
+      600: color.shade300,
+      700: color.shade200,
+      800: color.shade100,
+      900: color.shade50,
+    });
+  }
+
+  static void addDarkenColor(String name, MaterialColor color) {
+    _darkenColors[name] = color;
   }
 
   static bool hasLineHeight(String height) {
@@ -313,6 +323,32 @@ class WindTheme {
     return _pixelFactor * 4;
   }
 
+  static bool hasOperatingSystem(String name) {
+    return _operatingSystems.contains(name);
+  }
+
+  static bool checkOperatingSystem(String name) {
+
+    switch (name) {
+      case 'ios':
+        return Platform.instance.isIOS;
+      case 'android':
+        return Platform.instance.isAndroid;
+      case 'fuchsia':
+        return Platform.instance.isFuchsia;
+      case 'linux':
+        return Platform.instance.isLinux;
+      case 'macos':
+        return Platform.instance.isMacOS;
+      case 'windows':
+        return Platform.instance.isWindows;
+      case 'web':
+        return Platform.instance.isWeb;
+    }
+
+    return false;
+  }
+
   static void setPixelFactor(double factor) {
     _pixelFactor = factor;
   }
@@ -321,11 +357,33 @@ class WindTheme {
     return _screens.containsKey(key);
   }
 
+  static bool hasScreenOrModeOrOperatingSystem(String key) {
+    return _screens.containsKey(key) ||
+        key == 'dark' ||
+        key == 'light' ||
+        _operatingSystems.contains(key);
+  }
+
   static List<String> getScreenKeys() {
     return _screens.keys.toList();
   }
 
-  static int getScreenValue(String key) {
+  static int getScreenValue(String key, {bool next = false}) {
+    if (next) {
+      int current = _screens[key]!;
+      int smallest = 0;
+
+      _screens.forEach((String key, int value) {
+        if (value > current) {
+          if (smallest == 0 || value < smallest) {
+            smallest = value;
+          }
+        }
+      });
+
+      return smallest;
+    }
+
     return _screens[key]!;
   }
 
@@ -362,8 +420,16 @@ class WindTheme {
     _colors[name] = color;
   }
 
+  static void addOriginalColor(String name, MaterialColor color) {
+    _originalColors[name] = color;
+  }
+
   static void addStaticColor(String name) {
     _nonDarkenColors.add(name);
+  }
+
+  static void removeStaticColor(String name) {
+    _nonDarkenColors.remove(name);
   }
 
   static MaterialColor getMaterialColor(String name) {
@@ -464,7 +530,8 @@ class WindTheme {
     );
   }
 
-  static ThemeData toThemeCallback(BuildContext context, {
+  static ThemeData toThemeCallback(
+    BuildContext context, {
     TextTheme? textTheme,
     String? bodyFontString,
     String? displayFontString,
@@ -475,7 +542,11 @@ class WindTheme {
     Color? errorColor,
     Brightness? brightness,
   }) {
-    setTypeFromContext(context);
+    if (brightness != null) {
+      WindTheme.setType(brightness);
+    } else {
+      setTypeFromContext(context);
+    }
 
     return toThemeData(
       textTheme: textTheme ?? Theme.of(context).textTheme,

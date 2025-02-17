@@ -42,7 +42,8 @@ class WTextStyle extends TextStyle {
       fontWeight: FontWeightParser.applyFontWeight(context, parsedClassName),
       fontStyle: FontStyleParser.applyFontStyle(context, parsedClassName),
       fontSize: FontSizeParser.applyFontSize(context, parsedClassName),
-      height: LineHeightParser.applyLineHeight(context, parsedClassName) ?? null,
+      height: LineHeightParser.toLineHeight(parsedClassName) ??
+          FontSizeParser.applyLineHeight(context, parsedClassName),
       decoration:
           TextDecorationParser.applyDecoration(context, parsedClassName),
       letterSpacing:

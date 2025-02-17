@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../theme/wind_theme.dart';
 
-/// Parses padding classes and returns EdgeInsetsGeometry
-/// Example: p-4, pl-2, pr-4, pb-4, pt-4, px-4, py-4
-/// Example: p-[4], pl-[2], pr-[4], pb-[4], pt-[4], px-[4], py-[4]
+import '../helpers.dart';
+import '../theme/wind_theme.dart';
+import 'screens_parser.dart';
+
 class PaddingParser {
   static final RegExp _paddingRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?p-(?<size>[\[\]0-9.]+)$');
   static final RegExp _paddingLeftRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?pl-(?<size>[\[\]0-9.]+)$');
@@ -18,48 +18,63 @@ class PaddingParser {
     return padding == null ? child : Padding(padding: padding, child: child);
   }
 
-  static Padding? applyPadding(BuildContext context, String className) {
-    final padding = applyGeometry(context, className);
-    return padding == null ? null : Padding(padding: padding);
-  }
-
   static EdgeInsetsGeometry? applyGeometry(BuildContext context, String className) {
-    EdgeInsetsGeometry? padding;
+    Map<String, double> paddingValues = {
+      "left": 0.0,
+      "right": 0.0,
+      "top": 0.0,
+      "bottom": 0.0
+    };
 
     for (var name in className.split(' ')) {
-      padding = _parsePadding(context, name, padding);
+      _parsePadding(context, name, paddingValues);
     }
 
-    return padding;
+    if (hasDebugClassName(className)) {
+      print('PaddingParser - Padding: $paddingValues for className: $className');
+    }
+
+    return EdgeInsets.only(
+      left: paddingValues["left"]!,
+      right: paddingValues["right"]!,
+      top: paddingValues["top"]!,
+      bottom: paddingValues["bottom"]!,
+    );
   }
 
-  static EdgeInsetsGeometry? _parsePadding(BuildContext context, String name, EdgeInsetsGeometry? padding) {
+  static void _parsePadding(BuildContext context, String name, Map<String, double> paddingValues) {
     final matchers = {
-      _paddingRegExp: (size) => EdgeInsets.all(size),
-      _paddingLeftRegExp: (size) => EdgeInsets.only(left: size),
-      _paddingRightRegExp: (size) => EdgeInsets.only(right: size),
-      _paddingBottomRegExp: (size) => EdgeInsets.only(bottom: size),
-      _paddingTopRegExp: (size) => EdgeInsets.only(top: size),
-      _paddingHorizontalRegExp: (size) => EdgeInsets.symmetric(horizontal: size),
-      _paddingVerticalRegExp: (size) => EdgeInsets.symmetric(vertical: size),
+      _paddingRegExp: (size) {
+        paddingValues["left"] = size;
+        paddingValues["right"] = size;
+        paddingValues["top"] = size;
+        paddingValues["bottom"] = size;
+      },
+      _paddingLeftRegExp: (size) => paddingValues["left"] = size,
+      _paddingRightRegExp: (size) => paddingValues["right"] = size,
+      _paddingBottomRegExp: (size) => paddingValues["bottom"] = size,
+      _paddingTopRegExp: (size) => paddingValues["top"] = size,
+      _paddingHorizontalRegExp: (size) {
+        paddingValues["left"] = size;
+        paddingValues["right"] = size;
+      },
+      _paddingVerticalRegExp: (size) {
+        paddingValues["top"] = size;
+        paddingValues["bottom"] = size;
+      },
     };
 
     for (var entry in matchers.entries) {
       final match = entry.key.firstMatch(name);
-      if (match != null) {
+      if (match != null && ScreensParser.canApply(context, name)) {
         final matchedSize = match.namedGroup('size')!;
 
-        // if size value is wrapped in square brackets, it is a dynamic value
-        if (matchedSize.startsWith('[') && matchedSize.endsWith(']')) {
-          final size = double.parse(matchedSize.substring(1, matchedSize.length - 1));
-          padding = padding == null ? entry.value(size) : padding.add(entry.value(size));
-        } else {
-          final size = double.parse(matchedSize) * WindTheme.getPixelFactor();
-          padding = padding == null ? entry.value(size) : padding.add(entry.value(size));
-        }
+        double size = matchedSize.startsWith('[') && matchedSize.endsWith(']')
+            ? double.parse(matchedSize.substring(1, matchedSize.length - 1))
+            : double.parse(matchedSize) * WindTheme.getPixelFactor();
+
+        entry.value(size);
       }
     }
-
-    return padding;
   }
 }

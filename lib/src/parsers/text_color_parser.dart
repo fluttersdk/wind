@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 import '../theme/wind_theme.dart';
 import 'screens_parser.dart';
@@ -42,6 +43,10 @@ class TextColorParser {
             shade: match.namedGroup('shade')!.isNotEmpty
                 ? int.parse(match.namedGroup('shade')!)
                 : 500);
+
+        if (hasDebugClassName(className)) {
+          print('TextColorParser class name: $name with color: ${match.namedGroup('color')} and shade: ${match.namedGroup('shade')} color: $color');
+        }
       } else {
         final match = regExpDynamic.firstMatch(name);
         if (match != null && ScreensParser.canApply(context, name)) {

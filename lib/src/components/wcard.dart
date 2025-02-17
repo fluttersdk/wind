@@ -99,6 +99,7 @@ class WCard extends StatelessWidget {
       );
     }
 
+    childComponent = PaddingParser.apply(context, parsedClassName, childComponent);
     return FlexParser.applyFlexible(context, parsedClassName, childComponent);
   }
 }

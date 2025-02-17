@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../helpers.dart';
 import '../theme/wind_theme.dart';
+import 'screens_parser.dart';
 
 /// Parses margin classes and returns EdgeInsetsGeometry
 /// Example: m-4, ml-2, mr-4, mb-4, mt-4, mx-4, my-4
@@ -21,6 +23,10 @@ class MarginParser {
       margin = _parseMargin(context, name, margin);
     }
 
+    if (hasDebugClassName(className)) {
+      print('MarginParser - Margin: $margin for className: $className');
+    }
+
     return margin;
   }
 
@@ -37,7 +43,7 @@ class MarginParser {
 
     for (var entry in matchers.entries) {
       final match = entry.key.firstMatch(name);
-      if (match != null) {
+      if (match != null && ScreensParser.canApply(context, name)) {
         final matchedSize = match.namedGroup('size')!;
 
         // if size value is wrapped in square brackets, it is a dynamic value

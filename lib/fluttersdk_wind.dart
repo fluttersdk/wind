@@ -18,7 +18,7 @@ export 'src/parsers/padding_parser.dart';
 export 'src/parsers/screens_parser.dart';
 export 'src/parsers/background_color_parser.dart';
 export 'src/parsers/line_height_parser.dart';
-export 'src/decorations/winput_decoration.dart';
+export 'src/parsers/display_parser.dart';
 export 'src/components/wflex_container.dart';
 export 'src/components/wcontainer.dart';
 export 'src/components/wtext.dart';

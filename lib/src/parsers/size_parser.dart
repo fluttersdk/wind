@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../helpers.dart';
 import '../theme/wind_theme.dart';
 import 'screens_parser.dart';
 
@@ -56,13 +57,19 @@ class SizeParser {
     return _applySize(context, className, minHeightRegExp, SizeType.height);
   }
 
-  static BoxConstraints applyBoxConstraints(BuildContext context, String className) {
+  static BoxConstraints applyBoxConstraints(
+      BuildContext context, String className) {
     final width = applyWidth(context, className);
     final height = applyHeight(context, className);
     final maxWidth = applyMaxWidth(context, className) ?? width;
     final maxHeight = applyMaxHeight(context, className) ?? height;
     final minWidth = applyMinWidth(context, className) ?? width;
     final minHeight = applyMinHeight(context, className) ?? height;
+
+    if (hasDebugClassName(className)) {
+      print(
+          'BoxConstraints: width: $width, height: $height, maxWidth: $maxWidth, maxHeight: $maxHeight, minWidth: $minWidth, minHeight: $minHeight');
+    }
 
     return BoxConstraints(
       minWidth: minWidth ?? 0.0,
@@ -72,11 +79,92 @@ class SizeParser {
     );
   }
 
+  static double calculateHeight(BuildContext context, String className,
+      {double defaultHeight = 16.0}) {
+    final height = applyHeight(context, className);
+    final maxHeight = applyMaxHeight(context, className) ?? height;
+    final minHeight = applyMinHeight(context, className) ?? height;
+
+    if (hasDebugClassName(className)) {
+      print(
+          'calculateHeight: height: $height, maxHeight: $maxHeight, minHeight: $minHeight');
+    }
+
+    if (height != null) {
+      return height;
+    }
+
+    if (maxHeight != null) {
+      return maxHeight;
+    }
+
+    if (minHeight != null) {
+      return minHeight;
+    }
+
+    return defaultHeight;
+  }
+
+  static double calculateWidth(BuildContext context, String className,
+      {double defaultWidth = 16.0}) {
+    final width = applyWidth(context, className);
+    final maxWidth = applyMaxWidth(context, className) ?? width;
+    final minWidth = applyMinWidth(context, className) ?? width;
+
+    if (hasDebugClassName(className)) {
+      print(
+          'calculateWidth: width: $width, maxWidth: $maxWidth, minWidth: $minWidth');
+    }
+
+    if (width != null) {
+      return width;
+    }
+
+    if (maxWidth != null) {
+      return maxWidth;
+    }
+
+    if (minWidth != null) {
+      return minWidth;
+    }
+
+    return defaultWidth;
+  }
+
   static double? _applySize(
       BuildContext context, String className, RegExp regExp, SizeType type) {
+    List<String> matchedClasses = [];
+    for (var name in className.split(' ')) {
+      final match = regExp.firstMatch(name);
+      if (match != null) {
+        matchedClasses.add(name);
+      }
+    }
+
+    if (matchedClasses.length > 1) {
+      String lastClassName = matchedClasses.first;
+      for (var name in matchedClasses) {
+        if (ScreensParser.canApply(context, name)) {
+          lastClassName = name;
+        }
+      }
+
+      if (hasDebugClassName(className)) {
+        print('SizeParser: lastClassName: $lastClassName');
+      }
+
+      return calculate(
+          context, regExp.firstMatch(lastClassName)!.namedGroup('size')!,
+          type: type);
+    }
+
     for (var name in className.split(' ')) {
       final match = regExp.firstMatch(name);
       if (match != null && ScreensParser.canApply(context, name)) {
+        if (hasDebugClassName(className)) {
+          print('SizeParser: className: $name');
+        }
+
         return calculate(context, match.namedGroup('size')!, type: type);
       }
     }

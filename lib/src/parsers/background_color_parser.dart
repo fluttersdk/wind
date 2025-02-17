@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 import '../theme/wind_theme.dart';
 import 'screens_parser.dart';
@@ -30,10 +31,16 @@ class BackgroundColorParser {
 
   static Color? applyColor(BuildContext context, String className) {
     Color? color;
+    String? name;
 
     for (var name in className.split(' ')) {
       final match = regExp.firstMatch(name);
       if (match != null && ScreensParser.canApply(context, name)) {
+        if (hasDebugClassName(className)) {
+          print('Background color: ${match.namedGroup('color')} ${match.namedGroup('shade')} from $name');
+        }
+
+        name = match.namedGroup('color')!;
         color = WindTheme.getColor(match.namedGroup('color')!,
             shade: match.namedGroup('shade')!.isNotEmpty
                 ? int.parse(match.namedGroup('shade')!)
@@ -41,9 +48,14 @@ class BackgroundColorParser {
       } else {
         final match = regExpDynamic.firstMatch(name);
         if (match != null && ScreensParser.canApply(context, name)) {
+          name = match.namedGroup('code')!;
           color = WindTheme.hexToColor('#' + match.namedGroup('code')!);
         }
       }
+    }
+
+    if (hasDebugClassName(className) && color != null) {
+      print('Background color: $name $color from $className');
     }
 
     return color;

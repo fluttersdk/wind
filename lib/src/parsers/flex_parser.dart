@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../components/wgap.dart';
+import '../helpers.dart';
 import '../theme/wind_theme.dart';
 import 'screens_parser.dart';
 
@@ -74,7 +75,7 @@ class FlexParser {
   }
 
   static double? applyGap(BuildContext context, String className) {
-    for (var name in className.split(' ')) {
+    for (var name in className.split(' ').reversed) {
       final match = regExp.firstMatch(name);
       if (match != null && ScreensParser.canApply(context, name)) {
         return double.parse(match.namedGroup('size')!) *
@@ -112,9 +113,15 @@ class FlexParser {
 
   static T _applyProperty<T>(BuildContext context, String className,
       Map<String, T> properties, T defaultValue) {
-    for (var name in className.split(' ')) {
+    for (var name in className.split(' ').reversed) {
       if (ScreensParser.canApply(context, name) &&
           properties.containsKey(ScreensParser.without(name))) {
+        if (hasDebugClassName(className)) {
+          print('FlexParser: className: $name for property: $className');
+        }
+
+        // remove md: lg: prefix
+        name = ScreensParser.without(name);
         return properties[name]!;
       }
     }
@@ -126,7 +133,8 @@ class FlexParser {
     Widget newChild = child;
 
     for (var name in className.split(' ')) {
-      if (ScreensParser.canApply(context, name) && name == ScreensParser.without(overflowScroll)) {
+      if (ScreensParser.canApply(context, name) &&
+          name == ScreensParser.without(overflowScroll)) {
         newChild = SingleChildScrollView(
           child: newChild,
         );
@@ -172,7 +180,7 @@ class FlexParser {
   }
 
   static FlexFit? applyFlexFit(BuildContext context, String className) {
-    for (var name in className.split(' ')) {
+    for (var name in className.split(' ').reversed) {
       if (ScreensParser.canApply(context, name) &&
           flexFitClasses.contains(ScreensParser.without(name))) {
         return ScreensParser.without(name) == 'flex-grow'
@@ -184,7 +192,7 @@ class FlexParser {
   }
 
   static int? applyFlex(BuildContext context, String className) {
-    for (var name in className.split(' ')) {
+    for (var name in className.split(' ').reversed) {
       final match = flexRegExp.firstMatch(name);
       if (match != null && ScreensParser.canApply(context, name)) {
         return int.parse(match.namedGroup('size')!);

@@ -66,7 +66,7 @@ class WFlex extends StatelessWidget {
   Widget build(BuildContext context) {
     final String parsedClassName = classNameParser(className);
 
-    return FlexParser.applyOverflow(
+    final widget = FlexParser.applyOverflow(
         context,
         parsedClassName,
         Flex(
@@ -85,5 +85,11 @@ class WFlex extends StatelessWidget {
           children:
               FlexParser.applyGapToChildren(context, parsedClassName, children),
         ));
+
+    if (hasDebugWidgetClassName(className)) {
+      print(widget.toStringDeep());
+    }
+
+    return widget;
   }
 }
