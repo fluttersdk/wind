@@ -41,6 +41,7 @@ import 'pages/widgets/wflex.dart';
 import 'pages/widgets/wflexcontainer.dart';
 import 'pages/widgets/wflexible.dart';
 import 'pages/widgets/wtext.dart';
+import 'pages/example/product_grid.dart';
 
 class MyApp extends StatelessWidget {
   final Widget Function(BuildContext) appCallback;
@@ -190,6 +191,8 @@ void main() {
               AppLayoutWidget(WContainerWidget()),
           '/layouts/display': (context) =>
               AppLayoutWidget(DisplayLayout()),
+          '/example/product_grid': (context) =>
+              AppLayoutWidget(ProductGrid()),
         },
       );
     },

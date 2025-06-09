@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../helpers.dart';
 import '../theme/wind_theme.dart';
 import 'screens_parser.dart';
 
