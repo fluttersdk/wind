@@ -42,7 +42,7 @@ class ShadowParser {
     final elevation = applyElevation(context, className);
     if (elevation != null) {
       return BoxShadow(
-        color: Colors.black.withValues(alpha: 25),
+        color: Colors.black.withValues(alpha: 0.1),
         blurRadius: elevation,
         spreadRadius: 0,
         offset: Offset(0, elevation / 2),
@@ -57,7 +57,7 @@ class ShadowParser {
     if (elevation != null) {
       return [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 25),
+          color: Colors.black.withValues(alpha: 0.1),
           blurRadius: elevation,
           spreadRadius: 0,
           offset: Offset(0, elevation / 2),

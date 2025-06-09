@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 
 import '../helpers.dart';
 import '../parsers/alignment_parser.dart';
 import '../parsers/background_color_parser.dart';
 import '../parsers/border_parser.dart';
+import '../parsers/display_parser.dart';
 import '../parsers/flex_parser.dart';
 import '../parsers/margin_parser.dart';
 import '../parsers/padding_parser.dart';
@@ -87,25 +87,49 @@ class WContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final String parsedClassName = classNameParser(className);
 
-    var widget = FlexParser.applyFlexible(context, parsedClassName, Container(
-      alignment: alignment ?? AlignmentParser.applyAlignment(context, parsedClassName),
+    if (hasDebugClassName(className)) {
+      print('WContainer: $parsedClassName');
+    }
+
+    if (DisplayParser.hide(context, parsedClassName)) {
+      return const SizedBox.shrink();
+    }
+
+    final borderRadius =
+        BorderParser.applyBorderRadiusGeometry(context, parsedClassName);
+
+    Widget widget = Container(
+      alignment:
+          alignment ?? AlignmentParser.applyAlignment(context, parsedClassName),
       padding: padding ?? PaddingParser.applyGeometry(context, parsedClassName),
-      decoration: decoration ?? BoxDecoration(
-        color: color ?? BackgroundColorParser.applyColor(context, parsedClassName),
-        borderRadius: BorderParser.applyBorderRadiusGeometry(context, parsedClassName),
-        border: BorderParser.applyBoxBorder(context, parsedClassName),
-        boxShadow: ShadowParser.applyBoxShadows(context, parsedClassName) ?? [],
-      ),
+      decoration: decoration ??
+          BoxDecoration(
+            color: color ?? BackgroundColorParser.applyColor(context, parsedClassName),
+            border: BorderParser.applyBoxBorder(context, parsedClassName),
+            borderRadius: borderRadius,
+            boxShadow:
+                ShadowParser.applyBoxShadows(context, parsedClassName) ?? [],
+          ),
       foregroundDecoration: foregroundDecoration,
       width: width ?? SizeParser.applyWidth(context, parsedClassName),
       height: height ?? SizeParser.applyHeight(context, parsedClassName),
-      constraints: constraints ?? SizeParser.applyBoxConstraints(context, parsedClassName),
+      constraints: constraints ??
+          SizeParser.applyBoxConstraints(context, parsedClassName),
       margin: margin ?? MarginParser.applyGeometry(context, parsedClassName),
       transform: transform,
       transformAlignment: transformAlignment,
       clipBehavior: clipBehavior,
       child: child,
-    ));
+    );
+
+    if (borderRadius != null) {
+      widget = ClipRRect(
+        borderRadius: borderRadius,
+        child: widget,
+      );
+    }
+
+    widget = FlexParser.applyFlexible(context, parsedClassName, widget);
 
     if (hasDebugWidgetClassName(className)) {
       print(widget.toStringDeep());

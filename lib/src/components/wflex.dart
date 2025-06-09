@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../helpers.dart';
+import '../parsers/display_parser.dart';
 import '../parsers/flex_parser.dart';
 
 /// A utility-first widget for creating flexible layouts in the Wind plugin.
@@ -66,6 +67,14 @@ class WFlex extends StatelessWidget {
   Widget build(BuildContext context) {
     final String parsedClassName = classNameParser(className);
 
+    if (hasDebugClassName(className)) {
+      print('WFlex: $parsedClassName');
+    }
+
+    if (DisplayParser.hide(context, parsedClassName)) {
+      return const SizedBox.shrink();
+    }
+
     final widget = FlexParser.applyOverflow(
         context,
         parsedClassName,
@@ -86,8 +95,8 @@ class WFlex extends StatelessWidget {
               FlexParser.applyGapToChildren(context, parsedClassName, children),
         ));
 
-    if (hasDebugWidgetClassName(className)) {
-      print(widget.toStringDeep());
+    if (hasDebugClassName(className)) {
+      print('WFlex: $parsedClassName widget: ${widget.toStringDeep()}');
     }
 
     return widget;

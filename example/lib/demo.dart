@@ -22,6 +22,7 @@ import 'pages/flex/gap_dynamic.dart';
 import 'pages/flex/justify_content.dart';
 import 'pages/flex/scrollable_overflow.dart';
 import 'pages/home.dart';
+import 'pages/layout/display.dart';
 import 'pages/sizing/height.dart';
 import 'pages/sizing/width.dart';
 import 'pages/spacing/margin.dart';
@@ -187,6 +188,8 @@ void main() {
               AppLayoutWidget(WFlexibleWidget()),
           '/widgets/wcontainer': (context) =>
               AppLayoutWidget(WContainerWidget()),
+          '/layouts/display': (context) =>
+              AppLayoutWidget(DisplayLayout()),
         },
       );
     },

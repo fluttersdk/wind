@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../helpers.dart';
 import '../theme/wind_theme.dart';
 import 'screens_parser.dart';
 
@@ -162,6 +162,29 @@ class BorderParser {
     return null;
   }
 
+  static double? applyBorderRadiusValue(BuildContext context, String className) {
+    double? radius;
+
+    for (var name in className.split(' ')) {
+      final matchRounded = roundedRegExp.firstMatch(name);
+      if (matchRounded != null && ScreensParser.canApply(context, name)) {
+        final size = matchRounded.namedGroup('size')!;
+        radius = calculateRadius(context, size);
+      } else {
+        final matchRounded = roundedRegExpDynamic.firstMatch(name);
+        if (matchRounded != null && ScreensParser.canApply(context, name)) {
+          String size = matchRounded.namedGroup('size')!;
+
+          if (double.tryParse(size) != null) {
+            radius = double.parse(size);
+          }
+        }
+      }
+    }
+
+    return radius;
+  }
+
   static BoxBorder? applyBoxBorder(BuildContext context, String className) {
     BoxBorder? border;
     double? topWidth, rightWidth, bottomWidth, leftWidth;
@@ -196,18 +219,6 @@ class BorderParser {
           default:
             topWidth = rightWidth = bottomWidth = leftWidth = width;
         }
-
-        // if (hasDebugClassName(className)) {
-        //   print('----------');
-        //   print('className: $name');
-        //   print('position: $position');
-        //   print('size: $size');
-        //   print('topWidth: $topWidth');
-        //   print('rightWidth: $rightWidth');
-        //   print('bottomWidth: $bottomWidth');
-        //   print('leftWidth: $leftWidth');
-        //   print('----------');
-        // }
       } else {
         final match = widthRegExpDynamic.firstMatch(name);
         if (match != null && ScreensParser.canApply(context, name)) {
@@ -354,6 +365,31 @@ class BorderParser {
     }
 
     return border;
+  }
+
+  static Color? applyBorderColor(BuildContext context, String className) {
+    Color? borderColor;
+
+    for (var name in className.split(' ')) {
+      final matchColor = colorRegExp.firstMatch(name);
+      if (matchColor != null && ScreensParser.canApply(context, name)) {
+        String colorName = matchColor.namedGroup('color')!;
+        if (WindTheme.isValidColor(colorName)) {
+          borderColor = WindTheme.getColor(colorName,
+              shade: matchColor.namedGroup('shade')!.isNotEmpty
+                  ? int.parse(matchColor.namedGroup('shade')!)
+                  : 500);
+        }
+      } else {
+        final matchColor = colorRegExpDynamic.firstMatch(name);
+        if (matchColor != null && ScreensParser.canApply(context, name)) {
+          borderColor =
+              WindTheme.hexToColor('#' + matchColor.namedGroup('code')!);
+        }
+      }
+    }
+
+    return borderColor;
   }
 
   static double calculateRadius(BuildContext context, String size) {

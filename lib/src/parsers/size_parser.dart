@@ -173,7 +173,7 @@ class SizeParser {
 
   static double calculate(BuildContext context, String size,
       {SizeType type = SizeType.width}) {
-    if (size == 'max') {
+    if (size == 'max' || size == 'full') {
       return double.infinity;
     }
 
@@ -181,7 +181,7 @@ class SizeParser {
       return 0.0;
     }
 
-    if (size == 'full' || size == 'screen') {
+    if (size == 'screen') {
       return type == SizeType.height
           ? MediaQuery.of(context).size.height
           : MediaQuery.of(context).size.width;

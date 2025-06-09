@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../helpers.dart';
 import '../painting/wtext_style.dart';
+import '../parsers/alignment_parser.dart';
+import '../parsers/display_parser.dart';
 import '../parsers/padding_parser.dart';
 import '../parsers/text_align_parser.dart';
-import '../parsers/text_transform_parser.dart';
 import '../parsers/text_overflow_parser.dart';
+import '../parsers/text_transform_parser.dart';
 
 /// `WText` is a utility-first text widget for the Wind plugin.
 /// It enables developers to style text efficiently using predefined utility classes.
@@ -38,22 +40,22 @@ import '../parsers/text_overflow_parser.dart';
 /// [WText Documentation](https://wind.fluttersdk.com/widgets/wtext)
 class WText extends StatelessWidget {
   const WText(
-      this.data, {
-        this.className,
-        super.key,
-        this.style,
-        this.strutStyle,
-        this.textAlign,
-        this.textDirection,
-        this.locale,
-        this.softWrap,
-        this.overflow,
-        this.maxLines,
-        this.semanticsLabel,
-        this.textWidthBasis,
-        this.textHeightBehavior,
-        this.selectionColor,
-      });
+    this.data, {
+    this.className,
+    super.key,
+    this.style,
+    this.strutStyle,
+    this.textAlign,
+    this.textDirection,
+    this.locale,
+    this.softWrap,
+    this.overflow,
+    this.maxLines,
+    this.semanticsLabel,
+    this.textWidthBasis,
+    this.textHeightBehavior,
+    this.selectionColor,
+  });
 
   final String data;
   final dynamic className;
@@ -74,18 +76,32 @@ class WText extends StatelessWidget {
   Widget build(BuildContext context) {
     final String parsedClassName = classNameParser(className);
 
-    final TextOverflow? parsedOverflow = overflow ?? TextOverflowParser.parseOverflow(parsedClassName);
-    final int? parsedMaxLines = maxLines ?? TextOverflowParser.parseMaxLines(parsedClassName);
-    final bool? parsedSoftWrap = softWrap ?? TextOverflowParser.parseSoftWrap(parsedClassName);
-    final String truncatedText = TextOverflowParser.applyMaxChars(data, parsedClassName);
+    if (hasDebugClassName(className)) {
+      print('WText: $parsedClassName');
+    }
+
+    if (DisplayParser.hide(context, parsedClassName)) {
+      return const SizedBox.shrink();
+    }
+
+    final TextOverflow? parsedOverflow =
+        overflow ?? TextOverflowParser.parseOverflow(parsedClassName);
+    final int? parsedMaxLines =
+        maxLines ?? TextOverflowParser.parseMaxLines(parsedClassName);
+    final bool? parsedSoftWrap =
+        softWrap ?? TextOverflowParser.parseSoftWrap(parsedClassName);
+    final String truncatedText =
+        TextOverflowParser.applyMaxChars(data, parsedClassName);
 
     Widget textWidget;
     if (hasClassName(className, 'selectable')) {
       textWidget = SelectableText(
-        TextTransformParser.applyTransform(context, truncatedText, parsedClassName),
+        TextTransformParser.applyTransform(
+            context, truncatedText, parsedClassName),
         style: const WTextStyle().className(context, className).merge(style),
         strutStyle: strutStyle,
-        textAlign: textAlign ?? TextAlignParser.applyAlignment(context, parsedClassName),
+        textAlign: textAlign ??
+            TextAlignParser.applyAlignment(context, parsedClassName),
         textDirection: textDirection,
         maxLines: parsedMaxLines,
         semanticsLabel: semanticsLabel,
@@ -94,10 +110,12 @@ class WText extends StatelessWidget {
       );
     } else {
       textWidget = Text(
-        TextTransformParser.applyTransform(context, truncatedText, parsedClassName),
+        TextTransformParser.applyTransform(
+            context, truncatedText, parsedClassName),
         style: const WTextStyle().className(context, className).merge(style),
         strutStyle: strutStyle,
-        textAlign: textAlign ?? TextAlignParser.applyAlignment(context, parsedClassName),
+        textAlign: textAlign ??
+            TextAlignParser.applyAlignment(context, parsedClassName),
         textDirection: textDirection,
         locale: locale,
         softWrap: parsedSoftWrap,
@@ -110,7 +128,11 @@ class WText extends StatelessWidget {
       );
     }
 
-    final widget= PaddingParser.apply(context, parsedClassName, textWidget);
+    final widget = PaddingParser.apply(
+        context,
+        parsedClassName,
+        AlignmentParser.apply(context, parsedClassName, textWidget,
+            isText: true));
 
     if (hasDebugWidgetClassName(className)) {
       print(widget.toStringDeep());

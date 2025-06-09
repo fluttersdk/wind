@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class WGap extends LeafRenderObjectWidget {
+class WGap extends StatelessWidget {
   final double gap;
   final Axis axis;
 
@@ -10,24 +10,8 @@ class WGap extends LeafRenderObjectWidget {
   double get height => axis == Axis.vertical ? gap : 0.0;
 
   @override
-  RenderObject createRenderObject(BuildContext context) =>
-      RenderGap(width: width, height: height);
-
-  @override
-  void updateRenderObject(BuildContext context, RenderGap renderObject) =>
-      renderObject
-        ..height = height
-        ..width = width;
+  Widget build(BuildContext context) {
+    return SizedBox(width: width, height: height);
+  }
 }
 
-class RenderGap extends RenderBox {
-  double? width;
-  double? height;
-  RenderGap({this.width = 0.0, this.height = 0.0});
-
-  @override
-  void performLayout() => size = Size(width ?? 0.0, height ?? 0.0);
-
-  @override
-  void paint(PaintingContext context, Offset offset) {}
-}

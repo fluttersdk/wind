@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../helpers.dart';
+import '../parsers/display_parser.dart';
 import '../parsers/flex_parser.dart';
 import 'wcontainer.dart';
 import 'wflex.dart';
@@ -105,6 +106,14 @@ class WFlexContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final parsedClassName = classNameParser(className);
+
+    if (hasDebugClassName(className)) {
+      print('WFlexContainer: $parsedClassName');
+    }
+
+    if (DisplayParser.hide(context, parsedClassName)) {
+      return const SizedBox.shrink();
+    }
 
     return WContainer(
       className: className,

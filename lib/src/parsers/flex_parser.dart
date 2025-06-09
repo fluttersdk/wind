@@ -180,6 +180,11 @@ class FlexParser {
   }
 
   static FlexFit? applyFlexFit(BuildContext context, String className) {
+    final flex = applyFlex(context, className);
+    if (flex != null) {
+      return FlexFit.tight;
+    }
+
     for (var name in className.split(' ').reversed) {
       if (ScreensParser.canApply(context, name) &&
           flexFitClasses.contains(ScreensParser.without(name))) {
