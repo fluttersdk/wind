@@ -5,20 +5,32 @@ import '../theme/wind_theme.dart';
 import 'screens_parser.dart';
 
 class PaddingParser {
-  static final RegExp _paddingRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?p-(?<size>[\[\]0-9.]+)$');
-  static final RegExp _paddingLeftRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?pl-(?<size>[\[\]0-9.]+)$');
-  static final RegExp _paddingRightRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?pr-(?<size>[\[\]0-9.]+)$');
-  static final RegExp _paddingBottomRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?pb-(?<size>[\[\]0-9.]+)$');
-  static final RegExp _paddingTopRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?pt-(?<size>[\[\]0-9.]+)$');
-  static final RegExp _paddingHorizontalRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?px-(?<size>[\[\]0-9.]+)$');
-  static final RegExp _paddingVerticalRegExp = RegExp(r'^(?:[a-zA-Z0-9]+:)?py-(?<size>[\[\]0-9.]+)$');
+  static final RegExp _paddingRegExp =
+      RegExp(r'^(?:[a-zA-Z0-9]+:)?p-(?<size>[\[\]0-9.]+)$');
+  static final RegExp _paddingLeftRegExp =
+      RegExp(r'^(?:[a-zA-Z0-9]+:)?pl-(?<size>[\[\]0-9.]+)$');
+  static final RegExp _paddingRightRegExp =
+      RegExp(r'^(?:[a-zA-Z0-9]+:)?pr-(?<size>[\[\]0-9.]+)$');
+  static final RegExp _paddingBottomRegExp =
+      RegExp(r'^(?:[a-zA-Z0-9]+:)?pb-(?<size>[\[\]0-9.]+)$');
+  static final RegExp _paddingTopRegExp =
+      RegExp(r'^(?:[a-zA-Z0-9]+:)?pt-(?<size>[\[\]0-9.]+)$');
+  static final RegExp _paddingHorizontalRegExp =
+      RegExp(r'^(?:[a-zA-Z0-9]+:)?px-(?<size>[\[\]0-9.]+)$');
+  static final RegExp _paddingVerticalRegExp =
+      RegExp(r'^(?:[a-zA-Z0-9]+:)?py-(?<size>[\[\]0-9.]+)$');
 
   static Widget apply(BuildContext context, String className, Widget child) {
     final padding = applyGeometry(context, className);
-    return padding == null ? child : Padding(padding: padding, child: child);
+    if (padding == null || (padding.vertical == 0 && padding.horizontal == 0)) {
+      return child;
+    }
+
+    return Padding(padding: padding, child: child);
   }
 
-  static EdgeInsetsGeometry? applyGeometry(BuildContext context, String className) {
+  static EdgeInsetsGeometry? applyGeometry(
+      BuildContext context, String className) {
     Map<String, double> paddingValues = {
       "left": 0.0,
       "right": 0.0,
@@ -31,7 +43,8 @@ class PaddingParser {
     }
 
     if (hasDebugClassName(className)) {
-      print('PaddingParser - Padding: $paddingValues for className: $className');
+      print(
+          'PaddingParser - Padding: $paddingValues for className: $className');
     }
 
     return EdgeInsets.only(
@@ -42,7 +55,8 @@ class PaddingParser {
     );
   }
 
-  static void _parsePadding(BuildContext context, String name, Map<String, double> paddingValues) {
+  static void _parsePadding(
+      BuildContext context, String name, Map<String, double> paddingValues) {
     final matchers = {
       _paddingRegExp: (size) {
         paddingValues["left"] = size;

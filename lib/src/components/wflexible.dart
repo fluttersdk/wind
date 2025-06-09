@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../helpers.dart';
+import '../parsers/display_parser.dart';
 import '../parsers/flex_parser.dart';
 
 /// A utility-first widget that applies flexible behavior to its child using
@@ -31,24 +32,38 @@ class WFlexible extends StatelessWidget {
     this.className,
     this.flex,
     this.fit,
-    required this.child,
+    this.child,
   });
 
   final dynamic className;
   final int? flex;
   final FlexFit? fit;
-  final Widget child;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     final parsedClassName = classNameParser(className);
+
+    if (hasDebugClassName(className)) {
+      print('WFlexible: $parsedClassName');
+    }
+
+    if (DisplayParser.hide(context, parsedClassName)) {
+      return const SizedBox.shrink();
+    }
+
+    if (child == null) {
+      return Spacer(
+        flex: flex ?? FlexParser.applyFlex(context, parsedClassName) ?? 1,
+      );
+    }
 
     return Flexible(
       flex: flex ?? FlexParser.applyFlex(context, parsedClassName) ?? 1,
       fit: fit ??
           FlexParser.applyFlexFit(context, parsedClassName) ??
           FlexFit.loose,
-      child: child,
+      child: child!,
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../helpers.dart';
 import '../parsers/background_color_parser.dart';
 import '../parsers/border_parser.dart';
+import '../parsers/display_parser.dart';
 import '../parsers/flex_parser.dart';
 import '../parsers/margin_parser.dart';
 import '../parsers/padding_parser.dart';
@@ -74,6 +75,14 @@ class WCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String parsedClassName = classNameParser(className);
+
+    if (hasDebugClassName(className)) {
+      print('WCard: $parsedClassName');
+    }
+
+    if (DisplayParser.hide(context, parsedClassName)) {
+      return const SizedBox.shrink();
+    }
 
     Widget childComponent = Card(
       color:
