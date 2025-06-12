@@ -331,19 +331,19 @@ class WindTheme {
 
     switch (name) {
       case 'ios':
-        return Platform.instance.isIOS;
+        return Platform.instance.iOS;
       case 'android':
-        return Platform.instance.isAndroid;
+        return Platform.instance.android;
       case 'fuchsia':
-        return Platform.instance.isFuchsia;
+        return Platform.instance.fuchsia;
       case 'linux':
-        return Platform.instance.isLinux;
+        return Platform.instance.linux;
       case 'macos':
-        return Platform.instance.isMacOS;
+        return Platform.instance.macOS;
       case 'windows':
-        return Platform.instance.isWindows;
+        return Platform.instance.windows;
       case 'web':
-        return Platform.instance.isWeb;
+        return Platform.instance.js;
     }
 
     return false;

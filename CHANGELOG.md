@@ -1,6 +1,10 @@
 # Changelog
 This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.4] - 2025-06-12
+
+- Updated `platform_info` dependency to `^5.0.0` for improved platform detection.
+
 ## [0.0.3] - 2025-06-09
 
 ### Added
