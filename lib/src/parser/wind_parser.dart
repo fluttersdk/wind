@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'parsers/background_parser.dart';
+import 'parsers/border_parser.dart';
 import 'parsers/display_parser.dart';
 import 'parsers/margin_parser.dart';
 import 'parsers/padding_parser.dart';
@@ -27,6 +28,7 @@ class WindParser {
   static final Map<String, WindParserInterface> _parserMap = {
     'display': const DisplayParser(),
     'background': const BackgroundParser(),
+    'border': const BorderParser(),
     'sizing': const SizingParser(),
     'padding': const PaddingParser(),
     'margin': const MarginParser(),

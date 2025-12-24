@@ -1,7 +1,8 @@
-library fluttersdk_wind;
+library;
 
 export 'src/core/platform_service.dart';
 export 'src/parser/parsers/background_parser.dart';
+export 'src/parser/parsers/border_parser.dart';
 export 'src/parser/parsers/display_parser.dart';
 export 'src/parser/parsers/flexbox_grid_parser.dart';
 export 'src/parser/parsers/margin_parser.dart';
@@ -14,6 +15,8 @@ export 'src/parser/wind_parser.dart';
 export 'src/parser/wind_style.dart';
 export 'src/state/wind_anchor_state.dart';
 export 'src/state/wind_anchor_state_provider.dart';
+export 'src/theme/defaults/border_radius.dart';
+export 'src/theme/defaults/border_widths.dart';
 export 'src/theme/defaults/colors.dart';
 export 'src/theme/defaults/containers.dart';
 export 'src/theme/defaults/font_sizes.dart';

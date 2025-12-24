@@ -31,14 +31,23 @@ This release represents a complete rewrite of the Wind framework with a new arch
 - **`WindStyle`**: Immutable style data object containing all resolved properties
 - **`WindContext`**: Context object with theme, screen size, platform, and state information
 
-#### Specialist Parsers (7 Total)
+#### Specialist Parsers (8 Total)
 - **`DisplayParser`**: `block`, `flex`, `grid`, `wrap`, `hidden`
 - **`BackgroundParser`**: Colors, images, gradients, positioning, repeat
+- **`BorderParser`**: Border width, color, style, and radius utilities
 - **`TextParser`**: Colors, sizes, weights, alignment, decoration, transform, clamp
 - **`SizingParser`**: Width, height, min/max constraints, fractions
 - **`PaddingParser`**: All padding variants (`p-`, `px-`, `py-`, `pt-`, etc.)
 - **`MarginParser`**: All margin variants (`m-`, `mx-`, `my-`, `mt-`, etc.)
 - **`FlexboxGridParser`**: Flex direction, justify, align, gap, grid columns
+
+#### Border & Rounded Utilities
+- **Border width**: `border`, `border-0`, `border-2`, `border-4`, `border-8`
+- **Directional borders**: `border-t`, `border-r`, `border-b`, `border-l`
+- **Border colors**: `border-{color}-{shade}`, `border-[#hex]`
+- **Border radius**: `rounded`, `rounded-sm/md/lg/xl/2xl/3xl/full/none`
+- **Directional radius**: `rounded-t/r/b/l/tl/tr/bl/br`
+- **Theme customization**: `borderWidths`, `borderRadius` in `WindThemeData`
 
 #### State-Based Styling
 - **`hover:`** - Styles applied on hover (requires `WAnchor`)
