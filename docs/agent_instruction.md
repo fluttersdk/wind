@@ -20,6 +20,8 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
   - **SizingParser:** `w-`, `h-`, `min/max-`, arbitrary `w-[50%]`
   - **PaddingParser/MarginParser:** `p-`, `m-`, `px-`, `my-`
   - **FlexboxGridParser:** `flex-row`, `items-center`, `grid-cols-3`, `gap-4`
+  - **ShadowParser:** `shadow`, `shadow-md`, `shadow-red-500`, `shadow-[#hex]`
+  - **DebugParser:** `debug`
 
 ### Widgets
 - **WDiv:** Builds Column/Row/GridView/Wrap based on displayType. Wraps in DefaultTextStyle.merge.
@@ -59,6 +61,13 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 | Border Width | `border`, `border-0/2/4/8`, `border-t/r/b/l` |
 | Border Color | `border-{color}-{shade}`, `border-[#hex]` |
 | Radius | `rounded`, `rounded-sm/md/lg/xl/2xl/3xl/full/none` |
+
+### Effects & Filters
+| Category | Classes |
+|:---|:---|
+| Shadow | `shadow`, `shadow-sm/md/lg/xl/2xl`, `shadow-none` |
+| Shadow Color | `shadow-{color}-{shade}`, `shadow-[#hex]` |
+| Opacity | `opacity-{n}` (via `text/bg-opacity` in color classes) |
 
 ### Prefixes
 | Category | Prefixes |
@@ -115,6 +124,7 @@ class NewParser implements WindParserInterface { ... }
 lib/src/theme/defaults/
 ├── border_radius.dart
 ├── border_widths.dart
+├── box_shadows.dart
 ├── colors.dart
 ├── containers.dart
 ├── font_sizes.dart

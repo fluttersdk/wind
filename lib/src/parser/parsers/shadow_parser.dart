@@ -88,8 +88,11 @@ class ShadowParser implements WindParserInterface {
             } else {
               // Default color if no shade provided (unlikely for tailwind colors but possible)
               // For standard palette, usually need shade. If basic color like 'black', 'white'
-              if (colorName == 'white') shadowColor = Colors.white;
-              if (colorName == 'black') shadowColor = Colors.black;
+              if (colorName == 'white') {
+                shadowColor = Colors.white;
+              } else if (colorName == 'black') {
+                shadowColor = Colors.black;
+              }
             }
           }
         }
