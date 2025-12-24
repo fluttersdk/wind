@@ -50,11 +50,13 @@ WDiv(className: "border-8 border-indigo-500 w-16 h-16")
 
 ### Individual Sides
 
-Use `border-t`, `border-r`, `border-b`, `border-l` for individual sides:
+<x-preview path="borders/width_sides" size="md"></x-preview>
 
 ```dart
 WDiv(className: "border-t-4 border-indigo-500 ...")  // Top only
+WDiv(className: "border-r-4 border-indigo-500 ...")  // Right only
 WDiv(className: "border-b-4 border-indigo-500 ...")  // Bottom only
+WDiv(className: "border-l-4 border-indigo-500 ...")  // Left only
 ```
 
 ---
@@ -63,15 +65,21 @@ WDiv(className: "border-b-4 border-indigo-500 ...")  // Bottom only
 
 Use `border-{color}-{shade}` utilities to set the border color.
 
+<x-preview path="borders/colors_theme" size="md"></x-preview>
+
 ```dart
 WDiv(className: "border-2 border-red-500 ...")
 WDiv(className: "border-2 border-blue-500 ...")
+WDiv(className: "border-2 border-green-500 ...")
 ```
 
 ### Arbitrary Colors
 
+<x-preview path="borders/colors_arbitrary" size="md"></x-preview>
+
 ```dart
 WDiv(className: "border-2 border-[#FF5733] ...")
+WDiv(className: "border-2 border-[#3498DB] ...")
 ```
 
 ---
