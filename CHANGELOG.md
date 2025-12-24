@@ -6,6 +6,29 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [1.1.0] - 2025-12-24
+
+### ✨ New Features
+
+#### BorderParser
+- New `BorderParser` for border and rounded utility classes
+- **Border width**: `border`, `border-0`, `border-2`, `border-4`, `border-8`
+- **Directional borders**: `border-t`, `border-r`, `border-b`, `border-l`
+- **Border colors**: `border-{color}-{shade}`, `border-[#hex]`
+- **Border styles**: `border-solid`, `border-none`
+- **Border radius**: `rounded`, `rounded-sm`, `rounded-md`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `rounded-full`, `rounded-none`
+- **Directional radius**: `rounded-t`, `rounded-r`, `rounded-b`, `rounded-l`, `rounded-tl`, `rounded-tr`, `rounded-bl`, `rounded-br`
+
+### 📚 Documentation
+- Added `docs/borders.md` with Tailwind-style documentation
+- New example pages: `/borders/basic`, `/borders/width`, `/borders/colors`
+
+### 🧪 Tests
+- Added 20 new tests for BorderParser
+- Total: 232 tests passing
+
+---
+
 ## [1.0.0] - 2025-12-24
 
 ### 🚀 Major Release - Complete Architectural Rewrite

@@ -117,6 +117,9 @@ WAnchor(
 ### Background
 `bg-blue-500`, `bg-[#FF5733]`, `bg-[url(...)]`, `bg-cover`, `bg-center`
 
+### Borders
+`border`, `border-2`, `border-4`, `border-8`, `border-red-500`, `border-[#hex]`, `rounded`, `rounded-lg`, `rounded-full`
+
 ### Responsive
 `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
 
