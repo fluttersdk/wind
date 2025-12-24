@@ -54,7 +54,7 @@ WText("Justified", className: "text-justify")
 ```
 
 ## Text Decoration
-Utilities for controlling the decoration text.
+Utilities for controlling text decoration.
 
 <x-preview path="typography/decoration" size="md"></x-preview>
 

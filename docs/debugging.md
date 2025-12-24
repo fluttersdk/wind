@@ -2,7 +2,7 @@
 
 Wind includes a built-in debugging system to help you understand how your styles are being resolved and applied.
 
-<x-preview path="layout/display_basic" size="md"></x-preview>
+<x-preview path="layout/display" size="md"></x-preview>
 
 ## Enabling Debug Mode
 

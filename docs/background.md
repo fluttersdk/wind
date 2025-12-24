@@ -50,8 +50,9 @@ WDiv(className: "bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500")
 ### Usage
 Combine direction, from, (optional via), and to classes.
 
-```html
-<WDiv className="bg-gradient-to-r from-cyan-500 to-blue-500">
-  <!-- Content -->
-</WDiv>
+```dart
+WDiv(
+  className: "bg-gradient-to-r from-cyan-500 to-blue-500",
+  // Content
+)
 ```

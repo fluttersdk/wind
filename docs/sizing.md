@@ -1,6 +1,6 @@
 # Sizing
 
-Utilities for identifying the width and height of an element.
+Utilities for setting the width and height of an element.
 
 ## Width
 Utilities for setting the width of an element.

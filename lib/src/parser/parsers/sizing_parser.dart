@@ -126,16 +126,12 @@ class SizingParser implements WindParserInterface {
                 continue;
               }
             } else {
-              // Try parsing as number first to validity check
+              // Try parsing as number first to validate check
               final parsedValue = double.tryParse(valueKey);
               if (parsedValue != null) {
                 type = 'absolute';
                 // CRITICAL FIX: Use theme spacing scale
-                try {
-                  value = context.theme.getSpacing(valueKey);
-                } catch (e) {
-                  value = context.theme.getSpacing(valueKey);
-                }
+                value = context.theme.getSpacing(valueKey);
               } else {
                 continue;
               }
