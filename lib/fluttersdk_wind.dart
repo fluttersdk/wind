@@ -3,7 +3,7 @@ library;
 export 'src/core/platform_service.dart';
 export 'src/parser/parsers/background_parser.dart';
 export 'src/parser/parsers/border_parser.dart';
-export 'src/parser/parsers/display_parser.dart';
+
 export 'src/parser/parsers/flexbox_grid_parser.dart';
 export 'src/parser/parsers/margin_parser.dart';
 export 'src/parser/parsers/padding_parser.dart';

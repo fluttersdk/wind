@@ -121,7 +121,7 @@ class WindStyle {
   final String? fontFamily;
 
   /// Enable debug mode to log style details
-  final bool debug = true;
+  final bool debug;
 
   const WindStyle({
     this.isHidden = false,
@@ -162,6 +162,7 @@ class WindStyle {
     this.softWrap,
     this.textTransform,
     this.fontFamily,
+    this.debug = false,
   });
 
   WindStyle copyWith({
@@ -203,6 +204,7 @@ class WindStyle {
     bool? softWrap,
     WindTextTransform? textTransform,
     String? fontFamily,
+    bool? debug,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -259,6 +261,7 @@ class WindStyle {
       softWrap: softWrap ?? this.softWrap,
       textTransform: textTransform ?? this.textTransform,
       fontFamily: fontFamily ?? this.fontFamily,
+      debug: debug ?? this.debug,
     );
   }
 
@@ -304,7 +307,8 @@ class WindStyle {
           maxLines == other.maxLines &&
           softWrap == other.softWrap &&
           textTransform == other.textTransform &&
-          fontFamily == other.fontFamily;
+          fontFamily == other.fontFamily &&
+          debug == other.debug;
 
   @override
   int get hashCode =>
@@ -345,7 +349,8 @@ class WindStyle {
       maxLines.hashCode ^
       softWrap.hashCode ^
       textTransform.hashCode ^
-      fontFamily.hashCode;
+      fontFamily.hashCode ^
+      debug.hashCode;
 
   /// Calculates the effective line height based on either a fixed value
   /// or a factor of the font size.
@@ -421,7 +426,8 @@ class WindStyle {
         'maxLines: $maxLines, '
         'softWrap: $softWrap, '
         'textTransform: $textTransform, '
-        'fontFamily: $fontFamily'
+        'fontFamily: $fontFamily, '
+        'debug: $debug'
         '}';
   }
 }

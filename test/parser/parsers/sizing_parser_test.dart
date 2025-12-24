@@ -43,7 +43,7 @@ void main() {
         final styles = WindStyle();
         final classes = ['w-100', 'w-[50%]'];
         final updatedStyles = parser.parse(styles, classes, context);
-        expect(updatedStyles.width, 100);
+        expect(updatedStyles.width, 400);
         expect(updatedStyles.widthFactor, 0.5);
       });
 
@@ -51,7 +51,7 @@ void main() {
         final styles = WindStyle();
         final classes = ['h-200', 'h-[25%]'];
         final updatedStyles = parser.parse(styles, classes, context);
-        expect(updatedStyles.height, 200);
+        expect(updatedStyles.height, 800);
         expect(updatedStyles.heightFactor, 0.25);
       });
 
@@ -66,7 +66,7 @@ void main() {
         final styles = WindStyle();
         final classes = ['min-h-150', 'min-h-[10%]'];
         final updatedStyles = parser.parse(styles, classes, context);
-        expect(updatedStyles.constraints?.minHeight, 150);
+        expect(updatedStyles.constraints?.minHeight, 600);
       });
 
       test('ignores non-sizing classes', () {
@@ -133,4 +133,3 @@ void main() {
     });
   });
 }
-

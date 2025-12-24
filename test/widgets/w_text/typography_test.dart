@@ -195,5 +195,60 @@ void main() {
       expect(decoration.color, isNotNull);
       expect(decoration.color, themeData.colors['blue']![500]);
     });
+
+    // New tests for extended coverage
+    testWidgets('applies arbitrary font size (text-[32px])', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WText('Arbitrary Size', className: 'text-[32px]'),
+          ),
+        ),
+      );
+
+      final textFinder = find.byType(Text);
+      final Text textWidget = tester.widget(textFinder);
+
+      expect(textWidget.style?.fontSize, 32.0);
+    });
+
+    testWidgets('applies font weight arbitrary (font-[700])', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WText('Arbitrary Weight', className: 'font-[700]'),
+          ),
+        ),
+      );
+
+      final textFinder = find.byType(Text);
+      final Text textWidget = tester.widget(textFinder);
+
+      expect(textWidget.style?.fontWeight, FontWeight.bold);
+    });
+
+    testWidgets('applies font size and line height slash syntax (text-xl/8)', (
+      tester,
+    ) async {
+      final themeData = WindThemeData();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: themeData,
+            child: const WText('Slash Syntax', className: 'text-xl/8'),
+          ),
+        ),
+      );
+
+      final textFinder = find.byType(Text);
+      final Text textWidget = tester.widget(textFinder);
+
+      // text-xl is usually 1.25rem (20px)
+      // /8 is usually 2rem (32px)
+      expect(textWidget.style?.fontSize, themeData.fontSizes['xl']);
+      expect(textWidget.style?.height, themeData.getSpacing('8'));
+    });
   });
 }

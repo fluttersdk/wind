@@ -21,7 +21,7 @@ class BackgroundParser implements WindParserInterface {
 
   /// Regex for background color classes
   static final _backgroundColorRegex = RegExp(
-    r'^bg-(?:(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])$',
+    r'^bg-(?:(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])(?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
   );
 
   /// Regex for background image classes
@@ -56,6 +56,29 @@ class BackgroundParser implements WindParserInterface {
     'bg-repeat-y': ImageRepeat.repeatY,
   };
 
+  /// Regex for gradient direction
+  static final _gradientDirectionRegex = RegExp(
+    r'^bg-gradient-to-(?<dir>t|tr|r|br|b|bl|l|tl)$',
+  );
+
+  /// Regex for gradient stops (from, via, to)
+  /// Matches: from-red-500, to-[#123456], via-blue-200/50
+  static final _gradientStopRegex = RegExp(
+    r'^(?<type>from|via|to)-(?:(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])(?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
+  );
+
+  /// Map for gradient alignments
+  static final _gradientAlignMap = <String, Map<String, Alignment>>{
+    't': {'begin': Alignment.bottomCenter, 'end': Alignment.topCenter},
+    'tr': {'begin': Alignment.bottomLeft, 'end': Alignment.topRight},
+    'r': {'begin': Alignment.centerLeft, 'end': Alignment.centerRight},
+    'br': {'begin': Alignment.topLeft, 'end': Alignment.bottomRight},
+    'b': {'begin': Alignment.topCenter, 'end': Alignment.bottomCenter},
+    'bl': {'begin': Alignment.topRight, 'end': Alignment.bottomLeft},
+    'l': {'begin': Alignment.centerRight, 'end': Alignment.centerLeft},
+    'tl': {'begin': Alignment.bottomRight, 'end': Alignment.topLeft},
+  };
+
   /// Parses background related classes and returns updated WindStyle
   ///
   /// Example:
@@ -76,9 +99,10 @@ class BackgroundParser implements WindParserInterface {
 
     final color = parseColor(classes, context.theme);
     final image = parseImage(classes);
+    final gradient = parseGradient(classes, context.theme);
 
     // If no background classes are found, return original styles
-    if (color == null && image == null) {
+    if (color == null && image == null && gradient == null) {
       return styles;
     }
 
@@ -86,7 +110,11 @@ class BackgroundParser implements WindParserInterface {
     final decoration = styles.decoration ?? const BoxDecoration();
 
     return styles.copyWith(
-      decoration: decoration.copyWith(color: color, image: image),
+      decoration: decoration.copyWith(
+        color: color,
+        image: image,
+        gradient: gradient,
+      ),
     );
   }
 
@@ -100,7 +128,10 @@ class BackgroundParser implements WindParserInterface {
   /// ```
   @override
   bool canParse(String className) {
-    return className.startsWith('bg-');
+    return className.startsWith('bg-') ||
+        className.startsWith('from-') ||
+        className.startsWith('via-') ||
+        className.startsWith('to-');
   }
 
   /// Parses background color from the given classes
@@ -126,18 +157,34 @@ class BackgroundParser implements WindParserInterface {
       final className = classes[i];
       final match = _backgroundColorRegex.firstMatch(className);
       if (match != null) {
+        Color? color;
+
         if (match.namedGroup('arbitrary') != null) {
-          // Parse arbitrary color
           final hexCode = match.namedGroup('arbitrary')!;
-          return hexToColor(hexCode);
+          color = hexToColor(hexCode);
         } else if (match.namedGroup('color') != null) {
           final colorName = match.namedGroup('color')!;
           final shadeStr = match.namedGroup('shade')!;
           final shade = shadeStr.isNotEmpty ? int.parse(shadeStr) : 500;
 
           if (themeData.isValidColor(colorName, shade: shade)) {
-            return themeData.getColor(colorName, shade);
+            color = themeData.getColor(colorName, shade);
           }
+        }
+
+        if (color != null) {
+          // Check for opacity
+          double opacity = 1.0;
+          if (match.namedGroup('opacity') != null) {
+            final opacityInt = int.parse(match.namedGroup('opacity')!);
+            opacity = opacityInt / 100.0;
+          } else if (match.namedGroup('arbitraryOpacity') != null) {
+            opacity =
+                double.tryParse(match.namedGroup('arbitraryOpacity')!) ?? 1.0;
+          } else {
+            return color; // No opacity, return valid color directly
+          }
+          return color.withOpacity(opacity.clamp(0.0, 1.0));
         }
       }
     }
@@ -210,9 +257,9 @@ class BackgroundParser implements WindParserInterface {
         String assetPath = imageUrlOrPath;
         if (imageUrlOrPath.startsWith('~/') ||
             imageUrlOrPath.startsWith('@/')) {
-          assetPath = 'assets/' + imageUrlOrPath.substring(2);
+          assetPath = 'assets/${imageUrlOrPath.substring(2)}';
         } else if (!imageUrlOrPath.startsWith('assets/')) {
-          assetPath = 'assets/' + imageUrlOrPath;
+          assetPath = 'assets/$imageUrlOrPath';
         }
         imageProvider = AssetImage(assetPath);
       }
@@ -223,6 +270,105 @@ class BackgroundParser implements WindParserInterface {
         alignment: alignment ?? Alignment.center,
         repeat: repeat ?? ImageRepeat.noRepeat,
       );
+    }
+
+    return null;
+  }
+
+  /// Parses gradient from the given classes
+  static Gradient? parseGradient(
+    List<String> classes,
+    WindThemeData themeData,
+  ) {
+    Alignment? begin;
+    Alignment? end;
+    Color? fromColor;
+    Color? viaColor;
+    Color? toColor;
+
+    for (var i = classes.length - 1; i >= 0; i--) {
+      final className = classes[i];
+
+      // 1. Check Direction (bg-gradient-to-*)
+      if (begin == null) {
+        final dirMatch = _gradientDirectionRegex.firstMatch(className);
+        if (dirMatch != null) {
+          final dir = dirMatch.namedGroup('dir')!;
+          final align = _gradientAlignMap[dir];
+          if (align != null) {
+            begin = align['begin'];
+            end = align['end'];
+          }
+        }
+      }
+
+      // 2. Check Stops
+      final stopMatch = _gradientStopRegex.firstMatch(className);
+      if (stopMatch != null) {
+        final type = stopMatch.namedGroup('type');
+
+        // Skip if we already have this stop
+        if ((type == 'from' && fromColor != null) ||
+            (type == 'via' && viaColor != null) ||
+            (type == 'to' && toColor != null)) {
+          continue;
+        }
+
+        Color? color;
+        if (stopMatch.namedGroup('arbitrary') != null) {
+          color = hexToColor(stopMatch.namedGroup('arbitrary')!);
+        } else if (stopMatch.namedGroup('color') != null) {
+          final colorName = stopMatch.namedGroup('color')!;
+          final shadeStr = stopMatch.namedGroup('shade')!;
+          final shade = shadeStr.isNotEmpty ? int.parse(shadeStr) : 500;
+          if (themeData.isValidColor(colorName, shade: shade)) {
+            color = themeData.getColor(colorName, shade);
+          }
+        }
+
+        if (color != null) {
+          // Opacity
+          double opacity = 1.0;
+          if (stopMatch.namedGroup('opacity') != null) {
+            opacity = int.parse(stopMatch.namedGroup('opacity')!) / 100.0;
+          } else if (stopMatch.namedGroup('arbitraryOpacity') != null) {
+            opacity =
+                double.tryParse(stopMatch.namedGroup('arbitraryOpacity')!) ??
+                1.0;
+          }
+          color = color.withOpacity(opacity.clamp(0.0, 1.0));
+
+          if (type == 'from')
+            fromColor = color;
+          else if (type == 'via')
+            viaColor = color;
+          else if (type == 'to')
+            toColor = color;
+        }
+      }
+    }
+
+    if (begin != null &&
+        end != null &&
+        (fromColor != null || toColor != null)) {
+      final colors = <Color>[];
+      // Tailwind logic: must have at least valid stops.
+
+      final start = fromColor ?? Colors.transparent;
+      final finish =
+          toColor ??
+          (fromColor != null ? fromColor.withOpacity(0) : Colors.transparent);
+
+      if (viaColor != null) {
+        colors.add(start);
+        colors.add(viaColor);
+        colors.add(finish);
+      } else {
+        colors.add(start);
+        colors.add(finish);
+      }
+
+      return LinearGradient(begin: begin, end: end, colors: colors);
     }
 
     return null;
