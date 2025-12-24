@@ -6,36 +6,6 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
-## [1.1.0] - 2025-12-24
-
-### ✨ New Features
-
-#### BorderParser
-- New `BorderParser` for border and rounded utility classes
-- **Border width**: `border`, `border-0`, `border-2`, `border-4`, `border-8`
-- **Directional borders**: `border-t`, `border-r`, `border-b`, `border-l`
-- **Border colors**: `border-{color}-{shade}`, `border-[#hex]`
-- **Border styles**: `border-solid`, `border-none`
-- **Border radius**: `rounded`, `rounded-sm`, `rounded-md`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `rounded-full`, `rounded-none`
-- **Directional radius**: `rounded-t`, `rounded-r`, `rounded-b`, `rounded-l`, `rounded-tl`, `rounded-tr`, `rounded-bl`, `rounded-br`
-
-#### Theme Customization
-- Added `borderWidths` to `WindThemeData` for customizable border widths
-- Added `borderRadius` to `WindThemeData` for customizable border radius
-- New defaults: `defaults/border_widths.dart`, `defaults/border_radius.dart`
-- BorderParser now reads values from theme (user can override defaults)
-
-### 📚 Documentation
-- Added `docs/borders.md` with Tailwind-style documentation and `x-preview` components
-- New example pages: `/borders/radius_basic`, `/borders/width_basic` (iframe ready)
-
-### 🧪 Tests
-- Added 20 BorderParser unit tests
-- Added 8 WDiv border widget tests (feature tests)
-- Total: 239 tests passing
-
----
-
 ## [1.0.0] - 2025-12-24
 
 ### 🚀 Major Release - Complete Architectural Rewrite
@@ -61,14 +31,23 @@ This release represents a complete rewrite of the Wind framework with a new arch
 - **`WindStyle`**: Immutable style data object containing all resolved properties
 - **`WindContext`**: Context object with theme, screen size, platform, and state information
 
-#### Specialist Parsers (7 Total)
+#### Specialist Parsers (8 Total)
 - **`DisplayParser`**: `block`, `flex`, `grid`, `wrap`, `hidden`
 - **`BackgroundParser`**: Colors, images, gradients, positioning, repeat
+- **`BorderParser`**: Border width, color, style, and radius utilities
 - **`TextParser`**: Colors, sizes, weights, alignment, decoration, transform, clamp
 - **`SizingParser`**: Width, height, min/max constraints, fractions
 - **`PaddingParser`**: All padding variants (`p-`, `px-`, `py-`, `pt-`, etc.)
 - **`MarginParser`**: All margin variants (`m-`, `mx-`, `my-`, `mt-`, etc.)
 - **`FlexboxGridParser`**: Flex direction, justify, align, gap, grid columns
+
+#### Border & Rounded Utilities
+- **Border width**: `border`, `border-0`, `border-2`, `border-4`, `border-8`
+- **Directional borders**: `border-t`, `border-r`, `border-b`, `border-l`
+- **Border colors**: `border-{color}-{shade}`, `border-[#hex]`
+- **Border radius**: `rounded`, `rounded-sm/md/lg/xl/2xl/3xl/full/none`
+- **Directional radius**: `rounded-t/r/b/l/tl/tr/bl/br`
+- **Theme customization**: `borderWidths`, `borderRadius` in `WindThemeData`
 
 #### State-Based Styling
 - **`hover:`** - Styles applied on hover (requires `WAnchor`)
