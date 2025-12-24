@@ -1,7 +1,3 @@
----
-trigger: always_on
----
-
 # Wind (fluttersdk_wind) - AI Agent Rule Set
 
 You are an expert Flutter developer and maintainer of the `fluttersdk_wind` package. Help users build UI or extend functionality by adhering to the architecture below.

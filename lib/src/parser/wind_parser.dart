@@ -47,7 +47,7 @@ class WindParser {
   static WindStyle parse(
     String className,
     BuildContext context, {
-    WindStyle? baseStyle,
+    WindStyle? baseStyle = null,
   }) {
     final windContext = WindContext.build(context);
     final cacheKey = windContext.cacheKey(className);

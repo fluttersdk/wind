@@ -195,6 +195,36 @@ void main() {
 
         expect(result.decoration!.borderRadius, BorderRadius.circular(12.0));
       });
+
+      test('directional border overrides uniform border', () {
+        // border-2 border-t-4 should result in only top border
+        final result = parser.parse(const WindStyle(), [
+          'border-2',
+          'border-t-4',
+        ], context);
+
+        final border = result.decoration!.border as Border;
+        expect(border.top.width, 4.0);
+        expect(border.right, BorderSide.none);
+        expect(border.bottom, BorderSide.none);
+        expect(border.left, BorderSide.none);
+      });
+
+      test('directional radius overrides uniform radius', () {
+        // rounded-lg rounded-t-sm should result in only top radius
+        final result = parser.parse(const WindStyle(), [
+          'rounded-lg',
+          'rounded-t-sm',
+        ], context);
+
+        expect(
+          result.decoration!.borderRadius,
+          const BorderRadius.only(
+            topLeft: Radius.circular(2.0),
+            topRight: Radius.circular(2.0),
+          ),
+        );
+      });
     });
 
     group('integration with background', () {

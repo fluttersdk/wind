@@ -12,7 +12,7 @@ import 'wind_parser_interface.dart';
 /// - Border width: border, border-0, border-2, border-4, border-8
 /// - Directional borders: border-t, border-r, border-b, border-l
 /// - Border colors: border-red-500, border-[#FF5733]
-/// - Border styles: border-solid, border-dashed, border-dotted
+/// - Border styles: border-solid, border-none
 /// - Border radius: rounded, rounded-sm, rounded-md, rounded-lg, rounded-xl, rounded-full
 /// - Directional radius: rounded-t, rounded-r, rounded-b, rounded-l
 class BorderParser implements WindParserInterface {
@@ -31,12 +31,12 @@ class BorderParser implements WindParserInterface {
 
   /// Regex for border color: border-red-500, border-[#hex]
   static final _borderColorRegex = RegExp(
-    r'^border-(?:(?<color>[a-zA-Z]+)-(?<shade>\d{2,3})|(?:\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\]))$',
+    r'^border-(?:(?<color>[a-zA-Z]+)-(?<shade>\d{2,3})|(?:\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\]))$',
   );
 
   /// Regex for directional radius: rounded-t, rounded-tl, etc.
   static final _directionalRadiusRegex = RegExp(
-    r'^rounded-(t|r|b|l|tl|tr|bl|br)(?:-(sm|md|lg|xl|2xl|3xl|full))?$',
+    r'^rounded-(t|r|b|l|tl|tr|bl|br)(?:-(sm|md|lg|xl|2xl|3xl|full|none))?$',
   );
 
   /// Get border width from theme
@@ -141,6 +141,8 @@ class BorderParser implements WindParserInterface {
             leftWidth = dirWidth;
             break;
         }
+        // Reset uniform width when directional is set
+        width = null;
         continue;
       }
 
@@ -255,6 +257,8 @@ class BorderParser implements WindParserInterface {
             bottomRight = radius;
             break;
         }
+        // Reset uniform radius when directional is set
+        uniformRadius = null;
         continue;
       }
     }
