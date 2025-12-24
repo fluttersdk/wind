@@ -228,7 +228,8 @@ class WText extends StatelessWidget {
       case WindTextTransform.capitalize:
         if (text.isEmpty) {
           return text;
-        } // Simple capitalization: first letter upper, rest as-is.
+        }
+        // Simple capitalization: first letter upper, rest as-is.
         return text[0].toUpperCase() + text.substring(1);
       case WindTextTransform.none:
         return text;

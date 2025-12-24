@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
         WText("Title", className: "text-xl font-bold"),
         WText("Description text...", className: "text-gray-600"),
         WAnchor(
-          onTap: () {}, // print("Home page built");
+          onTap: () {},
           child: WDiv(
             // Hover state: changes background and shadow
             className:

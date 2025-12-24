@@ -24,6 +24,26 @@ void main() {
       expect(decoration.boxShadow![0].blurRadius, 2);
     });
 
+    testWidgets('renders shadow-none', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              className: 'shadow-none',
+              children: [Text('Shadow')],
+            ),
+          ),
+        ),
+      );
+
+      final container = tester.widget<Container>(find.byType(Container));
+      final decoration = container.decoration as BoxDecoration;
+      if (decoration.boxShadow != null) {
+        expect(decoration.boxShadow, isEmpty);
+      }
+    });
+
     testWidgets('renders shadow (default)', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

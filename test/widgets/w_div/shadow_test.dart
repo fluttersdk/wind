@@ -75,7 +75,10 @@ void main() {
       // Exact check might depend on theme defaults, but assuming standard blue.
       // We check if it's NOT the default shadow color.
       final shadowColor = decoration.boxShadow![0].color;
-      expect(shadowColor.r, isNot(0)); // Default is black (0,0,0)
+      // Blue 500 is #3b82f6 (R:59, G:130, B:246)
+      expect((shadowColor.r * 255).round(), 59);
+      expect((shadowColor.g * 255).round(), 130);
+      expect((shadowColor.b * 255).round(), 246);
     });
 
     testWidgets('renders arbitrary colored shadow on WDiv', (tester) async {
