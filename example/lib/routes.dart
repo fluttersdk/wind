@@ -27,32 +27,39 @@ import 'pages/typography/basics.dart';
 import 'pages/typography/colors.dart';
 import 'pages/typography/decoration.dart';
 
-final Map<String, Widget> appRoutes = {
-  '/': HomePage(),
-  '/examples/basic': BasicExamplePage(),
-  '/borders/radius_basic': RadiusBasicPage(),
-  '/borders/width_basic': WidthBasicPage(),
-  '/borders/width_sides': WidthSidesPage(),
-  '/borders/colors_theme': ColorsThemePage(),
-  '/borders/colors_arbitrary': ColorsArbitraryPage(),
-  '/typography/basics': TypographyBasicsPage(),
-  '/typography/colors': TypographyColorsPage(),
-  '/typography/alignment': TypographyAlignmentPage(),
+// Effects
+import 'pages/effects/shadows_basic.dart';
+import 'pages/effects/shadows_colored.dart';
 
-  '/typography/decoration': TypographyDecorationPage(),
-  '/layout/display': DisplayExamplePage(),
-  '/layout/visibility': VisibilityExamplePage(),
-  '/layout/flex_basic': FlexBasicExamplePage(),
-  '/layout/flex_grow': FlexGrowExamplePage(),
-  '/layout/flex_justify': FlexJustifyExamplePage(),
-  '/layout/flex_align': FlexAlignExamplePage(),
-  '/layout/grid_cols': GridColsExamplePage(),
-  '/layout/grid_gap': GridGapExamplePage(),
-  '/layout/responsive': ResponsiveExamplePage(),
-  '/spacing/padding': PaddingExamplePage(),
-  '/spacing/margin': MarginExamplePage(),
-  '/sizing/width': WidthExamplePage(),
-  '/sizing/height': HeightExamplePage(),
-  '/backgrounds/colors': BackgroundColorsPage(),
-  '/backgrounds/gradients': BackgroundGradientsPage(),
+final Map<String, Widget> appRoutes = {
+  // Effects
+  '/effects/shadows_basic': const ShadowsBasicExamplePage(),
+  '/effects/shadows_colored': const ShadowsColoredExamplePage(),
+  '/': const HomePage(),
+  '/examples/basic': const BasicExamplePage(),
+  '/borders/radius_basic': const RadiusBasicPage(),
+  '/borders/width_basic': const WidthBasicPage(),
+  '/borders/width_sides': const WidthSidesPage(),
+  '/borders/colors_theme': const ColorsThemePage(),
+  '/borders/colors_arbitrary': const ColorsArbitraryPage(),
+  '/typography/basics': const TypographyBasicsPage(),
+  '/typography/colors': const TypographyColorsPage(),
+  '/typography/alignment': const TypographyAlignmentPage(),
+
+  '/typography/decoration': const TypographyDecorationPage(),
+  '/layout/display': const DisplayExamplePage(),
+  '/layout/visibility': const VisibilityExamplePage(),
+  '/layout/flex_basic': const FlexBasicExamplePage(),
+  '/layout/flex_grow': const FlexGrowExamplePage(),
+  '/layout/flex_justify': const FlexJustifyExamplePage(),
+  '/layout/flex_align': const FlexAlignExamplePage(),
+  '/layout/grid_cols': const GridColsExamplePage(),
+  '/layout/grid_gap': const GridGapExamplePage(),
+  '/layout/responsive': const ResponsiveExamplePage(),
+  '/spacing/padding': const PaddingExamplePage(),
+  '/spacing/margin': const MarginExamplePage(),
+  '/sizing/width': const WidthExamplePage(),
+  '/sizing/height': const HeightExamplePage(),
+  '/backgrounds/colors': const BackgroundColorsPage(),
+  '/backgrounds/gradients': const BackgroundGradientsPage(),
 };

@@ -1,0 +1,40 @@
+# Shadows
+
+Utilities for specifying the box shadow of an element.
+
+## Box Shadow
+Control the shadow of an element.
+
+<x-preview path="effects/shadows_basic" size="md"></x-preview>
+
+```dart
+WDiv(className: "shadow-md p-4 bg-white rounded-lg")
+WDiv(className: "shadow-lg p-4 bg-white rounded-lg")
+WDiv(className: "shadow-xl p-4 bg-white rounded-lg")
+WDiv(className: "shadow-2xl p-4 bg-white rounded-lg")
+```
+
+| Class | Properties |
+| :--- | :--- |
+| `shadow-sm` | BoxShadow(blur: 2, offset: 0,1) |
+| `shadow` | BoxShadow(blur: 3, offset: 0,1) |
+| `shadow-md` | BoxShadow(blur: 6, offset: 0,4) |
+| `shadow-lg` | BoxShadow(blur: 15, offset: 0,10) |
+| `shadow-xl` | BoxShadow(blur: 25, offset: 0,20) |
+| `shadow-2xl` | BoxShadow(blur: 50, offset: 0,25) |
+| `shadow-none` | No shadow |
+
+## Shadow Color
+Control the color of the box shadow.
+
+<x-preview path="effects/shadows_colored" size="md"></x-preview>
+
+```dart
+WDiv(className: "shadow-xl shadow-blue-500")
+WDiv(className: "shadow-xl shadow-[#1da1f2]")
+```
+
+| Class | Behavior |
+| :--- | :--- |
+| `shadow-{color}` | Sets the shadow color (preserving opacity stops) |
+| `shadow-[#hex]` | Sets arbitrary shadow color |

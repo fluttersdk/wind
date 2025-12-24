@@ -22,6 +22,7 @@ class WindAnchorStateProvider extends InheritedWidget {
   ///
   /// The [state] and [child] arguments are required.
   const WindAnchorStateProvider({
+    super.key,
     required this.state,
     required super.child,
   });
@@ -55,4 +56,3 @@ class WindAnchorStateProvider extends InheritedWidget {
     return oldWidget.state != state;
   }
 }
-

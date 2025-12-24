@@ -184,7 +184,7 @@ class BackgroundParser implements WindParserInterface {
           } else {
             return color; // No opacity, return valid color directly
           }
-          return color.withOpacity(opacity.clamp(0.0, 1.0));
+          return color.withValues(alpha: opacity.clamp(0.0, 1.0));
         }
       }
     }
@@ -336,14 +336,15 @@ class BackgroundParser implements WindParserInterface {
                 double.tryParse(stopMatch.namedGroup('arbitraryOpacity')!) ??
                 1.0;
           }
-          color = color.withOpacity(opacity.clamp(0.0, 1.0));
+          color = color.withValues(alpha: opacity.clamp(0.0, 1.0));
 
-          if (type == 'from')
+          if (type == 'from') {
             fromColor = color;
-          else if (type == 'via')
+          } else if (type == 'via') {
             viaColor = color;
-          else if (type == 'to')
+          } else if (type == 'to') {
             toColor = color;
+          }
         }
       }
     }
@@ -357,7 +358,9 @@ class BackgroundParser implements WindParserInterface {
       final start = fromColor ?? Colors.transparent;
       final finish =
           toColor ??
-          (fromColor != null ? fromColor.withOpacity(0) : Colors.transparent);
+          (fromColor != null
+              ? fromColor.withValues(alpha: 0)
+              : Colors.transparent);
 
       if (viaColor != null) {
         colors.add(start);

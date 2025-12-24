@@ -8,14 +8,15 @@ class ResponsiveExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     String breakpoint = 'sm';
-    if (width >= 1536)
+    if (width >= 1536) {
       breakpoint = '2xl';
-    else if (width >= 1280)
+    } else if (width >= 1280) {
       breakpoint = 'xl';
-    else if (width >= 1024)
+    } else if (width >= 1024) {
       breakpoint = 'lg';
-    else if (width >= 768)
+    } else if (width >= 768) {
       breakpoint = 'md';
+    }
 
     return Scaffold(
       body: Center(

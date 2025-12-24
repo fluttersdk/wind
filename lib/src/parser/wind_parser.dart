@@ -9,6 +9,7 @@ import 'parsers/flexbox_grid_parser.dart';
 import 'parsers/wind_parser_interface.dart';
 import 'parsers/text_parser.dart';
 import 'parsers/debug_parser.dart';
+import 'parsers/shadow_parser.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
 
@@ -34,6 +35,7 @@ class WindParser {
     'flexbox_grid': const FlexboxGridParser(),
     'text': const TextParser(),
     'debug': const DebugParser(),
+    'shadow': const ShadowParser(),
   };
 
   /// Clears the style cache
