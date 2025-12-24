@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'parsers/background_parser.dart';
 import 'parsers/border_parser.dart';
-import 'parsers/display_parser.dart';
 import 'parsers/margin_parser.dart';
 import 'parsers/padding_parser.dart';
 import 'parsers/sizing_parser.dart';
 import 'parsers/flexbox_grid_parser.dart';
 import 'parsers/wind_parser_interface.dart';
 import 'parsers/text_parser.dart';
+import 'parsers/debug_parser.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
 
@@ -26,7 +26,6 @@ class WindParser {
 
   /// Map of property names to their respective parsers
   static final Map<String, WindParserInterface> _parserMap = {
-    'display': const DisplayParser(),
     'background': const BackgroundParser(),
     'border': const BorderParser(),
     'sizing': const SizingParser(),
@@ -34,6 +33,7 @@ class WindParser {
     'margin': const MarginParser(),
     'flexbox_grid': const FlexboxGridParser(),
     'text': const TextParser(),
+    'debug': const DebugParser(),
   };
 
   /// Clears the style cache
@@ -47,7 +47,7 @@ class WindParser {
   static WindStyle parse(
     String className,
     BuildContext context, {
-    WindStyle? baseStyle = null,
+    WindStyle? baseStyle,
   }) {
     final windContext = WindContext.build(context);
     final cacheKey = windContext.cacheKey(className);
@@ -142,14 +142,16 @@ class WindParser {
     final List<String> applicableClasses = [];
 
     final activeBreakpoints = ['base'];
-    bool breakpointReached = false;
-    final sortedScreens = context.theme.screens.entries.toList()
-      ..sort((a, b) => a.value.compareTo(b.value));
+    if (context.activeBreakpoint != 'base') {
+      bool breakpointReached = false;
+      final sortedScreens = context.theme.screens.entries.toList()
+        ..sort((a, b) => a.value.compareTo(b.value));
 
-    for (final entry in sortedScreens) {
-      if (breakpointReached) break;
-      activeBreakpoints.add(entry.key);
-      if (entry.key == context.activeBreakpoint) breakpointReached = true;
+      for (final entry in sortedScreens) {
+        if (breakpointReached) break;
+        activeBreakpoints.add(entry.key);
+        if (entry.key == context.activeBreakpoint) breakpointReached = true;
+      }
     }
 
     for (final cls in classes) {

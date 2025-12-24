@@ -6,12 +6,7 @@ import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
 
 // Mock WindThemeData for testing purposes
 final testTheme = WindThemeData(
-  screens: {
-    'sm': 640,
-    'md': 768,
-    'lg': 1024,
-    'xl': 1280,
-  },
+  screens: {'sm': 640, 'md': 768, 'lg': 1024, 'xl': 1280},
 );
 
 // Helper function to create a WindContext for testing
@@ -41,7 +36,7 @@ void main() {
   group('WindParser.findAndGroupClasses', () {
     test('should group classes by parser', () {
       final className = "bg-red-500 text-lg md:bg-blue-500";
-      final context = createTestContext();
+      final context = createTestContext(activeBreakpoint: 'md');
       final result = WindParser.findAndGroupClasses(className, context);
       expect(result, {
         "background": ["bg-red-500", "bg-blue-500"],
@@ -108,9 +103,17 @@ void main() {
 
       test('should include all up to "lg" on a large screen', () {
         final context = createTestContext(activeBreakpoint: 'lg');
-        final classes = ['bg-red-500', 'md:bg-blue-500', 'lg:bg-green-500', 'xl:bg-yellow-500'];
+        final classes = [
+          'bg-red-500',
+          'md:bg-blue-500',
+          'lg:bg-green-500',
+          'xl:bg-yellow-500',
+        ];
         final result = WindParser.resolveClasses(classes, context);
-        expect(result, containsAll(['bg-red-500', 'bg-blue-500', 'bg-green-500']));
+        expect(
+          result,
+          containsAll(['bg-red-500', 'bg-blue-500', 'bg-green-500']),
+        );
         expect(result, isNot(contains('bg-yellow-500')));
       });
 
@@ -177,26 +180,35 @@ void main() {
     });
 
     group('Complex Scenarios', () {
-      test('should handle combined state and breakpoint prefixes correctly', () {
-        // Scenario: On a medium screen and hovering
-        final context = createTestContext(activeBreakpoint: 'md', isHovering: true);
-        final classes = [
-          'bg-gray-200', // base
-          'hover:bg-gray-300', // hover only
-          'md:bg-blue-200', // md only
-          'md:hover:bg-blue-300', // md and hover
-          'lg:hover:bg-green-300', // lg and hover (should not apply)
-        ];
-        final result = WindParser.resolveClasses(classes, context);
-        expect(result, hasLength(4));
-        expect(result, containsAll([
-          'bg-gray-200',
-          'bg-gray-300',
-          'bg-blue-200',
-          'bg-blue-300',
-        ]));
-        expect(result, isNot(contains('bg-green-300')));
-      });
+      test(
+        'should handle combined state and breakpoint prefixes correctly',
+        () {
+          // Scenario: On a medium screen and hovering
+          final context = createTestContext(
+            activeBreakpoint: 'md',
+            isHovering: true,
+          );
+          final classes = [
+            'bg-gray-200', // base
+            'hover:bg-gray-300', // hover only
+            'md:bg-blue-200', // md only
+            'md:hover:bg-blue-300', // md and hover
+            'lg:hover:bg-green-300', // lg and hover (should not apply)
+          ];
+          final result = WindParser.resolveClasses(classes, context);
+          expect(result, hasLength(4));
+          expect(
+            result,
+            containsAll([
+              'bg-gray-200',
+              'bg-gray-300',
+              'bg-blue-200',
+              'bg-blue-300',
+            ]),
+          );
+          expect(result, isNot(contains('bg-green-300')));
+        },
+      );
 
       test('should handle dark mode, breakpoint, and state prefixes', () {
         // Scenario: Dark mode, large screen, focused
@@ -216,14 +228,17 @@ void main() {
         ];
         final result = WindParser.resolveClasses(classes, context);
         expect(result, hasLength(6));
-        expect(result, containsAll([
-          'text-black',
-          'text-white',
-          'text-xl',
-          'text-yellow-400',
-          'text-2xl',
-          'text-amber-400',
-        ]));
+        expect(
+          result,
+          containsAll([
+            'text-black',
+            'text-white',
+            'text-xl',
+            'text-yellow-400',
+            'text-2xl',
+            'text-amber-400',
+          ]),
+        );
         expect(result, isNot(contains('text-red-500')));
       });
 

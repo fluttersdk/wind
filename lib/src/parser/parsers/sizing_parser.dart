@@ -107,12 +107,38 @@ class SizingParser implements WindParserInterface {
             // skip 'auto' values
             continue;
           } else {
-            final parsedValue = double.tryParse(valueKey);
-            if (parsedValue != null) {
-              type = 'absolute';
-              value = parsedValue;
+            // Handle fractions (e.g. 1/2, 2/5)
+            if (valueKey.contains('/')) {
+              final parts = valueKey.split('/');
+              if (parts.length == 2) {
+                final numerator = double.tryParse(parts[0]);
+                final denominator = double.tryParse(parts[1]);
+                if (numerator != null &&
+                    denominator != null &&
+                    denominator != 0) {
+                  type = 'factor';
+                  value = numerator / denominator;
+                  // Parsed successfully, proceeds to assignment below
+                } else {
+                  continue;
+                }
+              } else {
+                continue;
+              }
             } else {
-              continue;
+              // Try parsing as number first to validity check
+              final parsedValue = double.tryParse(valueKey);
+              if (parsedValue != null) {
+                type = 'absolute';
+                // CRITICAL FIX: Use theme spacing scale
+                try {
+                  value = context.theme.getSpacing(valueKey);
+                } catch (e) {
+                  value = context.theme.getSpacing(valueKey);
+                }
+              } else {
+                continue;
+              }
             }
           }
 

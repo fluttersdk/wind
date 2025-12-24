@@ -86,14 +86,18 @@ class WindThemeData {
     Map<String, MaterialColor>? colors,
     Map<String, int>? screens,
     Map<String, int>? containers,
+    Map<String, double>? fontSizes,
+    Map<String, FontWeight>? fontWeights,
+    Map<String, double>? tracking,
+    Map<String, double>? leading,
     Map<String, double>? borderWidths,
     Map<String, double>? borderRadius,
     this.baseSpacingUnit = 4.0,
   }) : colors = colors ?? _initColors(),
-       fontSizes = default_font_sizes.fontSizes,
-       fontWeights = default_font_weights.fontWeights,
-       tracking = default_tracking.tracking,
-       leading = default_leading.leading,
+       fontSizes = fontSizes ?? default_font_sizes.fontSizes,
+       fontWeights = fontWeights ?? default_font_weights.fontWeights,
+       tracking = tracking ?? default_tracking.tracking,
+       leading = leading ?? default_leading.leading,
        borderWidths = borderWidths ?? default_border_widths.borderWidths,
        borderRadius = borderRadius ?? default_border_radius.borderRadius,
        containers = containers ?? default_containers.containers,
@@ -201,6 +205,10 @@ class WindThemeData {
     Map<String, MaterialColor>? colors,
     Map<String, int>? screens,
     Map<String, int>? containers,
+    Map<String, double>? fontSizes,
+    Map<String, FontWeight>? fontWeights,
+    Map<String, double>? tracking,
+    Map<String, double>? leading,
     Map<String, double>? borderWidths,
     Map<String, double>? borderRadius,
     double? baseSpacingUnit,
@@ -216,6 +224,18 @@ class WindThemeData {
       containers: containers != null
           ? (Map.from(this.containers)..addAll(containers))
           : this.containers,
+      fontSizes: fontSizes != null
+          ? (Map.from(this.fontSizes)..addAll(fontSizes))
+          : this.fontSizes,
+      fontWeights: fontWeights != null
+          ? (Map.from(this.fontWeights)..addAll(fontWeights))
+          : this.fontWeights,
+      tracking: tracking != null
+          ? (Map.from(this.tracking)..addAll(tracking))
+          : this.tracking,
+      leading: leading != null
+          ? (Map.from(this.leading)..addAll(leading))
+          : this.leading,
       borderWidths: borderWidths != null
           ? (Map.from(this.borderWidths)..addAll(borderWidths))
           : this.borderWidths,

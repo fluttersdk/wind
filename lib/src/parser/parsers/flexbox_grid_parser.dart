@@ -40,7 +40,6 @@ class FlexboxGridParser implements WindParserInterface {
     'grid': WindDisplayType.grid,
     'wrap': WindDisplayType.wrap,
     'block': WindDisplayType.block,
-    // 'hidden' is handled by DisplayParser
   };
 
   /// Maps flex-direction classes to `Axis`
@@ -142,15 +141,31 @@ class FlexboxGridParser implements WindParserInterface {
     FlexFit? flexFit;
     Alignment? alignment;
     int? gridCols;
+    bool? isHidden;
+    // Track if visibility has been determined by a later class
+    bool visibilitySet = false;
 
     for (var i = classes.length - 1; i >= 0; i--) {
       final className = classes[i];
 
       debugPrint('FlexboxGridParser checking class: $className');
 
+      // 0. Hidden check
+      if (className == 'hidden') {
+        if (!visibilitySet) {
+          isHidden = true;
+          visibilitySet = true;
+        }
+        continue;
+      }
+
       // 1. Static Map Lookups (Fastest)
       if (displayType == null && _displayMap.containsKey(className)) {
         displayType = _displayMap[className];
+        if (!visibilitySet) {
+          isHidden = false;
+          visibilitySet = true;
+        }
       } else if (flexDirection == null &&
           _directionMap.containsKey(className)) {
         flexDirection = _directionMap[className];
@@ -231,7 +246,8 @@ class FlexboxGridParser implements WindParserInterface {
         flex != null ||
         flexFit != null ||
         alignment != null ||
-        gridCols != null;
+        gridCols != null ||
+        isHidden != null;
 
     if (!didChange) {
       return styles;
@@ -251,6 +267,7 @@ class FlexboxGridParser implements WindParserInterface {
       flexFit: flexFit,
       alignment: alignment,
       gridCols: gridCols,
+      isHidden: isHidden,
     );
   }
 
@@ -264,12 +281,14 @@ class FlexboxGridParser implements WindParserInterface {
         className == 'grid' ||
         className == 'wrap' ||
         className == 'block' ||
+        className == 'hidden' ||
         className.startsWith('flex-') ||
         className.startsWith('grid-') ||
         className.startsWith('justify-') ||
         className.startsWith('items-') ||
         className.startsWith('align-') ||
         className.startsWith('gap-') ||
-        className.startsWith('axis-');
+        className.startsWith('axis-') ||
+        className.startsWith('place-');
   }
 }
