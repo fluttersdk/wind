@@ -148,13 +148,20 @@ class WindThemeData {
 
   /// Returns spacing based on the given [multiplier].
   ///
-  /// Supports integer multipliers (e.g., '2', '3.5')
-  /// and container keys (e.g., 'xs', 'sm', 'md', 'lg', 'xl', 'full').
+  /// Supports integer multipliers (e.g., '2', '3.5'),
+  /// container keys (e.g., 'xs', 'sm', 'md', 'lg', 'xl'),
+  /// and special values like 'full' which returns [double.infinity].
   ///
   /// Examples:
   /// - `getSpacing('2')` returns `8.0` (2 * baseSpacingUnit)
   /// - `getSpacing('md')` returns the spacing for the 'md' container.
+  /// - `getSpacing('full')` returns `double.infinity`.
   double getSpacing(String multiplier) {
+    // Handle special 'full' case
+    if (multiplier == 'full') {
+      return double.infinity;
+    }
+
     if (containers.containsKey(multiplier)) {
       return containers[multiplier]!.toDouble() * baseSpacingUnit;
     } else {
