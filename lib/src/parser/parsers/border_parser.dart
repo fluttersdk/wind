@@ -18,28 +18,6 @@ import 'wind_parser_interface.dart';
 class BorderParser implements WindParserInterface {
   const BorderParser();
 
-  /// Default border width values
-  static const Map<String, double> _borderWidthMap = {
-    'border': 1.0,
-    'border-0': 0.0,
-    'border-2': 2.0,
-    'border-4': 4.0,
-    'border-8': 8.0,
-  };
-
-  /// Border radius values (in rem units, 1rem = 4px)
-  static const Map<String, double> _borderRadiusMap = {
-    'rounded-none': 0.0,
-    'rounded-sm': 2.0, // 0.125rem = 2px
-    'rounded': 4.0, // 0.25rem = 4px
-    'rounded-md': 6.0, // 0.375rem = 6px
-    'rounded-lg': 8.0, // 0.5rem = 8px
-    'rounded-xl': 12.0, // 0.75rem = 12px
-    'rounded-2xl': 16.0, // 1rem = 16px
-    'rounded-3xl': 24.0, // 1.5rem = 24px
-    'rounded-full': 9999.0, // full circle
-  };
-
   /// Border style map
   static const Map<String, BorderStyle> _borderStyleMap = {
     'border-solid': BorderStyle.solid,
@@ -61,6 +39,32 @@ class BorderParser implements WindParserInterface {
     r'^rounded-(t|r|b|l|tl|tr|bl|br)(?:-(sm|md|lg|xl|2xl|3xl|full))?$',
   );
 
+  /// Get border width from theme
+  double? _getBorderWidth(String className, WindThemeData theme) {
+    if (className == 'border') return theme.borderWidths['DEFAULT'];
+    if (className.startsWith('border-')) {
+      final suffix = className.substring(7);
+      if (theme.borderWidths.containsKey(suffix)) {
+        return theme.borderWidths[suffix];
+      }
+    }
+    return null;
+  }
+
+  /// Get border radius from theme
+  double? _getBorderRadius(String className, WindThemeData theme) {
+    if (className == 'rounded') return theme.borderRadius['DEFAULT'];
+    if (className == 'rounded-none') return theme.borderRadius['none'];
+    if (className == 'rounded-full') return theme.borderRadius['full'];
+    if (className.startsWith('rounded-')) {
+      final suffix = className.substring(8);
+      if (theme.borderRadius.containsKey(suffix)) {
+        return theme.borderRadius[suffix];
+      }
+    }
+    return null;
+  }
+
   @override
   WindStyle parse(
     WindStyle styles,
@@ -70,7 +74,7 @@ class BorderParser implements WindParserInterface {
     if (classes == null || classes.isEmpty) return styles;
 
     final border = _parseBorder(classes, context.theme);
-    final borderRadius = _parseBorderRadius(classes);
+    final borderRadius = _parseBorderRadius(classes, context.theme);
 
     if (border == null && borderRadius == null) {
       return styles;
@@ -108,10 +112,10 @@ class BorderParser implements WindParserInterface {
         continue;
       }
 
-      // Check uniform border width
-      if (_borderWidthMap.containsKey(className)) {
-        width = _borderWidthMap[className];
-        // Reset directional when uniform is set
+      // Check uniform border width from theme
+      final themeWidth = _getBorderWidth(className, theme);
+      if (themeWidth != null) {
+        width = themeWidth;
         topWidth = rightWidth = bottomWidth = leftWidth = null;
         continue;
       }
@@ -197,15 +201,15 @@ class BorderParser implements WindParserInterface {
   }
 
   /// Parse border radius from classes
-  BorderRadius? _parseBorderRadius(List<String> classes) {
+  BorderRadius? _parseBorderRadius(List<String> classes, WindThemeData theme) {
     double? uniformRadius;
     double? topLeft, topRight, bottomLeft, bottomRight;
 
     for (final className in classes) {
-      // Check uniform radius
-      if (_borderRadiusMap.containsKey(className)) {
-        uniformRadius = _borderRadiusMap[className];
-        // Reset directional when uniform is set
+      // Check uniform radius from theme
+      final themeRadius = _getBorderRadius(className, theme);
+      if (themeRadius != null) {
+        uniformRadius = themeRadius;
         topLeft = topRight = bottomLeft = bottomRight = null;
         continue;
       }
@@ -216,8 +220,10 @@ class BorderParser implements WindParserInterface {
         final direction = match.group(1);
         final sizeStr = match.group(2);
         final radius = sizeStr != null
-            ? _borderRadiusMap['rounded-$sizeStr'] ?? 4.0
-            : 4.0;
+            ? theme.borderRadius[sizeStr] ??
+                  theme.borderRadius['DEFAULT'] ??
+                  4.0
+            : theme.borderRadius['DEFAULT'] ?? 4.0;
 
         switch (direction) {
           case 't':

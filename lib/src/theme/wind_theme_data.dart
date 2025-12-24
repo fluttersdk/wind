@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../utils/color_utils.dart';
+import 'defaults/border_radius.dart' as default_border_radius;
+import 'defaults/border_widths.dart' as default_border_widths;
 import 'defaults/colors.dart' as default_colors;
-import 'defaults/font_sizes.dart' as default_font_sizes;
-import 'defaults/screens.dart' as default_screens;
 import 'defaults/containers.dart' as default_containers;
+import 'defaults/font_sizes.dart' as default_font_sizes;
 import 'defaults/font_weights.dart' as default_font_weights;
-import 'defaults/tracking.dart' as default_tracking;
 import 'defaults/leading.dart' as default_leading;
+import 'defaults/screens.dart' as default_screens;
+import 'defaults/tracking.dart' as default_tracking;
 
 /// The REM unit used for sizing calculations.
 const int windRemUnit = 4;
@@ -57,6 +59,16 @@ class WindThemeData {
   /// Defaults to [default_leading.leading].
   final Map<String, double> leading;
 
+  /// A map of border width names to width values.
+  ///
+  /// Defaults to [default_border_widths.borderWidths].
+  final Map<String, double> borderWidths;
+
+  /// A map of border radius names to radius values.
+  ///
+  /// Defaults to [default_border_radius.borderRadius].
+  final Map<String, double> borderRadius;
+
   /// The base spacing unit used for spacing calculations.
   ///
   /// Defaults to 4.0.
@@ -74,12 +86,16 @@ class WindThemeData {
     Map<String, MaterialColor>? colors,
     Map<String, int>? screens,
     Map<String, int>? containers,
+    Map<String, double>? borderWidths,
+    Map<String, double>? borderRadius,
     this.baseSpacingUnit = 4.0,
   }) : colors = colors ?? _initColors(),
        fontSizes = default_font_sizes.fontSizes,
        fontWeights = default_font_weights.fontWeights,
        tracking = default_tracking.tracking,
        leading = default_leading.leading,
+       borderWidths = borderWidths ?? default_border_widths.borderWidths,
+       borderRadius = borderRadius ?? default_border_radius.borderRadius,
        containers = containers ?? default_containers.containers,
        screens = screens ?? default_screens.screens {
     _resolvedColors = _resolveColors();
@@ -185,6 +201,8 @@ class WindThemeData {
     Map<String, MaterialColor>? colors,
     Map<String, int>? screens,
     Map<String, int>? containers,
+    Map<String, double>? borderWidths,
+    Map<String, double>? borderRadius,
     double? baseSpacingUnit,
   }) {
     return WindThemeData(
@@ -198,6 +216,12 @@ class WindThemeData {
       containers: containers != null
           ? (Map.from(this.containers)..addAll(containers))
           : this.containers,
+      borderWidths: borderWidths != null
+          ? (Map.from(this.borderWidths)..addAll(borderWidths))
+          : this.borderWidths,
+      borderRadius: borderRadius != null
+          ? (Map.from(this.borderRadius)..addAll(borderRadius))
+          : this.borderRadius,
       baseSpacingUnit: baseSpacingUnit ?? this.baseSpacingUnit,
     );
   }

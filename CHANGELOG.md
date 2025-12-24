@@ -19,13 +19,20 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - **Border radius**: `rounded`, `rounded-sm`, `rounded-md`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `rounded-full`, `rounded-none`
 - **Directional radius**: `rounded-t`, `rounded-r`, `rounded-b`, `rounded-l`, `rounded-tl`, `rounded-tr`, `rounded-bl`, `rounded-br`
 
+#### Theme Customization
+- Added `borderWidths` to `WindThemeData` for customizable border widths
+- Added `borderRadius` to `WindThemeData` for customizable border radius
+- New defaults: `defaults/border_widths.dart`, `defaults/border_radius.dart`
+- BorderParser now reads values from theme (user can override defaults)
+
 ### 📚 Documentation
-- Added `docs/borders.md` with Tailwind-style documentation
-- New example pages: `/borders/basic`, `/borders/width`, `/borders/colors`
+- Added `docs/borders.md` with Tailwind-style documentation and `x-preview` components
+- New example pages: `/borders/radius_basic`, `/borders/width_basic` (iframe ready)
 
 ### 🧪 Tests
-- Added 20 new tests for BorderParser
-- Total: 232 tests passing
+- Added 20 BorderParser unit tests
+- Added 8 WDiv border widget tests (feature tests)
+- Total: 239 tests passing
 
 ---
 
