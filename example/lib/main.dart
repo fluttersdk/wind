@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+
+import 'routes.dart';
+
+void main() {
+  usePathUrlStrategy();
+  runApp(const MyApp());
+}
+
+class AppLayout extends StatelessWidget {
+  final Widget child;
+
+  const AppLayout({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: child);
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return WindTheme(
+      data: WindThemeData(
+        colors: {
+          'primary': MaterialColor(0xff0986e0, {
+            50: Color(0xffa5d7fb),
+            100: Color(0xff92cffb),
+            200: Color(0xff6abdf9),
+            300: Color(0xff43acf7),
+            400: Color(0xff1c9bf6),
+            500: Color(0xff0986e0),
+            600: Color(0xff0766aa),
+            700: Color(0xff054574),
+            800: Color(0xff02253e),
+            900: Color(0xff000508),
+            950: Color(0xff000000),
+          }),
+        },
+      ),
+      child: MaterialApp(
+        routes: appRoutes.map(
+          (path, pageBuilder) =>
+              MapEntry(path, (context) => AppLayout(child: pageBuilder)),
+        ),
+      ),
+    );
+  }
+}

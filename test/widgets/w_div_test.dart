@@ -1,0 +1,238 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
+import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
+import 'package:fluttersdk_wind/src/widgets/w_div.dart';
+import 'package:fluttersdk_wind/src/theme/defaults/colors.dart'
+    as default_colors;
+
+void main() {
+  group('WDiv Composition Tests', () {
+    testWidgets('renders Padding widget when p-4 is used', (tester) async {
+      // Arrange
+      const testKey = Key('test-wdiv');
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: WDiv(
+              key: testKey,
+              className: 'p-4',
+              child: const Text('Test'),
+            ),
+          ),
+        ),
+      );
+
+      // Assert
+      final wDivFinder = find.byKey(testKey);
+      expect(wDivFinder, findsOneWidget);
+
+      // Additional check to ensure Padding is applied
+      final paddingFinder = find.descendant(
+        of: wDivFinder,
+        matching: find.byWidgetPredicate((widget) {
+          if (widget is Padding) {
+            return widget.padding == const EdgeInsets.all(16.0);
+          }
+          return false;
+        }),
+      );
+
+      expect(paddingFinder, findsOneWidget);
+    });
+
+    testWidgets('renders Row when flex class is present', (tester) async {
+      // Arrange
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              className: 'flex',
+              children: [Text('A'), Text('B')],
+            ),
+          ),
+        ),
+      );
+
+      // Assert
+      expect(find.byType(Row), findsOneWidget);
+      expect(find.byType(Column), findsNothing);
+    });
+
+    testWidgets('renders Expanded when flex-1 is used on child', (
+      tester,
+    ) async {
+      // Arrange
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const Column(
+              children: [
+                WDiv(className: 'flex-1', child: Text('Expanded Item')),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // Assert
+      final expandedFinder = find.byType(Expanded);
+      expect(expandedFinder, findsOneWidget);
+
+      final Expanded expanded = tester.widget(expandedFinder);
+      expect(expanded.flex, 1);
+    });
+  });
+
+  testWidgets('renders Margin using Padding widget when m-4 is used', (
+    tester,
+  ) async {
+    const testKey = Key('test-wdiv-margin');
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WindTheme(
+          data: WindThemeData(),
+          child: WDiv(
+            key: testKey,
+            className: 'm-4', // Margin adds outer padding
+            child: const Text('Margin Test'),
+          ),
+        ),
+      ),
+    );
+
+    // Assert
+    final wDivFinder = find.byKey(testKey);
+
+    // WDiv internally uses Padding for margin.
+    // Since we only have 'm-4' and no 'p-', we expect exactly one Padding.
+    final paddingFinder = find.descendant(
+      of: wDivFinder,
+      matching: find.byWidgetPredicate((widget) {
+        if (widget is Padding) {
+          return widget.padding == const EdgeInsets.all(16.0);
+        }
+        return false;
+      }),
+    );
+
+    expect(paddingFinder, findsOneWidget);
+  });
+
+  testWidgets('renders Container with decoration when bg-red-500 is used', (
+    tester,
+  ) async {
+    const testKey = Key('test-wdiv-bg');
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WindTheme(
+          data: WindThemeData(),
+          child: WDiv(
+            key: testKey,
+            className: 'bg-red-500',
+            child: const Text('Background Test'),
+          ),
+        ),
+      ),
+    );
+
+    // Assert
+    // Look for a Container that has a BoxDecoration with red color
+    final containerFinder = find.descendant(
+      of: find.byKey(testKey),
+      matching: find.byWidgetPredicate((widget) {
+        if (widget is Container && widget.decoration is BoxDecoration) {
+          final decoration = widget.decoration as BoxDecoration;
+          return decoration.color == default_colors.colors['red']![500];
+        }
+        return false;
+      }),
+    );
+
+    expect(containerFinder, findsOneWidget);
+  });
+
+  testWidgets('renders GridView when grid class is present', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WindTheme(
+          data: WindThemeData(),
+          child: WDiv(
+            className: 'grid grid-cols-3',
+            children: List.generate(6, (i) => Text('Item $i')),
+          ),
+        ),
+      ),
+    );
+
+    // Assert
+    expect(find.byType(GridView), findsOneWidget);
+    // Ensure it's not a Row or Column
+    expect(find.byType(Row), findsNothing);
+    expect(find.byType(Column), findsNothing);
+  });
+
+  testWidgets('hides content when hidden class is present', (tester) async {
+    const testKey = Key('test-wdiv-hidden');
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WindTheme(
+          data: WindThemeData(),
+          child: Column(
+            children: [
+              const Text('Visible Before'),
+              WDiv(
+                key: testKey,
+                className: 'hidden', // Should return SizedBox.shrink()
+                child: const Text('You cannot see me'),
+              ),
+              const Text('Visible After'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Assert
+    // The text inside WDiv should NOT be found in the tree
+    expect(find.text('You cannot see me'), findsNothing);
+    expect(find.text('Visible Before'), findsOneWidget);
+
+    // Verify SizedBox.shrink() usage (it has size 0)
+    final wDivFinder = find.byKey(testKey);
+    final size = tester.getSize(wDivFinder);
+    expect(size, Size.zero);
+  });
+
+  testWidgets('injects SizedBox gaps when gap-4 is used in flex', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WindTheme(
+          data: WindThemeData(),
+          child: const WDiv(
+            className: 'flex gap-4', // gap-4 = 16px
+            children: [Text('A'), Text('B')],
+          ),
+        ),
+      ),
+    );
+
+    // Assert
+    // In a Row with 2 children and a gap, we expect 3 items total in the row's children list.
+    // [Text('A'), SizedBox(width: 16), Text('B')]
+    final rowFinder = find.byType(Row);
+    final Row rowWidget = tester.widget(rowFinder);
+
+    expect(rowWidget.children.length, 3);
+
+    // The middle element should be a SizedBox with width 16
+    final gapWidget = rowWidget.children[1];
+    expect(gapWidget, isA<SizedBox>());
+    expect((gapWidget as SizedBox).width, 16.0);
+  });
+}
