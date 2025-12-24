@@ -282,13 +282,28 @@ class WDiv extends StatelessWidget {
 
     // Apply Container ONLY if we have box-specific properties
     final bool needsContainer =
-        styles.decoration != null || constraints != null;
+        styles.decoration != null ||
+        constraints != null ||
+        styles.boxShadow != null;
 
     if (needsContainer) {
-      logger.wrapWith("Container", "decoration/constraints");
+      logger.wrapWith("Container", "decoration/constraints/shadow");
+
+      // Merge decoration with shadows if needed
+      BoxDecoration? finalDecoration = styles.decoration;
+      if (styles.boxShadow != null) {
+        if (finalDecoration == null) {
+          finalDecoration = BoxDecoration(boxShadow: styles.boxShadow);
+        } else {
+          finalDecoration = finalDecoration.copyWith(
+            boxShadow: styles.boxShadow,
+          );
+        }
+      }
+
       widgetToBuild = Container(
         constraints: constraints,
-        decoration: styles.decoration,
+        decoration: finalDecoration,
         child: widgetToBuild,
       );
     }

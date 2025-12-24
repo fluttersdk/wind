@@ -21,11 +21,11 @@ class HomePage extends StatelessWidget {
         WText("Title", className: "text-xl font-bold"),
         WText("Description text...", className: "text-gray-600"),
         WAnchor(
-          onTap: () => print("Clicked"),
+          onTap: () {}, // print("Home page built");
           child: WDiv(
             // Hover state: changes background and shadow
             className:
-            "bg-blue-500 hover:bg-blue-600 text-white p-4 rounded shadow hover:shadow-lg transition",
+                "bg-blue-500 hover:bg-blue-600 text-white p-4 rounded shadow hover:shadow-lg transition",
             child: WText("Click Me"),
           ),
         ),

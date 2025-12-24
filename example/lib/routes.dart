@@ -27,7 +27,14 @@ import 'pages/typography/basics.dart';
 import 'pages/typography/colors.dart';
 import 'pages/typography/decoration.dart';
 
+// Effects
+import 'pages/effects/shadows_basic.dart';
+import 'pages/effects/shadows_colored.dart';
+
 final Map<String, Widget> appRoutes = {
+  // Effects
+  '/effects/shadows_basic': ShadowsBasicExamplePage(),
+  '/effects/shadows_colored': ShadowsColoredExamplePage(),
   '/': HomePage(),
   '/examples/basic': BasicExamplePage(),
   '/borders/radius_basic': RadiusBasicPage(),

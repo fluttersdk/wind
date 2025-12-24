@@ -12,7 +12,7 @@ import '../wind_context.dart';
 ///   @override
 ///   ParsedStyle parse(
 ///     ParsedStyle styles,
-///     List<String>? classes,
+///     List\<String\>? classes,
 ///     WindContext context,
 ///   ) {
 ///     // Parse classes and update styles
@@ -27,11 +27,7 @@ import '../wind_context.dart';
 /// }
 abstract class WindParserInterface {
   // Parses the given classes and updates the ParsedStyle
-  WindStyle parse(
-    WindStyle styles,
-    List<String>? classes,
-    WindContext context,
-  );
+  WindStyle parse(WindStyle styles, List<String>? classes, WindContext context);
 
   // Determines if this parser can handle the given class name
   bool canParse(String className);

@@ -217,24 +217,6 @@ class WText extends StatelessWidget {
     return widgetToBuild;
   }
 
-  /// Converts [WindStyle] typography properties into a Flutter [TextStyle].
-  TextStyle _buildTextStyle(WindStyle styles) {
-    return TextStyle(
-      color: styles.color,
-      fontSize: styles.fontSize,
-      fontWeight: styles.fontWeight,
-      fontStyle: styles.fontStyle,
-      letterSpacing: styles.letterSpacing,
-      height: styles.heightLine,
-      // TextParser calculates this as a factor
-      decoration: styles.textDecoration,
-      decorationColor: styles.textDecorationColor,
-      decorationStyle: styles.textDecorationStyle,
-      decorationThickness: styles.textDecorationThickness,
-      fontFamily: styles.fontFamily,
-    );
-  }
-
   /// Applies text transformations (uppercase, lowercase, capitalize).
   String _applyTextTransform(String text, WindTextTransform? transform) {
     if (transform == null) return text;
@@ -244,8 +226,9 @@ class WText extends StatelessWidget {
       case WindTextTransform.lowercase:
         return text.toLowerCase();
       case WindTextTransform.capitalize:
-        if (text.isEmpty)
-          return text; // Simple capitalization: first letter upper, rest as-is.
+        if (text.isEmpty) {
+          return text;
+        } // Simple capitalization: first letter upper, rest as-is.
         return text[0].toUpperCase() + text.substring(1);
       case WindTextTransform.none:
         return text;

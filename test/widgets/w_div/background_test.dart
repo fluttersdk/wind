@@ -19,7 +19,7 @@ void main() {
 
       final container = tester.widget<Container>(find.byType(Container));
       final decoration = container.decoration as BoxDecoration;
-      expect(decoration.color!.opacity, closeTo(0.5, 0.01));
+      expect(decoration.color!.a, closeTo(0.5, 0.01));
     });
 
     testWidgets('Parsing arbitrary background opacity', (tester) async {
@@ -37,7 +37,7 @@ void main() {
 
       final container = tester.widget<Container>(find.byType(Container));
       final decoration = container.decoration as BoxDecoration;
-      expect(decoration.color!.opacity, closeTo(0.2, 0.01));
+      expect(decoration.color!.a, closeTo(0.2, 0.01));
     });
 
     testWidgets('Parsing linear gradient (to right)', (tester) async {

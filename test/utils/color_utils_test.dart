@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 import 'package:fluttersdk_wind/src/utils/color_utils.dart';
 
 void main() {
@@ -9,7 +10,11 @@ void main() {
         const MaterialColor blue = Colors.blue;
         final invertedBlue = invertMaterialColor(blue);
 
-        expect(invertedBlue.value, blue.value);
+        // Check primary color equality
+        expect(invertedBlue.r, blue.r);
+        expect(invertedBlue.g, blue.g);
+        expect(invertedBlue.b, blue.b);
+        expect(invertedBlue.a, blue.a);
         expect(invertedBlue.shade50, blue.shade900);
         expect(invertedBlue.shade100, blue.shade800);
         expect(invertedBlue.shade200, blue.shade700);
@@ -58,4 +63,3 @@ void main() {
     });
   });
 }
-

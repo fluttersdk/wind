@@ -120,6 +120,12 @@ class WindStyle {
   /// Font family e.g., font-sans, font-serif
   final String? fontFamily;
 
+  /// Box shadow e.g., shadow-sm, shadow-xl
+  final List<BoxShadow>? boxShadow;
+
+  /// Shadow color e.g., shadow-red-500
+  final Color? shadowColor;
+
   /// Enable debug mode to log style details
   final bool debug;
 
@@ -162,6 +168,8 @@ class WindStyle {
     this.softWrap,
     this.textTransform,
     this.fontFamily,
+    this.boxShadow,
+    this.shadowColor,
     this.debug = false,
   });
 
@@ -204,6 +212,8 @@ class WindStyle {
     bool? softWrap,
     WindTextTransform? textTransform,
     String? fontFamily,
+    List<BoxShadow>? boxShadow,
+    Color? shadowColor,
     bool? debug,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
@@ -261,6 +271,8 @@ class WindStyle {
       softWrap: softWrap ?? this.softWrap,
       textTransform: textTransform ?? this.textTransform,
       fontFamily: fontFamily ?? this.fontFamily,
+      boxShadow: boxShadow ?? this.boxShadow,
+      shadowColor: shadowColor ?? this.shadowColor,
       debug: debug ?? this.debug,
     );
   }
@@ -308,6 +320,8 @@ class WindStyle {
           softWrap == other.softWrap &&
           textTransform == other.textTransform &&
           fontFamily == other.fontFamily &&
+          boxShadow == other.boxShadow &&
+          shadowColor == other.shadowColor &&
           debug == other.debug;
 
   @override
@@ -350,6 +364,8 @@ class WindStyle {
       softWrap.hashCode ^
       textTransform.hashCode ^
       fontFamily.hashCode ^
+      boxShadow.hashCode ^
+      shadowColor.hashCode ^
       debug.hashCode;
 
   /// Calculates the effective line height based on either a fixed value
@@ -427,6 +443,8 @@ class WindStyle {
         'softWrap: $softWrap, '
         'textTransform: $textTransform, '
         'fontFamily: $fontFamily, '
+        'boxShadow: $boxShadow, '
+        'shadowColor: $shadowColor, '
         'debug: $debug'
         '}';
   }

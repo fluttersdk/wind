@@ -38,7 +38,7 @@ Color hexToColor(String code) {
   // If has `#` prefix, remove it
   if (code.startsWith('#')) {
     code = code.substring(1);
-    }
+  }
 
   // If has 3 or 4 characters, expand to 6 or 8 characters
   if (code.length == 3) {
@@ -49,7 +49,7 @@ Color hexToColor(String code) {
 
   // If has 6 characters, add `FF` for alpha
   if (code.length == 6) {
-    code = 'FF' + code;
+    code = 'FF$code';
   }
 
   return Color(int.parse(code, radix: 16));

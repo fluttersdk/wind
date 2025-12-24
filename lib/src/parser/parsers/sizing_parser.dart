@@ -88,14 +88,18 @@ class SizingParser implements WindParserInterface {
         if (valueKey == 'screen') {
           if (root == 'w' && width == null) width = context.screenWidth;
           if (root == 'h' && height == null) height = context.screenHeight;
-          if (root == 'min-w' && minWidth == null)
+          if (root == 'min-w' && minWidth == null) {
             minWidth = context.screenWidth;
-          if (root == 'max-w' && maxWidth == null)
+          }
+          if (root == 'max-w' && maxWidth == null) {
             maxWidth = context.screenWidth;
-          if (root == 'min-h' && minHeight == null)
+          }
+          if (root == 'min-h' && minHeight == null) {
             minHeight = context.screenHeight;
-          if (root == 'max-h' && maxHeight == null)
+          }
+          if (root == 'max-h' && maxHeight == null) {
             maxHeight = context.screenHeight;
+          }
         } else {
           String type = 'absolute';
           double value = 0.0;

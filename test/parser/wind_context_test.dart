@@ -335,8 +335,8 @@ extension on WindContext {
       isHovering: isHovering ?? this.isHovering,
       isFocused: isFocused ?? this.isFocused,
       isDisabled: isDisabled ?? this.isDisabled,
-      screenWidth: this.screenWidth,
-      screenHeight: this.screenHeight,
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
     );
   }
 }
