@@ -61,7 +61,7 @@ class AspectRatioParser implements WindParserInterface {
         if (aspectRatio == null) {
           final width = double.tryParse(arbitraryMatch.namedGroup('width')!);
           final height = double.tryParse(arbitraryMatch.namedGroup('height')!);
-          if (width != null && height != null && height > 0) {
+          if (width != null && width > 0 && height != null && height > 0) {
             aspectRatio = width / height;
           }
         }
