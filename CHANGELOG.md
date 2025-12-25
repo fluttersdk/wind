@@ -25,6 +25,11 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - **Opacity**: `opacity-0` to `opacity-100`, `opacity-[0.37]`
 - **Rings**: `ring`, `ring-2`, `ring-red-500`, `ring-offset-2` (Focus rings equivalents)
 
+#### Transitions & Animations
+- **Duration**: `duration-75/100/150/200/300/500/700/1000`, `duration-[ms]`
+- **Timing Function**: `ease-linear`, `ease-in`, `ease-out`, `ease-in-out`
+- **AnimatedContainer Integration**: `WDiv` automatically uses `AnimatedContainer` when `duration-*` is set
+
 #### Developer Experience (DX)
 - **Helper Functions**: `wColor`, `wSpacing`, `wScreen`, `wFontSize`, `wFontWeight`
 - **BuildContext Extensions**: `context.windTheme`, `context.windColors`, `context.wColorExt(...)`
@@ -32,6 +37,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### 🐛 Bug Fixes
 - Fixed `font-weight` parsing interfering with `font-family` classes
+- Fixed padding being applied outside Container instead of inside (Tailwind behavior)
 - Fixed various documentation examples
 
 ---

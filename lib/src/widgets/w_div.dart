@@ -319,9 +319,10 @@ class WDiv extends StatelessWidget {
         innerConstraints != null ||
         styles.boxShadow != null;
 
-    if (needsContainer) {
-      logger.wrapWith("Container", "decoration/constraints/shadow");
+    // Track if padding is consumed by Container (so we don't apply it again)
+    bool paddingConsumedByContainer = false;
 
+    if (needsContainer) {
       // Merge decoration with shadows if needed
       BoxDecoration? finalDecoration = styles.decoration;
       if (styles.boxShadow != null) {
@@ -334,11 +335,34 @@ class WDiv extends StatelessWidget {
         }
       }
 
-      widgetToBuild = Container(
-        constraints: innerConstraints,
-        decoration: finalDecoration,
-        child: widgetToBuild,
-      );
+      // Padding should be INSIDE the container (Tailwind behavior)
+      final containerPadding = styles.padding;
+      paddingConsumedByContainer =
+          containerPadding != null && containerPadding != EdgeInsets.zero;
+
+      // Use AnimatedContainer if transition duration is set
+      if (styles.transitionDuration != null) {
+        logger.wrapWith(
+          "AnimatedContainer",
+          "duration: ${styles.transitionDuration!.inMilliseconds}ms",
+        );
+        widgetToBuild = AnimatedContainer(
+          duration: styles.transitionDuration!,
+          curve: styles.transitionCurve ?? Curves.linear,
+          constraints: innerConstraints,
+          decoration: finalDecoration,
+          padding: containerPadding,
+          child: widgetToBuild,
+        );
+      } else {
+        logger.wrapWith("Container", "decoration/constraints/shadow");
+        widgetToBuild = Container(
+          constraints: innerConstraints,
+          decoration: finalDecoration,
+          padding: containerPadding,
+          child: widgetToBuild,
+        );
+      }
     }
 
     // 1b. OVERFLOW HANDLING
@@ -413,8 +437,10 @@ class WDiv extends StatelessWidget {
       );
     }
 
-    // Apply Padding (p-*)
-    if (styles.padding != null && styles.padding != EdgeInsets.zero) {
+    // Apply Padding (p-*) - only if not already consumed by Container
+    if (!paddingConsumedByContainer &&
+        styles.padding != null &&
+        styles.padding != EdgeInsets.zero) {
       logger.wrapWith("Padding", "${styles.padding}");
       widgetToBuild = Padding(padding: styles.padding!, child: widgetToBuild);
     }

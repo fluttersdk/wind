@@ -153,6 +153,12 @@ class WindStyle {
   /// Aspect ratio e.g., aspect-square, aspect-video, aspect-[4/3]
   final double? aspectRatio;
 
+  /// Transition duration e.g., duration-300, duration-[500ms]
+  final Duration? transitionDuration;
+
+  /// Transition curve e.g., ease-in, ease-out, ease-in-out
+  final Curve? transitionCurve;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -202,6 +208,8 @@ class WindStyle {
     this.overflowY,
     this.clipBehavior,
     this.aspectRatio,
+    this.transitionDuration,
+    this.transitionCurve,
   });
 
   WindStyle copyWith({
@@ -253,6 +261,8 @@ class WindStyle {
     WindOverflow? overflowY,
     Clip? clipBehavior,
     double? aspectRatio,
+    Duration? transitionDuration,
+    Curve? transitionCurve,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -319,6 +329,8 @@ class WindStyle {
       overflowY: overflowY ?? this.overflowY,
       clipBehavior: clipBehavior ?? this.clipBehavior,
       aspectRatio: aspectRatio ?? this.aspectRatio,
+      transitionDuration: transitionDuration ?? this.transitionDuration,
+      transitionCurve: transitionCurve ?? this.transitionCurve,
     );
   }
 

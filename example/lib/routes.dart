@@ -35,6 +35,9 @@ import 'pages/effects/shadows_colored.dart';
 import 'pages/effects/opacity.dart';
 import 'pages/effects/overflow_basic.dart';
 import 'pages/effects/overflow_directional.dart';
+import 'pages/effects/transition_duration.dart';
+import 'pages/effects/transition_ease.dart';
+import 'pages/effects/transition_combined.dart';
 
 final Map<String, Widget> appRoutes = {
   // Effects
@@ -43,6 +46,9 @@ final Map<String, Widget> appRoutes = {
   '/effects/opacity': const OpacityExamplePage(),
   '/effects/overflow_basic': const OverflowBasicExamplePage(),
   '/effects/overflow_directional': const OverflowDirectionalExamplePage(),
+  '/effects/transition_duration': const TransitionDurationPage(),
+  '/effects/transition_ease': const TransitionEasePage(),
+  '/effects/transition_combined': const TransitionCombinedPage(),
   '/': const HomePage(),
   '/examples/basic': const BasicExamplePage(),
   '/borders/radius_basic': const RadiusBasicPage(),
