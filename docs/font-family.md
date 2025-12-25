@@ -23,6 +23,24 @@ WText("Monospace text", className: "font-mono")
 | `font-serif` | Georgia, serif |
 | `font-mono` | UI Monospace, monospace |
 
+## Default Font
+
+By default, Wind applies the `font-sans` family to all text (like Tailwind CSS). This is controlled by `applyDefaultFontFamily` in WindThemeData.
+
+```dart
+// Default behavior: font-sans is applied to all text
+WindTheme(
+  data: WindThemeData(), // applyDefaultFontFamily = true (default)
+  child: ...
+)
+
+// Disable default font
+WindTheme(
+  data: WindThemeData(applyDefaultFontFamily: false),
+  child: ...
+)
+```
+
 ## Arbitrary Values
 
 For custom font families, use the bracket notation.

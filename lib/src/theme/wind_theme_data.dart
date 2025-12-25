@@ -75,6 +75,14 @@ class WindThemeData {
   /// Defaults to [default_font_families.fontFamilies].
   final Map<String, String> fontFamilies;
 
+  /// Whether to apply the default 'sans' font family to all text.
+  ///
+  /// When true, WindTheme wraps its child with DefaultTextStyle
+  /// using the 'sans' font family from [fontFamilies].
+  ///
+  /// Defaults to true (like Tailwind CSS).
+  final bool applyDefaultFontFamily;
+
   /// The base spacing unit used for spacing calculations.
   ///
   /// Defaults to 4.0.
@@ -99,6 +107,7 @@ class WindThemeData {
     Map<String, double>? borderWidths,
     Map<String, double>? borderRadius,
     Map<String, String>? fontFamilies,
+    this.applyDefaultFontFamily = true,
     this.baseSpacingUnit = 4.0,
   }) : colors = colors ?? _initColors(),
        fontSizes = fontSizes ?? default_font_sizes.fontSizes,
@@ -220,6 +229,7 @@ class WindThemeData {
     Map<String, double>? borderWidths,
     Map<String, double>? borderRadius,
     Map<String, String>? fontFamilies,
+    bool? applyDefaultFontFamily,
     double? baseSpacingUnit,
   }) {
     return WindThemeData(
@@ -254,6 +264,8 @@ class WindThemeData {
       fontFamilies: fontFamilies != null
           ? (Map.from(this.fontFamilies)..addAll(fontFamilies))
           : this.fontFamilies,
+      applyDefaultFontFamily:
+          applyDefaultFontFamily ?? this.applyDefaultFontFamily,
       baseSpacingUnit: baseSpacingUnit ?? this.baseSpacingUnit,
     );
   }
