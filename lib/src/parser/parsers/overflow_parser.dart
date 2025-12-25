@@ -67,7 +67,9 @@ class OverflowParser implements WindParserInterface {
         overflowX == WindOverflow.hidden ||
         overflowY == WindOverflow.hidden) {
       clipBehavior = Clip.hardEdge;
-    } else if (overflow == WindOverflow.visible) {
+    } else if (overflow == WindOverflow.visible ||
+        overflowX == WindOverflow.visible ||
+        overflowY == WindOverflow.visible) {
       clipBehavior = Clip.none;
     }
 
