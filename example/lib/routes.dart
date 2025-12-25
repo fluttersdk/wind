@@ -31,12 +31,16 @@ import 'pages/typography/decoration.dart';
 import 'pages/effects/shadows_basic.dart';
 import 'pages/effects/shadows_colored.dart';
 import 'pages/effects/opacity.dart';
+import 'pages/effects/overflow_basic.dart';
+import 'pages/effects/overflow_directional.dart';
 
 final Map<String, Widget> appRoutes = {
   // Effects
   '/effects/shadows_basic': const ShadowsBasicExamplePage(),
   '/effects/shadows_colored': const ShadowsColoredExamplePage(),
   '/effects/opacity': const OpacityExamplePage(),
+  '/effects/overflow_basic': const OverflowBasicExamplePage(),
+  '/effects/overflow_directional': const OverflowDirectionalExamplePage(),
   '/': const HomePage(),
   '/examples/basic': const BasicExamplePage(),
   '/borders/radius_basic': const RadiusBasicPage(),
