@@ -47,9 +47,10 @@ class ZIndexParser implements WindParserInterface {
     for (var i = classes.length - 1; i >= 0; i--) {
       final className = classes[i];
 
-      // Handle z-auto (null/unset) - skip, zIndex stays null
+      // Handle z-auto (null/unset) - explicitly reset and stop
       if (className == 'z-auto') {
-        continue;
+        zIndex = null;
+        break;
       }
 
       // Handle standard z-index values e.g., z-10
