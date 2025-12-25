@@ -55,6 +55,19 @@ class TextParser implements WindParserInterface {
   );
 
   /// Regex for font family: `font-sans`, `font-serif`, `font-mono`, `font-[CustomFont]`
+  ///
+  /// Notes about intentional overlap:
+  /// - The `[a-zA-Z]+` part allows custom theme font families such as `font-display`.
+  /// - This intentionally overlaps with named font-weight tokens like `font-bold`,
+  ///   `font-semibold`, etc. As a result, typos in weight classes (e.g. `font-blod`)
+  ///   would match this regex and be treated as a font family rather than being
+  ///   rejected.
+  /// - To keep this behavior predictable, the font-weight parser is expected to run
+  ///   before the font-family parser in the main parsing logic so that valid
+  ///   weight classes are consumed by the weight parser and only non-weights fall
+  ///   through to this regex.
+  /// If the order of font-related checks is changed, ensure that font-weight
+  /// parsing still occurs before font-family parsing to preserve this behavior.
   static final RegExp _fontFamilyRegex = RegExp(
     r'^font-(?:(?<family>sans|serif|mono|[a-zA-Z]+)|\[(?<arbitrary>[^\]]+)\])$',
   );
