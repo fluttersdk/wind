@@ -129,6 +129,13 @@ class WDiv extends StatelessWidget {
       );
     }
 
+    // 7. OPACITY (Effects Layer)
+    // Wrap with Opacity widget if opacity is explicitly set.
+    if (styles.opacity != null) {
+      logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
+      finalWidget = Opacity(opacity: styles.opacity!, child: finalWidget);
+    }
+
     // Final: Print debug log if enabled
     logger.printFinalCode();
     return finalWidget;

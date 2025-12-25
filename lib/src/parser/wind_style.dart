@@ -129,6 +129,9 @@ class WindStyle {
   /// Enable debug mode to log style details
   final bool debug;
 
+  /// Widget opacity e.g., opacity-50, opacity-[0.5]
+  final double? opacity;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -171,6 +174,7 @@ class WindStyle {
     this.boxShadow,
     this.shadowColor,
     this.debug = false,
+    this.opacity,
   });
 
   WindStyle copyWith({
@@ -215,6 +219,7 @@ class WindStyle {
     List<BoxShadow>? boxShadow,
     Color? shadowColor,
     bool? debug,
+    double? opacity,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -274,6 +279,7 @@ class WindStyle {
       boxShadow: boxShadow ?? this.boxShadow,
       shadowColor: shadowColor ?? this.shadowColor,
       debug: debug ?? this.debug,
+      opacity: opacity ?? this.opacity,
     );
   }
 
@@ -322,7 +328,8 @@ class WindStyle {
           fontFamily == other.fontFamily &&
           boxShadow == other.boxShadow &&
           shadowColor == other.shadowColor &&
-          debug == other.debug;
+          debug == other.debug &&
+          opacity == other.opacity;
 
   @override
   int get hashCode =>
@@ -366,7 +373,8 @@ class WindStyle {
       fontFamily.hashCode ^
       boxShadow.hashCode ^
       shadowColor.hashCode ^
-      debug.hashCode;
+      debug.hashCode ^
+      opacity.hashCode;
 
   /// Calculates the effective line height based on either a fixed value
   /// or a factor of the font size.
@@ -445,7 +453,8 @@ class WindStyle {
         'fontFamily: $fontFamily, '
         'boxShadow: $boxShadow, '
         'shadowColor: $shadowColor, '
-        'debug: $debug'
+        'debug: $debug, '
+        'opacity: $opacity'
         '}';
   }
 }
