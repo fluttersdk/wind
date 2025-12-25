@@ -6,6 +6,34 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [1.0.0-alpha.4] - 2025-12-26
+
+### ✨ New Features
+
+#### WInput Widget (Form Input)
+- **React-Style Binding**: `value` + `onChanged` props for controlled state management.
+- **Input Types**: `text`, `password`, `email`, `number`, `multiline` via `InputType` enum.
+- **Tailwind Styling**: `className` for input, `placeholderClassName` for placeholder text.
+- **Focus Ring Support**: `focus:ring-2 focus:ring-blue-500` and similar classes work.
+- **Custom States**: Use `states: {'error'}` with `error:border-red-500` for validation.
+- **Keyboard Actions**: `textInputAction`, `onSubmitted`, `onEditingComplete`, `onTap`, `onTapOutside`.
+- **Text Customization**: `textCapitalization`, `autocorrect`, `enableSuggestions` props.
+
+#### Ring Parser Enhancements
+- **Theme-Configurable Widths**: `ringWidths` and `ringOffsets` in `WindThemeData`.
+- **Custom Ring Values**: `ring-custom` looks up from theme config.
+- **Opacity Parsing**: Verified and tested `/opacity` syntax works for all ring colors.
+
+### 📦 New Example Pages
+- `/forms/input_basic` - Basic input types demonstration.
+- `/forms/input_styled` - Styled inputs with Tailwind classes.
+- `/forms/input_states` - Focus, disabled, and error state examples.
+
+### 🐛 Bug Fixes
+- Fixed deprecated `Color.value` usage in tests (replaced with `toARGB32()`).
+
+---
+
 ## [1.0.0-alpha.3] - 2025-12-26
 
 ### ✨ New Features

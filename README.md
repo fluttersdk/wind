@@ -8,7 +8,7 @@ Wind v1 is a **complete architectural rewrite** with a new parsing engine, widge
 
 ### Major Changes from v0
 
-- **New Widget System**: `WDiv`, `WText`, `WAnchor` replace old widgets
+- **New Widget System**: `WDiv`, `WText`, `WInput`, `WAnchor` replace old widgets
 - **Intelligent Composition**: Widgets dynamically build optimal Flutter widget trees
 - **Specialist Parsers**: Modular parsing engine with 7 dedicated parsers
 - **State-based Styling**: Built-in `hover:`, `focus:`, `disabled:` and custom states (`loading:`, `active:`)
@@ -87,6 +87,19 @@ WDiv(
 WText(
   'Styled Text',
   className: 'text-xl font-bold text-red-500 uppercase underline',
+)
+```
+
+### WInput - The Form Input Widget
+
+```dart
+WInput(
+  value: _email,
+  onChanged: (value) => setState(() => _email = value),
+  type: InputType.email,
+  placeholder: 'Enter email',
+  className: 'p-3 border rounded-lg focus:ring-2 focus:ring-blue-500',
+  placeholderClassName: 'text-gray-400',
 )
 ```
 
