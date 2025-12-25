@@ -106,19 +106,19 @@ WAnchor(
 `flex`, `grid`, `block`, `wrap`, `hidden`, `flex-row`, `flex-col`, `justify-center`, `items-center`, `gap-4`
 
 ### Sizing
-`w-full`, `h-screen`, `w-1/2`, `min-w-0`, `max-w-lg`, `w-[200px]`
+`w-full`, `h-screen`, `w-1/2`, `min-w-0`, `max-w-lg`, `w-[200px]`, `aspect-square`, `aspect-video`
 
 ### Spacing
 `p-4`, `px-2`, `py-3`, `m-4`, `mx-auto`, `mt-8`
 
 ### Typography
-`text-lg`, `font-bold`, `text-red-500`, `uppercase`, `underline`, `truncate`, `line-clamp-2`
+`text-lg`, `font-bold`, `font-sans`, `font-serif`, `text-red-500`, `uppercase`, `underline`, `truncate`
 
 ### Background
 `bg-blue-500`, `bg-[#FF5733]`, `bg-[url(...)]`, `bg-cover`, `bg-center`
 
-### Borders
-`border`, `border-2`, `border-4`, `border-8`, `border-red-500`, `border-[#hex]`, `rounded`, `rounded-lg`, `rounded-full`
+### Borders & Effects
+`border`, `border-2`, `rounded-lg`, `shadow-md`, `opacity-75`, `ring-2`, `ring-blue-500`
 
 ### Responsive
 `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
@@ -177,6 +177,21 @@ WindTheme(
   ),
   child: MaterialApp(...),
 )
+```
+
+## 🛠 Helper Functions & Extensions
+
+Access theme values and utilities programmatically:
+
+```dart
+// BuildContext extensions
+Color primary = context.windColors['primary']!;
+bool isDark = context.windIsDark;
+bool isDesktop = context.wScreenIs('lg');
+
+// Helper functions
+double spacing = wSpacing(context, 4); // 16.0
+Color red = wColor(context, 'red', 500)!;
 ```
 
 ## 📚 Documentation

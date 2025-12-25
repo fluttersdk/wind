@@ -6,7 +6,37 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
-## [1.0.0] - 2025-12-24
+## [1.0.0-alpha.2] - 2025-12-25
+
+### ✨ New Features
+
+#### Typography & Font Family
+- **Font Family Utilities**: `font-sans`, `font-serif`, `font-mono`
+- **Arbitrary Font Families**: `font-[Roboto]`, `font-[Inter, sans-serif]`
+- **Default Font Application**: Automatically applies `font-sans` to all text (configurable via `WindThemeData.applyDefaultFontFamily`)
+- **Theme Customization**: Define custom font families in `WindThemeData.fontFamilies`
+
+#### Sizing & Layout
+- **Aspect Ratio**: `aspect-square`, `aspect-video`, `aspect-auto`, `aspect-[4/3]`
+- **Z-Index**: `z-0` to `z-50`, `z-auto`, `z-[100]`
+- **Overflow**: `overflow-auto`, `overflow-hidden`, `overflow-visible`, `overflow-scroll`, `overflow-x/y-*`
+
+#### Effects & Borders
+- **Opacity**: `opacity-0` to `opacity-100`, `opacity-[0.37]`
+- **Rings**: `ring`, `ring-2`, `ring-red-500`, `ring-offset-2` (Focus rings equivalents)
+
+#### Developer Experience (DX)
+- **Helper Functions**: `wColor`, `wSpacing`, `wScreen`, `wFontSize`, `wFontWeight`
+- **BuildContext Extensions**: `context.windTheme`, `context.windColors`, `context.wColorExt(...)`
+- **WindStyle Parsing**: `wStyle(context, '...')` helper to programmatically parse styles
+
+### 🐛 Bug Fixes
+- Fixed `font-weight` parsing interfering with `font-family` classes
+- Fixed various documentation examples
+
+---
+
+## [1.0.0-alpha.1] - 2025-12-24
 
 ### 🚀 Major Release - Complete Architectural Rewrite
 

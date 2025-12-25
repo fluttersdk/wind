@@ -20,7 +20,11 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
   - **SizingParser:** `w-`, `h-`, `min/max-`, arbitrary `w-[50%]`
   - **PaddingParser/MarginParser:** `p-`, `m-`, `px-`, `my-`
   - **FlexboxGridParser:** `flex-row`, `items-center`, `grid-cols-3`, `gap-4`
-  - **ShadowParser:** `shadow`, `shadow-md`, `shadow-red-500`, `shadow-[#hex]`
+  - **AspectRatioParser:** `aspect-auto`, `aspect-square`, `aspect-video`, `aspect-[4/3]`
+  - **OpacityParser:** `opacity-0`, `opacity-100`, `opacity-[0.5]`
+  - **ZIndexParser:** `z-10`, `z-50`, `z-[100]`
+  - **OverflowParser:** `overflow-hidden`, `overflow-scroll`, `overflow-x-auto`
+  - **ShadowParser:** `shadow`, `shadow-md`, `shadow-red-500`, `ring`, `ring-2`
   - **DebugParser:** `debug`
 
 ### Widgets
@@ -42,6 +46,7 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 | Grid | `grid-cols-{n}`, `gap-{n}` |
 | Justify | `justify-start/end/center/between/around/evenly` |
 | Align | `items-start/end/center/baseline/stretch` |
+| Aspect Ratio | `aspect-auto`, `aspect-square`, `aspect-video`, `aspect-[ratio]` |
 | Sizing | `w-{n}`, `h-{n}`, `w-full`, `h-screen`, `w-[n]` |
 | Spacing | `p-{n}`, `m-{n}`, `px-{n}`, `my-{n}` |
 
@@ -50,6 +55,7 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 |:---|:---|
 | Color | `text-{color}-{shade}`, `text-[#hex]` |
 | Size | `text-xs/sm/base/lg/xl/2xl/3xl/4xl/5xl/6xl` |
+| Family | `font-sans`, `font-serif`, `font-mono`, `font-[family]` |
 | Weight | `font-thin/light/normal/medium/semibold/bold/extrabold/black` |
 | Transform | `uppercase`, `lowercase`, `capitalize` |
 | Overflow | `truncate`, `line-clamp-{n}` |
@@ -67,7 +73,9 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 |:---|:---|
 | Shadow | `shadow`, `shadow-sm/md/lg/xl/2xl`, `shadow-none` |
 | Shadow Color | `shadow-{color}-{shade}`, `shadow-[#hex]` |
-| Opacity | `opacity-{n}` (via `text/bg-opacity` in color classes) |
+| Opacity | `opacity-{n}`, `opacity-[n]` |
+| Ring | `ring`, `ring-{n}`, `ring-{color}`, `ring-offset-{n}` |
+| Z-Index | `z-{n}`, `z-auto`, `z-[n]` |
 
 ### Prefixes
 | Category | Prefixes |
@@ -127,11 +135,13 @@ lib/src/theme/defaults/
 ├── box_shadows.dart
 ├── colors.dart
 ├── containers.dart
+├── font_families.dart
 ├── font_sizes.dart
 ├── font_weights.dart
 ├── leading.dart
 ├── screens.dart
-└── tracking.dart
+├── tracking.dart
+└── z_index.dart
 ```
 
 ## 7. Developer Rules
