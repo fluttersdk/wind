@@ -9,16 +9,26 @@ import '../theme/wind_theme_data.dart';
 /// WindContext holds contextual information for styling components
 /// such as the active theme, breakpoint, platform, and interaction states.
 ///
-/// This class is typically constructed via the static `build` method,
-/// which extracts the necessary information from the provided `BuildContext`.
+/// ## State-Based Styling
+///
+/// Wind uses a unified state system via [activeStates]. Built-in states
+/// (`hover`, `focus`, `disabled`) are automatically populated from
+/// [WindAnchorStateProvider], and custom states can be added via the
+/// `states` parameter in [WDiv] or [WText].
 ///
 /// Example usage:
 /// ```dart
-/// final windContext = WindContext.build(context);
-/// ```
+/// // Built-in states (automatic)
+/// WAnchor(
+///   child: WDiv(className: 'hover:bg-blue-500 focus:ring-2'),
+/// )
 ///
-/// This allows components to adapt their styles based on the current
-/// environment and user interactions.
+/// // Custom states (manual)
+/// WDiv(
+///   className: 'loading:bg-gray-400 selected:border-blue-500',
+///   states: {if (isLoading) 'loading', if (isSelected) 'selected'},
+/// )
+/// ```
 @immutable
 class WindContext {
   final WindThemeData theme;
@@ -30,9 +40,11 @@ class WindContext {
   final String platform;
   final bool isMobile;
 
-  final bool isHovering;
-  final bool isFocused;
-  final bool isDisabled;
+  /// Unified state set containing all active states.
+  ///
+  /// Built-in states: `hover`, `focus`, `disabled`
+  /// Custom states: Any string passed via `states` parameter
+  final Set<String> activeStates;
 
   const WindContext({
     required this.theme,
@@ -41,12 +53,22 @@ class WindContext {
     required this.screenHeight,
     required this.platform,
     required this.isMobile,
-    required this.isHovering,
-    required this.isFocused,
-    required this.isDisabled,
+    this.activeStates = const {},
   });
 
-  factory WindContext.build(BuildContext context) {
+  /// Whether the element is currently being hovered.
+  bool get isHovering => activeStates.contains('hover');
+
+  /// Whether the element currently has focus.
+  bool get isFocused => activeStates.contains('focus');
+
+  /// Whether the element is disabled.
+  bool get isDisabled => activeStates.contains('disabled');
+
+  /// Checks if a custom state is active.
+  bool hasState(String state) => activeStates.contains(state);
+
+  factory WindContext.build(BuildContext context, {Set<String>? states}) {
     final theme = WindTheme.of(context);
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
@@ -57,6 +79,14 @@ class WindContext {
     final pressableState =
         WindAnchorStateProvider.of(context) ?? WindAnchorState.none;
 
+    // Build unified activeStates set
+    final Set<String> builtStates = {
+      if (pressableState.isHovering) 'hover',
+      if (pressableState.isFocused) 'focus',
+      if (pressableState.isDisabled) 'disabled',
+      ...?states, // Merge custom states
+    };
+
     return WindContext(
       theme: theme,
       activeBreakpoint: _calculateActiveBreakpoint(screenWidth, theme.screens),
@@ -64,9 +94,7 @@ class WindContext {
       screenWidth: screenWidth,
       screenHeight: screenHeight,
       isMobile: platformService.isMobile,
-      isHovering: pressableState.isHovering,
-      isFocused: pressableState.isFocused,
-      isDisabled: pressableState.isDisabled,
+      activeStates: builtStates,
     );
   }
 
@@ -91,6 +119,8 @@ class WindContext {
 
   /// Generates a unique cache key based on the current context and class name.
   String cacheKey(String? className) {
-    return "$className:$activeBreakpoint:${theme.brightness}:$isHovering:$isFocused:$isDisabled:$platform";
+    final sortedStates = activeStates.toList()..sort();
+    final statesKey = sortedStates.isEmpty ? '' : ':${sortedStates.join(',')}';
+    return "$className:$activeBreakpoint:${theme.brightness}:$platform$statesKey";
   }
 }

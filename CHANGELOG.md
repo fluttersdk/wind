@@ -6,6 +6,32 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [1.0.0-alpha.3] - 2025-12-26
+
+### ✨ New Features
+
+#### State System Refactor
+- **Unified State Handling**: Removed boolean flags (`isHovering`, etc.) in favor of `activeStates` (`Set<String>`).
+- **Custom States**: Support for arbitrary states like `loading:`, `selected:`, `error:`.
+- **Extensible Prefixes**: Any string can act as a state prefix (e.g., `loading:bg-gray-400`).
+
+#### Color Opacity Support
+- **Opacity Modifier**: Support for `/50` syntax on all color utilities.
+- **Classes**: `bg-{color}/{opacity}`, `text-{color}/{opacity}`, `border-{color}/{opacity}`, `ring-{color}/{opacity}`, `shadow-{color}/{opacity}`.
+- **Examples**: `bg-blue-500/50`, `text-red-500/75`, `ring-green-500/[0.3]`.
+
+#### Ring Utilities
+- **Ring Width**: `ring`, `ring-0` to `ring-8`.
+- **Ring Color**: `ring-{color}`, `ring-{color}/{opacity}`.
+- **Ring Offset**: `ring-offset-2`, `ring-offset-{color}`.
+- **Ring Inset**: `ring-inset`.
+- **Theme Configuration**: `WindThemeData.ringColor` to set default ring color.
+
+#### Shadow Improvements
+- **Shadow Opacity**: Support for opacity modifiers in shadow colors (`shadow-blue-500/50`).
+
+---
+
 ## [1.0.0-alpha.2] - 2025-12-25
 
 ### ✨ New Features

@@ -47,12 +47,24 @@ class WDiv extends StatelessWidget {
   /// will override. Useful for creating reusable component widgets.
   final WindStyle? style;
 
+  /// Custom states for dynamic state styling (e.g., 'loading', 'selected').
+  ///
+  /// When provided, these states activate their corresponding prefix classes.
+  /// Example: `states: ['loading']` activates `loading:bg-blue-500`.
+  final Set<String>? states;
+
   /// Creates a new [WDiv] instance.
-  const WDiv({super.key, this.className, this.child, this.children, this.style})
-    : assert(
-        child == null || children == null,
-        'WDiv Violation: You cannot provide both `child` and `children`. Please select one strategy.',
-      );
+  const WDiv({
+    super.key,
+    this.className,
+    this.child,
+    this.children,
+    this.style,
+    this.states,
+  }) : assert(
+         child == null || children == null,
+         'WDiv Violation: You cannot provide both `child` and `children`. Please select one strategy.',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +72,12 @@ class WDiv extends StatelessWidget {
     // We delegate parsing to the WindParser "Orchestrator".
     // It handles caching, precedence, and state resolution internally.
     final WindStyle styles = className != null
-        ? WindParser.parse(className!, context, baseStyle: style)
+        ? WindParser.parse(
+            className!,
+            context,
+            baseStyle: style,
+            states: states,
+          )
         : style ?? const WindStyle();
 
     // 2. DEBUGGING (The Developer Experience)
@@ -317,20 +334,28 @@ class WDiv extends StatelessWidget {
     final bool needsContainer =
         styles.decoration != null ||
         innerConstraints != null ||
-        styles.boxShadow != null;
+        styles.boxShadow != null ||
+        styles.ringShadow != null;
 
     // Track if padding is consumed by Container (so we don't apply it again)
     bool paddingConsumedByContainer = false;
 
     if (needsContainer) {
-      // Merge decoration with shadows if needed
+      // Merge decoration with shadows (boxShadow + ringShadow)
       BoxDecoration? finalDecoration = styles.decoration;
-      if (styles.boxShadow != null) {
+
+      // Combine box shadows and ring shadows
+      List<BoxShadow>? combinedShadows;
+      if (styles.boxShadow != null || styles.ringShadow != null) {
+        combinedShadows = [...?styles.boxShadow, ...?styles.ringShadow];
+      }
+
+      if (combinedShadows != null && combinedShadows.isNotEmpty) {
         if (finalDecoration == null) {
-          finalDecoration = BoxDecoration(boxShadow: styles.boxShadow);
+          finalDecoration = BoxDecoration(boxShadow: combinedShadows);
         } else {
           finalDecoration = finalDecoration.copyWith(
-            boxShadow: styles.boxShadow,
+            boxShadow: combinedShadows,
           );
         }
       }

@@ -54,3 +54,40 @@ Color hexToColor(String code) {
 
   return Color(int.parse(code, radix: 16));
 }
+
+/// Parses a color class with optional opacity modifier.
+///
+/// Supports the format: `{color}-{shade}/{opacity}` where opacity is 0-100.
+///
+/// Examples:
+/// - `blue-500/50` -> blue-500 with 50% opacity
+/// - `red-500/75` -> red-500 with 75% opacity
+/// - `[#FF5733]/25` -> #FF5733 with 25% opacity
+///
+/// Returns a tuple of (colorPart, opacityValue) where opacityValue is null if no opacity.
+({String colorPart, int? opacity}) parseColorOpacity(String colorClass) {
+  final parts = colorClass.split('/');
+
+  if (parts.length == 2) {
+    final opacityStr = parts[1];
+    // Handle arbitrary opacity like /[50]
+    if (opacityStr.startsWith('[') && opacityStr.endsWith(']')) {
+      final inner = opacityStr.substring(1, opacityStr.length - 1);
+      final opacity = int.tryParse(inner);
+      return (colorPart: parts[0], opacity: opacity);
+    }
+    // Handle standard opacity like /50
+    final opacity = int.tryParse(opacityStr);
+    return (colorPart: parts[0], opacity: opacity);
+  }
+
+  return (colorPart: colorClass, opacity: null);
+}
+
+/// Applies opacity to a Color.
+///
+/// [opacity] should be 0-100 where 0 is fully transparent and 100 is fully opaque.
+Color applyOpacity(Color color, int opacity) {
+  final alpha = (opacity / 100 * 255).round().clamp(0, 255);
+  return color.withAlpha(alpha);
+}

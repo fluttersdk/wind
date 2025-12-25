@@ -82,6 +82,20 @@ WDiv(className: "border-2 border-[#FF5733] ...")
 WDiv(className: "border-2 border-[#3498DB] ...")
 ```
 
+### Opacity
+
+You can control the opacity of the border color using the color opacity modifier.
+
+| Class | Properties |
+| :--- | :--- |
+| `border-red-500/50` | border-color: rgb(239 68 68 / 0.5); |
+| `border-blue-500/[0.25]` | border-color: rgb(59 130 246 / 0.25); |
+
+```dart
+WDiv(className: "border-2 border-red-500/50 ...")
+WDiv(className: "border-2 border-blue-500/25 ...")
+```
+
 ---
 
 ## Customization

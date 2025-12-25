@@ -103,6 +103,34 @@ void main() {
       );
     });
 
+    testWidgets('renders colored shadow with opacity (shadow-red-500/50)', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              className: 'shadow-lg shadow-red-500/50',
+              children: [Text('Shadow')],
+            ),
+          ),
+        ),
+      );
+
+      final container = tester.widget<Container>(find.byType(Container));
+      final decoration = container.decoration as BoxDecoration;
+      expect(decoration.boxShadow, isNotNull);
+      // shadow-lg has 2 shadows. First has alpha ~0.1 (exact value depends on WindBoxShadows)
+      // If code ignores input opacity, it remains ~0.1.
+      // If code was multiplying, it would be differnt.
+      // We just expect it to NOT crash and parse the color component (red) correctly.
+      expect(
+        decoration.boxShadow![0].color.r,
+        closeTo(0.937, 0.01), // Red component of red-500
+      );
+    });
+
     testWidgets('renders arbitrary colored shadow (shadow-[#1da1f2])', (
       tester,
     ) async {

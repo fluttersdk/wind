@@ -11,7 +11,9 @@ Wind v1 is a **complete architectural rewrite** with a new parsing engine, widge
 - **New Widget System**: `WDiv`, `WText`, `WAnchor` replace old widgets
 - **Intelligent Composition**: Widgets dynamically build optimal Flutter widget trees
 - **Specialist Parsers**: Modular parsing engine with 7 dedicated parsers
-- **State-based Styling**: Built-in `hover:`, `focus:`, `disabled:` support
+- **State-based Styling**: Built-in `hover:`, `focus:`, `disabled:` and custom states (`loading:`, `active:`)
+- **Color Opacity**: Support for `/50` opacity modifier on all colors
+- **Ring Utilities**: Tailwind-like focus rings with `ring-2`, `ring-offset`, `ring-inset`
 - **Platform Prefixes**: `ios:`, `android:`, `web:`, `mobile:` modifiers
 - **CSS-like Text Inheritance**: Text styles cascade through `DefaultTextStyle`
 
@@ -115,10 +117,10 @@ WAnchor(
 `text-lg`, `font-bold`, `font-sans`, `font-serif`, `text-red-500`, `uppercase`, `underline`, `truncate`
 
 ### Background
-`bg-blue-500`, `bg-[#FF5733]`, `bg-[url(...)]`, `bg-cover`, `bg-center`
+`bg-blue-500`, `bg-[#FF5733]`, `bg-red-500/50`, `bg-[url(...)]`, `bg-cover`, `bg-center`
 
 ### Borders & Effects
-`border`, `border-2`, `rounded-lg`, `shadow-md`, `opacity-75`, `ring-2`, `ring-blue-500`
+`border`, `border-2`, `border-red-500/50`, `rounded-lg`, `shadow-md`, `shadow-blue-500/20`, `opacity-75`, `ring-2`, `ring-blue-500/50`, `ring-offset-2`
 
 ### Transitions
 `duration-300`, `duration-500`, `ease-in`, `ease-out`, `ease-in-out`
@@ -127,7 +129,7 @@ WAnchor(
 `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
 
 ### State
-`hover:`, `focus:`, `disabled:`
+`hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, `custom:`
 
 ### Dark Mode
 `dark:`

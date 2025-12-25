@@ -11,6 +11,7 @@ import 'defaults/font_weights.dart' as default_font_weights;
 import 'defaults/leading.dart' as default_leading;
 import 'defaults/screens.dart' as default_screens;
 import 'defaults/tracking.dart' as default_tracking;
+import 'defaults/ring_widths.dart' as default_ring_widths;
 
 /// The REM unit used for sizing calculations.
 const int windRemUnit = 4;
@@ -75,6 +76,16 @@ class WindThemeData {
   /// Defaults to [default_font_families.fontFamilies].
   final Map<String, String> fontFamilies;
 
+  /// A map of ring width names to width values.
+  ///
+  /// Defaults to [default_ring_widths.WindRingWidths.widths].
+  final Map<String, double> ringWidths;
+
+  /// A map of ring offset names to offset values.
+  ///
+  /// Defaults to [default_ring_widths.WindRingWidths.offsets].
+  final Map<String, double> ringOffsets;
+
   /// Whether to apply the default 'sans' font family to all text.
   ///
   /// When true, WindTheme wraps its child with DefaultTextStyle
@@ -87,6 +98,11 @@ class WindThemeData {
   ///
   /// Defaults to 4.0.
   final double baseSpacingUnit;
+
+  /// The default color for ring utility.
+  ///
+  /// Defaults to Tailwind's blue-500 (#3B82F6).
+  final Color ringColor;
 
   /// The resolved colors based on the theme's brightness.
   late final Map<String, MaterialColor> _resolvedColors;
@@ -107,8 +123,11 @@ class WindThemeData {
     Map<String, double>? borderWidths,
     Map<String, double>? borderRadius,
     Map<String, String>? fontFamilies,
+    Map<String, double>? ringWidths,
+    Map<String, double>? ringOffsets,
     this.applyDefaultFontFamily = true,
     this.baseSpacingUnit = 4.0,
+    this.ringColor = const Color(0xFF3B82F6), // Tailwind blue-500
   }) : colors = colors ?? _initColors(),
        fontSizes = fontSizes ?? default_font_sizes.fontSizes,
        fontWeights = fontWeights ?? default_font_weights.fontWeights,
@@ -117,6 +136,8 @@ class WindThemeData {
        borderWidths = borderWidths ?? default_border_widths.borderWidths,
        borderRadius = borderRadius ?? default_border_radius.borderRadius,
        fontFamilies = fontFamilies ?? default_font_families.fontFamilies,
+       ringWidths = ringWidths ?? default_ring_widths.WindRingWidths.widths,
+       ringOffsets = ringOffsets ?? default_ring_widths.WindRingWidths.offsets,
        containers = containers ?? default_containers.containers,
        screens = screens ?? default_screens.screens {
     _resolvedColors = _resolveColors();
@@ -229,8 +250,11 @@ class WindThemeData {
     Map<String, double>? borderWidths,
     Map<String, double>? borderRadius,
     Map<String, String>? fontFamilies,
+    Map<String, double>? ringWidths,
+    Map<String, double>? ringOffsets,
     bool? applyDefaultFontFamily,
     double? baseSpacingUnit,
+    Color? ringColor,
   }) {
     return WindThemeData(
       brightness: brightness ?? this.brightness,
@@ -264,9 +288,16 @@ class WindThemeData {
       fontFamilies: fontFamilies != null
           ? (Map.from(this.fontFamilies)..addAll(fontFamilies))
           : this.fontFamilies,
+      ringWidths: ringWidths != null
+          ? (Map.from(this.ringWidths)..addAll(ringWidths))
+          : this.ringWidths,
+      ringOffsets: ringOffsets != null
+          ? (Map.from(this.ringOffsets)..addAll(ringOffsets))
+          : this.ringOffsets,
       applyDefaultFontFamily:
           applyDefaultFontFamily ?? this.applyDefaultFontFamily,
       baseSpacingUnit: baseSpacingUnit ?? this.baseSpacingUnit,
+      ringColor: ringColor ?? this.ringColor,
     );
   }
 }

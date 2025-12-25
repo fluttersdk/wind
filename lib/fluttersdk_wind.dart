@@ -14,6 +14,7 @@ export 'src/parser/parsers/zindex_parser.dart';
 export 'src/parser/parsers/overflow_parser.dart';
 export 'src/parser/parsers/aspectratio_parser.dart';
 export 'src/parser/parsers/transition_parser.dart';
+export 'src/parser/parsers/ring_parser.dart';
 export 'src/parser/parsers/wind_parser_interface.dart';
 export 'src/parser/wind_context.dart';
 export 'src/parser/wind_parser.dart';

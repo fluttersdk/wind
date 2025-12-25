@@ -191,7 +191,9 @@ class TextParser implements WindParserInterface {
 
       // 1. Text Color
       if (color == null) {
-        final match = _textColorRegex.firstMatch(className);
+        final opacityData = parseColorOpacity(className);
+        final match = _textColorRegex.firstMatch(opacityData.colorPart);
+
         if (match != null) {
           Color? parsedColor;
 
@@ -205,6 +207,9 @@ class TextParser implements WindParserInterface {
           }
 
           if (parsedColor != null) {
+            if (opacityData.opacity != null) {
+              parsedColor = applyOpacity(parsedColor, opacityData.opacity!);
+            }
             color = parsedColor;
             continue;
           }

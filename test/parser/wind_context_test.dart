@@ -223,9 +223,6 @@ void main() {
           activeBreakpoint: 'md',
           platform: 'macos',
           isMobile: false,
-          isHovering: false,
-          isFocused: false,
-          isDisabled: false,
           screenWidth: 800,
           screenHeight: 600,
         );
@@ -234,9 +231,6 @@ void main() {
           activeBreakpoint: 'md',
           platform: 'macos',
           isMobile: false,
-          isHovering: false,
-          isFocused: false,
-          isDisabled: false,
           screenWidth: 800,
           screenHeight: 600,
         );
@@ -250,9 +244,6 @@ void main() {
           activeBreakpoint: 'md',
           platform: 'macos',
           isMobile: false,
-          isHovering: false,
-          isFocused: false,
-          isDisabled: false,
           screenWidth: 800,
           screenHeight: 600,
         );
@@ -266,9 +257,6 @@ void main() {
           activeBreakpoint: 'md',
           platform: 'macos',
           isMobile: false,
-          isHovering: false,
-          isFocused: false,
-          isDisabled: false,
           screenWidth: 800,
           screenHeight: 600,
         );
@@ -283,13 +271,10 @@ void main() {
           activeBreakpoint: 'md',
           platform: 'macos',
           isMobile: false,
-          isHovering: false,
-          isFocused: false,
-          isDisabled: false,
           screenWidth: 800,
           screenHeight: 600,
         );
-        final context2 = context1.copyWith(isHovering: true);
+        final context2 = context1.copyWith(customStates: {'hover'});
 
         expect(context1.cacheKey('p-4'), isNot(context2.cacheKey('p-4')));
       });
@@ -303,9 +288,6 @@ void main() {
           activeBreakpoint: 'md',
           platform: 'macos',
           isMobile: false,
-          isHovering: false,
-          isFocused: false,
-          isDisabled: false,
           screenWidth: 800,
           screenHeight: 600,
         );
@@ -323,20 +305,16 @@ extension on WindContext {
     String? activeBreakpoint,
     String? platform,
     bool? isMobile,
-    bool? isHovering,
-    bool? isFocused,
-    bool? isDisabled,
+    Set<String>? customStates,
   }) {
     return WindContext(
       theme: theme ?? this.theme,
       activeBreakpoint: activeBreakpoint ?? this.activeBreakpoint,
       platform: platform ?? this.platform,
       isMobile: isMobile ?? this.isMobile,
-      isHovering: isHovering ?? this.isHovering,
-      isFocused: isFocused ?? this.isFocused,
-      isDisabled: isDisabled ?? this.isDisabled,
       screenWidth: screenWidth,
       screenHeight: screenHeight,
+      activeStates: customStates ?? activeStates,
     );
   }
 }

@@ -41,6 +41,19 @@ WAnchor(
 )
 ```
 
+### Opacity
+You can control the opacity of the text color using the color opacity modifier.
+
+| Class | Properties |
+| :--- | :--- |
+| `text-red-500/50` | color: rgb(239 68 68 / 0.5); |
+| `text-blue-500/[0.25]` | color: rgb(59 130 246 / 0.25); |
+
+```dart
+WText("50% Opacity", className: "text-red-500/50")
+WText("25% Opacity", className: "text-blue-500/25")
+```
+
 ## Text Alignment
 Utilities for controlling the alignment of text.
 

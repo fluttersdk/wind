@@ -58,41 +58,74 @@ class ShadowParser implements WindParserInterface {
         continue;
       }
 
+      final opacityData = parseColorOpacity(className);
+      final effectiveClassName = opacityData.colorPart;
+      final opacity = opacityData.opacity;
+
+      // Handle specific sizes e.g. shadow-lg
+      if (WindBoxShadows.shadows.containsKey(
+        effectiveClassName.replaceFirst('shadow-', ''), // use effective?
+        // Wait, shadow-lg/50 is invalid syntax for size.
+        // But parseColorOpacity strips /50.
+        // Should we allow shadow-lg/50? Tailwind: no.
+        // So we should check if opacity is null for size classes?
+        // Actually simplest is to just check original className logic for sizes.
+      )) {
+        // This block handles shadow-lg etc. They don't support opacity usually.
+        // But wait, "shadow-blue-500/50" is color.
+        // "shadow-lg" is size.
+        // Let's use effectiveClassName for color checks only.
+      }
+
       // Handle arbitrary shadow color e.g. shadow-[#ff0000]
-      final arbitraryMatch = _arbitraryShadowColorRegExp.firstMatch(className);
+      final arbitraryMatch = _arbitraryShadowColorRegExp.firstMatch(
+        effectiveClassName,
+      );
       if (arbitraryMatch != null) {
         if (shadowColor == null) {
           final value = arbitraryMatch.namedGroup('value')!;
-          shadowColor = hexToColor(value);
+          Color parsedColor = hexToColor(value);
+
+          if (opacity != null) {
+            parsedColor = applyOpacity(parsedColor, opacity);
+          }
+          shadowColor = parsedColor;
         }
         continue;
       }
 
       // Handle standard shadow color e.g. shadow-red-500
-      final colorMatch = _shadowColorRegExp.firstMatch(className);
+      final colorMatch = _shadowColorRegExp.firstMatch(effectiveClassName);
       if (colorMatch != null &&
           !WindBoxShadows.shadows.containsKey(
-            className.replaceFirst('shadow-', ''),
+            effectiveClassName.replaceFirst('shadow-', ''),
           )) {
         if (shadowColor == null) {
           final colorName = colorMatch.namedGroup('color')!;
           final shade = colorMatch.namedGroup('shade');
 
           if (context.theme.colors.containsKey(colorName)) {
+            Color? parsedColor;
             if (shade != null) {
               final shadeValue = int.tryParse(shade);
               if (shadeValue != null &&
                   context.theme.colors[colorName]![shadeValue] != null) {
-                shadowColor = context.theme.colors[colorName]![shadeValue];
+                parsedColor = context.theme.colors[colorName]![shadeValue];
               }
             } else {
-              // Default color if no shade provided (unlikely for tailwind colors but possible)
-              // For standard palette, usually need shade. If basic color like 'black', 'white'
+              // Default color if no shade provided
               if (colorName == 'white') {
-                shadowColor = Colors.white;
+                parsedColor = Colors.white;
               } else if (colorName == 'black') {
-                shadowColor = Colors.black;
+                parsedColor = Colors.black;
               }
+            }
+
+            if (parsedColor != null) {
+              if (opacity != null) {
+                parsedColor = applyOpacity(parsedColor, opacity);
+              }
+              shadowColor = parsedColor;
             }
           }
         }

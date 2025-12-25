@@ -38,6 +38,11 @@ import 'pages/effects/overflow_directional.dart';
 import 'pages/effects/transition_duration.dart';
 import 'pages/effects/transition_ease.dart';
 import 'pages/effects/transition_combined.dart';
+import 'pages/effects/ring_basic.dart';
+import 'pages/effects/ring_colors.dart';
+import 'pages/effects/ring_opacity.dart';
+import 'pages/effects/states_basic.dart';
+import 'pages/effects/states_custom.dart';
 
 final Map<String, Widget> appRoutes = {
   // Effects
@@ -49,6 +54,11 @@ final Map<String, Widget> appRoutes = {
   '/effects/transition_duration': const TransitionDurationPage(),
   '/effects/transition_ease': const TransitionEasePage(),
   '/effects/transition_combined': const TransitionCombinedPage(),
+  '/effects/ring_basic': const RingBasicExamplePage(),
+  '/effects/ring_colors': const RingColorsExamplePage(),
+  '/effects/ring_opacity': const RingOpacityExamplePage(),
+  '/effects/states_basic': const StatesBasicExamplePage(),
+  '/effects/states_custom': const StatesCustomExamplePage(),
   '/': const HomePage(),
   '/examples/basic': const BasicExamplePage(),
   '/borders/radius_basic': const RadiusBasicPage(),

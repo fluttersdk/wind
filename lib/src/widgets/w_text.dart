@@ -39,6 +39,9 @@ class WText extends StatelessWidget {
   /// If true, renders [SelectableText] instead of [Text].
   final bool selectable;
 
+  /// Custom states for dynamic state styling (e.g., 'loading', 'selected').
+  final Set<String>? states;
+
   const WText(
     this.data, {
     super.key,
@@ -46,13 +49,19 @@ class WText extends StatelessWidget {
     this.style,
     this.textStyle,
     this.selectable = false,
+    this.states,
   });
 
   @override
   Widget build(BuildContext context) {
     // 1. CALL THE "ORCHESTRATOR": Style Resolution final
     WindStyle styles = className != null
-        ? WindParser.parse(className!, context, baseStyle: style)
+        ? WindParser.parse(
+            className!,
+            context,
+            baseStyle: style,
+            states: states,
+          )
         : style ?? const WindStyle();
 
     // 2. INITIALIZE DEBUGGER

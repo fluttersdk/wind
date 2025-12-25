@@ -8,9 +8,6 @@ WindContext createTestContext() {
     activeBreakpoint: 'base',
     platform: 'macos',
     isMobile: false,
-    isHovering: false,
-    isFocused: false,
-    isDisabled: false,
     screenWidth: 1024,
     screenHeight: 768,
   );

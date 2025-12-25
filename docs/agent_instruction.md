@@ -10,7 +10,7 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 ## 2. Architecture
 
 ### Parsing Engine
-- **WindParser:** Takes `className` + `BuildContext`, builds WindContext, resolves prefixed classes (`md:`, `hover:`, `dark:`), delegates to sub-parsers. Static cache.
+- **WindParser:** Takes `className` + `BuildContext`, builds WindContext (with `activeStates`), resolves prefixed classes (e.g., `hover:`, `dark:`, `loading:`), delegates to sub-parsers. Static cache.
 - **WindStyle:** Immutable data object with all resolved style properties.
 - **Specialist Parsers** (WindParserInterface, "Last Class Wins"):
   - **DisplayParser:** `block`, `flex`, `grid`, `hidden`
@@ -54,7 +54,7 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 ### Typography
 | Category | Classes |
 |:---|:---|
-| Color | `text-{color}-{shade}`, `text-[#hex]` |
+| Color | `text-{color}-{shade}`, `text-[#hex]`, `text-{color}/{opacity}` |
 | Size | `text-xs/sm/base/lg/xl/2xl/3xl/4xl/5xl/6xl` |
 | Family | `font-sans`, `font-serif`, `font-mono`, `font-[family]` |
 | Weight | `font-thin/light/normal/medium/semibold/bold/extrabold/black` |
@@ -64,18 +64,18 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 ### Backgrounds & Borders
 | Category | Classes |
 |:---|:---|
-| BG Color | `bg-{color}-{shade}`, `bg-[#hex]` |
+| BG Color | `bg-{color}-{shade}`, `bg-[#hex]`, `bg-{color}/{opacity}` |
 | Border Width | `border`, `border-0/2/4/8`, `border-t/r/b/l` |
-| Border Color | `border-{color}-{shade}`, `border-[#hex]` |
+| Border Color | `border-{color}-{shade}`, `border-[#hex]`, `border-{color}/{opacity}` |
 | Radius | `rounded`, `rounded-sm/md/lg/xl/2xl/3xl/full/none` |
 
 ### Effects & Filters
 | Category | Classes |
 |:---|:---|
 | Shadow | `shadow`, `shadow-sm/md/lg/xl/2xl`, `shadow-none` |
-| Shadow Color | `shadow-{color}-{shade}`, `shadow-[#hex]` |
+| Shadow Color | `shadow-{color}-{shade}`, `shadow-[#hex]`, `shadow-{color}/{opacity}` |
 | Opacity | `opacity-{n}`, `opacity-[n]` |
-| Ring | `ring`, `ring-{n}`, `ring-{color}`, `ring-offset-{n}` |
+| Ring | `ring`, `ring-{n}`, `ring-{color}/{opacity}`, `ring-offset`, `ring-inset` |
 | Z-Index | `z-{n}`, `z-auto`, `z-[n]` |
 | Transition | `duration-{ms}`, `ease-{curve}` |
 
@@ -83,7 +83,7 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 | Category | Prefixes |
 |:---|:---|
 | Responsive | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` |
-| State | `hover:`, `focus:`, `disabled:` |
+| State | `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, `custom:` |
 | Dark Mode | `dark:` |
 | Platform | `ios:`, `android:`, `web:`, `mobile:` |
 

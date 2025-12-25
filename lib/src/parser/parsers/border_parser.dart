@@ -106,14 +106,19 @@ class BorderParser implements WindParserInterface {
 
     // Process classes in order (last wins)
     for (final className in classes) {
+      // Check for opacity syntax first
+      final opacityData = parseColorOpacity(className);
+      final effectiveClassName = opacityData.colorPart;
+      final opacity = opacityData.opacity;
+
       // Check border style
-      if (_borderStyleMap.containsKey(className)) {
-        style = _borderStyleMap[className]!;
+      if (_borderStyleMap.containsKey(effectiveClassName)) {
+        style = _borderStyleMap[effectiveClassName]!;
         continue;
       }
 
       // Check uniform border width from theme
-      final themeWidth = _getBorderWidth(className, theme);
+      final themeWidth = _getBorderWidth(effectiveClassName, theme);
       if (themeWidth != null) {
         width = themeWidth;
         topWidth = rightWidth = bottomWidth = leftWidth = null;
@@ -121,7 +126,9 @@ class BorderParser implements WindParserInterface {
       }
 
       // Check directional border width
-      final dirMatch = _directionalBorderWidthRegex.firstMatch(className);
+      final dirMatch = _directionalBorderWidthRegex.firstMatch(
+        effectiveClassName,
+      );
       if (dirMatch != null) {
         final direction = dirMatch.group(1);
         final widthStr = dirMatch.group(2);
@@ -147,19 +154,27 @@ class BorderParser implements WindParserInterface {
       }
 
       // Check border color
-      final colorMatch = _borderColorRegex.firstMatch(className);
+      final colorMatch = _borderColorRegex.firstMatch(effectiveClassName);
       if (colorMatch != null) {
+        Color? parsedColor;
         if (colorMatch.namedGroup('arbitrary') != null) {
-          color = hexToColor(colorMatch.namedGroup('arbitrary')!);
+          parsedColor = hexToColor(colorMatch.namedGroup('arbitrary')!);
         } else {
           final colorName = colorMatch.namedGroup('color');
           final shadeStr = colorMatch.namedGroup('shade');
           if (colorName != null && shadeStr != null) {
             final shade = int.parse(shadeStr);
             if (theme.isValidColor(colorName, shade: shade)) {
-              color = theme.getColor(colorName, shade);
+              parsedColor = theme.getColor(colorName, shade);
             }
           }
+        }
+
+        if (parsedColor != null) {
+          if (opacity != null) {
+            parsedColor = applyOpacity(parsedColor, opacity);
+          }
+          color = parsedColor;
         }
         continue;
       }
