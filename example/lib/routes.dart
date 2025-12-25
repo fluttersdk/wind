@@ -27,6 +27,7 @@ import 'pages/typography/alignment.dart';
 import 'pages/typography/basics.dart';
 import 'pages/typography/colors.dart';
 import 'pages/typography/decoration.dart';
+import 'pages/typography/font_family.dart';
 
 // Effects
 import 'pages/effects/shadows_basic.dart';
@@ -54,6 +55,7 @@ final Map<String, Widget> appRoutes = {
   '/typography/alignment': const TypographyAlignmentPage(),
 
   '/typography/decoration': const TypographyDecorationPage(),
+  '/typography/font_family': const FontFamilyExamplePage(),
   '/layout/display': const DisplayExamplePage(),
   '/layout/visibility': const VisibilityExamplePage(),
   '/layout/flex_basic': const FlexBasicExamplePage(),

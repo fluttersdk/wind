@@ -54,6 +54,11 @@ class TextParser implements WindParserInterface {
     r'^(?<style>italic|not-italic)$',
   );
 
+  /// Regex for font family: `font-sans`, `font-serif`, `font-mono`, `font-[CustomFont]`
+  static final RegExp _fontFamilyRegex = RegExp(
+    r'^font-(?:(?<family>sans|serif|mono|[a-zA-Z]+)|\[(?<arbitrary>[^\]]+)\])$',
+  );
+
   /// Regex for text decoration: `underline`, `line-through`
   static final RegExp _textDecorationRegex = RegExp(
     r'^(?<decoration>underline|overline|line-through|no-underline)$',
@@ -256,12 +261,16 @@ class TextParser implements WindParserInterface {
               final index = (weightValue ~/ 100) - 1;
               if (index >= 0 && index <= 8) {
                 fontWeight = FontWeight.values[index];
+                continue;
               }
             }
           } else {
-            fontWeight = theme.fontWeights[match.namedGroup('weight')];
+            final parsedWeight = theme.fontWeights[match.namedGroup('weight')];
+            if (parsedWeight != null) {
+              fontWeight = parsedWeight;
+              continue;
+            }
           }
-          continue;
         }
       }
 
@@ -446,6 +455,20 @@ class TextParser implements WindParserInterface {
             if (maxLines != null) {
               textOverflow ??= TextOverflow.ellipsis;
             }
+          }
+          continue;
+        }
+      }
+
+      // 16. Font Family
+      if (fontFamily == null) {
+        final match = _fontFamilyRegex.firstMatch(className);
+        if (match != null) {
+          if (match.namedGroup('arbitrary') != null) {
+            fontFamily = match.namedGroup('arbitrary')!;
+          } else {
+            final familyName = match.namedGroup('family')!;
+            fontFamily = theme.fontFamilies[familyName] ?? familyName;
           }
           continue;
         }

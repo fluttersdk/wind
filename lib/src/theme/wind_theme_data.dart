@@ -5,6 +5,7 @@ import 'defaults/border_radius.dart' as default_border_radius;
 import 'defaults/border_widths.dart' as default_border_widths;
 import 'defaults/colors.dart' as default_colors;
 import 'defaults/containers.dart' as default_containers;
+import 'defaults/font_families.dart' as default_font_families;
 import 'defaults/font_sizes.dart' as default_font_sizes;
 import 'defaults/font_weights.dart' as default_font_weights;
 import 'defaults/leading.dart' as default_leading;
@@ -69,6 +70,11 @@ class WindThemeData {
   /// Defaults to [default_border_radius.borderRadius].
   final Map<String, double> borderRadius;
 
+  /// A map of font family names to font family values.
+  ///
+  /// Defaults to [default_font_families.fontFamilies].
+  final Map<String, String> fontFamilies;
+
   /// The base spacing unit used for spacing calculations.
   ///
   /// Defaults to 4.0.
@@ -92,6 +98,7 @@ class WindThemeData {
     Map<String, double>? leading,
     Map<String, double>? borderWidths,
     Map<String, double>? borderRadius,
+    Map<String, String>? fontFamilies,
     this.baseSpacingUnit = 4.0,
   }) : colors = colors ?? _initColors(),
        fontSizes = fontSizes ?? default_font_sizes.fontSizes,
@@ -100,6 +107,7 @@ class WindThemeData {
        leading = leading ?? default_leading.leading,
        borderWidths = borderWidths ?? default_border_widths.borderWidths,
        borderRadius = borderRadius ?? default_border_radius.borderRadius,
+       fontFamilies = fontFamilies ?? default_font_families.fontFamilies,
        containers = containers ?? default_containers.containers,
        screens = screens ?? default_screens.screens {
     _resolvedColors = _resolveColors();
@@ -211,6 +219,7 @@ class WindThemeData {
     Map<String, double>? leading,
     Map<String, double>? borderWidths,
     Map<String, double>? borderRadius,
+    Map<String, String>? fontFamilies,
     double? baseSpacingUnit,
   }) {
     return WindThemeData(
@@ -242,6 +251,9 @@ class WindThemeData {
       borderRadius: borderRadius != null
           ? (Map.from(this.borderRadius)..addAll(borderRadius))
           : this.borderRadius,
+      fontFamilies: fontFamilies != null
+          ? (Map.from(this.fontFamilies)..addAll(fontFamilies))
+          : this.fontFamilies,
       baseSpacingUnit: baseSpacingUnit ?? this.baseSpacingUnit,
     );
   }
