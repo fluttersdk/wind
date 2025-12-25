@@ -121,8 +121,6 @@ class FlexboxGridParser implements WindParserInterface {
     List<String>? classes,
     WindContext context,
   ) {
-    debugPrint('FlexboxGridParser parsing classes: $classes');
-
     if (classes == null) return styles;
 
     final theme = context.theme;
@@ -147,8 +145,6 @@ class FlexboxGridParser implements WindParserInterface {
 
     for (var i = classes.length - 1; i >= 0; i--) {
       final className = classes[i];
-
-      debugPrint('FlexboxGridParser checking class: $className');
 
       // 0. Hidden check
       if (className == 'hidden') {

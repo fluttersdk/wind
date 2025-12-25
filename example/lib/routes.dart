@@ -30,11 +30,13 @@ import 'pages/typography/decoration.dart';
 // Effects
 import 'pages/effects/shadows_basic.dart';
 import 'pages/effects/shadows_colored.dart';
+import 'pages/effects/opacity.dart';
 
 final Map<String, Widget> appRoutes = {
   // Effects
   '/effects/shadows_basic': const ShadowsBasicExamplePage(),
   '/effects/shadows_colored': const ShadowsColoredExamplePage(),
+  '/effects/opacity': const OpacityExamplePage(),
   '/': const HomePage(),
   '/examples/basic': const BasicExamplePage(),
   '/borders/radius_basic': const RadiusBasicPage(),
