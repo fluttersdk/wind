@@ -11,6 +11,7 @@ import 'parsers/text_parser.dart';
 import 'parsers/debug_parser.dart';
 import 'parsers/shadow_parser.dart';
 import 'parsers/opacity_parser.dart';
+import 'parsers/zindex_parser.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
 
@@ -38,6 +39,7 @@ class WindParser {
     'debug': const DebugParser(),
     'shadow': const ShadowParser(),
     'opacity': const OpacityParser(),
+    'zindex': const ZIndexParser(),
   };
 
   /// Clears the style cache
