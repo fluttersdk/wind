@@ -88,6 +88,11 @@ class WindThemeData {
   /// Defaults to 4.0.
   final double baseSpacingUnit;
 
+  /// The default color for ring utility.
+  ///
+  /// Defaults to Tailwind's blue-500 (#3B82F6).
+  final Color ringColor;
+
   /// The resolved colors based on the theme's brightness.
   late final Map<String, MaterialColor> _resolvedColors;
 
@@ -109,6 +114,7 @@ class WindThemeData {
     Map<String, String>? fontFamilies,
     this.applyDefaultFontFamily = true,
     this.baseSpacingUnit = 4.0,
+    this.ringColor = const Color(0xFF3B82F6), // Tailwind blue-500
   }) : colors = colors ?? _initColors(),
        fontSizes = fontSizes ?? default_font_sizes.fontSizes,
        fontWeights = fontWeights ?? default_font_weights.fontWeights,
@@ -231,6 +237,7 @@ class WindThemeData {
     Map<String, String>? fontFamilies,
     bool? applyDefaultFontFamily,
     double? baseSpacingUnit,
+    Color? ringColor,
   }) {
     return WindThemeData(
       brightness: brightness ?? this.brightness,
@@ -267,6 +274,7 @@ class WindThemeData {
       applyDefaultFontFamily:
           applyDefaultFontFamily ?? this.applyDefaultFontFamily,
       baseSpacingUnit: baseSpacingUnit ?? this.baseSpacingUnit,
+      ringColor: ringColor ?? this.ringColor,
     );
   }
 }

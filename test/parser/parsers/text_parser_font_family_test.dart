@@ -8,9 +8,6 @@ WindContext createTestContext({Map<String, String>? fontFamilies}) {
     activeBreakpoint: 'base',
     platform: 'macos',
     isMobile: false,
-    isHovering: false,
-    isFocused: false,
-    isDisabled: false,
     screenWidth: 1024,
     screenHeight: 768,
   );

@@ -159,6 +159,21 @@ class WindStyle {
   /// Transition curve e.g., ease-in, ease-out, ease-in-out
   final Curve? transitionCurve;
 
+  /// Ring shadow e.g., ring, ring-2
+  final List<BoxShadow>? ringShadow;
+
+  /// Ring color e.g., ring-blue-500
+  final Color? ringColor;
+
+  /// Ring width e.g., ring-2, ring-4
+  final double? ringWidth;
+
+  /// Ring offset e.g., ring-offset-2
+  final double? ringOffset;
+
+  /// Ring inset e.g., ring-inset
+  final bool? ringInset;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -210,6 +225,11 @@ class WindStyle {
     this.aspectRatio,
     this.transitionDuration,
     this.transitionCurve,
+    this.ringShadow,
+    this.ringColor,
+    this.ringWidth,
+    this.ringOffset,
+    this.ringInset,
   });
 
   WindStyle copyWith({
@@ -263,6 +283,11 @@ class WindStyle {
     double? aspectRatio,
     Duration? transitionDuration,
     Curve? transitionCurve,
+    List<BoxShadow>? ringShadow,
+    Color? ringColor,
+    double? ringWidth,
+    double? ringOffset,
+    bool? ringInset,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -331,6 +356,11 @@ class WindStyle {
       aspectRatio: aspectRatio ?? this.aspectRatio,
       transitionDuration: transitionDuration ?? this.transitionDuration,
       transitionCurve: transitionCurve ?? this.transitionCurve,
+      ringShadow: ringShadow ?? this.ringShadow,
+      ringColor: ringColor ?? this.ringColor,
+      ringWidth: ringWidth ?? this.ringWidth,
+      ringOffset: ringOffset ?? this.ringOffset,
+      ringInset: ringInset ?? this.ringInset,
     );
   }
 

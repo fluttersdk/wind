@@ -18,9 +18,6 @@ void main() {
       activeBreakpoint: 'md',
       platform: 'web',
       isMobile: false,
-      isHovering: false,
-      isFocused: false,
-      isDisabled: false,
     );
   });
 

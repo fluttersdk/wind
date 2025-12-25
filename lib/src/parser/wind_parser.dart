@@ -15,6 +15,7 @@ import 'parsers/zindex_parser.dart';
 import 'parsers/overflow_parser.dart';
 import 'parsers/aspectratio_parser.dart';
 import 'parsers/transition_parser.dart';
+import 'parsers/ring_parser.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
 
@@ -46,6 +47,7 @@ class WindParser {
     'overflow': const OverflowParser(),
     'aspectratio': const AspectRatioParser(),
     'transition': const TransitionParser(),
+    'ring': const RingParser(),
   };
 
   /// Clears the style cache
@@ -56,12 +58,15 @@ class WindParser {
   /// Parses the given class name into a WindStyle
   /// If a baseStyle is provided, it will be used as the starting point
   /// for the parsed style.
+  /// If states is provided, it will be used to resolve custom state prefixes
+  /// (e.g., 'loading:', 'selected:').
   static WindStyle parse(
     String className,
     BuildContext context, {
     WindStyle? baseStyle,
+    Set<String>? states,
   }) {
-    final windContext = WindContext.build(context);
+    final windContext = WindContext.build(context, states: states);
     final cacheKey = windContext.cacheKey(className);
 
     if (_styleCache.containsKey(cacheKey)) {
@@ -175,12 +180,10 @@ class WindParser {
       bool isActive = true;
 
       for (final prefix in prefixes) {
-        if (prefix == 'hover') {
-          if (!context.isHovering) isActive = false;
-        } else if (prefix == 'focus') {
-          if (!context.isFocused) isActive = false;
-        } else if (prefix == 'disabled') {
-          if (!context.isDisabled) isActive = false;
+        // State prefixes (hover, focus, disabled, + custom)
+        // All states are now in activeStates set
+        if (prefix == 'hover' || prefix == 'focus' || prefix == 'disabled') {
+          if (!context.activeStates.contains(prefix)) isActive = false;
         } else if (prefix == context.platform) {
           // platform matches, do nothing
         } else if (prefix == 'mobile' && context.isMobile) {
@@ -191,7 +194,10 @@ class WindParser {
           if (!activeBreakpoints.contains(prefix)) {
             isActive = false;
           }
+        } else if (context.activeStates.contains(prefix)) {
+          // Custom state is active, do nothing
         } else {
+          // Unknown prefix -> not active
           isActive = false;
         }
       }

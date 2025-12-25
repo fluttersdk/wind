@@ -18,17 +18,21 @@ WindContext createTestContext({
   Brightness brightness = Brightness.light,
   String platform = 'unknown',
   bool isMobile = false,
+  Set<String>? customStates,
 }) {
   return WindContext(
     theme: testTheme.copyWith(brightness: brightness),
-    isHovering: isHovering,
-    isFocused: isFocused,
-    isDisabled: isDisabled,
     activeBreakpoint: activeBreakpoint,
     platform: platform,
     isMobile: isMobile,
     screenWidth: 400,
     screenHeight: 800,
+    activeStates: {
+      if (isHovering) 'hover',
+      if (isFocused) 'focus',
+      if (isDisabled) 'disabled',
+      ...?customStates,
+    },
   );
 }
 

@@ -20,11 +20,11 @@ class ShadowParser implements WindParserInterface {
   const ShadowParser();
 
   static final RegExp _shadowColorRegExp = RegExp(
-    r'^shadow-(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]+))?$',
+    r'^shadow-(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]+))?(?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
   );
 
   static final RegExp _arbitraryShadowColorRegExp = RegExp(
-    r'^shadow-\[(?<value>#[0-9a-fA-F]{3,8})\]$',
+    r'^shadow-\[(?<value>#[0-9a-fA-F]{3,8})\](?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
   );
 
   @override
@@ -58,12 +58,30 @@ class ShadowParser implements WindParserInterface {
         continue;
       }
 
-      // Handle arbitrary shadow color e.g. shadow-[#ff0000]
+      // Handle arbitrary shadow color e.g. shadow-[#ff0000], shadow-[#ff0000]/50
       final arbitraryMatch = _arbitraryShadowColorRegExp.firstMatch(className);
       if (arbitraryMatch != null) {
         if (shadowColor == null) {
           final value = arbitraryMatch.namedGroup('value')!;
-          shadowColor = hexToColor(value);
+          Color parsedColor = hexToColor(value);
+          // Apply opacity if specified
+          double opacity = 1.0;
+          if (arbitraryMatch.namedGroup('opacity') != null) {
+            final opacityInt = int.parse(arbitraryMatch.namedGroup('opacity')!);
+            opacity = opacityInt / 100.0;
+          } else if (arbitraryMatch.namedGroup('arbitraryOpacity') != null) {
+            opacity =
+                double.tryParse(
+                  arbitraryMatch.namedGroup('arbitraryOpacity')!,
+                ) ??
+                1.0;
+          }
+          if (opacity < 1.0) {
+            parsedColor = parsedColor.withValues(
+              alpha: opacity.clamp(0.0, 1.0),
+            );
+          }
+          shadowColor = parsedColor;
         }
         continue;
       }
@@ -79,20 +97,41 @@ class ShadowParser implements WindParserInterface {
           final shade = colorMatch.namedGroup('shade');
 
           if (context.theme.colors.containsKey(colorName)) {
+            Color? parsedColor;
             if (shade != null) {
               final shadeValue = int.tryParse(shade);
               if (shadeValue != null &&
                   context.theme.colors[colorName]![shadeValue] != null) {
-                shadowColor = context.theme.colors[colorName]![shadeValue];
+                parsedColor = context.theme.colors[colorName]![shadeValue];
               }
             } else {
-              // Default color if no shade provided (unlikely for tailwind colors but possible)
-              // For standard palette, usually need shade. If basic color like 'black', 'white'
+              // Default color if no shade provided
               if (colorName == 'white') {
-                shadowColor = Colors.white;
+                parsedColor = Colors.white;
               } else if (colorName == 'black') {
-                shadowColor = Colors.black;
+                parsedColor = Colors.black;
               }
+            }
+
+            if (parsedColor != null) {
+              // Apply opacity if specified
+              double opacity = 1.0;
+              if (colorMatch.namedGroup('opacity') != null) {
+                final opacityInt = int.parse(colorMatch.namedGroup('opacity')!);
+                opacity = opacityInt / 100.0;
+              } else if (colorMatch.namedGroup('arbitraryOpacity') != null) {
+                opacity =
+                    double.tryParse(
+                      colorMatch.namedGroup('arbitraryOpacity')!,
+                    ) ??
+                    1.0;
+              }
+              if (opacity < 1.0) {
+                parsedColor = parsedColor.withValues(
+                  alpha: opacity.clamp(0.0, 1.0),
+                );
+              }
+              shadowColor = parsedColor;
             }
           }
         }

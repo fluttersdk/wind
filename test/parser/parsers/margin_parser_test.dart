@@ -17,14 +17,16 @@ WindContext createTestContext({
 }) {
   return WindContext(
     theme: WindThemeData().copyWith(brightness: brightness),
-    isHovering: isHovering,
-    isFocused: isFocused,
-    isDisabled: isDisabled,
     activeBreakpoint: activeBreakpoint,
     platform: platform,
     isMobile: isMobile,
     screenWidth: 400,
     screenHeight: 800,
+    activeStates: {
+      if (isHovering) 'hover',
+      if (isFocused) 'focus',
+      if (isDisabled) 'disabled',
+    },
   );
 }
 
@@ -95,13 +97,16 @@ void main() {
         expect(updatedStyles.margin, styles.margin);
       });
 
-      test('returns null margin if no margin classes and original margin is null', () {
-        final styles = WindStyle();
-        final classes = ['p-4', 'bg-red-500'];
-        final updatedStyles = parser.parse(styles, classes, context);
+      test(
+        'returns null margin if no margin classes and original margin is null',
+        () {
+          final styles = WindStyle();
+          final classes = ['p-4', 'bg-red-500'];
+          final updatedStyles = parser.parse(styles, classes, context);
 
-        expect(updatedStyles.margin, isNull);
-      });
+          expect(updatedStyles.margin, isNull);
+        },
+      );
 
       test('handles null classes gracefully', () {
         final styles = WindStyle(margin: EdgeInsets.all(12.0));

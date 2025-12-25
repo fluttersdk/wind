@@ -29,9 +29,9 @@ import 'wind_parser_interface.dart';
 class TextParser implements WindParserInterface {
   const TextParser();
 
-  /// Regex for text color: `text-red-500`, `text-[#123456]`
+  /// Regex for text color: `text-red-500`, `text-[#123456]`, `text-red-500/50`
   static final RegExp _textColorRegex = RegExp(
-    r'^text-(?:(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]{2,3}))?|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])$',
+    r'^text-(?:(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]{2,3}))?|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])(?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
   );
 
   /// Regex for text alignment: `text-center`
@@ -205,6 +205,20 @@ class TextParser implements WindParserInterface {
           }
 
           if (parsedColor != null) {
+            // Apply opacity if specified
+            double opacity = 1.0;
+            if (match.namedGroup('opacity') != null) {
+              final opacityInt = int.parse(match.namedGroup('opacity')!);
+              opacity = opacityInt / 100.0;
+            } else if (match.namedGroup('arbitraryOpacity') != null) {
+              opacity =
+                  double.tryParse(match.namedGroup('arbitraryOpacity')!) ?? 1.0;
+            }
+            if (opacity < 1.0) {
+              parsedColor = parsedColor.withValues(
+                alpha: opacity.clamp(0.0, 1.0),
+              );
+            }
             color = parsedColor;
             continue;
           }

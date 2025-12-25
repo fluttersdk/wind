@@ -29,9 +29,9 @@ class BorderParser implements WindParserInterface {
     r'^border-(t|r|b|l)(?:-(\d+))?$',
   );
 
-  /// Regex for border color: border-red-500, border-[#hex]
+  /// Regex for border color: border-red-500, border-[#hex], border-red-500/50
   static final _borderColorRegex = RegExp(
-    r'^border-(?:(?<color>[a-zA-Z]+)-(?<shade>\d{2,3})|(?:\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\]))$',
+    r'^border-(?:(?<color>[a-zA-Z]+)-(?<shade>\d{2,3})|(?:\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\]))(?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
   );
 
   /// Regex for directional radius: rounded-t, rounded-tl, etc.
@@ -149,17 +149,37 @@ class BorderParser implements WindParserInterface {
       // Check border color
       final colorMatch = _borderColorRegex.firstMatch(className);
       if (colorMatch != null) {
+        Color? parsedColor;
         if (colorMatch.namedGroup('arbitrary') != null) {
-          color = hexToColor(colorMatch.namedGroup('arbitrary')!);
+          parsedColor = hexToColor(colorMatch.namedGroup('arbitrary')!);
         } else {
           final colorName = colorMatch.namedGroup('color');
           final shadeStr = colorMatch.namedGroup('shade');
           if (colorName != null && shadeStr != null) {
             final shade = int.parse(shadeStr);
             if (theme.isValidColor(colorName, shade: shade)) {
-              color = theme.getColor(colorName, shade);
+              parsedColor = theme.getColor(colorName, shade);
             }
           }
+        }
+
+        if (parsedColor != null) {
+          // Apply opacity if specified
+          double opacity = 1.0;
+          if (colorMatch.namedGroup('opacity') != null) {
+            final opacityInt = int.parse(colorMatch.namedGroup('opacity')!);
+            opacity = opacityInt / 100.0;
+          } else if (colorMatch.namedGroup('arbitraryOpacity') != null) {
+            opacity =
+                double.tryParse(colorMatch.namedGroup('arbitraryOpacity')!) ??
+                1.0;
+          }
+          if (opacity < 1.0) {
+            parsedColor = parsedColor.withValues(
+              alpha: opacity.clamp(0.0, 1.0),
+            );
+          }
+          color = parsedColor;
         }
         continue;
       }

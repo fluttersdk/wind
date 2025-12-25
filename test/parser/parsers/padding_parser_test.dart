@@ -17,14 +17,16 @@ WindContext createTestContext({
 }) {
   return WindContext(
     theme: WindThemeData().copyWith(brightness: brightness),
-    isHovering: isHovering,
-    isFocused: isFocused,
-    isDisabled: isDisabled,
     activeBreakpoint: activeBreakpoint,
     platform: platform,
     isMobile: isMobile,
     screenWidth: 400,
     screenHeight: 800,
+    activeStates: {
+      if (isHovering) 'hover',
+      if (isFocused) 'focus',
+      if (isDisabled) 'disabled',
+    },
   );
 }
 
