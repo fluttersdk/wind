@@ -47,25 +47,37 @@ class AspectRatioParser implements WindParserInterface {
       // Handle standard aspect ratio values
       final value = className.replaceFirst('aspect-', '');
       if (_aspectRatioValues.containsKey(value)) {
+<<<<<<< HEAD
         if (value == 'auto') {
           aspectRatio = null;
           break;
         }
         aspectRatio ??= _aspectRatioValues[value];
         continue;
+=======
+        aspectRatio = _aspectRatioValues[value];
+        break;
+>>>>>>> 9c237e4 (feat: Implement `aspect-auto` and robustly handle invalid arbitrary aspect ratio values in `AspectRatioParser`.)
       }
 
       // Handle arbitrary aspect ratios e.g., aspect-[4/3]
       final arbitraryMatch = _arbitraryAspectRatioRegExp.firstMatch(className);
       if (arbitraryMatch != null) {
+<<<<<<< HEAD
         if (aspectRatio == null) {
           final width = double.tryParse(arbitraryMatch.namedGroup('width')!);
           final height = double.tryParse(arbitraryMatch.namedGroup('height')!);
           if (width != null && width > 0 && height != null && height > 0) {
             aspectRatio = width / height;
           }
+=======
+        final width = double.tryParse(arbitraryMatch.namedGroup('width')!);
+        final height = double.tryParse(arbitraryMatch.namedGroup('height')!);
+        if (width != null && height != null && height > 0) {
+          aspectRatio = width / height;
+          break;
+>>>>>>> 9c237e4 (feat: Implement `aspect-auto` and robustly handle invalid arbitrary aspect ratio values in `AspectRatioParser`.)
         }
-        continue;
       }
     }
 

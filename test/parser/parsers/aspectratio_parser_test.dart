@@ -111,6 +111,34 @@ void main() {
         expect(style.aspectRatio, 16 / 9);
       });
 
+      test('aspect-auto overrides previous values', () {
+        final parser = const AspectRatioParser();
+        final style = parser.parse(const WindStyle(), [
+          'aspect-square',
+          'aspect-auto',
+        ], createTestContext());
+
+        expect(style.aspectRatio, isNull);
+      });
+
+      test('ignores invalid arbitrary values (division by zero)', () {
+        final parser = const AspectRatioParser();
+        final style = parser.parse(const WindStyle(), [
+          'aspect-[4/0]',
+        ], createTestContext());
+
+        expect(style.aspectRatio, isNull);
+      });
+
+      test('ignores invalid arbitrary values (empty)', () {
+        final parser = const AspectRatioParser();
+        final style = parser.parse(const WindStyle(), [
+          'aspect-[]',
+        ], createTestContext());
+
+        expect(style.aspectRatio, isNull);
+      });
+
       test('returns original style when classes is null', () {
         final parser = const AspectRatioParser();
         const originalStyle = WindStyle();
