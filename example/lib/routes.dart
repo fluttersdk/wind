@@ -20,6 +20,7 @@ import 'pages/backgrounds/gradients.dart';
 import 'pages/layout/visibility.dart';
 import 'pages/sizing/height.dart';
 import 'pages/sizing/width.dart';
+import 'pages/sizing/aspectratio.dart';
 import 'pages/spacing/margin.dart';
 import 'pages/spacing/padding.dart';
 import 'pages/typography/alignment.dart';
@@ -66,6 +67,7 @@ final Map<String, Widget> appRoutes = {
   '/spacing/margin': const MarginExamplePage(),
   '/sizing/width': const WidthExamplePage(),
   '/sizing/height': const HeightExamplePage(),
+  '/sizing/aspectratio': const AspectRatioExamplePage(),
   '/backgrounds/colors': const BackgroundColorsPage(),
   '/backgrounds/gradients': const BackgroundGradientsPage(),
 };

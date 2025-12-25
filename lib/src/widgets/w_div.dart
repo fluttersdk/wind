@@ -129,7 +129,17 @@ class WDiv extends StatelessWidget {
       );
     }
 
-    // 7. OPACITY (Effects Layer)
+    // 7. ASPECT RATIO
+    // Wrap with AspectRatio widget if aspectRatio is set.
+    if (styles.aspectRatio != null) {
+      logger.wrapWith("AspectRatio", "aspectRatio: ${styles.aspectRatio}");
+      finalWidget = AspectRatio(
+        aspectRatio: styles.aspectRatio!,
+        child: finalWidget,
+      );
+    }
+
+    // 8. OPACITY (Effects Layer)
     // Wrap with Opacity widget if opacity is explicitly set.
     if (styles.opacity != null) {
       logger.wrapWith("Opacity", "opacity: ${styles.opacity}");

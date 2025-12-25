@@ -150,6 +150,9 @@ class WindStyle {
   /// Clip behavior for overflow-hidden
   final Clip? clipBehavior;
 
+  /// Aspect ratio e.g., aspect-square, aspect-video, aspect-[4/3]
+  final double? aspectRatio;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -198,6 +201,7 @@ class WindStyle {
     this.overflowX,
     this.overflowY,
     this.clipBehavior,
+    this.aspectRatio,
   });
 
   WindStyle copyWith({
@@ -248,6 +252,7 @@ class WindStyle {
     WindOverflow? overflowX,
     WindOverflow? overflowY,
     Clip? clipBehavior,
+    double? aspectRatio,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -313,6 +318,7 @@ class WindStyle {
       overflowX: overflowX ?? this.overflowX,
       overflowY: overflowY ?? this.overflowY,
       clipBehavior: clipBehavior ?? this.clipBehavior,
+      aspectRatio: aspectRatio ?? this.aspectRatio,
     );
   }
 
@@ -367,7 +373,8 @@ class WindStyle {
           overflow == other.overflow &&
           overflowX == other.overflowX &&
           overflowY == other.overflowY &&
-          clipBehavior == other.clipBehavior;
+          clipBehavior == other.clipBehavior &&
+          aspectRatio == other.aspectRatio;
 
   @override
   int get hashCode =>
@@ -417,7 +424,8 @@ class WindStyle {
       overflow.hashCode ^
       overflowX.hashCode ^
       overflowY.hashCode ^
-      clipBehavior.hashCode;
+      clipBehavior.hashCode ^
+      aspectRatio.hashCode;
 
   /// Calculates the effective line height based on either a fixed value
   /// or a factor of the font size.
