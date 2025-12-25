@@ -171,6 +171,54 @@ void main() {
         expect(result, isA<String>());
       });
 
+      testWidgets('wFontSizeExt returns size', (tester) async {
+        double? result;
+        await tester.pumpWidget(
+          createTestApp(
+            Builder(
+              builder: (context) {
+                result = context.wFontSizeExt('lg');
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+
+        expect(result, 18.0);
+      });
+
+      testWidgets('wFontWeightExt returns weight', (tester) async {
+        FontWeight? result;
+        await tester.pumpWidget(
+          createTestApp(
+            Builder(
+              builder: (context) {
+                result = context.wFontWeightExt('bold');
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+
+        expect(result, FontWeight.w700);
+      });
+
+      testWidgets('wScreenIsExt checks breakpoint', (tester) async {
+        bool? result;
+        await tester.pumpWidget(
+          createTestApp(
+            Builder(
+              builder: (context) {
+                result = context.wScreenIsExt('sm');
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+
+        expect(result, isNotNull);
+      });
+
       testWidgets('wStyleExt parses class string', (tester) async {
         WindStyle? result;
         await tester.pumpWidget(

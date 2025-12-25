@@ -201,6 +201,22 @@ void main() {
         expect(result, isNotNull);
         expect(result, greaterThan(0));
       });
+
+      testWidgets('returns null for invalid breakpoint', (tester) async {
+        int? result;
+        await tester.pumpWidget(
+          createTestApp(
+            Builder(
+              builder: (context) {
+                result = wScreen(context, 'invalid');
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+
+        expect(result, isNull);
+      });
     });
 
     group('wScreenIs', () {

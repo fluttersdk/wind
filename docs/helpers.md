@@ -62,8 +62,8 @@ Work with responsive breakpoints programmatically.
 
 ```dart
 // Get breakpoint pixel value
-int md = wScreen(context, 'md');  // 768
-int lg = wScreen(context, 'lg');  // 1024
+int? md = wScreen(context, 'md');  // 768
+int? lg = wScreen(context, 'lg');  // 1024
 
 // Check if screen is at least a breakpoint
 if (wScreenIs(context, 'lg')) {
@@ -76,7 +76,7 @@ String current = wScreenCurrent(context);  // 'md', 'lg', etc.
 
 | Function | Description |
 | :--- | :--- |
-| `wScreen(context, name)` | Returns breakpoint pixel value |
+| `wScreen(context, name)` | Returns breakpoint pixel value or null if invalid |
 | `wScreenIs(context, name)` | Returns true if screen >= breakpoint |
 | `wScreenCurrent(context)` | Returns current active breakpoint name |
 

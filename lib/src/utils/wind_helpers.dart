@@ -78,14 +78,17 @@ FontWeight? wFontWeight(BuildContext context, String weightName) {
 
 /// Returns the pixel value for a breakpoint name.
 ///
+/// Returns null if the breakpoint name is not valid.
+///
 /// Example:
 /// ```dart
-/// int md = wScreen(context, 'md'); // 768
-/// int lg = wScreen(context, 'lg'); // 1024
+/// int? md = wScreen(context, 'md'); // 768
+/// int? lg = wScreen(context, 'lg'); // 1024
+/// int? invalid = wScreen(context, 'invalid'); // null
 /// ```
-int wScreen(BuildContext context, String name) {
+int? wScreen(BuildContext context, String name) {
   final theme = WindTheme.of(context);
-  return theme.screens[name] ?? 0;
+  return theme.screens[name];
 }
 
 /// Checks if the current screen width is at least the given breakpoint.
@@ -99,6 +102,9 @@ int wScreen(BuildContext context, String name) {
 bool wScreenIs(BuildContext context, String name) {
   final screenWidth = MediaQuery.of(context).size.width;
   final breakpointValue = wScreen(context, name);
+
+  if (breakpointValue == null) return false;
+
   return screenWidth >= breakpointValue;
 }
 
