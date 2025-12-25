@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -96,6 +97,17 @@ void main() {
         ], createTestContext());
 
         expect(style.fontFamily, contains('monospace'));
+      });
+
+      test('font-weight and font-family can be applied together', () {
+        final style = const TextParser().parse(const WindStyle(), [
+          'font-sans',
+          'font-bold',
+        ], createTestContext());
+
+        expect(style.fontFamily, isNotNull);
+        expect(style.fontFamily, contains('sans-serif'));
+        expect(style.fontWeight, FontWeight.w700);
       });
     });
   });

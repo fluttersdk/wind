@@ -278,6 +278,10 @@ class TextParser implements WindParserInterface {
               }
             }
           } else {
+            // Important: Only continue if a valid weight is found.
+            // Classes like 'font-display' match this regex but are not
+            // valid weights, so they should fall through to the font-family
+            // parser. See _fontFamilyRegex documentation for details.
             final parsedWeight = theme.fontWeights[match.namedGroup('weight')];
             if (parsedWeight != null) {
               fontWeight = parsedWeight;
