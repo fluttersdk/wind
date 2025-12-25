@@ -14,6 +14,7 @@ import 'parsers/opacity_parser.dart';
 import 'parsers/zindex_parser.dart';
 import 'parsers/overflow_parser.dart';
 import 'parsers/aspectratio_parser.dart';
+import 'parsers/transition_parser.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
 
@@ -44,6 +45,7 @@ class WindParser {
     'zindex': const ZIndexParser(),
     'overflow': const OverflowParser(),
     'aspectratio': const AspectRatioParser(),
+    'transition': const TransitionParser(),
   };
 
   /// Clears the style cache

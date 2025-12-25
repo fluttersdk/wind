@@ -25,6 +25,7 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
   - **ZIndexParser:** `z-10`, `z-50`, `z-[100]`
   - **OverflowParser:** `overflow-hidden`, `overflow-scroll`, `overflow-x-auto`
   - **ShadowParser:** `shadow`, `shadow-md`, `shadow-red-500`, `ring`, `ring-2`
+  - **TransitionParser:** `duration-300`, `ease-in`, `ease-out`, `ease-in-out`
   - **DebugParser:** `debug`
 
 ### Widgets
@@ -76,6 +77,7 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 | Opacity | `opacity-{n}`, `opacity-[n]` |
 | Ring | `ring`, `ring-{n}`, `ring-{color}`, `ring-offset-{n}` |
 | Z-Index | `z-{n}`, `z-auto`, `z-[n]` |
+| Transition | `duration-{ms}`, `ease-{curve}` |
 
 ### Prefixes
 | Category | Prefixes |

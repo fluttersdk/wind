@@ -120,6 +120,9 @@ WAnchor(
 ### Borders & Effects
 `border`, `border-2`, `rounded-lg`, `shadow-md`, `opacity-75`, `ring-2`, `ring-blue-500`
 
+### Transitions
+`duration-300`, `duration-500`, `ease-in`, `ease-out`, `ease-in-out`
+
 ### Responsive
 `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
 
