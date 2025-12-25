@@ -47,6 +47,10 @@ class AspectRatioParser implements WindParserInterface {
       // Handle standard aspect ratio values
       final value = className.replaceFirst('aspect-', '');
       if (_aspectRatioValues.containsKey(value)) {
+        if (value == 'auto') {
+          aspectRatio = null;
+          break;
+        }
         aspectRatio ??= _aspectRatioValues[value];
         continue;
       }
