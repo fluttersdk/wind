@@ -130,3 +130,9 @@ WindStyle style = context.wStyleExt('p-4 bg-blue-500');
 | `context.wIsTablet` | Check if md <= screen < lg |
 | `context.wIsDesktop` | Check if screen >= lg |
 | `context.wActiveBreakpoint` | Get current breakpoint name |
+| `context.wColorExt(name, [shade])` | Shortcut for `wColor` using the BuildContext |
+| `context.wSpacingExt(step)` | Shortcut for `wSpacing` using the BuildContext |
+| `context.wFontSizeExt(step)` | Shortcut for `wFontSize` using the BuildContext |
+| `context.wFontWeightExt(step)` | Shortcut for `wFontWeight` using the BuildContext |
+| `context.wScreenIsExt(breakpoint)` | Shortcut for `wScreenIs` using the BuildContext |
+| `context.wStyleExt(utilities)` | Shortcut for `wStyle` using the BuildContext |
