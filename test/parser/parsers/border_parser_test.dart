@@ -4,6 +4,7 @@ import 'package:fluttersdk_wind/src/parser/parsers/border_parser.dart';
 import 'package:fluttersdk_wind/src/parser/wind_context.dart';
 import 'package:fluttersdk_wind/src/parser/wind_style.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
+import 'package:fluttersdk_wind/src/utils/color_utils.dart';
 
 void main() {
   late BorderParser parser;
@@ -104,6 +105,20 @@ void main() {
 
         final border = result.decoration!.border as Border;
         expect(border.top.color, context.theme.getColor('red', 500));
+      });
+
+      test('parses theme color with opacity', () {
+        final result = parser.parse(const WindStyle(), [
+          'border',
+          'border-red-500/50',
+        ], context);
+
+        final border = result.decoration!.border as Border;
+        final expectedColor = applyOpacity(
+          context.theme.getColor('red', 500)!,
+          50,
+        );
+        expect(border.top.color.toARGB32(), expectedColor.toARGB32());
       });
 
       test('parses arbitrary hex color', () {

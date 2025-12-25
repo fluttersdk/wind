@@ -6,6 +6,7 @@ import 'package:fluttersdk_wind/src/parser/wind_style.dart';
 import 'package:fluttersdk_wind/src/theme/defaults/colors.dart'
     as default_colors;
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
+import 'package:fluttersdk_wind/src/utils/color_utils.dart';
 
 // Helper function to create a WindContext for testing
 WindContext createTestContext({
@@ -56,6 +57,13 @@ void main() {
       final classes = ['bg-red'];
       final color = BackgroundParser.parseColor(classes, themeData);
       expect(color, default_colors.colors['red']![500]);
+    });
+
+    test('parses color with opacity', () {
+      final classes = ['bg-red-500/50'];
+      final color = BackgroundParser.parseColor(classes, themeData);
+      final expected = applyOpacity(default_colors.colors['red']![500]!, 50);
+      expect(color!.toARGB32(), expected.toARGB32());
     });
 
     test('parses an arbitrary color class', () {

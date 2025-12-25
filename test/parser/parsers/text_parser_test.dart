@@ -4,6 +4,7 @@ import 'package:fluttersdk_wind/src/parser/parsers/text_parser.dart';
 import 'package:fluttersdk_wind/src/parser/wind_context.dart';
 import 'package:fluttersdk_wind/src/parser/wind_style.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
+import 'package:fluttersdk_wind/src/utils/color_utils.dart';
 
 // Helper function to create a WindContext for testing
 WindContext createTestContext({
@@ -55,6 +56,18 @@ void main() {
         final updatedStyles = parser.parse(styles, classes, context);
 
         expect(updatedStyles.color, const Color(0xFF123456));
+      });
+
+      test('parses text color with opacity', () {
+        final styles = WindStyle();
+        final classes = ['text-red-500/50'];
+        final updatedStyles = parser.parse(styles, classes, context);
+
+        final expectedColor = applyOpacity(
+          context.theme.getColor('red', 500)!,
+          50,
+        );
+        expect(updatedStyles.color!.toARGB32(), expectedColor.toARGB32());
       });
 
       test('last class wins for conflicting text color classes', () {

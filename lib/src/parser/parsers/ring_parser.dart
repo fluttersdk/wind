@@ -21,40 +21,21 @@ class RingParser implements WindParserInterface {
   /// Default ring width in pixels
   static const double _defaultRingWidth = 3.0;
 
-  /// Ring width map
-  static const Map<String, double> _ringWidthMap = {
-    '0': 0,
-    '1': 1,
-    '2': 2,
-    '': 3, // 'ring' without number = 3px
-    '4': 4,
-    '8': 8,
-  };
+  /// Regex for ring width: ring, ring-0, ring-custom
+  static final RegExp _ringWidthRegex = RegExp(r'^ring(?:-(.+))?$');
 
-  /// Ring offset map
-  static const Map<String, double> _ringOffsetMap = {
-    '0': 0,
-    '1': 1,
-    '2': 2,
-    '4': 4,
-    '8': 8,
-  };
-
-  /// Regex for ring width: ring, ring-0, ring-1, ring-2, ring-4, ring-8
-  static final RegExp _ringWidthRegex = RegExp(r'^ring(?:-([0-8]))?$');
-
-  /// Regex for ring color: ring-red-500, ring-blue-300, ring-red-500/50
+  /// Regex for ring color: ring-red-500, ring-blue-300
   static final RegExp _ringColorRegex = RegExp(
-    r'^ring-(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]+))?(?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
+    r'^ring-(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]+))?$',
   );
 
-  /// Regex for arbitrary ring color: ring-[#ff0000], ring-[#ff0000]/50
+  /// Regex for arbitrary ring color: ring-[#ff0000]
   static final RegExp _ringArbitraryColorRegex = RegExp(
-    r'^ring-\[(?<value>#[0-9a-fA-F]{3,8})\](?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
+    r'^ring-\[(?<value>#[0-9a-fA-F]{3,8})\]$',
   );
 
   /// Regex for ring offset: ring-offset-0, ring-offset-2
-  static final RegExp _ringOffsetRegex = RegExp(r'^ring-offset-([0-8])$');
+  static final RegExp _ringOffsetRegex = RegExp(r'^ring-offset-(.+)$');
 
   /// Regex for ring-inset
   static final RegExp _ringInsetRegex = RegExp(r'^ring-inset$');
@@ -91,8 +72,11 @@ class RingParser implements WindParserInterface {
       if (ringOffset == null) {
         final offsetMatch = _ringOffsetRegex.firstMatch(className);
         if (offsetMatch != null) {
-          ringOffset = _ringOffsetMap[offsetMatch.group(1)] ?? 0;
-          continue;
+          final offsetValue = offsetMatch.group(1)!;
+          if (context.theme.ringOffsets.containsKey(offsetValue)) {
+            ringOffset = context.theme.ringOffsets[offsetValue];
+            continue;
+          }
         }
       }
 
@@ -100,33 +84,29 @@ class RingParser implements WindParserInterface {
       if (ringWidth == null) {
         final widthMatch = _ringWidthRegex.firstMatch(className);
         if (widthMatch != null) {
-          final widthValue = widthMatch.group(1) ?? '';
-          ringWidth = _ringWidthMap[widthValue] ?? _defaultRingWidth;
-          continue;
+          final widthValue = widthMatch.group(1) ?? 'DEFAULT';
+          if (context.theme.ringWidths.containsKey(widthValue)) {
+            ringWidth = context.theme.ringWidths[widthValue];
+            continue;
+          }
         }
       }
 
-      // Parse arbitrary ring color: ring-[#ff0000], ring-[#ff0000]/50
+      // Check for opacity syntax first
+      final opacityData = parseColorOpacity(className);
+      final effectiveClassName = opacityData.colorPart;
+      final opacity = opacityData.opacity;
+
+      // Parse arbitrary ring color: ring-[#ff0000]
       if (ringColor == null) {
-        final arbitraryMatch = _ringArbitraryColorRegex.firstMatch(className);
+        final arbitraryMatch = _ringArbitraryColorRegex.firstMatch(
+          effectiveClassName,
+        );
         if (arbitraryMatch != null) {
           Color parsedColor = hexToColor(arbitraryMatch.namedGroup('value')!);
-          // Apply opacity if specified
-          double opacity = 1.0;
-          if (arbitraryMatch.namedGroup('opacity') != null) {
-            final opacityInt = int.parse(arbitraryMatch.namedGroup('opacity')!);
-            opacity = opacityInt / 100.0;
-          } else if (arbitraryMatch.namedGroup('arbitraryOpacity') != null) {
-            opacity =
-                double.tryParse(
-                  arbitraryMatch.namedGroup('arbitraryOpacity')!,
-                ) ??
-                1.0;
-          }
-          if (opacity < 1.0) {
-            parsedColor = parsedColor.withValues(
-              alpha: opacity.clamp(0.0, 1.0),
-            );
+
+          if (opacity != null) {
+            parsedColor = applyOpacity(parsedColor, opacity);
           }
           ringColor = parsedColor;
           continue;
@@ -135,15 +115,24 @@ class RingParser implements WindParserInterface {
 
       // Parse ring color: ring-blue-500
       if (ringColor == null) {
-        final colorMatch = _ringColorRegex.firstMatch(className);
+        final colorMatch = _ringColorRegex.firstMatch(effectiveClassName);
         if (colorMatch != null) {
           final colorName = colorMatch.namedGroup('color')!;
           final shade = colorMatch.namedGroup('shade');
 
-          // Skip if it's actually a width class (ring-0, ring-2, etc.)
-          if (_ringWidthMap.containsKey(colorName)) continue;
-          // Skip if it's offset or inset
-          if (colorName == 'offset' || colorName == 'inset') continue;
+          // Skip if it is a defined ring offset
+          if (colorName == 'offset') continue;
+
+          // Skip if it is a defined ring inset
+          if (colorName == 'inset') continue;
+
+          // Note: Width collision check is handled implicitly.
+          // Because width regex is wider (ring-(.+)), widths were checked above.
+          // If we are here, it means it wasn't a valid ring width known to theme.
+          // But wait, what if "ring-red" is both a theme key and a color?
+          // Theme keys usually are numbers. Colors are names.
+          // If user names a ring width "red", it will be consumed by width parser above.
+          // So "ring-red" would set width, not color. This is acceptable/expected conflict resolution.
 
           if (context.theme.colors.containsKey(colorName)) {
             Color? parsedColor;
@@ -163,22 +152,8 @@ class RingParser implements WindParserInterface {
             }
 
             if (parsedColor != null) {
-              // Apply opacity if specified
-              double opacity = 1.0;
-              if (colorMatch.namedGroup('opacity') != null) {
-                final opacityInt = int.parse(colorMatch.namedGroup('opacity')!);
-                opacity = opacityInt / 100.0;
-              } else if (colorMatch.namedGroup('arbitraryOpacity') != null) {
-                opacity =
-                    double.tryParse(
-                      colorMatch.namedGroup('arbitraryOpacity')!,
-                    ) ??
-                    1.0;
-              }
-              if (opacity < 1.0) {
-                parsedColor = parsedColor.withValues(
-                  alpha: opacity.clamp(0.0, 1.0),
-                );
+              if (opacity != null) {
+                parsedColor = applyOpacity(parsedColor, opacity);
               }
               ringColor = parsedColor;
             }

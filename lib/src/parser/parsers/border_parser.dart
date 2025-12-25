@@ -29,9 +29,9 @@ class BorderParser implements WindParserInterface {
     r'^border-(t|r|b|l)(?:-(\d+))?$',
   );
 
-  /// Regex for border color: border-red-500, border-[#hex], border-red-500/50
+  /// Regex for border color: border-red-500, border-[#hex]
   static final _borderColorRegex = RegExp(
-    r'^border-(?:(?<color>[a-zA-Z]+)-(?<shade>\d{2,3})|(?:\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\]))(?:/(?:(?<opacity>[0-9]+)|\[(?<arbitraryOpacity>[0-9.]+)\]))?$',
+    r'^border-(?:(?<color>[a-zA-Z]+)-(?<shade>\d{2,3})|(?:\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\]))$',
   );
 
   /// Regex for directional radius: rounded-t, rounded-tl, etc.
@@ -106,14 +106,19 @@ class BorderParser implements WindParserInterface {
 
     // Process classes in order (last wins)
     for (final className in classes) {
+      // Check for opacity syntax first
+      final opacityData = parseColorOpacity(className);
+      final effectiveClassName = opacityData.colorPart;
+      final opacity = opacityData.opacity;
+
       // Check border style
-      if (_borderStyleMap.containsKey(className)) {
-        style = _borderStyleMap[className]!;
+      if (_borderStyleMap.containsKey(effectiveClassName)) {
+        style = _borderStyleMap[effectiveClassName]!;
         continue;
       }
 
       // Check uniform border width from theme
-      final themeWidth = _getBorderWidth(className, theme);
+      final themeWidth = _getBorderWidth(effectiveClassName, theme);
       if (themeWidth != null) {
         width = themeWidth;
         topWidth = rightWidth = bottomWidth = leftWidth = null;
@@ -121,7 +126,9 @@ class BorderParser implements WindParserInterface {
       }
 
       // Check directional border width
-      final dirMatch = _directionalBorderWidthRegex.firstMatch(className);
+      final dirMatch = _directionalBorderWidthRegex.firstMatch(
+        effectiveClassName,
+      );
       if (dirMatch != null) {
         final direction = dirMatch.group(1);
         final widthStr = dirMatch.group(2);
@@ -147,7 +154,7 @@ class BorderParser implements WindParserInterface {
       }
 
       // Check border color
-      final colorMatch = _borderColorRegex.firstMatch(className);
+      final colorMatch = _borderColorRegex.firstMatch(effectiveClassName);
       if (colorMatch != null) {
         Color? parsedColor;
         if (colorMatch.namedGroup('arbitrary') != null) {
@@ -164,20 +171,8 @@ class BorderParser implements WindParserInterface {
         }
 
         if (parsedColor != null) {
-          // Apply opacity if specified
-          double opacity = 1.0;
-          if (colorMatch.namedGroup('opacity') != null) {
-            final opacityInt = int.parse(colorMatch.namedGroup('opacity')!);
-            opacity = opacityInt / 100.0;
-          } else if (colorMatch.namedGroup('arbitraryOpacity') != null) {
-            opacity =
-                double.tryParse(colorMatch.namedGroup('arbitraryOpacity')!) ??
-                1.0;
-          }
-          if (opacity < 1.0) {
-            parsedColor = parsedColor.withValues(
-              alpha: opacity.clamp(0.0, 1.0),
-            );
+          if (opacity != null) {
+            parsedColor = applyOpacity(parsedColor, opacity);
           }
           color = parsedColor;
         }

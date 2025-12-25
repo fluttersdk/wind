@@ -314,12 +314,7 @@ extension on WindContext {
       isMobile: isMobile ?? this.isMobile,
       screenWidth: screenWidth,
       screenHeight: screenHeight,
-      activeStates: {
-        if (isHovering) 'hover',
-        if (isFocused) 'focus',
-        if (isDisabled) 'disabled',
-        ...?customStates,
-      },
+      activeStates: customStates ?? activeStates,
     );
   }
 }

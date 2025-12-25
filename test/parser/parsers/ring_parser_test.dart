@@ -164,6 +164,42 @@ void main() {
 
         expect(style.ringShadow, isNull);
       });
+      test('parses custom ring width from theme', () {
+        final parser = const RingParser();
+        final theme = WindThemeData(ringWidths: {'custom': 10.0});
+        final context = WindContext(
+          theme: theme,
+          activeBreakpoint: 'base',
+          platform: 'macos',
+          isMobile: false,
+          screenWidth: 1024,
+          screenHeight: 768,
+        );
+
+        final style = parser.parse(const WindStyle(), ['ring-custom'], context);
+
+        expect(style.ringWidth, 10.0);
+      });
+
+      test('parses custom ring offset from theme', () {
+        final parser = const RingParser();
+        final theme = WindThemeData(ringOffsets: {'custom': 5.0});
+        final context = WindContext(
+          theme: theme,
+          activeBreakpoint: 'base',
+          platform: 'macos',
+          isMobile: false,
+          screenWidth: 1024,
+          screenHeight: 768,
+        );
+
+        final style = parser.parse(const WindStyle(), [
+          'ring-2',
+          'ring-offset-custom',
+        ], context);
+
+        expect(style.ringOffset, 5.0);
+      });
     });
   });
 }
