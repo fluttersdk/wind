@@ -36,10 +36,19 @@ void main() {
         expect(const OverflowParser().canParse('overflow-y-hidden'), isTrue);
       });
 
+      test('returns true for overflow-x-auto', () {
+        expect(const OverflowParser().canParse('overflow-x-auto'), isTrue);
+      });
+
+      test('returns true for overflow-y-visible', () {
+        expect(const OverflowParser().canParse('overflow-y-visible'), isTrue);
+      });
+
       test('returns false for non-overflow classes', () {
         expect(const OverflowParser().canParse('bg-red-500'), isFalse);
         expect(const OverflowParser().canParse('text-lg'), isFalse);
         expect(const OverflowParser().canParse('z-10'), isFalse);
+        expect(const OverflowParser().canParse('overflow-invalid'), isFalse);
       });
     });
 
@@ -91,6 +100,25 @@ void main() {
         expect(style.overflowX, WindOverflow.scroll);
       });
 
+      test('parses overflow-x-auto', () {
+        final parser = const OverflowParser();
+        final style = parser.parse(const WindStyle(), [
+          'overflow-x-auto',
+        ], createTestContext());
+
+        expect(style.overflowX, WindOverflow.auto);
+      });
+
+      test('parses overflow-x-visible', () {
+        final parser = const OverflowParser();
+        final style = parser.parse(const WindStyle(), [
+          'overflow-x-visible',
+        ], createTestContext());
+
+        expect(style.overflowX, WindOverflow.visible);
+        expect(style.clipBehavior, Clip.none);
+      });
+
       test('parses overflow-y-hidden', () {
         final parser = const OverflowParser();
         final style = parser.parse(const WindStyle(), [
@@ -99,6 +127,25 @@ void main() {
 
         expect(style.overflowY, WindOverflow.hidden);
         expect(style.clipBehavior, Clip.hardEdge);
+      });
+
+      test('parses overflow-y-auto', () {
+        final parser = const OverflowParser();
+        final style = parser.parse(const WindStyle(), [
+          'overflow-y-auto',
+        ], createTestContext());
+
+        expect(style.overflowY, WindOverflow.auto);
+      });
+
+      test('parses overflow-y-visible', () {
+        final parser = const OverflowParser();
+        final style = parser.parse(const WindStyle(), [
+          'overflow-y-visible',
+        ], createTestContext());
+
+        expect(style.overflowY, WindOverflow.visible);
+        expect(style.clipBehavior, Clip.none);
       });
 
       test('last class wins', () {

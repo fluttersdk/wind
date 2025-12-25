@@ -53,5 +53,9 @@ WDiv(className: "overflow-y-hidden")
 | :--- | :--- |
 | `overflow-x-hidden` | Clip horizontal overflow |
 | `overflow-x-scroll` | Enable horizontal scrolling |
+| `overflow-x-auto` | Auto horizontal scrolling |
+| `overflow-x-visible` | Allow horizontal overflow |
 | `overflow-y-hidden` | Clip vertical overflow |
 | `overflow-y-scroll` | Enable vertical scrolling |
+| `overflow-y-auto` | Auto vertical scrolling |
+| `overflow-y-visible` | Allow vertical overflow |

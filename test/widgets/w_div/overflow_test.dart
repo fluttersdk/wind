@@ -98,6 +98,27 @@ void main() {
       expect(scrollView.scrollDirection, Axis.horizontal);
     });
 
+    testWidgets('overflow-x-auto wraps with horizontal ScrollView', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              className: 'overflow-x-auto w-32 h-32',
+              children: [Text('Content')],
+            ),
+          ),
+        ),
+      );
+
+      final scrollView = tester.widget<SingleChildScrollView>(
+        find.byType(SingleChildScrollView),
+      );
+      expect(scrollView.scrollDirection, Axis.horizontal);
+    });
+
     testWidgets('overflow-y-scroll wraps with vertical ScrollView', (
       tester,
     ) async {
@@ -107,6 +128,27 @@ void main() {
             data: WindThemeData(),
             child: const WDiv(
               className: 'overflow-y-scroll w-32 h-32',
+              children: [Text('Content')],
+            ),
+          ),
+        ),
+      );
+
+      final scrollView = tester.widget<SingleChildScrollView>(
+        find.byType(SingleChildScrollView),
+      );
+      expect(scrollView.scrollDirection, Axis.vertical);
+    });
+
+    testWidgets('overflow-y-auto wraps with vertical ScrollView', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              className: 'overflow-y-auto w-32 h-32',
               children: [Text('Content')],
             ),
           ),
