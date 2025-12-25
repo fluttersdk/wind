@@ -38,6 +38,7 @@ export 'src/utils/wind_logger.dart';
 export 'src/utils/wind_helpers.dart';
 export 'src/utils/wind_extensions.dart';
 export 'src/widgets/w_anchor.dart';
+export 'src/widgets/w_button.dart';
 export 'src/widgets/w_div.dart';
 export 'src/widgets/w_input.dart';
 export 'src/widgets/w_text.dart';

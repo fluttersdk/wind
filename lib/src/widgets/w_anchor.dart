@@ -64,6 +64,12 @@ class WAnchor extends StatefulWidget {
   /// disabling a component without changing its appearance logic.
   final bool isDisabled;
 
+  /// Custom states for dynamic styling (e.g., 'error', 'success', 'loading').
+  ///
+  /// These states are propagated to child widgets through `WindAnchorStateProvider`
+  /// and activate their corresponding prefix classes (e.g., `error:border-red-500`).
+  final Set<String>? states;
+
   /// Creates a `WAnchor` widget.
   ///
   /// The [child] argument is required and represents the interactive area.
@@ -75,6 +81,7 @@ class WAnchor extends StatefulWidget {
     this.onLongPress,
     this.onDoubleTap,
     this.isDisabled = false,
+    this.states,
   });
 
   @override
@@ -145,6 +152,7 @@ class _WAnchorState extends State<WAnchor> {
       isHovering: _isHovering,
       isFocused: _isFocused,
       isDisabled: widget.isDisabled,
+      customStates: widget.states,
     );
 
     return WindAnchorStateProvider(
@@ -166,4 +174,3 @@ class _WAnchorState extends State<WAnchor> {
     );
   }
 }
-
