@@ -10,10 +10,27 @@ class WindTheme extends InheritedWidget {
   late final WindThemeData data;
 
   /// Creates a new [WindTheme] instance.
-  WindTheme({super.key, WindThemeData? data, required super.child}) {
+  ///
+  /// If [data.applyDefaultFontFamily] is true, the child will be wrapped
+  /// with a [DefaultTextStyle] using the 'sans' font family from the theme.
+  WindTheme({super.key, WindThemeData? data, required Widget child})
+    : super(child: _buildChild(data ?? WindThemeData(), child)) {
     WindPlatformService();
-
     this.data = data ?? WindThemeData();
+  }
+
+  /// Builds the child widget, optionally wrapping with DefaultTextStyle.
+  static Widget _buildChild(WindThemeData data, Widget child) {
+    if (data.applyDefaultFontFamily) {
+      final defaultFont = data.fontFamilies['sans'];
+      if (defaultFont != null) {
+        return DefaultTextStyle.merge(
+          style: TextStyle(fontFamily: defaultFont),
+          child: child,
+        );
+      }
+    }
+    return child;
   }
 
   /// Returns the [WindThemeData] from the closest [WindTheme] ancestor.

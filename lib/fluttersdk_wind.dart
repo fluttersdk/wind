@@ -28,6 +28,7 @@ export 'src/theme/defaults/font_weights.dart';
 export 'src/theme/defaults/leading.dart';
 export 'src/theme/defaults/screens.dart';
 export 'src/theme/defaults/tracking.dart';
+export 'src/theme/defaults/font_families.dart';
 export 'src/theme/wind_theme.dart';
 export 'src/theme/wind_theme_data.dart';
 export 'src/utils/color_utils.dart';

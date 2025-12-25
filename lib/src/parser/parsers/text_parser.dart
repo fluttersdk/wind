@@ -54,6 +54,24 @@ class TextParser implements WindParserInterface {
     r'^(?<style>italic|not-italic)$',
   );
 
+  /// Regex for font family: `font-sans`, `font-serif`, `font-mono`, `font-[CustomFont]`
+  ///
+  /// Notes about intentional overlap:
+  /// - The `[a-zA-Z]+` part allows custom theme font families such as `font-display`.
+  /// - This intentionally overlaps with named font-weight tokens like `font-bold`,
+  ///   `font-semibold`, etc. As a result, typos in weight classes (e.g. `font-blod`)
+  ///   would match this regex and be treated as a font family rather than being
+  ///   rejected.
+  /// - To keep this behavior predictable, the font-weight parser is expected to run
+  ///   before the font-family parser in the main parsing logic so that valid
+  ///   weight classes are consumed by the weight parser and only non-weights fall
+  ///   through to this regex.
+  /// If the order of font-related checks is changed, ensure that font-weight
+  /// parsing still occurs before font-family parsing to preserve this behavior.
+  static final RegExp _fontFamilyRegex = RegExp(
+    r'^font-(?:(?<family>sans|serif|mono|[a-zA-Z]+)|\[(?<arbitrary>[^\]]+)\])$',
+  );
+
   /// Regex for text decoration: `underline`, `line-through`
   static final RegExp _textDecorationRegex = RegExp(
     r'^(?<decoration>underline|overline|line-through|no-underline)$',
@@ -256,12 +274,20 @@ class TextParser implements WindParserInterface {
               final index = (weightValue ~/ 100) - 1;
               if (index >= 0 && index <= 8) {
                 fontWeight = FontWeight.values[index];
+                continue;
               }
             }
           } else {
-            fontWeight = theme.fontWeights[match.namedGroup('weight')];
+            // Important: Only continue if a valid weight is found.
+            // Classes like 'font-display' match this regex but are not
+            // valid weights, so they should fall through to the font-family
+            // parser. See _fontFamilyRegex documentation for details.
+            final parsedWeight = theme.fontWeights[match.namedGroup('weight')];
+            if (parsedWeight != null) {
+              fontWeight = parsedWeight;
+              continue;
+            }
           }
-          continue;
         }
       }
 
@@ -446,6 +472,20 @@ class TextParser implements WindParserInterface {
             if (maxLines != null) {
               textOverflow ??= TextOverflow.ellipsis;
             }
+          }
+          continue;
+        }
+      }
+
+      // 16. Font Family
+      if (fontFamily == null) {
+        final match = _fontFamilyRegex.firstMatch(className);
+        if (match != null) {
+          if (match.namedGroup('arbitrary') != null) {
+            fontFamily = match.namedGroup('arbitrary')!;
+          } else {
+            final familyName = match.namedGroup('family')!;
+            fontFamily = theme.fontFamilies[familyName] ?? familyName;
           }
           continue;
         }
