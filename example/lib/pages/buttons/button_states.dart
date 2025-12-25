@@ -106,14 +106,14 @@ class _ButtonStatesExamplePageState extends State<ButtonStatesExamplePage> {
                     isLoading: true,
                     loadingWidget: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(
+                      children: [
+                        const Icon(
                           Icons.hourglass_empty,
                           size: 16,
                           color: Colors.white,
                         ),
-                        SizedBox(width: 8),
-                        Text('Please wait...'),
+                        const SizedBox(width: 8),
+                        const Text('Please wait...'),
                       ],
                     ),
                     className:

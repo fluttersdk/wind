@@ -135,7 +135,7 @@ class WButton extends StatelessWidget {
 
           // Build active states set for parsing
           final Set<String> activeStates = {
-            ...?states,
+            ...?anchorState?.customStates,
             if (isLoading) 'loading',
             if (disabled) 'disabled',
             if (anchorState?.isHovering ?? false) 'hover',
@@ -205,6 +205,10 @@ class WButton extends StatelessWidget {
       );
     }
 
-    return Center(child: spinner);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [spinner],
+    );
   }
 }

@@ -60,5 +60,5 @@ class WindAnchorState {
       isHovering.hashCode ^
       isFocused.hashCode ^
       isDisabled.hashCode ^
-      (customStates?.hashCode ?? 0);
+      (customStates == null ? 0 : Object.hashAllUnordered(customStates!));
 }

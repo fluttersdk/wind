@@ -306,5 +306,114 @@ void main() {
         expect(colorBefore, isNot(equals(colorAfter)));
       });
     });
+
+    group('Custom States', () {
+      testWidgets('custom states are applied via states parameter', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              className: 'bg-blue-500 error:bg-red-500 p-4',
+              states: {'error'},
+              child: const Text('Error Button'),
+            ),
+          ),
+        );
+
+        // Get container
+        final container = tester.widget<Container>(
+          find.byType(Container).first,
+        );
+        final decoration = container.decoration as BoxDecoration?;
+
+        // Color should be red (error state active)
+        expect(decoration?.color, isNotNull);
+        expect(find.text('Error Button'), findsOneWidget);
+      });
+
+      testWidgets('multiple custom states can be active', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              className: 'bg-blue-500 error:bg-red-500 success:text-green-500',
+              states: {'error', 'success'},
+              child: const Text('Mixed States'),
+            ),
+          ),
+        );
+
+        expect(find.text('Mixed States'), findsOneWidget);
+      });
+    });
+
+    group('onDoubleTap Callback', () {
+      testWidgets('calls onDoubleTap when double tapped', (tester) async {
+        bool wasDoubleTapped = false;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onDoubleTap: () => wasDoubleTapped = true,
+              child: const Text('Double Tap'),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Double Tap'));
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.tap(find.text('Double Tap'));
+        await tester.pumpAndSettle();
+
+        expect(wasDoubleTapped, isTrue);
+      });
+
+      testWidgets('does not call onDoubleTap when disabled', (tester) async {
+        bool wasDoubleTapped = false;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onDoubleTap: () => wasDoubleTapped = true,
+              disabled: true,
+              child: const Text('Disabled'),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Disabled'), warnIfMissed: false);
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.tap(find.text('Disabled'), warnIfMissed: false);
+        await tester.pumpAndSettle();
+
+        expect(wasDoubleTapped, isFalse);
+      });
+
+      testWidgets('does not call onDoubleTap when loading', (tester) async {
+        bool wasDoubleTapped = false;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onDoubleTap: () => wasDoubleTapped = true,
+              isLoading: true,
+              loadingText: 'Loading...',
+              child: const Text('Submit'),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Loading...'), warnIfMissed: false);
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.tap(find.text('Loading...'), warnIfMissed: false);
+        // Use pump with fixed duration instead of pumpAndSettle
+        // because CircularProgressIndicator animation never settles
+        await tester.pump(const Duration(milliseconds: 500));
+
+        expect(wasDoubleTapped, isFalse);
+      });
+    });
   });
 }

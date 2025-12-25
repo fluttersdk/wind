@@ -26,24 +26,28 @@ WButton(
 ```dart
 // Primary
 WButton(
+  onTap: () {},
   className: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg',
   child: Text('Primary'),
 )
 
 // Secondary
 WButton(
+  onTap: () {},
   className: 'bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg',
   child: Text('Secondary'),
 )
 
 // Outline
 WButton(
+  onTap: () {},
   className: 'border-2 border-blue-600 hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-lg',
   child: Text('Outline'),
 )
 
 // Danger
 WButton(
+  onTap: () {},
   className: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg',
   child: Text('Delete'),
 )
