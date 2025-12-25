@@ -206,9 +206,9 @@ class RingParser implements WindParserInterface {
     List<BoxShadow> ringShadows = [];
 
     if (offset > 0 && !inset) {
-      // Offset ring: first add white (or bg color) shadow, then ring
+      // Offset ring: first add transparent (or bg color) shadow, then ring
       ringShadows.add(
-        BoxShadow(color: Colors.white, spreadRadius: offset, blurRadius: 0),
+        BoxShadow(color: Colors.transparent, spreadRadius: offset, blurRadius: 0),
       );
     }
 
