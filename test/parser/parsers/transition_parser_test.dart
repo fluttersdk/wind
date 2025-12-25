@@ -111,6 +111,14 @@ void main() {
         ], createTestContext());
         expect(style.transitionDuration, const Duration(milliseconds: 500));
       });
+
+      test('last class wins for ease', () {
+        final style = const TransitionParser().parse(const WindStyle(), [
+          'ease-in',
+          'ease-out',
+        ], createTestContext());
+        expect(style.transitionCurve, Curves.easeOut);
+      });
     });
   });
 }

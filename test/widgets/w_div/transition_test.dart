@@ -38,6 +38,28 @@ void main() {
       expect(find.byType(AnimatedContainer), findsNothing);
     });
 
+    testWidgets(
+      'uses regular Container when only ease is present without duration',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              child: Scaffold(
+                body: WDiv(
+                  className: 'bg-blue-500 ease-in-out',
+                  child: const Text('Test'),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // Should use Container, not AnimatedContainer because duration is missing
+        expect(find.byType(Container), findsWidgets);
+        expect(find.byType(AnimatedContainer), findsNothing);
+      },
+    );
+
     testWidgets('AnimatedContainer has correct duration', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
