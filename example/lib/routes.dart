@@ -49,6 +49,10 @@ import 'pages/forms/input_basic.dart';
 import 'pages/forms/input_styled.dart';
 import 'pages/forms/input_states.dart';
 
+// Buttons
+import 'pages/buttons/button_basic.dart';
+import 'pages/buttons/button_states.dart';
+
 final Map<String, Widget> appRoutes = {
   // Effects
   '/effects/shadows_basic': const ShadowsBasicExamplePage(),
@@ -68,6 +72,9 @@ final Map<String, Widget> appRoutes = {
   '/forms/input_basic': const InputBasicExamplePage(),
   '/forms/input_styled': const InputStyledExamplePage(),
   '/forms/input_states': const InputStatesExamplePage(),
+  // Buttons
+  '/buttons/button_basic': const ButtonBasicExamplePage(),
+  '/buttons/button_states': const ButtonStatesExamplePage(),
   '/': const HomePage(),
   '/examples/basic': const BasicExamplePage(),
   '/borders/radius_basic': const RadiusBasicPage(),

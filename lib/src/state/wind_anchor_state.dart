@@ -17,6 +17,12 @@ class WindAnchorState {
   /// Whether the widget is disabled.
   final bool isDisabled;
 
+  /// Custom states for dynamic styling (e.g., 'error', 'success', 'loading').
+  ///
+  /// These are propagated to child widgets and activate their corresponding
+  /// prefix classes (e.g., `error:border-red-500`).
+  final Set<String>? customStates;
+
   /// Creates a new instance of `WindPressableState`.
   ///
   /// All arguments are required.
@@ -24,6 +30,7 @@ class WindAnchorState {
     required this.isHovering,
     required this.isFocused,
     required this.isDisabled,
+    this.customStates,
   });
 
   /// A constant representing the default state where no interactions are occurring.
@@ -43,11 +50,15 @@ class WindAnchorState {
     return other is WindAnchorState &&
         other.isHovering == isHovering &&
         other.isFocused == isFocused &&
-        other.isDisabled == isDisabled;
+        other.isDisabled == isDisabled &&
+        setEquals(other.customStates, customStates);
   }
 
   /// Overrides the hash code to generate a unique hash based on the properties.
   @override
   int get hashCode =>
-      isHovering.hashCode ^ isFocused.hashCode ^ isDisabled.hashCode;
+      isHovering.hashCode ^
+      isFocused.hashCode ^
+      isDisabled.hashCode ^
+      (customStates?.hashCode ?? 0);
 }

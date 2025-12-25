@@ -94,7 +94,9 @@ Wind also supports custom states that you define yourself. This is powerful for 
 
 ### Using Custom States
 
-Pass a `Set<String>` of active states to the `states` parameter of `WDiv` or `WText`:
+Pass a `Set<String>` of active states to the `states` parameter of any Wind widget:
+
+#### WDiv
 
 ```dart
 WDiv(
@@ -103,6 +105,40 @@ WDiv(
   children: [
     WText(isLoading ? "Loading..." : "Submit"),
   ],
+)
+```
+
+#### WText
+
+```dart
+WText(
+  "Status message",
+  className: "text-gray-600 error:text-red-500 success:text-green-500",
+  states: {if (hasError) 'error', if (isSuccess) 'success'},
+)
+```
+
+#### WButton
+
+```dart
+WButton(
+  onTap: _submit,
+  className: "bg-blue-500 error:bg-red-500 success:bg-green-500 text-white px-4 py-2",
+  states: {if (hasError) 'error', if (isSuccess) 'success'},
+  child: Text("Submit"),
+)
+```
+
+#### WAnchor (Propagates to Children)
+
+```dart
+WAnchor(
+  onTap: () {},
+  states: {'loading'},  // Propagated to all child widgets
+  child: WDiv(
+    className: "bg-blue-500 loading:bg-gray-400 loading:opacity-70",
+    children: [WText("Content")],
+  ),
 )
 ```
 
