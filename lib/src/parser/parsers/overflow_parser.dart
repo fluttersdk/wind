@@ -1,0 +1,96 @@
+import 'package:flutter/widgets.dart';
+import '../wind_context.dart';
+import '../wind_style.dart';
+import 'wind_parser_interface.dart';
+
+/// Parser for overflow utility classes
+///
+/// Example classes:
+/// - overflow-hidden
+/// - overflow-visible
+/// - overflow-scroll
+/// - overflow-auto
+/// - overflow-x-hidden
+/// - overflow-x-scroll
+/// - overflow-y-hidden
+/// - overflow-y-scroll
+class OverflowParser implements WindParserInterface {
+  const OverflowParser();
+
+  @override
+  bool canParse(String className) {
+    return className.startsWith('overflow-');
+  }
+
+  @override
+  WindStyle parse(WindStyle style, List<String>? classes, WindContext context) {
+    if (classes == null) return style;
+
+    WindOverflow? overflow;
+    WindOverflow? overflowX;
+    WindOverflow? overflowY;
+    Clip? clipBehavior;
+
+    for (var i = classes.length - 1; i >= 0; i--) {
+      final className = classes[i];
+
+      // Handle directional overflow-x-*
+      if (className.startsWith('overflow-x-')) {
+        if (overflowX == null) {
+          final value = className.replaceFirst('overflow-x-', '');
+          overflowX = _parseOverflowValue(value);
+        }
+        continue;
+      }
+
+      // Handle directional overflow-y-*
+      if (className.startsWith('overflow-y-')) {
+        if (overflowY == null) {
+          final value = className.replaceFirst('overflow-y-', '');
+          overflowY = _parseOverflowValue(value);
+        }
+        continue;
+      }
+
+      // Handle general overflow-*
+      if (className.startsWith('overflow-')) {
+        if (overflow == null) {
+          final value = className.replaceFirst('overflow-', '');
+          overflow = _parseOverflowValue(value);
+        }
+        continue;
+      }
+    }
+
+    // Determine clipBehavior based on overflow settings
+    if (overflow == WindOverflow.hidden ||
+        overflowX == WindOverflow.hidden ||
+        overflowY == WindOverflow.hidden) {
+      clipBehavior = Clip.hardEdge;
+    } else if (overflow == WindOverflow.visible) {
+      clipBehavior = Clip.none;
+    }
+
+    return style.copyWith(
+      overflow: overflow,
+      overflowX: overflowX,
+      overflowY: overflowY,
+      clipBehavior: clipBehavior,
+    );
+  }
+
+  WindOverflow? _parseOverflowValue(String value) {
+    switch (value) {
+      case 'hidden':
+        return WindOverflow.hidden;
+      case 'visible':
+        return WindOverflow.visible;
+      case 'scroll':
+        return WindOverflow.scroll;
+      case 'auto':
+        return WindOverflow.auto;
+      default:
+        return null;
+    }
+  }
+}

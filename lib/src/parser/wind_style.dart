@@ -4,6 +4,9 @@ enum WindDisplayType { block, flex, grid, wrap }
 
 enum WindTextTransform { none, uppercase, lowercase, capitalize }
 
+/// Overflow behavior types
+enum WindOverflow { visible, hidden, scroll, auto }
+
 @immutable
 class WindStyle {
   /// `hidden` property e.g., hidden
@@ -135,6 +138,18 @@ class WindStyle {
   /// Z-index for Stack ordering e.g., z-10, z-[100]
   final int? zIndex;
 
+  /// Overflow behavior e.g., overflow-hidden
+  final WindOverflow? overflow;
+
+  /// Horizontal overflow behavior e.g., overflow-x-hidden
+  final WindOverflow? overflowX;
+
+  /// Vertical overflow behavior e.g., overflow-y-hidden
+  final WindOverflow? overflowY;
+
+  /// Clip behavior for overflow-hidden
+  final Clip? clipBehavior;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -179,6 +194,10 @@ class WindStyle {
     this.debug = false,
     this.opacity,
     this.zIndex,
+    this.overflow,
+    this.overflowX,
+    this.overflowY,
+    this.clipBehavior,
   });
 
   WindStyle copyWith({
@@ -225,6 +244,10 @@ class WindStyle {
     bool? debug,
     double? opacity,
     int? zIndex,
+    WindOverflow? overflow,
+    WindOverflow? overflowX,
+    WindOverflow? overflowY,
+    Clip? clipBehavior,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -286,6 +309,10 @@ class WindStyle {
       debug: debug ?? this.debug,
       opacity: opacity ?? this.opacity,
       zIndex: zIndex ?? this.zIndex,
+      overflow: overflow ?? this.overflow,
+      overflowX: overflowX ?? this.overflowX,
+      overflowY: overflowY ?? this.overflowY,
+      clipBehavior: clipBehavior ?? this.clipBehavior,
     );
   }
 
@@ -336,7 +363,11 @@ class WindStyle {
           shadowColor == other.shadowColor &&
           debug == other.debug &&
           opacity == other.opacity &&
-          zIndex == other.zIndex;
+          zIndex == other.zIndex &&
+          overflow == other.overflow &&
+          overflowX == other.overflowX &&
+          overflowY == other.overflowY &&
+          clipBehavior == other.clipBehavior;
 
   @override
   int get hashCode =>
@@ -382,7 +413,11 @@ class WindStyle {
       shadowColor.hashCode ^
       debug.hashCode ^
       opacity.hashCode ^
-      zIndex.hashCode;
+      zIndex.hashCode ^
+      overflow.hashCode ^
+      overflowX.hashCode ^
+      overflowY.hashCode ^
+      clipBehavior.hashCode;
 
   /// Calculates the effective line height based on either a fixed value
   /// or a factor of the font size.

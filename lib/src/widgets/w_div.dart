@@ -271,11 +271,22 @@ class WDiv extends StatelessWidget {
   }) {
     Widget? widgetToBuild = content;
 
+    // Check if we have overflow behavior that needs special handling
+    final bool hasOverflowClip = styles.clipBehavior == Clip.hardEdge;
+    final bool hasOverflowScroll =
+        styles.overflow == WindOverflow.scroll ||
+        styles.overflow == WindOverflow.auto ||
+        styles.overflowX == WindOverflow.scroll ||
+        styles.overflowX == WindOverflow.auto ||
+        styles.overflowY == WindOverflow.scroll ||
+        styles.overflowY == WindOverflow.auto;
+    final bool hasOverflow = hasOverflowClip || hasOverflowScroll;
+
     // 1. INNER LAYER: Box Model & Decoration
     // ---------------------------------------------------------
 
     // Determine constraints (combining direct width/height with box constraints)
-    final BoxConstraints? constraints =
+    BoxConstraints? constraints =
         (styles.width != null ||
             styles.height != null ||
             styles.constraints != null)
@@ -287,10 +298,15 @@ class WDiv extends StatelessWidget {
           )
         : styles.constraints;
 
+    // For overflow, we DON'T want to constrain children
+    // Instead, we'll apply constraints to an outer SizedBox
+    final BoxConstraints? innerConstraints = hasOverflow ? null : constraints;
+    final BoxConstraints? outerConstraints = hasOverflow ? constraints : null;
+
     // Apply Container ONLY if we have box-specific properties
     final bool needsContainer =
         styles.decoration != null ||
-        constraints != null ||
+        innerConstraints != null ||
         styles.boxShadow != null;
 
     if (needsContainer) {
@@ -309,8 +325,67 @@ class WDiv extends StatelessWidget {
       }
 
       widgetToBuild = Container(
-        constraints: constraints,
+        constraints: innerConstraints,
         decoration: finalDecoration,
+        child: widgetToBuild,
+      );
+    }
+
+    // 1b. OVERFLOW HANDLING
+    // Apply scroll/clip wrappers BEFORE outer sizing
+    if (hasOverflowScroll) {
+      if (styles.overflowX == WindOverflow.scroll ||
+          styles.overflowX == WindOverflow.auto) {
+        // Horizontal scroll only
+        logger.wrapWith("SingleChildScrollView", "horizontal");
+        widgetToBuild = SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: widgetToBuild,
+        );
+      } else if (styles.overflowY == WindOverflow.scroll ||
+          styles.overflowY == WindOverflow.auto) {
+        // Vertical scroll only
+        logger.wrapWith("SingleChildScrollView", "vertical");
+        widgetToBuild = SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: widgetToBuild,
+        );
+      } else {
+        // Both directions scroll - use nested ScrollViews
+        logger.wrapWith("SingleChildScrollView", "both (nested)");
+        widgetToBuild = SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: widgetToBuild,
+          ),
+        );
+      }
+    } else if (hasOverflowClip) {
+      logger.wrapWith("ClipRect", "hardEdge");
+      widgetToBuild = ClipRect(
+        clipBehavior: Clip.hardEdge,
+        child: OverflowBox(
+          alignment: Alignment.topLeft,
+          minWidth: 0,
+          minHeight: 0,
+          maxWidth: double.infinity,
+          maxHeight: double.infinity,
+          child: widgetToBuild,
+        ),
+      );
+    }
+
+    // Apply outer sizing for overflow cases
+    if (outerConstraints != null) {
+      logger.wrapWith("SizedBox", "outer sizing for overflow");
+      widgetToBuild = SizedBox(
+        width: outerConstraints.maxWidth.isFinite
+            ? outerConstraints.maxWidth
+            : null,
+        height: outerConstraints.maxHeight.isFinite
+            ? outerConstraints.maxHeight
+            : null,
         child: widgetToBuild,
       );
     }
