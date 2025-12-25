@@ -40,10 +40,29 @@ WDiv(className: "z-[-1]")
 
 ## Usage with IndexedStack
 
-When using `IndexedStack`, you can use the `zIndex` property from `WindStyle` to control visibility order.
+When using `Stack` or `IndexedStack`, you can use the `zIndex` property from `WindStyle` to control the order of your children.
+
+Flutter does **not** read `zIndex` directly from a widget; instead, you must reorder the `children` list yourself based on the parsed `zIndex` values.
 
 ```dart
-// Access the parsed style for ordering
-final style = WindParser.parse("z-20", context);
-// style.zIndex == 20
+// Parse styles for each widget
+final styleA = WindParser.parse("z-10", context); // styleA.zIndex == 10
+final styleB = WindParser.parse("z-20", context); // styleB.zIndex == 20
+
+// Higher zIndex should appear later in the `children` list so it paints on top
+final children = <Widget>[
+  if ((styleA.zIndex ?? 0) <= (styleB.zIndex ?? 0)) ...[
+    WDiv(className: "z-10 bg-blue-500"),
+    WDiv(className: "z-20 bg-red-500"),
+  ] else ...[
+    WDiv(className: "z-20 bg-red-500"),
+    WDiv(className: "z-10 bg-blue-500"),
+  ],
+];
+
+Stack(
+  children: children,
+);
+
+// With IndexedStack you can also use the parsed zIndex to decide which child index is visible.
 ```
