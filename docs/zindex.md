@@ -65,4 +65,14 @@ Stack(
 );
 
 // With IndexedStack you can also use the parsed zIndex to decide which child index is visible.
+final currentIndex =
+    (styleA.zIndex ?? 0) >= (styleB.zIndex ?? 0) ? 0 : 1;
+
+IndexedStack(
+  index: currentIndex,
+  children: const [
+    WDiv(className: "z-10 bg-blue-500"),
+    WDiv(className: "z-20 bg-red-500"),
+  ],
+);
 ```
