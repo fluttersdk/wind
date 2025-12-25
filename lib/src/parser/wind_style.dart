@@ -132,6 +132,9 @@ class WindStyle {
   /// Widget opacity e.g., opacity-50, opacity-[0.5]
   final double? opacity;
 
+  /// Z-index for Stack ordering e.g., z-10, z-[100]
+  final int? zIndex;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -175,6 +178,7 @@ class WindStyle {
     this.shadowColor,
     this.debug = false,
     this.opacity,
+    this.zIndex,
   });
 
   WindStyle copyWith({
@@ -220,6 +224,7 @@ class WindStyle {
     Color? shadowColor,
     bool? debug,
     double? opacity,
+    int? zIndex,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -280,6 +285,7 @@ class WindStyle {
       shadowColor: shadowColor ?? this.shadowColor,
       debug: debug ?? this.debug,
       opacity: opacity ?? this.opacity,
+      zIndex: zIndex ?? this.zIndex,
     );
   }
 
@@ -329,7 +335,8 @@ class WindStyle {
           boxShadow == other.boxShadow &&
           shadowColor == other.shadowColor &&
           debug == other.debug &&
-          opacity == other.opacity;
+          opacity == other.opacity &&
+          zIndex == other.zIndex;
 
   @override
   int get hashCode =>
@@ -374,7 +381,8 @@ class WindStyle {
       boxShadow.hashCode ^
       shadowColor.hashCode ^
       debug.hashCode ^
-      opacity.hashCode;
+      opacity.hashCode ^
+      zIndex.hashCode;
 
   /// Calculates the effective line height based on either a fixed value
   /// or a factor of the font size.
@@ -454,7 +462,8 @@ class WindStyle {
         'boxShadow: $boxShadow, '
         'shadowColor: $shadowColor, '
         'debug: $debug, '
-        'opacity: $opacity'
+        'opacity: $opacity, '
+        'zIndex: $zIndex'
         '}';
   }
 }
