@@ -325,7 +325,7 @@ class _WInputState extends State<WInput> {
         ? widget.maxLines
         : 1;
     final int minLines = widget.type == InputType.multiline
-        ? (widget.minLines > 1 ? widget.minLines : 3)
+        ? widget.minLines
         : 1;
 
     // Build text style from WindStyle

@@ -141,7 +141,7 @@ void main() {
 
         final textField = tester.widget<TextField>(find.byType(TextField));
         expect(textField.maxLines, isNull); // unlimited
-        expect(textField.minLines, 3); // default for multiline
+        expect(textField.minLines, 1); // default
         expect(textField.keyboardType, TextInputType.multiline);
       });
 
@@ -414,6 +414,164 @@ void main() {
 
         final textField = tester.widget<TextField>(find.byType(TextField));
         expect(textField.enableSuggestions, isFalse);
+      });
+
+      testWidgets('default textInputAction is next for single line', (
+        tester,
+      ) async {
+        await tester.pumpWidget(wrapWithTheme(const WInput()));
+
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        expect(textField.textInputAction, TextInputAction.next);
+      });
+
+      testWidgets('default textInputAction is newline for multiline', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WInput(type: InputType.multiline)),
+        );
+
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        expect(textField.textInputAction, TextInputAction.newline);
+      });
+    });
+
+    group('Controller Lifecycle', () {
+      testWidgets('switches from internal to external controller', (
+        tester,
+      ) async {
+        final externalController = TextEditingController(text: 'External');
+
+        // Start with internal (value prop)
+        await tester.pumpWidget(wrapWithTheme(const WInput(value: 'Internal')));
+        expect(find.text('Internal'), findsOneWidget);
+
+        // Switch to external
+        await tester.pumpWidget(
+          wrapWithTheme(WInput(controller: externalController)),
+        );
+        expect(find.text('External'), findsOneWidget);
+
+        externalController.dispose();
+      });
+
+      testWidgets('switches from external to internal controller', (
+        tester,
+      ) async {
+        final externalController = TextEditingController(text: 'External');
+
+        // Start with external
+        await tester.pumpWidget(
+          wrapWithTheme(WInput(controller: externalController)),
+        );
+        expect(find.text('External'), findsOneWidget);
+
+        // Switch to internal
+        await tester.pumpWidget(wrapWithTheme(const WInput(value: 'Internal')));
+        expect(find.text('Internal'), findsOneWidget);
+
+        externalController.dispose();
+      });
+
+      testWidgets('switches between external controllers', (tester) async {
+        final controller1 = TextEditingController(text: 'One');
+        final controller2 = TextEditingController(text: 'Two');
+
+        await tester.pumpWidget(wrapWithTheme(WInput(controller: controller1)));
+        expect(find.text('One'), findsOneWidget);
+
+        await tester.pumpWidget(wrapWithTheme(WInput(controller: controller2)));
+        expect(find.text('Two'), findsOneWidget);
+
+        controller1.dispose();
+        controller2.dispose();
+      });
+    });
+
+    group('Cursor Preservation', () {
+      testWidgets('preserves cursor at end when appending', (tester) async {
+        String value = 'Test';
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            StatefulBuilder(
+              builder: (context, setState) {
+                return WInput(
+                  value: value,
+                  onChanged: (v) => setState(() => value = v),
+                );
+              },
+            ),
+          ),
+        );
+
+        final textField = find.byType(TextField);
+        await tester.tap(textField);
+
+        // Move cursor to end
+        await tester.enterText(textField, 'Test');
+        // Type '!'
+        await tester.enterText(textField, 'Test!');
+        await tester.pump();
+
+        // Check cursor position
+        final textFieldWidget = tester.widget<TextField>(textField);
+        final controller = textFieldWidget.controller!;
+        expect(controller.selection.baseOffset, 5);
+      });
+
+      testWidgets('preserves cursor in middle when editing', (tester) async {
+        String value = 'Start End';
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            StatefulBuilder(
+              builder: (context, setState) {
+                return WInput(
+                  value: value,
+                  onChanged: (v) => setState(() => value = v),
+                );
+              },
+            ),
+          ),
+        );
+
+        final textField = find.byType(TextField);
+        await tester.tap(textField);
+
+        // Emulate cursor in middle (offset 6, after 'Start ')
+        // And inserting 'Middle ' -> 'Start Middle End'
+        // This is tricky to simulate exactly with enterText as it replaces content.
+        // But WInput._updateControllerValue handles the state update from parent.
+
+        // Simulating external update while focused
+        // 1. User types (handled by onChanged -> internal controller update)
+        // 2. Parent setState updates value
+        // 3. didUpdateWidget calls _updateControllerValue
+
+        // The real test is: if we update value prop externally while user has cursor somewhere, does it stay?
+        // But if value changes externally, usually it's because user typed.
+        // If external change is unrelated (e.g. formatting), we want cursor to stay valid.
+
+        // Let's simulate:
+        final textFieldWidgetBefore = tester.widget<TextField>(textField);
+        final controller = textFieldWidgetBefore.controller!;
+
+        // Set cursor to 5 ('Start| End')
+        controller.selection = const TextSelection.collapsed(offset: 5);
+
+        // Trigger external update (e.g. parent forces upper case)
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WInput(
+              value: 'START END', // Length same, content diff
+            ),
+          ),
+        );
+
+        // Cursor should still be at 5
+        expect(controller.selection.baseOffset, 5);
       });
     });
 

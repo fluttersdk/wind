@@ -28,18 +28,20 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
   - **OpacityParser:** `opacity-0`, `opacity-100`, `opacity-[0.5]`
   - **ZIndexParser:** `z-10`, `z-50`, `z-[100]`
   - **OverflowParser:** `overflow-hidden`, `overflow-scroll`, `overflow-x-auto`
-  - **ShadowParser:** `shadow`, `shadow-md`, `shadow-red-500`, `ring`, `ring-2`
+  - **ShadowParser:** `shadow`, `shadow-md`, `shadow-red-500`
+  - **RingParser:** `ring`, `ring-2`, `ring-blue-500/50`, `ring-offset-2`, `ring-inset`
   - **TransitionParser:** `duration-300`, `ease-in`, `ease-out`, `ease-in-out`
   - **DebugParser:** `debug`
 
 ### Widgets
 - **WDiv:** Builds Column/Row/GridView/Wrap based on displayType. Wraps in DefaultTextStyle.merge.
 - **WText:** Builds Text or SelectableText. Handles text transforms.
+- **WInput:** Form input with React-style binding (`value`/`onChanged`), `className`/`placeholderClassName`, focus states, validation.
 - **WAnchor:** Interactive wrapper for hover/focus/disabled states.
 
 ### Theme
 - **WindTheme:** InheritedWidget propagating WindThemeData.
-- **WindThemeData:** Colors, Screens, Typography, Spacing, borderWidths, borderRadius.
+- **WindThemeData:** Colors, Screens, Typography, Spacing, borderWidths, borderRadius, ringWidths, ringOffsets.
 
 ## 3. Supported Utility Classes
 

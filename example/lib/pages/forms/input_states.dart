@@ -16,10 +16,14 @@ class _InputStatesExamplePageState extends State<InputStatesExamplePage> {
   void _validateEmail(String value) {
     if (value.isEmpty) {
       _emailError = null;
-    } else if (!value.contains('@') || !value.contains('.')) {
-      _emailError = 'Please enter a valid email address';
     } else {
-      _emailError = null;
+      // Basic email regex for demonstration
+      final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
+      if (!emailRegex.hasMatch(value)) {
+        _emailError = 'Please enter a valid email address';
+      } else {
+        _emailError = null;
+      }
     }
   }
 
