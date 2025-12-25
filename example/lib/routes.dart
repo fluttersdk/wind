@@ -44,6 +44,11 @@ import 'pages/effects/ring_opacity.dart';
 import 'pages/effects/states_basic.dart';
 import 'pages/effects/states_custom.dart';
 
+// Forms
+import 'pages/forms/input_basic.dart';
+import 'pages/forms/input_styled.dart';
+import 'pages/forms/input_states.dart';
+
 final Map<String, Widget> appRoutes = {
   // Effects
   '/effects/shadows_basic': const ShadowsBasicExamplePage(),
@@ -59,6 +64,10 @@ final Map<String, Widget> appRoutes = {
   '/effects/ring_opacity': const RingOpacityExamplePage(),
   '/effects/states_basic': const StatesBasicExamplePage(),
   '/effects/states_custom': const StatesCustomExamplePage(),
+  // Forms
+  '/forms/input_basic': const InputBasicExamplePage(),
+  '/forms/input_styled': const InputStyledExamplePage(),
+  '/forms/input_states': const InputStatesExamplePage(),
   '/': const HomePage(),
   '/examples/basic': const BasicExamplePage(),
   '/borders/radius_basic': const RadiusBasicPage(),
