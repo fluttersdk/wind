@@ -138,10 +138,12 @@ class WIcon extends StatelessWidget {
       logger.setCoreWidget("Icon(icon: $icon, color: $color, size: $size)");
       logger.setFinalStyles(styles);
       // Log wrappers
-      if (styles.opacity != null)
+      if (styles.opacity != null) {
         logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
-      if (styles.animationType != null)
+      }
+      if (styles.animationType != null) {
         logger.wrapWith("Animation", "type: ${styles.animationType}");
+      }
       logger.printFinalCode();
     }
 

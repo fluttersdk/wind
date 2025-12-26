@@ -21,7 +21,9 @@ class HomePage extends StatelessWidget {
         WText("Title", className: "text-xl font-bold"),
         WText("Description text...", className: "text-gray-600"),
         WAnchor(
-          onTap: () {},
+          onTap: () {
+            WindTheme.of(context).toggleTheme();
+          },
           child: WDiv(
             // Hover state: changes background and shadow
             className:

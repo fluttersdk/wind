@@ -183,26 +183,51 @@ class WindThemeData {
     Map<String, Duration>? transitionDurations,
     Map<String, Curve>? transitionCurves,
     Map<String, WindAnimationType>? animations,
-  }) : colors = colors ?? _initColors(),
-       fontSizes = fontSizes ?? default_font_sizes.fontSizes,
-       fontWeights = fontWeights ?? default_font_weights.fontWeights,
-       tracking = tracking ?? default_tracking.tracking,
-       leading = leading ?? default_leading.leading,
-       borderWidths = borderWidths ?? default_border_widths.borderWidths,
-       borderRadius = borderRadius ?? default_border_radius.borderRadius,
-       fontFamilies = fontFamilies ?? default_font_families.fontFamilies,
-       ringWidths = ringWidths ?? default_ring_widths.WindRingWidths.widths,
-       ringOffsets = ringOffsets ?? default_ring_widths.WindRingWidths.offsets,
-       containers = containers ?? default_containers.containers,
-       screens = screens ?? default_screens.screens,
-       opacities = opacities ?? default_opacities.opacities,
-       zIndices = zIndices ?? default_z_indices.zIndices,
-       shadows = shadows ?? WindBoxShadows.shadows,
-       transitionDurations =
-           transitionDurations ?? default_transitions.transitionDurations,
-       transitionCurves =
-           transitionCurves ?? default_transitions.transitionCurves,
-       animations = animations ?? default_animations.animations {
+  }) : colors = (Map<String, MaterialColor>.from(_initColors())
+         ..addAll(colors ?? {})),
+       fontSizes = (Map<String, double>.from(default_font_sizes.fontSizes)
+         ..addAll(fontSizes ?? {})),
+       fontWeights = (Map<String, FontWeight>.from(
+         default_font_weights.fontWeights,
+       )..addAll(fontWeights ?? {})),
+       tracking = (Map<String, double>.from(default_tracking.tracking)
+         ..addAll(tracking ?? {})),
+       leading = (Map<String, double>.from(default_leading.leading)
+         ..addAll(leading ?? {})),
+       borderWidths = (Map<String, double>.from(
+         default_border_widths.borderWidths,
+       )..addAll(borderWidths ?? {})),
+       borderRadius = (Map<String, double>.from(
+         default_border_radius.borderRadius,
+       )..addAll(borderRadius ?? {})),
+       fontFamilies = (Map<String, String>.from(
+         default_font_families.fontFamilies,
+       )..addAll(fontFamilies ?? {})),
+       ringWidths = (Map<String, double>.from(
+         default_ring_widths.WindRingWidths.widths,
+       )..addAll(ringWidths ?? {})),
+       ringOffsets = (Map<String, double>.from(
+         default_ring_widths.WindRingWidths.offsets,
+       )..addAll(ringOffsets ?? {})),
+       containers = (Map<String, int>.from(default_containers.containers)
+         ..addAll(containers ?? {})),
+       screens = (Map<String, int>.from(default_screens.screens)
+         ..addAll(screens ?? {})),
+       opacities = (Map<String, double>.from(default_opacities.opacities)
+         ..addAll(opacities ?? {})),
+       zIndices = (Map<String, int>.from(default_z_indices.zIndices)
+         ..addAll(zIndices ?? {})),
+       shadows = (Map<String, List<BoxShadow>>.from(WindBoxShadows.shadows)
+         ..addAll(shadows ?? {})),
+       transitionDurations = (Map<String, Duration>.from(
+         default_transitions.transitionDurations,
+       )..addAll(transitionDurations ?? {})),
+       transitionCurves = (Map<String, Curve>.from(
+         default_transitions.transitionCurves,
+       )..addAll(transitionCurves ?? {})),
+       animations = (Map<String, WindAnimationType>.from(
+         default_animations.animations,
+       )..addAll(animations ?? {})) {
     _resolvedColors = _resolveColors();
   }
 
@@ -385,6 +410,80 @@ class WindThemeData {
       animations: animations != null
           ? (Map.from(this.animations)..addAll(animations))
           : this.animations,
+    );
+  }
+
+  /// Returns a new [WindThemeData] with the brightness toggled.
+  ///
+  /// If currently light, returns dark. If currently dark, returns light.
+  WindThemeData toggleTheme() {
+    return copyWith(
+      brightness: brightness == Brightness.light
+          ? Brightness.dark
+          : Brightness.light,
+    );
+  }
+
+  /// Converts this [WindThemeData] into a Flutter [ThemeData].
+  ///
+  /// This allows binding the Wind theme to the Material application theme,
+  /// ensuring consistency between Wind utility classes and standard Material widgets.
+  ///
+  /// The logic tries to map 'primary', 'secondary', and 'error' colors from
+  /// the [colors] map. If not found, it falls back to defaults.
+  ThemeData toThemeData() {
+    // Helper to safely fetch default material color
+    MaterialColor getDefault(String name) {
+      final raw = default_colors.colors[name] as Map<int, Color>;
+      return MaterialColor(raw[500]!.toARGB32(), raw);
+    }
+
+    // Resolve colors or use defaults
+    final primary = colors['primary'] ?? getDefault('indigo');
+    final secondary = colors['secondary'] ?? getDefault('teal');
+    final error = colors['error'] ?? getDefault('red');
+
+    final surface = colors['white'] ?? default_colors.colors['white'] as Color;
+
+    Color background;
+    if (colors.containsKey('background')) {
+      background = colors['background']!;
+    } else {
+      if (brightness == Brightness.dark) {
+        final gray = default_colors.colors['gray'] as Map<int, Color>;
+        background = gray[900]!;
+      } else {
+        background = default_colors.colors['white'] as Color;
+      }
+    }
+
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: primary,
+      brightness: brightness,
+      primary: primary,
+      secondary: secondary,
+      error: error,
+      surface: surface,
+      // Use surfaceContainerHighest for background effect in Material 3
+      surfaceContainerHighest: background,
+    );
+
+    // Resolve Typography
+    final defaultFontFamily = fontFamilies['sans'];
+    TextTheme? textTheme;
+    if (defaultFontFamily != null) {
+      textTheme = ThemeData(
+        brightness: brightness,
+      ).textTheme.apply(fontFamily: defaultFontFamily);
+    }
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: brightness,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: background,
+      textTheme: textTheme,
+      fontFamily: defaultFontFamily,
     );
   }
 }

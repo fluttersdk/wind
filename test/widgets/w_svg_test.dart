@@ -70,7 +70,7 @@ void main() {
               builder: (context) {
                 final style = WindParser.parse('fill-none', context);
                 expect(
-                  style.fillColor?.alpha,
+                  (style.fillColor!.a * 255).round(),
                   equals(0),
                   reason: 'fill-none should be transparent',
                 );

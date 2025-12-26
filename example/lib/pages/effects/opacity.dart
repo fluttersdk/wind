@@ -6,25 +6,22 @@ class OpacityExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _OpacityBox(className: "opacity-100", label: "100%"),
-              SizedBox(height: 16),
-              _OpacityBox(className: "opacity-75", label: "75%"),
-              SizedBox(height: 16),
-              _OpacityBox(className: "opacity-50", label: "50%"),
-              SizedBox(height: 16),
-              _OpacityBox(className: "opacity-25", label: "25%"),
-              SizedBox(height: 16),
-              _OpacityBox(className: "opacity-0", label: "0%"),
-            ],
-          ),
+    return const Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _OpacityBox(className: "opacity-100", label: "100%"),
+            SizedBox(height: 16),
+            _OpacityBox(className: "opacity-75", label: "75%"),
+            SizedBox(height: 16),
+            _OpacityBox(className: "opacity-50", label: "50%"),
+            SizedBox(height: 16),
+            _OpacityBox(className: "opacity-25", label: "25%"),
+            SizedBox(height: 16),
+            _OpacityBox(className: "opacity-0", label: "0%"),
+          ],
         ),
       ),
     );

@@ -173,13 +173,15 @@ class WImage extends StatelessWidget {
         _isAsset ? "Image.asset('$_assetPath')" : "Image.network('$src')",
       );
       logger.setFinalStyles(styles);
-      if (styles.width != null || styles.height != null)
+      if (styles.width != null || styles.height != null) {
         logger.wrapWith("SizedBox", "w: ${styles.width}, h: ${styles.height}");
-      if (styles.decoration?.borderRadius != null)
+      }
+      if (styles.decoration?.borderRadius != null) {
         logger.wrapWith(
           "ClipRRect",
           "radius: ${styles.decoration!.borderRadius}",
         );
+      }
       logger.printFinalCode();
     }
 

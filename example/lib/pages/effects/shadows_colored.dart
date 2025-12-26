@@ -6,30 +6,27 @@ class ShadowsColoredExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _ShadowBox(
-                className: "shadow-xl shadow-blue-500",
-                label: "shadow-blue-500",
-              ),
-              SizedBox(height: 32),
-              _ShadowBox(
-                className: "shadow-xl shadow-red-500",
-                label: "shadow-red-500",
-              ),
-              SizedBox(height: 32),
-              _ShadowBox(
-                className: "shadow-xl shadow-[#1da1f2]",
-                label: "shadow-[#1da1f2]",
-              ),
-            ],
-          ),
+    return const Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _ShadowBox(
+              className: "shadow-xl shadow-blue-500",
+              label: "shadow-blue-500",
+            ),
+            SizedBox(height: 32),
+            _ShadowBox(
+              className: "shadow-xl shadow-red-500",
+              label: "shadow-red-500",
+            ),
+            SizedBox(height: 32),
+            _ShadowBox(
+              className: "shadow-xl shadow-[#1da1f2]",
+              label: "shadow-[#1da1f2]",
+            ),
+          ],
         ),
       ),
     );

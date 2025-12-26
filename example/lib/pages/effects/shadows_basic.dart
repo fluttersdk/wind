@@ -6,27 +6,24 @@ class ShadowsBasicExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _ShadowBox(className: "shadow-sm", label: "shadow-sm"),
-              SizedBox(height: 32),
-              _ShadowBox(className: "shadow", label: "shadow"),
-              SizedBox(height: 32),
-              _ShadowBox(className: "shadow-md", label: "shadow-md"),
-              SizedBox(height: 32),
-              _ShadowBox(className: "shadow-lg", label: "shadow-lg"),
-              SizedBox(height: 32),
-              _ShadowBox(className: "shadow-xl", label: "shadow-xl"),
-              SizedBox(height: 32),
-              _ShadowBox(className: "shadow-2xl", label: "shadow-2xl"),
-            ],
-          ),
+    return const Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _ShadowBox(className: "shadow-sm", label: "shadow-sm"),
+            SizedBox(height: 32),
+            _ShadowBox(className: "shadow", label: "shadow"),
+            SizedBox(height: 32),
+            _ShadowBox(className: "shadow-md", label: "shadow-md"),
+            SizedBox(height: 32),
+            _ShadowBox(className: "shadow-lg", label: "shadow-lg"),
+            SizedBox(height: 32),
+            _ShadowBox(className: "shadow-xl", label: "shadow-xl"),
+            SizedBox(height: 32),
+            _ShadowBox(className: "shadow-2xl", label: "shadow-2xl"),
+          ],
         ),
       ),
     );

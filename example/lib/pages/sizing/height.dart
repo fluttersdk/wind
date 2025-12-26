@@ -6,24 +6,22 @@ class HeightExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            WDiv(
+    return const Center(
+      child: Column(
+        children: [
+          WDiv(
+            className:
+                "h-32 bg-red-200 w-full mb-2 flex items-center justify-center",
+            children: [Text("h-32")],
+          ),
+          Expanded(
+            child: WDiv(
               className:
-                  "h-32 bg-red-200 w-full mb-2 flex items-center justify-center",
-              children: [Text("h-32")],
+                  "h-full bg-blue-200 w-full flex items-center justify-center",
+              children: [Text("h-full (inside expanded)")],
             ),
-            Expanded(
-              child: WDiv(
-                className:
-                    "h-full bg-blue-200 w-full flex items-center justify-center",
-                children: [Text("h-full (inside expanded)")],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -6,39 +6,33 @@ class RingColorsExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFFF3F4F6),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(32),
-          child: Wrap(
-            spacing: 32,
-            runSpacing: 32,
-            alignment: WrapAlignment.center,
-            children: [
-              _RingBox(className: "ring-4 ring-red-500", label: "ring-red-500"),
-              _RingBox(
-                className: "ring-4 ring-green-500",
-                label: "ring-green-500",
-              ),
-              _RingBox(
-                className: "ring-4 ring-blue-500",
-                label: "ring-blue-500",
-              ),
-              _RingBox(
-                className: "ring-4 ring-yellow-500",
-                label: "ring-yellow-500",
-              ),
-              _RingBox(
-                className: "ring-4 ring-purple-500",
-                label: "ring-purple-500",
-              ),
-              _RingBox(
-                className: "ring-4 ring-[#1da1f2]",
-                label: "ring-[#1da1f2]",
-              ),
-            ],
-          ),
+    return const Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(32),
+        child: Wrap(
+          spacing: 32,
+          runSpacing: 32,
+          alignment: WrapAlignment.center,
+          children: [
+            _RingBox(className: "ring-4 ring-red-500", label: "ring-red-500"),
+            _RingBox(
+              className: "ring-4 ring-green-500",
+              label: "ring-green-500",
+            ),
+            _RingBox(className: "ring-4 ring-blue-500", label: "ring-blue-500"),
+            _RingBox(
+              className: "ring-4 ring-yellow-500",
+              label: "ring-yellow-500",
+            ),
+            _RingBox(
+              className: "ring-4 ring-purple-500",
+              label: "ring-purple-500",
+            ),
+            _RingBox(
+              className: "ring-4 ring-[#1da1f2]",
+              label: "ring-[#1da1f2]",
+            ),
+          ],
         ),
       ),
     );

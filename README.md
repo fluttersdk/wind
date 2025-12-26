@@ -207,6 +207,27 @@ Use `dark:` prefix for dark-mode-only styles:
 WDiv(className: 'bg-white dark:bg-gray-900')
 ```
 
+### Toggle Theme at Runtime
+
+```dart
+// Toggle between light/dark
+WindTheme.of(context).toggleTheme();
+// or
+context.windTheme.toggleTheme();
+```
+
+For reactive `MaterialApp.theme` updates, use the `builder` pattern:
+
+```dart
+WindTheme(
+  data: windTheme,
+  builder: (context, controller) => MaterialApp(
+    theme: controller.toThemeData(), // Auto-updates on toggle
+    home: MyHomePage(),
+  ),
+)
+```
+
 ## 📱 Responsive Design
 
 ```dart

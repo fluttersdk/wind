@@ -402,7 +402,7 @@ class _WInputState extends State<WInput> {
     required WindStyle styles,
     required WindStyle placeholderStyles,
   }) {
-    final theme = WindTheme.of(context);
+    final theme = WindTheme.dataOf(context);
 
     // Extract padding from styles
     final EdgeInsets contentPadding =

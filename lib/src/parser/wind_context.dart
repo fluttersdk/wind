@@ -67,7 +67,7 @@ class WindContext {
   bool hasState(String state) => activeStates.contains(state);
 
   factory WindContext.build(BuildContext context, {Set<String>? states}) {
-    final theme = WindTheme.of(context);
+    final theme = WindTheme.dataOf(context);
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;

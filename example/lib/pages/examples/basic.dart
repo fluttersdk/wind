@@ -5,13 +5,6 @@ class BasicExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Basic Example'),
-      ),
-      body: Center(
-        child: Text('This is a basic example page.'),
-      ),
-    );
+    return Center(child: Text('This is a basic example page.'));
   }
 }

@@ -26,7 +26,7 @@ Color? wColor(BuildContext context, String colorName, [int shade = 500]) {
     shade = int.parse(match.group(2)!);
   }
 
-  final theme = WindTheme.of(context);
+  final theme = WindTheme.dataOf(context);
   return theme.getColor(colorName, shade);
 }
 
@@ -40,7 +40,7 @@ Color? wColor(BuildContext context, String colorName, [int shade = 500]) {
 /// double half = wSpacing(context, 0.5); // 2.0
 /// ```
 double wSpacing(BuildContext context, num multiplier) {
-  final theme = WindTheme.of(context);
+  final theme = WindTheme.dataOf(context);
   return multiplier * theme.baseSpacingUnit;
 }
 
@@ -54,7 +54,7 @@ double wSpacing(BuildContext context, num multiplier) {
 /// double size = wFontSize(context, '2xl'); // 24.0
 /// ```
 double? wFontSize(BuildContext context, String sizeName) {
-  final theme = WindTheme.of(context);
+  final theme = WindTheme.dataOf(context);
   return theme.fontSizes[sizeName];
 }
 
@@ -68,7 +68,7 @@ double? wFontSize(BuildContext context, String sizeName) {
 /// FontWeight weight = wFontWeight(context, 'semibold')!; // FontWeight.w600
 /// ```
 FontWeight? wFontWeight(BuildContext context, String weightName) {
-  final theme = WindTheme.of(context);
+  final theme = WindTheme.dataOf(context);
   return theme.fontWeights[weightName];
 }
 
@@ -83,7 +83,7 @@ FontWeight? wFontWeight(BuildContext context, String weightName) {
 /// int? invalid = wScreen(context, 'invalid'); // null
 /// ```
 int? wScreen(BuildContext context, String name) {
-  final theme = WindTheme.of(context);
+  final theme = WindTheme.dataOf(context);
   return theme.screens[name];
 }
 
@@ -111,7 +111,7 @@ bool wScreenIs(BuildContext context, String name) {
 /// String bp = wScreenCurrent(context); // 'md', 'lg', etc.
 /// ```
 String wScreenCurrent(BuildContext context) {
-  final theme = WindTheme.of(context);
+  final theme = WindTheme.dataOf(context);
   final screenWidth = MediaQuery.of(context).size.width;
 
   // Sort breakpoints by value descending

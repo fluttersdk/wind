@@ -14,13 +14,30 @@ void main() {
     }
 
     group('Theme Access', () {
-      testWidgets('windTheme returns WindThemeData', (tester) async {
-        WindThemeData? result;
+      testWidgets('windTheme returns WindThemeController', (tester) async {
+        WindThemeController? result;
         await tester.pumpWidget(
           createTestApp(
             Builder(
               builder: (context) {
                 result = context.windTheme;
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+
+        expect(result, isNotNull);
+        expect(result, isA<WindThemeController>());
+      });
+
+      testWidgets('windThemeData returns WindThemeData', (tester) async {
+        WindThemeData? result;
+        await tester.pumpWidget(
+          createTestApp(
+            Builder(
+              builder: (context) {
+                result = context.windThemeData;
                 return const SizedBox();
               },
             ),

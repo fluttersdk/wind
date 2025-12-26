@@ -9,32 +9,51 @@ import 'wind_helpers.dart';
 ///
 /// Extensions on [BuildContext] for ergonomic access to Wind's theme and helpers.
 ///
+/// ### Theme Control:
+/// - `context.windTheme` -> Returns [WindThemeController] for toggling/updating theme
+/// - `context.windThemeData` -> Returns [WindThemeData] for read-only access
+///
 /// ### Shortcuts:
-/// - `context.windTheme` -> Access global theme data
 /// - `context.windColors` -> Access theme colors
 /// - `context.wIsMobile` -> Check for mobile breakpoint
 /// - `context.wColorExt('red', 500)` -> Resolve color safely
 ///
 /// Example:
 /// ```dart
+/// // Toggle theme
+/// context.windTheme.toggleTheme();
+///
+/// // Access colors
 /// final color = context.windColors['primary'];
-/// if (context.wIsMobile) { ... }
 /// ```
 extension WindContextExtension on BuildContext {
+  /// Returns the WindThemeController from the nearest WindTheme ancestor.
+  ///
+  /// Use this to toggle theme or set new theme data:
+  /// ```dart
+  /// context.windTheme.toggleTheme();
+  /// ```
+  WindThemeController get windTheme => WindTheme.of(this);
+
   /// Returns the WindThemeData from the nearest WindTheme ancestor.
-  WindThemeData get windTheme => WindTheme.of(this);
+  ///
+  /// Use this for read-only access to theme properties:
+  /// ```dart
+  /// final colors = context.windThemeData.colors;
+  /// ```
+  WindThemeData get windThemeData => WindTheme.dataOf(this);
 
   /// Returns the colors map from the theme.
-  Map<String, MaterialColor> get windColors => windTheme.colors;
+  Map<String, MaterialColor> get windColors => windThemeData.colors;
 
   /// Returns the screens (breakpoints) map from the theme.
-  Map<String, int> get windScreens => windTheme.screens;
+  Map<String, int> get windScreens => windThemeData.screens;
 
   /// Returns the current brightness of the theme.
-  Brightness get windBrightness => windTheme.brightness;
+  Brightness get windBrightness => windThemeData.brightness;
 
   /// Returns true if the theme is in dark mode.
-  bool get windIsDark => windTheme.brightness == Brightness.dark;
+  bool get windIsDark => windThemeData.brightness == Brightness.dark;
 
   /// Shortcut for wColor(context, colorName, shade).
   Color? wColorExt(String colorName, [int shade = 500]) =>

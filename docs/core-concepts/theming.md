@@ -141,7 +141,36 @@ Defines predefined animation behaviors (requires internal support or custom impl
 
 ## Programmatic Access
 
-You can access the theme data programmatically using `WindTheme.of(context)` or the `context.windTheme` extension. `WindThemeData` exposes several utility methods for resolving values.
+You can access the theme programmatically using `WindTheme.of(context)` or context extensions.
+
+### WindThemeController
+
+`WindTheme.of(context)` returns a `WindThemeController` for theme manipulation:
+
+```dart
+// Toggle between light/dark
+WindTheme.of(context).toggleTheme();
+context.windTheme.toggleTheme();
+
+// Set a new theme
+WindTheme.of(context).setTheme(WindThemeData(
+  brightness: Brightness.dark,
+));
+
+// Update partial theme
+WindTheme.of(context).updateTheme(
+  brightness: Brightness.dark,
+);
+```
+
+### WindThemeData (Read-Only Access)
+
+Use `WindTheme.dataOf(context)` or `context.windThemeData` for read-only access:
+
+```dart
+final data = WindTheme.dataOf(context);
+final colors = context.windThemeData.colors;
+```
 
 ### `getColor(String colorName, int shade)`
 Returns a `Color` from the theme.
@@ -149,7 +178,7 @@ Returns a `Color` from the theme.
 - Returns `null` if the color/shade doesn't exist.
 
 ```dart
-final primary = context.windTheme.getColor('blue', 500);
+final primary = context.windThemeData.getColor('blue', 500);
 ```
 
 ### `getOriginalColor(String colorName, int shade)`
@@ -161,11 +190,10 @@ Calculates a pixel value based on the `baseSpacingUnit` or other tokens.
 - **Decimals:** `"1.5"` → `1.5 * 4.0 = 6.0`
 - **Container Keys:** `"sm"`, `"md"`, `"lg"` etc. → returns container width.
 - **Full:** `"full"` → `double.infinity`
-- **Fraction:** `"1/2"` → Not supported here (use `WDiv` layout logic), this method expects multipliers.
 
 ```dart
-final p4 = context.windTheme.getSpacing('4'); // 16.0
-final width = context.windTheme.getSpacing('full'); // double.infinity
+final p4 = context.windThemeData.getSpacing('4'); // 16.0
+final width = context.windThemeData.getSpacing('full'); // double.infinity
 ```
 
 ### `isValidColor(String colorName, {int? shade})`

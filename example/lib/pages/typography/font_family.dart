@@ -16,31 +16,22 @@ class FontFamilyExamplePage extends StatelessWidget {
           'display': GoogleFonts.poppins().fontFamily!,
         },
       ),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              WText("font-sans (Inter)", className: "font-sans text-lg"),
-              const SizedBox(height: 16),
-              WText(
-                "font-serif (Merriweather)",
-                className: "font-serif text-lg",
-              ),
-              const SizedBox(height: 16),
-              WText(
-                "font-mono (JetBrains Mono)",
-                className: "font-mono text-lg",
-              ),
-              const SizedBox(height: 16),
-              WText(
-                "font-display (Poppins)",
-                className: "font-display text-lg font-semibold",
-              ),
-            ],
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            WText("font-sans (Inter)", className: "font-sans text-lg"),
+            const SizedBox(height: 16),
+            WText("font-serif (Merriweather)", className: "font-serif text-lg"),
+            const SizedBox(height: 16),
+            WText("font-mono (JetBrains Mono)", className: "font-mono text-lg"),
+            const SizedBox(height: 16),
+            WText(
+              "font-display (Poppins)",
+              className: "font-display text-lg font-semibold",
+            ),
+          ],
         ),
       ),
     );
