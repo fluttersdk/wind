@@ -94,3 +94,21 @@ When `duration-{n}` is present, the following properties will animate:
 | `ease-in` | Ease In |
 | `ease-out` | Ease Out |
 | `ease-in-out` | Ease In Out (Default) |
+
+## Customizing Theme
+
+You can customize the available explicit animations in `WindThemeData`. 
+Note: The value must be a `WindAnimationType` or a custom implementation if you extend the parser.
+
+```dart
+WindTheme(
+  theme: WindThemeData(
+    animations: {
+      'spin-slow': WindAnimationType.spinSlow, // Assuming you have added this to enum or similar
+    },
+  ),
+  child: MyApp(),
+)
+```
+
+Currently, `WindAnimationType` supports `spin`, `pulse`, `bounce`, and `ping`. For completely custom animations (keyframes), you would typically use a custom parser or `WAnimation` widget directly, as `WindThemeData` currently maps names to predefined types.

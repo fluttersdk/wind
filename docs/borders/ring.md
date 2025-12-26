@@ -91,16 +91,46 @@ WDiv(className: "ring-4 ring-inset ring-blue-500 p-4")
 
 ---
 
-## Customization
+## Customizing Theme
+
+You can customize ring properties in `WindThemeData`.
 
 ### Default Ring Color
 
-You can customize the default ring color via `WindThemeData`:
+When no ring color is specified (e.g., just `ring`), this color will be used instead of the default blue-500.
 
 ```dart
 WindThemeData(
-  ringColor: Colors.purple, // Custom default ring color
+  ringColor: Colors.purple,
 )
 ```
 
-When no ring color is specified (e.g., just `ring`), this color will be used instead of the default blue-500.
+### Ring Widths
+
+Override available values for `ring-{width}` classes.
+
+```dart
+WindThemeData(
+  ringWidths: {
+    'DEFAULT': 3,
+    '0': 0,
+    '10': 10,
+  },
+)
+```
+Usage: `ring-10`.
+
+### Ring Offsets
+
+Override available values for `ring-offset-{width}` classes.
+
+```dart
+WindThemeData(
+  ringOffsets: {
+    '0': 0,
+    '2': 2,
+    'loose': 12,
+  },
+)
+```
+Usage: `ring-offset-loose`.

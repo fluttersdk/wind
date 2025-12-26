@@ -42,3 +42,26 @@ For one-off opacity values, use the bracket notation.
 WDiv(className: "opacity-[0.35] bg-blue-500")
 WDiv(className: "opacity-[0.67] bg-blue-500")
 ```
+
+## Customizing Theme
+
+You can customize the available opacity intervals in your `WindThemeData`.
+
+```dart
+WindTheme(
+  theme: WindThemeData(
+    opacities: {
+      'disabled': 0.35,
+      'faint': 0.10,
+    },
+  ),
+  child: MyApp(),
+)
+```
+
+Now you can use these custom keys in your utilities:
+
+```dart
+WDiv(className: "opacity-disabled") // 0.35
+WDiv(className: "opacity-faint")    // 0.10
+```

@@ -128,3 +128,40 @@ Widget _colorBox(String colorClasses) {
   );
 }
 ```
+
+## Customizing Theme
+
+You can customize the default values for durations and animation curves in `WindThemeData`.
+
+### Durations
+
+```dart
+WindTheme(
+  theme: WindThemeData(
+    transitionDurations: {
+        'fast': Duration(milliseconds: 100),
+        'slow': Duration(milliseconds: 1000),
+        '2000': Duration(milliseconds: 2000), // Override default or add new
+    },
+  ),
+  child: MyApp(),
+)
+```
+
+Usage: `duration-fast`, `duration-slow`.
+
+### Curves
+
+```dart
+WindTheme(
+  theme: WindThemeData(
+    transitionCurves: {
+        'bounce': Curves.bounceOut,
+        'elastic': Curves.elasticIn,
+    },
+  ),
+  child: MyApp(),
+)
+```
+
+Usage: `ease-bounce`, `ease-elastic`.

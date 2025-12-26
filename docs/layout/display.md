@@ -30,6 +30,23 @@ WDiv(
 | `flex` | display: flex; |
 | `grid` | display: grid; |
 
+## Visibility
+Utilities for controlling the visibility of an element without affecting layout.
+
+<x-preview path="layout/visibility" size="md"></x-preview>
+
+```dart
+WDiv(
+  className: "invisible ...",
+  child: Text("I am invisible but take up space"),
+)
+```
+
+| Class | Description |
+| :--- | :--- |
+| `visible` | Make element visible |
+| `invisible` | Hide element (maintain layout space) |
+
 ## Responsive Display
 Control visibility at specific breakpoints.
 

@@ -39,3 +39,24 @@ WText("my-4", className: "my-4 bg-green-200")
 | Class | Properties |
 | :--- | :--- |
 | `m-[20px]` | margin: 20px; |
+
+## Customizing Theme
+
+### Base Spacing Unit
+
+Wind uses a grid system divisible by 4. You can customize this standard spacing unit in `WindThemeData`.
+The default is `4.0` pixels.
+
+```dart
+WindThemeData(
+  baseSpacingUnit: 8.0, // Now 'p-1' is 8px, 'p-4' is 32px
+)
+```
+
+This affects all utilities that use the spacing scale:
+- Padding (`p-*`)
+- Margin (`m-*`)
+- Width (`w-*`, except percentages)
+- Height (`h-*`, except percentages)
+- Gap (`gap-*`)
+- Inset (`top-*`, `left-*` etc. if supported)

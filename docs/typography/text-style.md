@@ -94,24 +94,12 @@ Utilities for controlling the font weight.
 | `font-black` | font-weight: 900; |
 
 
-## Customization
+## Customizing Theme
 
 You can customize typography values in `WindThemeData`.
 
-### Customizing Colors
-Extend the color palette by passing a `colors` map to `WindThemeData`.
+### Font Sizes & Weights
 
-```dart
-WindThemeData(
-  colors: {
-    'brand': Colors.blue,
-    'accent': Colors.orange,
-  },
-)
-```
-Usage: `text-brand-500`, `text-accent`.
-
-### Customizing Fonts
 Override default font sizes or weights.
 
 ```dart
@@ -127,3 +115,48 @@ WindThemeData(
 ```
 Usage: `text-mega`, `font-heavy`.
 
+### Letter Spacing (Tracking)
+
+Configure letter spacing values.
+
+```dart
+WindThemeData(
+  tracking: {
+    'tighter': -0.8,
+    'tight': -0.4,
+    'wide': 0.4,
+    'widest': 0.8,
+  }
+)
+```
+Usage: `tracking-widest`.
+
+### Line Height (Leading)
+
+Configure line height values.
+
+```dart
+WindThemeData(
+  leading: {
+    'none': 1.0,
+    'tight': 1.25,
+    'relaxed': 1.625,
+    'double': 2.0,
+  }
+)
+```
+Usage: `leading-relaxed`.
+
+### Text Colors
+
+Extend the color palette by passing a `colors` map to `WindThemeData`.
+
+```dart
+WindThemeData(
+  colors: {
+    'brand': Colors.blue,
+    'accent': Colors.orange,
+  },
+)
+```
+Usage: `text-brand-500`, `text-accent`.

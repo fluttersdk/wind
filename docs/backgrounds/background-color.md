@@ -56,3 +56,18 @@ WDiv(
   // Content
 )
 ```
+
+## Customizing Theme
+
+### Colors
+You can extend the global color palette in `WindThemeData`, which is used for background colors, text colors, and border colors.
+
+```dart
+WindThemeData(
+  colors: {
+    'brand': Colors.blue,
+    'surface': Color(0xFF1E293B),
+  },
+)
+```
+Usage: `bg-brand-500`, `bg-surface`.

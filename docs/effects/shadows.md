@@ -52,3 +52,30 @@ You can control the opacity of the shadow color using the color opacity modifier
 WDiv(className: "shadow-xl shadow-red-500/50")
 WDiv(className: "shadow-xl shadow-blue-500/25")
 ```
+
+## Customizing Theme
+
+You can customize the available shadows in your `WindThemeData`.
+
+```dart
+WindTheme(
+  theme: WindThemeData(
+    shadows: {
+      'custom': [
+         BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+      ],
+      'deep': [
+         BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 20, spreadRadius: 5),
+      ],
+    },
+  ),
+  child: MyApp(),
+)
+```
+
+Now you can use these custom shadow keys:
+
+```dart
+WDiv(className: "shadow-custom")
+WDiv(className: "shadow-deep")
+```

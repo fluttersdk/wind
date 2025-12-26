@@ -76,3 +76,20 @@ IndexedStack(
   ],
 );
 ```
+
+## Customizing Theme
+
+You can customize available Z-Index values in `WindThemeData`.
+
+```dart
+WindThemeData(
+  zIndices: {
+    '0': 0,
+    '10': 10,
+    'dropdown': 1000,
+    'modal': 9000,
+  }
+)
+```
+
+Usage: `z-dropdown`, `z-modal`.

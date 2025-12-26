@@ -138,3 +138,42 @@ Defines animation curves.
 **Type:** `Map<String, WindAnimationType>`
 **Usage:** `animate-spin`, `animate-bounce`
 Defines predefined animation behaviors (requires internal support or custom implementations).
+
+## Programmatic Access
+
+You can access the theme data programmatically using `WindTheme.of(context)` or the `context.windTheme` extension. `WindThemeData` exposes several utility methods for resolving values.
+
+### `getColor(String colorName, int shade)`
+Returns a `Color` from the theme.
+- Automatically handles dark mode inversion if `brightness` is `Brightness.dark`.
+- Returns `null` if the color/shade doesn't exist.
+
+```dart
+final primary = context.windTheme.getColor('blue', 500);
+```
+
+### `getOriginalColor(String colorName, int shade)`
+Returns the original `Color` ignoring brightness settings (no inversion).
+
+### `getSpacing(String multiplier)`
+Calculates a pixel value based on the `baseSpacingUnit` or other tokens.
+- **Numbers:** `"4"` → `4 * 4.0 = 16.0`
+- **Decimals:** `"1.5"` → `1.5 * 4.0 = 6.0`
+- **Container Keys:** `"sm"`, `"md"`, `"lg"` etc. → returns container width.
+- **Full:** `"full"` → `double.infinity`
+- **Fraction:** `"1/2"` → Not supported here (use `WDiv` layout logic), this method expects multipliers.
+
+```dart
+final p4 = context.windTheme.getSpacing('4'); // 16.0
+final width = context.windTheme.getSpacing('full'); // double.infinity
+```
+
+### `isValidColor(String colorName, {int? shade})`
+Checks if a color (and optional shade) exists in the theme configuration.
+
+## Defaults
+
+Wind comes pre-configured with a default theme inspired by Tailwind CSS v3.
+- **Colors:** Includes full palette (Slate, Gray, Red, Orange, Amber, Yellow, Lime, Green, Emerald, Teal, Cyan, Sky, Blue, Indigo, Violet, Purple, Fuchsia, Pink, Rose).
+- **Screens:** `sm` (640px), `md` (768px), `lg` (1024px), `xl` (1280px), `2xl` (1536px).
+- **Spacing:** Base unit is `4.0` pixels.
