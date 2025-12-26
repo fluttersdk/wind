@@ -48,10 +48,30 @@ import 'pages/effects/states_custom.dart';
 import 'pages/forms/input_basic.dart';
 import 'pages/forms/input_styled.dart';
 import 'pages/forms/input_states.dart';
+import 'pages/forms/select_basic.dart';
+import 'pages/forms/select_searchable.dart';
+import 'pages/forms/select_multi.dart';
+import 'pages/forms/select_pagination.dart';
+
+// Icons
+import 'pages/icons/icon_basic.dart';
+
+// Images
+import 'pages/images/image_basic.dart';
+
+// SVG
+import 'pages/svg/svg_basic.dart';
 
 // Buttons
 import 'pages/buttons/button_basic.dart';
 import 'pages/buttons/button_states.dart';
+
+// Checkbox
+import 'pages/checkbox/checkbox_basic.dart';
+
+// Animation
+import 'pages/animation/animation_basic.dart';
+import 'pages/animation/animation_implicit.dart';
 
 final Map<String, Widget> appRoutes = {
   // Effects
@@ -72,9 +92,24 @@ final Map<String, Widget> appRoutes = {
   '/forms/input_basic': const InputBasicExamplePage(),
   '/forms/input_styled': const InputStyledExamplePage(),
   '/forms/input_states': const InputStatesExamplePage(),
+  '/forms/select_basic': const SelectBasicExamplePage(),
+  '/forms/select_searchable': const SelectSearchableExamplePage(),
+  '/forms/select_multi': const SelectMultiExamplePage(),
+  '/forms/select_pagination': const SelectPaginationExamplePage(),
   // Buttons
   '/buttons/button_basic': const ButtonBasicExamplePage(),
   '/buttons/button_states': const ButtonStatesExamplePage(),
+  // Icons
+  '/icons/icon_basic': const IconBasicExamplePage(),
+  // Images
+  '/images/image_basic': const ImageBasicExamplePage(),
+  // SVG
+  '/svg/svg_basic': const SvgBasicExamplePage(),
+  // Checkbox
+  '/checkbox/checkbox_basic': const CheckboxBasicExamplePage(),
+  // Animation
+  '/animation/animation_basic': const AnimationBasicExamplePage(),
+  '/animation/animation_implicit': const AnimationImplicitExamplePage(),
   '/': const HomePage(),
   '/examples/basic': const BasicExamplePage(),
   '/borders/radius_basic': const RadiusBasicPage(),

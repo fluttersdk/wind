@@ -117,6 +117,17 @@ void main() {
         expect(styles.alignment, Alignment.center);
       });
 
+      test('parses container alignment classes', () {
+        var styles = parser.parse(WindStyle(), ['align-top-left'], context);
+        // Container alignment classes are removed/reverted.
+        // If they map to nothing now, expect null.
+        // Or if I removed the map entirely, they should be ignored.
+        // I removed the logic. So they should be ignored.
+        // Wait, if I removed `_containerAlignmentMap`, 'align-top-left' is unknown.
+        // So alignment should be null.
+        expect(styles.alignment, isNull);
+      });
+
       test('parses flexFit class', () {
         final styles = parser.parse(WindStyle(), ['flex-auto'], context);
         expect(styles.flexFit, FlexFit.loose);

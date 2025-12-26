@@ -65,29 +65,34 @@ Color hexToColor(String code) {
 /// - `[#FF5733]/25` -> #FF5733 with 25% opacity
 ///
 /// Returns a tuple of (colorPart, opacityValue) where opacityValue is null if no opacity.
-({String colorPart, int? opacity}) parseColorOpacity(String colorClass) {
+({String colorPart, double? opacity}) parseColorOpacity(String colorClass) {
   final parts = colorClass.split('/');
 
   if (parts.length == 2) {
     final opacityStr = parts[1];
-    // Handle arbitrary opacity like /[50]
+    // Handle arbitrary opacity like /[0.5] or /[50]
     if (opacityStr.startsWith('[') && opacityStr.endsWith(']')) {
       final inner = opacityStr.substring(1, opacityStr.length - 1);
-      final opacity = int.tryParse(inner);
-      return (colorPart: parts[0], opacity: opacity);
+      final val = double.tryParse(inner);
+      if (val != null) {
+        // If <= 1.0, assume factor (0.0 - 1.0). If > 1.0, assume percentage (0 - 100).
+        return (colorPart: parts[0], opacity: val <= 1.0 ? val : val / 100.0);
+      }
     }
     // Handle standard opacity like /50
-    final opacity = int.tryParse(opacityStr);
-    return (colorPart: parts[0], opacity: opacity);
+    final val = int.tryParse(opacityStr);
+    if (val != null) {
+      return (colorPart: parts[0], opacity: val / 100.0);
+    }
   }
 
-  return (colorPart: colorClass, opacity: null);
+  return (colorPart: parts[0], opacity: null);
 }
 
 /// Applies opacity to a Color.
 ///
-/// [opacity] should be 0-100 where 0 is fully transparent and 100 is fully opaque.
-Color applyOpacity(Color color, int opacity) {
-  final alpha = (opacity / 100 * 255).round().clamp(0, 255);
+/// [opacity] should be 0.0-1.0 where 0 is fully transparent and 1 is fully opaque.
+Color applyOpacity(Color color, double opacity) {
+  final alpha = (opacity * 255).round().clamp(0, 255);
   return color.withAlpha(alpha);
 }

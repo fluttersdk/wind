@@ -116,7 +116,7 @@ void main() {
         final border = result.decoration!.border as Border;
         final expectedColor = applyOpacity(
           context.theme.getColor('red', 500)!,
-          50,
+          0.5,
         );
         expect(border.top.color.toARGB32(), expectedColor.toARGB32());
       });

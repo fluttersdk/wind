@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import 'wind_animation_wrapper.dart';
 
 /// **The Fundamental Building Block of Wind**
 ///
@@ -157,10 +158,33 @@ class WDiv extends StatelessWidget {
     }
 
     // 8. OPACITY (Effects Layer)
-    // Wrap with Opacity widget if opacity is explicitly set.
+    // Wrap with AnimatedOpacity if transition duration is set, else static Opacity.
     if (styles.opacity != null) {
-      logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
-      finalWidget = Opacity(opacity: styles.opacity!, child: finalWidget);
+      if (styles.transitionDuration != null) {
+        logger.wrapWith("AnimatedOpacity", "opacity: ${styles.opacity}");
+        finalWidget = AnimatedOpacity(
+          duration: styles.transitionDuration!,
+          curve: styles.transitionCurve ?? Curves.linear,
+          opacity: styles.opacity!,
+          child: finalWidget,
+        );
+      } else {
+        logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
+        finalWidget = Opacity(opacity: styles.opacity!, child: finalWidget);
+      }
+    }
+
+    // 9. ANIMATION (animate-spin, animate-pulse, etc.)
+    // Wrap with animation if animationType is set.
+    if (styles.animationType != null &&
+        styles.animationType != WindAnimationType.none) {
+      logger.wrapWith("Animation", "type: ${styles.animationType}");
+      finalWidget = wrapWithAnimation(
+        child: finalWidget,
+        animationType: styles.animationType,
+        duration: styles.transitionDuration,
+        curve: styles.transitionCurve,
+      );
     }
 
     // Final: Print debug log if enabled
@@ -377,6 +401,7 @@ class WDiv extends StatelessWidget {
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
+          alignment: styles.alignment,
           child: widgetToBuild,
         );
       } else {
@@ -385,6 +410,7 @@ class WDiv extends StatelessWidget {
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
+          alignment: styles.alignment,
           child: widgetToBuild,
         );
       }

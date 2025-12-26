@@ -65,7 +65,7 @@ void main() {
 
         final expectedColor = applyOpacity(
           context.theme.getColor('red', 500)!,
-          50,
+          0.5,
         );
         expect(updatedStyles.color!.toARGB32(), expectedColor.toARGB32());
       });

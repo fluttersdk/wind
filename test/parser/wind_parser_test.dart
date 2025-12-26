@@ -48,6 +48,22 @@ void main() {
       });
     });
 
+    test('should handle multiline class strings with newlines', () {
+      final className = '''
+        w-10
+        h-10
+        bg-red-500
+      ''';
+      final context = createTestContext();
+      final result = WindParser.findAndGroupClasses(className, context);
+      // Sizing parser creates Sizing style, so 'w-10' should be in 'sizing' group if implemented
+      // But verify grouping logic first. SizingParser must support w-10. Assuming it does.
+      // Or just check split result. findAndGroupClasses keys depend on parser readiness.
+      // SizingParser is registered.
+      expect(result['sizing'], containsAll(['w-10', 'h-10']));
+      expect(result['background'], containsAll(['bg-red-500']));
+    });
+
     test('should handle classes with state prefixes', () {
       final className = "hover:bg-red-500 focus:text-lg";
       final context = createTestContext(isHovering: true, isFocused: true);

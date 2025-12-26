@@ -16,6 +16,8 @@ import 'parsers/overflow_parser.dart';
 import 'parsers/aspectratio_parser.dart';
 import 'parsers/transition_parser.dart';
 import 'parsers/ring_parser.dart';
+import 'parsers/svg_parser.dart';
+import 'parsers/animation_parser.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
 
@@ -48,6 +50,8 @@ class WindParser {
     'aspectratio': const AspectRatioParser(),
     'transition': const TransitionParser(),
     'ring': const RingParser(),
+    'svg': const SvgParser(),
+    'animation': const AnimationParser(),
   };
 
   /// Clears the style cache
@@ -122,7 +126,8 @@ class WindParser {
   ) {
     final Map<String, List<String>> map = {};
     final classes =
-        className?.split(' ').where((s) => s.isNotEmpty).toSet() ?? <String>{};
+        className?.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toSet() ??
+        <String>{};
     final resolvedClasses = resolveClasses(classes.toList(), windContext);
 
     for (final cls in resolvedClasses) {

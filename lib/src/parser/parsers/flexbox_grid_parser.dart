@@ -101,14 +101,10 @@ class FlexboxGridParser implements WindParserInterface {
   /// Maps align-self child properties to `Alignment`
   static const _alignSelfMap = <String, Alignment>{
     'align-self-start': Alignment.topCenter,
-    // (Start of cross-axis)
     'align-self-end': Alignment.bottomCenter,
-    // (End of cross-axis)
     'align-self-center': Alignment.center,
     'align-self-stretch': Alignment.center,
-    // (No direct equivalent, center is safe)
     'align-self-auto': Alignment.center,
-    // (Default)
   };
 
   /// Parses flexbox and grid related classes and returns updated WindStyle
@@ -182,6 +178,8 @@ class FlexboxGridParser implements WindParserInterface {
         flexFit = _flexFitMap[className];
       } else if (alignment == null && _alignSelfMap.containsKey(className)) {
         alignment = _alignSelfMap[className];
+      } else {
+        // No match or skipped.
       }
       // 2. RegEx Lookups (Slower)
       // `gap-` (Theme or Arbitrary)

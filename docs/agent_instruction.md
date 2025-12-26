@@ -27,12 +27,17 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
   - **ShadowParser:** `shadow`, `shadow-md`, `shadow-red-500`
   - **RingParser:** `ring`, `ring-2`, `ring-blue-500/50`, `ring-offset-2`, `ring-inset`
   - **TransitionParser:** `duration-300`, `ease-in`, `ease-out`, `ease-in-out`
+  - **AnimationParser:** `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`
   - **DebugParser:** `debug`
 
 ### Widgets
 - **WDiv:** Builds Column/Row/GridView/Wrap based on displayType. Wraps in DefaultTextStyle.merge.
 - **WText:** Builds Text or SelectableText. Handles text transforms.
 - **WInput:** Form input with React-style binding (`value`/`onChanged`), `className`/`placeholderClassName`, focus states, validation.
+- **WCheckbox:** Utility-first checkbox with `checked:` state styling.
+- **WSelect:** Searchable single/multi-select dropdown with infinite scroll and custom builders.
+- **WIcon / WSvg:** Icon and SVG wrappers inheriting parent text styles (color/size).
+- **WImage:** Image wrapper with `object-fit`, `aspect-ratio` support.
 - **WAnchor:** Interactive wrapper for hover/focus/disabled states.
 
 ### Theme
@@ -80,6 +85,7 @@ You are an expert Flutter developer and maintainer of the `fluttersdk_wind` pack
 | Ring | `ring`, `ring-{n}`, `ring-{color}/{opacity}`, `ring-offset`, `ring-inset` |
 | Z-Index | `z-{n}`, `z-auto`, `z-[n]` |
 | Transition | `duration-{ms}`, `ease-{curve}` |
+| Animation | `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`, `animate-none` |
 
 ### Prefixes
 | Category | Prefixes |
