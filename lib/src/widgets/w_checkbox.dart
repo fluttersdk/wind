@@ -3,6 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'w_anchor.dart';
 import 'w_div.dart';
 import 'w_icon.dart';
+import '../utils/wind_logger.dart';
+import '../parser/wind_parser.dart';
+import '../parser/wind_style.dart';
 
 /// **A Utility-First Checkbox Component**
 ///
@@ -77,6 +80,23 @@ class WCheckbox extends StatelessWidget {
       if (value) 'checked',
       if (disabled) 'disabled',
     };
+
+    // Parse just for debug purposes (WCheckbox delegates to WDiv, but we want to log top-level too)
+    // Note: This is a bit inefficient as WDiv will parse again, but needed for proper logging.
+    final WindStyle styles = className != null
+        ? WindParser.parse(className!, context, states: activeStates)
+        : const WindStyle();
+
+    final logger = WindLogger(
+      debug: styles.debug,
+      widgetName: runtimeType.toString(),
+    );
+
+    if (styles.debug) {
+      logger.logStep("ClassName", "'$className'");
+      logger.setCoreWidget("WAnchor -> WDiv");
+      logger.printFinalCode();
+    }
 
     return WAnchor(
       onTap: disabled ? null : () => onChanged?.call(!value),

@@ -23,26 +23,6 @@ class TransitionParser implements WindParserInterface {
     r'^ease-(?<curve>linear|in|out|in-out)$',
   );
 
-  /// Default durations map (Tailwind values in milliseconds)
-  static const Map<String, int> _durationMap = {
-    '75': 75,
-    '100': 100,
-    '150': 150,
-    '200': 200,
-    '300': 300,
-    '500': 500,
-    '700': 700,
-    '1000': 1000,
-  };
-
-  /// Curve map
-  static const Map<String, Curve> _curveMap = {
-    'linear': Curves.linear,
-    'in': Curves.easeIn,
-    'out': Curves.easeOut,
-    'in-out': Curves.easeInOut,
-  };
-
   @override
   bool canParse(String className) {
     return className.startsWith('duration-') || className.startsWith('ease-');
@@ -67,14 +47,16 @@ class TransitionParser implements WindParserInterface {
       if (duration == null) {
         final durationMatch = _durationRegex.firstMatch(className);
         if (durationMatch != null) {
-          int? ms;
           if (durationMatch.namedGroup('preset') != null) {
-            ms = _durationMap[durationMatch.namedGroup('preset')];
+            final preset = durationMatch.namedGroup('preset')!;
+            if (context.theme.transitionDurations.containsKey(preset)) {
+              duration = context.theme.transitionDurations[preset];
+            }
           } else if (durationMatch.namedGroup('arbitrary') != null) {
-            ms = int.tryParse(durationMatch.namedGroup('arbitrary')!);
-          }
-          if (ms != null) {
-            duration = Duration(milliseconds: ms);
+            final ms = int.tryParse(durationMatch.namedGroup('arbitrary')!);
+            if (ms != null) {
+              duration = Duration(milliseconds: ms);
+            }
           }
         }
       }
@@ -83,7 +65,10 @@ class TransitionParser implements WindParserInterface {
       if (curve == null) {
         final easeMatch = _easeRegex.firstMatch(className);
         if (easeMatch != null) {
-          curve = _curveMap[easeMatch.namedGroup('curve')];
+          final curveName = easeMatch.namedGroup('curve')!;
+          if (context.theme.transitionCurves.containsKey(curveName)) {
+            curve = context.theme.transitionCurves[curveName];
+          }
         }
       }
     }

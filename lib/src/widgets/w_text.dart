@@ -73,6 +73,7 @@ class WText extends StatelessWidget {
     if (styles.debug) {
       logger.logStep("ClassName", "'$className'");
       logger.logStep("Data", "'$data'");
+      logger.setFinalStyles(styles);
     }
 
     // 3. VISIBILITY CHECK

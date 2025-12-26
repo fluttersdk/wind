@@ -73,7 +73,7 @@ class SvgBasicExamplePage extends StatelessWidget {
           ],
         ),
 
-        // Stoke width
+        // Stroke width
         const WText(
           'Stroke Width (stroke-{width})',
           className: 'font-bold text-sm text-gray-700 mb-2',

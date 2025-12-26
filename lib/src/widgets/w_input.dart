@@ -5,6 +5,7 @@ import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../theme/wind_theme.dart';
 import '../theme/wind_theme_data.dart';
+import '../utils/wind_logger.dart';
 
 /// Input type enum for WInput widget
 ///
@@ -305,6 +306,16 @@ class _WInputState extends State<WInput> {
         ? WindParser.parse(widget.className!, context, states: activeStates)
         : const WindStyle();
 
+    final logger = WindLogger(
+      debug: styles.debug,
+      widgetName: runtimeType.toString(),
+    );
+
+    if (styles.debug) {
+      logger.logStep("ClassName", "'${widget.className}'");
+      logger.setFinalStyles(styles);
+    }
+
     // Parse placeholder styles
     final WindStyle placeholderStyles = widget.placeholderClassName != null
         ? WindParser.parse(widget.placeholderClassName!, context)
@@ -330,6 +341,9 @@ class _WInputState extends State<WInput> {
 
     // Build text style from WindStyle
     final TextStyle textStyle = styles.toTextStyle();
+
+    logger.setCoreWidget("TextField");
+    logger.printFinalCode();
 
     return TextField(
       controller: _controller,

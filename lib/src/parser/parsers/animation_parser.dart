@@ -13,15 +13,6 @@ import 'wind_parser_interface.dart';
 class AnimationParser implements WindParserInterface {
   const AnimationParser();
 
-  /// Animation class map
-  static const Map<String, WindAnimationType> _animationMap = {
-    'animate-spin': WindAnimationType.spin,
-    'animate-ping': WindAnimationType.ping,
-    'animate-pulse': WindAnimationType.pulse,
-    'animate-bounce': WindAnimationType.bounce,
-    'animate-none': WindAnimationType.none,
-  };
-
   @override
   bool canParse(String className) {
     return className.startsWith('animate-');
@@ -41,8 +32,9 @@ class AnimationParser implements WindParserInterface {
     for (var i = classes.length - 1; i >= 0; i--) {
       final className = classes[i];
 
-      if (animationType == null && _animationMap.containsKey(className)) {
-        animationType = _animationMap[className];
+      if (animationType == null &&
+          context.theme.animations.containsKey(className)) {
+        animationType = context.theme.animations[className];
         break;
       }
     }

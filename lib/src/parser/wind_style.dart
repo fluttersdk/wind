@@ -441,7 +441,17 @@ class WindStyle {
           overflowX == other.overflowX &&
           overflowY == other.overflowY &&
           clipBehavior == other.clipBehavior &&
-          aspectRatio == other.aspectRatio;
+          aspectRatio == other.aspectRatio &&
+          transitionDuration == other.transitionDuration &&
+          transitionCurve == other.transitionCurve &&
+          ringShadow == other.ringShadow &&
+          ringColor == other.ringColor &&
+          ringWidth == other.ringWidth &&
+          ringOffset == other.ringOffset &&
+          ringInset == other.ringInset &&
+          fillColor == other.fillColor &&
+          strokeColor == other.strokeColor &&
+          animationType == other.animationType;
 
   @override
   int get hashCode =>
@@ -492,7 +502,17 @@ class WindStyle {
       overflowX.hashCode ^
       overflowY.hashCode ^
       clipBehavior.hashCode ^
-      aspectRatio.hashCode;
+      aspectRatio.hashCode ^
+      transitionDuration.hashCode ^
+      transitionCurve.hashCode ^
+      ringShadow.hashCode ^
+      ringColor.hashCode ^
+      ringWidth.hashCode ^
+      ringOffset.hashCode ^
+      ringInset.hashCode ^
+      fillColor.hashCode ^
+      strokeColor.hashCode ^
+      animationType.hashCode;
 
   /// Calculates the effective line height based on either a fixed value
   /// or a factor of the font size.
@@ -559,6 +579,7 @@ class WindStyle {
         'fontStyle: $fontStyle, '
         'letterSpacing: $letterSpacing, '
         'heightLine: $heightLine, '
+        'heightLineFactor: $heightLineFactor, '
         'textDecoration: $textDecoration, '
         'textDecorationColor: $textDecorationColor, '
         'textDecorationStyle: $textDecorationStyle, '
@@ -573,7 +594,22 @@ class WindStyle {
         'shadowColor: $shadowColor, '
         'debug: $debug, '
         'opacity: $opacity, '
-        'zIndex: $zIndex'
+        'zIndex: $zIndex, '
+        'overflow: $overflow, '
+        'overflowX: $overflowX, '
+        'overflowY: $overflowY, '
+        'clipBehavior: $clipBehavior, '
+        'aspectRatio: $aspectRatio, '
+        'transitionDuration: $transitionDuration, '
+        'transitionCurve: $transitionCurve, '
+        'ringShadow: $ringShadow, '
+        'ringColor: $ringColor, '
+        'ringWidth: $ringWidth, '
+        'ringOffset: $ringOffset, '
+        'ringInset: $ringInset, '
+        'fillColor: $fillColor, '
+        'strokeColor: $strokeColor, '
+        'animationType: $animationType'
         '}';
   }
 }

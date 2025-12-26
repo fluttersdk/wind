@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
+import '../utils/wind_logger.dart';
 import 'wind_animation_wrapper.dart';
 
 /// **The Utility-First Icon Component**
@@ -138,6 +139,24 @@ class WIcon extends StatelessWidget {
         duration: styles.transitionDuration,
         curve: styles.transitionCurve,
       );
+    }
+
+    // Logger integration
+    final logger = WindLogger(
+      debug: styles.debug,
+      widgetName: runtimeType.toString(),
+    );
+
+    if (styles.debug) {
+      logger.logStep("ClassName", "'$className'");
+      logger.setCoreWidget("Icon(icon: $icon, color: $color, size: $size)");
+      logger.setFinalStyles(styles);
+      // Log wrappers
+      if (styles.opacity != null)
+        logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
+      if (styles.animationType != null)
+        logger.wrapWith("Animation", "type: ${styles.animationType}");
+      logger.printFinalCode();
     }
 
     return iconWidget;

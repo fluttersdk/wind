@@ -19,16 +19,6 @@ import 'wind_parser_interface.dart';
 class ZIndexParser implements WindParserInterface {
   const ZIndexParser();
 
-  /// Standard Tailwind z-index values
-  static const Map<String, int> _zIndexValues = {
-    '0': 0,
-    '10': 10,
-    '20': 20,
-    '30': 30,
-    '40': 40,
-    '50': 50,
-  };
-
   static final RegExp _arbitraryZIndexRegExp = RegExp(
     r'^z-\[(?<value>-?[0-9]+)\]$',
   );
@@ -55,8 +45,8 @@ class ZIndexParser implements WindParserInterface {
 
       // Handle standard z-index values e.g., z-10
       final value = className.replaceFirst('z-', '');
-      if (_zIndexValues.containsKey(value)) {
-        zIndex ??= _zIndexValues[value];
+      if (context.theme.zIndices.containsKey(value)) {
+        zIndex ??= context.theme.zIndices[value];
         continue;
       }
 

@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
+import '../utils/wind_logger.dart';
 
 /// **The Utility-First SVG Component**
 ///
@@ -142,6 +143,22 @@ class WSvg extends StatelessWidget {
       } else {
         svgWidget = Opacity(opacity: styles.opacity!, child: svgWidget);
       }
+    }
+
+    // Logger integration
+    final logger = WindLogger(
+      debug: styles.debug,
+      widgetName: runtimeType.toString(),
+    );
+
+    if (styles.debug) {
+      logger.logStep("ClassName", "'$className'");
+      if (src != null) logger.logStep("Source", "'$src'");
+      logger.setCoreWidget("SvgPicture(${src != null ? 'asset' : 'string'})");
+      logger.setFinalStyles(styles);
+      if (styles.opacity != null)
+        logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
+      logger.printFinalCode();
     }
 
     return svgWidget;

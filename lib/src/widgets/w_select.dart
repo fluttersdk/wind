@@ -8,6 +8,7 @@ import 'select_option.dart';
 import 'w_div.dart';
 import 'w_input.dart';
 import 'w_text.dart';
+import '../utils/wind_logger.dart';
 
 /// Signature for building a custom trigger widget for [WSelect].
 ///
@@ -505,6 +506,23 @@ class _WSelectState<T> extends State<WSelect<T>> {
     final String triggerClassName =
         widget.className ?? 'bg-white border border-gray-300 rounded-lg p-3';
 
+    // Logger integration
+    final styles = WindParser.parse(
+      triggerClassName,
+      context,
+      states: activeStates,
+    );
+    final logger = WindLogger(
+      debug: styles.debug,
+      widgetName: "WSelect (Trigger)",
+    );
+
+    if (styles.debug) {
+      logger.logStep("ClassName", "'$triggerClassName'");
+      logger.setCoreWidget("WDiv -> Trigger Content");
+      logger.printFinalCode();
+    }
+
     // Default trigger rendering
     return GestureDetector(
       onTap: _toggleMenu,
@@ -602,6 +620,18 @@ class _WSelectState<T> extends State<WSelect<T>> {
     final BorderRadius borderRadius =
         (menuStyles.decoration?.borderRadius as BorderRadius?) ??
         BorderRadius.circular(8);
+
+    // Logger integration for Menu
+    final logger = WindLogger(
+      debug: menuStyles.debug,
+      widgetName: "WSelect (Menu)",
+    );
+
+    if (menuStyles.debug) {
+      logger.logStep("Menu ClassName", "'${widget.menuClassName}'");
+      logger.setCoreWidget("OverlayPortal -> Container -> Column");
+      logger.printFinalCode();
+    }
 
     return CompositedTransformFollower(
       link: _layerLink,

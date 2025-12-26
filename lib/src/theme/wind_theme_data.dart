@@ -12,6 +12,12 @@ import 'defaults/leading.dart' as default_leading;
 import 'defaults/screens.dart' as default_screens;
 import 'defaults/tracking.dart' as default_tracking;
 import 'defaults/ring_widths.dart' as default_ring_widths;
+import 'defaults/box_shadows.dart';
+import 'defaults/opacities.dart' as default_opacities;
+import 'defaults/z_indices.dart' as default_z_indices;
+import 'defaults/transitions.dart' as default_transitions;
+import 'defaults/animations.dart' as default_animations;
+import '../parser/wind_style.dart';
 
 /// The REM unit used for sizing calculations.
 const int windRemUnit = 4;
@@ -102,7 +108,28 @@ class WindThemeData {
   /// The default color for ring utility.
   ///
   /// Defaults to Tailwind's blue-500 (#3B82F6).
+  /// The default color for ring utility.
+  ///
+  /// Defaults to Tailwind's blue-500 (#3B82F6).
   final Color ringColor;
+
+  /// A map of opacity names to opacity values.
+  final Map<String, double> opacities;
+
+  /// A map of z-index names to z-index values.
+  final Map<String, int> zIndices;
+
+  /// A map of shadow names to shadow lists.
+  final Map<String, List<BoxShadow>> shadows;
+
+  /// A map of transition duration names to durations.
+  final Map<String, Duration> transitionDurations;
+
+  /// A map of transition curve names to curves.
+  final Map<String, Curve> transitionCurves;
+
+  /// A map of animation class names to animation types.
+  final Map<String, WindAnimationType> animations;
 
   /// The resolved colors based on the theme's brightness.
   late final Map<String, MaterialColor> _resolvedColors;
@@ -128,6 +155,12 @@ class WindThemeData {
     this.applyDefaultFontFamily = true,
     this.baseSpacingUnit = 4.0,
     this.ringColor = const Color(0xFF3B82F6), // Tailwind blue-500
+    Map<String, double>? opacities,
+    Map<String, int>? zIndices,
+    Map<String, List<BoxShadow>>? shadows,
+    Map<String, Duration>? transitionDurations,
+    Map<String, Curve>? transitionCurves,
+    Map<String, WindAnimationType>? animations,
   }) : colors = colors ?? _initColors(),
        fontSizes = fontSizes ?? default_font_sizes.fontSizes,
        fontWeights = fontWeights ?? default_font_weights.fontWeights,
@@ -139,7 +172,15 @@ class WindThemeData {
        ringWidths = ringWidths ?? default_ring_widths.WindRingWidths.widths,
        ringOffsets = ringOffsets ?? default_ring_widths.WindRingWidths.offsets,
        containers = containers ?? default_containers.containers,
-       screens = screens ?? default_screens.screens {
+       screens = screens ?? default_screens.screens,
+       opacities = opacities ?? default_opacities.opacities,
+       zIndices = zIndices ?? default_z_indices.zIndices,
+       shadows = shadows ?? WindBoxShadows.shadows,
+       transitionDurations =
+           transitionDurations ?? default_transitions.transitionDurations,
+       transitionCurves =
+           transitionCurves ?? default_transitions.transitionCurves,
+       animations = animations ?? default_animations.animations {
     _resolvedColors = _resolveColors();
   }
 
@@ -255,6 +296,12 @@ class WindThemeData {
     bool? applyDefaultFontFamily,
     double? baseSpacingUnit,
     Color? ringColor,
+    Map<String, double>? opacities,
+    Map<String, int>? zIndices,
+    Map<String, List<BoxShadow>>? shadows,
+    Map<String, Duration>? transitionDurations,
+    Map<String, Curve>? transitionCurves,
+    Map<String, WindAnimationType>? animations,
   }) {
     return WindThemeData(
       brightness: brightness ?? this.brightness,
@@ -298,6 +345,24 @@ class WindThemeData {
           applyDefaultFontFamily ?? this.applyDefaultFontFamily,
       baseSpacingUnit: baseSpacingUnit ?? this.baseSpacingUnit,
       ringColor: ringColor ?? this.ringColor,
+      opacities: opacities != null
+          ? (Map.from(this.opacities)..addAll(opacities))
+          : this.opacities,
+      zIndices: zIndices != null
+          ? (Map.from(this.zIndices)..addAll(zIndices))
+          : this.zIndices,
+      shadows: shadows != null
+          ? (Map.from(this.shadows)..addAll(shadows))
+          : this.shadows,
+      transitionDurations: transitionDurations != null
+          ? (Map.from(this.transitionDurations)..addAll(transitionDurations))
+          : this.transitionDurations,
+      transitionCurves: transitionCurves != null
+          ? (Map.from(this.transitionCurves)..addAll(transitionCurves))
+          : this.transitionCurves,
+      animations: animations != null
+          ? (Map.from(this.animations)..addAll(animations))
+          : this.animations,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
+import '../utils/wind_logger.dart';
 
 /// Signature for building a custom error widget.
 typedef ImageErrorBuilder =
@@ -156,6 +157,29 @@ class WImage extends StatelessWidget {
     // Apply opacity
     if (styles.opacity != null) {
       imageWidget = Opacity(opacity: styles.opacity!, child: imageWidget);
+    }
+
+    // Logger integration
+    final logger = WindLogger(
+      debug: styles.debug,
+      widgetName: runtimeType.toString(),
+    );
+
+    if (styles.debug) {
+      logger.logStep("ClassName", "'$className'");
+      logger.logStep("Source", "'$src'");
+      logger.setCoreWidget(
+        _isAsset ? "Image.asset('$_assetPath')" : "Image.network('$src')",
+      );
+      logger.setFinalStyles(styles);
+      if (styles.width != null || styles.height != null)
+        logger.wrapWith("SizedBox", "w: ${styles.width}, h: ${styles.height}");
+      if (styles.decoration?.borderRadius != null)
+        logger.wrapWith(
+          "ClipRRect",
+          "radius: ${styles.decoration!.borderRadius}",
+        );
+      logger.printFinalCode();
     }
 
     return imageWidget;
