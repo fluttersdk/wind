@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'wind_anchor_state.dart';
 
-/// An `InheritedWidget` that provides `WindPressableState` to its descendants.
+/// **The State Propagator**
 ///
-/// `WindStateProvider` is the core mechanism for propagating hover and focus
-/// states down the widget tree. It is designed to be used by `WAnchor` and
-/// is not typically instantiated directly.
+/// `WindAnchorStateProvider` is an [InheritedWidget] that bubbles up the current
+/// [WindAnchorState] to all its descendants.
 ///
-/// Descendant widgets, such as `WDiv` or `WText`, can access the state by calling
-/// `WindStateProvider.of(context)`. This allows them to react to state changes
-/// and apply `hover:` or `focus:` styles without direct prop drilling.
+/// This allows widgets deep in the tree to know if they are being hovered or focused
+/// without explicitly passing `isHovering` parameters down every level.
 ///
-/// This is a private implementation detail of the Wind framework and is not
-/// intended for public use.
+/// ### How it works:
+///
+/// 1.  `WAnchor` detects a hover/focus event.
+/// 2.  It wraps its children in a `WindAnchorStateProvider` with new state.
+/// 3.  Descendants call `WindAnchorStateProvider.of(context)` to read the state.
 class WindAnchorStateProvider extends InheritedWidget {
   /// The current pressable state being provided to descendants.
   final WindAnchorState state;

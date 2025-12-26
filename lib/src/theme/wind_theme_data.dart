@@ -12,6 +12,12 @@ import 'defaults/leading.dart' as default_leading;
 import 'defaults/screens.dart' as default_screens;
 import 'defaults/tracking.dart' as default_tracking;
 import 'defaults/ring_widths.dart' as default_ring_widths;
+import 'defaults/box_shadows.dart';
+import 'defaults/opacities.dart' as default_opacities;
+import 'defaults/z_indices.dart' as default_z_indices;
+import 'defaults/transitions.dart' as default_transitions;
+import 'defaults/animations.dart' as default_animations;
+import '../parser/wind_style.dart';
 
 /// The REM unit used for sizing calculations.
 const int windRemUnit = 4;
@@ -19,9 +25,31 @@ const int windRemUnit = 4;
 /// The pixel unit used for sizing calculations.
 const double windPxUnit = 0.25;
 
-/// Defines the configuration for the Wind theme.
+/// **Theme Configuration**
 ///
-/// This class holds the theme data for colors and screen sizes.
+/// `WindThemeData` holds the configuration for the entire design system, including
+/// colors, typography, spacing, and breakpoints. It is the "Tailwind Config" of Wind.
+///
+/// Use [WindThemeData.copyWith] to override default values or add custom ones.
+///
+/// ### Customization Example:
+///
+/// ```dart
+/// WindThemeData(
+///   // Override or add colors
+///   colors: {
+///     'primary': Colors.indigo,
+///     'brand': Color(0xFF1E3A8A),
+///   },
+///   // Custom font family
+///   fontFamilies: {
+///     'sans': 'Inter',
+///     'display': 'Oswald',
+///   },
+///   // Custom spacing scale
+///   baseSpacingUnit: 4.0, // 1 unit = 4px
+/// )
+/// ```
 class WindThemeData {
   /// The brightness of the theme.
   final Brightness brightness;
@@ -102,7 +130,28 @@ class WindThemeData {
   /// The default color for ring utility.
   ///
   /// Defaults to Tailwind's blue-500 (#3B82F6).
+  /// The default color for ring utility.
+  ///
+  /// Defaults to Tailwind's blue-500 (#3B82F6).
   final Color ringColor;
+
+  /// A map of opacity names to opacity values.
+  final Map<String, double> opacities;
+
+  /// A map of z-index names to z-index values.
+  final Map<String, int> zIndices;
+
+  /// A map of shadow names to shadow lists.
+  final Map<String, List<BoxShadow>> shadows;
+
+  /// A map of transition duration names to durations.
+  final Map<String, Duration> transitionDurations;
+
+  /// A map of transition curve names to curves.
+  final Map<String, Curve> transitionCurves;
+
+  /// A map of animation class names to animation types.
+  final Map<String, WindAnimationType> animations;
 
   /// The resolved colors based on the theme's brightness.
   late final Map<String, MaterialColor> _resolvedColors;
@@ -128,18 +177,57 @@ class WindThemeData {
     this.applyDefaultFontFamily = true,
     this.baseSpacingUnit = 4.0,
     this.ringColor = const Color(0xFF3B82F6), // Tailwind blue-500
-  }) : colors = colors ?? _initColors(),
-       fontSizes = fontSizes ?? default_font_sizes.fontSizes,
-       fontWeights = fontWeights ?? default_font_weights.fontWeights,
-       tracking = tracking ?? default_tracking.tracking,
-       leading = leading ?? default_leading.leading,
-       borderWidths = borderWidths ?? default_border_widths.borderWidths,
-       borderRadius = borderRadius ?? default_border_radius.borderRadius,
-       fontFamilies = fontFamilies ?? default_font_families.fontFamilies,
-       ringWidths = ringWidths ?? default_ring_widths.WindRingWidths.widths,
-       ringOffsets = ringOffsets ?? default_ring_widths.WindRingWidths.offsets,
-       containers = containers ?? default_containers.containers,
-       screens = screens ?? default_screens.screens {
+    Map<String, double>? opacities,
+    Map<String, int>? zIndices,
+    Map<String, List<BoxShadow>>? shadows,
+    Map<String, Duration>? transitionDurations,
+    Map<String, Curve>? transitionCurves,
+    Map<String, WindAnimationType>? animations,
+  }) : colors = (Map<String, MaterialColor>.from(_initColors())
+         ..addAll(colors ?? {})),
+       fontSizes = (Map<String, double>.from(default_font_sizes.fontSizes)
+         ..addAll(fontSizes ?? {})),
+       fontWeights = (Map<String, FontWeight>.from(
+         default_font_weights.fontWeights,
+       )..addAll(fontWeights ?? {})),
+       tracking = (Map<String, double>.from(default_tracking.tracking)
+         ..addAll(tracking ?? {})),
+       leading = (Map<String, double>.from(default_leading.leading)
+         ..addAll(leading ?? {})),
+       borderWidths = (Map<String, double>.from(
+         default_border_widths.borderWidths,
+       )..addAll(borderWidths ?? {})),
+       borderRadius = (Map<String, double>.from(
+         default_border_radius.borderRadius,
+       )..addAll(borderRadius ?? {})),
+       fontFamilies = (Map<String, String>.from(
+         default_font_families.fontFamilies,
+       )..addAll(fontFamilies ?? {})),
+       ringWidths = (Map<String, double>.from(
+         default_ring_widths.WindRingWidths.widths,
+       )..addAll(ringWidths ?? {})),
+       ringOffsets = (Map<String, double>.from(
+         default_ring_widths.WindRingWidths.offsets,
+       )..addAll(ringOffsets ?? {})),
+       containers = (Map<String, int>.from(default_containers.containers)
+         ..addAll(containers ?? {})),
+       screens = (Map<String, int>.from(default_screens.screens)
+         ..addAll(screens ?? {})),
+       opacities = (Map<String, double>.from(default_opacities.opacities)
+         ..addAll(opacities ?? {})),
+       zIndices = (Map<String, int>.from(default_z_indices.zIndices)
+         ..addAll(zIndices ?? {})),
+       shadows = (Map<String, List<BoxShadow>>.from(WindBoxShadows.shadows)
+         ..addAll(shadows ?? {})),
+       transitionDurations = (Map<String, Duration>.from(
+         default_transitions.transitionDurations,
+       )..addAll(transitionDurations ?? {})),
+       transitionCurves = (Map<String, Curve>.from(
+         default_transitions.transitionCurves,
+       )..addAll(transitionCurves ?? {})),
+       animations = (Map<String, WindAnimationType>.from(
+         default_animations.animations,
+       )..addAll(animations ?? {})) {
     _resolvedColors = _resolveColors();
   }
 
@@ -255,6 +343,12 @@ class WindThemeData {
     bool? applyDefaultFontFamily,
     double? baseSpacingUnit,
     Color? ringColor,
+    Map<String, double>? opacities,
+    Map<String, int>? zIndices,
+    Map<String, List<BoxShadow>>? shadows,
+    Map<String, Duration>? transitionDurations,
+    Map<String, Curve>? transitionCurves,
+    Map<String, WindAnimationType>? animations,
   }) {
     return WindThemeData(
       brightness: brightness ?? this.brightness,
@@ -298,6 +392,98 @@ class WindThemeData {
           applyDefaultFontFamily ?? this.applyDefaultFontFamily,
       baseSpacingUnit: baseSpacingUnit ?? this.baseSpacingUnit,
       ringColor: ringColor ?? this.ringColor,
+      opacities: opacities != null
+          ? (Map.from(this.opacities)..addAll(opacities))
+          : this.opacities,
+      zIndices: zIndices != null
+          ? (Map.from(this.zIndices)..addAll(zIndices))
+          : this.zIndices,
+      shadows: shadows != null
+          ? (Map.from(this.shadows)..addAll(shadows))
+          : this.shadows,
+      transitionDurations: transitionDurations != null
+          ? (Map.from(this.transitionDurations)..addAll(transitionDurations))
+          : this.transitionDurations,
+      transitionCurves: transitionCurves != null
+          ? (Map.from(this.transitionCurves)..addAll(transitionCurves))
+          : this.transitionCurves,
+      animations: animations != null
+          ? (Map.from(this.animations)..addAll(animations))
+          : this.animations,
+    );
+  }
+
+  /// Returns a new [WindThemeData] with the brightness toggled.
+  ///
+  /// If currently light, returns dark. If currently dark, returns light.
+  WindThemeData toggleTheme() {
+    return copyWith(
+      brightness: brightness == Brightness.light
+          ? Brightness.dark
+          : Brightness.light,
+    );
+  }
+
+  /// Converts this [WindThemeData] into a Flutter [ThemeData].
+  ///
+  /// This allows binding the Wind theme to the Material application theme,
+  /// ensuring consistency between Wind utility classes and standard Material widgets.
+  ///
+  /// The logic tries to map 'primary', 'secondary', and 'error' colors from
+  /// the [colors] map. If not found, it falls back to defaults.
+  ThemeData toThemeData() {
+    // Helper to safely fetch default material color
+    MaterialColor getDefault(String name) {
+      final raw = default_colors.colors[name] as Map<int, Color>;
+      return MaterialColor(raw[500]!.toARGB32(), raw);
+    }
+
+    // Resolve colors or use defaults
+    final primary = colors['primary'] ?? getDefault('indigo');
+    final secondary = colors['secondary'] ?? getDefault('teal');
+    final error = colors['error'] ?? getDefault('red');
+
+    final surface = colors['white'] ?? default_colors.colors['white'] as Color;
+
+    Color background;
+    if (colors.containsKey('background')) {
+      background = colors['background']!;
+    } else {
+      if (brightness == Brightness.dark) {
+        final gray = default_colors.colors['gray'] as Map<int, Color>;
+        background = gray[900]!;
+      } else {
+        background = default_colors.colors['white'] as Color;
+      }
+    }
+
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: primary,
+      brightness: brightness,
+      primary: primary,
+      secondary: secondary,
+      error: error,
+      surface: surface,
+      // Use surfaceContainerHighest for background effect in Material 3
+      surfaceContainerHighest: background,
+    );
+
+    // Resolve Typography
+    final defaultFontFamily = fontFamilies['sans'];
+    TextTheme? textTheme;
+    if (defaultFontFamily != null) {
+      textTheme = ThemeData(
+        brightness: brightness,
+      ).textTheme.apply(fontFamily: defaultFontFamily);
+    }
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: brightness,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: background,
+      textTheme: textTheme,
+      fontFamily: defaultFontFamily,
     );
   }
 }

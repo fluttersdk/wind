@@ -13,6 +13,13 @@ import '../utils/wind_logger.dart';
 /// It acts as a "Controller", delegating parsing to [WindParser] and
 /// rendering to specialized private builders.
 ///
+/// ### Supported Features:
+/// - **Typography:** `text-lg`, `font-bold`, `uppercase`, `text-center`
+/// - **Colors:** `text-blue-500`, `text-opacity-50`, `text-[#FF0000]`
+/// - **Formatting:** `truncate`, `line-clamp-2`, `leading-loose`, `tracking-wide`
+/// - **Decoration:** `underline`, `line-through`
+/// - **Layout:** `p-4`, `m-2`, `flex-1` (when inside Flex)
+///
 /// ### Example Usage:
 ///
 /// ```dart
@@ -20,19 +27,36 @@ import '../utils/wind_logger.dart';
 ///   'Hello World',
 ///   className: 'text-xl text-blue-500 font-bold text-center p-4 uppercase',
 /// )
+/// ```
 class WText extends StatelessWidget {
   /// The text string to display.
   final String data;
 
   /// The string of Tailwind-like utility classes.
-  /// (e.g., "text-lg font-bold text-white")
+  ///
+  /// Supports:
+  /// - **Font:** `font-sans`, `font-bold`, `italic`
+  /// - **Size:** `text-xs`, `text-xl`, `text-4xl`
+  /// - **Color:** `text-white`, `text-slate-500`
+  /// - **Align:** `text-center`, `text-right`
+  /// - **Spacing:** `p-2`, `m-4` (applied to container)
+  ///
+  /// Example:
+  /// ```dart
+  /// className: "text-lg font-semibold text-gray-800 p-2"
+  /// ```
   final String? className;
 
   /// An explicit WindStyle object to serve as the base style.
   final WindStyle? style;
 
   /// Explicit TextStyle to merge with the parsed styles.
-  /// Useful for integrating with standard Flutter themes.
+  ///
+  /// **Usage:**
+  /// Use this when you want to inherit from standard Flutter themes or
+  /// apply dynamic TextStyle properties not available in utility classes.
+  ///
+  /// *Note: `className` styles take precedence over this textStyle.*
   final TextStyle? textStyle;
 
   /// Whether the text should be selectable.
@@ -73,6 +97,7 @@ class WText extends StatelessWidget {
     if (styles.debug) {
       logger.logStep("ClassName", "'$className'");
       logger.logStep("Data", "'$data'");
+      logger.setFinalStyles(styles);
     }
 
     // 3. VISIBILITY CHECK

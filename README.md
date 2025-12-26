@@ -90,6 +90,25 @@ WText(
 )
 ```
 
+### WIcon, WImage, WSvg - Media Widgets
+
+```dart
+// Icon with tailwind sizing/color
+WIcon(Icons.star, className: 'text-yellow-500 text-3xl')
+
+// Image with object-fit and aspect-ratio
+WImage(
+  src: 'https://via.placeholder.com/150',
+  className: 'w-full aspect-video object-cover rounded-xl',
+)
+
+// SVG with fill/stroke control
+WSvg(
+  src: 'assets/logo.svg',
+  className: 'fill-blue-600 w-12 h-12',
+)
+```
+
 ### WInput - The Form Input Widget
 
 ```dart
@@ -100,6 +119,29 @@ WInput(
   placeholder: 'Enter email',
   className: 'p-3 border rounded-lg focus:ring-2 focus:ring-blue-500',
   placeholderClassName: 'text-gray-400',
+)
+```
+
+### WCheckbox & WSelect - Selection Controls
+
+```dart
+// Utility-first Checkbox
+WCheckbox(
+  value: _isChecked,
+  onChanged: (v) => setState(() => _isChecked = v),
+  className: 'w-5 h-5 rounded checked:bg-blue-500 checked:border-transparent',
+)
+
+// Searchable Dropdown
+WSelect<String>(
+  value: _selected,
+  options: [
+    SelectOption(label: 'Flutter', value: 'flutter'),
+    SelectOption(label: 'React', value: 'react'),
+  ],
+  onChange: (val) => setState(() => _selected = val),
+  className: 'w-full p-2 border rounded',
+  searchable: true,
 )
 ```
 
@@ -135,8 +177,8 @@ WAnchor(
 ### Borders & Effects
 `border`, `border-2`, `border-red-500/50`, `rounded-lg`, `shadow-md`, `shadow-blue-500/20`, `opacity-75`, `ring-2`, `ring-blue-500/50`, `ring-offset-2`
 
-### Transitions
-`duration-300`, `duration-500`, `ease-in`, `ease-out`, `ease-in-out`
+### Transitions & Animations
+`duration-300`, `duration-500`, `ease-in`, `ease-out`, `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`
 
 ### Responsive
 `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
@@ -163,6 +205,27 @@ Use `dark:` prefix for dark-mode-only styles:
 
 ```dart
 WDiv(className: 'bg-white dark:bg-gray-900')
+```
+
+### Toggle Theme at Runtime
+
+```dart
+// Toggle between light/dark
+WindTheme.of(context).toggleTheme();
+// or
+context.windTheme.toggleTheme();
+```
+
+For reactive `MaterialApp.theme` updates, use the `builder` pattern:
+
+```dart
+WindTheme(
+  data: windTheme,
+  builder: (context, controller) => MaterialApp(
+    theme: controller.toThemeData(), // Auto-updates on toggle
+    home: MyHomePage(),
+  ),
+)
 ```
 
 ## 📱 Responsive Design

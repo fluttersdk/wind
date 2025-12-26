@@ -6,24 +6,21 @@ class RingBasicExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFFF3F4F6),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(32),
-          child: Wrap(
-            spacing: 32,
-            runSpacing: 32,
-            alignment: WrapAlignment.center,
-            children: [
-              _RingBox(className: "ring-0 ring-blue-500", label: "ring-0"),
-              _RingBox(className: "ring-1 ring-blue-500", label: "ring-1"),
-              _RingBox(className: "ring-2 ring-blue-500", label: "ring-2"),
-              _RingBox(className: "ring ring-blue-500", label: "ring"),
-              _RingBox(className: "ring-4 ring-blue-500", label: "ring-4"),
-              _RingBox(className: "ring-8 ring-blue-500", label: "ring-8"),
-            ],
-          ),
+    return const Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(32),
+        child: Wrap(
+          spacing: 32,
+          runSpacing: 32,
+          alignment: WrapAlignment.center,
+          children: [
+            _RingBox(className: "ring-0 ring-blue-500", label: "ring-0"),
+            _RingBox(className: "ring-1 ring-blue-500", label: "ring-1"),
+            _RingBox(className: "ring-2 ring-blue-500", label: "ring-2"),
+            _RingBox(className: "ring ring-blue-500", label: "ring"),
+            _RingBox(className: "ring-4 ring-blue-500", label: "ring-4"),
+            _RingBox(className: "ring-8 ring-blue-500", label: "ring-8"),
+          ],
         ),
       ),
     );

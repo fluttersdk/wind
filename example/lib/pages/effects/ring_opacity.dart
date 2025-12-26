@@ -6,23 +6,20 @@ class RingOpacityExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFFF3F4F6),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(32),
-          child: Wrap(
-            spacing: 32,
-            runSpacing: 32,
-            alignment: WrapAlignment.center,
-            children: [
-              _RingBox(className: "ring-4 ring-blue-500/100", label: "100%"),
-              _RingBox(className: "ring-4 ring-blue-500/75", label: "75%"),
-              _RingBox(className: "ring-4 ring-blue-500/50", label: "50%"),
-              _RingBox(className: "ring-4 ring-blue-500/25", label: "25%"),
-              _RingBox(className: "ring-4 ring-blue-500/10", label: "10%"),
-            ],
-          ),
+    return const Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(32),
+        child: Wrap(
+          spacing: 32,
+          runSpacing: 32,
+          alignment: WrapAlignment.center,
+          children: [
+            _RingBox(className: "ring-4 ring-blue-500/100", label: "100%"),
+            _RingBox(className: "ring-4 ring-blue-500/75", label: "75%"),
+            _RingBox(className: "ring-4 ring-blue-500/50", label: "50%"),
+            _RingBox(className: "ring-4 ring-blue-500/25", label: "25%"),
+            _RingBox(className: "ring-4 ring-blue-500/10", label: "10%"),
+          ],
         ),
       ),
     );

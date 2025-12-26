@@ -6,6 +6,33 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [1.0.0-alpha.5] - 2025-12-26
+
+### ✨ New Features
+
+#### Extended Widget Suite
+- **WSelect**: Powerful dropdown with single/multi-select, search, pagination (infinite scroll), tagging (`onCreateOption`), and full custom builders.
+- **WCheckbox**: Utility-first checkbox with `checked:` state styling and custom icon support.
+- **WImage**: Network/Asset image wrapper with `object-fit`, `aspect-ratio`, and `rounded` utilities. Supports `asset://` schema.
+- **WSvg**: SVG rendering with `fill-`, `stroke-` coloring and parent style inheritance.
+- **WIcon**: Tailwind-styled Icon wrapper that honors parent text styles (`text-{color}`, `text-{size}`).
+
+#### Animation System (Explicit)
+- **Animation Utilities**: `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`.
+- **WindAnimationWrapper**: Integrated wrapper that handles explicit animations automatically.
+- **Widget Integration**: `WDiv`, `WIcon`, `WText` (via WDiv wrapper) support animation classes.
+
+#### Implicit Animations (Transitions)
+- **Duration**: `duration-{ms}` enables implicit animations on properties.
+- **Easing**: `ease-linear`, `ease-in`, `ease-out`, `ease-in-out` curves.
+- **Animated Widgets**: Automatically swaps to `AnimatedContainer`, `AnimatedOpacity`, `AnimatedAlign` (via explicit toggle pattern) when duration is present.
+
+### 🐛 Bug Fixes & Improvements
+- **Opacity Parsing**: Enhanced `/[0.2]` arbitrary syntax support to handle fractional doubles (0.0-1.0) correctly.
+- **Revert**: Removed implicit alignment animation (`align-*` on containers) to avoid layout conflicts. Alignment animation should be done explicitly via `AnimatedAlign`.
+
+---
+
 ## [1.0.0-alpha.4] - 2025-12-26
 
 ### ✨ New Features

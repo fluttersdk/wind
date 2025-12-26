@@ -3,17 +3,16 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for overflow utility classes
+/// **Overflow Parser**
 ///
-/// Example classes:
-/// - overflow-hidden
-/// - overflow-visible
-/// - overflow-scroll
-/// - overflow-auto
-/// - overflow-x-hidden
-/// - overflow-x-scroll
-/// - overflow-y-hidden
-/// - overflow-y-scroll
+/// Handles content overflow behavior.
+///
+/// ### Supported Utility Classes:
+/// - **General:** `overflow-hidden`, `overflow-visible`, `overflow-scroll`
+/// - **Axis Specific:** `overflow-x-hidden`, `overflow-y-scroll`
+///
+/// Returns a [WindStyle] with `overflow`, `overflowX`, `overflowY`.
+/// Also sets helper `clipBehavior` based on the overflow mode.
 class OverflowParser implements WindParserInterface {
   const OverflowParser();
 
@@ -22,9 +21,15 @@ class OverflowParser implements WindParserInterface {
     // Only accept fully valid overflow utility classes to avoid
     // confusing behavior where canParse returns true but parsing
     // produces null because the value is unsupported.
-    return RegExp(r'^overflow-(hidden|visible|scroll|auto)$').hasMatch(className) ||
-        RegExp(r'^overflow-x-(hidden|visible|scroll|auto)$').hasMatch(className) ||
-        RegExp(r'^overflow-y-(hidden|visible|scroll|auto)$').hasMatch(className);
+    return RegExp(
+          r'^overflow-(hidden|visible|scroll|auto)$',
+        ).hasMatch(className) ||
+        RegExp(
+          r'^overflow-x-(hidden|visible|scroll|auto)$',
+        ).hasMatch(className) ||
+        RegExp(
+          r'^overflow-y-(hidden|visible|scroll|auto)$',
+        ).hasMatch(className);
   }
 
   @override

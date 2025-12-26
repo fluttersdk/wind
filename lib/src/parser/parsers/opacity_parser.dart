@@ -2,34 +2,19 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for opacity utility classes
+/// **Opacity Parser**
 ///
-/// Example classes:
-/// - opacity-0
-/// - opacity-50
-/// - opacity-100
-/// - opacity-[0.35]
+/// Handles `opacity-*` utility classes.
+///
+/// ### Supported Utility Classes:
+/// - **Steps:** `opacity-0`, `opacity-50`, `opacity-100` (maps to 0.0, 0.5, 1.0)
+/// - **Arbitrary:** `opacity-[0.35]`
+///
+/// Returns a [WindStyle] with `opacity` (double).
 class OpacityParser implements WindParserInterface {
   const OpacityParser();
 
   /// Standard Tailwind opacity values (percentage to decimal)
-  static const Map<String, double> _opacityValues = {
-    '0': 0.0,
-    '5': 0.05,
-    '10': 0.10,
-    '20': 0.20,
-    '25': 0.25,
-    '30': 0.30,
-    '40': 0.40,
-    '50': 0.50,
-    '60': 0.60,
-    '70': 0.70,
-    '75': 0.75,
-    '80': 0.80,
-    '90': 0.90,
-    '95': 0.95,
-    '100': 1.0,
-  };
 
   static final RegExp _arbitraryOpacityRegExp = RegExp(
     r'^opacity-\[(?<value>[0-9]*\.?[0-9]+)\]$',
@@ -51,8 +36,8 @@ class OpacityParser implements WindParserInterface {
 
       // Handle standard opacity values e.g., opacity-50
       final value = className.replaceFirst('opacity-', '');
-      if (_opacityValues.containsKey(value)) {
-        opacity ??= _opacityValues[value];
+      if (context.theme.opacities.containsKey(value)) {
+        opacity ??= context.theme.opacities[value];
         continue;
       }
 

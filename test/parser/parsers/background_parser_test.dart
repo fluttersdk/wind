@@ -62,7 +62,7 @@ void main() {
     test('parses color with opacity', () {
       final classes = ['bg-red-500/50'];
       final color = BackgroundParser.parseColor(classes, themeData);
-      final expected = applyOpacity(default_colors.colors['red']![500]!, 50);
+      final expected = applyOpacity(default_colors.colors['red']![500]!, 0.5);
       expect(color!.toARGB32(), expected.toARGB32());
     });
 

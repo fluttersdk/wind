@@ -2,32 +2,18 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for z-index utility classes
+/// **Z-Index Parser**
 ///
-/// Example classes:
-/// - z-0
-/// - z-10
-/// - z-20
-/// - z-30
-/// - z-40
-/// - z-50
-/// - z-auto
-/// - z-[100]
+/// Handles `z-*` utility classes for controlling stack order.
 ///
-/// Note: Flutter doesn't have CSS-like positioning (absolute, relative, fixed).
-/// Z-index only works within Stack widgets where children are ordered by index.
+/// ### Supported Utility Classes:
+/// - **Presets:** `z-0`, `z-10`, `z-20`... `z-50`
+/// - **Arbitrary:** `z-[100]`
+/// - **Auto:** `z-auto` (null)
+///
+/// Returns a [WindStyle] with `zIndex` (int). Only affects widgets inside a Stack.
 class ZIndexParser implements WindParserInterface {
   const ZIndexParser();
-
-  /// Standard Tailwind z-index values
-  static const Map<String, int> _zIndexValues = {
-    '0': 0,
-    '10': 10,
-    '20': 20,
-    '30': 30,
-    '40': 40,
-    '50': 50,
-  };
 
   static final RegExp _arbitraryZIndexRegExp = RegExp(
     r'^z-\[(?<value>-?[0-9]+)\]$',
@@ -55,8 +41,8 @@ class ZIndexParser implements WindParserInterface {
 
       // Handle standard z-index values e.g., z-10
       final value = className.replaceFirst('z-', '');
-      if (_zIndexValues.containsKey(value)) {
-        zIndex ??= _zIndexValues[value];
+      if (context.theme.zIndices.containsKey(value)) {
+        zIndex ??= context.theme.zIndices[value];
         continue;
       }
 

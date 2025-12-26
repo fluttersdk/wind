@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import '../../theme/defaults/box_shadows.dart';
+
 import '../wind_context.dart';
 import '../wind_style.dart';
 import '../../utils/color_utils.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for shadow related classes
+/// **Shadow Parser**
 ///
-/// Example classes:
-/// - shadow-sm
-/// - shadow
-/// - shadow-md
-/// - shadow-lg
-/// - shadow-xl
-/// - shadow-2xl
-/// - shadow-none
-/// - shadow-red-500
+/// Handles `shadow-*` utility classes.
+///
+/// ### Supported Utility Classes:
+/// - **Presets:** `shadow-sm`, `shadow`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`
+/// - **Color:** `shadow-red-500` (recolors the shadow while keeping opacity)
+/// - **None:** `shadow-none`
+///
+/// Returns a [WindStyle] with `boxShadow`.
 class ShadowParser implements WindParserInterface {
   const ShadowParser();
 
@@ -45,37 +44,20 @@ class ShadowParser implements WindParserInterface {
 
       // Handle simple shadow sizes
       if (className == 'shadow') {
-        boxShadow ??= WindBoxShadows.shadows['DEFAULT'];
+        boxShadow ??= context.theme.shadows['DEFAULT'];
         continue;
       }
 
       // Handle specific sizes e.g. shadow-lg
-      if (WindBoxShadows.shadows.containsKey(
-        className.replaceFirst('shadow-', ''),
-      )) {
-        boxShadow ??=
-            WindBoxShadows.shadows[className.replaceFirst('shadow-', '')];
+      final sizeName = className.replaceFirst('shadow-', '');
+      if (context.theme.shadows.containsKey(sizeName)) {
+        boxShadow ??= context.theme.shadows[sizeName];
         continue;
       }
 
       final opacityData = parseColorOpacity(className);
       final effectiveClassName = opacityData.colorPart;
       final opacity = opacityData.opacity;
-
-      // Handle specific sizes e.g. shadow-lg
-      if (WindBoxShadows.shadows.containsKey(
-        effectiveClassName.replaceFirst('shadow-', ''), // use effective?
-        // Wait, shadow-lg/50 is invalid syntax for size.
-        // But parseColorOpacity strips /50.
-        // Should we allow shadow-lg/50? Tailwind: no.
-        // So we should check if opacity is null for size classes?
-        // Actually simplest is to just check original className logic for sizes.
-      )) {
-        // This block handles shadow-lg etc. They don't support opacity usually.
-        // But wait, "shadow-blue-500/50" is color.
-        // "shadow-lg" is size.
-        // Let's use effectiveClassName for color checks only.
-      }
 
       // Handle arbitrary shadow color e.g. shadow-[#ff0000]
       final arbitraryMatch = _arbitraryShadowColorRegExp.firstMatch(
@@ -97,7 +79,7 @@ class ShadowParser implements WindParserInterface {
       // Handle standard shadow color e.g. shadow-red-500
       final colorMatch = _shadowColorRegExp.firstMatch(effectiveClassName);
       if (colorMatch != null &&
-          !WindBoxShadows.shadows.containsKey(
+          !context.theme.shadows.containsKey(
             effectiveClassName.replaceFirst('shadow-', ''),
           )) {
         if (shadowColor == null) {

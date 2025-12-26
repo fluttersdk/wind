@@ -2,14 +2,15 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for aspect ratio utility classes
+/// **Aspect Ratio Parser**
 ///
-/// Example classes:
-/// - aspect-auto
-/// - aspect-square (1:1)
-/// - aspect-video (16:9)
-/// - aspect-[4/3]
-/// - aspect-[16/9]
+/// Handles `aspect-*` utility classes.
+///
+/// ### Supported Utility Classes:
+/// - **Presets:** `aspect-auto`, `aspect-square` (1/1), `aspect-video` (16/9)
+/// - **Arbitrary:** `aspect-[4/3]`, `aspect-[16/9]`
+///
+/// Returns a [WindStyle] with `aspectRatio`.
 class AspectRatioParser implements WindParserInterface {
   const AspectRatioParser();
 

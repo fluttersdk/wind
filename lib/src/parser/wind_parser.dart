@@ -16,16 +16,34 @@ import 'parsers/overflow_parser.dart';
 import 'parsers/aspectratio_parser.dart';
 import 'parsers/transition_parser.dart';
 import 'parsers/ring_parser.dart';
+import 'parsers/svg_parser.dart';
+import 'parsers/animation_parser.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
 
-/// Main parser class for Wind styles
-/// Handles parsing of class names into WindStyle objects
-/// with caching and state resolution.
+/// **The Core Parsing Engine**
 ///
-/// Example:
+/// `WindParser` is responsible for converting utility class strings into
+/// structured [WindStyle] objects. It acts as the central orchestrator that:
+///
+/// 1.  **Parses:** Splits className strings and delegates to specific parsers.
+/// 2.  **Resolves:** Handles responsive prefixes (`md:`) and state prefixes (`hover:`).
+/// 3.  **Caches:** Memoizes results for performance optimization.
+///
+/// ### How it works:
+///
+/// When you use `className: "bg-red-500 hover:bg-blue-500"`, the parser:
+/// 1.  Checks if `hover` state is active in the current [WindContext].
+/// 2.  Delegates `bg-red-500` to [BackgroundParser].
+/// 3.  Merges the resulting styles into a final [WindStyle].
+///
+/// ### Example Usage:
+///
 /// ```dart
-/// final style = WindParser.parse("bg-red-500 text-lg md:bg-blue-500", context);
+/// final style = WindParser.parse(
+///   "bg-red-500 text-lg hover:text-white",
+///   context,
+/// );
 /// ```
 class WindParser {
   /// Cache for parsed styles
@@ -48,6 +66,8 @@ class WindParser {
     'aspectratio': const AspectRatioParser(),
     'transition': const TransitionParser(),
     'ring': const RingParser(),
+    'svg': const SvgParser(),
+    'animation': const AnimationParser(),
   };
 
   /// Clears the style cache
@@ -122,7 +142,8 @@ class WindParser {
   ) {
     final Map<String, List<String>> map = {};
     final classes =
-        className?.split(' ').where((s) => s.isNotEmpty).toSet() ?? <String>{};
+        className?.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toSet() ??
+        <String>{};
     final resolvedClasses = resolveClasses(classes.toList(), windContext);
 
     for (final cls in resolvedClasses) {

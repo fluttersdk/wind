@@ -1,26 +1,34 @@
 import 'package:flutter/foundation.dart';
 
-/// An immutable class representing the pressable state of a widget.
+/// **The State Snapshot**
 ///
-/// This class holds boolean flags for hover, focus, and disabled states. It is used
-/// by `WindStateProvider` to propagate the state down the widget tree.
+/// `WindAnchorState` gives you a point-in-time snapshot of user interactions.
+/// It works hand-in-hand with [WAnchor] and [WindStateProvider].
 ///
-/// It overrides `==` and `hashCode` to ensure correct behavior when used.
+/// ### Properties:
+/// - **isHovering:** True when mouse is over the widget.
+/// - **isFocused:** True when the widget has keyboard focus.
+/// - **isDisabled:** True when interactions are blocked.
+/// - **customStates:** Set of user-defined states like `selected` or `loading`.
+///
+/// This object is immutable and typically accessed via `WindStateProvider.of(context)`.
 @immutable
 class WindAnchorState {
-  /// Whether the widget is currently being hovered over.
+  /// Whether the mouse pointer is hovering over the widget.
   final bool isHovering;
 
-  /// Whether the widget currently has focus.
+  /// Whether the widget has keyboard focus.
   final bool isFocused;
 
-  /// Whether the widget is disabled.
+  /// Whether the widget is disabled and ignoring interactions.
   final bool isDisabled;
 
-  /// Custom states for dynamic styling (e.g., 'error', 'success', 'loading').
+  /// Custom states for dynamic styling.
   ///
-  /// These are propagated to child widgets and activate their corresponding
-  /// prefix classes (e.g., `error:border-red-500`).
+  /// Examples:
+  /// - `loading` -> activates `loading:` prefix
+  /// - `selected` -> activates `selected:` prefix
+  /// - `error` -> activates `error:` prefix
   final Set<String>? customStates;
 
   /// Creates a new instance of `WindPressableState`.

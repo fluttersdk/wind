@@ -4,11 +4,16 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for margin related classes
+/// **Margin Parser**
 ///
-/// Example classes:
-/// - Theme-based: m-4, mt-2, mb-6, ml-3, mr-5, mx-1/2, my-8
-/// - Arbitrary: m-[10px], mt-[5px], mb-[15px], ml-[20px], mr-[25px], mx-[3.5], my-[12.75]
+/// Handles `m-*`, `mx-*`, `my-*`, etc.
+///
+/// ### Supported Utility Classes:
+/// - **All Sides:** `m-4`, `m-[10px]`
+/// - **Axis:** `mx-4`, `my-2`
+/// - **Sides:** `mt-4` (top), `mr-4` (right), `mb-4` (bottom), `ml-4` (left)
+///
+/// Returns a [WindStyle] with resolved `margin` property.
 class MarginParser implements WindParserInterface {
   const MarginParser();
 

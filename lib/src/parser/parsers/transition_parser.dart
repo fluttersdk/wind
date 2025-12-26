@@ -4,12 +4,15 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for transition and animation related classes
+/// **Transition Parser**
 ///
-/// Example classes:
-/// - Duration: duration-75, duration-100, duration-150, duration-200,
-///   duration-300, duration-500, duration-700, duration-1000, duration-[500ms]
-/// - Ease/Curve: ease-linear, ease-in, ease-out, ease-in-out
+/// Handles animation duration and easing curves.
+///
+/// ### Supported Utility Classes:
+/// - **Duration:** `duration-300`, `duration-700`, `duration-[500ms]`
+/// - **Easing:** `ease-in`, `ease-out`, `ease-linear`, `ease-in-out`
+///
+/// Returns a [WindStyle] with `transitionDuration` and `transitionCurve`.
 class TransitionParser implements WindParserInterface {
   const TransitionParser();
 
@@ -22,26 +25,6 @@ class TransitionParser implements WindParserInterface {
   static final RegExp _easeRegex = RegExp(
     r'^ease-(?<curve>linear|in|out|in-out)$',
   );
-
-  /// Default durations map (Tailwind values in milliseconds)
-  static const Map<String, int> _durationMap = {
-    '75': 75,
-    '100': 100,
-    '150': 150,
-    '200': 200,
-    '300': 300,
-    '500': 500,
-    '700': 700,
-    '1000': 1000,
-  };
-
-  /// Curve map
-  static const Map<String, Curve> _curveMap = {
-    'linear': Curves.linear,
-    'in': Curves.easeIn,
-    'out': Curves.easeOut,
-    'in-out': Curves.easeInOut,
-  };
 
   @override
   bool canParse(String className) {
@@ -67,14 +50,16 @@ class TransitionParser implements WindParserInterface {
       if (duration == null) {
         final durationMatch = _durationRegex.firstMatch(className);
         if (durationMatch != null) {
-          int? ms;
           if (durationMatch.namedGroup('preset') != null) {
-            ms = _durationMap[durationMatch.namedGroup('preset')];
+            final preset = durationMatch.namedGroup('preset')!;
+            if (context.theme.transitionDurations.containsKey(preset)) {
+              duration = context.theme.transitionDurations[preset];
+            }
           } else if (durationMatch.namedGroup('arbitrary') != null) {
-            ms = int.tryParse(durationMatch.namedGroup('arbitrary')!);
-          }
-          if (ms != null) {
-            duration = Duration(milliseconds: ms);
+            final ms = int.tryParse(durationMatch.namedGroup('arbitrary')!);
+            if (ms != null) {
+              duration = Duration(milliseconds: ms);
+            }
           }
         }
       }
@@ -83,7 +68,10 @@ class TransitionParser implements WindParserInterface {
       if (curve == null) {
         final easeMatch = _easeRegex.firstMatch(className);
         if (easeMatch != null) {
-          curve = _curveMap[easeMatch.namedGroup('curve')];
+          final curveName = easeMatch.namedGroup('curve')!;
+          if (context.theme.transitionCurves.containsKey(curveName)) {
+            curve = context.theme.transitionCurves[curveName];
+          }
         }
       }
     }

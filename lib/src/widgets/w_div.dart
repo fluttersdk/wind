@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import 'wind_animation_wrapper.dart';
 
 /// **The Fundamental Building Block of Wind**
 ///
@@ -14,12 +15,25 @@ import '../utils/wind_logger.dart';
 /// the [className] and selectively applies specialized widgets like `Padding`,
 /// `Align`, `Row`, or `GridView` only when necessary.
 ///
+/// ### Supported Features:
+/// - **Flexbox:** `flex`, `flex-row`, `items-center`, `justify-between`
+/// - **Grid:** `grid`, `grid-cols-3`, `gap-4`
+/// - **Spacing:** `p-4`, `m-2`, `space-x-4`
+/// - **Sizing:** `w-full`, `h-12`, `min-h-screen`, `aspect-video`
+/// - **Backgrounds:** `bg-red-500`, `bg-gradient-to-r`
+/// - **Borders:** `border`, `border-red-500`, `rounded-lg`
+/// - **Effects:** `shadow-lg`, `opacity-50`
+/// - **Text:** `text-red-500`, `text-center`, `text-2xl`
+/// - **Animation:** `animate-pulse`, `animate-bounce`, `animate-spin`
+/// - **States:** `hover:bg-red-600`, `dark:bg-slate-900`
+/// - **Transitions:** `transition-all`, `duration-300`, `ease-in-out`
+///
 /// ### Example Usage:
 ///
 /// ```dart
 /// // A responsive flex container with padding and gap
 /// WDiv(
-///   className: "flex flex-col md:flex-row gap-4 p-4 bg-gray-100",
+///   className: "flex flex-col md:flex-row gap-4 p-4 bg-gray-100 rounded-lg",
 ///   children: [
 ///     Text("Item 1"),
 ///     Text("Item 2"),
@@ -28,17 +42,32 @@ import '../utils/wind_logger.dart';
 /// ```
 class WDiv extends StatelessWidget {
   /// The utility class string defining the style and layout.
-  /// e.g., `"bg-blue-500 p-4 rounded-lg shadow-md"`
+  ///
+  /// Supports:
+  /// - **Layout:** `flex`, `grid`, `block`, `hidden`
+  /// - **Spacing:** `p-4`, `m-2`, `gap-x-4`
+  /// - **Sizing:** `w-full`, `h-12`, `min-h-screen`, `aspect-video`
+  /// - **Styling:** `bg-red-500`, `text-white`, `rounded-xl`, `shadow-lg`
+  /// - **States:** `hover:bg-red-600`, `dark:bg-slate-900`
+  ///
+  /// Example:
+  /// ```dart
+  /// className: "flex flex-col gap-4 p-6 bg-white shadow-sm"
+  /// ```
   final String? className;
 
   /// The single child widget. Used for `block` layouts or simple wrappers.
   ///
-  /// *Note: Cannot be used simultaneously with [children].*
+  /// **Usage Rules:**
+  /// - Use this when `className` does NOT contain `flex` or `grid`.
+  /// - *Exclusive:* Cannot be used simultaneously with [children].
   final Widget? child;
 
   /// The list of children widgets. Used for `flex`, `grid`, or `wrap` layouts.
   ///
-  /// *Note: Cannot be used simultaneously with [child].*
+  /// **Usage Rules:**
+  /// - Use this when `className` contains `flex`, `grid`, or `wrap`.
+  /// - *Exclusive:* Cannot be used simultaneously with [child].
   final List<Widget>? children;
 
   /// An optional explicit style object.
@@ -157,10 +186,33 @@ class WDiv extends StatelessWidget {
     }
 
     // 8. OPACITY (Effects Layer)
-    // Wrap with Opacity widget if opacity is explicitly set.
+    // Wrap with AnimatedOpacity if transition duration is set, else static Opacity.
     if (styles.opacity != null) {
-      logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
-      finalWidget = Opacity(opacity: styles.opacity!, child: finalWidget);
+      if (styles.transitionDuration != null) {
+        logger.wrapWith("AnimatedOpacity", "opacity: ${styles.opacity}");
+        finalWidget = AnimatedOpacity(
+          duration: styles.transitionDuration!,
+          curve: styles.transitionCurve ?? Curves.linear,
+          opacity: styles.opacity!,
+          child: finalWidget,
+        );
+      } else {
+        logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
+        finalWidget = Opacity(opacity: styles.opacity!, child: finalWidget);
+      }
+    }
+
+    // 9. ANIMATION (animate-spin, animate-pulse, etc.)
+    // Wrap with animation if animationType is set.
+    if (styles.animationType != null &&
+        styles.animationType != WindAnimationType.none) {
+      logger.wrapWith("Animation", "type: ${styles.animationType}");
+      finalWidget = wrapWithAnimation(
+        child: finalWidget,
+        animationType: styles.animationType,
+        duration: styles.transitionDuration,
+        curve: styles.transitionCurve,
+      );
     }
 
     // Final: Print debug log if enabled
@@ -377,6 +429,7 @@ class WDiv extends StatelessWidget {
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
+          alignment: styles.alignment,
           child: widgetToBuild,
         );
       } else {
@@ -385,6 +438,7 @@ class WDiv extends StatelessWidget {
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
+          alignment: styles.alignment,
           child: widgetToBuild,
         );
       }

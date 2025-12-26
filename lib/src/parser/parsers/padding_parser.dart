@@ -4,11 +4,16 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for padding related classes
+/// **Padding Parser**
 ///
-/// Example classes:
-/// - Theme-based: p-4, pt-2, pb-6, pl-3, pr-5, px-1/2, py-8
-/// - Arbitrary: p-[10px], pt-[5px], pb-[15px], pl-[20px], pr-[25px], px-[3.5], py-[12.75]
+/// Handles `p-*`, `px-*`, `py-*`, etc.
+///
+/// ### Supported Utility Classes:
+/// - **All Sides:** `p-4`, `p-[10px]`
+/// - **Axis:** `px-4`, `py-2`
+/// - **Sides:** `pt-4` (top), `pr-4` (right), `pb-4` (bottom), `pl-4` (left)
+///
+/// Returns a [WindStyle] with resolved `padding` property.
 class PaddingParser implements WindParserInterface {
   const PaddingParser();
 

@@ -10,23 +10,23 @@ import 'w_anchor.dart';
 /// `WButton` is a button widget that combines `WAnchor` state management
 /// with Tailwind-like utility class styling and built-in loading states.
 ///
-/// ### Key Features:
-/// - **State-Based Styling:** Inherits `hover:`, `focus:`, `disabled:` from `WAnchor`
-/// - **Loading State:** Built-in loading spinner with optional text
-/// - **Tailwind Styling:** Use `className` for button appearance
-/// - **Custom Loading:** Provide your own `loadingWidget`
+/// ### Supported Features:
+/// - **States:** `hover:bg-blue-700`, `focus:ring-2`, `disabled:opacity-50`
+/// - **Loading:** Built-in spinner, `loading:text-transparent`
+/// - **Interactvity:** `onTap`, `onDoubleTap`, `onLongPress`
+/// - **Styling:** `bg-blue-500`, `text-white`, `rounded`, `shadow`
 ///
 /// ### Example Usage:
 ///
 /// ```dart
 /// WButton(
 ///   onTap: () => print('Clicked!'),
-///   className: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg',
+///   className: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors',
 ///   child: Text('Click me'),
 /// )
 /// ```
 ///
-/// ### Loading State:
+/// ### Loading State Example:
 ///
 /// ```dart
 /// WButton(
@@ -54,26 +54,27 @@ class WButton extends StatelessWidget {
 
   /// Whether the button is in loading state.
   ///
-  /// When true:
-  /// - Interactions are disabled
-  /// - Shows loading spinner (or custom `loadingWidget`)
-  /// - `loading:` prefixed classes are applied
+  /// **Effects:**
+  /// - Disables user interaction (`onTap` will not fire).
+  /// - Replaces or overlays content with a loading spinner.
+  /// - Activates the `loading:` prefix for styling (e.g., `loading:opacity-50`).
   final bool isLoading;
 
   /// Whether the button is disabled.
   ///
-  /// When true:
-  /// - Interactions are disabled
-  /// - `disabled:` prefixed classes are applied
+  /// **Effects:**
+  /// - Disables user interaction.
+  /// - Activates the `disabled:` prefix for styling (e.g., `disabled:bg-gray-300`).
+  /// - Changes cursor to `forbidden` (desktop/web).
   final bool disabled;
 
   /// Tailwind-like utility classes for styling.
   ///
-  /// Supports state prefixes:
-  /// - `hover:` - Applied on hover
-  /// - `focus:` - Applied on focus
-  /// - `disabled:` - Applied when disabled
-  /// - `loading:` - Applied when loading
+  /// Supports special states:
+  /// - **Hover:** `hover:bg-blue-700`
+  /// - **Focus:** `focus:ring-2 focus:ring-blue-500`
+  /// - **Disabled:** `disabled:bg-gray-300 disabled:cursor-not-allowed`
+  /// - **Loading:** `loading:opacity-75`
   ///
   /// Example: `'bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400'`
   final String? className;

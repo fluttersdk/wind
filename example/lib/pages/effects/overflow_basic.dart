@@ -6,16 +6,13 @@ class OverflowBasicExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _OverflowBox(className: "overflow-visible", label: "visible"),
-          _OverflowBox(className: "overflow-hidden", label: "hidden"),
-          _OverflowBox(className: "overflow-scroll", label: "scroll"),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _OverflowBox(className: "overflow-visible", label: "visible"),
+        _OverflowBox(className: "overflow-hidden", label: "hidden"),
+        _OverflowBox(className: "overflow-scroll", label: "scroll"),
+      ],
     );
   }
 }

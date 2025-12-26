@@ -7,6 +7,22 @@ enum WindTextTransform { none, uppercase, lowercase, capitalize }
 /// Overflow behavior types
 enum WindOverflow { visible, hidden, scroll, auto }
 
+/// Animation types for animate-* classes
+enum WindAnimationType { spin, ping, pulse, bounce, none }
+
+/// **The Immutable Style Object**
+///
+/// `WindStyle` represents a resolved set of style properties derived from
+/// utility classes. It is the "Output" of the `WindParser`.
+///
+/// It aggregates properties from all specialized parsers (Typography, Spacing,
+/// Layout, etc.) into a single, flattening data structure that can be easily
+/// consumed by widgets like `WDiv` or `WText`.
+///
+/// ### Characteristics:
+/// - **Immutable:** Once created, it cannot be changed (use `copyWith`).
+/// - **Comprehensive:** Covers all supported CSS-like properties.
+/// - **Null-safe:** Properties are null if not specified by a utility class.
 @immutable
 class WindStyle {
   /// `hidden` property e.g., hidden
@@ -174,6 +190,19 @@ class WindStyle {
   /// Ring inset e.g., ring-inset
   final bool? ringInset;
 
+  // ============== SVG PROPERTIES ==============
+
+  /// SVG fill color e.g., fill-red-500, fill-current
+  final Color? fillColor;
+
+  /// SVG stroke color e.g., stroke-blue-500, stroke-current
+  final Color? strokeColor;
+
+  // ============== ANIMATION PROPERTIES ==============
+
+  /// Animation type e.g., animate-spin, animate-pulse, animate-bounce
+  final WindAnimationType? animationType;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -230,6 +259,9 @@ class WindStyle {
     this.ringWidth,
     this.ringOffset,
     this.ringInset,
+    this.fillColor,
+    this.strokeColor,
+    this.animationType,
   });
 
   WindStyle copyWith({
@@ -288,6 +320,9 @@ class WindStyle {
     double? ringWidth,
     double? ringOffset,
     bool? ringInset,
+    Color? fillColor,
+    Color? strokeColor,
+    WindAnimationType? animationType,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -361,6 +396,9 @@ class WindStyle {
       ringWidth: ringWidth ?? this.ringWidth,
       ringOffset: ringOffset ?? this.ringOffset,
       ringInset: ringInset ?? this.ringInset,
+      fillColor: fillColor ?? this.fillColor,
+      strokeColor: strokeColor ?? this.strokeColor,
+      animationType: animationType ?? this.animationType,
     );
   }
 
@@ -416,7 +454,17 @@ class WindStyle {
           overflowX == other.overflowX &&
           overflowY == other.overflowY &&
           clipBehavior == other.clipBehavior &&
-          aspectRatio == other.aspectRatio;
+          aspectRatio == other.aspectRatio &&
+          transitionDuration == other.transitionDuration &&
+          transitionCurve == other.transitionCurve &&
+          ringShadow == other.ringShadow &&
+          ringColor == other.ringColor &&
+          ringWidth == other.ringWidth &&
+          ringOffset == other.ringOffset &&
+          ringInset == other.ringInset &&
+          fillColor == other.fillColor &&
+          strokeColor == other.strokeColor &&
+          animationType == other.animationType;
 
   @override
   int get hashCode =>
@@ -467,7 +515,17 @@ class WindStyle {
       overflowX.hashCode ^
       overflowY.hashCode ^
       clipBehavior.hashCode ^
-      aspectRatio.hashCode;
+      aspectRatio.hashCode ^
+      transitionDuration.hashCode ^
+      transitionCurve.hashCode ^
+      ringShadow.hashCode ^
+      ringColor.hashCode ^
+      ringWidth.hashCode ^
+      ringOffset.hashCode ^
+      ringInset.hashCode ^
+      fillColor.hashCode ^
+      strokeColor.hashCode ^
+      animationType.hashCode;
 
   /// Calculates the effective line height based on either a fixed value
   /// or a factor of the font size.
@@ -534,6 +592,7 @@ class WindStyle {
         'fontStyle: $fontStyle, '
         'letterSpacing: $letterSpacing, '
         'heightLine: $heightLine, '
+        'heightLineFactor: $heightLineFactor, '
         'textDecoration: $textDecoration, '
         'textDecorationColor: $textDecorationColor, '
         'textDecorationStyle: $textDecorationStyle, '
@@ -548,7 +607,22 @@ class WindStyle {
         'shadowColor: $shadowColor, '
         'debug: $debug, '
         'opacity: $opacity, '
-        'zIndex: $zIndex'
+        'zIndex: $zIndex, '
+        'overflow: $overflow, '
+        'overflowX: $overflowX, '
+        'overflowY: $overflowY, '
+        'clipBehavior: $clipBehavior, '
+        'aspectRatio: $aspectRatio, '
+        'transitionDuration: $transitionDuration, '
+        'transitionCurve: $transitionCurve, '
+        'ringShadow: $ringShadow, '
+        'ringColor: $ringColor, '
+        'ringWidth: $ringWidth, '
+        'ringOffset: $ringOffset, '
+        'ringInset: $ringInset, '
+        'fillColor: $fillColor, '
+        'strokeColor: $strokeColor, '
+        'animationType: $animationType'
         '}';
   }
 }

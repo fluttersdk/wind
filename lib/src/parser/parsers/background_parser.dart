@@ -8,14 +8,16 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for background related classes
+/// **Background Style Parser**
 ///
-/// Example classes:
-/// - Background color: bg-red-500, bg-[#FF5733]
-/// - Background image: bg-[url(https://example.com/image.png)], bg-[assets/image.png]
-/// - Background size: bg-cover, bg-contain
-/// - Background position: bg-center, bg-top-left
-/// - Background repeat: bg-no-repeat, bg-repeat-x
+/// Handles all `bg-*` and gradient utility classes.
+///
+/// ### Supported Utility Classes:
+/// - **Color:** `bg-red-500`, `bg-[#FF0000]`, `bg-red-500/50`
+/// - **Image:** `bg-[url(...)]`, `bg-cover`, `bg-center`, `bg-no-repeat`
+/// - **Gradient:** `bg-gradient-to-r`, `from-red-500`, `via-white`, `to-blue-500`
+///
+/// Returns a [WindStyle] with a resolved `BoxDecoration`.
 class BackgroundParser implements WindParserInterface {
   const BackgroundParser();
 

@@ -6,15 +6,17 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for border and rounded related classes
+/// **Border & Radius Parser**
 ///
-/// Example classes:
-/// - Border width: border, border-0, border-2, border-4, border-8
-/// - Directional borders: border-t, border-r, border-b, border-l
-/// - Border colors: border-red-500, border-[#FF5733]
-/// - Border styles: border-solid, border-none
-/// - Border radius: rounded, rounded-sm, rounded-md, rounded-lg, rounded-xl, rounded-full
-/// - Directional radius: rounded-t, rounded-r, rounded-b, rounded-l
+/// Handles `border-*`, `rounded-*`, and `divide-*` (future) classes.
+///
+/// ### Supported Utility Classes:
+/// - **Width:** `border`, `border-2`, `border-t-4`
+/// - **Color:** `border-red-500`, `border-[#FF0000]/50`
+/// - **Style:** `border-solid`, `border-none`
+/// - **Radius:** `rounded`, `rounded-lg`, `rounded-full`, `rounded-tl-md`
+///
+/// Returns a [WindStyle] with a resolved `BoxDecoration`, specifically `border` and `borderRadius`.
 class BorderParser implements WindParserInterface {
   const BorderParser();
 

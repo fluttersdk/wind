@@ -5,6 +5,7 @@ import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../theme/wind_theme.dart';
 import '../theme/wind_theme_data.dart';
+import '../utils/wind_logger.dart';
 
 /// Input type enum for WInput widget
 ///
@@ -31,15 +32,26 @@ enum InputType {
 /// `WInput` is a form input widget that combines React-style controlled state
 /// management with Tailwind-like utility class styling.
 ///
-/// ### Key Features:
+/// ### Supported Features:
 /// - **Controlled Value:** Pass `value` and `onChanged` for React-style binding
-/// - **Tailwind Styling:** Use `className` to style the input
-/// - **Placeholder Styling:** Use `placeholderClassName` for placeholder text
-/// - **Focus States:** `focus:ring-2 focus:border-blue-500` support
-/// - **Input Types:** text, password, email, number, multiline
-/// - **Keyboard Actions:** Customize keyboard actions and callbacks
+/// - **Styling:** `bg-gray-50` `text-gray-900` `rounded-lg` `border-gray-300`
+/// - **Focus:** `focus:ring-2` `focus:border-blue-500`
+/// - **Placeholders:** Styled via `placeholderClassName`
+/// - **States:** `disabled:bg-gray-100` `disabled:cursor-not-allowed`
+/// - **Types:** `text`, `password`, `email`, `number`, `multiline`
 ///
 /// ### Example Usage:
+///
+/// ```dart
+/// WInput(
+///   value: _email,
+///   onChanged: (value) => setState(() => _email = value),
+///   type: InputType.email,
+///   placeholder: 'Enter your email',
+///   className: 'p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500',
+///   placeholderClassName: 'text-gray-400 italic',
+/// )
+/// ```
 ///
 /// ```dart
 /// WInput(
@@ -68,20 +80,20 @@ class WInput extends StatefulWidget {
   /// Tailwind-like utility classes for styling the input field.
   ///
   /// Supports:
-  /// - `p-*`, `px-*`, `py-*` → content padding
-  /// - `bg-*` → fill color
-  /// - `border-*`, `rounded-*` → border styling
-  /// - `text-*`, `font-*` → input text style
-  /// - `focus:*` → focus state styles
-  /// - `disabled:*` → disabled state styles
+  /// - **Box Model:** `p-3`, `mx-2`, `w-full`, `rounded-lg`
+  /// - **Border:** `border`, `border-gray-300`, `border-2`
+  /// - **Typography:** `text-lg`, `text-gray-900`, `font-medium`
+  /// - **Background:** `bg-white`, `bg-gray-50`
+  /// - **States:** `focus:ring-2`, `focus:border-blue-500`, `disabled:bg-gray-100`
+  ///
+  /// Example: `'w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm'`
   final String? className;
 
   /// Tailwind-like utility classes for styling the placeholder text.
   ///
   /// Supports:
-  /// - `text-*` → placeholder text color
-  /// - `font-*` → placeholder font weight/style
-  /// - `text-sm`, `text-lg` etc. → placeholder font size
+  /// - **Color:** `text-gray-400`, `text-gray-500/50`
+  /// - **Typography:** `text-sm`, `italic`, `font-light`
   ///
   /// Example: `'text-gray-400 text-sm italic'`
   final String? placeholderClassName;
@@ -305,6 +317,16 @@ class _WInputState extends State<WInput> {
         ? WindParser.parse(widget.className!, context, states: activeStates)
         : const WindStyle();
 
+    final logger = WindLogger(
+      debug: styles.debug,
+      widgetName: runtimeType.toString(),
+    );
+
+    if (styles.debug) {
+      logger.logStep("ClassName", "'${widget.className}'");
+      logger.setFinalStyles(styles);
+    }
+
     // Parse placeholder styles
     final WindStyle placeholderStyles = widget.placeholderClassName != null
         ? WindParser.parse(widget.placeholderClassName!, context)
@@ -330,6 +352,9 @@ class _WInputState extends State<WInput> {
 
     // Build text style from WindStyle
     final TextStyle textStyle = styles.toTextStyle();
+
+    logger.setCoreWidget("TextField");
+    logger.printFinalCode();
 
     return TextField(
       controller: _controller,
@@ -377,7 +402,7 @@ class _WInputState extends State<WInput> {
     required WindStyle styles,
     required WindStyle placeholderStyles,
   }) {
-    final theme = WindTheme.of(context);
+    final theme = WindTheme.dataOf(context);
 
     // Extract padding from styles
     final EdgeInsets contentPadding =

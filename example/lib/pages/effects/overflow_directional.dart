@@ -6,16 +6,13 @@ class OverflowDirectionalExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _OverflowBox(className: "overflow-x-scroll", label: "x-scroll"),
-          _OverflowBox(className: "overflow-y-scroll", label: "y-scroll"),
-          _OverflowBox(className: "overflow-x-hidden", label: "x-hidden"),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _OverflowBox(className: "overflow-x-scroll", label: "x-scroll"),
+        _OverflowBox(className: "overflow-y-scroll", label: "y-scroll"),
+        _OverflowBox(className: "overflow-x-hidden", label: "x-hidden"),
+      ],
     );
   }
 }
