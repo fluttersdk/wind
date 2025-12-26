@@ -2,164 +2,188 @@
 trigger: always_on
 ---
 
-# Wind (fluttersdk_wind) - AI Agent Rule Set
+# Wind - AI Agent Rule Set
 
-You are an expert Flutter developer and maintainer of the `fluttersdk_wind` package. Help users build UI or extend functionality by adhering to the architecture below.
+Expert Flutter developer guide for `fluttersdk_wind`. Use Tailwind-like utility strings instead of manual Flutter styling.
 
-## 1. Core Philosophies
+## Core Widgets
 
-- **"Laravel Artisan" Philosophy:** Configuration-driven design via WindThemeData. Utility classes (e.g., `"p-4 bg-red-500"`) provide elegant DX. Layers: **Widgets** → **WindParser** → **Specialist Parsers**.
-- **"Tailwind Engine" Philosophy:** Frictionless utility classes. WindParser caches WindStyle by compound key. WDiv dynamically builds Row/Column/GridView/Wrap.
+### WDiv - Universal Container
+```dart
+WDiv(className: "flex gap-4 p-4 bg-gray-100 rounded-lg", children: [...])
+WDiv(className: "p-4 bg-white shadow-md", child: WText("Single"))
+```
+- `child`: Single widget (block layout)  
+- `children`: Multiple widgets (flex/grid/wrap) - **never use both**
+- `states`: Custom states for `loading:`, `error:` prefixes
 
-## 2. Architecture
+### WText - Typography
+```dart
+WText("Hello", className: "text-xl text-blue-500 font-bold uppercase")
+```
 
-### Parsing Engine
-- **WindParser:** Takes `className` + `BuildContext`, builds WindContext (with `activeStates`), resolves prefixed classes (e.g., `hover:`, `dark:`, `loading:`), delegates to sub-parsers. Static cache.
-- **WindStyle:** Immutable data object with all resolved style properties.
-- **Specialist Parsers** (WindParserInterface, "Last Class Wins"):
-  - **DisplayParser:** `block`, `flex`, `grid`, `hidden`
-  - **BackgroundParser:** `bg-{color}`, images, gradients
-  - **BorderParser:** `border-{n}`, `border-{color}`, `rounded-{size}`
-  - **TextParser:** `text-{color}`, `text-{size}`, `font-{weight}`
-  - **SizingParser:** `w-`, `h-`, `min/max-`, arbitrary `w-[50%]`
-  - **PaddingParser/MarginParser:** `p-`, `m-`, `px-`, `my-`
-  - **FlexboxGridParser:** `flex-row`, `items-center`, `grid-cols-3`, `gap-4`
-  - **AspectRatioParser:** `aspect-auto`, `aspect-square`, `aspect-video`, `aspect-[4/3]`
-  - **OpacityParser:** `opacity-0`, `opacity-100`, `opacity-[0.5]`
-  - **ZIndexParser:** `z-10`, `z-50`, `z-[100]`
-  - **OverflowParser:** `overflow-hidden`, `overflow-scroll`, `overflow-x-auto`
-  - **ShadowParser:** `shadow`, `shadow-md`, `shadow-red-500`
-  - **RingParser:** `ring`, `ring-2`, `ring-blue-500/50`, `ring-offset-2`, `ring-inset`
-  - **TransitionParser:** `duration-300`, `ease-in`, `ease-out`, `ease-in-out`
-  - **AnimationParser:** `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`
-  - **DebugParser:** `debug`
+### WButton - Interactive Button
+```dart
+WButton(
+  onTap: () {}, isLoading: _loading, disabled: _disabled,
+  className: "bg-blue-600 hover:bg-blue-700 disabled:opacity-50 loading:opacity-70 px-4 py-2 rounded-lg",
+  child: Text("Submit"),
+)
+```
 
-### Widgets
-- **WDiv:** Builds Column/Row/GridView/Wrap based on displayType. Wraps in DefaultTextStyle.merge.
-- **WText:** Builds Text or SelectableText. Handles text transforms.
-- **WInput:** Form input with React-style binding (`value`/`onChanged`), `className`/`placeholderClassName`, focus states, validation.
-- **WCheckbox:** Utility-first checkbox with `checked:` state styling.
-- **WSelect:** Searchable single/multi-select dropdown with infinite scroll and custom builders.
-- **WIcon / WSvg:** Icon and SVG wrappers inheriting parent text styles (color/size).
-- **WImage:** Image wrapper with `object-fit`, `aspect-ratio` support.
-- **WAnchor:** Interactive wrapper for hover/focus/disabled states.
+### WAnchor - State Wrapper (enables hover:/focus:/disabled:)
+```dart
+WAnchor(
+  onTap: () {},
+  child: WDiv(className: "bg-white hover:bg-gray-100 focus:ring-2 duration-300", children: [...]),
+)
+```
 
-### Theme
-- **WindTheme:** InheritedWidget propagating WindThemeData.
-- **WindThemeData:** Colors, Screens, Typography, Spacing, borderWidths, borderRadius, ringWidths, ringOffsets.
+### WInput - Form Input
+```dart
+WInput(
+  value: _email, onChanged: (v) => setState(() => _email = v),
+  type: InputType.email, placeholder: "Email",
+  className: "p-3 border rounded-lg focus:ring-2 focus:ring-blue-500",
+)
+```
 
-## 3. Supported Utility Classes
+### Other Widgets
+- `WIcon(Icons.star, className: "text-yellow-400 text-2xl")`
+- `WImage(src: "url", className: "w-full aspect-video object-cover")`
+- `WSvg.asset("path.svg", className: "fill-blue-500 w-6 h-6")`
+- `WCheckbox(value: v, onChanged: fn, className: "checked:bg-blue-500")`
 
-### Layout & Sizing
-| Category | Classes |
-|:---|:---|
-| Display | `block`, `flex`, `grid`, `wrap`, `hidden` |
-| Flex | `flex-row`, `flex-col`, `flex-{n}`, `flex-grow` |
-| Grid | `grid-cols-{n}`, `gap-{n}` |
-| Justify | `justify-start/end/center/between/around/evenly` |
-| Align | `items-start/end/center/baseline/stretch` |
-| Aspect Ratio | `aspect-auto`, `aspect-square`, `aspect-video`, `aspect-[ratio]` |
-| Sizing | `w-{n}`, `h-{n}`, `w-full`, `h-screen`, `w-[n]` |
-| Spacing | `p-{n}`, `m-{n}`, `px-{n}`, `my-{n}` |
+## Utility Classes
+
+### Layout
+`block` `flex` `flex-row` `flex-col` `grid` `wrap` `hidden`
+
+### Flex/Grid
+`justify-{start|end|center|between|around|evenly}` `items-{start|end|center|stretch|baseline}`  
+`flex-1` `flex-none` `flex-grow` `grid-cols-{1-12}` `gap-{n}` `gap-x-{n}` `gap-y-{n}`
+
+### Sizing
+`w-{n}` `h-{n}` (n×4px) `w-full` `h-full` `w-screen` `h-screen` `w-1/2` `w-[100px]`  
+`min-w-{n}` `max-w-{n}` `min-h-{n}` `max-h-{n}`
+
+### Spacing
+`p-{n}` `px-{n}` `py-{n}` `pt-{n}` `pr-{n}` `pb-{n}` `pl-{n}` `p-[10px]`  
+`m-{n}` `mx-{n}` `my-{n}` `mt-{n}` `mr-{n}` `mb-{n}` `ml-{n}`
 
 ### Typography
-| Category | Classes |
-|:---|:---|
-| Color | `text-{color}-{shade}`, `text-[#hex]`, `text-{color}/{opacity}` |
-| Size | `text-xs/sm/base/lg/xl/2xl/3xl/4xl/5xl/6xl` |
-| Family | `font-sans`, `font-serif`, `font-mono`, `font-[family]` |
-| Weight | `font-thin/light/normal/medium/semibold/bold/extrabold/black` |
-| Transform | `uppercase`, `lowercase`, `capitalize` |
-| Overflow | `truncate`, `line-clamp-{n}` |
+**Sizes:** `text-{xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl}`  
+**Weights:** `font-{thin|light|normal|medium|semibold|bold|extrabold|black}`  
+**Family:** `font-{sans|serif|mono}`  
+**Transform:** `uppercase` `lowercase` `capitalize` `italic`  
+**Align:** `text-{left|center|right|justify}` `truncate` `line-clamp-{n}`  
+**Decoration:** `underline` `line-through` `no-underline`
 
-### Backgrounds & Borders
-| Category | Classes |
-|:---|:---|
-| BG Color | `bg-{color}-{shade}`, `bg-[#hex]`, `bg-{color}/{opacity}` |
-| Border Width | `border`, `border-0/2/4/8`, `border-t/r/b/l` |
-| Border Color | `border-{color}-{shade}`, `border-[#hex]`, `border-{color}/{opacity}` |
-| Radius | `rounded`, `rounded-sm/md/lg/xl/2xl/3xl/full/none` |
+### Colors
+Pattern: `{bg|text|border|ring|shadow}-{color}-{shade}` or `{...}-{color}-{shade}/{opacity}`  
+**Colors:** slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose, white, black, transparent  
+**Shades:** 50, 100, 200, 300, 400, 500, 600, 700, 800, 900  
+**Arbitrary:** `bg-[#FF5733]` `text-[rgb(255,87,51)]`
 
-### Effects & Filters
-| Category | Classes |
-|:---|:---|
-| Shadow | `shadow`, `shadow-sm/md/lg/xl/2xl`, `shadow-none` |
-| Shadow Color | `shadow-{color}-{shade}`, `shadow-[#hex]`, `shadow-{color}/{opacity}` |
-| Opacity | `opacity-{n}`, `opacity-[n]` |
-| Ring | `ring`, `ring-{n}`, `ring-{color}/{opacity}`, `ring-offset`, `ring-inset` |
-| Z-Index | `z-{n}`, `z-auto`, `z-[n]` |
-| Transition | `duration-{ms}`, `ease-{curve}` |
-| Animation | `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`, `animate-none` |
+### Borders
+`border` `border-{0|2|4|8}` `border-{t|r|b|l}` `border-{color}-{shade}`  
+`rounded` `rounded-{none|sm|md|lg|xl|2xl|3xl|full}`
 
-### Prefixes
-| Category | Prefixes |
-|:---|:---|
-| Responsive | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` |
-| State | `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, `custom:` |
-| Dark Mode | `dark:` |
-| Platform | `ios:`, `android:`, `web:`, `mobile:` |
+### Effects
+`shadow-{sm|DEFAULT|md|lg|xl|2xl|none}` `shadow-{color}-{shade}`  
+`ring` `ring-{0|1|2|4|8}` `ring-{color}` `ring-offset-{n}` `ring-inset`  
+`opacity-{0|25|50|75|100}` `opacity-[0.3]`
 
-## 4. Project Workflow
+### Aspect Ratio
+`aspect-{auto|square|video}` `aspect-[4/3]`
 
-### Git
-- Use **feature branches** (e.g., `feature/border-parser`)
-- Create **PRs to `v1` branch**
-- All features go into current **unreleased version**
+### Overflow
+`overflow-{visible|hidden|scroll|auto}` `overflow-{x|y}-{scroll|hidden|auto}`
 
-### Documentation
-- Follow **Tailwind CSS documentation** style
-- Use `<x-preview path="..." size="md"></x-preview>` for iframe previews
-- Each code example → separate page in `example/lib/pages/`
-- Docs in `docs/` as markdown
+### Z-Index
+`z-{0|10|20|30|40|50}` `z-[100]`
 
-### Tests
-- Widget tests: `test/widgets/{widget_name}/{feature}_test.dart`
-- Parser tests: `test/parser/parsers/{parser}_test.dart`
+### Gradients
+`bg-gradient-to-{t|tr|r|br|b|bl|l|tl} from-{color}-{shade} via-{color}-{shade} to-{color}-{shade}`
 
-### Example Pages
-- Location: `example/lib/pages/{category}/{demo_name}.dart`
-- Minimal, **iframe-ready** format
-- Update `example/lib/routes.dart`
+## State Prefixes
 
-### Theme
-- Defaults: `lib/src/theme/defaults/`
-- Customizable via `WindThemeData.copyWith()`
-- Parsers read from theme, not hardcoded
+| Prefix | Trigger |
+|--------|---------|
+| `hover:` | Mouse hover (requires WAnchor) |
+| `focus:` | Focus (requires WAnchor) |
+| `disabled:` | disabled=true |
+| `loading:` | WButton isLoading=true |
+| `checked:` | WCheckbox value=true |
+| `dark:` | Dark mode |
+| `ios:` `android:` `web:` `mobile:` | Platform |
+| `sm:` `md:` `lg:` `xl:` `2xl:` | Breakpoints (≥640/768/1024/1280/1536px) |
 
-## 5. Adding New Parser
+Custom states via `states` prop: `states: {'loading', 'error'}` → `loading:bg-gray-400 error:border-red-500`
+
+## Animations
+
+### Transitions (implicit)
+`duration-{75|100|150|200|300|500|700|1000}` `ease-{linear|in|out|in-out}`
+
+### Animations (explicit looping)
+`animate-{spin|pulse|bounce|ping|none}`
 
 ```dart
-// 1. Create: lib/src/parser/parsers/new_parser.dart
-class NewParser implements WindParserInterface { ... }
+// Smooth hover
+WDiv(className: "bg-blue-500 hover:bg-blue-700 hover:scale-105 duration-300 ease-out", ...)
 
-// 2. Register in WindParser._parserMap
-// 3. Export from lib/fluttersdk_wind.dart
-// 4. Parser tests: test/parser/parsers/new_parser_test.dart
-// 5. Widget tests: test/widgets/w_div/new_test.dart  
-// 6. Example pages: example/lib/pages/new/
-// 7. Docs: docs/new.md with x-preview
+// Loading spinner
+WIcon(Icons.refresh, className: "animate-spin text-blue-500")
 ```
 
-## 6. Theme Defaults
+## Theme
 
+```dart
+WindTheme(
+  data: WindThemeData(
+    colors: {'primary': Colors.indigo},
+    brightness: Brightness.light,
+  ),
+  builder: (context, controller) => MaterialApp(
+    theme: controller.data.toThemeData(),
+    home: MyApp(),
+  ),
+)
+
+// Toggle theme
+context.windTheme.toggleTheme();
 ```
-lib/src/theme/defaults/
-├── border_radius.dart
-├── border_widths.dart
-├── box_shadows.dart
-├── colors.dart
-├── containers.dart
-├── font_families.dart
-├── font_sizes.dart
-├── font_weights.dart
-├── leading.dart
-├── screens.dart
-├── tracking.dart
-└── z_index.dart
+
+## Helpers
+
+```dart
+context.windTheme          // WindThemeController (toggle/update)
+context.windThemeData      // WindThemeData (read-only)
+context.wIsMobile          // bool
+context.wIsDesktop         // bool
+wColor(context, 'blue', 500)  // Color
+wSpacing(context, 4)          // double (16.0)
 ```
 
-## 7. Developer Rules
+## Best Practices
 
-1. **Never Hardcode:** Use utility classes or `WindTheme.of(context)`
-2. **State:** Wrap in WAnchor, use prefixes (`hover:`, `focus:`)
-3. **Extending:** WindParserInterface → Register → Add to WindStyle
+✅ **DO:**
+```dart
+WDiv(className: "p-4 bg-white rounded-lg shadow-md", ...)
+WAnchor(onTap: fn, child: WDiv(className: "hover:bg-gray-100", ...))
+```
+
+❌ **DON'T:**
+```dart
+Container(padding: EdgeInsets.all(16), ...)  // Use className
+WDiv(className: "hover:bg-gray-100", ...)    // hover: requires WAnchor
+WDiv(child: X, children: [Y])                // Never both
+```
+
+## Debugging
+
+Add `debug` class to see widget composition in console:
+```dart
+WDiv(className: "debug p-4 bg-red-500", ...)
+```

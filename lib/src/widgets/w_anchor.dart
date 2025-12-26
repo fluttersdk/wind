@@ -155,6 +155,9 @@ class _WAnchorState extends State<WAnchor> {
     return WindAnchorStateProvider(
       state: currentState,
       child: MouseRegion(
+        cursor: widget.isDisabled
+            ? SystemMouseCursors.basic
+            : SystemMouseCursors.click,
         onEnter: widget.isDisabled ? null : (_) => _onHover(true),
         onExit: widget.isDisabled ? null : (_) => _onHover(false),
         child: GestureDetector(

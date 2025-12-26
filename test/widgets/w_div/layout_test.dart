@@ -92,18 +92,13 @@ void main() {
       );
 
       expect(find.text('GridItem'), findsOneWidget);
-      final gridFinder = find.byType(GridView);
-      expect(gridFinder, findsOneWidget);
+      // Grid now uses Wrap for flexible item heights (Tailwind-like behavior)
+      final wrapFinder = find.byType(Wrap);
+      expect(wrapFinder, findsOneWidget);
 
-      final GridView grid = tester.widget(gridFinder);
-      expect(
-        grid.gridDelegate,
-        isA<SliverGridDelegateWithFixedCrossAxisCount>(),
-      );
-      final delegate =
-          grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
-      expect(delegate.mainAxisSpacing, 16.0); // 4 * 4
-      expect(delegate.crossAxisSpacing, 16.0);
+      final Wrap wrap = tester.widget(wrapFinder);
+      expect(wrap.spacing, 16.0); // gap-4 = 4 * 4 = 16
+      expect(wrap.runSpacing, 16.0);
     });
 
     testWidgets('renders place-content (class="place-content-center")', (

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/color_utils.dart';
 import 'defaults/border_radius.dart' as default_border_radius;
 import 'defaults/border_widths.dart' as default_border_widths;
 import 'defaults/colors.dart' as default_colors;
@@ -251,23 +250,14 @@ class WindThemeData {
 
   /// Resolves the colors based on the current brightness.
   ///
-  /// In dark mode, colors are inverted using [invertMaterialColor].
+  /// In Tailwind CSS, colors are NOT automatically inverted in dark mode.
+  /// Instead, the `dark:` prefix is used to explicitly define dark mode styles.
+  /// This implementation matches that behavior - colors remain the same
+  /// regardless of brightness, and developers use `dark:` prefixed classes
+  /// to define dark mode variants.
   Map<String, MaterialColor> _resolveColors() {
-    if (brightness == Brightness.dark) {
-      return Map.fromEntries(
-        colors.entries.map((entry) {
-          if (entry.key == 'white') {
-            return MapEntry(entry.key, invertMaterialColor(colors['gray']!));
-          }
-          if (entry.key == 'black') {
-            return MapEntry(entry.key, colors['gray']!);
-          }
-          return MapEntry(entry.key, invertMaterialColor(entry.value));
-        }),
-      );
-    } else {
-      return colors;
-    }
+    // Return colors as-is without inversion (Tailwind behavior)
+    return colors;
   }
 
   /// Returns a color from the theme.

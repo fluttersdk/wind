@@ -228,8 +228,39 @@ class WDiv extends StatelessWidget {
     required WindStyle styles,
     required WindLogger logger,
   }) {
-    // Case A: Single Child (Pass-through)
+    // Case A: Single Child
     if (child != null) {
+      // If flex display is specified, wrap single child in Row/Column for alignment
+      if (styles.displayType == WindDisplayType.flex) {
+        final direction = styles.flexDirection ?? Axis.horizontal;
+        final isColumn = direction == Axis.vertical;
+
+        logger.setCoreWidget(
+          "${isColumn ? 'Column' : 'Row'}(child: single item)",
+        );
+
+        if (isColumn) {
+          return Column(
+            mainAxisAlignment:
+                styles.mainAxisAlignment ?? MainAxisAlignment.start,
+            crossAxisAlignment:
+                styles.crossAxisAlignment ?? CrossAxisAlignment.start,
+            mainAxisSize: styles.mainAxisSize ?? MainAxisSize.min,
+            children: [child!],
+          );
+        } else {
+          return Row(
+            mainAxisAlignment:
+                styles.mainAxisAlignment ?? MainAxisAlignment.start,
+            crossAxisAlignment:
+                styles.crossAxisAlignment ?? CrossAxisAlignment.start,
+            mainAxisSize: styles.mainAxisSize ?? MainAxisSize.min,
+            children: [child!],
+          );
+        }
+      }
+
+      // Pass-through for non-flex single child
       logger.setCoreWidget("child: $child");
       return child;
     }
@@ -292,19 +323,40 @@ class WDiv extends StatelessWidget {
     }
   }
 
-  /// Builds a Grid layout (`GridView`).
+  /// Builds a Grid layout using Wrap for flexible item heights.
+  ///
+  /// Unlike CSS Grid which allows variable heights, Flutter's GridView forces
+  /// equal heights. We use Wrap + LayoutBuilder to achieve Tailwind-like
+  /// behavior where each item has intrinsic height.
   Widget _buildGridStructure(WindStyle styles, WindLogger logger) {
+    final cols = styles.gridCols ?? 2;
+    final gapX = styles.gapX ?? 0;
+    final gapY = styles.gapY ?? 0;
+
     logger.setCoreWidget(
-      "GridView(cols: ${styles.gridCols ?? 2}, children: [${children!.length}])",
+      "Wrap-Grid(cols: $cols, children: [${children!.length}])",
     );
 
-    return GridView.count(
-      crossAxisCount: styles.gridCols ?? 2,
-      mainAxisSpacing: styles.gapY ?? 0,
-      crossAxisSpacing: styles.gapX ?? 0,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: children!,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate item width based on available space and columns
+        final totalGapWidth = gapX * (cols - 1);
+        final availableWidth = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : MediaQuery.of(context).size.width;
+        final itemWidth = (availableWidth - totalGapWidth) / cols;
+
+        return Wrap(
+          spacing: gapX,
+          runSpacing: gapY,
+          children: children!.map((child) {
+            return SizedBox(
+              width: itemWidth > 0 ? itemWidth : null,
+              child: child,
+            );
+          }).toList(),
+        );
+      },
     );
   }
 
@@ -444,6 +496,21 @@ class WDiv extends StatelessWidget {
       }
     }
 
+    // 1c. EXPLICIT SIZING (w-*, h-* when not handled by overflow)
+    // Apply SizedBox for explicit width/height regardless of Container
+    // This ensures Tailwind-like behavior where child respects explicit sizing
+    if (!hasOverflow && (styles.width != null || styles.height != null)) {
+      logger.wrapWith(
+        "SizedBox",
+        "width: ${styles.width}, height: ${styles.height}",
+      );
+      widgetToBuild = SizedBox(
+        width: styles.width,
+        height: styles.height,
+        child: widgetToBuild,
+      );
+    }
+
     // 1b. OVERFLOW HANDLING
     // Apply scroll/clip wrappers BEFORE outer sizing
     if (hasOverflowScroll) {
@@ -539,6 +606,15 @@ class WDiv extends StatelessWidget {
     if (styles.alignment != null) {
       logger.wrapWith("Align", "${styles.alignment}");
       widgetToBuild = Align(alignment: styles.alignment!, child: widgetToBuild);
+    }
+
+    // Apply mx-auto (horizontal centering like Tailwind)
+    if (styles.marginXAuto) {
+      logger.wrapWith("Align", "horizontal center (mx-auto)");
+      widgetToBuild = Align(
+        alignment: Alignment.topCenter,
+        child: widgetToBuild,
+      );
     }
 
     // Apply Flex/Expanded (flex-*)

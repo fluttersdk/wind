@@ -55,9 +55,17 @@ class MarginParser implements WindParserInterface {
     double? mBottom;
     double? mLeft;
     double? mRight;
+    bool? marginXAuto;
 
     for (var i = classes.length - 1; i >= 0; i--) {
       final className = classes[i];
+
+      // Handle mx-auto specially
+      if (className == 'mx-auto') {
+        marginXAuto ??= true;
+        continue;
+      }
+
       double? value;
       String? root;
 
@@ -75,6 +83,9 @@ class MarginParser implements WindParserInterface {
       if (match != null) {
         root = match.namedGroup('root')!;
         final valueKey = match.namedGroup('value')!; // "4", "1/2"
+
+        // Skip 'auto' value - it's handled by mx-auto
+        if (valueKey == 'auto') continue;
 
         // Call the theme's `getSpacing` method
         value = theme.getSpacing(valueKey);
@@ -105,6 +116,8 @@ class MarginParser implements WindParserInterface {
         case 'mx':
           mLeft ??= value;
           mRight ??= value;
+          // Explicit mx-{value} (like mx-0) should disable mx-auto centering
+          marginXAuto ??= false;
           break;
         case 'my':
           mTop ??= value;
@@ -114,7 +127,11 @@ class MarginParser implements WindParserInterface {
     }
 
     final bool didChange =
-        mTop != null || mBottom != null || mLeft != null || mRight != null;
+        mTop != null ||
+        mBottom != null ||
+        mLeft != null ||
+        mRight != null ||
+        marginXAuto != null;
 
     if (!didChange) {
       return styles;
@@ -122,12 +139,16 @@ class MarginParser implements WindParserInterface {
 
     // `copyWith` intelligently merges with existing margin
     return styles.copyWith(
-      margin: EdgeInsets.only(
-        top: mTop ?? 0.0,
-        bottom: mBottom ?? 0.0,
-        left: mLeft ?? 0.0,
-        right: mRight ?? 0.0,
-      ),
+      margin:
+          (mTop != null || mBottom != null || mLeft != null || mRight != null)
+          ? EdgeInsets.only(
+              top: mTop ?? 0.0,
+              bottom: mBottom ?? 0.0,
+              left: mLeft ?? 0.0,
+              right: mRight ?? 0.0,
+            )
+          : null,
+      marginXAuto: marginXAuto,
     );
   }
 

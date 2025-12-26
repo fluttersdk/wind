@@ -39,6 +39,8 @@ import 'pages/effects/transition_ease.dart';
 
 // Examples (Misc)
 import 'pages/examples/basic.dart';
+import 'pages/examples/blog_section.dart';
+import 'pages/examples/hero_card.dart';
 
 // Forms
 import 'pages/forms/input_basic.dart';
@@ -131,6 +133,8 @@ final Map<String, Widget> appRoutes = {
 
   // Examples
   '/examples/basic': const BasicExamplePage(),
+  '/examples/blog_section': const BlogSectionExamplePage(),
+  '/examples/hero_card': const HeroCardExamplePage(),
 
   // Forms
   '/forms/input_basic': const InputBasicExamplePage(),
