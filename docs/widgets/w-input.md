@@ -68,15 +68,18 @@ WInput(
 )
 ```
 
-### Supported Classes
+### Supported Utility Classes
+
+`WInput` maps utility classes to `InputDecoration` properties.
 
 | Category | Classes | Maps To |
 | :--- | :--- | :--- |
-| Padding | `p-*`, `px-*`, `py-*` | `contentPadding` |
-| Background | `bg-*` | `fillColor` |
-| Border | `border`, `border-*` | `OutlineInputBorder` |
-| Radius | `rounded-*` | `borderRadius` |
-| Typography | `text-*`, `font-*` | Input text style |
+| **Padding** | `p-{n}`, `px-{n}`, `py-{n}` | `contentPadding` |
+| **Background** | `bg-{color}` | `fillColor`, `filled: true` |
+| **Border** | `border`, `border-{n}`, `border-{color}` | `enabledBorder`, `focusedBorder` |
+| **Radius** | `rounded-{size}` | `borderRadius` |
+| **Typography** | `text-{color}`, `font-{weight}` | Input text style |
+| **Placeholder** | `placeholder:{style}` | Placeholder text style (via `placeholderClassName`) |
 
 ---
 

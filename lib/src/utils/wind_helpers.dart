@@ -5,18 +5,14 @@ import '../parser/wind_style.dart';
 import '../theme/wind_theme.dart';
 import '../utils/color_utils.dart';
 
-/// Returns a theme color by name and optional shade.
+/// **Global Color Resolver**
+///
+/// Resolves a color by name/shade from the active [WindTheme].
 ///
 /// Supports:
-/// - Named colors: `wColor(context, 'red', 500)`
-/// - Hex colors: `wColor(context, '#FF5733')`
-/// - Color with shade in name: `wColor(context, 'blue-600')`
-///
-/// Example:
-/// ```dart
-/// Color primary = wColor(context, 'blue', 500)!;
-/// Color custom = wColor(context, '#FF5733')!;
-/// ```
+/// - `wColor(context, 'blue', 500)`
+/// - `wColor(context, '#FFAABB')`
+/// - `wColor(context, 'primary')`
 Color? wColor(BuildContext context, String colorName, [int shade = 500]) {
   // Handle hex colors
   if (colorName.startsWith('#')) {
@@ -131,17 +127,13 @@ String wScreenCurrent(BuildContext context) {
   return 'base';
 }
 
-/// Parses a Wind class string into a WindStyle object.
+/// **Style Parser Helper**
 ///
-/// This is useful for custom widgets that need Wind styling,
-/// or for debugging parsed styles.
+/// Parses a utility string on the fly. Useful for debugging or One-off parsing.
 ///
 /// Example:
 /// ```dart
-/// WindStyle style = wStyle(context, 'bg-red-500 p-4 text-white');
-/// final color = style.decoration?.color;
-/// final padding = style.padding;
-/// final textStyle = style.toTextStyle();
+/// final style = wStyle(context, 'bg-red-500 p-4');
 /// ```
 WindStyle wStyle(BuildContext context, String className) {
   return WindParser.parse(className, context);

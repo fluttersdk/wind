@@ -4,11 +4,13 @@ import '../parser/wind_style.dart';
 
 /// Wraps a widget in the appropriate animation based on [WindAnimationType].
 ///
-/// Uses Flutter's animation widgets:
-/// - `spin` → [RotationTransition] with infinite rotation
-/// - `ping` → Scale + Fade animation
-/// - `pulse` → Opacity pulse between 0.5 and 1.0
-/// - `bounce` → Vertical bounce animation
+/// **Supported Animations:**
+/// - `spin` → Infinite rotation (loading indicators)
+/// - `ping` → Scaling ripple effect (notifications)
+/// - `pulse` → Opacity fading (skeleton loaders)
+/// - `bounce` → Vertical jumping (attention grabbers)
+///
+/// This widget is typically controlled via `animate-*` utility classes.
 class WindAnimationWrapper extends StatefulWidget {
   final Widget child;
   final WindAnimationType animationType;

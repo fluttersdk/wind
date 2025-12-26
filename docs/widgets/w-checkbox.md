@@ -80,7 +80,8 @@ iconClassName: 'text-white text-base'
 ## Supported Prefixes
 
 | Prefix | Description |
-|--------|-------------|
-| `checked:` | Styles when checked |
-| `hover:` | Styles on hover |
-| `disabled:` | Styles when disabled |
+| :--- | :--- |
+| `checked:` | Styles applied when `value` is true |
+| `hover:` | Styles applied on mouse hover |
+| `focus:` | Styles applied when focused (via keyboard) |
+| `disabled:` | Styles applied when `disabled` is true |

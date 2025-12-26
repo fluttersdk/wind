@@ -34,12 +34,19 @@ WDiv(className: "h-full bg-blue-200")
 WDiv(className: "h-screen bg-green-200")
 ```
 
-| Class | Properties |
+## Supported Utility Classes
+
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Width** | `w-{n}`, `w-full`, `w-screen`, `w-1/2`... | Width |
+| **Height** | `h-{n}`, `h-full`, `h-screen` | Height |
+| **Min/Max** | `min-w-{size}`, `max-w-{size}`, `min-h-{size}`, `max-h-{size}` | Constraints |
+
+### Examples
+
+| Class | CSS Equivalent |
 | :--- | :--- |
-| `h-0` | height: 0px; |
-| `h-4` | height: 1rem; /* 16px */ |
-| `h-full` | height: 100%; |
+| `w-4` | width: 1rem; /* 16px */ |
+| `w-full` | width: 100%; |
 | `h-screen` | height: 100vh; |
-| `h-1/2` | height: 50%; |
-| `min-h-0` | min-height: 0px; |
-| `max-h-full` | max-height: 100%; |
+| `max-w-md` | max-width: 28rem; |

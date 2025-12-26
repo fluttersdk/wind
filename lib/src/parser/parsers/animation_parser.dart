@@ -2,14 +2,18 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for animation classes.
+/// **Animation Parser**
 ///
-/// Supports Tailwind-style animation classes:
-/// - `animate-spin` - Continuous rotation (loading spinner)
-/// - `animate-ping` - Scale and fade out (notification badge)
-/// - `animate-pulse` - Opacity pulse (skeleton loader)
-/// - `animate-bounce` - Vertical bounce (scroll indicator)
-/// - `animate-none` - Remove animation
+/// Handles indeterminate animations.
+///
+/// ### Supported Utility Classes:
+/// - `animate-spin`: Rotates 360 degrees (loading).
+/// - `animate-pulse`: Fades opacity (skeletons).
+/// - `animate-bounce`: Bounces vertically (alerts).
+/// - `animate-ping`: Scales and fades (notifications).
+/// - `animate-none`: Disables animation.
+///
+/// Returns a [WindStyle] with `animationType`.
 class AnimationParser implements WindParserInterface {
   const AnimationParser();
 

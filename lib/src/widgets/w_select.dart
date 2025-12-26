@@ -61,33 +61,34 @@ typedef LoadingBuilder = Widget Function(BuildContext context);
 /// `WSelect` is a highly customizable dropdown widget that combines
 /// React-style controlled state management with Tailwind-like utility class styling.
 ///
-/// ### Key Features:
-/// - **Single & Multi-Select:** Use `isMulti` for tag-style selection
-/// - **Controlled Value:** Pass `value`/`values` and `onChange`/`onMultiChange`
-/// - **Tailwind Styling:** Use `className` for trigger, `menuClassName` for dropdown
-/// - **Custom Rendering:** Override trigger and items with builder functions
-/// - **Search Support:** Built-in searchable dropdown with async support
-/// - **Tagging:** Create new options with `onCreateOption`
-/// - **Pagination:** Infinite scroll with `onLoadMore`
+/// ### Supported Features:
+/// - **Selection:** Single or Multi-select (`isMulti: true`)
+/// - **Searchable:** Built-in search input (`searchable: true`)
+/// - **Remote Data:** Async search (`onSearch`) and Pagination (`onLoadMore`)
+/// - **Tagging:** Create new options on the fly (`onCreateOption`)
+/// - **Styling:** `className` (trigger) and `menuClassName` (dropdown)
 ///
-/// ### Basic Usage:
+/// ### Example Usage:
 ///
 /// ```dart
 /// WSelect<String>(
 ///   value: _selectedCountry,
-///   options: [...],
+///   options: countries,
 ///   onChange: (value) => setState(() => _selectedCountry = value),
+///   className: 'w-64 bg-white border border-gray-300 rounded-lg',
+///   menuClassName: 'bg-white shadow-xl rounded-lg border border-gray-100',
 /// )
 /// ```
 ///
-/// ### Multi-Select:
+/// ### Multi-Select Example:
 ///
 /// ```dart
 /// WSelect<String>(
 ///   isMulti: true,
 ///   values: _selectedTags,
-///   options: [...],
+///   options: tags,
 ///   onMultiChange: (values) => setState(() => _selectedTags = values),
+///   searchable: true,
 /// )
 /// ```
 class WSelect<T> extends StatefulWidget {
@@ -152,9 +153,25 @@ class WSelect<T> extends StatefulWidget {
   // ============== STYLING ==============
 
   /// Tailwind-like utility classes for the trigger container.
+  ///
+  /// Supports:
+  /// - **Box Model:** `w-64`, `p-3`, `rounded-lg`
+  /// - **Visuals:** `bg-white`, `border`, `border-gray-300`
+  /// - **States:** `hover:border-blue-500`, `focus:ring-2`
+  ///
+  /// Example: `'w-full p-2 bg-white border rounded shadow-sm'`
   final String? className;
 
   /// Tailwind-like utility classes for the dropdown menu container.
+  ///
+  /// *Note: This container holds the scrollable list.*
+  ///
+  /// Supports:
+  /// - **Box Model:** `rounded-lg`, `border`
+  /// - **Shadow:** `shadow-xl`, `shadow-gray-200`
+  /// - **Background:** `bg-white` (Recommended)
+  ///
+  /// Example: `'bg-white border border-gray-100 shadow-lg rounded-xl'`
   final String? menuClassName;
 
   /// Placeholder text shown when no value is selected.

@@ -4,15 +4,16 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for sizing related classes
+/// **Sizing Parser**
 ///
-/// Example classes:
-/// - Width: w-10, w-full, w-screen, w-[50%], w-[200px]
-/// - Height: h-20, h-full, h-screen, h-[75%], h-[300px]
-/// - Max Width: max-w-40, max-w-screen, max-w-[80%], max-w-[400px]
-/// - Max Height: max-h-60, max-h-screen, max-h-[90%], max-h-[500px]
-/// - Min Width: min-w-15, min-w-[30%], min-w-[150px]
-/// - Min Height: min-h-25, min-h-[40%], min-h-[200px]
+/// Handles width, height, and constraint utilities.
+///
+/// ### Supported Utility Classes:
+/// - **Width:** `w-4`, `w-full`, `w-screen`, `w-[50%]`
+/// - **Height:** `h-full`, `h-screen`, `h-[300px]`
+/// - **Min/Max:** `min-w-0`, `max-w-md`, `max-h-screen`
+///
+/// Returns a [WindStyle] with `width`, `height`, and `constraints`.
 class SizingParser implements WindParserInterface {
   const SizingParser();
 

@@ -25,9 +25,31 @@ const int windRemUnit = 4;
 /// The pixel unit used for sizing calculations.
 const double windPxUnit = 0.25;
 
-/// Defines the configuration for the Wind theme.
+/// **Theme Configuration**
 ///
-/// This class holds the theme data for colors and screen sizes.
+/// `WindThemeData` holds the configuration for the entire design system, including
+/// colors, typography, spacing, and breakpoints. It is the "Tailwind Config" of Wind.
+///
+/// Use [WindThemeData.copyWith] to override default values or add custom ones.
+///
+/// ### Customization Example:
+///
+/// ```dart
+/// WindThemeData(
+///   // Override or add colors
+///   colors: {
+///     'primary': Colors.indigo,
+///     'brand': Color(0xFF1E3A8A),
+///   },
+///   // Custom font family
+///   fontFamilies: {
+///     'sans': 'Inter',
+///     'display': 'Oswald',
+///   },
+///   // Custom spacing scale
+///   baseSpacingUnit: 4.0, // 1 unit = 4px
+/// )
+/// ```
 class WindThemeData {
   /// The brightness of the theme.
   final Brightness brightness;

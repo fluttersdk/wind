@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
-/// Inverts the shades of a [MaterialColor].
+/// **Color Utility: Inverter**
 ///
-/// This is used to automatically generate a dark mode color palette from a
-/// light mode palette.
+/// Inverts a MaterialColor palette by swapping shades.
+/// Used automatically by [WindTheme] to generate dark mode variants.
+///
+/// Mapping:
+/// - 50 <-> 900
+/// - 100 <-> 800
+/// ...and so on.
 MaterialColor invertMaterialColor(MaterialColor color) {
   return MaterialColor(color.toARGB32(), <int, Color>{
     50: color.shade900,
@@ -19,21 +24,17 @@ MaterialColor invertMaterialColor(MaterialColor color) {
   });
 }
 
-/// Converts a hex color code to a [Color] object.
+/// **Color Utility: Hex Parser**
 ///
-/// Supports the following formats:
-/// - `#RRGGBB`
-/// - `#AARRGGBB`
-/// - `#RGB` (shorthand for `#RRGGBB`)
-/// - `#ARGB` (shorthand for `#AARRGGBB`)
+/// Converts hex strings to [Color] objects.
 ///
-/// Examples:
-/// - `#FF5733`
-/// - `#80FF5733`
-/// - `#F53`
-/// - `#8F53`
+/// Supported Formats:
+/// - `#RRGGBB` -> `Color(0xFFAABBCC)`
+/// - `#AARRGGBB` -> `Color(0xAABBCCDD)`
+/// - `#RGB` -> `Color(0xFFAABBCC)` (Short)
+/// - `RRGGBB` -> (No hash prefix)
 ///
-/// Returns a [Color] object representing the color.
+/// Example: `hexToColor('#FF0000')` returns red.
 Color hexToColor(String code) {
   // If has `#` prefix, remove it
   if (code.startsWith('#')) {

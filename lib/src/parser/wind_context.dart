@@ -6,28 +6,26 @@ import '../state/wind_anchor_state_provider.dart';
 import '../theme/wind_theme.dart';
 import '../theme/wind_theme_data.dart';
 
-/// WindContext holds contextual information for styling components
-/// such as the active theme, breakpoint, platform, and interaction states.
+/// **The styling context context**
 ///
-/// ## State-Based Styling
+/// `WindContext` holds all environmental factors required to resolve styles:
 ///
-/// Wind uses a unified state system via [activeStates]. Built-in states
-/// (`hover`, `focus`, `disabled`) are automatically populated from
-/// [WindAnchorStateProvider], and custom states can be added via the
-/// `states` parameter in [WDiv] or [WText].
+/// 1.  **Theme:** The active [WindThemeData].
+/// 2.  **Responsiveness:** Current screen width and active breakpoint (sm, md, lg).
+/// 3.  **Platform:** Current OS (mobile vs web) for platform prefixes.
+/// 4.  **Interaction:** Active states (`hover`, `focus`) and custom states (`loading`).
 ///
-/// Example usage:
+/// It acts as the "Input" state for the `WindParser`.
+///
+/// ### State-Based Styling
+///
+/// Wind uses a unified state set `activeStates`. Built-in states like `hover`
+/// are automatically populated from [WAnchor]. Custom states can be passed manually.
+///
+/// Example:
 /// ```dart
-/// // Built-in states (automatic)
-/// WAnchor(
-///   child: WDiv(className: 'hover:bg-blue-500 focus:ring-2'),
-/// )
-///
-/// // Custom states (manual)
-/// WDiv(
-///   className: 'loading:bg-gray-400 selected:border-blue-500',
-///   states: {if (isLoading) 'loading', if (isSelected) 'selected'},
-/// )
+/// // The context will contain {'hover', 'focus'} if the user is interacting
+/// final context = WindContext.build(context, states: {'custom-state'});
 /// ```
 @immutable
 class WindContext {

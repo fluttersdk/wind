@@ -4,12 +4,15 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for transition and animation related classes
+/// **Transition Parser**
 ///
-/// Example classes:
-/// - Duration: duration-75, duration-100, duration-150, duration-200,
-///   duration-300, duration-500, duration-700, duration-1000, duration-[500ms]
-/// - Ease/Curve: ease-linear, ease-in, ease-out, ease-in-out
+/// Handles animation duration and easing curves.
+///
+/// ### Supported Utility Classes:
+/// - **Duration:** `duration-300`, `duration-700`, `duration-[500ms]`
+/// - **Easing:** `ease-in`, `ease-out`, `ease-linear`, `ease-in-out`
+///
+/// Returns a [WindStyle] with `transitionDuration` and `transitionCurve`.
 class TransitionParser implements WindParserInterface {
   const TransitionParser();
 

@@ -4,17 +4,18 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for ring utility classes (focus rings)
+/// **Ring (Focus) Parser**
 ///
-/// Ring is implemented as a BoxShadow with spreadRadius only (no blur),
-/// similar to Tailwind CSS's ring utility.
+/// Handles `ring-*` classes (similar to box-shadow but for focus states).
 ///
-/// Example classes:
-/// - ring          (default 3px ring)
-/// - ring-0, ring-1, ring-2, ring-4, ring-8 (ring widths)
-/// - ring-{color}-{shade} (ring color)
-/// - ring-offset-{n} (offset between ring and element)
-/// - ring-inset (inner ring)
+/// ### Supported Utility Classes:
+/// - **Width:** `ring`, `ring-2`, `ring-4`
+/// - **Color:** `ring-blue-500`, `ring-[#FF0000]`
+/// - **Offset:** `ring-offset-2` (space between element and ring)
+/// - **Inset:** `ring-inset` (forces ring inside the element)
+///
+/// Returns a [WindStyle] with ring properties.
+/// Implemented as a [BoxShadow] with spread radius.
 class RingParser implements WindParserInterface {
   const RingParser();
 
@@ -183,7 +184,11 @@ class RingParser implements WindParserInterface {
     if (offset > 0 && !inset) {
       // Offset ring: first add transparent (or bg color) shadow, then ring
       ringShadows.add(
-        BoxShadow(color: Colors.transparent, spreadRadius: offset, blurRadius: 0),
+        BoxShadow(
+          color: Colors.transparent,
+          spreadRadius: offset,
+          blurRadius: 0,
+        ),
       );
     }
 

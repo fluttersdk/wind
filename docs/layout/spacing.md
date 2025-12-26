@@ -24,21 +24,20 @@ WText("mx-8", className: "mx-8 bg-blue-200")
 WText("my-4", className: "my-4 bg-green-200")
 ```
 
-| Class | Properties |
-| :--- | :--- |
-| `m-0` | margin: 0px; |
-| `m-4` | margin: 1rem; /* 16px */ |
-| `mx-4` | margin-left: 1rem; margin-right: 1rem; |
-| `my-4` | margin-top: 1rem; margin-bottom: 1rem; |
-| `mt-4` | margin-top: 1rem; |
-| `mr-4` | margin-right: 1rem; |
-| `mb-4` | margin-bottom: 1rem; |
-| `ml-4` | margin-left: 1rem; |
+## Supported Utility Classes
 
-### Arbitrary values
-| Class | Properties |
-| :--- | :--- |
-| `m-[20px]` | margin: 20px; |
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Padding** | `p-{n}`, `px-{n}`, `py-{n}`, `pt-{n}`, `pr-{n}`, `pb-{n}`, `pl-{n}` | Inner spacing |
+| **Margin** | `m-{n}`, `mx-{n}`, `my-{n}`, `mt-{n}`, `mr-{n}`, `mb-{n}`, `ml-{n}` | Outer spacing |
+
+### Arbitrary Values
+
+You can use square brackets for precise pixel values:
+
+- `p-[20px]`
+- `mt-[10.5px]`
+- `gap-[5px]`
 
 ## Customizing Theme
 

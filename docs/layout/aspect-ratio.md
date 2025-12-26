@@ -19,11 +19,13 @@ WDiv(className: "aspect-auto w-32 h-24 bg-green-500")
 
 <x-preview path="sizing/aspectratio" size="md"></x-preview>
 
-| Class | Aspect Ratio |
-| :--- | :--- |
-| `aspect-auto` | No aspect ratio constraint |
-| `aspect-square` | 1 / 1 |
-| `aspect-video` | 16 / 9 |
+## Supported Utility Classes
+
+| Category | Classes | Aspect Ratio |
+| :--- | :--- | :--- |
+| **Presets** | `aspect-square` | 1 / 1 |
+| **Presets** | `aspect-video` | 16 / 9 |
+| **Reset** | `aspect-auto` | No constraint |
 
 ## Arbitrary Values
 

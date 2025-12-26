@@ -38,3 +38,31 @@ WDiv(
   child: WText("I am red", className: "text-red-500"), // Override
 )
 ```
+
+## Supported Utility Classes
+
+`WText` works with typical Tailwind typography classes.
+
+### Font & Color
+| Class | Description |
+| :--- | :--- |
+| `text-{color}` | Text Color (e.g., `text-red-500`) |
+| `text-{size}` | Font Size (e.g., `text-xl`, `text-[20px]`) |
+| `font-{family}` | Font Family |
+| `font-{weight}` | Font Weight (e.g., `font-bold`, `font-[700]`) |
+
+### Formatting
+| Class | Description |
+| :--- | :--- |
+| `italic`, `not-italic` | Font Style |
+| `underline`, `line-through` | Decoration |
+| `uppercase`, `lowercase`, `capitalize` | Transformation |
+| `tracking-{size}` | Letter Spacing |
+| `leading-{size}` | Line Height |
+| `text-{align}` | Alignment (`left`, `center`, `right`, `justify`) |
+
+### Overflow
+| Class | Description |
+| :--- | :--- |
+| `truncate` | Single line ellipsis |
+| `line-clamp-{n}` | Limit to `n` lines with ellipsis |

@@ -6,18 +6,16 @@ import '../wind_context.dart';
 import '../../utils/color_utils.dart';
 import '../../theme/wind_theme_data.dart';
 
-/// Parses SVG-specific utility classes.
+/// **SVG Parser**
 ///
-/// ### Supported Classes:
+/// Handles SVG-specific styling utilities.
 ///
-/// | Class Pattern | Example | Description |
-/// |---------------|---------|-------------|
-/// | `fill-{color}` | `fill-red-500` | SVG fill color |
-/// | `fill-current` | `fill-current` | Use current text color |
-/// | `fill-none` | `fill-none` | No fill |
-/// | `stroke-{color}` | `stroke-blue-500` | SVG stroke color |
-/// | `stroke-current` | `stroke-current` | Use current text color |
-/// | `stroke-none` | `stroke-none` | No stroke |
+/// ### Supported Utility Classes:
+/// - **Fill:** `fill-red-500`, `fill-none`, `fill-current`
+/// - **Stroke:** `stroke-blue-500`, `stroke-none`, `stroke-[2px]` (future)
+///
+/// Returns a [WindStyle] with `fillColor` and `strokeColor`.
+/// Used by [WSvg] and `flutter_svg`.
 class SvgParser implements WindParserInterface {
   const SvgParser();
 

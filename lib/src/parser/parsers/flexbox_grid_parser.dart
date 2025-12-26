@@ -4,15 +4,18 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Flexbox and Grid parser for Wind styles
+/// **Layout Parser (Flex & Grid)**
 ///
-/// Example classes:
-/// - flex, grid
-/// - flex-row, flex-col
-/// - justify-center, items-start
-/// - gap-4, gap-x-2, gap-y-3
-/// - flex-1, flex-grow
-/// - grid-cols-3
+/// Handles Flexbox and Grid layout properties.
+///
+/// ### Supported Utility Classes:
+/// - **Display:** `flex`, `grid`, `block`, `hidden`
+/// - **Direction:** `flex-row`, `flex-col`
+/// - **Alignment:** `items-center`, `justify-between`
+/// - **Grid:** `grid-cols-3`, `gap-4`
+/// - **Flex Children:** `flex-1`, `flex-grow`
+///
+/// Returns a [WindStyle] affecting layout properties like `mainAxisAlignment`, `crossAxisAlignment`, etc.
 class FlexboxGridParser implements WindParserInterface {
   const FlexboxGridParser();
 

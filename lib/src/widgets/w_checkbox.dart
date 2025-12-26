@@ -12,30 +12,20 @@ import '../parser/wind_style.dart';
 /// `WCheckbox` uses `WAnchor` and `WDiv` to render a fully styled checkbox,
 /// bypassing native widget limitations.
 ///
-/// ### Features:
-/// - **Checked State:** Shows check icon when checked
-/// - **State Styling:** Use `checked:` prefix for checked state styles
-/// - **Custom Rendering:** Fully styled with utility classes
+/// ### Supported Features:
+/// - **Styling:** `w-6`, `h-6`, `rounded`, `border-2`, `border-gray-300`
+/// - **Checked State:** `checked:bg-blue-600`, `checked:border-transparent`
+/// - **Interactive States:** `hover:border-blue-400`, `disabled:opacity-50`
+/// - **Icons:** Customize status icon via `iconClassName` and `checkIcon`
 ///
-/// ### Basic Usage:
+/// ### Example Usage:
 ///
 /// ```dart
 /// WCheckbox(
 ///   value: isChecked,
 ///   onChanged: (val) => setState(() => isChecked = val),
-///   className: 'w-5 h-5 rounded border border-gray-300 checked:bg-blue-500 checked:border-transparent',
+///   className: 'w-5 h-5 rounded border border-gray-300 checked:bg-blue-500 checked:border-transparent transition-colors',
 /// )
-/// ```
-///
-/// ### State Styling:
-///
-/// ```dart
-/// className: '''
-///   w-5 h-5 rounded border border-gray-300
-///   checked:bg-blue-500 checked:border-transparent
-///   hover:border-blue-400
-///   disabled:bg-gray-100 disabled:border-gray-200
-/// '''
 /// ```
 class WCheckbox extends StatelessWidget {
   /// Whether the checkbox is checked.
@@ -47,13 +37,17 @@ class WCheckbox extends StatelessWidget {
   /// Utility classes for styling.
   ///
   /// Supports:
-  /// - `checked:` prefix for checked state
-  /// - `hover:` prefix for hover state
-  /// - `disabled:` prefix for disabled state
-  /// - All standard sizing, border, background classes
+  /// - **Dimensions:** `w-5`, `h-5` (Required)
+  /// - **Appearance:** `rounded-md`, `border`, `border-gray-300`
+  /// - **States:** `checked:bg-blue-600`, `hover:border-blue-500`, `disabled:bg-gray-100`
+  ///
+  /// Example: `'w-6 h-6 rounded-full border-2 border-red-500 checked:bg-red-500'`
   final String? className;
 
   /// Additional classes for the check icon.
+  ///
+  /// Defaults to white text.
+  /// Example: `'text-white text-xs'` or `'text-black'`
   final String? iconClassName;
 
   /// Whether the checkbox is disabled.

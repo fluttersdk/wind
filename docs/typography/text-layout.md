@@ -15,6 +15,9 @@ WText("Right Aligned", className: "text-right")
 WText("Justified", className: "text-justify")
 ```
 
+## Supported Utility Classes
+
+### Alignment
 | Class | Description |
 | :--- | :--- |
 | `text-left` | Align left |
@@ -22,34 +25,15 @@ WText("Justified", className: "text-justify")
 | `text-right` | Align right |
 | `text-justify` | Justify text |
 
-## Text Overflow
-
+### Overflow & Wrapping
 | Class | Description |
 | :--- | :--- |
-| `truncate` | Single line, ellipsis overflow (`...`) |
+| `truncate` | Single line ellipsis |
 | `text-clip` | Clip overflow |
 | `text-ellipsis` | Ellipsis overflow |
+| `line-clamp-{n}` | Max lines (1-6, or none) |
 
-## Line Clamping
-
-To limit text to a specific number of lines with an ellipsis.
-
-| Class | Description |
-| :--- | :--- |
-| `line-clamp-1` | Max 1 line |
-| `line-clamp-2` | Max 2 lines |
-| `line-clamp-3` | Max 3 lines |
-| `line-clamp-none`| No limit |
-
-```dart
-WText(
-  "This is a very long text that will be cut off after two lines...",
-  className: "line-clamp-2",
-)
-```
-
-## Text Transform
-
+### Transform
 | Class | Description |
 | :--- | :--- |
 | `uppercase` | UPPERCASE |

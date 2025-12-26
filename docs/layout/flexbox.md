@@ -27,7 +27,6 @@ WDiv(
   ],
 ),
 ```
-
 | Class | Properties |
 | :--- | :--- |
 | `flex-row` | flex-direction: row; |
@@ -48,13 +47,6 @@ WDiv(className: "flex ...", children: [
 ])
 ```
 
-| Class | Properties |
-| :--- | :--- |
-| `flex-1` | flex: 1 1 0%; |
-| `flex-auto` | flex: 1 1 auto; |
-| `flex-initial` | flex: 0 1 auto; |
-| `flex-none` | flex: none; |
-
 ## Justify Content
 Utilities for controlling how flex and grid items are positioned along the main axis.
 
@@ -64,15 +56,6 @@ Utilities for controlling how flex and grid items are positioned along the main 
 WDiv(className: "flex justify-center", children: [...])
 WDiv(className: "flex justify-between", children: [...])
 ```
-
-| Class | Properties |
-| :--- | :--- |
-| `justify-start` | justify-content: flex-start; |
-| `justify-center` | justify-content: center; |
-| `justify-end` | justify-content: flex-end; |
-| `justify-between` | justify-content: space-between; |
-| `justify-around` | justify-content: space-around; |
-| `justify-evenly` | justify-content: space-evenly; |
 
 ## Align Items
 Utilities for controlling how flex and grid items are positioned along the cross axis.
@@ -84,10 +67,13 @@ WDiv(className: "flex items-center", children: [...])
 WDiv(className: "flex items-stretch", children: [...])
 ```
 
-| Class | Properties |
-| :--- | :--- |
-| `items-start` | align-items: flex-start; |
-| `items-center` | align-items: center; |
-| `items-end` | align-items: flex-end; |
-| `items-baseline` | align-items: baseline; |
-| `items-stretch` | align-items: stretch; |
+## Supported Utility Classes
+
+| Category | Classes | CSS Equivalent |
+| :--- | :--- | :--- |
+| **Direction** | `flex-row`, `flex-col` | `flex-direction` |
+| **Wrap** | `flex-wrap`, `flex-nowrap` | `flex-wrap` |
+| **Flex** | `flex-1`, `flex-auto`, `flex-initial`, `flex-none` | `flex` |
+| **Grow** | `flex-grow`, `flex-grow-0` | `flex-grow` |
+| **Justify** | `justify-start`, `justify-end`, `justify-center`, `justify-between`, `justify-around`, `justify-evenly` | `justify-content` |
+| **Align** | `items-start`, `items-end`, `items-center`, `items-baseline`, `items-stretch` | `align-items` |

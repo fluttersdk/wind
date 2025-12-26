@@ -78,11 +78,11 @@ WIcon(Icons.circle, className: 'text-blue-500 text-2xl opacity-50')
 
 ---
 
-## Supported Classes
+## Supported Utility Classes
 
-| Class | Effect |
-|-------|--------|
-| `text-{color}` | Icon color |
-| `text-{size}` | Icon size (text sizing) |
-| `w-{n}`, `h-{n}` | Icon size (pixels) |
-| `opacity-{n}` | Opacity |
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Color** | `text-{color}` | Icon color |
+| **Size** | `text-{size}` | Sizing (font-relative) |
+| **Dimensions** | `w-{n}`, `h-{n}` | Sizing (explicit pixels) |
+| **Effects** | `opacity-{n}` | Opacity |

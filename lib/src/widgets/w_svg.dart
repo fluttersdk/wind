@@ -8,30 +8,29 @@ import '../utils/wind_logger.dart';
 /// **The Utility-First SVG Component**
 ///
 /// `WSvg` brings HTML SVG semantics to Flutter with Tailwind-like utility
-/// classes for styling. Like WIcon, it inherits color/size from parent.
+/// classes for styling. Like `WIcon`, it inherits color/size from parent styles.
 ///
-/// ### Features:
-/// - **Asset & String:** Use `src` for asset paths or `svgString` for inline SVG
-/// - **Fill Color:** Use `fill-{color}` or `text-{color}` to colorize SVG
-/// - **Stroke:** Use `stroke-{color}` for outlined icons
-/// - **Sizing:** Use `text-{size}`, `w-*`, `h-*` for dimensions
-/// - **Inheritance:** Inherits color/size from parent DefaultTextStyle
+/// ### Supported Features:
+/// - **Sources:** Asset paths (`src`) or raw Strings (`svgString`)
+/// - **Coloring:** `fill-blue-500`, `stroke-red-500`, `text-green-500` (fallback)
+/// - **Sizing:** `w-6`, `h-6`, `text-xl`
+/// - **Effects:** `opacity-50`, `animate-spin`
 ///
-/// ### Basic Usage:
+/// ### Example Usage:
 ///
 /// ```dart
 /// WSvg(
 ///   src: 'assets/icons/star.svg',
-///   className: 'fill-yellow-500 w-6 h-6',
+///   className: 'fill-yellow-500 w-6 h-6 hover:scale-110 transition-transform',
 /// )
 /// ```
 ///
-/// ### Outlined Icons:
+/// ### Outlined Icons Example:
 ///
 /// ```dart
 /// WSvg.string(
 ///   '<svg>...</svg>',
-///   className: 'stroke-blue-500 w-8 h-8',
+///   className: 'stroke-blue-500 stroke-2 w-8 h-8',
 /// )
 /// ```
 class WSvg extends StatelessWidget {
@@ -44,11 +43,12 @@ class WSvg extends StatelessWidget {
   /// Tailwind-like utility classes for styling.
   ///
   /// Supports:
-  /// - `fill-{color}` → SVG fill color
-  /// - `stroke-{color}` → SVG stroke color (for outlined icons)
-  /// - `text-{color}` → fallback color
-  /// - `text-{size}`, `w-{n}`, `h-{n}` → dimensions
-  /// - `opacity-{n}` → SVG opacity
+  /// - **Fill:** `fill-red-500`
+  /// - **Stroke:** `stroke-blue-500`
+  /// - **Size:** `w-6 h-6` or `text-xl`
+  /// - **Fallback:** `text-gray-500` (applies to fill if no fill specified)
+  ///
+  /// Example: `'fill-current text-blue-500 w-8 h-8'`
   final String? className;
 
   /// Custom states for dynamic styling.
@@ -156,8 +156,9 @@ class WSvg extends StatelessWidget {
       if (src != null) logger.logStep("Source", "'$src'");
       logger.setCoreWidget("SvgPicture(${src != null ? 'asset' : 'string'})");
       logger.setFinalStyles(styles);
-      if (styles.opacity != null)
+      if (styles.opacity != null) {
         logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
+      }
       logger.printFinalCode();
     }
 

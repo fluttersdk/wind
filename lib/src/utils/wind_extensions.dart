@@ -5,19 +5,20 @@ import '../theme/wind_theme.dart';
 import '../theme/wind_theme_data.dart';
 import 'wind_helpers.dart';
 
-/// Extension on BuildContext for convenient Wind theme access.
+/// **Wind Context Extensions**
 ///
-/// Provides quick access to theme data and helper function shortcuts.
+/// Extensions on [BuildContext] for ergonomic access to Wind's theme and helpers.
+///
+/// ### Shortcuts:
+/// - `context.windTheme` -> Access global theme data
+/// - `context.windColors` -> Access theme colors
+/// - `context.wIsMobile` -> Check for mobile breakpoint
+/// - `context.wColorExt('red', 500)` -> Resolve color safely
 ///
 /// Example:
 /// ```dart
-/// // Theme access
-/// final theme = context.windTheme;
-/// final colors = context.windColors;
-///
-/// // Helper shortcuts
-/// Color blue = context.wColorExt('blue', 500)!;
-/// double space = context.wSpacingExt(4);
+/// final color = context.windColors['primary'];
+/// if (context.wIsMobile) { ... }
 /// ```
 extension WindContextExtension on BuildContext {
   /// Returns the WindThemeData from the nearest WindTheme ancestor.

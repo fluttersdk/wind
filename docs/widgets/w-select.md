@@ -109,12 +109,12 @@ WSelect<User>(
 WSelect automatically manages these states for styling:
 
 | State | Condition |
-|-------|-----------|
-| `hover` | Mouse over trigger |
-| `focus` | Menu is open |
-| `open` | Menu is open |
+| :--- | :--- |
+| `hover` | Mouse over the select trigger |
+| `focus` | Select widget is focused |
+| `open` | Dropdown menu is currently open |
 | `disabled` | Widget is disabled |
-| `selected` | A value is selected |
+| `selected` | A value is currently selected |
 
 Use with state prefixes in className:
 

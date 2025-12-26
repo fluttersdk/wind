@@ -10,6 +10,19 @@ enum WindOverflow { visible, hidden, scroll, auto }
 /// Animation types for animate-* classes
 enum WindAnimationType { spin, ping, pulse, bounce, none }
 
+/// **The Immutable Style Object**
+///
+/// `WindStyle` represents a resolved set of style properties derived from
+/// utility classes. It is the "Output" of the `WindParser`.
+///
+/// It aggregates properties from all specialized parsers (Typography, Spacing,
+/// Layout, etc.) into a single, flattening data structure that can be easily
+/// consumed by widgets like `WDiv` or `WText`.
+///
+/// ### Characteristics:
+/// - **Immutable:** Once created, it cannot be changed (use `copyWith`).
+/// - **Comprehensive:** Covers all supported CSS-like properties.
+/// - **Null-safe:** Properties are null if not specified by a utility class.
 @immutable
 class WindStyle {
   /// `hidden` property e.g., hidden

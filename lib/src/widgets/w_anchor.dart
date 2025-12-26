@@ -2,36 +2,30 @@ import 'package:flutter/widgets.dart';
 import '../state/wind_anchor_state.dart';
 import '../state/wind_anchor_state_provider.dart';
 
-/// A foundational widget that provides hover, focus, and disabled states to its descendants.
+/// **The Foundational State Wrapper**
 ///
-/// `WAnchor` is the cornerstone of Wind's state-based styling system. It detects
-/// user interactions such as hovering, focusing, and gestures (`onTap`, `onLongPress`,
-/// `onDoubleTap`), and makes this state available to any descendant widget through
-/// a `WindStateProvider`.
+/// `WAnchor` acts as the "Brain" for interaction state management in Wind.
+/// It detects user gestures (Hover, Focus, Press) and propagates that state
+/// down to all descendant widgets via `WindStateProvider`.
 ///
-/// This allows widgets like `WDiv` and `WText` to dynamically change their
-/// appearance using `hover:`, `focus:`, and `disabled:` style variants, without
-/// needing to manage the state themselves.
+/// Use `WAnchor` when you want to enable `hover:`, `focus:`, or `disabled:`
+/// styling on a `WDiv` or any custom widget.
 ///
-/// ### State Propagation
-/// When the state of `WAnchor` changes (e.g., a user hovers over it), it rebuilds
-/// and passes the new `WindPressableState` down the tree. Any descendant widget
-/// that uses `WindStateProvider.of(context)` will be rebuilt with the new state,
-/// allowing for dynamic and efficient UI updates.
+/// ### Supported Features:
+/// - **Hover Detection:** Activates `hover:` class prefix
+/// - **Focus Management:** Activates `focus:` class prefix
+/// - **Gestures:** `onTap`, `onLongPress`, `onDoubleTap`
+/// - **Disabling:** `isDisabled` prop prevents all interactions
 ///
-/// ### Usage
-///
-/// Wrap any widget or tree of widgets with `WAnchor` to enable state-based
-/// styling within that tree.
+/// ### Example Usage:
 ///
 /// ```dart
 /// WAnchor(
-///   onTap: () => print('Anchor tapped!'),
-///   isDisabled: false,
+///   onTap: () => print('Pressed'),
 ///   child: WDiv(
-///     // This text will be blue by default, red on hover, and gray when disabled.
-///     className: 'text-blue-500 hover:text-red-500 disabled:text-gray-400',
-///     child: WText('Interact with me!'),
+///     // Reacts to hover state provided by WAnchor
+///     className: 'p-4 bg-white hover:bg-gray-100 transition-colors',
+///     child: WText('Hover Me'),
 ///   ),
 /// )
 /// ```
@@ -58,16 +52,19 @@ class WAnchor extends StatefulWidget {
 
   /// Determines whether the widget is interactive.
   ///
-  /// When `true`, all gesture callbacks (`onTap`, `onLongPress`, `onDoubleTap`)
-  /// are ignored, hover and focus events are suppressed, and the `disabled:`
-  /// state is propagated to descendant widgets. This is useful for temporarily
-  /// disabling a component without changing its appearance logic.
+  /// When `true`:
+  /// - All gestures (`onTap`, etc.) are ignored.
+  /// - Hover and focus states are suppressed.
+  /// - The `disabled:` prefix becomes active for descendants.
   final bool isDisabled;
 
-  /// Custom states for dynamic styling (e.g., 'error', 'success', 'loading').
+  /// Custom states for dynamic styling.
   ///
-  /// These states are propagated to child widgets through `WindAnchorStateProvider`
-  /// and activate their corresponding prefix classes (e.g., `error:border-red-500`).
+  /// These states are propagated to descendants and allow for custom class prefixes.
+  ///
+  /// Example:
+  /// - If `states` contains `'error'`, then `error:border-red-500` will activate.
+  /// - If `states` contains `'active'`, then `active:bg-blue-600` will activate.
   final Set<String>? states;
 
   /// Creates a `WAnchor` widget.

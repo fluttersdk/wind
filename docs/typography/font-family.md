@@ -17,11 +17,13 @@ WText("Serif text", className: "font-serif")
 WText("Monospace text", className: "font-mono")
 ```
 
-| Class | Font Family |
-| :--- | :--- |
-| `font-sans` | System UI, sans-serif |
-| `font-serif` | Georgia, serif |
-| `font-mono` | UI Monospace, monospace |
+## Supported Utility Classes
+
+| Category | Classes | Font Family |
+| :--- | :--- | :--- |
+| **Sans** | `font-sans` | System UI, sans-serif |
+| **Serif** | `font-serif` | Georgia, serif |
+| **Mono** | `font-mono` | UI Monospace, monospace |
 
 ## Default Font
 

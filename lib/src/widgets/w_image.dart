@@ -21,20 +21,20 @@ typedef ImageLoadingBuilder =
 /// `WImage` brings HTML `<img>` semantics to Flutter with Tailwind-like
 /// utility classes for styling.
 ///
-/// ### Features:
-/// - **Network & Asset:** Use `src` for network URLs or `asset://` prefix for assets
-/// - **Object Fit:** Parse `object-cover`, `object-contain`, `object-fill`, `object-none`
-/// - **Aspect Ratio:** Use `aspect-video`, `aspect-square`, `aspect-[4/3]`
-/// - **Sizing:** Use `w-*`, `h-*` for dimensions
-/// - **Decoration:** Use `rounded-*`, `shadow-*` for styling
+/// ### Supported Features:
+/// - **Sources:** Network URLs or `asset://` paths
+/// - **Sizing:** `w-32`, `h-32`, `w-full`, `max-w-md`
+/// - **Fit:** `object-cover`, `object-contain`, `object-fill`
+/// - **Aspect Ratio:** `aspect-video`, `aspect-square`, `aspect-[4/3]`
+/// - **Decoration:** `rounded-lg`, `shadow-md`, `border-2`, `opacity-90`
 ///
-/// ### Basic Usage:
+/// ### Example Usage:
 ///
 /// ```dart
 /// WImage(
-///   src: 'https://example.com/image.jpg',
-///   alt: 'Profile picture',
-///   className: 'w-32 h-32 rounded-full object-cover',
+///   src: 'https://example.com/photo.jpg',
+///   alt: 'User Avatar',
+///   className: 'w-24 h-24 rounded-full object-cover border-2 border-white shadow-sm',
 /// )
 /// ```
 ///
@@ -59,11 +59,12 @@ class WImage extends StatelessWidget {
   /// Tailwind-like utility classes for styling.
   ///
   /// Supports:
-  /// - `w-*`, `h-*` → dimensions
-  /// - `rounded-*` → corner radius
-  /// - `object-cover`, `object-contain`, `object-fill`, `object-none` → fit mode
-  /// - `aspect-video`, `aspect-square`, `aspect-[ratio]` → aspect ratio
-  /// - `opacity-*` → image opacity
+  /// - **Dimensions:** `w-full`, `h-64`, `min-h-[200px]`
+  /// - **Object Fit:** `object-cover` (default), `object-contain`
+  /// - **Aspect Ratio:** `aspect-video`, `aspect-square`
+  /// - **Appearance:** `rounded-lg`, `shadow-xl`, `opacity-75`
+  ///
+  /// Example: `'w-full aspect-video object-cover rounded-xl shadow-sm'`
   final String? className;
 
   /// Custom states for dynamic styling.

@@ -1,6 +1,6 @@
 # WAnchor
 
-`WAnchor` is the interactivity wrapper of the Wind framework. It is responsible for handling gestures (`onTap`, `onDoubleTap`, `onLongPress`) and managing widget states (`hover`, `focus`, `active`).
+`WAnchor` is the core interactivity wrapper of the Wind framework. It handles gestures (`onTap`, `onHover`, `onFocus`) and managing widget states (`hover`, `focus`, `active`, `disabled`).
 
 ## Basic Usage
 
@@ -15,7 +15,7 @@ WAnchor(
 
 ## State Propagation
 
-The power of `WAnchor` comes from its ability to propagate state to its children.
+The power of `WAnchor` comes from its ability to propagate state to its descendants via `WindContext`.
 
 ```dart
 WAnchor(
@@ -29,12 +29,39 @@ WAnchor(
 
 ## Focus Management
 
-`WAnchor` manages a `FocusNode`. You can pass a `focusNode` if you need to control it externally, or `autofocus: true`.
+`WAnchor` automatically manages a `FocusNode`.
 
 ```dart
 WAnchor(
   autofocus: true,
-  className: "focus:ring-2 ring-blue-500", // Style the anchor itself if it wraps content intimately
+  className: "focus:ring-2 ring-blue-500 focus:outline-none",
   child: Text("I have focus"),
 )
 ```
+
+## API Reference
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `onTap` | `VoidCallback?` | Click/Tap handler |
+| `onDoubleTap` | `VoidCallback?` | Double click handler |
+| `onLongPress` | `VoidCallback?` | Long press handler |
+| `onHover` | `ValueChanged<bool>?` | Hover state change handler |
+| `onFocusChange` | `ValueChanged<bool>?` | Focus state change handler |
+| `disabled` | `bool` | Disables interaction and sets `disabled` state |
+| `autofocus` | `bool` | Whether to request focus on mount |
+| `focusNode` | `FocusNode?` | External focus node |
+| `mouseCursor` | `MouseCursor` | Cursor style (default: `SystemMouseCursors.click`) |
+| `states` | `Set<String>?` | Custom states to apply manually |
+
+## Supported State Prefixes
+
+Descendants can use these prefixes to react to `WAnchor`'s state:
+
+| Prefix | State |
+| :--- | :--- |
+| `hover:` | Cursor is over the widget |
+| `focus:` | Widget has keyboard focus |
+| `disabled:` | `disabled` property is true |
+| `active:` | Widget is being pressed |
+| `custom:` | Any custom state passed via `states` |

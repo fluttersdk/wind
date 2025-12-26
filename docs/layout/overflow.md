@@ -49,13 +49,10 @@ WDiv(className: "overflow-y-hidden")
 
 <x-preview path="effects/overflow_directional" size="md"></x-preview>
 
-| Class | Behavior |
-| :--- | :--- |
-| `overflow-x-hidden` | Clip horizontal overflow |
-| `overflow-x-scroll` | Enable horizontal scrolling |
-| `overflow-x-auto` | Auto horizontal scrolling |
-| `overflow-x-visible` | Allow horizontal overflow |
-| `overflow-y-hidden` | Clip vertical overflow |
-| `overflow-y-scroll` | Enable vertical scrolling |
-| `overflow-y-auto` | Auto vertical scrolling |
-| `overflow-y-visible` | Allow vertical overflow |
+## Supported Utility Classes
+
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **General** | `overflow-{hidden/visible/scroll/auto}` | Overflow for both axes |
+| **X-Axis** | `overflow-x-{hidden/visible/scroll/auto}` | Overflow for horizontal axis |
+| **Y-Axis** | `overflow-y-{hidden/visible/scroll/auto}` | Overflow for vertical axis |

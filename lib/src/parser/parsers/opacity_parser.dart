@@ -2,13 +2,15 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for opacity utility classes
+/// **Opacity Parser**
 ///
-/// Example classes:
-/// - opacity-0
-/// - opacity-50
-/// - opacity-100
-/// - opacity-[0.35]
+/// Handles `opacity-*` utility classes.
+///
+/// ### Supported Utility Classes:
+/// - **Steps:** `opacity-0`, `opacity-50`, `opacity-100` (maps to 0.0, 0.5, 1.0)
+/// - **Arbitrary:** `opacity-[0.35]`
+///
+/// Returns a [WindStyle] with `opacity` (double).
 class OpacityParser implements WindParserInterface {
   const OpacityParser();
 

@@ -1,13 +1,14 @@
 import 'package:flutter/widgets.dart';
 
-/// **SelectOption - Data Model for WSelect Options**
+/// **SelectOption - Data Model for WSelect**
 ///
-/// A generic data class that represents a single option in a [WSelect] dropdown.
+/// A generic data container representing a single dropdown item.
+/// It holds the value, display label, and optional UI decorations.
 ///
 /// ### Example Usage:
 ///
 /// ```dart
-/// final options = [
+/// final countries = [
 ///   SelectOption(value: 'us', label: 'United States'),
 ///   SelectOption(value: 'uk', label: 'United Kingdom'),
 ///   SelectOption(value: 'ca', label: 'Canada', disabled: true),

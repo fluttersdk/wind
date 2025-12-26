@@ -8,39 +8,23 @@ import 'wind_animation_wrapper.dart';
 /// **The Utility-First Icon Component**
 ///
 /// `WIcon` wraps Flutter's [Icon] widget and applies Tailwind-like utility
-/// classes for styling. Control size, color, and opacity via className.
+/// classes for styling. It automatically inherits color and size from parent
+/// text styles if not explicitly overridden.
 ///
-/// ### Features:
-/// - **Inherits from parent:** When inside WDiv, inherits color/size from text styles
-/// - **Text size classes:** Use `text-sm`, `text-lg`, etc. for icon sizing
-/// - **Width/height classes:** Use `w-6 h-6` for icon sizing
+/// ### Supported Features:
+/// - **Sizing:** `text-xl`, `w-6`, `h-6`
+/// - **Coloring:** `text-red-500`, `text-opacity-50`
+/// - **Effects:** `opacity-75`, `animate-spin`
+/// - **Inheritance:** Inherits color/size from parent `WDiv` text styles
 ///
-/// ### Basic Usage:
-///
-/// ```dart
-/// WIcon(Icons.star, className: 'text-yellow-500 text-lg')
-/// ```
-///
-/// ### Inheriting from parent WDiv:
+/// ### Example Usage:
 ///
 /// ```dart
-/// WDiv(
-///   className: 'text-red-500 text-xl',
-///   children: [
-///     WIcon(Icons.favorite), // Inherits red color and xl size
-///     WText('Liked'),
-///   ],
+/// WIcon(
+///   Icons.star,
+///   className: 'text-yellow-400 text-2xl hover:text-yellow-500 transition-colors',
 /// )
 /// ```
-///
-/// ### Supported Utility Classes:
-///
-/// | Class | Effect |
-/// |-------|--------|
-/// | `text-{color}` | Icon color |
-/// | `text-{size}` | Icon size (sm, base, lg, xl, 2xl, etc.) |
-/// | `w-{n}`, `h-{n}` | Icon size (explicit pixel size) |
-/// | `opacity-{n}` | Icon opacity |
 class WIcon extends StatelessWidget {
   /// The icon to display.
   final IconData icon;
@@ -48,10 +32,12 @@ class WIcon extends StatelessWidget {
   /// Tailwind-like utility classes for styling.
   ///
   /// Supports:
-  /// - `text-{color}` → icon color
-  /// - `text-{size}` → icon size (uses font size mapping)
-  /// - `w-{n}`, `h-{n}` → icon size (uses width or height)
-  /// - `opacity-{n}` → icon opacity
+  /// - **Color:** `text-blue-500` (primary mechanism)
+  /// - **Size:** `text-lg` (font-based) or `w-6 h-6` (explicit)
+  /// - **Animation:** `animate-spin`, `animate-pulse`
+  /// - **States:** `hover:text-blue-600`
+  ///
+  /// Example: `'text-red-500 text-xl hover:scale-110'`
   final String? className;
 
   /// Custom states for dynamic styling.

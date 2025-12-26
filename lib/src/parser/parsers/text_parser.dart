@@ -5,27 +5,18 @@ import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
 
-/// Parser for typography related classes.
+/// **Typography Parser**
 ///
-/// This parser handles classes related to text styling, including color,
-/// alignment, decoration, transformation, overflow, and more.
+/// Handles all text-related styling properties.
 ///
-/// Example classes:
-/// - Color: `text-red-500`, `text-[#123456]`
-/// - Alignment: `text-center`
-/// - Font Size: `text-xl`, `text-[20px]`
-/// - Font Weight: `font-bold`, `font-[700]`
-/// - Font Style: `italic`, `not-italic`
-/// - Text Decoration: `underline`, `line-through`
-/// - Decoration Color: `decoration-red-500`
-/// - Decoration Style: `decoration-solid`
-/// - Decoration Thickness: `decoration-2`, `decoration-[3px]`
-/// - Text Transform: `uppercase`
-/// - Letter Spacing: `tracking-wide`, `tracking-[0.1em]`
-/// - Line Height: `leading-loose`, `leading-[24px]`
-/// - Text Overflow: `truncate`, `text-ellipsis`
-/// - Line Clamp: `line-clamp-2`
-/// - Whitespace/Wrap: `whitespace-nowrap`, `text-wrap`
+/// ### Supported Utility Classes:
+/// - **Color/Align:** `text-red-500`, `text-center`, `text-justify`
+/// - **Size/Weight:** `text-xl`, `font-bold`, `font-[700]`
+/// - **Formatting:** `italic`, `uppercase`, `underline`
+/// - **Space/Height:** `tracking-wide` (letter spacing), `leading-loose` (line height)
+/// - **Overflow:** `truncate`, `line-clamp-2`
+///
+/// Returns a [WindStyle] with `fontSize`, `fontWeight`, `color`, etc.
 class TextParser implements WindParserInterface {
   const TextParser();
 

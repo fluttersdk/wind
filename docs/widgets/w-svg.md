@@ -85,13 +85,11 @@ WDiv(
 
 ---
 
-## Supported Classes
+## Supported Utility Classes
 
-| Class | Effect |
-|-------|--------|
-| `fill-{color}` | Fill color |
-| `fill-none` | No fill |
-| `stroke-{color}` | Stroke color |
-| `text-{size}` | Size (text sizing) |
-| `w-{n}`, `h-{n}` | Size (pixels) |
-| `opacity-{n}` | Opacity |
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Fill** | `fill-{color}`, `fill-none`, `fill-current` | Fill color |
+| **Stroke** | `stroke-{color}` | Stroke color |
+| **Size** | `w-{n}`, `h-{n}`, `text-{size}` | Dimensions (pixel or font-relative) |
+| **Effects** | `opacity-{n}` | Opacity |

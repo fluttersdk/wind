@@ -124,11 +124,11 @@ WButton(
 | `onTap` | `VoidCallback?` | `null` | Tap callback |
 | `onLongPress` | `VoidCallback?` | `null` | Long press callback |
 | `onDoubleTap` | `VoidCallback?` | `null` | Double tap callback |
-| `isLoading` | `bool` | `false` | Loading state |
-| `disabled` | `bool` | `false` | Disabled state |
+| `isLoading` | `bool` | `false` | Shows loading spinner if true |
+| `disabled` | `bool` | `false` | Disables interaction and styles |
 | `className` | `String?` | `null` | Tailwind-like classes |
-| `states` | `Set<String>?` | `null` | Custom states |
-| `loadingText` | `String?` | `null` | Text shown with spinner |
-| `loadingWidget` | `Widget?` | `null` | Custom loading widget |
-| `loadingSize` | `double` | `16` | Spinner size |
-| `loadingColor` | `Color?` | `null` | Spinner color |
+| `states` | `Set<String>?` | `null` | Custom states (e.g. `active`) |
+| `loadingText` | `String?` | `null` | Text shown next to spinner |
+| `loadingWidget` | `Widget?` | `null` | Custom spinner widget |
+| `loadingSize` | `double` | `16` | Spinner size in pixels |
+| `loadingColor` | `Color?` | `null` | Spinner color (defaults to text color) |

@@ -89,12 +89,12 @@ WImage(
 
 ---
 
-## Supported Classes
+## Supported Utility Classes
 
-| Class | Effect |
-|-------|--------|
-| `w-*`, `h-*` | Dimensions |
-| `object-*` | Fit mode |
-| `aspect-*` | Aspect ratio |
-| `rounded-*` | Corner radius |
-| `opacity-*` | Opacity |
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Sizing** | `w-{n}`, `h-{n}` | Dimensions |
+| **Fit** | `object-cover`, `object-contain`, `object-fill` | BoxFit mode |
+| **Aspect** | `aspect-video`, `aspect-square`, `aspect-[ratio]` | Aspect Ratio |
+| **Border** | `rounded-{size}`, `border` | Corner radius & borders |
+| **Effects** | `opacity-{n}`, `shadow` | Opacity & Shadow |

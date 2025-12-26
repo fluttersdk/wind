@@ -3,8 +3,30 @@ import 'package:flutter/widgets.dart';
 import '../core/platform_service.dart';
 import 'wind_theme_data.dart';
 
-/// An inherited widget that makes a [WindThemeData] object available to
-/// its descendants.
+/// **The Theme Provider**
+///
+/// `WindTheme` is an [InheritedWidget] that provides the styling configuration
+/// to the entire widget tree. It is similar to Flutter's [Theme] widget.
+///
+/// Wrap your app in a `WindTheme` to customize colors, fonts, breakpoints, etc.
+///
+/// ### Example Usage:
+///
+/// ```dart
+/// WindTheme(
+///   data: WindThemeData(
+///     colors: {
+///       'primary': Colors.blue, // Adds 'primary' color
+///     },
+///     fontFamilies: {
+///       'sans': 'Inter', // Sets default font
+///     },
+///   ),
+///   child: MyApp(),
+/// )
+/// ```
+///
+/// Access it via `WindTheme.of(context)`.
 class WindTheme extends InheritedWidget {
   /// The theme data.
   late final WindThemeData data;

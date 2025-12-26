@@ -16,17 +16,6 @@ WText("Text XL", className: "text-xl")
 WText("Text 2XL", className: "text-2xl")
 ```
 
-| Class | Properties |
-| :--- | :--- |
-| `text-xs` | font-size: 0.75rem; /* 12px */ |
-| `text-sm` | font-size: 0.875rem; /* 14px */ |
-| `text-base` | font-size: 1rem; /* 16px */ |
-| `text-lg` | font-size: 1.125rem; /* 18px */ |
-| `text-xl` | font-size: 1.25rem; /* 20px */ |
-| `text-2xl` | font-size: 1.5rem; /* 24px */ |
-| `text-3xl` | font-size: 1.875rem; /* 30px */ |
-| `text-4xl` | font-size: 2.25rem; /* 36px */ |
-
 ## Text Color
 Utilities for controlling value of text color.
 
@@ -39,19 +28,6 @@ WAnchor(
     onTap: () {},
     child: Text("Hover me", className: "text-gray-500 hover:text-blue-500"),
 )
-```
-
-### Opacity
-You can control the opacity of the text color using the color opacity modifier.
-
-| Class | Properties |
-| :--- | :--- |
-| `text-red-500/50` | color: rgb(239 68 68 / 0.5); |
-| `text-blue-500/[0.25]` | color: rgb(59 130 246 / 0.25); |
-
-```dart
-WText("50% Opacity", className: "text-red-500/50")
-WText("25% Opacity", className: "text-blue-500/25")
 ```
 
 ## Text Alignment
@@ -78,20 +54,55 @@ WText("No Underline", className: "no-underline")
 WText("Decorated", className: "underline decoration-red-500 decoration-wavy")
 ```
 
-## Font Weight
-Utilities for controlling the font weight.
+### Opacity
+You can control the opacity of the text color using the color opacity modifier.
 
 | Class | Properties |
 | :--- | :--- |
-| `font-thin` | font-weight: 100; |
-| `font-extralight` | font-weight: 200; |
-| `font-light` | font-weight: 300; |
-| `font-normal` | font-weight: 400; |
-| `font-medium` | font-weight: 500; |
-| `font-semibold` | font-weight: 600; |
-| `font-bold` | font-weight: 700; |
-| `font-extrabold` | font-weight: 800; |
-| `font-black` | font-weight: 900; |
+| `text-red-500/50` | color: rgb(239 68 68 / 0.5); |
+| `text-blue-500/[0.25]` | color: rgb(59 130 246 / 0.25); |
+
+```dart
+WText("50% Opacity", className: "text-red-500/50")
+WText("25% Opacity", className: "text-blue-500/25")
+```
+
+## Supported Utility Classes
+
+### Font Size
+| Class | Size (rem/px) |
+| :--- | :--- |
+| `text-xs` | 0.75rem (12px) |
+| `text-sm` | 0.875rem (14px) |
+| `text-base` | 1rem (16px) |
+| `text-lg` | 1.125rem (18px) |
+| `text-xl` | 1.25rem (20px) |
+| `text-2xl` | 1.5rem (24px) |
+| `text-3xl` | 1.875rem (30px) |
+| `text-4xl` | 2.25rem (36px) |
+
+### Font Weight
+| Class | Weight |
+| :--- | :--- |
+| `font-thin` | 100 |
+| `font-extralight` | 200 |
+| `font-light` | 300 |
+| `font-normal` | 400 |
+| `font-medium` | 500 |
+| `font-semibold` | 600 |
+| `font-bold` | 700 |
+| `font-extrabold` | 800 |
+| `font-black` | 900 |
+
+### Decoration
+| Class | Description |
+| :--- | :--- |
+| `underline` | Underline text |
+| `line-through` | Strikethrough |
+| `no-underline` | Remove decoration |
+| `decoration-{color}` | Decoration color |
+| `decoration-{style}` | dotted, dashed, double, wavy |
+| `decoration-{width}` | 1, 2, 4, 8 |
 
 
 ## Customizing Theme

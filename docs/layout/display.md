@@ -23,12 +23,14 @@ WDiv(
 )
 ```
 
-| Class | Properties |
-| :--- | :--- |
-| `block` | display: block; |
-| `hidden` | display: none; |
-| `flex` | display: flex; |
-| `grid` | display: grid; |
+## Supported Utility Classes
+
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Box** | `block` | Standard box model (default) |
+| **Flexbox** | `flex` | Flexbox layout |
+| **Grid** | `grid` | Grid layout |
+| **Visibility** | `hidden` | Remove from layout |
 
 ## Visibility
 Utilities for controlling the visibility of an element without affecting layout.

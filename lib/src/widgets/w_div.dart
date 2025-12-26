@@ -15,12 +15,25 @@ import 'wind_animation_wrapper.dart';
 /// the [className] and selectively applies specialized widgets like `Padding`,
 /// `Align`, `Row`, or `GridView` only when necessary.
 ///
+/// ### Supported Features:
+/// - **Flexbox:** `flex`, `flex-row`, `items-center`, `justify-between`
+/// - **Grid:** `grid`, `grid-cols-3`, `gap-4`
+/// - **Spacing:** `p-4`, `m-2`, `space-x-4`
+/// - **Sizing:** `w-full`, `h-12`, `min-h-screen`, `aspect-video`
+/// - **Backgrounds:** `bg-red-500`, `bg-gradient-to-r`
+/// - **Borders:** `border`, `border-red-500`, `rounded-lg`
+/// - **Effects:** `shadow-lg`, `opacity-50`
+/// - **Text:** `text-red-500`, `text-center`, `text-2xl`
+/// - **Animation:** `animate-pulse`, `animate-bounce`, `animate-spin`
+/// - **States:** `hover:bg-red-600`, `dark:bg-slate-900`
+/// - **Transitions:** `transition-all`, `duration-300`, `ease-in-out`
+///
 /// ### Example Usage:
 ///
 /// ```dart
 /// // A responsive flex container with padding and gap
 /// WDiv(
-///   className: "flex flex-col md:flex-row gap-4 p-4 bg-gray-100",
+///   className: "flex flex-col md:flex-row gap-4 p-4 bg-gray-100 rounded-lg",
 ///   children: [
 ///     Text("Item 1"),
 ///     Text("Item 2"),
@@ -29,17 +42,32 @@ import 'wind_animation_wrapper.dart';
 /// ```
 class WDiv extends StatelessWidget {
   /// The utility class string defining the style and layout.
-  /// e.g., `"bg-blue-500 p-4 rounded-lg shadow-md"`
+  ///
+  /// Supports:
+  /// - **Layout:** `flex`, `grid`, `block`, `hidden`
+  /// - **Spacing:** `p-4`, `m-2`, `gap-x-4`
+  /// - **Sizing:** `w-full`, `h-12`, `min-h-screen`, `aspect-video`
+  /// - **Styling:** `bg-red-500`, `text-white`, `rounded-xl`, `shadow-lg`
+  /// - **States:** `hover:bg-red-600`, `dark:bg-slate-900`
+  ///
+  /// Example:
+  /// ```dart
+  /// className: "flex flex-col gap-4 p-6 bg-white shadow-sm"
+  /// ```
   final String? className;
 
   /// The single child widget. Used for `block` layouts or simple wrappers.
   ///
-  /// *Note: Cannot be used simultaneously with [children].*
+  /// **Usage Rules:**
+  /// - Use this when `className` does NOT contain `flex` or `grid`.
+  /// - *Exclusive:* Cannot be used simultaneously with [children].
   final Widget? child;
 
   /// The list of children widgets. Used for `flex`, `grid`, or `wrap` layouts.
   ///
-  /// *Note: Cannot be used simultaneously with [child].*
+  /// **Usage Rules:**
+  /// - Use this when `className` contains `flex`, `grid`, or `wrap`.
+  /// - *Exclusive:* Cannot be used simultaneously with [child].
   final List<Widget>? children;
 
   /// An optional explicit style object.

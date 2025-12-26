@@ -1,15 +1,13 @@
 # WDiv Widget
 
-The `WDiv` widget is the fundamental building block of the Wind framework. It is designed to replace the standard `Container`, `Row`, `Column`, `Padding`, and `properties` stack with a single, intelligent widget.
+The `WDiv` widget is the fundamental building block of the Wind framework. It acts as a smart container that parses utility classes to build `Container`, `Row`, `Column`, `Flex`, `Grid`, or `Wrap` widgets efficiently.
 
 ## Intelligent Composition
 
-One of the biggest challenges in Flutter is the "Widget Tree Depth". To add padding, you wrap in `Padding`. To align, you wrap in `Align`. To add a background, you wrap in `DecoratedBox` (or `Container`).
-
-`WDiv` solves this via **Intelligent Composition**. It parses your `className` string and dynamically constructs the most efficient widget tree possible, flattening the structure where it can.
+`WDiv` parses your `className` string and dynamically constructs the widget tree. It avoids unnecessary nesting levels by flattening the structure where possible.
 
 > **Note**
-> `WDiv` is not just a wrapper around `Container`. It selectively builds `Row`, `Column`, `GridView`, or `Wrap` based on your layout classes.
+> `WDiv` checks for layout classes like `flex`, `grid`, or `wrap` to determine which Flutter layout widget to use.
 
 ## Usage
 
@@ -24,12 +22,12 @@ WDiv(
 ```
 
 ### Flex Layout (Row/Column)
-When you provide `children`, `WDiv` acts as a layout container. By default, it behaves like a generic block (Column), but you can control this with `flex`, `flex-row`, or `flex-col`.
+When you provide `children`, `WDiv` acts as a layout container. By default, it behaves like a generic block (`Column`), but you can control this with `flex-row` or `flex-col`.
 
 ```dart
-// Creates a Row (flex-row is default for flex display)
+// Row Layout
 WDiv(
-  className: "flex gap-4 items-center",
+  className: "flex flex-row gap-4 items-center",
   children: [
     WDiv(className: "w-10 h-10 bg-red-500 rounded-full"),
     Text("User Name"),
@@ -46,29 +44,55 @@ WDiv(
   children: [
     WDiv(className: "bg-blue-100 p-4", child: Text("Item 1")),
     WDiv(className: "bg-blue-200 p-4", child: Text("Item 2")),
-    WDiv(className: "bg-blue-300 p-4", child: Text("Item 3")),
-    WDiv(className: "bg-blue-400 p-4", child: Text("Item 4")),
   ],
 )
 ```
 
 ## The "Child vs Children" Rule
 
-To ensure clarity and prevent ambiguous layouts, `WDiv` enforces a strict rule:
+To prevent ambiguous layouts, `WDiv` enforces a strict rule:
 
-> **Rule**
-> You must provide either `child` OR `children`, but NEVER both.
+> **Rule:** You must provide either `child` OR `children`, but NEVER both.
 
-- Use **`child`** when wrapping a single widget (e.g., styling a specific element).
-- Use **`children`** when managing a layout (Row, Column, Grid, Wrap).
+- **`child`**: Wraps a single widget.
+- **`children`**: Manages a list of widgets (Row, Column, Grid, Wrap).
 
-## Text Style Inheritance
+## Supported Utility Classes
 
-`WDiv` automatically propagates typography styles to its descendants using `DefaultTextStyle`. This mimics CSS inheritance.
+`WDiv` supports a vast range of utility classes. Key categories include:
 
-```dart
-WDiv(
-  className: "text-center text-lg text-gray-700 font-bold",
-  child: Text("I inherit all these styles!"),
-)
-```
+### Layout
+| Class | Description |
+| :--- | :--- |
+| `block`, `hidden` | Display mode |
+| `flex`, `flex-row`, `flex-col` | Flexbox layout |
+| `grid`, `grid-cols-{n}` | Grid layout |
+| `gap-{n}`, `gap-x-{n}`, `gap-y-{n}` | Spacing between items |
+| `items-{start/center/end}` | Cross-axis alignment |
+| `justify-{start/center/between}` | Main-axis alignment |
+| `wrap` | Wrap layout |
+
+### Sizing & Spacing
+| Class | Description |
+| :--- | :--- |
+| `w-{n}`, `h-{n}`, `w-full`, `h-screen` | Width / Height |
+| `min-w-{n}`, `max-w-{n}` | Constraints |
+| `p-{n}`, `px-{n}`, `py-{n}` | Padding |
+| `m-{n}`, `mx-{n}`, `my-{n}` | Margin |
+
+### Styling
+| Class | Description |
+| :--- | :--- |
+| `bg-{color}`, `bg-gradient-*` | Backgrounds |
+| `border`, `border-{n}`, `border-{color}` | Borders |
+| `rounded`, `rounded-{size}` | Border Radius |
+| `shadow`, `shadow-{size}` | Box Shadow |
+| `opacity-{n}` | Opacity |
+
+### Interactivity
+| Prefix | Description |
+| :--- | :--- |
+| `hover:` | Styles applied on mouse hover |
+| `focus:` | Styles applied when focused (if `WAnchor`) |
+| `dark:` | Styles applied in dark mode |
+| `sm:`, `md:`, `lg:` | Responsive breakpoints |
