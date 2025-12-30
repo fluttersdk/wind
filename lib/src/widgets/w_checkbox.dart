@@ -56,6 +56,21 @@ class WCheckbox extends StatelessWidget {
   /// Custom check icon.
   final IconData? checkIcon;
 
+  /// Custom states for dynamic styling.
+  ///
+  /// These states are merged with built-in states (`checked`, `disabled`).
+  /// Use to add custom states like `error`, `loading`, etc.
+  ///
+  /// Example:
+  /// ```dart
+  /// WCheckbox(
+  ///   value: isChecked,
+  ///   states: {'error'},
+  ///   className: 'w-5 h-5 border error:border-red-500',
+  /// )
+  /// ```
+  final Set<String>? states;
+
   /// Creates a [WCheckbox] widget.
   const WCheckbox({
     super.key,
@@ -65,14 +80,16 @@ class WCheckbox extends StatelessWidget {
     this.iconClassName,
     this.disabled = false,
     this.checkIcon,
+    this.states,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Build states set based on current value
+    // Build states set: merge built-in states with custom states
     final Set<String> activeStates = {
       if (value) 'checked',
       if (disabled) 'disabled',
+      ...?states, // Merge custom states
     };
 
     // Parse just for debug purposes (WCheckbox delegates to WDiv, but we want to log top-level too)
@@ -98,8 +115,7 @@ class WCheckbox extends StatelessWidget {
       states: activeStates,
       child: WDiv(
         className:
-            className ??
-            'w-5 h-5 rounded border border-gray-300 items-center justify-center checked:bg-blue-500 checked:border-transparent',
+            'w-5 h-5 rounded border border-gray-300 items-center justify-center checked:bg-blue-500 error:border-red-500 checked:bg-primary checked:border-transparent ${className != null ? ' $className' : ''}',
         states: activeStates, // Pass states to WDiv for checked: prefix
         children: [
           if (value)

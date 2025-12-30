@@ -356,7 +356,7 @@ class _WInputState extends State<WInput> {
     logger.setCoreWidget("TextField");
     logger.printFinalCode();
 
-    return TextField(
+    Widget result = TextField(
       controller: _controller,
       focusNode: _focusNode,
       keyboardType: keyboardType,
@@ -383,6 +383,18 @@ class _WInputState extends State<WInput> {
       onTap: widget.onTap,
       onTapOutside: widget.onTapOutside,
     );
+
+    // Apply Flexible/Expanded wrapper if flex-auto or flex-1 is present
+    // - flex-auto parses to flexFit (FlexFit.loose)
+    // - flex-1 parses to flex (int value 1)
+    // This allows WInput to properly expand in flex containers
+    if (styles.flex != null) {
+      result = Expanded(flex: styles.flex!, child: result);
+    } else if (styles.flexFit != null) {
+      result = Flexible(fit: styles.flexFit!, child: result);
+    }
+
+    return result;
   }
 
   /// Returns keyboard type and obscureText based on InputType

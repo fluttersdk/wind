@@ -125,7 +125,7 @@ void main() {
           createTestApp(
             Builder(
               builder: (context) {
-                result = context.wColorExt('blue', 500);
+                result = context.wColorExt('blue', shade: 500);
                 return const SizedBox();
               },
             ),

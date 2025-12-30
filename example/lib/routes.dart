@@ -41,6 +41,7 @@ import 'pages/effects/transition_ease.dart';
 import 'pages/examples/basic.dart';
 import 'pages/examples/blog_section.dart';
 import 'pages/examples/hero_card.dart';
+import 'pages/examples/stacked_layout.dart';
 
 // Forms
 import 'pages/forms/input_basic.dart';
@@ -135,6 +136,7 @@ final Map<String, Widget> appRoutes = {
   '/examples/basic': const BasicExamplePage(),
   '/examples/blog_section': const BlogSectionExamplePage(),
   '/examples/hero_card': const HeroCardExamplePage(),
+  '/examples/stacked_layout': const StackedLayoutExamplePage(),
 
   // Forms
   '/forms/input_basic': const InputBasicExamplePage(),

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../parser/wind_parser.dart';
-import '../parser/wind_style.dart';
-import '../theme/wind_theme.dart';
-import '../utils/color_utils.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 /// **Global Color Resolver**
 ///
@@ -13,7 +9,22 @@ import '../utils/color_utils.dart';
 /// - `wColor(context, 'blue', 500)`
 /// - `wColor(context, '#FFAABB')`
 /// - `wColor(context, 'primary')`
-Color? wColor(BuildContext context, String colorName, [int shade = 500]) {
+Color? wColor(
+  BuildContext context,
+  String colorName, {
+  int shade = 500,
+  String? darkColorName,
+  int darkShade = 500,
+}) {
+  final theme = WindTheme.dataOf(context);
+
+  // Handle dark mode
+  if (theme.brightness == Brightness.dark) {
+    if (darkColorName != null) {
+      return theme.getColor(darkColorName, darkShade);
+    }
+  }
+
   // Handle hex colors
   if (colorName.startsWith('#')) {
     return hexToColor(colorName);
@@ -25,8 +36,6 @@ Color? wColor(BuildContext context, String colorName, [int shade = 500]) {
     colorName = match.group(1)!;
     shade = int.parse(match.group(2)!);
   }
-
-  final theme = WindTheme.dataOf(context);
   return theme.getColor(colorName, shade);
 }
 

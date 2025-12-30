@@ -608,5 +608,79 @@ void main() {
         },
       );
     });
+
+    group('Flex Container Support', () {
+      testWidgets('flex-auto wraps TextField in Flexible', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Row(
+              children: [
+                WInput(className: 'flex-auto'),
+                const Text('Label'),
+              ],
+            ),
+          ),
+        );
+
+        // Should find Flexible widget wrapping TextField
+        expect(find.byType(Flexible), findsOneWidget);
+        expect(find.byType(TextField), findsOneWidget);
+      });
+
+      testWidgets('flex-1 wraps TextField in Expanded', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Row(
+              children: [
+                WInput(className: 'flex-1'),
+                const Text('Label'),
+              ],
+            ),
+          ),
+        );
+
+        // flex-1 uses Expanded (with flex: 1)
+        expect(find.byType(Expanded), findsOneWidget);
+      });
+
+      testWidgets('WInput without flex classes renders without Flexible', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const SizedBox(width: 200, child: WInput(className: 'p-4 border')),
+          ),
+        );
+
+        // Should NOT find Flexible widget
+        expect(find.byType(Flexible), findsNothing);
+        expect(find.byType(TextField), findsOneWidget);
+      });
+
+      testWidgets('flex-auto WInput works in Row with Button', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Row(
+              children: [
+                WInput(
+                  className: 'flex-auto rounded-md px-3 py-2',
+                  placeholder: 'Enter email',
+                ),
+                WButton(
+                  className: 'flex-none px-4 py-2',
+                  onTap: () {},
+                  child: const Text('Subscribe'),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        // Should render without errors
+        expect(find.byType(TextField), findsOneWidget);
+        expect(find.byType(WButton), findsOneWidget);
+        expect(find.text('Enter email'), findsOneWidget);
+      });
+    });
   });
 }

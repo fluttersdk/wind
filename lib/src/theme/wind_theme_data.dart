@@ -152,9 +152,6 @@ class WindThemeData {
   /// A map of animation class names to animation types.
   final Map<String, WindAnimationType> animations;
 
-  /// The resolved colors based on the theme's brightness.
-  late final Map<String, MaterialColor> _resolvedColors;
-
   /// Creates a new [WindThemeData] instance.
   ///
   /// If [colors] or [screens] are not provided, they will default
@@ -226,9 +223,7 @@ class WindThemeData {
        )..addAll(transitionCurves ?? {})),
        animations = (Map<String, WindAnimationType>.from(
          default_animations.animations,
-       )..addAll(animations ?? {})) {
-    _resolvedColors = _resolveColors();
-  }
+       )..addAll(animations ?? {}));
 
   /// Initializes the default colors from the predefined color map.
   ///
@@ -248,23 +243,19 @@ class WindThemeData {
     })..removeWhere((key, value) => value.toARGB32() == 0);
   }
 
-  /// Resolves the colors based on the current brightness.
-  ///
-  /// In Tailwind CSS, colors are NOT automatically inverted in dark mode.
-  /// Instead, the `dark:` prefix is used to explicitly define dark mode styles.
-  /// This implementation matches that behavior - colors remain the same
-  /// regardless of brightness, and developers use `dark:` prefixed classes
-  /// to define dark mode variants.
-  Map<String, MaterialColor> _resolveColors() {
-    // Return colors as-is without inversion (Tailwind behavior)
-    return colors;
-  }
-
   /// Returns a color from the theme.
   ///
   /// If the theme is dark, it will return the inverted color.
   Color? getColor(String colorName, int shade) {
-    return _resolvedColors[colorName]?[shade];
+    if (colors[colorName] == null) {
+      return null;
+    }
+
+    if (colors[colorName]![shade] == null) {
+      return null;
+    }
+
+    return colors[colorName]?[shade];
   }
 
   /// Returns the original color from the theme, regardless of brightness.
@@ -474,6 +465,7 @@ class WindThemeData {
       scaffoldBackgroundColor: background,
       textTheme: textTheme,
       fontFamily: defaultFontFamily,
+      canvasColor: Colors.transparent,
     );
   }
 }

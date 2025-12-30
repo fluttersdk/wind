@@ -21,7 +21,7 @@ void main() {
           createTestApp(
             Builder(
               builder: (context) {
-                result = wColor(context, 'red', 500);
+                result = wColor(context, 'red', shade: 500);
                 return const SizedBox();
               },
             ),
@@ -70,7 +70,7 @@ void main() {
           createTestApp(
             Builder(
               builder: (context) {
-                result = wColor(context, 'invalidcolor', 500);
+                result = wColor(context, 'invalidcolor', shade: 500);
                 return const SizedBox();
               },
             ),

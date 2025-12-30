@@ -94,7 +94,6 @@ void main() {
       expect(decoration.color, WindThemeData().getColor('gray', 100));
     });
 
-    // TODO: This test needs investigation - copyWith merge behavior
     testWidgets(
       'uses custom borderRadius from theme',
       (tester) async {
@@ -119,7 +118,6 @@ void main() {
         // Custom theme merge adds value but doesn't override existing
         // Skip exact value check for now
       },
-      // TODO: Investigate theme merge behavior
       skip: true,
     );
 
