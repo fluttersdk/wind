@@ -56,8 +56,8 @@ extension WindContextExtension on BuildContext {
   bool get windIsDark => windThemeData.brightness == Brightness.dark;
 
   /// Shortcut for wColor(context, colorName, shade).
-  Color? wColorExt(String colorName, [int shade = 500]) =>
-      wColor(this, colorName, shade);
+  Color? wColorExt(String colorName, {int shade = 500}) =>
+      wColor(this, colorName, shade: shade);
 
   /// Shortcut for wSpacing(context, multiplier).
   double wSpacingExt(num multiplier) => wSpacing(this, multiplier);

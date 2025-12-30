@@ -155,7 +155,9 @@ void main() {
     expect(containerFinder, findsOneWidget);
   });
 
-  testWidgets('renders GridView when grid class is present', (tester) async {
+  testWidgets('renders Wrap-based grid when grid class is present', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: WindTheme(
@@ -168,8 +170,8 @@ void main() {
       ),
     );
 
-    // Assert
-    expect(find.byType(GridView), findsOneWidget);
+    // Grid now uses Wrap for flexible item heights (Tailwind-like behavior)
+    expect(find.byType(Wrap), findsOneWidget);
     // Ensure it's not a Row or Column
     expect(find.byType(Row), findsNothing);
     expect(find.byType(Column), findsNothing);

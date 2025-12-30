@@ -44,17 +44,6 @@ Wind checks `MediaQuery.of(context).platformBrightness`. If it is `Brightness.da
 > **Note**
 > `WindThemeData` has a `brightness` property. If you manually set this to `Brightness.dark`, Wind will force dark mode styles regardless of the system setting.
 
-## Strategies
-
-### Inverted Colours
-The most common pattern is to invert background and text colors.
-
-```dart
-// Light: White bg, Slate-900 text
-// Dark: Slate-900 bg, White text
-className: "bg-white text-slate-900 dark:bg-slate-900 dark:text-white"
-```
-
 ### Softer Borders
 Dark mode often requires more subtle borders to avoid high contrast eye strain.
 

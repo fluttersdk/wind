@@ -55,6 +55,9 @@ class WindStyle {
   /// `margin` property e.g., m-4, mx-2, my-3
   final EdgeInsets? margin;
 
+  /// Whether horizontal margin is auto (mx-auto) for centering
+  final bool marginXAuto;
+
   /// Flex direction for flex display type e.g., flex-row, flex-col
   final Axis? flexDirection;
 
@@ -214,6 +217,7 @@ class WindStyle {
     this.constraints,
     this.padding,
     this.margin,
+    this.marginXAuto = false,
     this.flexDirection,
     this.mainAxisAlignment,
     this.crossAxisAlignment,
@@ -275,6 +279,7 @@ class WindStyle {
     BoxConstraints? constraints,
     EdgeInsets? padding,
     EdgeInsets? margin,
+    bool? marginXAuto,
     Axis? flexDirection,
     MainAxisAlignment? mainAxisAlignment,
     CrossAxisAlignment? crossAxisAlignment,
@@ -350,6 +355,7 @@ class WindStyle {
       constraints: constraints ?? this.constraints,
       padding: padding ?? this.padding,
       margin: margin ?? this.margin,
+      marginXAuto: marginXAuto ?? this.marginXAuto,
       flexDirection: flexDirection ?? this.flexDirection,
       mainAxisAlignment: mainAxisAlignment ?? this.mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment ?? this.crossAxisAlignment,
@@ -417,6 +423,7 @@ class WindStyle {
           constraints == other.constraints &&
           padding == other.padding &&
           margin == other.margin &&
+          marginXAuto == other.marginXAuto &&
           flexDirection == other.flexDirection &&
           mainAxisAlignment == other.mainAxisAlignment &&
           crossAxisAlignment == other.crossAxisAlignment &&
@@ -478,6 +485,7 @@ class WindStyle {
       constraints.hashCode ^
       padding.hashCode ^
       margin.hashCode ^
+      marginXAuto.hashCode ^
       flexDirection.hashCode ^
       mainAxisAlignment.hashCode ^
       crossAxisAlignment.hashCode ^
@@ -575,6 +583,7 @@ class WindStyle {
         'constraints: $constraints, '
         'padding: $padding, '
         'margin: $margin, '
+        'marginXAuto: $marginXAuto, '
         'flexDirection: $flexDirection, '
         'mainAxisAlignment: $mainAxisAlignment, '
         'crossAxisAlignment: $crossAxisAlignment, '

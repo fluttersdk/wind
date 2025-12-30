@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/color_utils.dart';
 import 'defaults/border_radius.dart' as default_border_radius;
 import 'defaults/border_widths.dart' as default_border_widths;
 import 'defaults/colors.dart' as default_colors;
@@ -153,9 +152,6 @@ class WindThemeData {
   /// A map of animation class names to animation types.
   final Map<String, WindAnimationType> animations;
 
-  /// The resolved colors based on the theme's brightness.
-  late final Map<String, MaterialColor> _resolvedColors;
-
   /// Creates a new [WindThemeData] instance.
   ///
   /// If [colors] or [screens] are not provided, they will default
@@ -227,9 +223,7 @@ class WindThemeData {
        )..addAll(transitionCurves ?? {})),
        animations = (Map<String, WindAnimationType>.from(
          default_animations.animations,
-       )..addAll(animations ?? {})) {
-    _resolvedColors = _resolveColors();
-  }
+       )..addAll(animations ?? {}));
 
   /// Initializes the default colors from the predefined color map.
   ///
@@ -249,32 +243,19 @@ class WindThemeData {
     })..removeWhere((key, value) => value.toARGB32() == 0);
   }
 
-  /// Resolves the colors based on the current brightness.
-  ///
-  /// In dark mode, colors are inverted using [invertMaterialColor].
-  Map<String, MaterialColor> _resolveColors() {
-    if (brightness == Brightness.dark) {
-      return Map.fromEntries(
-        colors.entries.map((entry) {
-          if (entry.key == 'white') {
-            return MapEntry(entry.key, invertMaterialColor(colors['gray']!));
-          }
-          if (entry.key == 'black') {
-            return MapEntry(entry.key, colors['gray']!);
-          }
-          return MapEntry(entry.key, invertMaterialColor(entry.value));
-        }),
-      );
-    } else {
-      return colors;
-    }
-  }
-
   /// Returns a color from the theme.
   ///
   /// If the theme is dark, it will return the inverted color.
   Color? getColor(String colorName, int shade) {
-    return _resolvedColors[colorName]?[shade];
+    if (colors[colorName] == null) {
+      return null;
+    }
+
+    if (colors[colorName]![shade] == null) {
+      return null;
+    }
+
+    return colors[colorName]?[shade];
   }
 
   /// Returns the original color from the theme, regardless of brightness.
@@ -484,6 +465,7 @@ class WindThemeData {
       scaffoldBackgroundColor: background,
       textTheme: textTheme,
       fontFamily: defaultFontFamily,
+      canvasColor: Colors.transparent,
     );
   }
 }

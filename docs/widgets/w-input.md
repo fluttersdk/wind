@@ -80,8 +80,35 @@ WInput(
 | **Radius** | `rounded-{size}` | `borderRadius` |
 | **Typography** | `text-{color}`, `font-{weight}` | Input text style |
 | **Placeholder** | `placeholder:{style}` | Placeholder text style (via `placeholderClassName`) |
+| **Flex** | `flex-auto`, `flex-1` | Wraps in `Flexible`/`Expanded` for flex containers |
 
 ---
+
+## Flex Container Support
+
+`WInput` automatically handles flex layout classes when used inside a Row or WDiv with flex layout:
+
+```dart
+WDiv(
+  className: "flex gap-x-4",
+  children: [
+    WInput(
+      className: "flex-auto rounded-md px-3 py-2 border",
+      placeholder: "Enter your email",
+    ),
+    WButton(
+      className: "flex-none px-4 py-2 bg-blue-500",
+      onTap: () {},
+      child: Text("Subscribe"),
+    ),
+  ],
+)
+```
+
+| Class | Behavior |
+| :--- | :--- |
+| `flex-auto` | Wraps in `Flexible` - grows/shrinks with available space |
+| `flex-1` | Wraps in `Expanded` - takes equal share of available space |
 
 ## Focus States
 
