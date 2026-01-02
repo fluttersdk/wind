@@ -681,8 +681,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
                   ),
               child: ClipRRect(
                 borderRadius: borderRadius,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                child: WDiv(
+                  className: 'flex flex-col',
                   children: [
                     if (widget.searchable) _buildSearchInput(),
                     Flexible(child: _buildOptionsContent()),
@@ -697,8 +697,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
   }
 
   Widget _buildSearchInput() {
-    return Padding(
-      padding: const EdgeInsets.all(8),
+    return WDiv(
+      className: 'p-2',
       child: WInput(
         placeholder: widget.searchPlaceholder,
         autofocus: true,
@@ -714,8 +714,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
     }
 
     if (_filteredOptions.isEmpty) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
+      return WDiv(
+        className: 'flex flex-col',
         children: [
           widget.emptyBuilder?.call(context, _searchQuery) ??
               _buildEmptyState(),
@@ -742,8 +742,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
   }
 
   Widget _buildEmptyState() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    return WDiv(
+      className: 'p-4',
       child: WText('No options found', className: 'text-gray-500'),
     );
   }

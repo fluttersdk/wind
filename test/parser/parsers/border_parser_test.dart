@@ -68,11 +68,13 @@ void main() {
         expect(border.top.width, 4.0);
       });
 
-      test('parses border-0 (no border)', () {
+      test('parses border-0 (zero width border)', () {
         final result = parser.parse(const WindStyle(), ['border-0'], context);
 
-        // border-0 should result in no visible border
-        expect(result.decoration?.border, isNull);
+        // border-0 should result in a border with width 0
+        expect(result.decoration?.border, isNotNull);
+        final border = result.decoration!.border as Border;
+        expect(border.top.width, 0.0);
       });
     });
 

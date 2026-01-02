@@ -20,13 +20,14 @@ class FlexboxGridParser implements WindParserInterface {
   const FlexboxGridParser();
 
   /// Matches theme-based gap classes (e.g., `gap-4`, `gap-x-2`, `gap-y-1/2`)
+  /// Also matches space-x and space-y as aliases (Tailwind's margin-based spacing)
   static final RegExp _themeGapRegex = RegExp(
-    r'^(?<root>gap|gap-x|gap-y)-(?<value>[a-zA-Z0-9./]+)$',
+    r'^(?<root>gap|gap-x|gap-y|space-x|space-y)-(?<value>[a-zA-Z0-9./]+)$',
   );
 
   /// Matches arbitrary gap classes (e.g., `gap-[10px]`)
   static final RegExp _arbitraryGapRegex = RegExp(
-    r'^(?<root>gap|gap-x|gap-y)-\[(?<value>[0-9.]+(?:px)?)\]$',
+    r'^(?<root>gap|gap-x|gap-y|space-x|space-y)-\[(?<value>[0-9.]+(?:px)?)\]$',
   );
 
   /// Matches theme-based flex classes (e.g., `flex-1`, `flex-2`)
@@ -208,9 +209,9 @@ class FlexboxGridParser implements WindParserInterface {
           if (root == 'gap') {
             gapX ??= value;
             gapY ??= value;
-          } else if (root == 'gap-x') {
+          } else if (root == 'gap-x' || root == 'space-x') {
             gapX ??= value;
-          } else if (root == 'gap-y') {
+          } else if (root == 'gap-y' || root == 'space-y') {
             gapY ??= value;
           }
         }
@@ -250,6 +251,27 @@ class FlexboxGridParser implements WindParserInterface {
       return styles;
     }
 
+    // 4. Derive Alignment for Container from Flex properties
+    // This allows justify-center to work with min-h-full by aligning the container's child
+    if (alignment == null) {
+      final isVertical = flexDirection == Axis.vertical;
+      double? x, y;
+
+      if (isVertical) {
+        x = _getCrossAxisAlignValue(crossAxisAlignment); // Items
+        y = _getMainAxisAlignValue(mainAxisAlignment); // Justify
+      } else {
+        x = _getMainAxisAlignValue(mainAxisAlignment); // Justify
+        y = _getCrossAxisAlignValue(crossAxisAlignment); // Items
+      }
+
+      if (x != null || y != null) {
+        // Default to center (0.0) if one axis is set, or start (-1.0)
+        // Using 0.0 (center) as default for cross-axis stretch compatibility
+        alignment = Alignment(x ?? 0.0, y ?? -1.0);
+      }
+    }
+
     // 3. Apply changes to WindStyle
     return styles.copyWith(
       displayType: displayType,
@@ -266,6 +288,36 @@ class FlexboxGridParser implements WindParserInterface {
       gridCols: gridCols,
       isHidden: isHidden,
     );
+  }
+
+  double? _getMainAxisAlignValue(MainAxisAlignment? alignment) {
+    if (alignment == null) return -1.0;
+    switch (alignment) {
+      case MainAxisAlignment.start:
+        return -1.0;
+      case MainAxisAlignment.end:
+        return 1.0;
+      case MainAxisAlignment.center:
+        return 0.0;
+      default:
+        return null;
+    }
+  }
+
+  double? _getCrossAxisAlignValue(CrossAxisAlignment? alignment) {
+    if (alignment == null) return null;
+    switch (alignment) {
+      case CrossAxisAlignment.start:
+        return -1.0;
+      case CrossAxisAlignment.end:
+        return 1.0;
+      case CrossAxisAlignment.center:
+        return 0.0;
+      case CrossAxisAlignment.baseline:
+        return -1.0;
+      default:
+        return null;
+    }
   }
 
   /// Checks if the parser can parse the given class name
@@ -285,6 +337,8 @@ class FlexboxGridParser implements WindParserInterface {
         className.startsWith('items-') ||
         className.startsWith('align-') ||
         className.startsWith('gap-') ||
+        className.startsWith('space-x-') ||
+        className.startsWith('space-y-') ||
         className.startsWith('axis-') ||
         className.startsWith('place-');
   }

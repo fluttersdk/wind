@@ -31,14 +31,22 @@ class BorderParser implements WindParserInterface {
     r'^border-(t|r|b|l)(?:-(\d+))?$',
   );
 
-  /// Regex for border color: border-red-500, border-[#hex]
+  /// Regex for border color: border-red-500, border-white, border-[#hex]
   static final _borderColorRegex = RegExp(
-    r'^border-(?:(?<color>[a-zA-Z]+)-(?<shade>\d{2,3})|(?:\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\]))$',
+    r'^border-(?:(?<color>[a-zA-Z]+)(?:-(?<shade>\d{2,3}))?|(?:\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\]))$',
   );
 
   /// Regex for directional radius: rounded-t, rounded-tl, etc.
   static final _directionalRadiusRegex = RegExp(
     r'^rounded-(t|r|b|l|tl|tr|bl|br)(?:-(sm|md|lg|xl|2xl|3xl|full|none))?$',
+  );
+
+  /// Regex for uniform border width: border-0, border-2
+  static final _uniformBorderWidthRegex = RegExp(r'^border-(\d+)$');
+
+  /// Regex for arbitrary border width: border-[3px]
+  static final _arbitraryBorderWidthRegex = RegExp(
+    r'^border-\[(?<value>[^\]]+)\]$',
   );
 
   /// Get border width from theme
@@ -127,6 +135,30 @@ class BorderParser implements WindParserInterface {
         continue;
       }
 
+      // Check uniform border width (numeric regex)
+      final uniformMatch = _uniformBorderWidthRegex.firstMatch(
+        effectiveClassName,
+      );
+      if (uniformMatch != null) {
+        width = double.parse(uniformMatch.group(1)!);
+        topWidth = rightWidth = bottomWidth = leftWidth = null;
+        continue;
+      }
+
+      // Check arbitrary border width
+      final arbMatch = _arbitraryBorderWidthRegex.firstMatch(
+        effectiveClassName,
+      );
+      if (arbMatch != null) {
+        final val = arbMatch.namedGroup('value')!;
+        // Ensure it's not a color (doesn't start with # and usually contains px/rem or is number)
+        if (!val.startsWith('#')) {
+          width = double.tryParse(val.replaceAll('px', '')) ?? 0.0;
+          topWidth = rightWidth = bottomWidth = leftWidth = null;
+          continue;
+        }
+      }
+
       // Check directional border width
       final dirMatch = _directionalBorderWidthRegex.firstMatch(
         effectiveClassName,
@@ -164,8 +196,9 @@ class BorderParser implements WindParserInterface {
         } else {
           final colorName = colorMatch.namedGroup('color');
           final shadeStr = colorMatch.namedGroup('shade');
-          if (colorName != null && shadeStr != null) {
-            final shade = int.parse(shadeStr);
+          if (colorName != null) {
+            // Use shade if provided, otherwise default to 500 (or handle white/black)
+            final shade = shadeStr != null ? int.parse(shadeStr) : 500;
             if (theme.isValidColor(colorName, shade: shade)) {
               parsedColor = theme.getColor(colorName, shade);
             }
@@ -206,8 +239,8 @@ class BorderParser implements WindParserInterface {
       );
     }
 
-    // Uniform border
-    if (width != null && width > 0) {
+    // Uniform border - including border-0 case (width == 0)
+    if (width != null) {
       return Border.all(width: width, color: defaultColor, style: style);
     }
 

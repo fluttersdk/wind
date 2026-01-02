@@ -94,32 +94,28 @@ void main() {
       expect(decoration.color, WindThemeData().getColor('gray', 100));
     });
 
-    testWidgets(
-      'uses custom borderRadius from theme',
-      (tester) async {
-        // Use copyWith to merge custom value with defaults
-        final customTheme = WindThemeData().copyWith(
-          borderRadius: {'lg': 20.0}, // Custom lg value
-        );
+    testWidgets('uses custom borderRadius from theme', (tester) async {
+      // Use copyWith to merge custom value with defaults
+      final customTheme = WindThemeData().copyWith(
+        borderRadius: {'lg': 20.0}, // Custom lg value
+      );
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: customTheme,
-              child: const WDiv(className: 'rounded-lg'),
-            ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: customTheme,
+            child: const WDiv(className: 'rounded-lg'),
           ),
-        );
+        ),
+      );
 
-        final container = tester.widget<Container>(find.byType(Container));
-        final decoration = container.decoration as BoxDecoration?;
+      final container = tester.widget<Container>(find.byType(Container));
+      final decoration = container.decoration as BoxDecoration?;
 
-        expect(decoration, isNotNull);
-        // Custom theme merge adds value but doesn't override existing
-        // Skip exact value check for now
-      },
-      skip: true,
-    );
+      expect(decoration, isNotNull);
+      // Custom theme merge adds value but doesn't override existing
+      // Skip exact value check for now
+    }, skip: true);
 
     testWidgets('uses custom borderWidths from theme', (tester) async {
       // Use copyWith to merge custom value with defaults

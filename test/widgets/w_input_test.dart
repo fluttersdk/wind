@@ -682,5 +682,67 @@ void main() {
         expect(find.text('Enter email'), findsOneWidget);
       });
     });
+
+    group('Border Styling', () {
+      testWidgets('border-0 applies InputBorder.none', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WInput(className: 'p-3 border-0 rounded-lg')),
+        );
+
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        final decoration = textField.decoration!;
+
+        // border-0 should result in InputBorder.none for enabled border
+        expect(decoration.enabledBorder, InputBorder.none);
+        expect(decoration.border, InputBorder.none);
+      });
+
+      testWidgets('border-0 with focus:ring still shows ring on focus', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(
+              className:
+                  'p-3 border-0 rounded-lg focus:ring-2 focus:ring-blue-500',
+            ),
+          ),
+        );
+
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        final decoration = textField.decoration!;
+
+        // Initially no border
+        expect(decoration.enabledBorder, InputBorder.none);
+
+        // Focus the input
+        await tester.tap(find.byType(TextField));
+        await tester.pump();
+
+        final focusedTextField = tester.widget<TextField>(
+          find.byType(TextField),
+        );
+        final focusedDecoration = focusedTextField.decoration!;
+
+        // When focused, should have ring as border
+        expect(focusedDecoration.focusedBorder, isA<OutlineInputBorder>());
+      });
+
+      testWidgets('regular border class applies border', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(className: 'p-3 border border-gray-300 rounded-lg'),
+          ),
+        );
+
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        final decoration = textField.decoration!;
+
+        // Should have a border
+        expect(decoration.enabledBorder, isA<OutlineInputBorder>());
+        final border = decoration.enabledBorder as OutlineInputBorder;
+        expect(border.borderSide.width, 1.0);
+      });
+    });
   });
 }

@@ -119,6 +119,10 @@ class WFormInput extends FormField<String> {
     // Hint
     this.hint,
     this.hintClassName = 'text-gray-500 text-xs mt-1',
+
+    // Prefix/Suffix
+    this.prefix,
+    this.suffix,
   }) : super(
          initialValue: controller?.text ?? initialValue ?? '',
          builder: (FormFieldState<String> state) {
@@ -152,6 +156,8 @@ class WFormInput extends FormField<String> {
              labelClassName: labelClassName,
              hint: hint,
              hintClassName: hintClassName,
+             prefix: prefix,
+             suffix: suffix,
            );
          },
        );
@@ -279,6 +285,12 @@ class WFormInput extends FormField<String> {
   ///
   /// Defaults to `'text-gray-500 text-xs mt-1'`.
   final String hintClassName;
+
+  /// Widget to display before the input field (e.g., icon).
+  final Widget? prefix;
+
+  /// Widget to display after the input field (e.g., visibility toggle).
+  final Widget? suffix;
 }
 
 /// Internal stateful widget that handles controller sync and error state.
@@ -313,6 +325,8 @@ class _WFormInputContent extends StatefulWidget {
     required this.labelClassName,
     this.hint,
     required this.hintClassName,
+    this.prefix,
+    this.suffix,
   });
 
   final FormFieldState<String> state;
@@ -344,6 +358,8 @@ class _WFormInputContent extends StatefulWidget {
   final String labelClassName;
   final String? hint;
   final String hintClassName;
+  final Widget? prefix;
+  final Widget? suffix;
 
   @override
   State<_WFormInputContent> createState() => _WFormInputContentState();
@@ -439,6 +455,8 @@ class _WFormInputContentState extends State<_WFormInputContent> {
       textCapitalization: widget.textCapitalization,
       autocorrect: widget.autocorrect,
       enableSuggestions: widget.enableSuggestions,
+      prefix: widget.prefix,
+      suffix: widget.suffix,
     );
 
     // Determine bottom text: error takes priority over hint

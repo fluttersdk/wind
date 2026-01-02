@@ -237,4 +237,42 @@ void main() {
     expect(gapWidget, isA<SizedBox>());
     expect((gapWidget as SizedBox).width, 16.0);
   });
+
+  testWidgets('w-full h-full works inside scroll view (overflow-auto)', (
+    tester,
+  ) async {
+    // This tests the fix for FractionallySizedBox infinite constraints error
+    // when w-full/h-full is used inside a scrollable container
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WindTheme(
+          data: WindThemeData(),
+          child: const WDiv(
+            className: 'w-full h-full overflow-auto',
+            child: WDiv(
+              className: 'w-full h-full flex items-center justify-center',
+              child: Text('Centered'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Should not throw any errors and render successfully
+    expect(find.text('Centered'), findsOneWidget);
+
+    // Verify we have SingleChildScrollView(s) (from overflow-auto - nested for both directions)
+    expect(find.byType(SingleChildScrollView), findsWidgets);
+
+    // Verify the inner content uses SizedBox for full-size (not FractionallySizedBox)
+    // because constraints are unbounded inside scroll view
+    final sizedBoxFinder = find.byWidgetPredicate((widget) {
+      if (widget is SizedBox) {
+        // Looking for SizedBox that uses screen dimensions
+        return widget.width != null && widget.height != null;
+      }
+      return false;
+    });
+    expect(sizedBoxFinder, findsWidgets);
+  });
 }

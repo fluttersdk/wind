@@ -52,6 +52,10 @@ import 'pages/forms/select_multi.dart';
 import 'pages/forms/select_pagination.dart';
 import 'pages/forms/select_searchable.dart';
 
+// Popover
+import 'pages/popover/popover_alignment.dart';
+import 'pages/popover/popover_basic.dart';
+
 // Home
 import 'pages/home.dart';
 
@@ -146,6 +150,10 @@ final Map<String, Widget> appRoutes = {
   '/forms/select_multi': const SelectMultiExamplePage(),
   '/forms/select_pagination': const SelectPaginationExamplePage(),
   '/forms/select_searchable': const SelectSearchableExamplePage(),
+
+  // Popover
+  '/popover/popover_basic': const PopoverBasicExamplePage(),
+  '/popover/popover_alignment': const PopoverAlignmentExamplePage(),
 
   // Icons
   '/icons/icon_basic': const IconBasicExamplePage(),

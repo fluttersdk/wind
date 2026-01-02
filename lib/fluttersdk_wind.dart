@@ -51,4 +51,5 @@ export 'src/widgets/w_image.dart';
 export 'src/widgets/w_svg.dart';
 export 'src/widgets/w_checkbox.dart';
 export 'src/widgets/w_form_checkbox.dart';
+export 'src/widgets/w_popover.dart';
 export 'src/widgets/wind_animation_wrapper.dart';

@@ -10,6 +10,7 @@ class InputStatesExamplePage extends StatefulWidget {
 
 class _InputStatesExamplePageState extends State<InputStatesExamplePage> {
   String _focusRing = '';
+  String _noBorder = '';
   String _email = '';
   String? _emailError;
 
@@ -60,6 +61,27 @@ class _InputStatesExamplePageState extends State<InputStatesExamplePage> {
                     placeholder: 'Click to see focus ring',
                     className:
                         'w-full p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                  ),
+                ),
+              ],
+            ),
+
+            // No Border Examples
+            WDiv(
+              className: 'flex flex-col gap-2 w-full',
+              children: [
+                const WText(
+                  'No Border',
+                  className: 'text-sm font-medium text-gray-700',
+                ),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  child: WInput(
+                    value: _noBorder,
+                    onChanged: (value) => setState(() => _noBorder = value),
+                    placeholder: 'No border input',
+                    className:
+                        'w-full p-3 border-0 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
                   ),
                 ),
               ],

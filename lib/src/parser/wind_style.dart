@@ -535,16 +535,18 @@ class WindStyle {
       strokeColor.hashCode ^
       animationType.hashCode;
 
-  /// Calculates the effective line height based on either a fixed value
-  /// or a factor of the font size.
+  /// Calculates the effective line height as a multiplier for TextStyle.height.
   ///
-  /// If both `heightLine` and `heightLineFactor` are provided,
-  /// `heightLine` takes precedence.
+  /// Flutter's TextStyle.height is a multiplier (e.g., 1.5 means 1.5x font size).
+  /// - `heightLine` is stored as pixels, so we divide by fontSize to get multiplier
+  /// - `heightLineFactor` is already a multiplier (e.g., from `leading-loose`)
   double? get effectiveLineHeight {
-    if (heightLine != null) {
-      return heightLine;
-    } else if (heightLineFactor != null && fontSize != null) {
-      return heightLineFactor! * fontSize!;
+    if (heightLine != null && fontSize != null && fontSize! > 0) {
+      // Convert pixel value to multiplier: 36px / 24px = 1.5
+      return heightLine! / fontSize!;
+    } else if (heightLineFactor != null) {
+      // Already a factor like 1.5
+      return heightLineFactor;
     }
     return null;
   }

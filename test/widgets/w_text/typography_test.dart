@@ -246,9 +246,10 @@ void main() {
       final Text textWidget = tester.widget(textFinder);
 
       // text-xl is usually 1.25rem (20px)
-      // /8 is usually 2rem (32px)
+      // /8 = 8 * 4 = 32px line-height
+      // Flutter's TextStyle.height is a multiplier: 32 / 20 = 1.6
       expect(textWidget.style?.fontSize, themeData.fontSizes['xl']);
-      expect(textWidget.style?.height, themeData.getSpacing('8'));
+      expect(textWidget.style?.height, closeTo(1.6, 0.01));
     });
   });
 }

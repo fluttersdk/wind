@@ -4,6 +4,8 @@ import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../state/wind_anchor_state_provider.dart';
 import 'w_anchor.dart';
+import 'w_div.dart';
+import 'w_text.dart';
 
 /// **The Utility-First Button Component**
 ///
@@ -151,10 +153,25 @@ class WButton extends StatelessWidget {
           // Build content
           Widget content = isLoading ? _buildLoadingContent(styles) : child;
 
+          // Determine alignment for content
+          // justify-center in flex maps to centered content
+          Alignment? containerAlignment;
+          if (styles.mainAxisAlignment == MainAxisAlignment.center) {
+            containerAlignment = Alignment.center;
+          } else if (styles.alignment != null) {
+            containerAlignment = styles.alignment;
+          }
+
           // Wrap in styled container
           Widget styledButton = Container(
+            width: styles.widthFactor != null ? double.infinity : styles.width,
+            height: styles.heightFactor != null
+                ? double.infinity
+                : styles.height,
+            constraints: styles.constraints,
             padding: styles.padding,
             decoration: styles.decoration,
+            alignment: containerAlignment,
             child: DefaultTextStyle.merge(
               style: styles.toTextStyle(),
               child: content,
@@ -199,16 +216,14 @@ class WButton extends StatelessWidget {
     );
 
     if (loadingText != null) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [spinner, const SizedBox(width: 8), Text(loadingText!)],
+      return WDiv(
+        className: 'flex items-center justify-center gap-2',
+        children: [spinner, WText(loadingText!)],
       );
     }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
+    return WDiv(
+      className: 'flex items-center justify-center',
       children: [spinner],
     );
   }

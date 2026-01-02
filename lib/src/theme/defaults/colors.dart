@@ -15,6 +15,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff334155),
     800: Color(0xff1e293b),
     900: Color(0xff0f172a),
+    950: Color(0xff020617),
   },
   'gray': {
     50: Color(0xfff9fafb),
@@ -22,11 +23,12 @@ const Map<String, dynamic> colors = {
     200: Color(0xffe5e7eb),
     300: Color(0xffd1d5db),
     400: Color(0xff9ca3af),
-    500: Color(0xff1f2937),
+    500: Color(0xff6b7280),
     600: Color(0xff4b5563),
     700: Color(0xff374151),
     800: Color(0xff1f2937),
     900: Color(0xff111827),
+    950: Color(0xff030712),
   },
   'zinc': {
     50: Color(0xfffafafa),
@@ -39,6 +41,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff3f3f46),
     800: Color(0xff27272a),
     900: Color(0xff18181b),
+    950: Color(0xff09090b),
   },
   'neutral': {
     50: Color(0xfffafafa),
@@ -51,6 +54,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff404040),
     800: Color(0xff262626),
     900: Color(0xff171717),
+    950: Color(0xff0a0a0a),
   },
   'stone': {
     50: Color(0xfffafaf9),
@@ -63,6 +67,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff44403c),
     800: Color(0xff292524),
     900: Color(0xff1c1917),
+    950: Color(0xff0c0a09),
   },
   'red': {
     50: Color(0xfffef2f2),
@@ -75,6 +80,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xffb91c1c),
     800: Color(0xff991b1b),
     900: Color(0xff7f1d1d),
+    950: Color(0xff450a0a),
   },
   'orange': {
     50: Color(0xfffff7ed),
@@ -87,6 +93,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xffc2410c),
     800: Color(0xff9a3412),
     900: Color(0xff7c2d12),
+    950: Color(0xff431407),
   },
   'amber': {
     50: Color(0xfffffbeb),
@@ -99,6 +106,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xffb45309),
     800: Color(0xff92400e),
     900: Color(0xff78350f),
+    950: Color(0xff451a03),
   },
   'yellow': {
     50: Color(0xfffefce8),
@@ -111,6 +119,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xffa16207),
     800: Color(0xff854d0e),
     900: Color(0xff713f12),
+    950: Color(0xff422006),
   },
   'lime': {
     50: Color(0xfff7fee7),
@@ -123,6 +132,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff4d7c0f),
     800: Color(0xff3f6212),
     900: Color(0xff365314),
+    950: Color(0xff1a2e05),
   },
   'green': {
     50: Color(0xfff0fdf4),
@@ -135,6 +145,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff15803d),
     800: Color(0xff166534),
     900: Color(0xff14532d),
+    950: Color(0xff052e16),
   },
   'emerald': {
     50: Color(0xffecfdf5),
@@ -147,6 +158,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff047857),
     800: Color(0xff065f46),
     900: Color(0xff064e3b),
+    950: Color(0xff022c22),
   },
   'teal': {
     50: Color(0xfff0fdfa),
@@ -159,6 +171,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff0f766e),
     800: Color(0xff115e59),
     900: Color(0xff134e4a),
+    950: Color(0xff042f2e),
   },
   'cyan': {
     50: Color(0xffecfeff),
@@ -171,6 +184,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff0e7490),
     800: Color(0xff155e75),
     900: Color(0xff164e63),
+    950: Color(0xff083344),
   },
   'sky': {
     50: Color(0xfff0f9ff),
@@ -183,6 +197,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff0369a1),
     800: Color(0xff075985),
     900: Color(0xff0c4a6e),
+    950: Color(0xff082f49),
   },
   'blue': {
     50: Color(0xffeff6ff),
@@ -195,6 +210,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff1d4ed8),
     800: Color(0xff1e40af),
     900: Color(0xff1e3a8a),
+    950: Color(0xff172554),
   },
   'indigo': {
     50: Color(0xffeef2ff),
@@ -207,6 +223,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff4338ca),
     800: Color(0xff3730a3),
     900: Color(0xff312e81),
+    950: Color(0xff1e1b4b),
   },
   'violet': {
     50: Color(0xfff5f3ff),
@@ -219,6 +236,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff6d28d9),
     800: Color(0xff5b21b6),
     900: Color(0xff4c1d95),
+    950: Color(0xff2e1065),
   },
   'purple': {
     50: Color(0xfffaf5ff),
@@ -231,6 +249,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xff7e22ce),
     800: Color(0xff6b21a8),
     900: Color(0xff581c87),
+    950: Color(0xff3b0764),
   },
   'fuchsia': {
     50: Color(0xfffdf4ff),
@@ -243,6 +262,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xffa21caf),
     800: Color(0xff86198f),
     900: Color(0xff701a75),
+    950: Color(0xff4a044e),
   },
   'pink': {
     50: Color(0xfffdf2f8),
@@ -255,6 +275,7 @@ const Map<String, dynamic> colors = {
     700: Color(0xffbe185d),
     800: Color(0xff9d174d),
     900: Color(0xff831843),
+    950: Color(0xff500724),
   },
   'rose': {
     50: Color(0xfffff1f2),
@@ -267,5 +288,6 @@ const Map<String, dynamic> colors = {
     700: Color(0xffbe123c),
     800: Color(0xff9f1239),
     900: Color(0xff881337),
+    950: Color(0xff4c0519),
   },
 };

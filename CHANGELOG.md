@@ -6,6 +6,74 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [1.0.0-alpha.8] - 2026-01-02
+
+### ✨ New Features
+
+#### Named Max-Width Sizes
+- **Added**: Tailwind-compatible named max-width values for `max-w-*` classes.
+- **Classes**: `max-w-xs` (320px), `max-w-sm` (384px), `max-w-md` (448px), `max-w-lg` (512px), `max-w-xl` (576px), `max-w-2xl` (672px), `max-w-3xl` (768px), `max-w-4xl` (896px), `max-w-5xl` (1024px), `max-w-6xl` (1152px), `max-w-7xl` (1280px), `max-w-prose` (1040px).
+- **Usage**: `WDiv(className: "max-w-sm p-4 bg-white rounded-lg", ...)`.
+
+#### Border-0 Support
+- **Added**: `border-0` now correctly removes borders.
+- **Added**: Shade-less border colors now work: `border-white`, `border-black`, `border-transparent`.
+
+### 🐛 Bug Fixes
+
+#### WDiv Max-Width Constraint Override
+- **Fixed**: `max-w-sm` and other max-width constraints were being overridden by explicit width values.
+- **Behavior**: Max-width constraints now take precedence over width when explicitly set.
+- **Impact**: Cards with `max-w-sm` now correctly constrain to 384px instead of expanding to full width.
+
+---
+
+## [1.0.0-alpha.7] - 2026-01-01
+
+### 🐛 Bug Fixes
+
+#### WDiv Fractional Sizing in Scroll Contexts
+- **Fixed**: `w-full`/`h-full` now works correctly inside scroll views (`overflow-auto`).
+- **Behavior**: Uses `LayoutBuilder` to detect unbounded constraints and applies `MediaQuery.of(context).size` for full-size factors instead of `FractionallySizedBox`.
+- **Impact**: Enables proper Tailwind-to-Flutter conversion where scrollable containers wrap full-viewport content with flex centering.
+
+#### Flex Centering with Full Size
+- **Fixed**: `justify-center` and `items-center` now work correctly with `h-full`/`w-full` and `min-h-full`/`min-w-full`.
+- **Behavior**: Column with `h-full`, `min-h-full`, or explicit height now uses `MainAxisSize.max` instead of `.min`, allowing vertical centering to work.
+- **Impact**: `flex flex-col items-center justify-center h-full` or `min-h-full` now properly centers content like Tailwind.
+
+#### Background Fill with Full Size
+- **Fixed**: `bg-*` colors now properly fill entire parent area when combined with `w-full`/`h-full`.
+- **Behavior**: Container uses `width: double.infinity` and `height: double.infinity` when full-size is requested.
+- **Impact**: `w-full h-full bg-slate-950` now fills the entire viewport with the background color.
+
+### ✨ New Features
+
+#### Tailwind v4 Color Shades
+- **Added**: 950 shade for all color palettes.
+- **Colors**: All 22 colors now have 950 shade (slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose).
+- **Examples**: `bg-slate-950`, `text-indigo-950`, `border-red-950`, etc.
+
+#### Space Utilities
+- **Added**: `space-x-*` and `space-y-*` utilities for spacing between children.
+- **Usage**: `space-y-6` adds vertical gap of 24px (6 × 4) between children.
+- **Implementation**: Internally mapped to `gap-x` and `gap-y` for Flutter compatibility.
+
+---
+
+## [1.0.0-alpha.6] - 2026-01-01
+
+### ✨ New Features
+
+#### WPopover Widget
+- **Overlay System**: Flexible popover for dropdowns, menus, and tooltips.
+- **Alignment**: 6 supported positions (bottomLeft, bottomCenter, bottomRight, etc.).
+- **Styling**: Full Wind `className` support for overlay container.
+- **Interaction**: `triggerBuilder` and `contentBuilder` for maximum flexibility.
+- **Auto-Close**: Built-in tap-outside handling via `TapRegion`.
+
+---
+
 ## [1.0.0-alpha.5] - 2025-12-26
 
 ### ✨ New Features

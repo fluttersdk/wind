@@ -27,6 +27,23 @@ class SizingParser implements WindParserInterface {
     r'^(?<root>w|h|min-w|max-w|min-h|max-h)-\[(?<value>[0-9.]+%?(?:px)?)\]$',
   );
 
+  /// Named max-width sizes from Tailwind CSS default config
+  /// https://tailwindcss.com/docs/max-width
+  static const Map<String, double> _namedMaxWidths = {
+    'xs': 320,
+    'sm': 384,
+    'md': 448,
+    'lg': 512,
+    'xl': 576,
+    '2xl': 672,
+    '3xl': 768,
+    '4xl': 896,
+    '5xl': 1024,
+    '6xl': 1152,
+    '7xl': 1280,
+    'prose': 65 * 16, // 65ch ≈ 65 * average char width (16px for body text)
+  };
+
   /// Parses sizing related classes and returns updated WindStyle
   ///
   /// Example:
@@ -101,14 +118,33 @@ class SizingParser implements WindParserInterface {
           if (root == 'max-h' && maxHeight == null) {
             maxHeight = context.screenHeight;
           }
+        } else if (valueKey == 'full') {
+          // Handle full for all roots
+          if (root == 'w' && widthFactor == null) {
+            widthFactor = 1.0;
+          } else if (root == 'h' && heightFactor == null) {
+            heightFactor = 1.0;
+          } else if (root == 'min-w' && minWidth == null) {
+            // min-w-full means minimum width should be parent's full width
+            // Use screen width as fallback since ConstrainedBox doesn't support factors
+            minWidth = context.screenWidth;
+          } else if (root == 'min-h' && minHeight == null) {
+            // min-h-full means minimum height should be parent's full height
+            // Use screen height as fallback
+            minHeight = context.screenHeight;
+          } else if (root == 'max-w' && maxWidth == null) {
+            maxWidth = double.infinity;
+          } else if (root == 'max-h' && maxHeight == null) {
+            maxHeight = double.infinity;
+          }
+        } else if (root == 'max-w' && _namedMaxWidths.containsKey(valueKey)) {
+          // Handle named max-widths: max-w-xs, max-w-sm, max-w-md, etc.
+          maxWidth ??= _namedMaxWidths[valueKey];
         } else {
           String type = 'absolute';
           double value = 0.0;
 
-          if (valueKey == 'full') {
-            type = 'factor';
-            value = 1.0;
-          } else if (valueKey == 'auto') {
+          if (valueKey == 'auto') {
             // skip 'auto' values
             continue;
           } else {

@@ -173,6 +173,30 @@ class WInput extends StatefulWidget {
   /// Whether to show suggestions (predictive text).
   final bool enableSuggestions;
 
+  /// Widget to display before the input field (e.g., icon).
+  ///
+  /// Example:
+  /// ```dart
+  /// WInput(
+  ///   prefix: Icon(Icons.email, size: 20),
+  ///   className: 'pl-10 p-3 border rounded-lg',
+  /// )
+  /// ```
+  final Widget? prefix;
+
+  /// Widget to display after the input field (e.g., visibility toggle).
+  ///
+  /// Example:
+  /// ```dart
+  /// WInput(
+  ///   suffix: IconButton(
+  ///     icon: Icon(Icons.visibility),
+  ///     onPressed: () => toggleVisibility(),
+  ///   ),
+  /// )
+  /// ```
+  final Widget? suffix;
+
   /// Creates a new [WInput] instance.
   const WInput({
     super.key,
@@ -199,6 +223,8 @@ class WInput extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.autocorrect = true,
     this.enableSuggestions = true,
+    this.prefix,
+    this.suffix,
   });
 
   @override
@@ -356,6 +382,9 @@ class _WInputState extends State<WInput> {
     logger.setCoreWidget("TextField");
     logger.printFinalCode();
 
+    logger.setCoreWidget("TextField");
+    logger.printFinalCode();
+
     Widget result = TextField(
       controller: _controller,
       focusNode: _focusNode,
@@ -375,6 +404,14 @@ class _WInputState extends State<WInput> {
       maxLines: maxLines,
       minLines: minLines,
       style: textStyle,
+      strutStyle: StrutStyle(
+        forceStrutHeight: true,
+        height: styles.effectiveLineHeight,
+        fontSize: styles.fontSize,
+        fontWeight: styles.fontWeight,
+        fontStyle: styles.fontStyle,
+        fontFamily: styles.fontFamily,
+      ),
       decoration: decoration,
       inputFormatters: widget.inputFormatters,
       onChanged: widget.onChanged,
@@ -384,9 +421,34 @@ class _WInputState extends State<WInput> {
       onTapOutside: widget.onTapOutside,
     );
 
+    // Apply Box Model (Margin, Width, Height)
+    // WInput needs to respect standard Wind utility classes for sizing and spacing
+    final bool hasBoxProps =
+        styles.margin != null ||
+        styles.width != null ||
+        styles.height != null ||
+        styles.widthFactor != null ||
+        styles.heightFactor != null ||
+        styles.constraints != null;
+
+    if (hasBoxProps) {
+      double? width = styles.width;
+      double? height = styles.height;
+
+      // Handle w-full / h-full behavior
+      if (styles.widthFactor == 1.0) width = double.infinity;
+      if (styles.heightFactor == 1.0) height = double.infinity;
+
+      result = Container(
+        margin: styles.margin,
+        width: width,
+        height: height,
+        constraints: styles.constraints,
+        child: result,
+      );
+    }
+
     // Apply Flexible/Expanded wrapper if flex-auto or flex-1 is present
-    // - flex-auto parses to flexFit (FlexFit.loose)
-    // - flex-1 parses to flex (int value 1)
     // This allows WInput to properly expand in flex containers
     if (styles.flex != null) {
       result = Expanded(flex: styles.flex!, child: result);
@@ -442,16 +504,21 @@ class _WInputState extends State<WInput> {
       isDisabled: true,
     );
 
-    // Build hint style from placeholderStyles or fallback
-    TextStyle hintStyle = placeholderStyles.toTextStyle();
+    // Build hint style by merging input styles with placeholder styles
+    // This ensures font size, height, and family are inherited from the input
+    TextStyle baseTextStyle = styles.toTextStyle();
+    TextStyle hintBaseStyle = placeholderStyles.toTextStyle();
+    TextStyle hintStyle = baseTextStyle.merge(hintBaseStyle);
 
-    // If no placeholder color specified, use text color with lower opacity
-    if (placeholderStyles.color == null && styles.color != null) {
-      hintStyle = hintStyle.copyWith(
-        color: styles.color!.withValues(alpha: 0.5),
-      );
-    } else if (placeholderStyles.color == null) {
-      hintStyle = hintStyle.copyWith(color: Colors.grey.shade500);
+    // If no placeholder color specified, use text color with lower opacity or default grey
+    if (placeholderStyles.color == null) {
+      if (styles.color != null) {
+        hintStyle = hintStyle.copyWith(
+          color: styles.color!.withValues(alpha: 0.5),
+        );
+      } else {
+        hintStyle = hintStyle.copyWith(color: Colors.grey.shade500);
+      }
     }
 
     return InputDecoration(
@@ -464,7 +531,27 @@ class _WInputState extends State<WInput> {
       enabledBorder: border,
       focusedBorder: focusedBorder,
       disabledBorder: disabledBorder,
-      isDense: true,
+      // isDense: false allows Flutter to respect line-height and padding naturally
+      isDense: false,
+      constraints: const BoxConstraints(minHeight: 0),
+      prefixIcon: widget.prefix != null
+          ? Padding(
+              padding: const EdgeInsets.only(left: 12, right: 8),
+              child: widget.prefix,
+            )
+          : null,
+      prefixIconConstraints: widget.prefix != null
+          ? const BoxConstraints(minWidth: 0, minHeight: 0)
+          : null,
+      suffixIcon: widget.suffix != null
+          ? Padding(
+              padding: const EdgeInsets.only(right: 12, left: 8),
+              child: widget.suffix,
+            )
+          : null,
+      suffixIconConstraints: widget.suffix != null
+          ? const BoxConstraints(minWidth: 0, minHeight: 0)
+          : null,
     );
   }
 
@@ -482,6 +569,7 @@ class _WInputState extends State<WInput> {
     double borderWidth = 1.0;
     Color borderColor = Colors.grey.shade300;
     double borderRadius = 4.0;
+    bool hasBorder = true;
 
     // Extract border properties from BoxDecoration
     if (boxDecoration != null) {
@@ -490,6 +578,10 @@ class _WInputState extends State<WInput> {
         final border = boxDecoration.border as Border;
         borderWidth = border.top.width;
         borderColor = border.top.color;
+        // If border width is 0, mark as no border
+        if (borderWidth == 0) {
+          hasBorder = false;
+        }
       }
 
       // Border radius
@@ -497,6 +589,12 @@ class _WInputState extends State<WInput> {
         final br = boxDecoration.borderRadius as BorderRadius;
         borderRadius = br.topLeft.x;
       }
+    }
+
+    // If no border (border-0), return InputBorder.none
+    // But if focused with ring, we still want to show the ring as border
+    if (!hasBorder && !isFocused) {
+      return InputBorder.none;
     }
 
     // Apply ring shadow as focus indicator if present
@@ -511,11 +609,18 @@ class _WInputState extends State<WInput> {
       if (styles.ringWidth != null && styles.ringWidth! > 0) {
         borderWidth = styles.ringWidth!;
       }
+    } else if (!hasBorder && isFocused) {
+      // If border-0 but focused without ring, return no border
+      return InputBorder.none;
     }
 
     // Disabled state
     if (isDisabled) {
       borderColor = Colors.grey.shade200;
+      // If originally no border, keep it that way when disabled
+      if (!hasBorder) {
+        return InputBorder.none;
+      }
     }
 
     return OutlineInputBorder(

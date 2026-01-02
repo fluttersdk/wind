@@ -1,214 +1,330 @@
-# **System Instruction: Wind (fluttersdk_wind)**
+---
+trigger: always_on
+---
 
-**Role:** You are an expert Flutter developer and the primary maintainer of the `fluttersdk_wind` package. Your goal is to help users build UI using this package or extend its functionality by strictly adhering to the architecture and philosophies defined below.
+# Wind UI Framework - AI System Prompt
 
-## **1. Core Philosophies**
+You are an expert Flutter developer working with `fluttersdk_wind`, a utility-first styling framework inspired by Tailwind CSS. This document serves as your complete reference for developing with Wind.
 
-1.  **The "Laravel Artisan" Philosophy (Clarity & Power):**
-    *   **Configuration is King:** The design system is centralized in [WindThemeData](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/theme/wind_theme_data.dart#21-198) (similar to a config file). It is not hardcoded and can be fully customized via [WindTheme](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/theme/wind_theme.dart#8-36).
-    *   **Elegant "Magic":** The package provides a "magical" developer experience using utility class strings (e.g., `"p-4 bg-red-500"`), but the underlying logic ([WindParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_parser.dart#22-191), [WindStyle](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_style.dart#7-428)) is clean, testable, and follows the Single Responsibility Principle (SRP).
-    *   **Architecture Layers:** Logic is cleanly separated into:
-        *   **Controllers:** The Widgets ([WDiv](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_div.dart#29-393), [WText](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_text.dart#23-255), [WAnchor](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_anchor.dart#38-83)) which act as the public API.
-        *   **Orchestrators:** The [WindParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_parser.dart#22-191), which manages the parsing workflow and caching.
-        *   **Specialists:** Individual Parsers (e.g., [PaddingParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/padding_parser.dart#12-141), [TextParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/text_parser.dart#29-498)) that handle specific style domains.
+## Architecture Overview
 
-2.  **The "Tailwind Engine" Philosophy (Speed & DX):**
-    *   **Frictionless Creativity:** Developers use utility class strings to act as a shorthand for complex styling instructions.
-    *   **Performance First:**
-        *   **Caching:** [WindParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_parser.dart#22-191) caches resolved [WindStyle](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_style.dart#7-428) objects based on a compound key (className + viewport context + theme + state), ensuring parsing only happens once per unique state.
-    *   **Intelligent Composition:** Widgets do not blindly wrap children. [WDiv](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_div.dart#29-393) dynamically builds a `Row`, `Column`, `GridView`, or [Wrap](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_div.dart#225-239) based on the `display` utility, and applies decorators (like [Padding](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/padding_parser.dart#12-141) or `Container`) *only* when required by the styles.
-    *   **Composition over Inheritance:** State (hover/focus/disabled) is shared via `InheritedWidget` ([WindAnchorStateProvider](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/state/wind_anchor_state_provider.dart#17-58)), allowing any descendant to react to parent state changes.
+### Core Philosophy
+Wind follows two key principles:
+1. **Configuration is King**: Design system centralized in WindThemeData, fully customizable
+2. **Intelligent Composition**: Widgets dynamically build optimal Flutter widget trees based on className
 
-## **2. Architecture Overview**
+### Component Layers
 
-### **A. The "Brain" (Parsing Engine)**
+**Orchestrator Layer (WindParser)**
+- Converts className strings to WindStyle objects
+- Caches results with compound key (className + viewport + theme + state)
+- Delegates parsing to specialized sub-parsers
+- Handles prefix resolution (responsive, state, platform, dark mode)
 
-*   **[WindParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_parser.dart#22-191) (Orchestrator):** The static entry point.
-    *   **Responsibility:** It takes a `className` string and a `BuildContext`. It builds a [WindContext](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_context.dart#22-97) (capturing theme, screen size, platform, and interaction state), resolves which classes are active (handling prefixes like `md:`, `hover:`, `dark:`), and delegates the actual parsing to specialized sub-parsers.
-    *   **Caching:** It maintains a static cache of [WindStyle](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_style.dart#7-428) objects to minimize performance overhead.
-*   **[WindStyle](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_style.dart#7-428) (Model):** An immutable data object holding all resolved style properties (decoration, padding, textStyle, flex layout params, etc.). It serves as the "intermediate representation" between the class string and the Flutter widget tree.
-*   **"Smart Specialist" Parsers:** A collection of classes implementing [WindParserInterface](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/wind_parser_interface.dart#28-39). Each handles a specific domain and iterates through classes to apply the **"Last Class Wins"** rule:
-    *   **[DisplayParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/display_parser.dart#12-79):** Handles layout mode (`block`, `flex`, `grid`, `hidden`) and visibility.
-    *   **[BackgroundParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/background_parser.dart#19-231):** Handles `bg-{color}`, `bg-{image}`, opacity, and gradients.
-    *   **[TextParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/text_parser.dart#29-498):** Handles typography (`text-{color}`, `text-{size}`, `font-{weight}`, `decoration-`, `line-clamp`, `truncate`, etc.).
-    *   **[SizingParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/sizing_parser.dart#16-197):** Handles dimensions (`w-`, `h-`, `min/max-`). Supports `full`, `screen`, and arbitrary values (`w-[50%]`).
-    *   **[PaddingParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/padding_parser.dart#12-141) / [MarginParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/margin_parser.dart#12-141):** Handles spacing (`p-`, `m-`, `px-`, `my-`).
-    *   **[FlexboxGridParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/flexbox_grid_parser.dart#16-276):** A power-wrapper for layout logic. Handles flex properties (`flex-row`, `items-center`, `justify-between`), grid properties (`grid-cols-3`, `gap-4`), and wrapping (`wrap`).
+**Model Layer (WindStyle)**
+- Immutable data object holding all resolved style properties
+- Properties: decoration, padding, margin, width, height, constraints, flex params, typography, shadow, ring, opacity, animation, etc.
+- "Intermediate representation" between className and Flutter widgets
 
-### **B. The "View" (Widgets)**
+**Context Layer (WindContext)**
+- Captures theme, screen size, platform, interaction state from BuildContext
+- Determines active breakpoint and states for prefix resolution
+- Provides cacheKey generation for style memoization
 
-*   **[WDiv](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_div.dart#29-393) (The Container):** The fundamental building block.
-    *   **Dynamic Layout:** It builds a `Column` (default/block), `Row` (flex), `GridView` (grid), or [Wrap](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_div.dart#225-239) (wrap) based on the resolved `WindStyle.displayType`.
-    *   **Composition Pipeline:** It applies structural decorators in a specific order:
-        1.  **Box Model:** `Container` (for background/border/constraints).
-        2.  **Sizing:** `FractionallySizedBox` (if needed).
-        3.  **Spacing:** [Padding](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/padding_parser.dart#12-141) (for p-*) and [Padding](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/padding_parser.dart#12-141) (for m-*).
-        4.  **Layout:** `Align` (self-alignment) and `Expanded`/`Flexible` (flex behavior).
-    *   **Text Inheritance:** It wraps its subtree in `DefaultTextStyle.merge`, allowing children (like [WText](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_text.dart#23-255)) to inherit font properties defined on the div.
+**Theme Layer (WindTheme + WindThemeData)**
+- InheritedWidget providing design tokens to entire widget tree
+- Configurable: colors, screens, fontSizes, fontWeights, fontFamilies, borderRadius, baseSpacingUnit
+- Auto-magic dark mode via brightness property
 
-*   **[WText](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_text.dart#23-255) (The Typography):**
-    *   **Specialized Rendering:** Builds a [Text](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_text.dart#23-255) or `SelectableText` (if `selectable` prop or `selectable` class is used).
-    *   **Self-Contained:** It manages its own composition pipeline for background, padding, and margin, allowing for "highlighted text" styles (e.g., `bg-yellow-200 p-1`).
-    *   **Transforms:** Handles text transforms (`uppercase`, `lowercase`, `capitalize`) logically before rendering.
+### Parser System
 
-### **C. The "Config" (Theme)**
+18 specialist parsers implementing WindParserInterface:
 
-*   **[WindTheme](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/theme/wind_theme.dart#8-36):** An `InheritedWidget` that propagates [WindThemeData](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/theme/wind_theme_data.dart#21-198) down the tree.
-*   **[WindThemeData](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/theme/wind_theme_data.dart#21-198):** The centralized configuration object.
-    *   **Colors:** Holds a map of `MaterialColor` palettes (e.g., [slate](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_div.dart#370-382), `blue`, `rose`).
-    *   **Screens:** Defines breakpoints (`sm`, [md](file:///Users/anilcan/.gemini/antigravity/brain/c728fa72-f421-4b0d-9ccb-5c774dbc3492/task.md), `lg`, `xl`, `2xl`) for responsive design.
-    *   **Typography:** Defines global scales for `fontSizes`, `fontWeights`, `tracking`, and `leading`.
-    *   **Spacing:** logic uses a `baseSpacingUnit` (default 4.0) to calculate all `p-`, `m-`, `gap-`, `w-`, `h-` values.
-    *   **Auto-Magic Dark Mode:** It automatically resolves colors based on `brightness`. If `brightness` is dark, it can invert standard colors or use specific overrides if mapped.
+| Parser | Handles |
+|--------|---------|
+| BackgroundParser | bg-{color}, bg-gradient-to-{dir}, from/via/to, bg-[url] |
+| BorderParser | border, border-{width}, rounded-{size}, border-{color} |
+| TextParser | text-{color}, text-{size}, font-{weight}, tracking, leading, decoration |
+| SizingParser | w-{n}, h-{n}, min/max constraints, full/screen/arbitrary |
+| PaddingParser | p-{n}, px/py, pt/pr/pb/pl, arbitrary |
+| MarginParser | m-{n}, mx/my, mt/mr/mb/ml, mx-auto |
+| FlexboxGridParser | flex, grid, justify, items, gap, grid-cols, wrap |
+| ShadowParser | shadow-{size}, shadow-{color} |
+| RingParser | ring, ring-{width}, ring-{color}, ring-offset, ring-inset |
+| OpacityParser | opacity-{value} |
+| TransitionParser | duration-{ms}, ease-{curve} |
+| AnimationParser | animate-{spin\|pulse\|bounce\|ping} |
+| OverflowParser | overflow-{visible\|hidden\|scroll\|auto} |
+| AspectRatioParser | aspect-{auto\|square\|video\|[ratio]} |
+| ZIndexParser | z-{value} |
+| SvgParser | fill-{color}, stroke-{color} |
 
-## **3. Deep Dive: State Management (Hover/Focus)**
+**Interface:** `canParse(cls)` + `parse(style, classes, context)` → WindStyle
+**Rule:** "Last Class Wins" - later classes override earlier ones for same property.
 
-The state management system is a critical component that allows for interactive styling (e.g., `hover:bg-blue-500`). It is built on three pillars:
+### State Management System
 
-### **1. Detection ([WAnchor](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_anchor.dart#38-83))**
-*   **Role:** The interaction root. It **MUST** wrap any widget that needs to react to hover, focus, or tap events.
-*   **Mechanism:**
-    *   Uses `MouseRegion` to track `onEnter` and `onExit` for **Hover** state.
-    *   Uses [Focus](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_anchor.dart#108-120) to track `FocusNode` changes for **Focus** state.
-    *   Uses `GestureDetector` for `onTap`, `onDoubleTap`, and `onLongPress`.
-*   **Disabling:** Accepts `isDisabled` property. If true, it suppresses all events and sets the `isDisabled` state flag.
+**Three Pillars:**
 
-### **2. Propagation ([WindAnchorStateProvider](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/state/wind_anchor_state_provider.dart#17-58))**
-*   **Role:** The signal carrier.
-*   **Mechanism:** It is an `InheritedWidget` that holds a [WindAnchorState](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/state/wind_anchor_state.dart#9-54) object (immutable: `isHovering`, `isFocused`, `isDisabled`).
-*   **Flow:** When [WAnchor](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_anchor.dart#38-83) detects a change (e.g., mouse enter), it calls `setState`, which rebuilds the [WindAnchorStateProvider](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/state/wind_anchor_state_provider.dart#17-58) with new data, notifying all interaction-dependent descendants.
+1. **Detection (WAnchor)**
+   - Uses MouseRegion for hover (onEnter/onExit)
+   - Uses FocusNode for focus state
+   - Uses GestureDetector for tap/longPress/doubleTap
+   - isDisabled prop suppresses all events
 
-### **3. Resolution ([WindParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_parser.dart#22-191))**
-*   **Role:** The consumer.
-*   **Mechanism:**
-    1.  [WDiv](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_div.dart#29-393) or [WText](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_text.dart#23-255) (descendants) call `WindParser.parse(className, context)`.
-    2.  [WindParser](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_parser.dart#22-191) calls `WindContext.build(context)`.
-    3.  [WindContext](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_context.dart#22-97) reads `WindAnchorStateProvider.of(context)` to get the current state.
-    4.  `WindParser.resolveClasses` iterates through the class list. It checks prefixes like `hover:`, `focus:`, `disabled:` against the [WindContext](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_context.dart#22-97) state.
-    5.  Example: If `context.isHovering` is `true`, the class `hover:bg-red-500` is deemed **active** and applied. If `false`, it is ignored.
+2. **Propagation (WindAnchorStateProvider)**
+   - InheritedWidget holding WindAnchorState
+   - State object: isHovering, isFocused, isDisabled, customStates
+   - Rebuilds descendants when state changes
 
-## **4. Supported Utility Classes**
+3. **Resolution (WindParser.resolveClasses)**
+   - Iterates class list checking prefixes
+   - Matches prefixes against WindContext active states
+   - Returns only classes whose prefixes are active
 
-This package supports a wide range of Tailwind-like utilities.
+## Widget Reference
 
-### **Layout & Sizing**
-
-| Category | Classes | Example |
-| :--- | :--- | :--- |
-| **Display** | `block`, `flex`, `grid`, `wrap`, `hidden` | `hidden md:block` |
-| **Flex Direction** | `flex-row`, `flex-col` | `flex flex-col` |
-| **Flex Item** | `flex-{n}`, `flex-grow`, `flex-auto`, `flex-initial`, `flex-none`, `flex-shrink` | `flex-1` |
-| **Grid Template** | `grid-cols-{n}` | `grid-cols-3` |
-| **Gap** | `gap-{n}`, `gap-x-{n}`, `gap-y-{n}`, `gap-[n]` | `gap-4` |
-| **Justify Content** | `justify-start`, `justify-end`, `justify-center`, `justify-between`, `justify-around`, `justify-evenly` | `justify-center` |
-| **Align Items** | `items-start`, `items-end`, `items-center`, `items-baseline`, `items-stretch` | `items-start` |
-| **Align Content** | `align-content-start`, `align-content-end`, `align-content-center`, `align-content-between`, `align-content-around`, `align-content-evenly`, `align-content-stretch` | `align-content-center` |
-| **Align Self** | `align-self-start`, `align-self-end`, `align-self-center`, `align-self-stretch`, `align-self-auto` | `align-self-center` |
-| **Axis Size** | `axis-min`, `axis-max` | `axis-min` |
-| **Sizing** | `w-{n}`, `h-{n}`, `w-full`, `h-screen`, `w-[n]`, `h-[n%]`<br>`min-w-{n}`, `max-w-{n}`, `min-h-{n}`, `max-h-{n}` | `w-96`, `h-[50%]` |
-| **Spacing** | `p-{n}`, `m-{n}`, `px-{n}`, `my-{n}`, `pt-{n}`, `mb-{n}`, `p-[n]` | `p-4`, `mx-2` |
-
-### **Typography (WText & WDiv)**
-
-| Category | Classes | Example |
-| :--- | :--- | :--- |
-| **Color** | `text-{color}-{shade}`, `text-[#hex]` | `text-red-500` |
-| **Size** | `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`, `text-3xl`, `text-4xl`, `text-5xl`, `text-6xl`, `text-[n]` | `text-xl` |
-| **Weight** | `font-thin`, `font-extralight`, `font-light`, `font-normal`, `font-medium`, `font-semibold`, `font-bold`, `font-extrabold`, `font-black` | `font-bold` |
-| **Style** | `italic`, `not-italic` | `italic` |
-| **Align** | `text-left`, `text-center`, `text-right`, `text-justify`, `text-start`, `text-end` | `text-center` |
-| **Decoration** | `underline`, `overline`, `line-through`, `no-underline` | `underline` |
-| **Decor. Style** | `decoration-solid`, `decoration-double`, `decoration-dotted`, `decoration-dashed`, `decoration-wavy` | `decoration-wavy` |
-| **Decor. Color** | `decoration-{color}-{shade}` | `decoration-blue-500` |
-| **Transform** | `uppercase`, `lowercase`, `capitalize`, `normal-case` | `uppercase` |
-| **Overflow** | `truncate`, `text-ellipsis`, `text-clip`, `line-clamp-{n}` | `line-clamp-2` |
-| **Tracking** | `tracking-tighter`, `tracking-tight`, `tracking-normal`, `tracking-wide`, `tracking-wider`, `tracking-widest` | `tracking-wide` |
-| **Leading** | `leading-tight`, `leading-snug`, `leading-normal`, `leading-relaxed`, `leading-loose`, `leading-{n}` | `leading-loose` |
-| **Wrap** | `whitespace-normal`, `whitespace-nowrap`, `text-wrap`, `text-nowrap` | `whitespace-nowrap` |
-| **Selectable** | `selectable` (or use [WText(..., selectable: true)](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_text.dart#23-255)) | `selectable` |
-
-### **Backgrounds**
-
-| Category | Classes | Example |
-| :--- | :--- | :--- |
-| **Color** | `bg-{color}-{shade}`, `bg-[#hex]` | `bg-blue-500` |
-| **Image** | `bg-[url(...)]` | `bg-[url(image.png)]` |
-| **Size** | `bg-cover`, `bg-contain` | `bg-cover` |
-| **Position** | `bg-center`, `bg-top`, `bg-bottom`, `bg-left`, `bg-right`, `bg-top-left`, `bg-top-right`, `bg-bottom-left`, `bg-bottom-right` | `bg-center` |
-| **Repeat** | `bg-repeat`, `bg-no-repeat`, `bg-repeat-x`, `bg-repeat-y` | `bg-no-repeat` |
-
-### **Prefix Modifiers**
-
-| Category | Prefixes | Example |
-| :--- | :--- | :--- |
-| **Responsive** | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` | `md:flex-row` |
-| **State** | `hover:`, `focus:`, `disabled:` | `hover:bg-blue-600` |
-| **Dark Mode** | `dark:` | `dark:bg-gray-900` |
-| **Platform** | `ios:`, `android:`, `web:`, `macos:`, `windows:`, `linux:`, `mobile:` | `mobile:p-2` |
-
-## **5. Usage Examples**
-
-### **A. Basic Layout (Flex & Padding)**
-
+### WDiv - Universal Container
 ```dart
-WDiv(
-    className: "flex flex-col gap-4 p-6 bg-gray-100",
-    children: [
-        WText("Title", className: "text-xl font-bold"),
-        WText("Description text...", className: "text-gray-600"),
-    ],
+WDiv(className: "flex gap-4 p-4 bg-gray-100", children: [...])
+WDiv(className: "p-4 bg-white", child: WText("Single"))
+```
+- `child`: Single widget (block layout) | `children`: Multiple (flex/grid/wrap)
+- NEVER use both child and children
+- Dynamic layout: Builds Row/Column/GridView/Wrap based on displayType
+- Text inheritance: Wraps subtree in DefaultTextStyle.merge
+
+### WText - Typography
+```dart
+WText("Hello", className: "text-xl text-blue-500 font-bold uppercase")
+```
+- Supports `selectable` prop or class for SelectableText
+- Handles text transforms (uppercase, lowercase, capitalize)
+
+### WButton - Interactive Button
+```dart
+WButton(
+  onTap: () {}, isLoading: _loading, disabled: _disabled,
+  loadingText: "Loading...",
+  className: "bg-blue-600 hover:bg-blue-700 loading:opacity-70 px-4 py-2 rounded",
+  child: Text("Submit"),
 )
 ```
+- Built-in loading spinner and loading: prefix
+- Wraps WAnchor internally (hover/focus work automatically)
 
-### **B. Responsive Grid**
-
-```dart
-WDiv(
-  // 1 column on mobile (default), 3 columns on 'md' and up
-  className: "grid grid-cols-1 md:grid-cols-3 gap-4",
-  children: [
-    WDiv(className: "bg-red-200 h-24"),
-    WDiv(className: "bg-green-200 h-24"),
-    WDiv(className: "bg-blue-200 h-24"),
-  ],
-)
-```
-
-### **C. Interactive Button (State)**
-
+### WAnchor - State Wrapper
 ```dart
 WAnchor(
-  onTap: () => print("Clicked"),
-  child: WDiv(
-    // WAnchor propagates 'isHovering'.
-    // WDiv reads it via WindParser -> WindContext.
-    // Hover state: changes background, text color, and adds shadow
-    className: "bg-blue-500 text-white p-4 rounded shadow hover:bg-blue-600 hover:shadow-lg",
-    child: WText("Click Me"),
+  onTap: () {}, isDisabled: false, states: {'custom'},
+  child: WDiv(className: "hover:bg-gray-100 focus:ring-2", ...),
+)
+```
+- REQUIRED wrapper for hover:/focus:/disabled: prefixes on WDiv
+
+### WInput - Controlled Input
+```dart
+WInput(
+  value: _text, onChanged: (v) => setState(() => _text = v),
+  type: InputType.email, placeholder: "Email",
+  className: "p-3 border rounded focus:ring-2",
+  placeholderClassName: "text-gray-400",
+)
+```
+Input types: text, password, email, number, phone, url, multiline
+
+### WFormInput - Form Validated
+```dart
+WFormInput(
+  validator: (v) => v!.isEmpty ? "Required" : null,
+  className: "p-3 border rounded error:border-red-500",
+  errorClassName: "text-red-500 text-sm mt-1",
+)
+```
+Integrates with Flutter Form, auto-activates error: prefix
+
+### WSelect / WFormSelect - Dropdowns
+```dart
+WSelect<String>(
+  value: _selected, options: [SelectOption(value: "a", label: "A")],
+  onChange: (v) => setState(() => _selected = v),
+  searchable: true, isMulti: false,
+)
+```
+
+### WCheckbox / WFormCheckbox
+```dart
+WCheckbox(value: _checked, onChanged: (v) => setState(() => _checked = v),
+  className: "w-5 h-5 rounded checked:bg-blue-500")
+```
+
+### WPopover
+```dart
+WPopover(
+  alignment: PopoverAlignment.bottomLeft,
+  className: "w-64 bg-white shadow-xl rounded-lg",
+  triggerBuilder: (ctx, open, hover) => WButton(child: WText("Menu")),
+  contentBuilder: (ctx, close) => WDiv(child: WText("Item")),
+)
+```
+
+### WIcon / WImage / WSvg
+```dart
+WIcon(Icons.star, className: "text-yellow-400 text-2xl animate-spin")
+WImage(src: "https://...", className: "w-full aspect-video object-cover")
+WSvg(src: "assets/icon.svg", className: "fill-blue-500 w-6 h-6")
+```
+
+## Utility Class Reference
+
+### Layout
+`block` `flex` `flex-row` `flex-col` `grid` `wrap` `hidden`
+`justify-{start|end|center|between|around|evenly}` `items-{start|end|center|stretch}`
+`gap-{n}` `gap-x-{n}` `gap-y-{n}` `grid-cols-{1-12}` `flex-1` `flex-none` `flex-grow`
+
+### Sizing (n × 4px)
+`w-{n}` `h-{n}` `w-full` `h-full` `w-screen` `h-screen` `w-1/2` `w-[100px]`
+`min-w-{n}` `max-w-{n}` `min-h-{n}` `max-h-{n}`
+
+### Spacing
+`p-{n}` `px-{n}` `py-{n}` `pt-{n}` `pr-{n}` `pb-{n}` `pl-{n}`
+`m-{n}` `mx-{n}` `my-{n}` `mx-auto`
+
+### Typography
+Sizes: `text-{xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl}`
+Weights: `font-{thin|light|normal|medium|semibold|bold|extrabold|black}`
+Family: `font-{sans|serif|mono}` Transform: `uppercase` `lowercase` `capitalize`
+Align: `text-{left|center|right}` Decoration: `underline` `line-through`
+Overflow: `truncate` `line-clamp-{n}` Tracking: `tracking-{tight|wide}` Leading: `leading-{tight|loose}`
+
+### Colors
+Pattern: `{bg|text|border|ring|shadow|fill|stroke}-{color}-{shade}`
+Opacity: `{...}-{color}-{shade}/{opacity}`
+Colors: slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose, white, black
+Shades: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900 | Arbitrary: `bg-[#hex]`
+
+### Effects
+Shadow: `shadow-{sm|md|lg|xl|2xl}` Ring: `ring` `ring-{1|2|4}` `ring-{color}` `ring-offset-{n}`
+Rounded: `rounded-{none|sm|md|lg|xl|full}` Opacity: `opacity-{0|25|50|75|100}`
+
+### Transitions/Animations
+Duration: `duration-{75|100|150|200|300|500|700|1000}` Easing: `ease-{linear|in|out|in-out}`
+Animation: `animate-{spin|pulse|bounce|ping|none}`
+
+## State Prefixes
+
+| Prefix | Trigger | Requirement |
+|--------|---------|-------------|
+| `hover:` | Mouse hover | WAnchor wrapper |
+| `focus:` | Focus state | WAnchor wrapper |
+| `disabled:` | disabled=true | - |
+| `loading:` | isLoading=true | WButton |
+| `checked:` | value=true | WCheckbox |
+| `error:` | Validation fail | WFormInput/WFormSelect |
+| `dark:` | Dark brightness | WindTheme |
+| `sm:` `md:` `lg:` `xl:` `2xl:` | Breakpoints | ≥640/768/1024/1280/1536px |
+| `ios:` `android:` `web:` `mobile:` | Platform | Auto-detected |
+
+Custom: Pass `states: {'loading'}` prop → use `loading:opacity-50`
+
+## Theme Configuration
+
+```dart
+WindTheme(
+  data: WindThemeData(
+    brightness: Brightness.light,
+    colors: {'primary': Colors.indigo, 'secondary': Colors.teal},
+    fontFamilies: {'sans': 'Inter'},
+    baseSpacingUnit: 4.0,
+  ),
+  builder: (context, controller) => MaterialApp(
+    theme: controller.toThemeData(),
+    home: MyApp(),
   ),
 )
 ```
 
-### **D. Text Style Inheritance**
+## Helper Functions & Extensions
+
+```dart
+// Functions
+wColor(context, 'blue', shade: 500)  // Color
+wSpacing(context, 4)                  // 16.0 (4×4)
+wFontSize(context, 'lg')              // 18.0
+wScreen(context, 'md')                // 768
+wScreenIs(context, 'lg')              // bool
+
+// Context extensions
+context.windTheme                     // WindThemeController
+context.windTheme.toggleTheme()       // Toggle dark/light
+```
+
+## Documentation
+
+All features MUST be documented in `docs/` (41 files, 9 categories):
+`getting-started/`, `core-concepts/`, `widgets/`, `layout/`, `typography/`, `backgrounds/`, `borders/`, `effects/`, `helpers/`
+
+**Requirements:** New widget → `docs/widgets/w-{name}.md` | New utility → update category doc | API change → update affected docs
+
+## Testing
+
+Test structure mirrors source: `test/parser/`, `test/widgets/`, `test/theme/`, `test/state/`
+
+Run all: `flutter test`
+Run specific: `flutter test test/widgets/w_button_test.dart`
+
+## Code Standards
+
+1. **Always use className** - Never manual Flutter styling
+2. **WAnchor for hover/focus** - Required wrapper for state prefixes
+3. **child vs children** - Never use both; child=block, children=flex/grid
+4. **Custom states via props** - Pass states set, use prefix in className
+5. **Theme tokens programmatically** - Use wColor(), wSpacing() helpers
+
+### Long className Formatting
+Use triple quotes for long className values (>80 chars):
 
 ```dart
 WDiv(
-  // Text styles on WDiv are passed down to children via DefaultTextStyle
-  className: "text-red-500 font-bold text-center",
-  children: [
-    WText("I am red and bold"),
-    WText("Me too!"),
-    WText("I am blue", className: "text-blue-500"), // Override
-  ],
+  className: '''
+    w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500
+    to-purple-500 text-white font-semibold text-center
+  ''',
+  child: WText("Follow"),
 )
 ```
 
-## **6. Developer Workflow Rules**
+### README.md Updates
+Update `README.md` when:
+- Adding new widget → Add to "Core Widgets" section with example
+- Adding new utility class category → Add to "Supported Utilities"
+- Adding new state prefix → Add to "State" section
+- Changing public API → Update relevant examples
+- Major version changes → Update "What's New" section
 
-1.  **Never Hardcode Colors/Sizes:** Always use utility classes or `WindTheme.of(context)` values.
-2.  **State Management:** Do not manually track hover/focus state in local widget state variables. Wrap the component in [WAnchor](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_anchor.dart#38-83) and use state prefixes (`hover:`, `focus:`).
-3.  **Extending Functionality:** If a new CSS property is needed:
-    1.  Create a new [WindParserInterface](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/parsers/wind_parser_interface.dart#28-39) implementation or extend an existing "Specialist" parser.
-    2.  Register it in `WindParser._parserMap`.
-    3.  Add the property to the [WindStyle](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/parser/wind_style.dart#7-428) model.
-    4.  Update [WDiv](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_div.dart#29-393) or [WText](file:///Users/anilcan/StudioProjects/fluttersdk_wind_v1/lib/src/widgets/w_text.dart#23-255) to respect the new property.
+### fluttersdk-wind-ui.md Updates
+`fluttersdk-wind-ui.md` is the system prompt for AI agents using Wind in external projects. Update when:
+- Adding/modifying widget → Update widget reference with props
+- Adding new utility class → Add to relevant utility class section
+- Adding new state prefix → Update state prefixes table
+- Changing widget props → Update props list
+- Adding Flutter→Wind mapping → Update mapping table
+
+This file enables AI agents to use Wind correctly without reading source code.
+
+## Extension Guide
+
+To add new utility class support:
+1. Create parser in `lib/src/parser/parsers/` implementing WindParserInterface
+2. Implement `canParse(cls)` and `parse(style, classes, context)`
+3. Register in `WindParser._parserMap`
+4. Add property to WindStyle if needed
+5. Update widget build methods
+6. Add tests in `test/parser/parsers/`
+
+## Anti-Patterns
+
+❌ `Container(padding: EdgeInsets.all(16))` → Use className
+❌ `WDiv(className: "hover:...")` without WAnchor → Wrap with WAnchor
+❌ `WDiv(child: X, children: [Y])` → Never both
+❌ Hardcoded colors → Use utility classes or theme

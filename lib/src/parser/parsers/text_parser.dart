@@ -239,9 +239,16 @@ class TextParser implements WindParserInterface {
                 );
               } else if (match.namedGroup('lineHeight') != null) {
                 final lhKey = match.namedGroup('lineHeight')!;
-                if (double.tryParse(lhKey) != null) {
-                  lhValue = theme.getSpacing(lhKey);
+                // Check if it's a numeric value like "9" in text-2xl/9
+                // Tailwind's numeric line-height values are based on rem units
+                // /9 = 9 * 0.25rem = 2.25rem = 36px (but this is absolute height)
+                final numericValue = double.tryParse(lhKey);
+                if (numericValue != null) {
+                  // Convert Tailwind's numeric scale to pixels (N * 4px)
+                  // This gives actual line-height in pixels
+                  lhValue = numericValue * 4;
                 } else {
+                  // Named values like 'loose', 'tight' etc.
                   lhValue = theme.leading[lhKey];
                 }
               }

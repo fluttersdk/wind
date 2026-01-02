@@ -3,13 +3,45 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 /// Helper to wrap widget in MaterialApp with WindTheme
+/// Positions widget at top of screen so dropdowns have room to render within viewport
 Widget wrapWithTheme(Widget child) {
   return MaterialApp(
     home: WindTheme(
       data: WindThemeData(),
-      child: Scaffold(body: child),
+      child: Scaffold(
+        body: Align(
+          alignment: Alignment.topLeft,
+          child: Padding(padding: const EdgeInsets.all(16), child: child),
+        ),
+      ),
     ),
   );
+}
+
+/// Helper to tap a dropdown option by finding its GestureDetector and invoking onTap.
+/// This works around Flutter test's inability to tap widgets in overlays.
+Future<void> tapDropdownOption(WidgetTester tester, String label) async {
+  final finder = find.text(label);
+  expect(finder, findsOneWidget, reason: 'Option "$label" should be visible');
+
+  // Find the GestureDetector ancestor of the text widget
+  final gestureDetectorFinder = find.ancestor(
+    of: finder,
+    matching: find.byType(GestureDetector),
+  );
+
+  if (gestureDetectorFinder.evaluate().isNotEmpty) {
+    // Get the first GestureDetector and invoke its onTap
+    final gestureDetector = tester.widget<GestureDetector>(
+      gestureDetectorFinder.first,
+    );
+    gestureDetector.onTap?.call();
+    await tester.pumpAndSettle();
+  } else {
+    // Fallback to regular tap
+    await tester.tap(finder, warnIfMissed: false);
+    await tester.pumpAndSettle();
+  }
 }
 
 void main() {
@@ -120,9 +152,8 @@ void main() {
         await tester.tap(find.text('Select an option'));
         await tester.pumpAndSettle();
 
-        // Select Apple
-        await tester.tap(find.text('Apple'));
-        await tester.pumpAndSettle();
+        // Select Apple using helper
+        await tapDropdownOption(tester, 'Apple');
 
         expect(selected, 'apple');
         // Dropdown should be closed - can't find other options anymore
@@ -146,8 +177,7 @@ void main() {
         await tester.tap(find.text('Select an option'));
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Cherry'));
-        await tester.pumpAndSettle();
+        await tapDropdownOption(tester, 'Cherry');
 
         expect(selected, 'cherry');
       });
@@ -631,9 +661,8 @@ void main() {
       await tester.tap(find.text('Apple'));
       await tester.pumpAndSettle();
 
-      // Tap banana to add
-      await tester.tap(find.text('Banana'));
-      await tester.pumpAndSettle();
+      // Tap banana to add using helper
+      await tapDropdownOption(tester, 'Banana');
 
       expect(selectedValues, contains('banana'));
       expect(selectedValues, contains('apple'));

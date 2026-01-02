@@ -4,6 +4,8 @@ import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
 import 'wind_animation_wrapper.dart';
+import '../state/wind_anchor_state_provider.dart';
+import 'w_anchor.dart';
 
 /// **The Fundamental Building Block of Wind**
 ///
@@ -97,7 +99,35 @@ class WDiv extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if we need to wrap with WAnchor for interactive states
+    final bool isInteractive =
+        className != null &&
+        (className!.contains('hover:') ||
+            className!.contains('focus:') ||
+            className!.contains('active:'));
+
+    if (isInteractive) {
+      return WAnchor(
+        isDisabled: false,
+        child: Builder(builder: (innerContext) => _buildImpl(innerContext)),
+      );
+    }
+
+    return _buildImpl(context);
+  }
+
+  Widget _buildImpl(BuildContext context) {
     // 1. RESOLVE STYLES (The Logic Layer)
+    // Fetch state from WindAnchorStateProvider (if present)
+    final anchorState = WindAnchorStateProvider.of(context);
+    final Set<String> activeStates = {
+      ...?states,
+      ...?anchorState?.customStates,
+      if (anchorState?.isHovering ?? false) 'hover',
+      if (anchorState?.isFocused ?? false) 'focus',
+      if (anchorState?.isDisabled ?? false) 'disabled',
+    };
+
     // We delegate parsing to the WindParser "Orchestrator".
     // It handles caching, precedence, and state resolution internally.
     final WindStyle styles = className != null
@@ -105,7 +135,7 @@ class WDiv extends StatelessWidget {
             className!,
             context,
             baseStyle: style,
-            states: states,
+            states: activeStates,
           )
         : style ?? const WindStyle();
 
@@ -235,6 +265,24 @@ class WDiv extends StatelessWidget {
         final direction = styles.flexDirection ?? Axis.horizontal;
         final isColumn = direction == Axis.vertical;
 
+        // Determine mainAxisSize based on sizing
+        // Column with h-full or min-h-full needs .max for centering
+        final hasMinHeight =
+            styles.constraints?.minHeight != null &&
+            styles.constraints!.minHeight > 0;
+
+        MainAxisSize effectiveMainAxisSize;
+        if (styles.mainAxisSize != null) {
+          effectiveMainAxisSize = styles.mainAxisSize!;
+        } else if (isColumn &&
+            (styles.heightFactor != null ||
+                styles.height != null ||
+                hasMinHeight)) {
+          effectiveMainAxisSize = MainAxisSize.max;
+        } else {
+          effectiveMainAxisSize = MainAxisSize.min;
+        }
+
         logger.setCoreWidget(
           "${isColumn ? 'Column' : 'Row'}(child: single item)",
         );
@@ -245,7 +293,7 @@ class WDiv extends StatelessWidget {
                 styles.mainAxisAlignment ?? MainAxisAlignment.start,
             crossAxisAlignment:
                 styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-            mainAxisSize: styles.mainAxisSize ?? MainAxisSize.min,
+            mainAxisSize: effectiveMainAxisSize,
             children: [child!],
           );
         } else {
@@ -254,7 +302,7 @@ class WDiv extends StatelessWidget {
                 styles.mainAxisAlignment ?? MainAxisAlignment.start,
             crossAxisAlignment:
                 styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-            mainAxisSize: styles.mainAxisSize ?? MainAxisSize.min,
+            mainAxisSize: effectiveMainAxisSize,
             children: [child!],
           );
         }
@@ -300,6 +348,28 @@ class WDiv extends StatelessWidget {
       gapY: styles.gapY,
     );
 
+    // Determine mainAxisSize:
+    // - Column with h-full or min-h-full needs .max to fill height for centering
+    // - Row should generally use .min unless explicitly sized
+    // - Otherwise use provided value or default to .min
+    MainAxisSize effectiveMainAxisSize;
+
+    // Check if Row needs space distribution (justify-between, space-around, etc)
+    final needsSpaceDistribution =
+        !isColumn &&
+        (styles.mainAxisAlignment == MainAxisAlignment.spaceBetween ||
+            styles.mainAxisAlignment == MainAxisAlignment.spaceAround ||
+            styles.mainAxisAlignment == MainAxisAlignment.spaceEvenly);
+
+    if (styles.mainAxisSize != null) {
+      effectiveMainAxisSize = styles.mainAxisSize!;
+    } else if (needsSpaceDistribution) {
+      // Row with justify-between/space-around/space-evenly needs to expand
+      effectiveMainAxisSize = MainAxisSize.max;
+    } else {
+      effectiveMainAxisSize = MainAxisSize.min;
+    }
+
     logger.setCoreWidget(
       "${isColumn ? 'Column' : 'Row'}(children: [${children!.length} items])",
     );
@@ -309,16 +379,26 @@ class WDiv extends StatelessWidget {
         mainAxisAlignment: styles.mainAxisAlignment ?? MainAxisAlignment.start,
         crossAxisAlignment:
             styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-        mainAxisSize: styles.mainAxisSize ?? MainAxisSize.min,
+        mainAxisSize: effectiveMainAxisSize,
         children: gappedChildren,
       );
     } else {
+      // For Row with space distribution, wrap children with Flexible
+      // This mimics CSS flex-shrink: 1 default behavior
+      final rowChildren = needsSpaceDistribution
+          ? gappedChildren.map((child) {
+              // Don't wrap SizedBox gaps with Flexible
+              if (child is SizedBox) return child;
+              return Flexible(child: child);
+            }).toList()
+          : gappedChildren;
+
       return Row(
         mainAxisAlignment: styles.mainAxisAlignment ?? MainAxisAlignment.start,
         crossAxisAlignment:
             styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-        mainAxisSize: styles.mainAxisSize ?? MainAxisSize.min,
-        children: gappedChildren,
+        mainAxisSize: effectiveMainAxisSize,
+        children: rowChildren,
       );
     }
   }
@@ -383,11 +463,19 @@ class WDiv extends StatelessWidget {
       return children!.first;
     }
 
+    // Apply gaps for space-y-* classes
+    final gappedChildren = _buildGappedChildren(
+      children: children!,
+      direction: Axis.vertical,
+      gapX: null,
+      gapY: styles.gapY,
+    );
+
     logger.setCoreWidget("Column(children: [${children!.length}])");
     return Column(
       mainAxisSize: styles.mainAxisSize ?? MainAxisSize.min,
       crossAxisAlignment: styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-      children: children!,
+      children: gappedChildren,
     );
   }
 
@@ -417,15 +505,26 @@ class WDiv extends StatelessWidget {
     // ---------------------------------------------------------
 
     // Determine constraints (combining direct width/height with box constraints)
+    // IMPORTANT: Do NOT let styles.width override maxWidth constraints (e.g. max-w-sm)
     BoxConstraints? constraints =
         (styles.width != null ||
             styles.height != null ||
             styles.constraints != null)
         ? (styles.constraints ?? const BoxConstraints()).copyWith(
             minWidth: styles.width ?? styles.constraints?.minWidth,
-            maxWidth: styles.width ?? styles.constraints?.maxWidth,
+            // maxWidth should be the SMALLER of width and maxWidth constraint
+            maxWidth:
+                styles.constraints?.maxWidth != null &&
+                    styles.constraints!.maxWidth != double.infinity
+                ? styles.constraints!.maxWidth
+                : styles.width ?? styles.constraints?.maxWidth,
             minHeight: styles.height ?? styles.constraints?.minHeight,
-            maxHeight: styles.height ?? styles.constraints?.maxHeight,
+            // maxHeight should be the SMALLER of height and maxHeight constraint
+            maxHeight:
+                styles.constraints?.maxHeight != null &&
+                    styles.constraints!.maxHeight != double.infinity
+                ? styles.constraints!.maxHeight
+                : styles.height ?? styles.constraints?.maxHeight,
           )
         : styles.constraints;
 
@@ -434,12 +533,20 @@ class WDiv extends StatelessWidget {
     final BoxConstraints? innerConstraints = hasOverflow ? null : constraints;
     final BoxConstraints? outerConstraints = hasOverflow ? constraints : null;
 
+    // For full-size (w-full/h-full), Container should expand to fill parent
+    // This ensures bg-* colors fill the entire area, not just content
+    // BUT: only when NOT in scroll context (hasOverflow), otherwise causes infinite size error
+    final bool wantFullWidth = styles.widthFactor == 1.0 && !hasOverflow;
+    final bool wantFullHeight = styles.heightFactor == 1.0 && !hasOverflow;
+
     // Apply Container ONLY if we have box-specific properties
     final bool needsContainer =
         styles.decoration != null ||
         innerConstraints != null ||
         styles.boxShadow != null ||
-        styles.ringShadow != null;
+        styles.ringShadow != null ||
+        wantFullWidth ||
+        wantFullHeight;
 
     // Track if padding is consumed by Container (so we don't apply it again)
     bool paddingConsumedByContainer = false;
@@ -478,6 +585,8 @@ class WDiv extends StatelessWidget {
         widgetToBuild = AnimatedContainer(
           duration: styles.transitionDuration!,
           curve: styles.transitionCurve ?? Curves.linear,
+          width: wantFullWidth ? double.infinity : null,
+          height: wantFullHeight ? double.infinity : null,
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
@@ -487,6 +596,8 @@ class WDiv extends StatelessWidget {
       } else {
         logger.wrapWith("Container", "decoration/constraints/shadow");
         widgetToBuild = Container(
+          width: wantFullWidth ? double.infinity : null,
+          height: wantFullHeight ? double.infinity : null,
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
@@ -573,13 +684,53 @@ class WDiv extends StatelessWidget {
     // 2. MIDDLE LAYER: Sizing & Spacing
     // ---------------------------------------------------------
 
-    // Apply Fractional Sizing (e.g., w-1/2)
+    // Apply Fractional Sizing (e.g., w-1/2, w-full, h-full)
+    // Use LayoutBuilder to detect unbounded constraints (e.g., inside scroll views)
+    // For full-size (factor 1.0), use screen dimensions when unbounded
+    // For partial fractions, skip when unbounded to avoid infinite size errors
     if (styles.widthFactor != null || styles.heightFactor != null) {
-      logger.wrapWith("FractionallySizedBox", "factor");
-      widgetToBuild = FractionallySizedBox(
-        widthFactor: styles.widthFactor,
-        heightFactor: styles.heightFactor,
-        child: widgetToBuild,
+      final innerChild = widgetToBuild;
+      widgetToBuild = LayoutBuilder(
+        builder: (context, constraints) {
+          // Check if we're in an unbounded context (inside ScrollView)
+          final bool widthUnbounded = !constraints.hasBoundedWidth;
+          final bool heightUnbounded = !constraints.hasBoundedHeight;
+
+          // For full-size factors (1.0), use SizedBox with screen dimensions
+          final bool wantFullWidth = styles.widthFactor == 1.0;
+          final bool wantFullHeight = styles.heightFactor == 1.0;
+
+          // If unbounded but wants full size, use screen dimensions
+          if ((widthUnbounded && wantFullWidth) ||
+              (heightUnbounded && wantFullHeight)) {
+            final screenSize = MediaQuery.of(context).size;
+            return SizedBox(
+              width: wantFullWidth ? screenSize.width : null,
+              height: wantFullHeight ? screenSize.height : null,
+              child: innerChild,
+            );
+          }
+
+          // Skip fractional sizing for unbounded dimensions (partial fractions)
+          final double? effectiveWidthFactor = widthUnbounded
+              ? null
+              : styles.widthFactor;
+          final double? effectiveHeightFactor = heightUnbounded
+              ? null
+              : styles.heightFactor;
+
+          // If both factors would be null, just return the child directly
+          if (effectiveWidthFactor == null && effectiveHeightFactor == null) {
+            return innerChild ?? const SizedBox.shrink();
+          }
+
+          logger.wrapWith("FractionallySizedBox", "factor");
+          return FractionallySizedBox(
+            widthFactor: effectiveWidthFactor,
+            heightFactor: effectiveHeightFactor,
+            child: innerChild,
+          );
+        },
       );
     }
 

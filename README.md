@@ -145,6 +145,26 @@ WSelect<String>(
 )
 ```
 
+### WPopover - Overlay Widget
+
+```dart
+WPopover(
+  alignment: PopoverAlignment.bottomRight,
+  className: 'w-64 bg-white rounded-lg shadow-xl p-2',
+  triggerBuilder: (context, isOpen, isHovering) => WButton(
+    className: 'bg-blue-600 text-white',
+    child: Text('Open Menu'),
+  ),
+  contentBuilder: (context, close) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      ListTile(title: Text('Profile'), onTap: close),
+      ListTile(title: Text('Settings'), onTap: close),
+    ],
+  ),
+)
+```
+
 ### WAnchor - The Interactive Widget
 
 ```dart

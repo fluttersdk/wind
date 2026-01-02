@@ -64,6 +64,32 @@ void main() {
         expect(updatedStyles.constraints?.maxWidth, context.screenWidth);
       });
 
+      test('parses named max-width sizes (xs, sm, md, lg, etc.)', () {
+        // xs = 320px
+        final stylesXs = parser.parse(WindStyle(), ['max-w-xs'], context);
+        expect(stylesXs.constraints?.maxWidth, 320);
+
+        // sm = 384px
+        final stylesSm = parser.parse(WindStyle(), ['max-w-sm'], context);
+        expect(stylesSm.constraints?.maxWidth, 384);
+
+        // md = 448px
+        final stylesMd = parser.parse(WindStyle(), ['max-w-md'], context);
+        expect(stylesMd.constraints?.maxWidth, 448);
+
+        // lg = 512px
+        final stylesLg = parser.parse(WindStyle(), ['max-w-lg'], context);
+        expect(stylesLg.constraints?.maxWidth, 512);
+
+        // xl = 576px
+        final stylesXl = parser.parse(WindStyle(), ['max-w-xl'], context);
+        expect(stylesXl.constraints?.maxWidth, 576);
+
+        // 2xl = 672px
+        final styles2xl = parser.parse(WindStyle(), ['max-w-2xl'], context);
+        expect(styles2xl.constraints?.maxWidth, 672);
+      });
+
       test('parses min-height classes correctly', () {
         final styles = WindStyle();
         final classes = ['min-h-150', 'min-h-[10%]'];
