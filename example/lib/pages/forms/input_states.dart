@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+/// Input states example demonstrating focus, error, and disabled states.
 class InputStatesExamplePage extends StatefulWidget {
   const InputStatesExamplePage({super.key});
 
@@ -10,7 +11,6 @@ class InputStatesExamplePage extends StatefulWidget {
 
 class _InputStatesExamplePageState extends State<InputStatesExamplePage> {
   String _focusRing = '';
-  String _noBorder = '';
   String _email = '';
   String? _emailError;
 
@@ -18,7 +18,6 @@ class _InputStatesExamplePageState extends State<InputStatesExamplePage> {
     if (value.isEmpty) {
       _emailError = null;
     } else {
-      // Basic email regex for demonstration
       final emailRegex = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
       if (!emailRegex.hasMatch(value)) {
         _emailError = 'Please enter a valid email address';
@@ -30,140 +29,147 @@ class _InputStatesExamplePageState extends State<InputStatesExamplePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(32),
-      child: Center(
-        child: WDiv(
-          className: 'flex flex-col gap-8 w-full',
-          children: [
-            const WText(
-              'Focus & Validation States',
-              className: 'text-2xl font-bold text-gray-900',
-            ),
-            const WText(
-              'WInput supports custom states like error, success via the states prop',
-              className: 'text-gray-500',
-            ),
+    return WDiv(
+      className: 'w-full h-full overflow-y-auto p-4',
+      child: WDiv(
+        className: 'flex flex-col gap-6',
+        children: [
+          // Header with gradient
+          WDiv(
+            className: '''
+              w-full p-4 rounded-xl
+              bg-gradient-to-r from-cyan-500 to-blue-500
+            ''',
+            children: const [
+              WText('Input States', className: 'text-lg font-bold text-white'),
+              WText(
+                'Focus, error, and disabled states',
+                className: 'text-sm text-cyan-100',
+              ),
+            ],
+          ),
 
-            // Focus Ring Example
-            WDiv(
-              className: 'flex flex-col gap-2 w-full',
-              children: [
-                const WText(
-                  'Focus Ring',
-                  className: 'text-sm font-medium text-gray-700',
-                ),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  child: WInput(
-                    value: _focusRing,
-                    onChanged: (value) => setState(() => _focusRing = value),
-                    placeholder: 'Click to see focus ring',
-                    className:
-                        'w-full p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-                  ),
-                ),
-              ],
-            ),
+          // Focus Ring
+          _buildSection(
+            title: 'Focus Ring',
+            description: 'Click input to see focus:ring-* effect',
+            children: [
+              WInput(
+                value: _focusRing,
+                onChanged: (value) => setState(() => _focusRing = value),
+                placeholder: 'Click to see focus ring',
+                className: '''
+                  w-full p-3 rounded-lg
+                  border border-gray-300 dark:border-gray-600
+                  text-gray-900 dark:text-white
+                  bg-white dark:bg-slate-800
+                  focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ''',
+              ),
+            ],
+          ),
 
-            // No Border Examples
-            WDiv(
-              className: 'flex flex-col gap-2 w-full',
-              children: [
-                const WText(
-                  'No Border',
-                  className: 'text-sm font-medium text-gray-700',
-                ),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  child: WInput(
-                    value: _noBorder,
-                    onChanged: (value) => setState(() => _noBorder = value),
-                    placeholder: 'No border input',
-                    className:
-                        'w-full p-3 border-0 border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-                  ),
-                ),
-              ],
-            ),
+          // Error State
+          _buildSection(
+            title: 'Error State',
+            description: 'Type invalid email to see error:* classes',
+            children: [
+              WInput(
+                type: InputType.email,
+                value: _email,
+                onChanged: (value) {
+                  setState(() {
+                    _email = value;
+                    _validateEmail(value);
+                  });
+                },
+                placeholder: 'Enter email to validate',
+                states: _emailError != null ? {'error'} : {},
+                className: '''
+                  w-full p-3 rounded-lg
+                  border border-gray-300 dark:border-gray-600
+                  text-gray-900 dark:text-white
+                  bg-white dark:bg-slate-800
+                  focus:ring-2 focus:ring-blue-500
+                  error:border-red-500 error:ring-red-500
+                ''',
+              ),
+              if (_emailError != null)
+                WText(_emailError!, className: 'text-sm text-red-500'),
+            ],
+          ),
 
-            // Validation/Error State Example
-            WDiv(
-              className: 'flex flex-col gap-2 w-full',
-              children: [
-                const WText(
-                  'Email Validation (Error State)',
-                  className: 'text-sm font-medium text-gray-700',
-                ),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  child: WInput(
-                    type: InputType.email,
-                    value: _email,
-                    onChanged: (value) {
-                      setState(() {
-                        _email = value;
-                        _validateEmail(value);
-                      });
-                    },
-                    placeholder: 'Enter email to validate',
-                    states: _emailError != null ? {'error'} : {},
-                    className:
-                        'w-full p-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 error:border-red-500 error:ring-red-500',
-                  ),
-                ),
-                if (_emailError != null)
-                  WText(_emailError!, className: 'text-sm text-red-500'),
-              ],
-            ),
+          // Disabled State
+          _buildSection(
+            title: 'Disabled State',
+            description: 'Use enabled: false and disabled:* classes',
+            children: [
+              const WInput(
+                enabled: false,
+                value: 'Cannot edit this',
+                className: '''
+                  w-full p-3 rounded-lg
+                  border border-gray-300
+                  disabled:bg-gray-100 disabled:text-gray-400
+                ''',
+              ),
+            ],
+          ),
 
-            // Disabled State
-            WDiv(
-              className: 'flex flex-col gap-2 w-full',
-              children: [
-                const WText(
-                  'Disabled State',
-                  className: 'text-sm font-medium text-gray-700',
-                ),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  child: const WInput(
-                    enabled: false,
-                    value: 'Cannot edit this',
-                    className:
-                        'w-full p-3 border border-gray-300 rounded-lg disabled:bg-gray-100 disabled:text-gray-400',
-                  ),
-                ),
-              ],
-            ),
-
-            // Code Example
-            WDiv(
-              className: 'w-full p-4 bg-gray-800 rounded-lg',
-              children: const [
-                WText(
-                  '''// Error state with custom states prop
-WInput(
-  value: _email,
-  onChanged: (v) => setState(() {
-    _email = v;
-    _emailError = validate(v);
-  }),
-  states: _emailError != null ? {'error'} : {},
-  className: '''
-                  '''
-    border border-gray-300 rounded-lg
-    error:border-red-500 error:ring-red-500
-  '''
-                  ''',
-)''',
-                  className: 'text-xs text-white font-mono',
-                ),
-              ],
-            ),
-          ],
-        ),
+          // Quick Reference
+          WDiv(
+            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+            children: [
+              const WText(
+                'State Prefixes',
+                className: 'font-semibold text-gray-800 dark:text-white mb-2',
+              ),
+              WDiv(
+                className: 'flex flex-col gap-1',
+                children: [
+                  _referenceRow('focus:', 'Input focused'),
+                  _referenceRow('error:', 'states: {\'error\'}'),
+                  _referenceRow('disabled:', 'enabled: false'),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required String description,
+    required List<Widget> children,
+  }) {
+    return WDiv(
+      className: 'flex flex-col gap-2',
+      children: [
+        WText(
+          title,
+          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ),
+        WText(
+          description,
+          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ),
+        ...children,
+      ],
+    );
+  }
+
+  Widget _referenceRow(String className, String value) {
+    return WDiv(
+      className: 'flex justify-between',
+      children: [
+        WText(
+          className,
+          className: 'text-sm font-mono text-gray-600 dark:text-gray-300',
+        ),
+        WText(value, className: 'text-sm text-gray-500 dark:text-gray-400'),
+      ],
     );
   }
 }

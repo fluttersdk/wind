@@ -96,6 +96,8 @@ class FlexboxGridParser implements WindParserInterface {
 
   /// Maps flex child properties to `FlexFit`
   static const _flexFitMap = <String, FlexFit>{
+    'shrink': FlexFit.loose, // flex-shrink: 1 (can shrink)
+    'shrink-0': FlexFit.tight, // flex-shrink: 0 (don't shrink)
     'flex-auto': FlexFit.loose,
     'flex-initial': FlexFit.loose,
     'flex-shrink': FlexFit.loose,
@@ -138,6 +140,7 @@ class FlexboxGridParser implements WindParserInterface {
     int? flex;
     FlexFit? flexFit;
     Alignment? alignment;
+    TextBaseline? textBaseline;
     int? gridCols;
     bool? isHidden;
     // Track if visibility has been determined by a later class
@@ -171,6 +174,10 @@ class FlexboxGridParser implements WindParserInterface {
       } else if (crossAxisAlignment == null &&
           _itemsMap.containsKey(className)) {
         crossAxisAlignment = _itemsMap[className];
+        // Flutter requires textBaseline when using CrossAxisAlignment.baseline
+        if (crossAxisAlignment == CrossAxisAlignment.baseline) {
+          textBaseline = TextBaseline.alphabetic;
+        }
       } else if (runAlignment == null && _contentMap.containsKey(className)) {
         runAlignment = _contentMap[className];
       } else if (mainAxisSize == null &&
@@ -244,32 +251,12 @@ class FlexboxGridParser implements WindParserInterface {
         flex != null ||
         flexFit != null ||
         alignment != null ||
+        textBaseline != null ||
         gridCols != null ||
         isHidden != null;
 
     if (!didChange) {
       return styles;
-    }
-
-    // 4. Derive Alignment for Container from Flex properties
-    // This allows justify-center to work with min-h-full by aligning the container's child
-    if (alignment == null) {
-      final isVertical = flexDirection == Axis.vertical;
-      double? x, y;
-
-      if (isVertical) {
-        x = _getCrossAxisAlignValue(crossAxisAlignment); // Items
-        y = _getMainAxisAlignValue(mainAxisAlignment); // Justify
-      } else {
-        x = _getMainAxisAlignValue(mainAxisAlignment); // Justify
-        y = _getCrossAxisAlignValue(crossAxisAlignment); // Items
-      }
-
-      if (x != null || y != null) {
-        // Default to center (0.0) if one axis is set, or start (-1.0)
-        // Using 0.0 (center) as default for cross-axis stretch compatibility
-        alignment = Alignment(x ?? 0.0, y ?? -1.0);
-      }
     }
 
     // 3. Apply changes to WindStyle
@@ -285,6 +272,7 @@ class FlexboxGridParser implements WindParserInterface {
       flex: flex,
       flexFit: flexFit,
       alignment: alignment,
+      textBaseline: textBaseline,
       gridCols: gridCols,
       isHidden: isHidden,
     );
@@ -320,8 +308,6 @@ class FlexboxGridParser implements WindParserInterface {
     }
   }
 
-  /// Checks if the parser can parse the given class name
-  /// This is used by `WindParser` to group classes.
   @override
   bool canParse(String className) {
     // This 'Specialist' casts a wide net to catch all
@@ -331,6 +317,8 @@ class FlexboxGridParser implements WindParserInterface {
         className == 'wrap' ||
         className == 'block' ||
         className == 'hidden' ||
+        className == 'shrink' ||
+        className == 'shrink-0' ||
         className.startsWith('flex-') ||
         className.startsWith('grid-') ||
         className.startsWith('justify-') ||

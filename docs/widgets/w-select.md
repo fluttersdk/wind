@@ -2,6 +2,8 @@
 
 A utility-first dropdown select component with multi-select, tagging, and pagination support.
 
+<x-preview path="forms/select_basic" size="md" source="example/lib/pages/forms/select_basic.dart"></x-preview>
+
 ## Basic Usage
 
 ```dart
@@ -17,11 +19,9 @@ WSelect<String>(
 )
 ```
 
-<x-preview path="forms/select_basic" size="md"></x-preview>
-
----
-
 ## Multi-Select
+
+<x-preview path="forms/select_multi" size="md" source="example/lib/pages/forms/select_multi.dart"></x-preview>
 
 Enable multi-select mode with `isMulti: true`. Selected items appear as chips.
 
@@ -36,20 +36,9 @@ WSelect<String>(
 )
 ```
 
-<x-preview path="forms/select_multi" size="md"></x-preview>
-
-### Custom Chip Builder
-
-```dart
-selectedChipBuilder: (context, option, onRemove) => Chip(
-  label: Text(option.label),
-  onDeleted: onRemove,
-),
-```
-
----
-
 ## Searchable
+
+<x-preview path="forms/select_searchable" size="md" source="example/lib/pages/forms/select_searchable.dart"></x-preview>
 
 Add search input with `searchable: true`.
 
@@ -62,10 +51,6 @@ WSelect<String>(
 )
 ```
 
-<x-preview path="forms/select_searchable" size="md"></x-preview>
-
----
-
 ## Tagging (Create Options)
 
 Allow users to create new options with `onCreateOption`.
@@ -74,7 +59,6 @@ Allow users to create new options with `onCreateOption`.
 WSelect<String>(
   isMulti: true,
   values: _tags,
-  options: _tagOptions,
   searchable: true,
   onCreateOption: (query) async {
     return SelectOption(value: query.toLowerCase(), label: query);
@@ -82,13 +66,9 @@ WSelect<String>(
 )
 ```
 
-When search returns no matches, a "Create X" button appears.
-
-<x-preview path="forms/select_pagination" size="md"></x-preview>
-
----
-
 ## Pagination (Infinite Scroll)
+
+<x-preview path="forms/select_pagination" size="md" source="example/lib/pages/forms/select_pagination.dart"></x-preview>
 
 Load more options on scroll with `onLoadMore` and `hasMore`.
 
@@ -102,8 +82,6 @@ WSelect<User>(
 )
 ```
 
----
-
 ## Active States
 
 WSelect automatically manages these states for styling:
@@ -116,7 +94,7 @@ WSelect automatically manages these states for styling:
 | `disabled` | Widget is disabled |
 | `selected` | A value is currently selected |
 
-Use with state prefixes in className:
+Use with state prefixes:
 
 ```dart
 WSelect(
@@ -124,62 +102,53 @@ WSelect(
 )
 ```
 
-Add custom states via `states` prop:
+## Props
 
-```dart
-WSelect(
-  states: {'loading', 'error'},
-  className: 'border loading:opacity-50 error:border-red-500',
-)
-```
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `value` | `T?` | - | Selected value (single-select) |
+| `values` | `List<T>?` | - | Selected values (multi-select) |
+| `isMulti` | `bool` | `false` | Enable multi-select mode |
+| `onChange` | `ValueChanged<T>?` | - | Single-select callback |
+| `onMultiChange` | `ValueChanged<List<T>>?` | - | Multi-select callback |
+| `options` | `List<SelectOption<T>>` | required | Available options |
+| `searchable` | `bool` | `false` | Show search input |
+| `searchPlaceholder` | `String` | `'Search...'` | Search placeholder |
+| `onSearch` | `Future<List> Function(String)?` | - | Async search callback |
+| `onCreateOption` | `Future<SelectOption> Function(String)?` | - | Create new option |
+| `onLoadMore` | `Future<List> Function()?` | - | Pagination callback |
+| `hasMore` | `bool` | `false` | More pages available |
+| `className` | `String?` | - | Trigger styling |
+| `menuClassName` | `String?` | - | Menu styling |
+| `placeholder` | `String` | `'Select...'` | Placeholder text |
+| `disabled` | `bool` | `false` | Disable widget |
+| `states` | `Set<String>?` | - | Custom states |
 
----
+## Custom Builders
 
-## Props Reference
+| Builder | Description |
+| :--- | :--- |
+| `triggerBuilder` | Custom trigger (single) |
+| `multiTriggerBuilder` | Custom trigger (multi) |
+| `itemBuilder` | Custom option items |
+| `selectedChipBuilder` | Custom chips |
+| `emptyBuilder` | Custom empty state |
+| `loadingBuilder` | Custom loading indicator |
+| `createOptionBuilder` | Custom create button |
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `value` | `T?` | Selected value (single-select) |
-| `values` | `List<T>?` | Selected values (multi-select) |
-| `isMulti` | `bool` | Enable multi-select mode |
-| `onChange` | `ValueChanged<T>?` | Single-select callback |
-| `onMultiChange` | `ValueChanged<List<T>>?` | Multi-select callback |
-| `options` | `List<SelectOption<T>>` | Available options |
-| `searchable` | `bool` | Show search input |
-| `searchPlaceholder` | `String` | Search input placeholder |
-| `onSearch` | `Future<List> Function(String)?` | Async search callback |
-| `onCreateOption` | `Future<SelectOption> Function(String)?` | Create new option |
-| `onLoadMore` | `Future<List> Function()?` | Pagination callback |
-| `hasMore` | `bool` | More pages available |
-| `className` | `String?` | Trigger styling |
-| `menuClassName` | `String?` | Menu styling |
-| `placeholder` | `String` | Placeholder text |
-| `disabled` | `bool` | Disable widget |
+## All Supported Classes
 
-### Custom Builders
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Sizing** | `w-*`, `h-*`, `min-h-*` | Trigger dimensions |
+| **Padding** | `p-*`, `px-*`, `py-*` | Content padding |
+| **Background** | `bg-*` | Fill color |
+| **Border** | `border-*`, `rounded-*` | Border style |
+| **Shadow** | `shadow-*` | Drop shadow |
+| **Menu** | `max-h-*` | Menu max height |
+| **States** | `hover:*`, `focus:*`, `open:*` | State styling |
 
-| Builder | Type | Description |
-|---------|------|-------------|
-| `triggerBuilder` | `SelectTriggerBuilder` | Custom trigger (single) |
-| `multiTriggerBuilder` | `MultiSelectTriggerBuilder` | Custom trigger (multi) |
-| `itemBuilder` | `SelectItemBuilder` | Custom option items |
-| `selectedChipBuilder` | `SelectedChipBuilder` | Custom chips |
-| `emptyBuilder` | `EmptyStateBuilder` | Custom empty state |
-| `loadingBuilder` | `LoadingBuilder` | Custom loading indicator |
-| `createOptionBuilder` | `CreateOptionBuilder` | Custom create button |
+## Related Documentation
 
----
-
-## Styling
-
-### Trigger Width
-Use `w-*` in `className`:
-```dart
-className: 'w-64 bg-white border rounded-lg p-3'
-```
-
-### Menu Height
-Use `max-h-*` in `menuClassName`:
-```dart
-menuClassName: 'bg-white shadow-lg max-h-48'
-```
+- [WInput](./w-input.md) - Text input widget
+- [WFormCheckbox](./w-form-checkbox.md) - Form checkbox widget

@@ -23,7 +23,7 @@ void main() {
 
       final controller = WindTheme.of(capturedContext!);
       expect(controller, isA<WindThemeController>());
-      expect(controller.data, themeData);
+      expect(controller.data.colors, themeData.colors);
     });
 
     testWidgets('dataOf returns WindThemeData', (WidgetTester tester) async {
@@ -43,7 +43,7 @@ void main() {
       );
 
       final data = WindTheme.dataOf(capturedContext!);
-      expect(data, themeData);
+      expect(data.colors, themeData.colors);
     });
 
     testWidgets('toggleTheme switches brightness', (WidgetTester tester) async {

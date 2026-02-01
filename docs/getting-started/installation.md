@@ -2,6 +2,8 @@
 
 Wind is available as a Flutter package. Since it relies on Dart-based utility parsing, it works with any Flutter project.
 
+<x-preview path="examples/showcase"></x-preview>
+
 ## Requirements
 
 - Flutter 3.0.0 or higher
@@ -9,20 +11,20 @@ Wind is available as a Flutter package. Since it relies on Dart-based utility pa
 
 ## Adding Wind to your project
 
-Add `fluttersdk_wind` to your `pubspec.yaml` dependencies:
+The fastest way to add Wind is via the Flutter CLI:
+
+```bash
+flutter pub add fluttersdk_wind
+```
+
+Alternatively, you can manually add it to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter:
-    sdk: flutter
   fluttersdk_wind: ^1.0.0
 ```
 
-Then run:
-
-```bash
-flutter pub get
-```
+Then run `flutter pub get` to install.
 
 ## Setup
 
@@ -44,8 +46,8 @@ class MyApp extends StatelessWidget {
     return WindTheme(
       theme: WindThemeData(
         colors: {
-            'primary': Colors.indigo,
-            'secondary': Colors.teal,
+          'primary': Colors.indigo,
+          'secondary': Colors.teal,
         },
       ),
       child: MaterialApp(
@@ -57,4 +59,10 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-Now you can start using `WDiv` and `WText` anywhere in your app!
+Now you can start using `WDiv`, `WText`, and other Wind widgets anywhere in your app!
+
+## Next Steps
+
+- **[Theme Configuration](../core-concepts/theming.md):** Learn how to customize colors, typography, and spacing.
+- **[Utility-First Fundamentals](../core-concepts/utility-first.md):** Understand the core philosophy and syntax.
+- **[Responsive Design](../core-concepts/responsive-design.md):** Build layouts that adapt to any screen size.

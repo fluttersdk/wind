@@ -21,7 +21,7 @@ void main() {
 
       test('identifies asset prefix correctly', () {
         const widget = WImage(src: 'asset://assets/test.png');
-        expect(widget.src.startsWith('asset://'), isTrue);
+        expect(widget.src!.startsWith('asset://'), isTrue);
       });
 
       test('stores alt text', () {

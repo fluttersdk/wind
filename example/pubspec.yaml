@@ -40,6 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.3.3
   web: ^1.1.1
+  mcp_toolkit: ^0.3.0
 
 dev_dependencies:
   flutter_test:

@@ -1,31 +1,43 @@
 # Binding with Flutter Theme
 
-You can bind the Wind theme to your Flutter application to seamlessly integrate your app's default styles with Wind's powerful theming system. This ensures consistency between Wind utility classes and standard Flutter widgets.
+Wind allows you to bind your custom `WindThemeData` to Flutter's standard `ThemeData`. This creates a seamless integration where standard Material widgets (like `AppBar`, `FloatingActionButton`, `TextField`) automatically reflect your Wind configuration.
+
+## Why Bind Themes?
+
+By binding Wind to Flutter's theme system, you ensure consistency across your app:
+- **Colors:** `bg-primary-500` will match `Theme.of(context).primaryColor`.
+- **Typography:** `font-sans` will be used by `Text` widgets by default.
+- **Brightness:** Toggling Wind's theme also updates `ThemeData.brightness`.
 
 ## Reactive Theme Binding
 
-Use the `builder` pattern to create a reactive binding where `MaterialApp.theme` updates automatically when you call `toggleTheme()`:
+Use the `builder` pattern to create a reactive binding. This ensures your entire app rebuilds automatically when you toggle the theme (e.g., Dark Mode).
 
 ```dart
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // 1. Define your Wind Theme
     final windTheme = WindThemeData(
       colors: {
         'primary': Colors.indigo,
         'secondary': Colors.teal,
+        'background': Colors.white, // In dark mode: auto-inverted or override
       },
       fontFamilies: {'sans': 'Inter'},
     );
 
+    // 2. Wrap MaterialApp with WindTheme
     return WindTheme(
       data: windTheme,
-      builder: (context, controller) => MaterialApp(
-        title: 'Wind App',
-        // Auto-updates when controller.toggleTheme() is called
-        theme: controller.toThemeData(),
-        home: HomePage(),
-      ),
+      builder: (context, controller) {
+        // 3. Use controller.toThemeData() to generate Flutter ThemeData
+        return MaterialApp(
+          title: 'Wind App',
+          theme: controller.toThemeData(),
+          home: HomePage(),
+        );
+      },
     );
   }
 }
@@ -33,25 +45,27 @@ class MyApp extends StatelessWidget {
 
 ### Toggling Theme
 
+When using reactive binding, changing the theme state automatically rebuilds `MaterialApp`.
+
 ```dart
-// Anywhere in your app:
-WindTheme.of(context).toggleTheme();
-// or
+// Toggle between Light and Dark mode
 context.windTheme.toggleTheme();
 ```
 
 ## Static Theme Binding
 
-If you don't need reactive theme switching, use the `child` pattern with a static `toThemeData()` call:
+If you don't need dynamic theme switching (e.g., force dark mode or static branding), you can bind the theme once.
 
 ```dart
 final windTheme = WindThemeData(
-  brightness: Brightness.light,
+  brightness: Brightness.dark,
+  colors: {'primary': Colors.purple},
 );
 
 return WindTheme(
   data: windTheme,
   child: MaterialApp(
+    // Generate ThemeData once
     theme: windTheme.toThemeData(),
     home: HomePage(),
   ),
@@ -60,17 +74,15 @@ return WindTheme(
 
 ## How it works
 
-The `toThemeData()` method creates a standard Flutter `ThemeData` object derived from your `WindThemeData` configuration. It automatically maps:
+The `toThemeData()` method converts your `WindThemeData` into a standard Flutter `ThemeData` object. It maps tokens intelligently:
 
-- **Colors:**
-  - `primary`: Uses `colors['primary']` (fallback: Indigo).
-  - `secondary`: Uses `colors['secondary']` (fallback: Teal).
-  - `error`: Uses `colors['error']` (fallback: Red).
-  - `surface`: Uses `colors['white']`.
-  - `scaffoldBackgroundColor`: Uses `colors['background']` if defined, otherwise defaults to White (light) or Gray-900 (dark).
-- **Typography:**
-  - Applies the default `sans` font family to the entire `textTheme`.
-- **System:**
-  - Sets `brightness` and enables `useMaterial3: true`.
+| Wind Token | Flutter Theme Property |
+|------------|------------------------|
+| `colors['primary']` | `colorScheme.primary` |
+| `colors['secondary']` | `colorScheme.secondary` |
+| `colors['error']` | `colorScheme.error` |
+| `colors['background']` | `scaffoldBackgroundColor` |
+| `brightness` | `brightness` |
+| `fontFamilies['sans']` | `textTheme.fontFamily` |
 
-This ensures that widgets like `AppBar`, `FloatingActionButton`, or `TextField` that rely on `Theme.of(context)` will match your Wind utility classes.
+This ensures that a button styled with `bg-primary-500` looks identical to a standard `ElevatedButton` using the primary color.

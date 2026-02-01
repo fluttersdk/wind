@@ -40,6 +40,32 @@ typedef PopoverTriggerBuilder =
 typedef PopoverContentBuilder =
     Widget Function(BuildContext context, VoidCallback close);
 
+/// Controller for programmatic popover control
+class PopoverController extends ChangeNotifier {
+  bool _isOpen = false;
+
+  bool get isOpen => _isOpen;
+
+  void show() {
+    if (!_isOpen) {
+      _isOpen = true;
+      notifyListeners();
+    }
+  }
+
+  void hide() {
+    if (_isOpen) {
+      _isOpen = false;
+      notifyListeners();
+    }
+  }
+
+  void toggle() {
+    _isOpen = !_isOpen;
+    notifyListeners();
+  }
+}
+
 /// **WPopover - Flexible Popover Component**
 ///
 /// A utility-first popover component for creating dropdown menus,
@@ -66,33 +92,6 @@ typedef PopoverContentBuilder =
 ///   ),
 /// )
 /// ```
-///
-/// ### Dropdown Menu Example:
-///
-/// ```dart
-/// WPopover(
-///   alignment: PopoverAlignment.bottomLeft,
-///   className: '''
-///     w-56 bg-white dark:bg-gray-800
-///     border border-gray-200 dark:border-gray-700
-///     rounded-lg shadow-xl p-1
-///   ''',
-///   triggerBuilder: (context, isOpen, isHovering) => WDiv(
-///     className: 'flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100',
-///     children: [
-///       WText('Actions'),
-///       WIcon(isOpen ? Icons.expand_less : Icons.expand_more),
-///     ],
-///   ),
-///   contentBuilder: (context, close) => Column(
-///     mainAxisSize: MainAxisSize.min,
-///     children: [
-///       _MenuItem(icon: Icons.edit, label: 'Edit', onTap: () { close(); }),
-///       _MenuItem(icon: Icons.delete, label: 'Delete', onTap: () { close(); }),
-///     ],
-///   ),
-/// )
-/// ```
 class WPopover extends StatefulWidget {
   /// Builder for the trigger widget that opens/closes the popover.
   ///
@@ -105,6 +104,14 @@ class WPopover extends StatefulWidget {
   ///
   /// Receives a [close] callback to programmatically close the popover.
   final PopoverContentBuilder contentBuilder;
+
+  /// Optional controller for programmatic control.
+  final PopoverController? controller;
+
+  /// Whether tapping the trigger toggles the popover.
+  ///
+  /// Default: `true`. Set to `false` for manual control (e.g. text inputs).
+  final bool enableTriggerOnTap;
 
   /// Where to position the popover relative to the trigger.
   ///
@@ -145,17 +152,27 @@ class WPopover extends StatefulWidget {
   /// Set to `true` for simple menus where any tap should close.
   final bool closeOnContentTap;
 
+  /// Callback when popover opens
+  final VoidCallback? onOpen;
+
+  /// Callback when popover closes
+  final VoidCallback? onClose;
+
   /// Creates a new [WPopover] instance.
   const WPopover({
     super.key,
     required this.triggerBuilder,
     required this.contentBuilder,
+    this.controller,
+    this.enableTriggerOnTap = true,
     this.alignment = PopoverAlignment.bottomLeft,
     this.className,
     this.offset = const Offset(0, 4),
     this.maxHeight = 400,
     this.disabled = false,
     this.closeOnContentTap = false,
+    this.onOpen,
+    this.onClose,
   });
 
   @override
@@ -178,13 +195,35 @@ class _WPopoverState extends State<WPopover> {
   void initState() {
     super.initState();
     _focusNode.addListener(_onFocusChange);
+    widget.controller?.addListener(_handleControllerChange);
+  }
+
+  @override
+  void didUpdateWidget(WPopover oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      oldWidget.controller?.removeListener(_handleControllerChange);
+      widget.controller?.addListener(_handleControllerChange);
+    }
   }
 
   @override
   void dispose() {
     _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
+    widget.controller?.removeListener(_handleControllerChange);
     super.dispose();
+  }
+
+  void _handleControllerChange() {
+    if (widget.controller == null) return;
+    if (widget.controller!.isOpen != _isOpen) {
+      if (widget.controller!.isOpen) {
+        open();
+      } else {
+        close();
+      }
+    }
   }
 
   void _onFocusChange() {
@@ -196,25 +235,38 @@ class _WPopoverState extends State<WPopover> {
   /// Toggle the popover open/closed state.
   void toggle() {
     if (widget.disabled) return;
+    if (_isOpen) {
+      close();
+    } else {
+      open();
+    }
+  }
 
+  void open() {
+    if (_isOpen || widget.disabled) return;
     setState(() {
-      _isOpen = !_isOpen;
-      if (_isOpen) {
-        _overlayController.show();
-      } else {
-        _overlayController.hide();
+      _isOpen = true;
+      _overlayController.show();
+      widget.onOpen?.call();
+      // Sync controller if exists and not already synced
+      if (widget.controller != null && !widget.controller!.isOpen) {
+        widget.controller!.show();
       }
     });
   }
 
   /// Close the popover.
   void close() {
-    if (_isOpen) {
-      setState(() {
-        _isOpen = false;
-        _overlayController.hide();
-      });
-    }
+    if (!_isOpen) return;
+    setState(() {
+      _isOpen = false;
+      _overlayController.hide();
+      widget.onClose?.call();
+      // Sync controller if exists and not already synced
+      if (widget.controller != null && widget.controller!.isOpen) {
+        widget.controller!.hide();
+      }
+    });
   }
 
   Alignment get _targetAnchor {
@@ -272,17 +324,20 @@ class _WPopoverState extends State<WPopover> {
   }
 
   Widget _buildTrigger(BuildContext context) {
-    return GestureDetector(
-      onTap: toggle,
-      child: MouseRegion(
-        onEnter: (_) => setState(() => _isHovering = true),
-        onExit: (_) => setState(() => _isHovering = false),
-        cursor: widget.disabled
-            ? SystemMouseCursors.forbidden
-            : SystemMouseCursors.click,
-        child: widget.triggerBuilder(context, _isOpen, _isHovering),
-      ),
+    final trigger = MouseRegion(
+      onEnter: (_) => setState(() => _isHovering = true),
+      onExit: (_) => setState(() => _isHovering = false),
+      cursor: widget.disabled
+          ? SystemMouseCursors.forbidden
+          : SystemMouseCursors.click,
+      child: widget.triggerBuilder(context, _isOpen, _isHovering),
     );
+
+    if (widget.enableTriggerOnTap) {
+      return GestureDetector(onTap: toggle, child: trigger);
+    }
+
+    return trigger;
   }
 
   Widget _buildOverlay(BuildContext context) {
@@ -318,11 +373,20 @@ class _WPopoverState extends State<WPopover> {
     // Use parsed width or fallback to trigger width
     final double? parsedWidth = styles.width;
 
+    // For top alignments, invert the Y offset
+    final bool isTopAlignment =
+        widget.alignment == PopoverAlignment.topLeft ||
+        widget.alignment == PopoverAlignment.topCenter ||
+        widget.alignment == PopoverAlignment.topRight;
+    final effectiveOffset = isTopAlignment
+        ? Offset(widget.offset.dx, -widget.offset.dy)
+        : widget.offset;
+
     return CompositedTransformFollower(
       link: _layerLink,
       targetAnchor: _targetAnchor,
       followerAnchor: _followerAnchor,
-      offset: widget.offset,
+      offset: effectiveOffset,
       child: Align(
         alignment: _overlayAlignment,
         child: TapRegion(

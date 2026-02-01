@@ -1,12 +1,29 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:mcp_toolkit/mcp_toolkit.dart';
 
 import 'routes.dart';
 
 void main() {
   usePathUrlStrategy();
-  runApp(const MyApp());
+
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      MCPToolkitBinding.instance
+        ..initialize() // Initializes the Toolkit
+        ..initializeFlutterToolkit(); // Adds Flutter related methods to the MCP server
+
+      runApp(const MyApp());
+    },
+    (error, stack) {
+      // You can place it in your error handling tool, or directly in the zone. The most important thing is to have it - otherwise the errors will not be captured and MCP server will not return error results.
+      MCPToolkitBinding.instance.handleZoneError(error, stack);
+    },
+  );
 }
 
 class AppLayout extends StatelessWidget {
@@ -19,12 +36,7 @@ class AppLayout extends StatelessWidget {
     return Scaffold(
       body: child,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {
-          context.windTheme.toggleTheme(),
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Theme toggled!'))),
-        },
+        onPressed: () => context.windTheme.toggleTheme(),
         child: const Icon(Icons.brightness_4),
       ),
     );

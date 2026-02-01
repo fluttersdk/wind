@@ -200,14 +200,32 @@ class WindTheme extends StatefulWidget {
   State<WindTheme> createState() => _WindThemeState();
 }
 
-class _WindThemeState extends State<WindTheme> {
+class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
   late WindThemeController _controller;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WindPlatformService();
-    _controller = WindThemeController(widget.data ?? WindThemeData());
+
+    // Initialize with provided data or defaults
+    var initialData = widget.data ?? WindThemeData();
+
+    // Sync with system brightness on startup
+    // We do this to ensure "Auto" behavior by default
+    final systemBrightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    initialData = initialData.copyWith(brightness: systemBrightness);
+
+    _controller = WindThemeController(initialData);
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    // Update theme when system brightness changes
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    _controller.updateTheme(brightness: brightness);
   }
 
   @override
@@ -220,6 +238,7 @@ class _WindThemeState extends State<WindTheme> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
   }

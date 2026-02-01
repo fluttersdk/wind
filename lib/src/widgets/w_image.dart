@@ -51,7 +51,13 @@ class WImage extends StatelessWidget {
   ///
   /// For network images, use a standard URL.
   /// For asset images, prefix with `asset://` (e.g., `asset://assets/logo.png`)
-  final String src;
+  final String? src;
+
+  /// The image provider.
+  ///
+  /// If `src` is provided, it will be used to create an `ImageProvider`.
+  /// If `image` is provided, it will be used as the image source.
+  final ImageProvider? image;
 
   /// Alternative text for accessibility.
   final String? alt;
@@ -82,20 +88,21 @@ class WImage extends StatelessWidget {
   /// Creates a new [WImage] instance.
   const WImage({
     super.key,
-    required this.src,
+    this.src,
+    this.image,
     this.alt,
     this.className,
     this.states,
     this.placeholder,
     this.errorBuilder,
     this.loadingBuilder,
-  });
+  }) : assert(src != null || image != null);
 
   /// Check if the source is an asset image
-  bool get _isAsset => src.startsWith('asset://');
+  bool get _isAsset => src != null && src!.startsWith('asset://');
 
   /// Get the actual path for asset images
-  String get _assetPath => src.replaceFirst('asset://', '');
+  String get _assetPath => src != null ? src!.replaceFirst('asset://', '') : '';
 
   @override
   Widget build(BuildContext context) {
@@ -108,27 +115,34 @@ class WImage extends StatelessWidget {
     final BoxFit fit = _parseObjectFit(className);
 
     // Build the image widget
-    Widget imageWidget = _isAsset
-        ? Image.asset(
-            _assetPath,
+    Widget imageWidget = image != null
+        ? Image(
+            image: image!,
             fit: fit,
             semanticLabel: alt,
             errorBuilder: errorBuilder,
           )
-        : Image.network(
-            src,
-            fit: fit,
-            semanticLabel: alt,
-            errorBuilder: errorBuilder,
-            loadingBuilder:
-                loadingBuilder ??
-                (placeholder != null
-                    ? (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return placeholder!;
-                      }
-                    : null),
-          );
+        : (_isAsset
+              ? Image.asset(
+                  _assetPath,
+                  fit: fit,
+                  semanticLabel: alt,
+                  errorBuilder: errorBuilder,
+                )
+              : Image.network(
+                  src!,
+                  fit: fit,
+                  semanticLabel: alt,
+                  errorBuilder: errorBuilder,
+                  loadingBuilder:
+                      loadingBuilder ??
+                      (placeholder != null
+                          ? (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return placeholder!;
+                            }
+                          : null),
+                ));
 
     // Apply decoration (rounded corners) immediately via ClipRRect
     final BorderRadius borderRadius =
@@ -136,6 +150,14 @@ class WImage extends StatelessWidget {
 
     if (styles.decoration != null && borderRadius != BorderRadius.zero) {
       imageWidget = ClipRRect(borderRadius: borderRadius, child: imageWidget);
+    }
+
+    // Apply border
+    if (styles.decoration != null) {
+      imageWidget = Container(
+        decoration: styles.decoration,
+        child: imageWidget,
+      );
     }
 
     // Apply aspect ratio (must be inside sized container)

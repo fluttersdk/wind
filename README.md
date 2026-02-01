@@ -299,6 +299,16 @@ Color red = wColor(context, 'red', 500)!;
 
 For full documentation and examples, visit: **[wind.fluttersdk.com](https://wind.fluttersdk.com)**
 
+## 🤖 AI Agent Integration
+
+For AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.), see [`docs/claude/`](docs/claude/) for integration guides and usage patterns that can be added to your project's AI context files.
+
+**Files available:**
+- `docs/claude/CLAUDE.md` - Plugin usage guide for AI agents
+- `docs/claude/skills/wind-usage/SKILL.md` - Detailed usage patterns
+
+Copy these files to your project or reference them to help AI assistants correctly use Wind in your Flutter projects.
+
 ## 🤝 Contributing
 
 1. Fork the repository

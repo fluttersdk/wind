@@ -2,6 +2,8 @@
 
 A Wind-styled checkbox that integrates with Flutter's Form validation.
 
+<x-preview path="forms/form_checkbox_basic" size="md" source="example/lib/pages/forms/form_checkbox_basic.dart"></x-preview>
+
 ## Basic Usage
 
 ```dart
@@ -16,8 +18,6 @@ Form(
   ),
 )
 ```
-
----
 
 ## Label Options
 
@@ -38,17 +38,12 @@ WFormCheckbox(
     text: TextSpan(
       text: 'I accept the ',
       children: [
-        TextSpan(
-          text: 'Terms',
-          style: TextStyle(color: Colors.blue),
-        ),
+        TextSpan(text: 'Terms', style: TextStyle(color: Colors.blue)),
       ],
     ),
   ),
 )
 ```
-
----
 
 ## Error Styling
 
@@ -64,53 +59,50 @@ WFormCheckbox(
 )
 ```
 
----
+## Props
 
-## Hint
-
-```dart
-WFormCheckbox(
-  hint: 'Optional but recommended',
-  hintClassName: 'text-gray-400 text-xs',
-)
-```
-
-> [!NOTE]
-> Hint is hidden when error message is displayed.
-
----
-
-## API Reference
-
-| Property | Type | Default | Description |
+| Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `value` | `bool` | `false` | Initial checked state |
 | `onChanged` | `ValueChanged<bool>?` | `null` | Change callback |
 | `validator` | `FormFieldValidator<bool>?` | `null` | Validation function |
 | `className` | `String?` | `null` | Checkbox styling |
+| `iconClassName` | `String?` | `null` | Check icon classes |
 | `labelText` | `String?` | `null` | Simple text label |
 | `label` | `Widget?` | `null` | Custom label widget |
+| `labelClassName` | `String` | `'text-sm text-gray-700'` | Label classes |
 | `hint` | `String?` | `null` | Hint text below |
+| `hintClassName` | `String` | `'text-gray-500 text-xs mt-1'` | Hint classes |
 | `showError` | `bool` | `true` | Show error message |
+| `errorClassName` | `String` | `'text-red-500 text-xs mt-1'` | Error classes |
 | `disabled` | `bool` | `false` | Disable interaction |
+| `checkIcon` | `IconData?` | `null` | Custom check icon |
+| `states` | `Set<String>?` | `null` | Custom states |
 
----
+## State Prefixes
 
-## WCheckbox States Enhancement
+| Prefix | Activates When |
+| :--- | :--- |
+| `checked:` | `value` is true |
+| `error:` | Validation fails |
+| `hover:` | Mouse is over checkbox |
+| `disabled:` | `disabled` is true |
 
-WCheckbox now supports custom states via `states` prop:
+## All Supported Classes
 
-```dart
-WCheckbox(
-  value: isChecked,
-  states: {'error', 'loading'},
-  className: 'w-5 h-5 border error:border-red-500 loading:opacity-50',
-)
-```
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Sizing** | `w-*`, `h-*` | Checkbox dimensions |
+| **Border** | `rounded-*`, `border-*` | Border radius and width |
+| **Background** | `bg-*`, `checked:bg-*` | Background colors |
+| **Error** | `error:border-*`, `error:bg-*` | Error state styling |
+| **Layout** | `items-center`, `justify-center` | Content alignment |
+| **Effects** | `opacity-*`, `disabled:opacity-*` | Opacity |
 
----
+> [!NOTE]
+> Hint is hidden when error message is displayed.
 
-## See Also
+## Related Documentation
 
-- [WCheckbox](/widgets/w-checkbox) - Base checkbox widget
-- [WFormInput](/widgets/w-form-input) - Form input widget
+- [WCheckbox](./w-checkbox.md) - Base checkbox widget
+- [WFormInput](./w-form-input.md) - Form input widget

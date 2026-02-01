@@ -8,7 +8,7 @@ Ring is implemented as a box shadow with spread radius only (no blur), similar t
 
 Control the width of the ring.
 
-<x-preview path="effects/ring_basic" size="md"></x-preview>
+<x-preview path="effects/ring_basic" size="md" source="example/lib/pages/effects/ring_basic.dart"></x-preview>
 
 ```dart
 WDiv(className: "ring ring-blue-500 p-4")
@@ -31,7 +31,7 @@ WDiv(className: "ring-4 ring-blue-500 p-4")
 
 Control the color of the ring.
 
-<x-preview path="effects/ring_colors" size="md"></x-preview>
+<x-preview path="effects/ring_colors" size="md" source="example/lib/pages/effects/ring_colors.dart"></x-preview>
 
 ```dart
 WDiv(className: "ring-4 ring-red-500 p-4")
@@ -48,7 +48,7 @@ WDiv(className: "ring-4 ring-[#1da1f2] p-4")
 
 You can control the opacity of the ring color using the color opacity modifier.
 
-<x-preview path="effects/ring_opacity" size="md"></x-preview>
+<x-preview path="effects/ring_opacity" size="md" source="example/lib/pages/effects/ring_opacity.dart"></x-preview>
 
 | Class | Behavior |
 | :--- | :--- |
@@ -118,6 +118,7 @@ WindThemeData(
   },
 )
 ```
+
 Usage: `ring-10`.
 
 ### Ring Offsets
@@ -133,4 +134,11 @@ WindThemeData(
   },
 )
 ```
+
 Usage: `ring-offset-loose`.
+
+## Related Documentation
+
+- [Borders](./borders.md) - Border utilities
+- [Outline](./outline.md) - Outline utilities
+- [Shadow](../styling/shadow.md) - Box shadow utilities

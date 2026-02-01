@@ -39,111 +39,187 @@ class SvgBasicExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: 'p-6 bg-gray-100 h-full w-screen',
+      className: 'w-full h-full overflow-y-auto p-4',
+      child: WDiv(
+        className: 'flex flex-col gap-6',
+        children: [
+          // Header with gradient
+          WDiv(
+            className: '''
+              w-full p-4 rounded-xl
+              bg-gradient-to-r from-orange-500 to-amber-500
+            ''',
+            children: const [
+              WText('WSvg', className: 'text-lg font-bold text-white'),
+              WText(
+                'Utility-first SVG component with fill, stroke, and sizing',
+                className: 'text-sm text-orange-100',
+              ),
+            ],
+          ),
+
+          // Fill colors
+          _buildSection(
+            title: 'Fill Colors',
+            description: 'Use fill-{color} to colorize filled SVGs',
+            children: [
+              WDiv(
+                className: 'flex gap-4 overflow-x-auto',
+                children: const [
+                  WSvg.string(_starSvg, className: 'fill-yellow-500 w-8 h-8'),
+                  WSvg.string(_heartSvg, className: 'fill-red-500 w-8 h-8'),
+                  WSvg.string(_starSvg, className: 'fill-blue-500 w-8 h-8'),
+                  WSvg.string(_heartSvg, className: 'fill-green-500 w-8 h-8'),
+                  WSvg.string(_checkSvg, className: 'fill-purple-500 w-8 h-8'),
+                ],
+              ),
+            ],
+          ),
+
+          // Stroke colors
+          _buildSection(
+            title: 'Stroke Colors',
+            description: 'Use stroke-{color} for outlined SVGs',
+            children: [
+              WDiv(
+                className: 'flex gap-4 overflow-x-auto',
+                children: const [
+                  WSvg.string(_circleSvg, className: 'stroke-red-500 w-8 h-8'),
+                  WSvg.string(_squareSvg, className: 'stroke-blue-500 w-8 h-8'),
+                  WSvg.string(
+                    _circleSvg,
+                    className: 'stroke-green-500 w-8 h-8',
+                  ),
+                  WSvg.string(
+                    _squareSvg,
+                    className: 'stroke-orange-500 w-8 h-8',
+                  ),
+                  WSvg.string(
+                    _circleSvg,
+                    className: 'stroke-purple-500 w-8 h-8',
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          // Parent inheritance
+          _buildSection(
+            title: 'Parent Inheritance',
+            description: 'Inherits color and size from parent like WIcon',
+            children: [
+              WDiv(
+                className: 'flex gap-4 overflow-x-auto',
+                children: [
+                  WDiv(
+                    className: 'flex items-center gap-2 text-red-500 text-xl',
+                    children: const [WSvg.string(_heartSvg), WText('Love')],
+                  ),
+                  WDiv(
+                    className: 'flex items-center gap-2 text-blue-500 text-xl',
+                    children: const [WSvg.string(_starSvg), WText('Star')],
+                  ),
+                  WDiv(
+                    className: 'flex items-center gap-2 text-green-500 text-xl',
+                    children: const [WSvg.string(_checkSvg), WText('Done')],
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          // Text sizes
+          _buildSection(
+            title: 'Text Sizes',
+            description: 'Use text-{size} for font-relative sizing',
+            children: [
+              WDiv(
+                className: 'flex items-end gap-4 overflow-x-auto',
+                children: const [
+                  WSvg.string(_starSvg, className: 'fill-gray-600 text-sm'),
+                  WSvg.string(_starSvg, className: 'fill-gray-600 text-base'),
+                  WSvg.string(_starSvg, className: 'fill-gray-600 text-lg'),
+                  WSvg.string(_starSvg, className: 'fill-gray-600 text-xl'),
+                  WSvg.string(_starSvg, className: 'fill-gray-600 text-2xl'),
+                  WSvg.string(_starSvg, className: 'fill-gray-600 text-3xl'),
+                ],
+              ),
+            ],
+          ),
+
+          // Pixel sizes
+          _buildSection(
+            title: 'Pixel Sizes',
+            description: 'Use w-{n} h-{n} for exact dimensions',
+            children: [
+              WDiv(
+                className: 'flex items-end gap-4 overflow-x-auto',
+                children: const [
+                  WSvg.string(_starSvg, className: 'fill-yellow-500 w-4 h-4'),
+                  WSvg.string(_starSvg, className: 'fill-yellow-500 w-6 h-6'),
+                  WSvg.string(_starSvg, className: 'fill-yellow-500 w-8 h-8'),
+                  WSvg.string(_starSvg, className: 'fill-yellow-500 w-10 h-10'),
+                  WSvg.string(_starSvg, className: 'fill-yellow-500 w-12 h-12'),
+                ],
+              ),
+            ],
+          ),
+
+          // Quick Reference
+          WDiv(
+            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+            children: [
+              const WText(
+                'Quick Reference',
+                className: 'font-semibold text-gray-800 dark:text-white mb-2',
+              ),
+              WDiv(
+                className: 'flex flex-col gap-1',
+                children: [
+                  _referenceRow('fill-{color}', 'Fill color'),
+                  _referenceRow('stroke-{color}', 'Stroke color'),
+                  _referenceRow('w-{n} h-{n}', 'Pixel dimensions'),
+                  _referenceRow('text-{size}', 'Font-relative size'),
+                  _referenceRow('opacity-{n}', 'Opacity'),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required String description,
+    required List<Widget> children,
+  }) {
+    return WDiv(
+      className: 'flex flex-col gap-2',
       children: [
-        // Fill colors
-        const WText(
-          'Fill Colors (fill-{color})',
-          className: 'font-bold text-sm text-gray-700 mb-2',
+        WText(
+          title,
+          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WDiv(
-          className: 'flex gap-4 mb-6',
-          children: const [
-            WSvg.string(_starSvg, className: 'fill-yellow-500 w-8 h-8'),
-            WSvg.string(_heartSvg, className: 'fill-red-500 w-8 h-8'),
-            WSvg.string(_starSvg, className: 'fill-blue-500 w-8 h-8'),
-            WSvg.string(_heartSvg, className: 'fill-green-500 w-8 h-8'),
-            WSvg.string(_checkSvg, className: 'fill-purple-500 w-8 h-8'),
-          ],
+        WText(
+          description,
+          className: 'text-sm text-gray-500 dark:text-gray-400',
         ),
+        ...children,
+      ],
+    );
+  }
 
-        // Stroke colors (outlined icons)
-        const WText(
-          'Stroke Colors (stroke-{color})',
-          className: 'font-bold text-sm text-gray-700 mb-2',
+  Widget _referenceRow(String className, String value) {
+    return WDiv(
+      className: 'flex justify-between',
+      children: [
+        WText(
+          className,
+          className: 'text-sm font-mono text-gray-600 dark:text-gray-300',
         ),
-        WDiv(
-          className: 'flex gap-4 mb-6',
-          children: const [
-            WSvg.string(_circleSvg, className: 'stroke-red-500 w-8 h-8'),
-            WSvg.string(_squareSvg, className: 'stroke-blue-500 w-8 h-8'),
-            WSvg.string(_circleSvg, className: 'stroke-green-500 w-8 h-8'),
-            WSvg.string(_squareSvg, className: 'stroke-orange-500 w-8 h-8'),
-            WSvg.string(_circleSvg, className: 'stroke-purple-500 w-8 h-8'),
-          ],
-        ),
-
-        // Stroke width
-        const WText(
-          'Stroke Width (stroke-{width})',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WDiv(
-          className: 'flex gap-4 mb-6',
-          children: const [
-            WSvg.string(_circleSvg, className: 'stroke-1 w-8 h-8'),
-            WSvg.string(_squareSvg, className: 'stroke-2 w-8 h-8'),
-            WSvg.string(_circleSvg, className: 'stroke-3 w-8 h-8'),
-            WSvg.string(_squareSvg, className: 'stroke-4 w-8 h-8'),
-            WSvg.string(_circleSvg, className: 'stroke-5 w-8 h-8'),
-          ],
-        ),
-
-        // Inheriting from parent WDiv
-        const WText(
-          'Inherit from Parent (like WIcon)',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WDiv(
-          className: 'flex gap-4 mb-6',
-          children: [
-            WDiv(
-              className: 'flex items-center gap-2 text-red-500 text-xl',
-              children: const [WSvg.string(_heartSvg), WText('Love')],
-            ),
-            WDiv(
-              className: 'flex items-center gap-2 text-blue-500 text-xl',
-              children: const [WSvg.string(_starSvg), WText('Star')],
-            ),
-            WDiv(
-              className: 'flex items-center gap-2 text-green-500 text-xl',
-              children: const [WSvg.string(_checkSvg), WText('Done')],
-            ),
-          ],
-        ),
-
-        // Sizes with text-{size}
-        const WText(
-          'Text Sizes (text-sm, text-lg, text-2xl)',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WDiv(
-          className: 'flex items-end gap-4 mb-6',
-          children: const [
-            WSvg.string(_starSvg, className: 'fill-gray-600 text-sm'),
-            WSvg.string(_starSvg, className: 'fill-gray-600 text-base'),
-            WSvg.string(_starSvg, className: 'fill-gray-600 text-lg'),
-            WSvg.string(_starSvg, className: 'fill-gray-600 text-xl'),
-            WSvg.string(_starSvg, className: 'fill-gray-600 text-2xl'),
-            WSvg.string(_starSvg, className: 'fill-gray-600 text-3xl'),
-          ],
-        ),
-
-        // Pixel sizes with w-{n} h-{n}
-        const WText(
-          'Pixel Sizes (w-4 h-4, w-8 h-8, w-12 h-12)',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WDiv(
-          className: 'flex items-end gap-4',
-          children: const [
-            WSvg.string(_starSvg, className: 'fill-yellow-500 w-4 h-4'),
-            WSvg.string(_starSvg, className: 'fill-yellow-500 w-6 h-6'),
-            WSvg.string(_starSvg, className: 'fill-yellow-500 w-8 h-8'),
-            WSvg.string(_starSvg, className: 'fill-yellow-500 w-10 h-10'),
-            WSvg.string(_starSvg, className: 'fill-yellow-500 w-12 h-12'),
-          ],
-        ),
+        WText(value, className: 'text-sm text-gray-500 dark:text-gray-400'),
       ],
     );
   }

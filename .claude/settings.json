@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(pwd:*)",
+      "Bash(cd:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(jq:*)",
+      "Bash(curl:*)",
+      "Bash(echo:*)",
+      "WebFetch",
+      "WebSearch",
+      "mcp__sequential-thinking__*",
+      "mcp__serena__*"
+    ]
+  },
+  "enabledPlugins": {
+    "serena-integration@anilcancakir": true,
+    "project-optimizer@anilcancakir": true,
+    "pre-commit-flow@anilcancakir": true,
+    "security-guidance@claude-plugins-official": true,
+    "dart-lsp@anilcancakir": true
+  }
+}

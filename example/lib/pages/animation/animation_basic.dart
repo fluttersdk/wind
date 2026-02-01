@@ -1,154 +1,224 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Animation example showing animate-spin, animate-pulse, animate-bounce.
+/// Explicit Animation Example Page - demonstrates animate-* classes.
 class AnimationBasicExamplePage extends StatelessWidget {
   const AnimationBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: 'p-6 bg-gray-100 h-full w-screen',
-      children: [
-        // Spin animation
-        const WText(
-          'animate-spin (Loading Spinner)',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WDiv(
-          className: 'flex items-center gap-6 mb-8',
-          children: [
-            // Using built-in spinner with WDiv animation
-            WDiv(
-              className: 'animate-spin',
-              child: WDiv(
-                className: 'w-8 h-8 border-4 border-blue-500 rounded-full',
-                child: WText('-', className: 'text-2xl text-blue-500'),
+      className: 'w-full h-full overflow-y-auto p-4',
+      child: WDiv(
+        className: 'flex flex-col gap-6',
+        children: [
+          // Header
+          WDiv(
+            className: '''
+              w-full p-4 rounded-xl
+              bg-gradient-to-r from-purple-500 to-pink-500
+            ''',
+            children: const [
+              WText('Animation', className: 'text-lg font-bold text-white'),
+              WText(
+                'Explicit animation utilities',
+                className: 'text-sm text-purple-100',
               ),
-            ),
-            // Simple spinning box
-            const WDiv(className: 'w-8 h-8 bg-purple-500 rounded animate-spin'),
-            // Spinning icon
-            const WIcon(
-              Icons.refresh,
-              className: 'text-green-500 text-3xl animate-spin',
-            ),
-            // Flutter CircularProgressIndicator spinning
-            const SizedBox(
-              width: 32,
-              height: 32,
-              child: CircularProgressIndicator(strokeWidth: 3),
-            ),
-          ],
-        ),
+            ],
+          ),
 
-        // Pulse animation
-        const WText(
-          'animate-pulse (Skeleton Loader)',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WDiv(
-          className: 'flex gap-2 mb-8 items-start',
-          children: [
-            const WDiv(
-              className: 'w-12 h-12 bg-gray-300 rounded-full animate-pulse',
-            ),
-            WDiv(
-              className: 'flex flex-col mt-1 gap-2',
-              children: const [
-                WDiv(className: 'h-4 bg-gray-300 rounded animate-pulse w-48'),
-                WDiv(className: 'h-4 bg-gray-300 rounded animate-pulse w-32'),
-              ],
-            ),
-          ],
-        ),
+          // Spin animation
+          _buildSection(
+            title: 'animate-spin',
+            description: 'Continuous rotation for loading spinners',
+            children: [
+              WDiv(
+                className: 'flex gap-6 items-center overflow-x-auto',
+                children: const [
+                  WIcon(
+                    Icons.refresh,
+                    className: 'text-blue-500 text-3xl animate-spin',
+                  ),
+                  WDiv(className: 'w-8 h-8 bg-purple-500 rounded animate-spin'),
+                  WIcon(
+                    Icons.settings,
+                    className: 'text-gray-600 text-3xl animate-spin',
+                  ),
+                ],
+              ),
+            ],
+          ),
 
-        // Bounce animation
-        const WText(
-          'animate-bounce (Scroll Indicator)',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WDiv(
-          className: 'flex items-end gap-6 mb-8 h-12',
-          children: const [
-            WIcon(
-              Icons.arrow_downward,
-              className: 'text-blue-500 text-2xl animate-bounce',
-            ),
-            WIcon(
-              Icons.keyboard_arrow_down,
-              className: 'text-green-500 text-3xl animate-bounce',
-            ),
-            WDiv(className: 'w-6 h-6 bg-red-500 rounded animate-bounce'),
-            WIcon(
-              Icons.south,
-              className: 'text-purple-500 text-2xl animate-bounce',
-            ),
-          ],
-        ),
-
-        // Ping animation
-        const WText(
-          'animate-ping (Notification Badge)',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WDiv(
-          className: 'flex items-center gap-8',
-          children: [
-            // Notification with ping badge
-            SizedBox(
-              width: 48,
-              height: 48,
-              child: Stack(
+          // Pulse animation
+          _buildSection(
+            title: 'animate-pulse',
+            description: 'Opacity pulse for skeleton loaders',
+            children: [
+              WDiv(
+                className: 'flex gap-4 items-start overflow-x-auto',
                 children: [
-                  const Positioned.fill(
-                    child: Center(
-                      child: Icon(
-                        Icons.notifications,
-                        size: 32,
-                        color: Colors.grey,
+                  const WDiv(
+                    className:
+                        'w-12 h-12 bg-gray-300 rounded-full animate-pulse',
+                  ),
+                  WDiv(
+                    className: 'flex flex-col gap-2',
+                    children: const [
+                      WDiv(
+                        className: 'h-3 w-32 bg-gray-300 rounded animate-pulse',
                       ),
-                    ),
-                  ),
-                  const Positioned(
-                    right: 4,
-                    top: 4,
-                    child: WDiv(
-                      className: 'w-3 h-3 bg-red-500 rounded-full animate-ping',
-                    ),
+                      WDiv(
+                        className: 'h-3 w-24 bg-gray-300 rounded animate-pulse',
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
-            // Message with badge
-            SizedBox(
-              width: 48,
-              height: 48,
-              child: Stack(
+            ],
+          ),
+
+          // Bounce animation
+          _buildSection(
+            title: 'animate-bounce',
+            description: 'Vertical bounce for scroll indicators',
+            children: [
+              WDiv(
+                className: 'flex gap-6 items-end h-12 overflow-x-auto',
+                children: const [
+                  WIcon(
+                    Icons.arrow_downward,
+                    className: 'text-blue-500 text-2xl animate-bounce',
+                  ),
+                  WIcon(
+                    Icons.keyboard_arrow_down,
+                    className: 'text-green-500 text-3xl animate-bounce',
+                  ),
+                  WDiv(className: 'w-5 h-5 bg-red-500 rounded animate-bounce'),
+                ],
+              ),
+            ],
+          ),
+
+          // Ping animation
+          _buildSection(
+            title: 'animate-ping',
+            description: 'Scale and fade out for notifications',
+            children: [
+              WDiv(
+                className: 'flex gap-8 items-center overflow-x-auto',
                 children: [
-                  const Positioned.fill(
-                    child: Center(
-                      child: Icon(Icons.mail, size: 32, color: Colors.grey),
-                    ),
+                  _NotificationBadge(
+                    icon: Icons.notifications,
+                    badgeColor: 'bg-red-500',
                   ),
-                  const Positioned(
-                    right: 4,
-                    top: 4,
-                    child: WDiv(
-                      className:
-                          'w-3 h-3 bg-blue-500 rounded-full animate-ping',
-                    ),
+                  _NotificationBadge(
+                    icon: Icons.mail,
+                    badgeColor: 'bg-blue-500',
+                  ),
+                  const WDiv(
+                    className: 'w-4 h-4 bg-green-500 rounded-full animate-ping',
                   ),
                 ],
               ),
-            ),
-            // Standalone ping
-            const WDiv(
-              className: 'w-4 h-4 bg-green-500 rounded-full animate-ping',
-            ),
-          ],
+            ],
+          ),
+
+          // Quick Reference
+          WDiv(
+            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+            children: [
+              const WText(
+                'Quick Reference',
+                className: 'font-semibold text-gray-800 dark:text-white mb-2',
+              ),
+              WDiv(
+                className: 'flex flex-col gap-1',
+                children: const [
+                  WText(
+                    'animate-spin | animate-pulse | animate-bounce | animate-ping',
+                    className:
+                        'text-xs font-mono text-gray-600 dark:text-gray-400',
+                  ),
+                  WText(
+                    'animate-none (to remove)',
+                    className:
+                        'text-xs font-mono text-gray-600 dark:text-gray-400',
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required String description,
+    required List<Widget> children,
+  }) {
+    return WDiv(
+      className: 'flex flex-col gap-2',
+      children: [
+        WText(
+          title,
+          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
+        WText(
+          description,
+          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ),
+        ...children,
       ],
+    );
+  }
+}
+
+class _AnimatedBox extends StatelessWidget {
+  final String animation;
+  final Widget child;
+
+  const _AnimatedBox({required this.animation, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className:
+          '''
+        $animation w-14 h-14 bg-white rounded-lg shadow-sm
+        flex items-center justify-center
+      ''',
+      children: [child],
+    );
+  }
+}
+
+class _NotificationBadge extends StatelessWidget {
+  final IconData icon;
+  final String badgeColor;
+
+  const _NotificationBadge({required this.icon, required this.badgeColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 40,
+      height: 40,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Center(child: Icon(icon, size: 28, color: Colors.grey)),
+          ),
+          Positioned(
+            right: 2,
+            top: 2,
+            child: WDiv(
+              className: 'w-3 h-3 $badgeColor rounded-full animate-ping',
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

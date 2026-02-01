@@ -20,8 +20,6 @@ class _SelectMultiExamplePageState extends State<SelectMultiExamplePage> {
     SelectOption(value: 'web', label: 'Web'),
     SelectOption(value: 'desktop', label: 'Desktop'),
     SelectOption(value: 'ui', label: 'UI/UX'),
-    SelectOption(value: 'backend', label: 'Backend'),
-    SelectOption(value: 'database', label: 'Database'),
   ];
 
   final _colorOptions = const [
@@ -41,11 +39,6 @@ class _SelectMultiExamplePageState extends State<SelectMultiExamplePage> {
       icon: Icon(Icons.circle, color: Colors.green, size: 16),
     ),
     SelectOption(
-      value: 'orange',
-      label: 'Orange',
-      icon: Icon(Icons.circle, color: Colors.orange, size: 16),
-    ),
-    SelectOption(
       value: 'purple',
       label: 'Purple',
       icon: Icon(Icons.circle, color: Colors.purple, size: 16),
@@ -55,64 +48,136 @@ class _SelectMultiExamplePageState extends State<SelectMultiExamplePage> {
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: 'p-6 bg-gray-100 h-full',
-      children: [
-        // Basic multi-select
-        const WText(
-          'Multi-Select (Tags)',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WSelect<String>(
-          isMulti: true,
-          values: _selectedTags,
-          options: _tagOptions,
-          searchable: true,
-          placeholder: 'Select tags...',
-          onMultiChange: (values) => setState(() => _selectedTags = values),
-          className:
-              'w-80 bg-white border border-gray-300 rounded-lg p-2 min-h-10',
-          menuClassName:
-              'bg-white border border-gray-200 rounded-lg shadow-lg max-h-64',
-        ),
-
-        const WDiv(className: 'h-6'),
-
-        // Multi-select with icons
-        const WText(
-          'Multi-Select with Icons',
-          className: 'font-bold text-sm text-gray-700 mb-2',
-        ),
-        WSelect<String>(
-          isMulti: true,
-          values: _selectedColors,
-          options: _colorOptions,
-          placeholder: 'Select colors...',
-          onMultiChange: (values) => setState(() => _selectedColors = values),
-          className:
-              'w-80 bg-white border border-gray-300 rounded-lg p-2 min-h-10',
-          menuClassName:
-              'bg-white border border-gray-200 rounded-lg shadow-lg max-h-48',
-        ),
-
-        const WDiv(className: 'h-6'),
-
-        // Selected values display
-        if (_selectedTags.isNotEmpty || _selectedColors.isNotEmpty)
+      className: 'w-full h-full overflow-y-auto p-4',
+      child: WDiv(
+        className: 'flex flex-col gap-6',
+        children: [
+          // Header with gradient
           WDiv(
-            className: 'p-4 bg-blue-50 rounded-lg',
+            className: '''
+              w-full p-4 rounded-xl
+              bg-gradient-to-r from-pink-500 to-rose-500
+            ''',
+            children: const [
+              WText('Multi-Select', className: 'text-lg font-bold text-white'),
+              WText(
+                'Select multiple items with chips',
+                className: 'text-sm text-pink-100',
+              ),
+            ],
+          ),
+
+          // Multi-select tags
+          _buildSection(
+            title: 'Tag Selection',
+            description: 'Select multiple tags with search',
             children: [
+              WSelect<String>(
+                isMulti: true,
+                values: _selectedTags,
+                options: _tagOptions,
+                searchable: true,
+                placeholder: 'Select tags...',
+                onMultiChange: (values) =>
+                    setState(() => _selectedTags = values),
+                className: '''
+                  w-80 p-2 min-h-10 rounded-lg
+                  bg-white dark:bg-slate-800
+                  border border-gray-300 dark:border-gray-600
+                ''',
+                menuClassName: '''
+                  bg-white dark:bg-slate-800
+                  border border-gray-200 dark:border-gray-600
+                  rounded-lg shadow-lg max-h-64
+                ''',
+              ),
               if (_selectedTags.isNotEmpty)
                 WText(
-                  'Tags: ${_selectedTags.join(", ")}',
-                  className: 'text-blue-700',
-                ),
-              if (_selectedColors.isNotEmpty)
-                WText(
-                  'Colors: ${_selectedColors.join(", ")}',
-                  className: 'text-blue-700',
+                  'Selected: ${_selectedTags.join(", ")}',
+                  className: 'text-sm text-green-600 dark:text-green-400',
                 ),
             ],
           ),
+
+          // Multi-select with icons
+          _buildSection(
+            title: 'With Icons',
+            description: 'Options with color icons',
+            children: [
+              WSelect<String>(
+                isMulti: true,
+                values: _selectedColors,
+                options: _colorOptions,
+                placeholder: 'Select colors...',
+                onMultiChange: (values) =>
+                    setState(() => _selectedColors = values),
+                className: '''
+                  w-80 p-2 min-h-10 rounded-lg
+                  bg-white dark:bg-slate-800
+                  border border-gray-300 dark:border-gray-600
+                ''',
+                menuClassName: '''
+                  bg-white dark:bg-slate-800
+                  border border-gray-200 dark:border-gray-600
+                  rounded-lg shadow-lg max-h-48
+                ''',
+              ),
+            ],
+          ),
+
+          // Quick Reference
+          WDiv(
+            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+            children: [
+              const WText(
+                'Multi-Select Props',
+                className: 'font-semibold text-gray-800 dark:text-white mb-2',
+              ),
+              WDiv(
+                className: 'flex flex-col gap-1',
+                children: [
+                  _referenceRow('isMulti:', 'true'),
+                  _referenceRow('values:', 'List<T>'),
+                  _referenceRow('onMultiChange:', 'Callback'),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required String description,
+    required List<Widget> children,
+  }) {
+    return WDiv(
+      className: 'flex flex-col gap-2',
+      children: [
+        WText(
+          title,
+          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ),
+        WText(
+          description,
+          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ),
+        ...children,
+      ],
+    );
+  }
+
+  Widget _referenceRow(String className, String value) {
+    return WDiv(
+      className: 'flex justify-between',
+      children: [
+        WText(
+          className,
+          className: 'text-sm font-mono text-gray-600 dark:text-gray-300',
+        ),
+        WText(value, className: 'text-sm text-gray-500 dark:text-gray-400'),
       ],
     );
   }

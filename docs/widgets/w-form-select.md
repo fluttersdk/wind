@@ -1,6 +1,8 @@
 # WFormSelect
 
-Wind-styled select widgets that integrate with Flutter's Form validation system.
+Form-integrated select widgets with Flutter Form validation.
+
+<x-preview path="forms/form_select_basic" size="md" source="example/lib/pages/forms/form_select_basic.dart"></x-preview>
 
 ## WFormSelect (Single-Select)
 
@@ -22,8 +24,6 @@ Form(
 )
 ```
 
----
-
 ## WFormMultiSelect (Multi-Select)
 
 ```dart
@@ -41,8 +41,6 @@ WFormMultiSelect<String>(
 )
 ```
 
----
-
 ## Error Styling
 
 When validation fails, `error` state is automatically added:
@@ -57,8 +55,6 @@ WFormSelect(
 )
 ```
 
----
-
 ## Label & Hint
 
 Both widgets support label and hint:
@@ -69,55 +65,47 @@ WFormSelect(
   labelClassName: 'text-sm font-semibold',
   hint: 'We ship worldwide',
   hintClassName: 'text-gray-400 text-xs',
-  ...
 )
 ```
 
 > [!NOTE]
 > Hint is hidden when error message is displayed.
 
----
+## Props
 
-## Controller Bridge
+### WFormSelect
 
-Bridge with Magic controller validation:
-
-```dart
-WFormSelect(
-  validator: (_) => controller.getError('country'),
-  ...
-)
-```
-
----
-
-## API Reference
-
-### WFormSelect Properties
-
-| Property | Type | Default | Description |
+| Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `value` | `T?` | `null` | Selected value |
 | `options` | `List<SelectOption<T>>` | required | Available options |
-| `onChange` | `ValueChanged<T?>?` | `null` | Selection callback |
-| `validator` | `FormFieldValidator<T>?` | `null` | Validation function |
+| `onChange` | `ValueChanged<T?>?` | - | Selection callback |
+| `validator` | `FormFieldValidator<T>?` | - | Validation function |
 | `label` | `String?` | `null` | Label above select |
 | `hint` | `String?` | `null` | Hint below select |
 | `showError` | `bool` | `true` | Show error message |
 | `searchable` | `bool` | `false` | Enable search |
 
-### WFormMultiSelect Additional Properties
+### WFormMultiSelect Additional
 
-| Property | Type | Default | Description |
+| Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `values` | `List<T>?` | `null` | Selected values |
-| `onMultiChange` | `ValueChanged<List<T>>?` | `null` | Selection callback |
+| `onMultiChange` | `ValueChanged<List<T>>?` | - | Selection callback |
 
-All [WSelect properties](/widgets/w-select) are also supported.
+All [WSelect properties](./w-select.md) are also supported.
 
----
+## All Supported Classes
 
-## See Also
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Sizing** | `w-*`, `min-h-*` | Trigger dimensions |
+| **Padding** | `p-*`, `px-*` | Content padding |
+| **Background** | `bg-*` | Fill color |
+| **Border** | `border-*`, `rounded-*` | Border style |
+| **Error** | `error:border-*`, `error:ring-*` | Error styling |
 
-- [WSelect](/widgets/w-select) - Base select widget
-- [WFormInput](/widgets/w-form-input) - Form input widget
+## Related Documentation
+
+- [WSelect](./w-select.md) - Base select widget
+- [WFormInput](./w-form-input.md) - Form input widget

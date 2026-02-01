@@ -2,19 +2,17 @@
 
 A utility-first checkbox component using `WAnchor` + `WDiv` for full styling control.
 
+<x-preview path="checkbox/checkbox_basic" size="md" source="example/lib/pages/checkbox/checkbox_basic.dart"></x-preview>
+
 ## Basic Usage
 
 ```dart
 WCheckbox(
   value: isChecked,
   onChanged: (val) => setState(() => isChecked = val),
-  className: 'w-5 h-5 rounded border border-gray-300 items-center justify-center checked:bg-blue-500 checked:border-transparent',
+  className: 'w-5 h-5 rounded border border-gray-300 checked:bg-blue-500 checked:border-transparent',
 )
 ```
-
-<x-preview path="checkbox/checkbox_basic" size="md"></x-preview>
-
----
 
 ## State Styling
 
@@ -29,8 +27,6 @@ className: '''
 '''
 ```
 
----
-
 ## Custom Colors
 
 ```dart
@@ -43,8 +39,6 @@ className: 'checked:bg-red-500 checked:border-transparent'
 // Purple
 className: 'checked:bg-purple-500 checked:border-transparent'
 ```
-
----
 
 ## Sizes
 
@@ -62,26 +56,40 @@ className: 'w-6 h-6 ...'
 iconClassName: 'text-white text-base'
 ```
 
----
-
 ## Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `value` | `bool` | Whether checked |
-| `onChanged` | `ValueChanged<bool>?` | Change callback |
-| `className` | `String?` | Utility classes |
-| `iconClassName` | `String?` | Check icon classes |
-| `disabled` | `bool` | Disable interaction |
-| `checkIcon` | `IconData?` | Custom check icon |
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `value` | `bool` | required | Whether checked |
+| `onChanged` | `ValueChanged<bool>?` | `null` | Change callback |
+| `className` | `String?` | `null` | Box utility classes |
+| `iconClassName` | `String?` | `null` | Check icon classes |
+| `disabled` | `bool` | `false` | Disable interaction |
+| `checkIcon` | `IconData?` | `null` | Custom check icon |
+| `states` | `Set<String>?` | `null` | Custom states |
 
----
+## State Prefixes
 
-## Supported Prefixes
-
-| Prefix | Description |
+| Prefix | Activates When |
 | :--- | :--- |
-| `checked:` | Styles applied when `value` is true |
-| `hover:` | Styles applied on mouse hover |
-| `focus:` | Styles applied when focused (via keyboard) |
-| `disabled:` | Styles applied when `disabled` is true |
+| `checked:` | `value` is true |
+| `hover:` | Mouse is over checkbox |
+| `focus:` | Checkbox is focused |
+| `disabled:` | `disabled` is true |
+
+## All Supported Classes
+
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Sizing** | `w-*`, `h-*` | Checkbox dimensions |
+| **Border** | `rounded-*`, `border-*` | Border radius and width |
+| **Background** | `bg-*`, `checked:bg-*` | Background colors |
+| **Border Color** | `border-*`, `checked:border-*` | Border colors |
+| **Layout** | `items-center`, `justify-center` | Content alignment |
+| **Effects** | `opacity-*`, `disabled:opacity-*` | Opacity |
+
+## Related Documentation
+
+- [WAnchor](./w-anchor.md) - State wrapper used internally
+- [WIcon](./w-icon.md) - Check icon component
+- [Colors](../styling/colors.md) - Color utilities

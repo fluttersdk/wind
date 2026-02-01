@@ -137,14 +137,14 @@ class RingParser implements WindParserInterface {
 
           if (context.theme.colors.containsKey(colorName)) {
             Color? parsedColor;
-            if (shade != null) {
-              final shadeValue = int.tryParse(shade);
-              if (shadeValue != null &&
-                  context.theme.colors[colorName]![shadeValue] != null) {
-                parsedColor = context.theme.colors[colorName]![shadeValue];
-              }
+            // Use shade if provided, otherwise default to 500
+            final shadeStr = colorMatch.namedGroup('shade');
+            final shade = shadeStr != null ? int.parse(shadeStr) : 500;
+
+            if (context.theme.isValidColor(colorName, shade: shade)) {
+              parsedColor = context.theme.getColor(colorName, shade);
             } else {
-              // Handle basic colors
+              // Handle basic colors if not found in theme (fallback)
               if (colorName == 'white') {
                 parsedColor = Colors.white;
               } else if (colorName == 'black') {

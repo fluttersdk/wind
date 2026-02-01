@@ -2,62 +2,63 @@
 
 Utilities for controlling the font family of an element.
 
+<x-preview path="typography/font_family" size="lg" source="example/lib/pages/typography/font_family.dart"></x-preview>
+
 ## Basic Usage
 
-Control the font family using `font-{family}` utilities.
+Control the font family using `font-{family}` utilities:
+
+### font-sans
+
+System UI, sans-serif fonts (applied by default):
 
 ```dart
-// System sans-serif
-WText("Sans-serif text", className: "font-sans")
-
-// Serif fonts
-WText("Serif text", className: "font-serif")
-
-// Monospace
-WText("Monospace text", className: "font-mono")
+WText(
+  'The quick brown fox jumps over the lazy dog.',
+  className: 'font-sans text-lg text-gray-800',
+)
 ```
 
-## Supported Utility Classes
+### font-serif
 
-| Category | Classes | Font Family |
-| :--- | :--- | :--- |
-| **Sans** | `font-sans` | System UI, sans-serif |
-| **Serif** | `font-serif` | Georgia, serif |
-| **Mono** | `font-mono` | UI Monospace, monospace |
-
-## Default Font
-
-By default, Wind applies the `font-sans` family to all text (like Tailwind CSS). This is controlled by `applyDefaultFontFamily` in WindThemeData.
+Serif fonts for elegant typography:
 
 ```dart
-// Default behavior: font-sans is applied to all text
-WindTheme(
-  data: WindThemeData(), // applyDefaultFontFamily = true (default)
-  child: ...
-)
-
-// Disable default font
-WindTheme(
-  data: WindThemeData(applyDefaultFontFamily: false),
-  child: ...
+WText(
+  'The quick brown fox jumps over the lazy dog.',
+  className: 'font-serif text-lg text-gray-800',
 )
 ```
+
+### font-mono
+
+Monospace fonts for code:
+
+```dart
+WText(
+  'const message = "Hello, World!";',
+  className: 'font-mono text-lg text-gray-800',
+)
+```
+
+| Class | Font Family |
+| :--- | :--- |
+| `font-sans` | System UI, sans-serif |
+| `font-serif` | Georgia, serif |
+| `font-mono` | UI Monospace, monospace |
 
 ## Arbitrary Values
 
-For custom font families, use the bracket notation.
+For custom font families, use the bracket notation:
 
 ```dart
-// Custom font
-WText("Roboto text", className: "font-[Roboto]")
-
-// Font stack
-WText("Inter text", className: "font-[Inter, sans-serif]")
+WText('Custom font', className: 'font-[Roboto]')
+WText('Font stack', className: 'font-[Inter, sans-serif]')
 ```
 
 ## Customizing Theme
 
-You can customize font families via WindThemeData:
+Define custom font families in `WindThemeData`:
 
 ```dart
 WindTheme(
@@ -66,22 +67,18 @@ WindTheme(
       'sans': 'Inter, system-ui, sans-serif',
       'serif': 'Georgia, serif',
       'mono': 'JetBrains Mono, monospace',
-      'display': 'Poppins, sans-serif',  // custom family
+      'display': 'Poppins, sans-serif',  // custom
     },
   ),
   child: ...
 )
 ```
 
-Then use in your widgets:
-
-```dart
-WText("Display heading", className: "font-display")
-```
+Usage: `font-display`
 
 ## Using Google Fonts
 
-You can easily integrate [google_fonts](https://pub.dev/packages/google_fonts) package:
+Integrate [google_fonts](https://pub.dev/packages/google_fonts) package:
 
 ```dart
 import 'package:google_fonts/google_fonts.dart';
@@ -99,4 +96,28 @@ WindTheme(
 )
 ```
 
-<x-preview path="typography/font_family" size="md"></x-preview>
+## Default Font
+
+By default, Wind applies `font-sans` to all text (like Tailwind CSS). Control with `applyDefaultFontFamily`:
+
+```dart
+// Disable default font
+WindTheme(
+  data: WindThemeData(applyDefaultFontFamily: false),
+  child: ...
+)
+```
+
+## All Font Family Classes
+
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Sans** | `font-sans` | System UI, sans-serif |
+| **Serif** | `font-serif` | Georgia, serif |
+| **Mono** | `font-mono` | Monospace fonts |
+| **Arbitrary** | `font-[Name]` | Custom font family |
+
+## Related Documentation
+
+- [Font Size](./font-size.md) - Text size utilities
+- [Font Weight](./font-weight.md) - Font weight utilities

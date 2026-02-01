@@ -294,6 +294,7 @@ class WDiv extends StatelessWidget {
             crossAxisAlignment:
                 styles.crossAxisAlignment ?? CrossAxisAlignment.start,
             mainAxisSize: effectiveMainAxisSize,
+            textBaseline: styles.textBaseline,
             children: [child!],
           );
         } else {
@@ -303,6 +304,7 @@ class WDiv extends StatelessWidget {
             crossAxisAlignment:
                 styles.crossAxisAlignment ?? CrossAxisAlignment.start,
             mainAxisSize: effectiveMainAxisSize,
+            textBaseline: styles.textBaseline,
             children: [child!],
           );
         }
@@ -339,6 +341,9 @@ class WDiv extends StatelessWidget {
   Widget _buildFlexStructure(WindStyle styles, WindLogger logger) {
     final direction = styles.flexDirection ?? Axis.horizontal;
     final isColumn = direction == Axis.vertical;
+
+    // Check if overflow-hidden is set (requires children to shrink)
+    final hasOverflowClip = styles.clipBehavior == Clip.hardEdge;
 
     // Inject gaps if necessary (SRP: delegated to helper)
     final gappedChildren = _buildGappedChildren(
@@ -380,12 +385,14 @@ class WDiv extends StatelessWidget {
         crossAxisAlignment:
             styles.crossAxisAlignment ?? CrossAxisAlignment.start,
         mainAxisSize: effectiveMainAxisSize,
+        textBaseline: styles.textBaseline,
         children: gappedChildren,
       );
     } else {
-      // For Row with space distribution, wrap children with Flexible
+      // For Row with space distribution OR overflow-hidden, wrap children with Flexible
       // This mimics CSS flex-shrink: 1 default behavior
-      final rowChildren = needsSpaceDistribution
+      final needsFlexible = needsSpaceDistribution || hasOverflowClip;
+      final rowChildren = needsFlexible
           ? gappedChildren.map((child) {
               // Don't wrap SizedBox gaps with Flexible
               if (child is SizedBox) return child;
@@ -398,6 +405,7 @@ class WDiv extends StatelessWidget {
         crossAxisAlignment:
             styles.crossAxisAlignment ?? CrossAxisAlignment.start,
         mainAxisSize: effectiveMainAxisSize,
+        textBaseline: styles.textBaseline,
         children: rowChildren,
       );
     }
@@ -408,10 +416,39 @@ class WDiv extends StatelessWidget {
   /// Unlike CSS Grid which allows variable heights, Flutter's GridView forces
   /// equal heights. We use Wrap + LayoutBuilder to achieve Tailwind-like
   /// behavior where each item has intrinsic height.
+  ///
+  /// When overflow-x-scroll is set, we use Row instead of Wrap to allow
+  /// horizontal scrolling with intrinsic child widths.
   Widget _buildGridStructure(WindStyle styles, WindLogger logger) {
     final cols = styles.gridCols ?? 2;
     final gapX = styles.gapX ?? 0;
     final gapY = styles.gapY ?? 0;
+
+    // Check if horizontal scroll is enabled - use Row for horizontal layout
+    final hasHorizontalScroll =
+        styles.overflowX == WindOverflow.scroll ||
+        styles.overflowX == WindOverflow.auto;
+
+    if (hasHorizontalScroll) {
+      logger.setCoreWidget(
+        "Row-Grid(cols: $cols, children: [${children!.length}])",
+      );
+
+      // Use Row for horizontal scrollable grid - children keep intrinsic width
+      final gappedChildren = <Widget>[];
+      for (var i = 0; i < children!.length; i++) {
+        gappedChildren.add(children![i]);
+        if (i < children!.length - 1) {
+          gappedChildren.add(SizedBox(width: gapX));
+        }
+      }
+
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: gappedChildren,
+      );
+    }
 
     logger.setCoreWidget(
       "Wrap-Grid(cols: $cols, children: [${children!.length}])",
@@ -653,17 +690,17 @@ class WDiv extends StatelessWidget {
         );
       }
     } else if (hasOverflowClip) {
-      logger.wrapWith("ClipRect", "hardEdge");
-      widgetToBuild = ClipRect(
+      logger.wrapWith("ClipRRect", "overflow-hidden");
+      // Use ClipRRect to clip content that overflows
+      // This respects the container's border radius if present
+      final borderRadius = styles.decoration?.borderRadius;
+
+      widgetToBuild = ClipRRect(
+        borderRadius: borderRadius is BorderRadius
+            ? borderRadius
+            : BorderRadius.zero,
         clipBehavior: Clip.hardEdge,
-        child: OverflowBox(
-          alignment: Alignment.topLeft,
-          minWidth: 0,
-          minHeight: 0,
-          maxWidth: double.infinity,
-          maxHeight: double.infinity,
-          child: widgetToBuild,
-        ),
+        child: widgetToBuild,
       );
     }
 
@@ -690,6 +727,15 @@ class WDiv extends StatelessWidget {
     // For partial fractions, skip when unbounded to avoid infinite size errors
     if (styles.widthFactor != null || styles.heightFactor != null) {
       final innerChild = widgetToBuild;
+
+      // Check if we have max constraints that need to be preserved
+      final hasMaxWidthConstraint =
+          styles.constraints?.maxWidth != null &&
+          styles.constraints!.maxWidth != double.infinity;
+      final hasMaxHeightConstraint =
+          styles.constraints?.maxHeight != null &&
+          styles.constraints!.maxHeight != double.infinity;
+
       widgetToBuild = LayoutBuilder(
         builder: (context, constraints) {
           // Check if we're in an unbounded context (inside ScrollView)
@@ -704,11 +750,26 @@ class WDiv extends StatelessWidget {
           if ((widthUnbounded && wantFullWidth) ||
               (heightUnbounded && wantFullHeight)) {
             final screenSize = MediaQuery.of(context).size;
-            return SizedBox(
+            Widget result = SizedBox(
               width: wantFullWidth ? screenSize.width : null,
               height: wantFullHeight ? screenSize.height : null,
               child: innerChild,
             );
+            // Apply max constraints if present
+            if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
+              result = ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: hasMaxWidthConstraint
+                      ? styles.constraints!.maxWidth
+                      : double.infinity,
+                  maxHeight: hasMaxHeightConstraint
+                      ? styles.constraints!.maxHeight
+                      : double.infinity,
+                ),
+                child: result,
+              );
+            }
+            return result;
           }
 
           // Skip fractional sizing for unbounded dimensions (partial fractions)
@@ -722,6 +783,41 @@ class WDiv extends StatelessWidget {
           // If both factors would be null, just return the child directly
           if (effectiveWidthFactor == null && effectiveHeightFactor == null) {
             return innerChild ?? const SizedBox.shrink();
+          }
+
+          // If we have max constraints (e.g., max-w-96), calculate actual size
+          // instead of using FractionallySizedBox which ignores constraints
+          if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
+            double? width;
+            double? height;
+
+            if (effectiveWidthFactor != null) {
+              final parentWidth = constraints.maxWidth;
+              final calculatedWidth = parentWidth * effectiveWidthFactor;
+              // Respect max-w constraint
+              if (hasMaxWidthConstraint) {
+                width = calculatedWidth.clamp(0, styles.constraints!.maxWidth);
+              } else {
+                width = calculatedWidth;
+              }
+            }
+
+            if (effectiveHeightFactor != null) {
+              final parentHeight = constraints.maxHeight;
+              final calculatedHeight = parentHeight * effectiveHeightFactor;
+              // Respect max-h constraint
+              if (hasMaxHeightConstraint) {
+                height = calculatedHeight.clamp(
+                  0,
+                  styles.constraints!.maxHeight,
+                );
+              } else {
+                height = calculatedHeight;
+              }
+            }
+
+            logger.wrapWith("SizedBox", "w-full + max-w constraint");
+            return SizedBox(width: width, height: height, child: innerChild);
           }
 
           logger.wrapWith("FractionallySizedBox", "factor");

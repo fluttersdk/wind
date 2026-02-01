@@ -1,63 +1,147 @@
-# Layout
+# Display
 
-Utilities for controlling the display, position, and visibility of elements.
+Utilities for controlling how elements are displayed, positioned, and their visibility.
 
-## Display
-Utilities for controlling how an element is displayed.
+<x-preview path="layout/display" size="lg" source="example/lib/pages/layout/display.dart"></x-preview>
 
-<x-preview path="layout/display" size="md"></x-preview>
+## Display Types
+
+### block
+
+Standard box model layout (default for `WDiv`):
 
 ```dart
-WText("block (default)", className: "block p-4 bg-red-200 mb-2")
 WDiv(
-  className: "hidden p-4 bg-blue-200 mb-2",
-  children: [Text("I am hidden")],
-)
-WDiv(
-  className: "flex p-4 bg-green-200 mb-2 gap-2",
-  children: [Text("Item 1"), Text("Item 2")],
-)
-WDiv(
-  className: "grid p-4 bg-purple-200 mb-2 gap-2",
-  children: [Text("Grid 1"), Text("Grid 2")],
+  className: 'block p-4 bg-blue-500 rounded-lg',
+  child: WText(
+    'block',
+    className: 'text-white font-mono text-sm',
+  ),
 )
 ```
 
-## Supported Utility Classes
+### flex
 
-| Category | Classes | Description |
-| :--- | :--- | :--- |
-| **Box** | `block` | Standard box model (default) |
-| **Flexbox** | `flex` | Flexbox layout |
-| **Grid** | `grid` | Grid layout |
-| **Visibility** | `hidden` | Remove from layout |
-
-## Visibility
-Utilities for controlling the visibility of an element without affecting layout.
-
-<x-preview path="layout/visibility" size="md"></x-preview>
+Flexbox layout - arrange children in a row or column:
 
 ```dart
 WDiv(
-  className: "invisible ...",
-  child: Text("I am invisible but take up space"),
+  className: 'flex gap-2 p-4 bg-emerald-500 rounded-lg',
+  children: [
+    WDiv(className: 'w-10 h-10 bg-white/30 rounded-lg'),
+    WDiv(className: 'w-10 h-10 bg-white/30 rounded-lg'),
+    WDiv(className: 'w-10 h-10 bg-white/30 rounded-lg'),
+  ],
+)
+```
+
+### grid
+
+Grid layout - arrange children in columns and rows:
+
+```dart
+WDiv(
+  className: 'grid grid-cols-3 gap-2 p-4 bg-violet-500 rounded-lg',
+  children: [
+    WDiv(className: 'h-10 bg-white/30 rounded-lg'),
+    WDiv(className: 'h-10 bg-white/30 rounded-lg'),
+    WDiv(className: 'h-10 bg-white/30 rounded-lg'),
+    WDiv(className: 'h-10 bg-white/30 rounded-lg'),
+    WDiv(className: 'h-10 bg-white/30 rounded-lg'),
+    WDiv(className: 'h-10 bg-white/30 rounded-lg'),
+  ],
 )
 ```
 
 | Class | Description |
 | :--- | :--- |
-| `visible` | Make element visible |
-| `invisible` | Hide element (maintain layout space) |
+| `block` | Standard box model (default) |
+| `flex` | Flexbox layout |
+| `grid` | Grid layout |
 
-## Responsive Display
-Control visibility at specific breakpoints.
+## Visibility
 
-<x-preview path="layout/responsive" size="md"></x-preview>
+### hidden
+
+Remove element from layout completely:
 
 ```dart
-// Hidden on mobile, visible on medium screens and up
-WDiv(className: "hidden md:flex ...")
-
-// Visible on mobile, hidden on large screens
-WDiv(className: "flex md:hidden ...")
+WDiv(
+  className: 'hidden',
+  child: WText('Not rendered'),
+)
 ```
+
+### invisible
+
+Hide element but preserve its layout space:
+
+```dart
+WDiv(
+  className: 'invisible w-12 h-12 bg-amber-500',
+  child: WText('Invisible'),
+)
+```
+
+| Class | Description |
+| :--- | :--- |
+| `hidden` | Remove from layout (not rendered) |
+| `opacity-0` | Hide visually but maintain space |
+
+### opacity-0 (Preserve Layout Space)
+
+Use `opacity-0` to hide an element while keeping its layout space:
+
+```dart
+WDiv(
+  className: 'opacity-0 w-12 h-12 bg-amber-500 rounded-lg',
+  child: WText('Hidden but takes space'),
+)
+```
+
+## Responsive Display
+
+Show or hide elements at specific breakpoints using responsive prefixes like `md:`, `lg:`.
+
+<x-preview path="layout/responsive_display" size="lg" source="example/lib/pages/layout/responsive_display.dart"></x-preview>
+
+```dart
+WDiv(
+  className: 'flex flex-col gap-2',
+  children: [
+    // Visible only on mobile (hidden on md+)
+    WDiv(
+      className: 'md:hidden p-3 bg-red-500 rounded-lg',
+      child: WText(
+        'Visible on mobile only',
+        className: 'text-white text-sm',
+      ),
+    ),
+    // Hidden on mobile, visible on md+
+    WDiv(
+      className: 'hidden md:block p-3 bg-green-500 rounded-lg',
+      child: WText(
+        'Visible on md+ only',
+        className: 'text-white text-sm',
+      ),
+    ),
+  ],
+)
+```
+
+Control visibility at specific breakpoints:
+
+### Common Patterns
+
+| Pattern | Description |
+| :--- | :--- |
+| `md:hidden` | Hide on medium screens and up |
+| `hidden md:block` | Show only on medium screens and up |
+| `hidden md:flex` | Show as flex on medium screens and up |
+| `lg:hidden` | Hide on large screens and up |
+
+## Related Documentation
+
+- [Flexbox](./flexbox.md) - Detailed flex layout utilities
+- [Grid](./grid.md) - Detailed grid layout utilities
+- [Responsive Design](../core-concepts/responsive-design.md) - Breakpoints and responsive patterns

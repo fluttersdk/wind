@@ -577,8 +577,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   Widget _buildSingleSelectTriggerContent() {
     final textColor = _selectedOption != null
-        ? 'text-gray-800'
-        : 'text-gray-400';
+        ? 'text-gray-800 dark:text-gray-100'
+        : 'text-gray-400 dark:text-gray-500';
     return WText(
       _selectedOption?.label ?? widget.placeholder,
       className: '$textColor truncate',
@@ -587,7 +587,10 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   Widget _buildMultiSelectTriggerContent() {
     if (_selectedOptions.isEmpty) {
-      return WText(widget.placeholder, className: 'text-gray-400 truncate');
+      return WText(
+        widget.placeholder,
+        className: 'text-gray-400 dark:text-gray-500 truncate',
+      );
     }
 
     return SingleChildScrollView(
@@ -756,7 +759,10 @@ class _WSelectState<T> extends State<WSelect<T>> {
     return GestureDetector(
       onTap: _isCreating ? null : _createOption,
       child: WDiv(
-        className: 'flex items-center gap-2 px-3 py-2 hover:bg-gray-50',
+        className: '''
+          w-full flex items-center gap-2 px-3 py-2
+          hover:bg-gray-50 dark:hover:bg-slate-700
+        ''',
         children: [
           if (_isCreating)
             const SizedBox(
@@ -765,10 +771,10 @@ class _WSelectState<T> extends State<WSelect<T>> {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           else
-            Icon(Icons.add, size: 16, color: Colors.blue.shade600),
+            Icon(Icons.add, size: 16, color: Colors.blue.shade400),
           WText(
             'Create "$_searchQuery"',
-            className: 'text-blue-600 font-medium',
+            className: 'text-blue-500 dark:text-blue-400 font-medium',
           ),
         ],
       ),
@@ -817,15 +823,15 @@ class _WSelectState<T> extends State<WSelect<T>> {
     }
 
     final String bgClass = isSelected
-        ? 'bg-blue-50'
+        ? 'bg-blue-50 dark:bg-blue-900/30'
         : isHovered
-        ? 'bg-gray-100'
+        ? 'bg-gray-100 dark:bg-slate-700'
         : 'bg-transparent';
     final String textColorClass = option.disabled
-        ? 'text-gray-400'
+        ? 'text-gray-400 dark:text-gray-500'
         : isSelected
-        ? 'text-blue-700 font-medium'
-        : 'text-gray-800';
+        ? 'text-blue-700 dark:text-blue-300 font-medium'
+        : 'text-gray-800 dark:text-gray-200';
 
     return WindAnchorStateProvider(
       state: WindAnchorState(

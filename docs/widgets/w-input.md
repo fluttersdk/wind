@@ -2,11 +2,9 @@
 
 A utility-first form input widget with React-style controlled state management.
 
-`WInput` provides a clean, declarative API for building styled form inputs with Tailwind-like classes. It supports multiple input types and seamlessly integrates with Wind's state-based styling system.
+<x-preview path="forms/input_basic" size="md" source="example/lib/pages/forms/input_basic.dart"></x-preview>
 
 ## Basic Usage
-
-<x-preview path="forms/input_basic" size="md"></x-preview>
 
 ```dart
 WInput(
@@ -16,8 +14,6 @@ WInput(
   className: 'w-full p-3 border border-gray-300 rounded-lg',
 )
 ```
-
----
 
 ## Input Types
 
@@ -53,11 +49,9 @@ WInput(
 )
 ```
 
----
-
 ## Styling with className
 
-<x-preview path="forms/input_styled" size="lg"></x-preview>
+<x-preview path="forms/input_styled" size="lg" source="example/lib/pages/forms/input_styled.dart"></x-preview>
 
 Apply Tailwind-like classes to style your inputs:
 
@@ -67,22 +61,6 @@ WInput(
   placeholder: 'Styled input',
 )
 ```
-
-### Supported Utility Classes
-
-`WInput` maps utility classes to `InputDecoration` properties.
-
-| Category | Classes | Maps To |
-| :--- | :--- | :--- |
-| **Padding** | `p-{n}`, `px-{n}`, `py-{n}` | `contentPadding` |
-| **Background** | `bg-{color}` | `fillColor`, `filled: true` |
-| **Border** | `border`, `border-{n}`, `border-{color}` | `enabledBorder`, `focusedBorder` |
-| **Radius** | `rounded-{size}` | `borderRadius` |
-| **Typography** | `text-{color}`, `font-{weight}` | Input text style |
-| **Placeholder** | `placeholder:{style}` | Placeholder text style (via `placeholderClassName`) |
-| **Flex** | `flex-auto`, `flex-1` | Wraps in `Flexible`/`Expanded` for flex containers |
-
----
 
 ## Flex Container Support
 
@@ -112,7 +90,7 @@ WDiv(
 
 ## Focus States
 
-<x-preview path="forms/input_states" size="md"></x-preview>
+<x-preview path="forms/input_states" size="md" source="example/lib/pages/forms/input_states.dart"></x-preview>
 
 Use focus-prefixed classes for focus styling:
 
@@ -127,22 +105,9 @@ WInput(
 )
 ```
 
-### Available State Prefixes
-
-| Prefix | Condition |
-| :--- | :--- |
-| `focus:` | Applied when input is focused |
-| `disabled:` | Applied when `enabled: false` |
-
----
-
 ## Custom States & Validation
 
-Use the `states` prop to apply custom state-based styling. This is perfect for validation:
-
-<x-preview path="forms/input_states" size="lg"></x-preview>
-
-### Error State Example
+Use the `states` prop to apply custom state-based styling:
 
 ```dart
 WInput(
@@ -161,97 +126,18 @@ WInput(
 )
 ```
 
-### Available Custom State Prefixes
+## Prefix & Suffix
 
-You can use any custom state name with the `states` prop:
-
-| State | Usage |
-| :--- | :--- |
-| `error:` | `states: {'error'}` - Validation errors |
-| `success:` | `states: {'success'}` - Valid input |
-| `warning:` | `states: {'warning'}` - Warnings |
-| Any custom | `states: {'mystate'}` - `mystate:` prefix |
-
----
-
-## Disabled State
+Add icons or widgets inside the input:
 
 ```dart
 WInput(
-  enabled: false,
-  value: 'Cannot edit',
-  className: 'p-3 border rounded-lg disabled:bg-gray-100 disabled:text-gray-400',
+  prefix: Icon(Icons.email, size: 20),
+  suffix: Icon(Icons.check, color: Colors.green),
+  className: 'p-3 border rounded-lg',
+  placeholder: 'With icons',
 )
 ```
-
----
-
-## Controlled vs Uncontrolled
-
-### Controlled (React-style)
-
-Pass `value` and `onChanged` for full control:
-
-```dart
-class _MyFormState extends State<MyForm> {
-  String _name = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return WInput(
-      value: _name,
-      onChanged: (value) => setState(() => _name = value),
-      placeholder: 'Your name',
-    );
-  }
-}
-```
-
-### With External Controller
-
-For advanced use cases, pass your own controller:
-
-```dart
-final _controller = TextEditingController();
-
-WInput(
-  controller: _controller,
-  placeholder: 'Using controller',
-)
-```
-
-> [!NOTE]
-> When using `controller`, the `value` prop is ignored.
-
----
-
-## Keyboard Actions
-
-Customize keyboard behavior for mobile users:
-
-```dart
-WInput(
-  textInputAction: TextInputAction.search,
-  onSubmitted: (value) => _performSearch(value),
-  onEditingComplete: () => _focusNextField(),
-  textCapitalization: TextCapitalization.words,
-  autocorrect: false,
-  enableSuggestions: false,
-)
-```
-
-### Available TextInputAction Values
-
-| Action | Keyboard Button |
-| :--- | :--- |
-| `TextInputAction.done` | Done / ✓ |
-| `TextInputAction.next` | Next → |
-| `TextInputAction.search` | Search 🔍 |
-| `TextInputAction.send` | Send |
-| `TextInputAction.go` | Go |
-| `TextInputAction.newline` | Enter (multiline) |
-
----
 
 ## Placeholder Styling
 
@@ -265,15 +151,9 @@ WInput(
 )
 ```
 
-If no `placeholderClassName` is provided, placeholder inherits text color with 50% opacity.
+## Props
 
----
-
-## API Reference
-
-### Properties
-
-| Property | Type | Default | Description |
+| Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `value` | `String?` | `null` | Controlled value |
 | `onChanged` | `ValueChanged<String>?` | `null` | Called on value change |
@@ -281,6 +161,8 @@ If no `placeholderClassName` is provided, placeholder inherits text color with 5
 | `className` | `String?` | `null` | Tailwind-like classes for input |
 | `placeholderClassName` | `String?` | `null` | Tailwind-like classes for placeholder |
 | `placeholder` | `String?` | `null` | Placeholder text |
+| `prefix` | `Widget?` | `null` | Widget before input |
+| `suffix` | `Widget?` | `null` | Widget after input |
 | `enabled` | `bool` | `true` | Whether input is enabled |
 | `readOnly` | `bool` | `false` | Whether input is read-only |
 | `autofocus` | `bool` | `false` | Whether to autofocus |
@@ -298,3 +180,33 @@ If no `placeholderClassName` is provided, placeholder inherits text color with 5
 | `controller` | `TextEditingController?` | `null` | External controller |
 | `states` | `Set<String>?` | `null` | Custom states |
 | `inputFormatters` | `List<TextInputFormatter>?` | `null` | Input formatters |
+
+## State Prefixes
+
+| Prefix | Activates When |
+| :--- | :--- |
+| `focus:` | Input is focused |
+| `disabled:` | `enabled: false` |
+| `error:` | `states: {'error'}` |
+| `success:` | `states: {'success'}` |
+
+## All Supported Classes
+
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Sizing** | `w-*`, `h-*`, `w-full` | Input dimensions |
+| **Padding** | `p-*`, `px-*`, `py-*` | Content padding |
+| **Background** | `bg-*` | Fill color |
+| **Border** | `border-*`, `rounded-*` | Border style and radius |
+| **Typography** | `text-*`, `font-*` | Text styling |
+| **Focus** | `focus:ring-*`, `focus:border-*` | Focus indicators |
+| **Flex** | `flex-auto`, `flex-1` | Flex container behavior |
+
+> [!NOTE]
+> When using `controller`, the `value` prop is ignored.
+
+## Related Documentation
+
+- [WFormInput](./w-form-input.md) - Form-integrated input with validation
+- [WButton](./w-button.md) - Button for form submission
+- [Colors](../styling/colors.md) - Color utilities

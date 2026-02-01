@@ -2,11 +2,9 @@
 
 A utility-first button widget with loading states, hover effects, and native cursor behavior.
 
-`WButton` extends `WAnchor` capabilities with standard button features like loading spinners, disabled styling, and automatic cursor changes for web/desktop platforms.
+<x-preview path="buttons/button_basic" size="md" source="example/lib/pages/buttons/button_basic.dart"></x-preview>
 
 ## Basic Usage
-
-<x-preview path="buttons/button_basic" size="md"></x-preview>
 
 ```dart
 WButton(
@@ -19,45 +17,39 @@ WButton(
 > [!TIP]
 > WButton automatically shows `pointer` cursor on hover and `forbidden` cursor when disabled.
 
----
-
 ## Button Variants
 
 ```dart
 // Primary
 WButton(
   onTap: () {},
-  className: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg',
+  className: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg duration-200',
   child: Text('Primary'),
 )
 
 // Secondary
 WButton(
   onTap: () {},
-  className: 'bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg',
+  className: 'bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg duration-200',
   child: Text('Secondary'),
 )
 
 // Outline
 WButton(
   onTap: () {},
-  className: 'border-2 border-blue-600 hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-lg',
+  className: 'border-2 border-blue-600 hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-lg duration-200',
   child: Text('Outline'),
 )
 
 // Danger
 WButton(
   onTap: () {},
-  className: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg',
+  className: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg duration-200',
   child: Text('Delete'),
 )
 ```
 
----
-
 ## Loading State
-
-<x-preview path="buttons/button_states" size="lg"></x-preview>
 
 Show a loading spinner while processing:
 
@@ -71,25 +63,6 @@ WButton(
 )
 ```
 
-### Custom Loading Widget
-
-```dart
-WButton(
-  isLoading: true,
-  loadingWidget: Row(
-    children: [
-      Icon(Icons.hourglass_empty, size: 16),
-      SizedBox(width: 8),
-      Text('Please wait...'),
-    ],
-  ),
-  className: 'bg-blue-600 text-white px-4 py-2 rounded-lg',
-  child: Text('Submit'),
-)
-```
-
----
-
 ## Disabled State
 
 ```dart
@@ -101,34 +74,46 @@ WButton(
 )
 ```
 
----
+## Props
 
-## State Prefixes
-
-| Prefix | Condition |
-| :--- | :--- |
-| `hover:` | Mouse is over the button |
-| `focus:` | Button is focused |
-| `disabled:` | `disabled: true` |
-| `loading:` | `isLoading: true` |
-
----
-
-## API Reference
-
-### Properties
-
-| Property | Type | Default | Description |
+| Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `child` | `Widget` | required | Button content |
 | `onTap` | `VoidCallback?` | `null` | Tap callback |
 | `onLongPress` | `VoidCallback?` | `null` | Long press callback |
 | `onDoubleTap` | `VoidCallback?` | `null` | Double tap callback |
-| `isLoading` | `bool` | `false` | Shows loading spinner if true |
-| `disabled` | `bool` | `false` | Disables interaction and styles |
-| `className` | `String?` | `null` | Tailwind-like classes |
-| `states` | `Set<String>?` | `null` | Custom states (e.g. `active`) |
-| `loadingText` | `String?` | `null` | Text shown next to spinner |
+| `isLoading` | `bool` | `false` | Shows loading spinner |
+| `disabled` | `bool` | `false` | Disables interaction |
+| `className` | `String?` | `null` | Utility classes |
+| `states` | `Set<String>?` | `null` | Custom states |
+| `loadingText` | `String?` | `null` | Text shown with spinner |
 | `loadingWidget` | `Widget?` | `null` | Custom spinner widget |
-| `loadingSize` | `double` | `16` | Spinner size in pixels |
-| `loadingColor` | `Color?` | `null` | Spinner color (defaults to text color) |
+| `loadingSize` | `double` | `16` | Spinner size |
+| `loadingColor` | `Color?` | `null` | Spinner color |
+
+## State Prefixes
+
+| Prefix | Activates When |
+| :--- | :--- |
+| `hover:` | Mouse is over button |
+| `focus:` | Button is focused |
+| `disabled:` | `disabled: true` |
+| `loading:` | `isLoading: true` |
+
+## All Supported Classes
+
+| Category | Classes | Description |
+| :--- | :--- | :--- |
+| **Sizing** | `w-*`, `h-*`, `w-full`, `h-full` | Button dimensions |
+| **Spacing** | `p-*`, `px-*`, `py-*`, `m-*` | Padding and margin |
+| **Background** | `bg-*`, `hover:bg-*` | Background colors |
+| **Text** | `text-*`, `font-*` | Text styling |
+| **Border** | `rounded-*`, `border-*` | Border radius and width |
+| **Layout** | `flex`, `items-*`, `justify-*` | Internal layout |
+| **Transition** | `duration-*`, `ease-*` | Smooth hover transitions |
+
+## Related Documentation
+
+- [WAnchor](./w-anchor.md) - Low-level state wrapper
+- [Transition](../interactivity/transition.md) - Transition utilities
+- [Colors](../styling/colors.md) - Color utilities

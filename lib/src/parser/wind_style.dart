@@ -88,6 +88,9 @@ class WindStyle {
   /// Alignment for flex or grid display type e.g., align-self-center, align-self-start
   final Alignment? alignment;
 
+  /// Text baseline for baseline alignment (required when using items-baseline)
+  final TextBaseline? textBaseline;
+
   /// Number of grid columns for grid display type e.g., grid-cols-3
   final int? gridCols;
 
@@ -228,6 +231,7 @@ class WindStyle {
     this.flex,
     this.flexFit,
     this.alignment,
+    this.textBaseline,
     this.gridCols,
     this.color,
     this.fontSize,
@@ -290,6 +294,7 @@ class WindStyle {
     int? flex,
     FlexFit? flexFit,
     Alignment? alignment,
+    TextBaseline? textBaseline,
     int? gridCols,
     Color? color,
     double? fontSize,
@@ -366,6 +371,7 @@ class WindStyle {
       flex: flex ?? this.flex,
       flexFit: flexFit ?? this.flexFit,
       alignment: alignment ?? this.alignment,
+      textBaseline: textBaseline ?? this.textBaseline,
       gridCols: gridCols ?? this.gridCols,
       color: color ?? this.color,
       fontSize: fontSize ?? this.fontSize,
@@ -434,6 +440,7 @@ class WindStyle {
           flex == other.flex &&
           flexFit == other.flexFit &&
           alignment == other.alignment &&
+          textBaseline == other.textBaseline &&
           gridCols == other.gridCols &&
           color == other.color &&
           fontSize == other.fontSize &&
@@ -496,6 +503,7 @@ class WindStyle {
       flex.hashCode ^
       flexFit.hashCode ^
       alignment.hashCode ^
+      textBaseline.hashCode ^
       gridCols.hashCode ^
       color.hashCode ^
       fontSize.hashCode ^
@@ -596,6 +604,7 @@ class WindStyle {
         'flex: $flex, '
         'flexFit: $flexFit, '
         'alignment: $alignment, '
+        'textBaseline: $textBaseline, '
         'gridCols: $gridCols, '
         'color: $color, '
         'fontSize: $fontSize, '
