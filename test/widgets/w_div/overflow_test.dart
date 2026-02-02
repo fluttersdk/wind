@@ -4,7 +4,7 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 void main() {
   group('WDiv Overflow Feature Tests', () {
-    testWidgets('overflow-hidden uses ClipRect and OverflowBox', (
+    testWidgets('overflow-hidden uses ClipRRect', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -19,8 +19,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(ClipRect), findsOneWidget);
-      expect(find.byType(OverflowBox), findsOneWidget);
+      expect(find.byType(ClipRRect), findsOneWidget);
     });
 
     testWidgets('overflow-visible does not use ClipRect', (tester) async {
@@ -161,7 +160,7 @@ void main() {
       expect(scrollView.scrollDirection, Axis.vertical);
     });
 
-    testWidgets('overflow-x-hidden uses ClipRect', (tester) async {
+    testWidgets('overflow-x-hidden uses ClipRRect', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -174,10 +173,10 @@ void main() {
         ),
       );
 
-      expect(find.byType(ClipRect), findsOneWidget);
+      expect(find.byType(ClipRRect), findsOneWidget);
     });
 
-    testWidgets('overflow-y-hidden uses ClipRect', (tester) async {
+    testWidgets('overflow-y-hidden uses ClipRRect', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -190,7 +189,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(ClipRect), findsOneWidget);
+      expect(find.byType(ClipRRect), findsOneWidget);
     });
 
     testWidgets('no overflow class does not add ClipRect', (tester) async {

@@ -212,10 +212,12 @@ class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
     // Initialize with provided data or defaults
     var initialData = widget.data ?? WindThemeData();
 
-    // Sync with system brightness on startup
+    // Sync with system brightness on startup (only if syncWithSystem is true)
     // We do this to ensure "Auto" behavior by default
-    final systemBrightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-    initialData = initialData.copyWith(brightness: systemBrightness);
+    if (initialData.syncWithSystem) {
+      final systemBrightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      initialData = initialData.copyWith(brightness: systemBrightness);
+    }
 
     _controller = WindThemeController(initialData);
   }
@@ -223,9 +225,11 @@ class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
   @override
   void didChangePlatformBrightness() {
     super.didChangePlatformBrightness();
-    // Update theme when system brightness changes
-    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-    _controller.updateTheme(brightness: brightness);
+    // Update theme when system brightness changes (only if syncWithSystem is true)
+    if (_controller.data.syncWithSystem) {
+      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      _controller.updateTheme(brightness: brightness);
+    }
   }
 
   @override

@@ -121,6 +121,17 @@ class WindThemeData {
   /// Defaults to true (like Tailwind CSS).
   final bool applyDefaultFontFamily;
 
+  /// Whether to sync theme brightness with system settings.
+  ///
+  /// When true (default), WindTheme will automatically sync with the
+  /// system's brightness setting on startup and when it changes.
+  ///
+  /// When false, the explicitly set [brightness] will be preserved,
+  /// ignoring system preferences.
+  ///
+  /// Defaults to true.
+  final bool syncWithSystem;
+
   /// The base spacing unit used for spacing calculations.
   ///
   /// Defaults to 4.0.
@@ -171,6 +182,7 @@ class WindThemeData {
     Map<String, double>? ringWidths,
     Map<String, double>? ringOffsets,
     this.applyDefaultFontFamily = true,
+    this.syncWithSystem = true,
     this.baseSpacingUnit = 4.0,
     this.ringColor = const Color(0xFF3B82F6), // Tailwind blue-500
     Map<String, double>? opacities,
@@ -322,6 +334,7 @@ class WindThemeData {
     Map<String, double>? ringWidths,
     Map<String, double>? ringOffsets,
     bool? applyDefaultFontFamily,
+    bool? syncWithSystem,
     double? baseSpacingUnit,
     Color? ringColor,
     Map<String, double>? opacities,
@@ -371,6 +384,7 @@ class WindThemeData {
           : this.ringOffsets,
       applyDefaultFontFamily:
           applyDefaultFontFamily ?? this.applyDefaultFontFamily,
+      syncWithSystem: syncWithSystem ?? this.syncWithSystem,
       baseSpacingUnit: baseSpacingUnit ?? this.baseSpacingUnit,
       ringColor: ringColor ?? this.ringColor,
       opacities: opacities != null

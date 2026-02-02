@@ -152,24 +152,38 @@ class _WAnchorState extends State<WAnchor> {
       customStates: widget.states,
     );
 
+    final hasGestures = widget.onTap != null ||
+        widget.onLongPress != null ||
+        widget.onDoubleTap != null;
+
+    // Focus is always present — needed for focus: class prefix to work
+    Widget innerChild = Focus(
+      focusNode: _focusNode,
+      canRequestFocus: !widget.isDisabled,
+      child: widget.child,
+    );
+
+    // Only wrap with GestureDetector if there are actual gesture callbacks
+    if (hasGestures) {
+      innerChild = GestureDetector(
+        onTap: widget.isDisabled ? null : widget.onTap,
+        onLongPress: widget.isDisabled ? null : widget.onLongPress,
+        onDoubleTap: widget.isDisabled ? null : widget.onDoubleTap,
+        child: innerChild,
+      );
+    }
+
     return WindAnchorStateProvider(
       state: currentState,
       child: MouseRegion(
         cursor: widget.isDisabled
             ? SystemMouseCursors.basic
-            : SystemMouseCursors.click,
+            : hasGestures
+                ? SystemMouseCursors.click
+                : SystemMouseCursors.basic,
         onEnter: widget.isDisabled ? null : (_) => _onHover(true),
         onExit: widget.isDisabled ? null : (_) => _onHover(false),
-        child: GestureDetector(
-          onTap: widget.isDisabled ? null : widget.onTap,
-          onLongPress: widget.isDisabled ? null : widget.onLongPress,
-          onDoubleTap: widget.isDisabled ? null : widget.onDoubleTap,
-          child: Focus(
-            focusNode: _focusNode,
-            canRequestFocus: !widget.isDisabled,
-            child: widget.child,
-          ),
-        ),
+        child: innerChild,
       ),
     );
   }

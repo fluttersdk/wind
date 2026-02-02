@@ -258,6 +258,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   bool _isOpen = false;
   bool _isHovering = false;
+  bool _openUpward = false;
   String _searchQuery = '';
   List<SelectOption<T>> _filteredOptions = [];
   bool _isSearching = false;
@@ -328,6 +329,19 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   void _toggleMenu() {
     if (widget.disabled) return;
+
+    if (!_isOpen) {
+      // Calculate whether to open upward based on available space
+      final RenderBox? triggerBox =
+          _triggerKey.currentContext?.findRenderObject() as RenderBox?;
+      if (triggerBox != null) {
+        final triggerPosition = triggerBox.localToGlobal(Offset.zero);
+        final screenHeight = MediaQuery.of(context).size.height;
+        final spaceBelow = screenHeight - triggerPosition.dy - triggerBox.size.height;
+        final menuMaxHeight = widget.maxMenuHeight;
+        _openUpward = spaceBelow < menuMaxHeight && triggerPosition.dy > spaceBelow;
+      }
+    }
 
     setState(() {
       _isOpen = !_isOpen;
@@ -655,11 +669,11 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
     return CompositedTransformFollower(
       link: _layerLink,
-      targetAnchor: Alignment.bottomLeft,
-      followerAnchor: Alignment.topLeft,
-      offset: const Offset(0, 4),
+      targetAnchor: _openUpward ? Alignment.topLeft : Alignment.bottomLeft,
+      followerAnchor: _openUpward ? Alignment.bottomLeft : Alignment.topLeft,
+      offset: Offset(0, _openUpward ? -4 : 4),
       child: Align(
-        alignment: Alignment.topLeft,
+        alignment: _openUpward ? Alignment.bottomLeft : Alignment.topLeft,
         child: TapRegion(
           onTapOutside: (_) => _closeMenu(),
           child: Material(

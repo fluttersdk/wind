@@ -394,8 +394,10 @@ class WDiv extends StatelessWidget {
       final needsFlexible = needsSpaceDistribution || hasOverflowClip;
       final rowChildren = needsFlexible
           ? gappedChildren.map((child) {
-              // Don't wrap SizedBox gaps with Flexible
-              if (child is SizedBox) return child;
+              // Don't wrap SizedBox gaps or already-flex widgets with Flexible
+              if (child is SizedBox ||
+                  child is Flexible ||
+                  child is Expanded) return child;
               return Flexible(child: child);
             }).toList()
           : gappedChildren;
@@ -577,13 +579,15 @@ class WDiv extends StatelessWidget {
     final bool wantFullHeight = styles.heightFactor == 1.0 && !hasOverflow;
 
     // Apply Container ONLY if we have box-specific properties
+    // Note: wantFullWidth/wantFullHeight no longer triggers Container creation
+    // because fractional sizing is handled by the SizedBox layer above.
+    // Container's width/height is still set when it IS created, to ensure
+    // decoration (bg-*) fills the full area.
     final bool needsContainer =
         styles.decoration != null ||
         innerConstraints != null ||
         styles.boxShadow != null ||
-        styles.ringShadow != null ||
-        wantFullWidth ||
-        wantFullHeight;
+        styles.ringShadow != null;
 
     // Track if padding is consumed by Container (so we don't apply it again)
     bool paddingConsumedByContainer = false;
@@ -722,13 +726,12 @@ class WDiv extends StatelessWidget {
     // ---------------------------------------------------------
 
     // Apply Fractional Sizing (e.g., w-1/2, w-full, h-full)
-    // Use LayoutBuilder to detect unbounded constraints (e.g., inside scroll views)
-    // For full-size (factor 1.0), use screen dimensions when unbounded
-    // For partial fractions, skip when unbounded to avoid infinite size errors
+    // Optimized: w-full (factor 1.0) uses SizedBox.expand directly without
+    // LayoutBuilder to avoid expensive cascade rebuilds. LayoutBuilder is only
+    // used for partial fractions (w-1/2, w-1/3) or when max constraints exist.
     if (styles.widthFactor != null || styles.heightFactor != null) {
       final innerChild = widgetToBuild;
 
-      // Check if we have max constraints that need to be preserved
       final hasMaxWidthConstraint =
           styles.constraints?.maxWidth != null &&
           styles.constraints!.maxWidth != double.infinity;
@@ -736,98 +739,107 @@ class WDiv extends StatelessWidget {
           styles.constraints?.maxHeight != null &&
           styles.constraints!.maxHeight != double.infinity;
 
-      widgetToBuild = LayoutBuilder(
-        builder: (context, constraints) {
-          // Check if we're in an unbounded context (inside ScrollView)
-          final bool widthUnbounded = !constraints.hasBoundedWidth;
-          final bool heightUnbounded = !constraints.hasBoundedHeight;
+      final bool isFullWidth = styles.widthFactor == 1.0;
+      final bool isFullHeight = styles.heightFactor == 1.0;
+      // Fast path only for w-full WITHOUT h-full. h-full needs LayoutBuilder
+      // because vertical axis is often unbounded (inside ScrollView/Column)
+      // and SizedBox(height: double.infinity) would cause infinite size errors.
+      final bool canUseFastPath =
+          isFullWidth &&
+          styles.heightFactor == null &&
+          !hasMaxWidthConstraint &&
+          !hasMaxHeightConstraint;
 
-          // For full-size factors (1.0), use SizedBox with screen dimensions
-          final bool wantFullWidth = styles.widthFactor == 1.0;
-          final bool wantFullHeight = styles.heightFactor == 1.0;
+      if (canUseFastPath) {
+        logger.wrapWith("SizedBox", "w-full (no LayoutBuilder)");
+        widgetToBuild = SizedBox(
+          width: double.infinity,
+          child: innerChild,
+        );
+      } else {
+        // Slow path: partial fractions or max constraints need LayoutBuilder
+        widgetToBuild = LayoutBuilder(
+          builder: (context, constraints) {
+            final bool widthUnbounded = !constraints.hasBoundedWidth;
+            final bool heightUnbounded = !constraints.hasBoundedHeight;
 
-          // If unbounded but wants full size, use screen dimensions
-          if ((widthUnbounded && wantFullWidth) ||
-              (heightUnbounded && wantFullHeight)) {
-            final screenSize = MediaQuery.of(context).size;
-            Widget result = SizedBox(
-              width: wantFullWidth ? screenSize.width : null,
-              height: wantFullHeight ? screenSize.height : null,
+            // Full-size in unbounded context → use screen dimensions
+            if ((widthUnbounded && isFullWidth) ||
+                (heightUnbounded && isFullHeight)) {
+              final screenSize = MediaQuery.of(context).size;
+              Widget result = SizedBox(
+                width: isFullWidth ? screenSize.width : null,
+                height: isFullHeight ? screenSize.height : null,
+                child: innerChild,
+              );
+              if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
+                result = ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: hasMaxWidthConstraint
+                        ? styles.constraints!.maxWidth
+                        : double.infinity,
+                    maxHeight: hasMaxHeightConstraint
+                        ? styles.constraints!.maxHeight
+                        : double.infinity,
+                  ),
+                  child: result,
+                );
+              }
+              return result;
+            }
+
+            final double? effectiveWidthFactor = widthUnbounded
+                ? null
+                : styles.widthFactor;
+            final double? effectiveHeightFactor = heightUnbounded
+                ? null
+                : styles.heightFactor;
+
+            if (effectiveWidthFactor == null && effectiveHeightFactor == null) {
+              return innerChild ?? const SizedBox.shrink();
+            }
+
+            // Max constraints: calculate actual size
+            if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
+              double? width;
+              double? height;
+
+              if (effectiveWidthFactor != null) {
+                final parentWidth = constraints.maxWidth;
+                final calculatedWidth = parentWidth * effectiveWidthFactor;
+                if (hasMaxWidthConstraint) {
+                  width = calculatedWidth.clamp(0, styles.constraints!.maxWidth);
+                } else {
+                  width = calculatedWidth;
+                }
+              }
+
+              if (effectiveHeightFactor != null) {
+                final parentHeight = constraints.maxHeight;
+                final calculatedHeight = parentHeight * effectiveHeightFactor;
+                if (hasMaxHeightConstraint) {
+                  height = calculatedHeight.clamp(
+                    0,
+                    styles.constraints!.maxHeight,
+                  );
+                } else {
+                  height = calculatedHeight;
+                }
+              }
+
+              logger.wrapWith("SizedBox", "fractional + max constraint");
+              return SizedBox(width: width, height: height, child: innerChild);
+            }
+
+            logger.wrapWith("FractionallySizedBox", "factor");
+            return FractionallySizedBox(
+              widthFactor: effectiveWidthFactor,
+              heightFactor: effectiveHeightFactor,
               child: innerChild,
             );
-            // Apply max constraints if present
-            if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
-              result = ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: hasMaxWidthConstraint
-                      ? styles.constraints!.maxWidth
-                      : double.infinity,
-                  maxHeight: hasMaxHeightConstraint
-                      ? styles.constraints!.maxHeight
-                      : double.infinity,
-                ),
-                child: result,
-              );
-            }
-            return result;
-          }
-
-          // Skip fractional sizing for unbounded dimensions (partial fractions)
-          final double? effectiveWidthFactor = widthUnbounded
-              ? null
-              : styles.widthFactor;
-          final double? effectiveHeightFactor = heightUnbounded
-              ? null
-              : styles.heightFactor;
-
-          // If both factors would be null, just return the child directly
-          if (effectiveWidthFactor == null && effectiveHeightFactor == null) {
-            return innerChild ?? const SizedBox.shrink();
-          }
-
-          // If we have max constraints (e.g., max-w-96), calculate actual size
-          // instead of using FractionallySizedBox which ignores constraints
-          if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
-            double? width;
-            double? height;
-
-            if (effectiveWidthFactor != null) {
-              final parentWidth = constraints.maxWidth;
-              final calculatedWidth = parentWidth * effectiveWidthFactor;
-              // Respect max-w constraint
-              if (hasMaxWidthConstraint) {
-                width = calculatedWidth.clamp(0, styles.constraints!.maxWidth);
-              } else {
-                width = calculatedWidth;
-              }
-            }
-
-            if (effectiveHeightFactor != null) {
-              final parentHeight = constraints.maxHeight;
-              final calculatedHeight = parentHeight * effectiveHeightFactor;
-              // Respect max-h constraint
-              if (hasMaxHeightConstraint) {
-                height = calculatedHeight.clamp(
-                  0,
-                  styles.constraints!.maxHeight,
-                );
-              } else {
-                height = calculatedHeight;
-              }
-            }
-
-            logger.wrapWith("SizedBox", "w-full + max-w constraint");
-            return SizedBox(width: width, height: height, child: innerChild);
-          }
-
-          logger.wrapWith("FractionallySizedBox", "factor");
-          return FractionallySizedBox(
-            widthFactor: effectiveWidthFactor,
-            heightFactor: effectiveHeightFactor,
-            child: innerChild,
-          );
-        },
-      );
+          },
+        );
+      }
     }
 
     // Apply Padding (p-*) - only if not already consumed by Container
