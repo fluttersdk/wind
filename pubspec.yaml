@@ -10,7 +10,6 @@ topics:
   - tailwind
   - utility-first
   - styling
-  - responsive-design
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
