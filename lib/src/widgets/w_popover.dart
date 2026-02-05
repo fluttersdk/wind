@@ -325,8 +325,22 @@ class _WPopoverState extends State<WPopover> {
 
   Widget _buildTrigger(BuildContext context) {
     final trigger = MouseRegion(
-      onEnter: (_) => setState(() => _isHovering = true),
-      onExit: (_) => setState(() => _isHovering = false),
+      onEnter: (_) {
+        // Defer setState to avoid conflicts with mouse tracker updates
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && !_isHovering) {
+            setState(() => _isHovering = true);
+          }
+        });
+      },
+      onExit: (_) {
+        // Defer setState to avoid conflicts with mouse tracker updates
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _isHovering) {
+            setState(() => _isHovering = false);
+          }
+        });
+      },
       cursor: widget.disabled
           ? SystemMouseCursors.forbidden
           : SystemMouseCursors.click,
@@ -341,10 +355,11 @@ class _WPopoverState extends State<WPopover> {
   }
 
   Widget _buildOverlay(BuildContext context) {
-    // Get trigger width for fallback
+    // Get trigger width for fallback - safely check if hasSize
     final RenderBox? triggerBox =
         _triggerKey.currentContext?.findRenderObject() as RenderBox?;
-    final double triggerWidth = triggerBox?.size.width ?? 200;
+    final double triggerWidth =
+        (triggerBox != null && triggerBox.hasSize) ? triggerBox.size.width : 200;
 
     // Default className if none provided
     final String effectiveClassName =

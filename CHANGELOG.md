@@ -6,6 +6,80 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [1.0.0-alpha.1] - 2026-02-05
+
+### 🚀 Preparation for First Alpha Release
+
+- Fixed dependency constraints for CI compatibility
+- Downgraded flutter_lints to 5.0.0 for Flutter 3.27.1
+- Updated SDK constraints (Dart >=3.4.0 <4.0.0, Flutter >=3.22.0)
+- Cleaned up test imports and warnings
+- Ready for automated publishing via GitHub Actions
+
+## [1.0.0-alpha.9] - 2026-02-04
+
+### ✨ New Features
+
+#### WKeyboardActions Widget
+- **Added**: New `WKeyboardActions` widget for iOS keyboard management.
+- **Problem Solved**: iOS numeric keyboards lack a "Done" button, making it impossible to dismiss the keyboard.
+- **Solution**: Wraps form content with a keyboard toolbar showing Done button and optional field navigation.
+- **Package**: Integrated `keyboard_actions` package (v4.2.1).
+
+**Usage:**
+```dart
+class MyForm extends StatefulWidget {
+  @override
+  State<MyForm> createState() => _MyFormState();
+}
+
+class _MyFormState extends State<MyForm> {
+  final _amountFocus = FocusNode();
+  final _quantityFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _amountFocus.dispose();
+    _quantityFocus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WKeyboardActions(
+      focusNodes: [_amountFocus, _quantityFocus],
+      toolbarClassName: 'bg-gray-100 dark:bg-gray-800',
+      child: Column(
+        children: [
+          WFormInput(
+            focusNode: _amountFocus,
+            label: 'Amount',
+            type: InputType.number, // Done button appears!
+          ),
+          WFormInput(
+            focusNode: _quantityFocus,
+            label: 'Quantity',
+            type: InputType.number,
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+**Props:**
+- `focusNodes`: List of FocusNodes for inputs needing keyboard actions
+- `platform`: Target platform (`'ios'`, `'android'`, `'all'`) - default `'all'`
+- `nextFocus`: Enable up/down navigation between fields - default `true`
+- `toolbarClassName`: Wind className for toolbar styling (supports `bg-*`, `dark:bg-*`)
+- `closeWidgetBuilder`: Custom close button builder
+
+**Re-exports:**
+- `keyboard_actions` package is re-exported for advanced usage
+
+---
+
 ## [1.0.0-alpha.8] - 2026-01-02
 
 ### ✨ New Features

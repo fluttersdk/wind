@@ -206,6 +206,8 @@ overflow-x-{hidden|visible|scroll|auto}
 overflow-y-{hidden|visible|scroll|auto}
 ```
 
+**Note:** `overflow-y-auto`/`overflow-x-auto` creates `SingleChildScrollView`. Use `scrollPrimary: true` on WDiv for iOS status bar tap-to-top behavior.
+
 ## Aspect Ratio
 
 ```
@@ -245,3 +247,13 @@ stroke-{color}-{shade}, stroke-none, stroke-current
 ```
 debug                        enables logging for that widget
 ```
+
+## Visibility (Responsive)
+
+```
+hidden                       display: none
+sm:hidden, md:hidden, etc.   hide at breakpoint
+sm:block, md:flex, etc.      show at breakpoint
+```
+
+Example: `hidden sm:block` — hidden on mobile, visible on sm+

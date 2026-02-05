@@ -134,7 +134,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.0.0-alpha.1"
   from_json_to_json:
     dependency: transitive
     description:
@@ -183,6 +183,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  keyboard_actions:
+    dependency: transitive
+    description:
+      name: keyboard_actions
+      sha256: "5155a158c0d22c3a2f4a2192040445fe84977620cf0eeb29f6148a1dcb5835fa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.1"
   leak_tracker:
     dependency: transitive
     description:

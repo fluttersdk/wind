@@ -126,11 +126,16 @@ class _WAnchorState extends State<WAnchor> {
   ///
   /// Updates the `_isHovering` state via `setState` if the widget is not disabled,
   /// which triggers a rebuild to propagate the new state.
+  /// Uses addPostFrameCallback to avoid mouse_tracker conflicts.
   void _onHover(bool isHovering) {
     if (widget.isDisabled) return;
     if (isHovering != _isHovering) {
-      setState(() {
-        _isHovering = isHovering;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _isHovering != isHovering) {
+          setState(() {
+            _isHovering = isHovering;
+          });
+        }
       });
     }
   }

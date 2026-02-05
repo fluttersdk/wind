@@ -53,3 +53,13 @@ export 'src/widgets/w_checkbox.dart';
 export 'src/widgets/w_form_checkbox.dart';
 export 'src/widgets/w_popover.dart';
 export 'src/widgets/wind_animation_wrapper.dart';
+export 'src/widgets/date_preset.dart';
+export 'src/widgets/w_calendar_grid.dart';
+export 'src/widgets/w_calendar_header.dart';
+export 'src/widgets/w_date_picker.dart';
+export 'src/widgets/w_form_date_picker.dart';
+export 'src/widgets/w_keyboard_actions.dart';
+export 'src/widgets/w_spacer.dart';
+
+// Re-export keyboard_actions for convenience
+export 'package:keyboard_actions/keyboard_actions.dart';

@@ -6,6 +6,7 @@ import '../utils/wind_logger.dart';
 import 'wind_animation_wrapper.dart';
 import '../state/wind_anchor_state_provider.dart';
 import 'w_anchor.dart';
+import 'w_text.dart';
 
 /// **The Fundamental Building Block of Wind**
 ///
@@ -84,6 +85,19 @@ class WDiv extends StatelessWidget {
   /// Example: `states: ['loading']` activates `loading:bg-blue-500`.
   final Set<String>? states;
 
+  /// Whether this scroll view is the primary scroll view associated with
+  /// the parent [PrimaryScrollController].
+  ///
+  /// When true, the scroll view is scrollable even if it doesn't have
+  /// sufficient content to scroll. This also enables iOS status bar
+  /// tap-to-scroll-top and desktop scrollbar integration.
+  ///
+  /// Only applies when [className] includes `overflow-y-auto`, `overflow-y-scroll`,
+  /// `overflow-x-auto`, `overflow-x-scroll`, or `overflow-scroll`.
+  ///
+  /// Defaults to `false`.
+  final bool scrollPrimary;
+
   /// Creates a new [WDiv] instance.
   const WDiv({
     super.key,
@@ -92,6 +106,7 @@ class WDiv extends StatelessWidget {
     this.children,
     this.style,
     this.states,
+    this.scrollPrimary = false,
   }) : assert(
          child == null || children == null,
          'WDiv Violation: You cannot provide both `child` and `children`. Please select one strategy.',
@@ -398,6 +413,9 @@ class WDiv extends StatelessWidget {
               if (child is SizedBox ||
                   child is Flexible ||
                   child is Expanded) return child;
+              // Don't wrap WDiv/WText with flex-N classes (they become Expanded)
+              if (child is WDiv && _hasFlexClass(child.className)) return child;
+              if (child is WText && _hasFlexClass(child.className)) return child;
               return Flexible(child: child);
             }).toList()
           : gappedChildren;
@@ -411,6 +429,16 @@ class WDiv extends StatelessWidget {
         children: rowChildren,
       );
     }
+  }
+
+  /// Checks if a className contains flex-N classes that produce Expanded widgets
+  static bool _hasFlexClass(String? className) {
+    if (className == null) return false;
+    return className.contains('flex-1') ||
+        className.contains('flex-2') ||
+        className.contains('flex-3') ||
+        className.contains('flex-4') ||
+        className.contains('flex-5');
   }
 
   /// Builds a Grid layout using Wrap for flexible item heights.
@@ -669,26 +697,40 @@ class WDiv extends StatelessWidget {
       if (styles.overflowX == WindOverflow.scroll ||
           styles.overflowX == WindOverflow.auto) {
         // Horizontal scroll only
-        logger.wrapWith("SingleChildScrollView", "horizontal");
+        logger.wrapWith(
+          "SingleChildScrollView",
+          "horizontal${scrollPrimary ? ', primary' : ''}",
+        );
         widgetToBuild = SingleChildScrollView(
           scrollDirection: Axis.horizontal,
+          primary: scrollPrimary,
           child: widgetToBuild,
         );
       } else if (styles.overflowY == WindOverflow.scroll ||
           styles.overflowY == WindOverflow.auto) {
         // Vertical scroll only
-        logger.wrapWith("SingleChildScrollView", "vertical");
+        logger.wrapWith(
+          "SingleChildScrollView",
+          "vertical${scrollPrimary ? ', primary' : ''}",
+        );
         widgetToBuild = SingleChildScrollView(
           scrollDirection: Axis.vertical,
+          primary: scrollPrimary,
           child: widgetToBuild,
         );
       } else {
         // Both directions scroll - use nested ScrollViews
-        logger.wrapWith("SingleChildScrollView", "both (nested)");
+        // Only outer (vertical) gets primary, inner (horizontal) never does
+        logger.wrapWith(
+          "SingleChildScrollView",
+          "both (nested)${scrollPrimary ? ', primary on outer' : ''}",
+        );
         widgetToBuild = SingleChildScrollView(
           scrollDirection: Axis.vertical,
+          primary: scrollPrimary,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            primary: false, // Inner scroll is never primary
             child: widgetToBuild,
           ),
         );

@@ -100,7 +100,27 @@ xs:320, sm:384, md:448, lg:512, xl:576, 2xl:672, 3xl:768, 4xl:896, 5xl:1024, 6xl
 ```dart
 // Controller (for toggling theme mode, etc.)
 final controller = WindTheme.of(context);
+// or extension: context.windTheme
 
 // Data (for reading scales)
 final data = WindTheme.dataOf(context);
+
+// Toggle theme
+context.windTheme.toggleTheme();
+
+// Check dark mode
+if (context.windTheme.isDark) { ... }
 ```
+
+## Dark Mode Patterns
+
+Always provide both light and dark variants:
+
+| Element | Light | Dark |
+|---------|-------|------|
+| Background | `bg-white` | `dark:bg-gray-800` |
+| Card bg | `bg-gray-50` | `dark:bg-gray-900` |
+| Text | `text-gray-900` | `dark:text-white` |
+| Muted text | `text-gray-600` | `dark:text-gray-400` |
+| Borders | `border-gray-200` | `dark:border-gray-700` |
+| Dividers | `border-gray-100` | `dark:border-gray-700` |

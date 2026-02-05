@@ -396,6 +396,24 @@ class _WSelectState<T> extends State<WSelect<T>> {
     widget.onMultiChange?.call(currentValues);
   }
 
+  /// Deferred setState for hovering to avoid mouse_tracker conflicts
+  void _setHovering(bool value) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _isHovering != value) {
+        setState(() => _isHovering = value);
+      }
+    });
+  }
+
+  /// Deferred setState for hovered index to avoid mouse_tracker conflicts
+  void _setHoveredIndex(int value) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _hoveredIndex != value) {
+        setState(() => _hoveredIndex = value);
+      }
+    });
+  }
+
   Future<void> _createOption() async {
     if (widget.onCreateOption == null || _searchQuery.isEmpty) return;
 
@@ -492,8 +510,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
       return GestureDetector(
         onTap: _toggleMenu,
         child: MouseRegion(
-          onEnter: (_) => setState(() => _isHovering = true),
-          onExit: (_) => setState(() => _isHovering = false),
+          onEnter: (_) => _setHovering(true),
+          onExit: (_) => _setHovering(false),
           cursor: widget.disabled
               ? SystemMouseCursors.forbidden
               : SystemMouseCursors.click,
@@ -510,8 +528,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
       return GestureDetector(
         onTap: _toggleMenu,
         child: MouseRegion(
-          onEnter: (_) => setState(() => _isHovering = true),
-          onExit: (_) => setState(() => _isHovering = false),
+          onEnter: (_) => _setHovering(true),
+          onExit: (_) => _setHovering(false),
           cursor: widget.disabled
               ? SystemMouseCursors.forbidden
               : SystemMouseCursors.click,
@@ -558,8 +576,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
     return GestureDetector(
       onTap: _toggleMenu,
       child: MouseRegion(
-        onEnter: (_) => setState(() => _isHovering = true),
-        onExit: (_) => setState(() => _isHovering = false),
+        onEnter: (_) => _setHovering(true),
+        onExit: (_) => _setHovering(false),
         cursor: widget.disabled
             ? SystemMouseCursors.forbidden
             : SystemMouseCursors.click,
@@ -826,8 +844,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
       return GestureDetector(
         onTap: () => _selectOption(option),
         child: MouseRegion(
-          onEnter: (_) => setState(() => _hoveredIndex = index),
-          onExit: (_) => setState(() => _hoveredIndex = -1),
+          onEnter: (_) => _setHoveredIndex(index),
+          onExit: (_) => _setHoveredIndex(-1),
           cursor: option.disabled
               ? SystemMouseCursors.forbidden
               : SystemMouseCursors.click,
@@ -856,8 +874,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
       child: GestureDetector(
         onTap: () => _selectOption(option),
         child: MouseRegion(
-          onEnter: (_) => setState(() => _hoveredIndex = index),
-          onExit: (_) => setState(() => _hoveredIndex = -1),
+          onEnter: (_) => _setHoveredIndex(index),
+          onExit: (_) => _setHoveredIndex(-1),
           cursor: option.disabled
               ? SystemMouseCursors.forbidden
               : SystemMouseCursors.click,
