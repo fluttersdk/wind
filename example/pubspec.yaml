@@ -39,7 +39,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  google_fonts: ^6.3.3
+  google_fonts: ^6.1.0  # Downgraded for Dart 3.6.0 compatibility
   web: ^1.1.1
   # mcp_toolkit: ^0.3.0  # Requires Dart 3.8.0, temporarily disabled
 

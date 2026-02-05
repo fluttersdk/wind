@@ -1,29 +1,29 @@
-import 'dart:async';
+// import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
-import 'package:mcp_toolkit/mcp_toolkit.dart';
+// import 'package:mcp_toolkit/mcp_toolkit.dart';  // Requires Dart 3.8.0, temporarily disabled
 
 import 'routes.dart';
 
 void main() {
   usePathUrlStrategy();
 
-  runZonedGuarded(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
-      MCPToolkitBinding.instance
-        ..initialize() // Initializes the Toolkit
-        ..initializeFlutterToolkit(); // Adds Flutter related methods to the MCP server
+  // runZonedGuarded(
+  //   () async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // MCPToolkitBinding.instance
+  //   ..initialize() // Initializes the Toolkit
+  //   ..initializeFlutterToolkit(); // Adds Flutter related methods to the MCP server
 
-      runApp(const MyApp());
-    },
-    (error, stack) {
-      // You can place it in your error handling tool, or directly in the zone. The most important thing is to have it - otherwise the errors will not be captured and MCP server will not return error results.
-      MCPToolkitBinding.instance.handleZoneError(error, stack);
-    },
-  );
+  runApp(const MyApp());
+  //   },
+  //   (error, stack) {
+  //     // You can place it in your error handling tool, or directly in the zone. The most important thing is to have it - otherwise the errors will not be captured and MCP server will not return error results.
+  //     MCPToolkitBinding.instance.handleZoneError(error, stack);
+  //   },
+  // );
 }
 
 class AppLayout extends StatelessWidget {
