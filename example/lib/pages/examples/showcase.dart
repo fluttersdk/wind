@@ -80,18 +80,4 @@ class ShowcaseExamplePage extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildFeature(IconData icon, String text) {
-    return WDiv(
-      className: 'flex items-center gap-2',
-      children: [
-        WDiv(
-          className:
-              'w-7 h-7 rounded-lg bg-indigo-500/20 flex items-center justify-center',
-          child: WIcon(icon, className: 'text-indigo-400 text-sm'),
-        ),
-        WText(text, className: 'text-sm text-gray-300'),
-      ],
-    );
-  }
 }

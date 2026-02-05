@@ -154,8 +154,7 @@ class _OpacityBox extends StatelessWidget {
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className:
-              '''
+          className: '''
             opacity-$value w-16 h-16 bg-blue-500 rounded-lg
             flex items-center justify-center
           ''',
@@ -186,8 +185,7 @@ class _ArbitraryOpacityBox extends StatelessWidget {
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className:
-              '''
+          className: '''
             opacity-[$value] w-16 h-16 bg-purple-500 rounded-lg
             flex items-center justify-center
           ''',

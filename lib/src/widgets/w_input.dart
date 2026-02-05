@@ -369,12 +369,10 @@ class _WInputState extends State<WInput> {
     final (TextInputType keyboardType, bool obscureText) = _getKeyboardConfig();
 
     // Determine max/min lines
-    final int? maxLines = widget.type == InputType.multiline
-        ? widget.maxLines
-        : 1;
-    final int minLines = widget.type == InputType.multiline
-        ? widget.minLines
-        : 1;
+    final int? maxLines =
+        widget.type == InputType.multiline ? widget.maxLines : 1;
+    final int minLines =
+        widget.type == InputType.multiline ? widget.minLines : 1;
 
     // Build text style from WindStyle
     final TextStyle textStyle = styles.toTextStyle();
@@ -393,8 +391,7 @@ class _WInputState extends State<WInput> {
       enabled: widget.enabled,
       readOnly: widget.readOnly,
       autofocus: widget.autofocus,
-      textInputAction:
-          widget.textInputAction ??
+      textInputAction: widget.textInputAction ??
           (widget.type == InputType.multiline
               ? TextInputAction.newline
               : TextInputAction.next),
@@ -423,8 +420,7 @@ class _WInputState extends State<WInput> {
 
     // Apply Box Model (Margin, Width, Height)
     // WInput needs to respect standard Wind utility classes for sizing and spacing
-    final bool hasBoxProps =
-        styles.margin != null ||
+    final bool hasBoxProps = styles.margin != null ||
         styles.width != null ||
         styles.height != null ||
         styles.widthFactor != null ||
@@ -479,8 +475,7 @@ class _WInputState extends State<WInput> {
     final theme = WindTheme.dataOf(context);
 
     // Extract padding from styles
-    final EdgeInsets contentPadding =
-        styles.padding ??
+    final EdgeInsets contentPadding = styles.padding ??
         const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
 
     // Extract background color

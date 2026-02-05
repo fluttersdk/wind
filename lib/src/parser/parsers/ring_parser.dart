@@ -119,7 +119,6 @@ class RingParser implements WindParserInterface {
         final colorMatch = _ringColorRegex.firstMatch(effectiveClassName);
         if (colorMatch != null) {
           final colorName = colorMatch.namedGroup('color')!;
-          final shade = colorMatch.namedGroup('shade');
 
           // Skip if it is a defined ring offset
           if (colorName == 'offset') continue;

@@ -31,14 +31,14 @@ enum PopoverAlignment {
 ///
 /// - [isOpen]: Whether the popover is currently open
 /// - [isHovering]: Whether the mouse is hovering over the trigger
-typedef PopoverTriggerBuilder =
-    Widget Function(BuildContext context, bool isOpen, bool isHovering);
+typedef PopoverTriggerBuilder = Widget Function(
+    BuildContext context, bool isOpen, bool isHovering);
 
 /// Builder for the popover content.
 ///
 /// - [close]: Callback to programmatically close the popover
-typedef PopoverContentBuilder =
-    Widget Function(BuildContext context, VoidCallback close);
+typedef PopoverContentBuilder = Widget Function(
+    BuildContext context, VoidCallback close);
 
 /// Controller for programmatic popover control
 class PopoverController extends ChangeNotifier {
@@ -358,12 +358,12 @@ class _WPopoverState extends State<WPopover> {
     // Get trigger width for fallback - safely check if hasSize
     final RenderBox? triggerBox =
         _triggerKey.currentContext?.findRenderObject() as RenderBox?;
-    final double triggerWidth =
-        (triggerBox != null && triggerBox.hasSize) ? triggerBox.size.width : 200;
+    final double triggerWidth = (triggerBox != null && triggerBox.hasSize)
+        ? triggerBox.size.width
+        : 200;
 
     // Default className if none provided
-    final String effectiveClassName =
-        widget.className ??
+    final String effectiveClassName = widget.className ??
         '''
         bg-white dark:bg-gray-800
         border border-gray-200 dark:border-gray-700
@@ -389,8 +389,7 @@ class _WPopoverState extends State<WPopover> {
     final double? parsedWidth = styles.width;
 
     // For top alignments, invert the Y offset
-    final bool isTopAlignment =
-        widget.alignment == PopoverAlignment.topLeft ||
+    final bool isTopAlignment = widget.alignment == PopoverAlignment.topLeft ||
         widget.alignment == PopoverAlignment.topCenter ||
         widget.alignment == PopoverAlignment.topRight;
     final effectiveOffset = isTopAlignment

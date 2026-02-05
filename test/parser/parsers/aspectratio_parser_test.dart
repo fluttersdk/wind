@@ -46,92 +46,122 @@ void main() {
     group('parse', () {
       test('parses aspect-square', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-square',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-square',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, 1.0);
       });
 
       test('parses aspect-video', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-video',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-video',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, 16 / 9);
       });
 
       test('parses aspect-auto', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-auto',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-auto',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, isNull);
       });
 
       test('parses aspect-[4/3]', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-[4/3]',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-[4/3]',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, 4 / 3);
       });
 
       test('parses aspect-[16/9]', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-[16/9]',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-[16/9]',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, 16 / 9);
       });
 
       test('parses aspect-[21/9]', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-[21/9]',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-[21/9]',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, 21 / 9);
       });
 
       test('last class wins', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-square',
-          'aspect-video',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-square',
+              'aspect-video',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, 16 / 9);
       });
 
       test('aspect-auto overrides previous values', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-square',
-          'aspect-auto',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-square',
+              'aspect-auto',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, isNull);
       });
 
       test('ignores invalid arbitrary values (division by zero)', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-[4/0]',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-[4/0]',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, isNull);
       });
 
       test('ignores invalid arbitrary values (empty)', () {
         final parser = const AspectRatioParser();
-        final style = parser.parse(const WindStyle(), [
-          'aspect-[]',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'aspect-[]',
+            ],
+            createTestContext());
 
         expect(style.aspectRatio, isNull);
       });

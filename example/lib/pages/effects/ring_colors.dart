@@ -124,8 +124,7 @@ class _ColorBox extends StatelessWidget {
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className:
-              '''
+          className: '''
             ring-4 ring-$color w-14 h-14 bg-white rounded-lg
             flex items-center justify-center
           ''',
@@ -151,8 +150,7 @@ class _HexBox extends StatelessWidget {
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className:
-              '''
+          className: '''
             ring-4 ring-[$hex] w-14 h-14 bg-white rounded-lg
             flex items-center justify-center
           ''',

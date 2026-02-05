@@ -170,7 +170,8 @@ class _WDatePickerState extends State<WDatePicker>
     if (_isOpen) return;
 
     final overlay = Overlay.of(context);
-    final renderBox = _triggerKey.currentContext?.findRenderObject() as RenderBox?;
+    final renderBox =
+        _triggerKey.currentContext?.findRenderObject() as RenderBox?;
     final triggerSize = renderBox?.size ?? const Size(200, 40);
 
     _overlayEntry = OverlayEntry(
@@ -302,8 +303,18 @@ class _WDatePickerState extends State<WDatePicker>
   String _formatDate(DateTime date) {
     // Simple format: "Feb 15, 2026"
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
@@ -550,7 +561,8 @@ class _DatePickerOverlayState extends State<_DatePickerOverlay> {
       widget.onRangeStartChanged(date);
     } else {
       // Complete range selection
-      final start = widget.rangeStart!.isBefore(date) ? widget.rangeStart! : date;
+      final start =
+          widget.rangeStart!.isBefore(date) ? widget.rangeStart! : date;
       final end = widget.rangeStart!.isBefore(date) ? date : widget.rangeStart!;
       widget.onRangeSelected(DateTimeRange(start: start, end: end));
     }

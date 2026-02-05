@@ -5,16 +5,15 @@ import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
 
 /// Signature for building a custom error widget.
-typedef ImageErrorBuilder =
-    Widget Function(BuildContext context, Object error, StackTrace? stackTrace);
+typedef ImageErrorBuilder = Widget Function(
+    BuildContext context, Object error, StackTrace? stackTrace);
 
 /// Signature for building a custom loading widget.
-typedef ImageLoadingBuilder =
-    Widget Function(
-      BuildContext context,
-      Widget child,
-      ImageChunkEvent? loadingProgress,
-    );
+typedef ImageLoadingBuilder = Widget Function(
+  BuildContext context,
+  Widget child,
+  ImageChunkEvent? loadingProgress,
+);
 
 /// **The Utility-First Image Component**
 ///
@@ -123,26 +122,25 @@ class WImage extends StatelessWidget {
             errorBuilder: errorBuilder,
           )
         : (_isAsset
-              ? Image.asset(
-                  _assetPath,
-                  fit: fit,
-                  semanticLabel: alt,
-                  errorBuilder: errorBuilder,
-                )
-              : Image.network(
-                  src!,
-                  fit: fit,
-                  semanticLabel: alt,
-                  errorBuilder: errorBuilder,
-                  loadingBuilder:
-                      loadingBuilder ??
-                      (placeholder != null
-                          ? (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return placeholder!;
-                            }
-                          : null),
-                ));
+            ? Image.asset(
+                _assetPath,
+                fit: fit,
+                semanticLabel: alt,
+                errorBuilder: errorBuilder,
+              )
+            : Image.network(
+                src!,
+                fit: fit,
+                semanticLabel: alt,
+                errorBuilder: errorBuilder,
+                loadingBuilder: loadingBuilder ??
+                    (placeholder != null
+                        ? (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return placeholder!;
+                          }
+                        : null),
+              ));
 
     // Apply decoration (rounded corners) immediately via ClipRRect
     final BorderRadius borderRadius =

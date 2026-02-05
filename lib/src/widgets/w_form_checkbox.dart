@@ -58,26 +58,26 @@ class WFormCheckbox extends FormField<bool> {
     this.showError = true,
     this.errorClassName = 'text-red-500 text-xs mt-1',
   }) : super(
-         initialValue: value,
-         builder: (FormFieldState<bool> state) {
-           return _WFormCheckboxContent(
-             state: state,
-             onChanged: onChanged,
-             className: className,
-             iconClassName: iconClassName,
-             disabled: disabled || !enabled,
-             checkIcon: checkIcon,
-             states: states,
-             label: label,
-             labelText: labelText,
-             labelClassName: labelClassName,
-             hint: hint,
-             hintClassName: hintClassName,
-             showError: showError,
-             errorClassName: errorClassName,
-           );
-         },
-       );
+          initialValue: value,
+          builder: (FormFieldState<bool> state) {
+            return _WFormCheckboxContent(
+              state: state,
+              onChanged: onChanged,
+              className: className,
+              iconClassName: iconClassName,
+              disabled: disabled || !enabled,
+              checkIcon: checkIcon,
+              states: states,
+              label: label,
+              labelText: labelText,
+              labelClassName: labelClassName,
+              hint: hint,
+              hintClassName: hintClassName,
+              showError: showError,
+              errorClassName: errorClassName,
+            );
+          },
+        );
 
   /// Called when the checkbox value changes.
   final ValueChanged<bool>? onChanged;

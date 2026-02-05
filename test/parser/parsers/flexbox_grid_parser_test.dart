@@ -52,29 +52,38 @@ void main() {
       });
 
       test('parses gap-x and gap-y classes', () {
-        final styles = parser.parse(WindStyle(), [
-          'gap-x-4',
-          'gap-y-2',
-        ], context);
+        final styles = parser.parse(
+            WindStyle(),
+            [
+              'gap-x-4',
+              'gap-y-2',
+            ],
+            context);
         expect(styles.gapX, 16.0); // Assuming theme spacing of 4 = 16.0
         expect(styles.gapY, 8.0); // Assuming theme spacing of 2 = 8.0
       });
 
       test('applies last class wins rule', () {
-        final styles = parser.parse(WindStyle(), [
-          'flex',
-          'grid',
-          'flex',
-        ], context);
+        final styles = parser.parse(
+            WindStyle(),
+            [
+              'flex',
+              'grid',
+              'flex',
+            ],
+            context);
         expect(styles.displayType, WindDisplayType.flex);
       });
 
       test('returns unchanged styles if no relevant classes', () {
         final initialStyles = WindStyle();
-        final styles = parser.parse(initialStyles, [
-          'text-center',
-          'bg-red-500',
-        ], context);
+        final styles = parser.parse(
+            initialStyles,
+            [
+              'text-center',
+              'bg-red-500',
+            ],
+            context);
         expect(styles, initialStyles);
       });
 
@@ -90,13 +99,16 @@ void main() {
       });
 
       test('parses multiple classes correctly', () {
-        final styles = parser.parse(WindStyle(), [
-          'flex',
-          'flex-col',
-          'justify-center',
-          'items-end',
-          'gap-2',
-        ], context);
+        final styles = parser.parse(
+            WindStyle(),
+            [
+              'flex',
+              'flex-col',
+              'justify-center',
+              'items-end',
+              'gap-2',
+            ],
+            context);
         expect(styles.displayType, WindDisplayType.flex);
         expect(styles.flexDirection, Axis.vertical);
         expect(styles.mainAxisAlignment, MainAxisAlignment.center);
@@ -111,9 +123,12 @@ void main() {
       });
 
       test('parses align-self class', () {
-        final styles = parser.parse(WindStyle(), [
-          'align-self-center',
-        ], context);
+        final styles = parser.parse(
+            WindStyle(),
+            [
+              'align-self-center',
+            ],
+            context);
         expect(styles.alignment, Alignment.center);
       });
 

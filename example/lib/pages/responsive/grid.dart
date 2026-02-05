@@ -26,7 +26,8 @@ class ResponsiveGridExamplePage extends StatelessWidget {
 
   Widget _buildBreakpointIndicator(double width) {
     return WDiv(
-      className: 'w-full p-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500',
+      className:
+          'w-full p-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500',
       children: [
         WDiv(
           className: 'flex flex-wrap items-center gap-2',

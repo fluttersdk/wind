@@ -18,7 +18,8 @@ class ResponsiveCardExamplePage extends StatelessWidget {
         children: [
           // Header
           WDiv(
-            className: 'w-full p-4 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500',
+            className:
+                'w-full p-4 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500',
             children: [
               WText(
                 'Responsive Card',
@@ -50,7 +51,8 @@ class ResponsiveCardExamplePage extends StatelessWidget {
 
           // Responsive Card Demo
           WDiv(
-            className: 'rounded-xl overflow-hidden shadow-lg bg-white dark:bg-slate-800',
+            className:
+                'rounded-xl overflow-hidden shadow-lg bg-white dark:bg-slate-800',
             child: isMedium
                 ? WDiv(
                     className: 'flex flex-row',
@@ -147,7 +149,8 @@ class ResponsiveCardExamplePage extends StatelessWidget {
 
   Widget _buildTag(String label) {
     return WDiv(
-      className: 'px-2 py-1 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300 text-xs font-mono',
+      className:
+          'px-2 py-1 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300 text-xs font-mono',
       child: WText(label),
     );
   }

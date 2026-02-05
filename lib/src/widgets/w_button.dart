@@ -165,9 +165,8 @@ class WButton extends StatelessWidget {
           // Wrap in styled container
           Widget styledButton = Container(
             width: styles.widthFactor != null ? double.infinity : styles.width,
-            height: styles.heightFactor != null
-                ? double.infinity
-                : styles.height,
+            height:
+                styles.heightFactor != null ? double.infinity : styles.height,
             constraints: styles.constraints,
             padding: styles.padding,
             decoration: styles.decoration,

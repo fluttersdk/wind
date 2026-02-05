@@ -140,8 +140,7 @@ class _RingBox extends StatelessWidget {
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className:
-              '''
+          className: '''
             $ringClass ring-blue-500 w-16 h-16 bg-white rounded-lg
             flex items-center justify-center
           ''',
@@ -169,8 +168,7 @@ class _OffsetBox extends StatelessWidget {
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className:
-              '''
+          className: '''
             ring-4 ring-offset-$offset ring-blue-500 w-16 h-16 bg-white rounded-lg
             flex items-center justify-center
           ''',
@@ -202,8 +200,7 @@ class _InsetBox extends StatelessWidget {
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className:
-              '''
+          className: '''
             ring-4 $insetClass ring-blue-500 w-16 h-16 bg-blue-100 rounded-lg
             flex items-center justify-center
           ''',

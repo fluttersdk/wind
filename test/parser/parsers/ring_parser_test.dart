@@ -46,9 +46,12 @@ void main() {
     group('parse', () {
       test('parses basic ring class', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring',
+            ],
+            createTestContext());
 
         expect(style.ringWidth, 3.0);
         expect(style.ringShadow, isNotNull);
@@ -57,28 +60,37 @@ void main() {
 
       test('parses ring-2', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-2',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+            ],
+            createTestContext());
 
         expect(style.ringWidth, 2.0);
       });
 
       test('parses ring-0 (no ring)', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-0',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-0',
+            ],
+            createTestContext());
 
         expect(style.ringWidth, 0.0);
       });
 
       test('parses ring color', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-2',
-          'ring-red-500',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-red-500',
+            ],
+            createTestContext());
 
         expect(style.ringColor, isNotNull);
         expect(style.ringColor!.r, closeTo(0.937, 0.01)); // red-500
@@ -86,10 +98,13 @@ void main() {
 
       test('parses arbitrary ring color', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-2',
-          'ring-[#FF0000]',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-[#FF0000]',
+            ],
+            createTestContext());
 
         expect(style.ringColor, isNotNull);
         expect(style.ringColor!.r, closeTo(1.0, 0.01));
@@ -98,10 +113,13 @@ void main() {
 
       test('parses ring with opacity', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-2',
-          'ring-blue-500/50',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-blue-500/50',
+            ],
+            createTestContext());
 
         expect(style.ringColor, isNotNull);
         expect(style.ringColor!.a, closeTo(0.5, 0.01));
@@ -109,20 +127,26 @@ void main() {
 
       test('parses ring-offset', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-2',
-          'ring-offset-2',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-offset-2',
+            ],
+            createTestContext());
 
         expect(style.ringOffset, 2.0);
       });
 
       test('parses ring-inset', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-2',
-          'ring-inset',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-inset',
+            ],
+            createTestContext());
 
         expect(style.ringInset, isTrue);
       });
@@ -130,19 +154,25 @@ void main() {
       test('uses theme ringColor as default', () {
         final customRingColor = Colors.purple;
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-2',
-        ], createTestContext(ringColor: customRingColor));
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+            ],
+            createTestContext(ringColor: customRingColor));
 
         expect(style.ringColor, customRingColor);
       });
 
       test('last class wins for ring width', () {
         final parser = const RingParser();
-        final style = parser.parse(const WindStyle(), [
-          'ring-4',
-          'ring-2',
-        ], createTestContext());
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-4',
+              'ring-2',
+            ],
+            createTestContext());
 
         expect(style.ringWidth, 2.0);
       });
@@ -158,9 +188,12 @@ void main() {
       test('returns original style when no ring classes', () {
         final parser = const RingParser();
         const originalStyle = WindStyle();
-        final style = parser.parse(originalStyle, [
-          'bg-red-500',
-        ], createTestContext());
+        final style = parser.parse(
+            originalStyle,
+            [
+              'bg-red-500',
+            ],
+            createTestContext());
 
         expect(style.ringShadow, isNull);
       });
@@ -193,10 +226,13 @@ void main() {
           screenHeight: 768,
         );
 
-        final style = parser.parse(const WindStyle(), [
-          'ring-2',
-          'ring-offset-custom',
-        ], context);
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-offset-custom',
+            ],
+            context);
 
         expect(style.ringOffset, 5.0);
       });

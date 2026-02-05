@@ -239,8 +239,7 @@ class FlexboxGridParser implements WindParserInterface {
       }
     }
 
-    final bool didChange =
-        displayType != null ||
+    final bool didChange = displayType != null ||
         flexDirection != null ||
         mainAxisAlignment != null ||
         crossAxisAlignment != null ||
@@ -276,36 +275,6 @@ class FlexboxGridParser implements WindParserInterface {
       gridCols: gridCols,
       isHidden: isHidden,
     );
-  }
-
-  double? _getMainAxisAlignValue(MainAxisAlignment? alignment) {
-    if (alignment == null) return -1.0;
-    switch (alignment) {
-      case MainAxisAlignment.start:
-        return -1.0;
-      case MainAxisAlignment.end:
-        return 1.0;
-      case MainAxisAlignment.center:
-        return 0.0;
-      default:
-        return null;
-    }
-  }
-
-  double? _getCrossAxisAlignValue(CrossAxisAlignment? alignment) {
-    if (alignment == null) return null;
-    switch (alignment) {
-      case CrossAxisAlignment.start:
-        return -1.0;
-      case CrossAxisAlignment.end:
-        return 1.0;
-      case CrossAxisAlignment.center:
-        return 0.0;
-      case CrossAxisAlignment.baseline:
-        return -1.0;
-      default:
-        return null;
-    }
   }
 
   @override

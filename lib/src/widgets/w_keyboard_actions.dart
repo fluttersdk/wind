@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 import '../parser/wind_parser.dart';
-import '../theme/wind_theme.dart';
 
 /// A Wind-styled wrapper that adds keyboard actions (Done button, navigation)
 /// to input fields, especially for iOS numeric keyboards.
@@ -169,4 +168,3 @@ class WKeyboardActions extends StatelessWidget {
     return styles.decoration?.color;
   }
 }
-

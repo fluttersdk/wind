@@ -198,8 +198,7 @@ class SizingParser implements WindParserInterface {
       }
     }
 
-    final didChange =
-        width != null ||
+    final didChange = width != null ||
         height != null ||
         widthFactor != null ||
         heightFactor != null ||
@@ -212,20 +211,19 @@ class SizingParser implements WindParserInterface {
       return styles;
     }
 
-    final constraintsChanged =
-        minWidth != null ||
+    final constraintsChanged = minWidth != null ||
         maxWidth != null ||
         minHeight != null ||
         maxHeight != null;
 
     if (constraintsChanged) {
-      final newConstraints = (styles.constraints ?? const BoxConstraints())
-          .copyWith(
-            minWidth: minWidth,
-            maxWidth: maxWidth,
-            minHeight: minHeight,
-            maxHeight: maxHeight,
-          );
+      final newConstraints =
+          (styles.constraints ?? const BoxConstraints()).copyWith(
+        minWidth: minWidth,
+        maxWidth: maxWidth,
+        minHeight: minHeight,
+        maxHeight: maxHeight,
+      );
 
       return styles.copyWith(
         width: width,

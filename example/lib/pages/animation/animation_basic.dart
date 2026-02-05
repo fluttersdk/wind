@@ -175,25 +175,6 @@ class AnimationBasicExamplePage extends StatelessWidget {
   }
 }
 
-class _AnimatedBox extends StatelessWidget {
-  final String animation;
-  final Widget child;
-
-  const _AnimatedBox({required this.animation, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          '''
-        $animation w-14 h-14 bg-white rounded-lg shadow-sm
-        flex items-center justify-center
-      ''',
-      children: [child],
-    );
-  }
-}
-
 class _NotificationBadge extends StatelessWidget {
   final IconData icon;
   final String badgeColor;

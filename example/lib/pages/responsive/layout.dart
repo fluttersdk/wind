@@ -18,7 +18,8 @@ class ResponsiveLayoutExamplePage extends StatelessWidget {
         children: [
           // Header
           WDiv(
-            className: 'w-full p-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500',
+            className:
+                'w-full p-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500',
             children: [
               WText(
                 'Responsive Layout',
@@ -124,7 +125,8 @@ class ResponsiveLayoutExamplePage extends StatelessWidget {
     return WButton(
       onTap: () {},
       child: WDiv(
-        className: 'flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors',
+        className:
+            'flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors',
         children: [
           WIcon(icon, className: 'text-white text-sm'),
           WText(label, className: 'text-white text-sm'),
@@ -164,7 +166,8 @@ class ResponsiveLayoutExamplePage extends StatelessWidget {
 
   Widget _buildTag(String label) {
     return WDiv(
-      className: 'px-2 py-1 rounded bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 text-xs font-mono',
+      className:
+          'px-2 py-1 rounded bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 text-xs font-mono',
       child: WText(label),
     );
   }

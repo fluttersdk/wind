@@ -32,9 +32,8 @@ class DynamicRenderer {
 
     final String type = json['type'] ?? 'Unknown';
     final props = json['props'];
-    final Map<String, dynamic> safeProps = props is Map
-        ? _deepConvertMap(props)
-        : <String, dynamic>{};
+    final Map<String, dynamic> safeProps =
+        props is Map ? _deepConvertMap(props) : <String, dynamic>{};
     final List<dynamic> childrenRaw = json['children'] ?? [];
 
     List<Widget> children = childrenRaw.map((childJson) {
@@ -400,8 +399,7 @@ class _PlaygroundScreenState extends State<PlaygroundScreen> {
             // ConstrainedBox is required for 'min-h-full' and vertical centering to work inside a ScrollView
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child:
-                  _renderedWidget ??
+              child: _renderedWidget ??
                   const Center(child: CircularProgressIndicator()),
             ),
           );

@@ -14,13 +14,13 @@ void main() {
       expect(themeData.useMaterial3, true);
       // Fallback Primary is Indigo
       expect(
-        themeData.colorScheme.primary.value,
-        default_colors.colors['indigo']![500]!.value,
+        themeData.colorScheme.primary.toARGB32(),
+        default_colors.colors['indigo']![500]!.toARGB32(),
       );
       // Background default light is white
       expect(
-        themeData.scaffoldBackgroundColor.value,
-        (default_colors.colors['white'] as Color).value,
+        themeData.scaffoldBackgroundColor.toARGB32(),
+        (default_colors.colors['white'] as Color).toARGB32(),
       );
     });
 
@@ -31,13 +31,13 @@ void main() {
       expect(themeData.brightness, Brightness.dark);
       // Fallback Primary is Indigo
       expect(
-        themeData.colorScheme.primary.value,
-        default_colors.colors['indigo']![500]!.value,
+        themeData.colorScheme.primary.toARGB32(),
+        default_colors.colors['indigo']![500]!.toARGB32(),
       );
       // Background default dark is gray-900
       expect(
-        themeData.scaffoldBackgroundColor.value,
-        default_colors.colors['gray']![900]!.value,
+        themeData.scaffoldBackgroundColor.toARGB32(),
+        default_colors.colors['gray']![900]!.toARGB32(),
       );
     });
 
@@ -47,8 +47,8 @@ void main() {
       final themeData = windTheme.toThemeData();
 
       expect(
-        themeData.colorScheme.primary.value,
-        customPrimary.shade500.value,
+        themeData.colorScheme.primary.toARGB32(),
+        customPrimary.shade500.toARGB32(),
       );
     });
 
@@ -58,8 +58,8 @@ void main() {
       final themeData = windTheme.toThemeData();
 
       expect(
-        themeData.scaffoldBackgroundColor.value,
-        customBg.shade500.value,
+        themeData.scaffoldBackgroundColor.toARGB32(),
+        customBg.shade500.toARGB32(),
       );
     });
 

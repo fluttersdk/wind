@@ -14,41 +14,37 @@ import '../utils/wind_logger.dart';
 ///
 /// The [selectedOption] is null when no value is selected.
 /// For multi-select, use [MultiSelectTriggerBuilder] instead.
-typedef SelectTriggerBuilder<T> =
-    Widget Function(
-      BuildContext context,
-      SelectOption<T>? selectedOption,
-      bool isOpen,
-    );
+typedef SelectTriggerBuilder<T> = Widget Function(
+  BuildContext context,
+  SelectOption<T>? selectedOption,
+  bool isOpen,
+);
 
 /// Signature for building a custom trigger widget for multi-select [WSelect].
-typedef MultiSelectTriggerBuilder<T> =
-    Widget Function(
-      BuildContext context,
-      List<SelectOption<T>> selectedOptions,
-      bool isOpen,
-    );
+typedef MultiSelectTriggerBuilder<T> = Widget Function(
+  BuildContext context,
+  List<SelectOption<T>> selectedOptions,
+  bool isOpen,
+);
 
 /// Signature for building a custom item widget for [WSelect].
-typedef SelectItemBuilder<T> =
-    Widget Function(
-      BuildContext context,
-      SelectOption<T> option,
-      bool isSelected,
-      bool isHovered,
-    );
+typedef SelectItemBuilder<T> = Widget Function(
+  BuildContext context,
+  SelectOption<T> option,
+  bool isSelected,
+  bool isHovered,
+);
 
 /// Signature for building a selected chip/tag in multi-select mode.
-typedef SelectedChipBuilder<T> =
-    Widget Function(
-      BuildContext context,
-      SelectOption<T> option,
-      VoidCallback onRemove,
-    );
+typedef SelectedChipBuilder<T> = Widget Function(
+  BuildContext context,
+  SelectOption<T> option,
+  VoidCallback onRemove,
+);
 
 /// Signature for building the "create option" button.
-typedef CreateOptionBuilder =
-    Widget Function(BuildContext context, String query, VoidCallback onCreate);
+typedef CreateOptionBuilder = Widget Function(
+    BuildContext context, String query, VoidCallback onCreate);
 
 /// Signature for building the empty state.
 typedef EmptyStateBuilder = Widget Function(BuildContext context, String query);
@@ -337,9 +333,11 @@ class _WSelectState<T> extends State<WSelect<T>> {
       if (triggerBox != null) {
         final triggerPosition = triggerBox.localToGlobal(Offset.zero);
         final screenHeight = MediaQuery.of(context).size.height;
-        final spaceBelow = screenHeight - triggerPosition.dy - triggerBox.size.height;
+        final spaceBelow =
+            screenHeight - triggerPosition.dy - triggerBox.size.height;
         final menuMaxHeight = widget.maxMenuHeight;
-        _openUpward = spaceBelow < menuMaxHeight && triggerPosition.dy > spaceBelow;
+        _openUpward =
+            spaceBelow < menuMaxHeight && triggerPosition.dy > spaceBelow;
       }
     }
 
@@ -671,7 +669,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
         menuStyles.constraints?.maxHeight ?? widget.maxMenuHeight;
     final BorderRadius borderRadius =
         (menuStyles.decoration?.borderRadius as BorderRadius?) ??
-        BorderRadius.circular(8);
+            BorderRadius.circular(8);
 
     // Logger integration for Menu
     final logger = WindLogger(
@@ -700,8 +698,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
             child: Container(
               width: menuWidth,
               constraints: BoxConstraints(maxHeight: maxHeight),
-              decoration:
-                  menuStyles.decoration ??
+              decoration: menuStyles.decoration ??
                   BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: Colors.grey.shade200),
@@ -857,13 +854,13 @@ class _WSelectState<T> extends State<WSelect<T>> {
     final String bgClass = isSelected
         ? 'bg-blue-50 dark:bg-blue-900/30'
         : isHovered
-        ? 'bg-gray-100 dark:bg-slate-700'
-        : 'bg-transparent';
+            ? 'bg-gray-100 dark:bg-slate-700'
+            : 'bg-transparent';
     final String textColorClass = option.disabled
         ? 'text-gray-400 dark:text-gray-500'
         : isSelected
-        ? 'text-blue-700 dark:text-blue-300 font-medium'
-        : 'text-gray-800 dark:text-gray-200';
+            ? 'text-blue-700 dark:text-blue-300 font-medium'
+            : 'text-gray-800 dark:text-gray-200';
 
     return WindAnchorStateProvider(
       state: WindAnchorState(
@@ -886,9 +883,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
                 Icon(
                   isSelected ? Icons.check_box : Icons.check_box_outline_blank,
                   size: 18,
-                  color: isSelected
-                      ? Colors.blue.shade600
-                      : Colors.grey.shade400,
+                  color:
+                      isSelected ? Colors.blue.shade600 : Colors.grey.shade400,
                 ),
               if (option.icon != null) option.icon!,
               WDiv(

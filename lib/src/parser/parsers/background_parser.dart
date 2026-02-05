@@ -214,9 +214,8 @@ class BackgroundParser implements WindParserInterface {
       }
 
       if (fit == null) {
-        final fitMatch = _fitMap.containsKey(className)
-            ? _fitMap[className]
-            : null;
+        final fitMatch =
+            _fitMap.containsKey(className) ? _fitMap[className] : null;
         if (fitMatch != null) {
           fit = fitMatch;
         }
@@ -232,9 +231,8 @@ class BackgroundParser implements WindParserInterface {
       }
 
       if (repeat == null) {
-        final repeatMatch = _repeatMap.containsKey(className)
-            ? _repeatMap[className]
-            : null;
+        final repeatMatch =
+            _repeatMap.containsKey(className) ? _repeatMap[className] : null;
         if (repeatMatch != null) {
           repeat = repeatMatch;
         }
@@ -345,8 +343,7 @@ class BackgroundParser implements WindParserInterface {
       // Tailwind logic: must have at least valid stops.
 
       final start = fromColor ?? Colors.transparent;
-      final finish =
-          toColor ??
+      final finish = toColor ??
           (fromColor != null
               ? fromColor.withValues(alpha: 0)
               : Colors.transparent);

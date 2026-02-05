@@ -96,8 +96,8 @@ class DatePreset {
   /// Creates a preset for the previous month.
   factory DatePreset.lastMonth() {
     final now = DateTime.now();
-    final lastMonthEnd = DateTime(now.year, now.month, 1)
-        .subtract(const Duration(days: 1));
+    final lastMonthEnd =
+        DateTime(now.year, now.month, 1).subtract(const Duration(days: 1));
     final lastMonthStart = DateTime(lastMonthEnd.year, lastMonthEnd.month, 1);
 
     return DatePreset(

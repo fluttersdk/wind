@@ -58,7 +58,8 @@ void main() {
         expect(
           flexibleCount,
           2,
-          reason: 'overflow-hidden flex-row children should be wrapped with Flexible',
+          reason:
+              'overflow-hidden flex-row children should be wrapped with Flexible',
         );
       },
     );
@@ -195,8 +196,7 @@ void main() {
 
         // With gap-4, we expect: [Flexible(WText), SizedBox(gap), Flexible(WText)]
         // SizedBox should NOT be wrapped
-        final sizedBoxCount =
-            row.children.where((child) => child is SizedBox).length;
+        final sizedBoxCount = row.children.whereType<SizedBox>().length;
         expect(sizedBoxCount, 1, reason: 'Gap SizedBox should not be wrapped');
 
         // And we should have 2 Flexible wrappers for the texts
@@ -230,7 +230,8 @@ void main() {
                             'flex flex-row items-center gap-1.5 px-2.5 py-1 overflow-hidden',
                         children: [
                           WText('Label', className: 'text-xs truncate'),
-                          WText('12345.67 units', className: 'text-xs truncate'),
+                          WText('12345.67 units',
+                              className: 'text-xs truncate'),
                         ],
                       ),
                   ],
@@ -277,8 +278,7 @@ void main() {
         final column = tester.widget<Column>(find.byType(Column));
 
         // Column children should NOT be wrapped with Flexible by default
-        final flexibleCount =
-            column.children.where((child) => child is Flexible).length;
+        final flexibleCount = column.children.whereType<Flexible>().length;
         expect(flexibleCount, 0);
       },
     );

@@ -323,7 +323,7 @@ class DynamicRenderer {
             child: children.isNotEmpty ? children.first : const SizedBox(),
           );
         case 'Container':
-          return Container(
+          return SizedBox(
             width: _parseDouble(safeProps['width']),
             height: _parseDouble(safeProps['height']),
             child: children.isNotEmpty ? children.first : null,

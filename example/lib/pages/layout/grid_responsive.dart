@@ -91,8 +91,7 @@ class GridResponsiveExamplePage extends StatelessWidget {
                     'bg-purple-500',
                   ];
                   return WDiv(
-                    className:
-                        '''
+                    className: '''
                       ${colors[index]} rounded-xl
                       h-24 flex items-center justify-center
                     ''',
@@ -160,8 +159,7 @@ class GridResponsiveExamplePage extends StatelessWidget {
 
   Widget _buildBreakpointBadge(String label, bool isActive) {
     return WDiv(
-      className:
-          '''
+      className: '''
         px-2 py-1 rounded text-xs font-bold
         ${isActive ? 'bg-white text-emerald-600' : 'bg-white/10 text-white/50'}
       ''',
@@ -171,8 +169,7 @@ class GridResponsiveExamplePage extends StatelessWidget {
 
   Widget _buildLayoutTag(String label, bool isActive) {
     return WDiv(
-      className:
-          '''
+      className: '''
         px-3 py-1 rounded-lg text-sm font-mono
         ${isActive ? 'bg-emerald-500 text-white' : 'bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-gray-400'}
       ''',

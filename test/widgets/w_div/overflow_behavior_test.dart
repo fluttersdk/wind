@@ -33,14 +33,8 @@ void main() {
           ),
         );
 
-        // Find the Container that has padding
-        final containers = tester.widgetList<Container>(
-          find.byType(Container),
-        );
-
         // Find padding location
         bool paddingInsideScroll = false;
-        // bool paddingOutsideScroll = false; // Unused variable
 
         // Walk the widget tree to understand structure
         final scrollView = tester.widget<SingleChildScrollView>(

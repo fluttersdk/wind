@@ -126,8 +126,7 @@ class TransitionEasePage extends StatelessWidget {
     return WAnchor(
       onTap: () {},
       child: WDiv(
-        className:
-            '''
+        className: '''
           $colors duration-700 $easeClass
           w-[120px] py-5 rounded-xl shadow-md hover:shadow-xl
         ''',

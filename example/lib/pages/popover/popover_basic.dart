@@ -41,8 +41,7 @@ class PopoverBasicExamplePage extends StatelessWidget {
                   rounded-lg shadow-xl
                 ''',
                 triggerBuilder: (context, isOpen, isHovering) => WDiv(
-                  className:
-                      '''
+                  className: '''
                     px-4 py-2 rounded-lg flex items-center gap-2
                     bg-blue-500 ${isHovering ? 'bg-blue-600' : ''}
                   ''',
@@ -89,8 +88,7 @@ class PopoverBasicExamplePage extends StatelessWidget {
                   bg-gradient-to-br from-purple-500 to-indigo-600
                 ''',
                 triggerBuilder: (context, isOpen, isHovering) => WDiv(
-                  className:
-                      '''
+                  className: '''
                     px-4 py-2 rounded-lg flex items-center gap-2
                     border-2 border-purple-500
                     ${isHovering ? 'bg-purple-50 dark:bg-purple-900/20' : 'bg-white dark:bg-slate-800'}

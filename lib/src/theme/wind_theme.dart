@@ -158,16 +158,16 @@ class WindTheme extends StatefulWidget {
   /// )
   /// ```
   final Widget Function(BuildContext context, WindThemeController controller)?
-  builder;
+      builder;
 
   /// Creates a new [WindTheme] instance.
   ///
   /// [data] defaults to [WindThemeData()] if not provided.
   const WindTheme({super.key, this.data, this.child, this.builder})
-    : assert(
-        child != null || builder != null,
-        'Either child or builder must be provided',
-      );
+      : assert(
+          child != null || builder != null,
+          'Either child or builder must be provided',
+        );
 
   /// Returns the [WindThemeController] from the closest [WindTheme] ancestor.
   ///
@@ -179,8 +179,8 @@ class WindTheme extends StatefulWidget {
   /// WindTheme.of(context).data.colors['primary'];
   /// ```
   static WindThemeController of(BuildContext context) {
-    final inherited = context
-        .dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
+    final inherited =
+        context.dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
     assert(inherited != null, 'No WindTheme found in context');
     return inherited!.controller;
   }
@@ -190,8 +190,8 @@ class WindTheme extends StatefulWidget {
   /// Use this when you only need to read theme data without rebuilding
   /// when the theme changes.
   static WindThemeData dataOf(BuildContext context) {
-    final inherited = context
-        .dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
+    final inherited =
+        context.dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
     assert(inherited != null, 'No WindTheme found in context');
     return inherited!.controller.data;
   }
@@ -215,7 +215,8 @@ class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
     // Sync with system brightness on startup (only if syncWithSystem is true)
     // We do this to ensure "Auto" behavior by default
     if (initialData.syncWithSystem) {
-      final systemBrightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      final systemBrightness =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness;
       initialData = initialData.copyWith(brightness: systemBrightness);
     }
 
@@ -227,7 +228,8 @@ class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
     super.didChangePlatformBrightness();
     // Update theme when system brightness changes (only if syncWithSystem is true)
     if (_controller.data.syncWithSystem) {
-      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      final brightness =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness;
       _controller.updateTheme(brightness: brightness);
     }
   }

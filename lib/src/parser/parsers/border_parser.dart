@@ -273,8 +273,8 @@ class BorderParser implements WindParserInterface {
         final sizeStr = match.group(2);
         final radius = sizeStr != null
             ? theme.borderRadius[sizeStr] ??
-                  theme.borderRadius['DEFAULT'] ??
-                  4.0
+                theme.borderRadius['DEFAULT'] ??
+                4.0
             : theme.borderRadius['DEFAULT'] ?? 4.0;
 
         switch (direction) {

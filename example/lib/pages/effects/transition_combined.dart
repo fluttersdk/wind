@@ -178,8 +178,7 @@ class TransitionCombinedPage extends StatelessWidget {
     return WAnchor(
       onTap: () {},
       child: WDiv(
-        className:
-            '''
+        className: '''
           $colorClasses duration-300 ease-in-out 
           w-[56px] h-[56px] rounded-xl shadow-sm hover:shadow-lg
         ''',

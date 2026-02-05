@@ -17,7 +17,8 @@ class ResponsiveVisibilityExamplePage extends StatelessWidget {
         children: [
           // Header
           WDiv(
-            className: 'w-full p-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500',
+            className:
+                'w-full p-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500',
             children: [
               WText(
                 'Show/Hide Elements',
@@ -57,7 +58,8 @@ class ResponsiveVisibilityExamplePage extends StatelessWidget {
                 WDiv(
                   children: [
                     WText('Mobile Only', className: 'text-white font-bold'),
-                    WText('block md:hidden', className: 'text-white/70 text-sm font-mono'),
+                    WText('block md:hidden',
+                        className: 'text-white/70 text-sm font-mono'),
                   ],
                 ),
               ],
@@ -74,7 +76,8 @@ class ResponsiveVisibilityExamplePage extends StatelessWidget {
                 WDiv(
                   children: [
                     WText('Tablet Only', className: 'text-white font-bold'),
-                    WText('hidden md:block lg:hidden', className: 'text-white/70 text-sm font-mono'),
+                    WText('hidden md:block lg:hidden',
+                        className: 'text-white/70 text-sm font-mono'),
                   ],
                 ),
               ],
@@ -91,7 +94,8 @@ class ResponsiveVisibilityExamplePage extends StatelessWidget {
                 WDiv(
                   children: [
                     WText('Desktop Only', className: 'text-white font-bold'),
-                    WText('hidden lg:block', className: 'text-white/70 text-sm font-mono'),
+                    WText('hidden lg:block',
+                        className: 'text-white/70 text-sm font-mono'),
                   ],
                 ),
               ],
@@ -100,11 +104,13 @@ class ResponsiveVisibilityExamplePage extends StatelessWidget {
 
           // Always visible
           WDiv(
-            className: 'p-4 rounded-xl bg-gray-200 dark:bg-slate-700 border-2 border-dashed border-gray-400 dark:border-slate-500',
+            className:
+                'p-4 rounded-xl bg-gray-200 dark:bg-slate-700 border-2 border-dashed border-gray-400 dark:border-slate-500',
             child: WDiv(
               className: 'flex items-center justify-center gap-2',
               children: [
-                WIcon(Icons.visibility, className: 'text-gray-500 dark:text-gray-400'),
+                WIcon(Icons.visibility,
+                    className: 'text-gray-500 dark:text-gray-400'),
                 WText(
                   'Always visible (no breakpoint prefix)',
                   className: 'text-gray-600 dark:text-gray-300',

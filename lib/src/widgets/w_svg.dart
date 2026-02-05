@@ -73,8 +73,8 @@ class WSvg extends StatelessWidget {
     this.className,
     this.states,
     this.semanticsLabel,
-  }) : svgString = svg,
-       src = null;
+  })  : svgString = svg,
+        src = null;
 
   @override
   Widget build(BuildContext context) {
@@ -97,8 +97,7 @@ class WSvg extends StatelessWidget {
     // 2. fill-{color}
     // 3. text-{color}
     // 4. inherited from parent
-    final Color? color =
-        styles.strokeColor ??
+    final Color? color = styles.strokeColor ??
         styles.fillColor ??
         styles.color ??
         inheritedColor;

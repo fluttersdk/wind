@@ -193,16 +193,14 @@ class WText extends StatelessWidget {
 
     // Step A: Decoration (Background Color / Border)
     // Text can have a background color via `bg-` classes.
-    final bool needsContainer =
-        styles.decoration != null ||
+    final bool needsContainer = styles.decoration != null ||
         styles.width != null ||
         styles.height != null ||
         styles.constraints != null;
 
     if (needsContainer) {
       // Combine constraints
-      final BoxConstraints? constraints =
-          (styles.width != null ||
+      final BoxConstraints? constraints = (styles.width != null ||
               styles.height != null ||
               styles.constraints != null)
           ? (styles.constraints ?? const BoxConstraints()).copyWith(

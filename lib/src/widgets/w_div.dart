@@ -108,15 +108,14 @@ class WDiv extends StatelessWidget {
     this.states,
     this.scrollPrimary = false,
   }) : assert(
-         child == null || children == null,
-         'WDiv Violation: You cannot provide both `child` and `children`. Please select one strategy.',
-       );
+          child == null || children == null,
+          'WDiv Violation: You cannot provide both `child` and `children`. Please select one strategy.',
+        );
 
   @override
   Widget build(BuildContext context) {
     // Check if we need to wrap with WAnchor for interactive states
-    final bool isInteractive =
-        className != null &&
+    final bool isInteractive = className != null &&
         (className!.contains('hover:') ||
             className!.contains('focus:') ||
             className!.contains('active:'));
@@ -282,8 +281,7 @@ class WDiv extends StatelessWidget {
 
         // Determine mainAxisSize based on sizing
         // Column with h-full or min-h-full needs .max for centering
-        final hasMinHeight =
-            styles.constraints?.minHeight != null &&
+        final hasMinHeight = styles.constraints?.minHeight != null &&
             styles.constraints!.minHeight > 0;
 
         MainAxisSize effectiveMainAxisSize;
@@ -375,8 +373,7 @@ class WDiv extends StatelessWidget {
     MainAxisSize effectiveMainAxisSize;
 
     // Check if Row needs space distribution (justify-between, space-around, etc)
-    final needsSpaceDistribution =
-        !isColumn &&
+    final needsSpaceDistribution = !isColumn &&
         (styles.mainAxisAlignment == MainAxisAlignment.spaceBetween ||
             styles.mainAxisAlignment == MainAxisAlignment.spaceAround ||
             styles.mainAxisAlignment == MainAxisAlignment.spaceEvenly);
@@ -410,12 +407,16 @@ class WDiv extends StatelessWidget {
       final rowChildren = needsFlexible
           ? gappedChildren.map((child) {
               // Don't wrap SizedBox gaps or already-flex widgets with Flexible
-              if (child is SizedBox ||
-                  child is Flexible ||
-                  child is Expanded) return child;
+              if (child is SizedBox || child is Flexible || child is Expanded) {
+                return child;
+              }
               // Don't wrap WDiv/WText with flex-N classes (they become Expanded)
-              if (child is WDiv && _hasFlexClass(child.className)) return child;
-              if (child is WText && _hasFlexClass(child.className)) return child;
+              if (child is WDiv && _hasFlexClass(child.className)) {
+                return child;
+              }
+              if (child is WText && _hasFlexClass(child.className)) {
+                return child;
+              }
               return Flexible(child: child);
             }).toList()
           : gappedChildren;
@@ -455,8 +456,7 @@ class WDiv extends StatelessWidget {
     final gapY = styles.gapY ?? 0;
 
     // Check if horizontal scroll is enabled - use Row for horizontal layout
-    final hasHorizontalScroll =
-        styles.overflowX == WindOverflow.scroll ||
+    final hasHorizontalScroll = styles.overflowX == WindOverflow.scroll ||
         styles.overflowX == WindOverflow.auto;
 
     if (hasHorizontalScroll) {
@@ -559,8 +559,7 @@ class WDiv extends StatelessWidget {
 
     // Check if we have overflow behavior that needs special handling
     final bool hasOverflowClip = styles.clipBehavior == Clip.hardEdge;
-    final bool hasOverflowScroll =
-        styles.overflow == WindOverflow.scroll ||
+    final bool hasOverflowScroll = styles.overflow == WindOverflow.scroll ||
         styles.overflow == WindOverflow.auto ||
         styles.overflowX == WindOverflow.scroll ||
         styles.overflowX == WindOverflow.auto ||
@@ -573,22 +572,19 @@ class WDiv extends StatelessWidget {
 
     // Determine constraints (combining direct width/height with box constraints)
     // IMPORTANT: Do NOT let styles.width override maxWidth constraints (e.g. max-w-sm)
-    BoxConstraints? constraints =
-        (styles.width != null ||
+    BoxConstraints? constraints = (styles.width != null ||
             styles.height != null ||
             styles.constraints != null)
         ? (styles.constraints ?? const BoxConstraints()).copyWith(
             minWidth: styles.width ?? styles.constraints?.minWidth,
             // maxWidth should be the SMALLER of width and maxWidth constraint
-            maxWidth:
-                styles.constraints?.maxWidth != null &&
+            maxWidth: styles.constraints?.maxWidth != null &&
                     styles.constraints!.maxWidth != double.infinity
                 ? styles.constraints!.maxWidth
                 : styles.width ?? styles.constraints?.maxWidth,
             minHeight: styles.height ?? styles.constraints?.minHeight,
             // maxHeight should be the SMALLER of height and maxHeight constraint
-            maxHeight:
-                styles.constraints?.maxHeight != null &&
+            maxHeight: styles.constraints?.maxHeight != null &&
                     styles.constraints!.maxHeight != double.infinity
                 ? styles.constraints!.maxHeight
                 : styles.height ?? styles.constraints?.maxHeight,
@@ -611,8 +607,7 @@ class WDiv extends StatelessWidget {
     // because fractional sizing is handled by the SizedBox layer above.
     // Container's width/height is still set when it IS created, to ensure
     // decoration (bg-*) fills the full area.
-    final bool needsContainer =
-        styles.decoration != null ||
+    final bool needsContainer = styles.decoration != null ||
         innerConstraints != null ||
         styles.boxShadow != null ||
         styles.ringShadow != null;
@@ -742,9 +737,8 @@ class WDiv extends StatelessWidget {
       final borderRadius = styles.decoration?.borderRadius;
 
       widgetToBuild = ClipRRect(
-        borderRadius: borderRadius is BorderRadius
-            ? borderRadius
-            : BorderRadius.zero,
+        borderRadius:
+            borderRadius is BorderRadius ? borderRadius : BorderRadius.zero,
         clipBehavior: Clip.hardEdge,
         child: widgetToBuild,
       );
@@ -774,11 +768,9 @@ class WDiv extends StatelessWidget {
     if (styles.widthFactor != null || styles.heightFactor != null) {
       final innerChild = widgetToBuild;
 
-      final hasMaxWidthConstraint =
-          styles.constraints?.maxWidth != null &&
+      final hasMaxWidthConstraint = styles.constraints?.maxWidth != null &&
           styles.constraints!.maxWidth != double.infinity;
-      final hasMaxHeightConstraint =
-          styles.constraints?.maxHeight != null &&
+      final hasMaxHeightConstraint = styles.constraints?.maxHeight != null &&
           styles.constraints!.maxHeight != double.infinity;
 
       final bool isFullWidth = styles.widthFactor == 1.0;
@@ -786,8 +778,7 @@ class WDiv extends StatelessWidget {
       // Fast path only for w-full WITHOUT h-full. h-full needs LayoutBuilder
       // because vertical axis is often unbounded (inside ScrollView/Column)
       // and SizedBox(height: double.infinity) would cause infinite size errors.
-      final bool canUseFastPath =
-          isFullWidth &&
+      final bool canUseFastPath = isFullWidth &&
           styles.heightFactor == null &&
           !hasMaxWidthConstraint &&
           !hasMaxHeightConstraint;
@@ -830,12 +821,10 @@ class WDiv extends StatelessWidget {
               return result;
             }
 
-            final double? effectiveWidthFactor = widthUnbounded
-                ? null
-                : styles.widthFactor;
-            final double? effectiveHeightFactor = heightUnbounded
-                ? null
-                : styles.heightFactor;
+            final double? effectiveWidthFactor =
+                widthUnbounded ? null : styles.widthFactor;
+            final double? effectiveHeightFactor =
+                heightUnbounded ? null : styles.heightFactor;
 
             if (effectiveWidthFactor == null && effectiveHeightFactor == null) {
               return innerChild ?? const SizedBox.shrink();
@@ -850,7 +839,8 @@ class WDiv extends StatelessWidget {
                 final parentWidth = constraints.maxWidth;
                 final calculatedWidth = parentWidth * effectiveWidthFactor;
                 if (hasMaxWidthConstraint) {
-                  width = calculatedWidth.clamp(0, styles.constraints!.maxWidth);
+                  width =
+                      calculatedWidth.clamp(0, styles.constraints!.maxWidth);
                 } else {
                   width = calculatedWidth;
                 }

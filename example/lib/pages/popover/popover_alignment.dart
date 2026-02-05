@@ -132,8 +132,7 @@ class PopoverAlignmentExamplePage extends StatelessWidget {
         rounded-lg shadow-lg
       ''',
       triggerBuilder: (context, isOpen, isHovering) => WDiv(
-        className:
-            '''
+        className: '''
           px-4 py-2 rounded-lg
           bg-gray-800 dark:bg-gray-700
           ${isOpen ? 'ring-2 ring-blue-400' : ''}

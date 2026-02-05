@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
-import 'package:fluttersdk_wind/src/widgets/w_calendar_header.dart';
 
 void main() {
   group('WCalendarHeader', () {

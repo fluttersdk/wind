@@ -17,7 +17,8 @@ class ChromeMcpTestPage extends StatelessWidget {
         children: [
           // Header
           WDiv(
-            className: 'p-4 rounded-xl bg-gradient-to-r from-green-500 to-teal-500',
+            className:
+                'p-4 rounded-xl bg-gradient-to-r from-green-500 to-teal-500',
             children: [
               WText(
                 'Chrome MCP Test Page [v1.0.1]',
@@ -103,12 +104,21 @@ class ChromeMcpTestPage extends StatelessWidget {
             child: WDiv(
               className: 'flex flex-col gap-2',
               children: [
-                WText('text-xs', className: 'text-xs text-gray-700 dark:text-gray-300'),
-                WText('text-sm', className: 'text-sm text-gray-700 dark:text-gray-300'),
-                WText('text-base', className: 'text-base text-gray-700 dark:text-gray-300'),
-                WText('text-lg font-semibold', className: 'text-lg font-semibold text-gray-700 dark:text-gray-300'),
-                WText('text-xl font-bold', className: 'text-xl font-bold text-gray-700 dark:text-gray-300'),
-                WText('text-2xl font-extrabold', className: 'text-2xl font-extrabold text-gray-700 dark:text-gray-300'),
+                WText('text-xs',
+                    className: 'text-xs text-gray-700 dark:text-gray-300'),
+                WText('text-sm',
+                    className: 'text-sm text-gray-700 dark:text-gray-300'),
+                WText('text-base',
+                    className: 'text-base text-gray-700 dark:text-gray-300'),
+                WText('text-lg font-semibold',
+                    className:
+                        'text-lg font-semibold text-gray-700 dark:text-gray-300'),
+                WText('text-xl font-bold',
+                    className:
+                        'text-xl font-bold text-gray-700 dark:text-gray-300'),
+                WText('text-2xl font-extrabold',
+                    className:
+                        'text-2xl font-extrabold text-gray-700 dark:text-gray-300'),
               ],
             ),
           ),
@@ -123,21 +133,26 @@ class ChromeMcpTestPage extends StatelessWidget {
                 WButton(
                   onTap: () {},
                   child: WDiv(
-                    className: 'px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors',
-                    child: WText('Primary', className: 'text-white font-medium'),
+                    className:
+                        'px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors',
+                    child:
+                        WText('Primary', className: 'text-white font-medium'),
                   ),
                 ),
                 WButton(
                   onTap: () {},
                   child: WDiv(
-                    className: 'px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors',
-                    child: WText('Secondary', className: 'text-gray-800 dark:text-white font-medium'),
+                    className:
+                        'px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors',
+                    child: WText('Secondary',
+                        className: 'text-gray-800 dark:text-white font-medium'),
                   ),
                 ),
                 WButton(
                   onTap: () {},
                   child: WDiv(
-                    className: 'px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 transition-colors',
+                    className:
+                        'px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 transition-colors',
                     child: WText('Danger', className: 'text-white font-medium'),
                   ),
                 ),
@@ -149,7 +164,8 @@ class ChromeMcpTestPage extends StatelessWidget {
           WDiv(
             className: 'p-4 rounded-xl bg-slate-800',
             children: [
-              WText('Console Test', className: 'text-sm font-bold text-gray-300 mb-2'),
+              WText('Console Test',
+                  className: 'text-sm font-bold text-gray-300 mb-2'),
               WText(
                 'Check browser console - a test message should appear.',
                 className: 'text-sm text-gray-400',
@@ -170,7 +186,8 @@ class ChromeMcpTestPage extends StatelessWidget {
       className: 'p-4 rounded-xl bg-white dark:bg-slate-800 shadow-sm',
       children: [
         WText(title, className: 'font-bold text-gray-800 dark:text-white'),
-        WText(description, className: 'text-sm text-gray-500 dark:text-gray-400 mb-3'),
+        WText(description,
+            className: 'text-sm text-gray-500 dark:text-gray-400 mb-3'),
         child,
       ],
     );
@@ -178,7 +195,8 @@ class ChromeMcpTestPage extends StatelessWidget {
 
   Widget _buildColorBox(String bgColor, String label) {
     return WDiv(
-      className: '$bgColor w-12 h-12 rounded-lg flex items-center justify-center',
+      className:
+          '$bgColor w-12 h-12 rounded-lg flex items-center justify-center',
       child: WText(label, className: 'text-white font-bold'),
     );
   }

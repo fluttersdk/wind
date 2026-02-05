@@ -7,9 +7,11 @@ class BasicExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: "w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4",
+      className:
+          "w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4",
       child: WDiv(
-        className: "w-48 h-48 p-4 bg-white rounded-xl shadow-lg flex items-center justify-center dark:bg-slate-800",
+        className:
+            "w-48 h-48 p-4 bg-white rounded-xl shadow-lg flex items-center justify-center dark:bg-slate-800",
         child: WText(
           "Hello World",
           className: "text-lg font-bold text-black dark:text-white",

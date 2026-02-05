@@ -298,10 +298,10 @@ class WCalendarGrid extends StatelessWidget {
   _RangePosition _getRangePosition(DateTime date) {
     if (selectedRange == null) return _RangePosition.none;
 
-    final start = DateTime(selectedRange!.start.year, selectedRange!.start.month,
-        selectedRange!.start.day);
-    final end = DateTime(
-        selectedRange!.end.year, selectedRange!.end.month, selectedRange!.end.day);
+    final start = DateTime(selectedRange!.start.year,
+        selectedRange!.start.month, selectedRange!.start.day);
+    final end = DateTime(selectedRange!.end.year, selectedRange!.end.month,
+        selectedRange!.end.day);
     final current = DateTime(date.year, date.month, date.day);
 
     if (current.isAtSameMomentAs(start)) return _RangePosition.start;

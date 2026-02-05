@@ -15,7 +15,7 @@ class _FormCheckboxBasicExamplePageState
   final _formKey = GlobalKey<FormState>();
   bool _agreeTerms = false;
   bool _subscribe = false;
-  bool _remember = true;
+  final bool _remember = true;
 
   void _submit() {
     if (_formKey.currentState!.validate()) {

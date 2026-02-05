@@ -17,7 +17,8 @@ class ResponsiveSpacingExamplePage extends StatelessWidget {
         children: [
           // Header
           WDiv(
-            className: 'w-full p-4 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500',
+            className:
+                'w-full p-4 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500',
             children: [
               WText(
                 'Responsive Spacing',
@@ -61,7 +62,8 @@ class ResponsiveSpacingExamplePage extends StatelessWidget {
               ),
               WText(
                 'p-4 → md:p-6 → lg:p-8',
-                className: 'text-sm font-mono text-violet-600 dark:text-violet-400 mt-1',
+                className:
+                    'text-sm font-mono text-violet-600 dark:text-violet-400 mt-1',
               ),
               WDiv(className: 'h-2'),
               WText(
@@ -86,7 +88,8 @@ class ResponsiveSpacingExamplePage extends StatelessWidget {
               ),
               WText(
                 'max-w-xs → md:max-w-md → lg:max-w-2xl',
-                className: 'text-sm font-mono text-purple-600 dark:text-purple-400 mt-1',
+                className:
+                    'text-sm font-mono text-purple-600 dark:text-purple-400 mt-1',
               ),
               WDiv(className: 'h-2'),
               WText(
@@ -110,14 +113,16 @@ class ResponsiveSpacingExamplePage extends StatelessWidget {
               ),
               WText(
                 'gap-2 → md:gap-4 → lg:gap-6',
-                className: 'text-sm font-mono text-fuchsia-600 dark:text-fuchsia-400 mt-1',
+                className:
+                    'text-sm font-mono text-fuchsia-600 dark:text-fuchsia-400 mt-1',
               ),
               WDiv(className: 'h-4'),
               WDiv(
                 className: 'flex flex-wrap gap-2 md:gap-4 lg:gap-6',
                 children: List.generate(4, (i) {
                   return WDiv(
-                    className: 'w-16 h-16 rounded-lg bg-fuchsia-500 flex items-center justify-center',
+                    className:
+                        'w-16 h-16 rounded-lg bg-fuchsia-500 flex items-center justify-center',
                     child: WText(
                       '${i + 1}',
                       className: 'text-white font-bold',

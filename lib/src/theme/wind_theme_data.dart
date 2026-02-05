@@ -191,51 +191,51 @@ class WindThemeData {
     Map<String, Duration>? transitionDurations,
     Map<String, Curve>? transitionCurves,
     Map<String, WindAnimationType>? animations,
-  }) : colors = (Map<String, MaterialColor>.from(_initColors())
-         ..addAll(colors ?? {})),
-       fontSizes = (Map<String, double>.from(default_font_sizes.fontSizes)
-         ..addAll(fontSizes ?? {})),
-       fontWeights = (Map<String, FontWeight>.from(
-         default_font_weights.fontWeights,
-       )..addAll(fontWeights ?? {})),
-       tracking = (Map<String, double>.from(default_tracking.tracking)
-         ..addAll(tracking ?? {})),
-       leading = (Map<String, double>.from(default_leading.leading)
-         ..addAll(leading ?? {})),
-       borderWidths = (Map<String, double>.from(
-         default_border_widths.borderWidths,
-       )..addAll(borderWidths ?? {})),
-       borderRadius = (Map<String, double>.from(
-         default_border_radius.borderRadius,
-       )..addAll(borderRadius ?? {})),
-       fontFamilies = (Map<String, String>.from(
-         default_font_families.fontFamilies,
-       )..addAll(fontFamilies ?? {})),
-       ringWidths = (Map<String, double>.from(
-         default_ring_widths.WindRingWidths.widths,
-       )..addAll(ringWidths ?? {})),
-       ringOffsets = (Map<String, double>.from(
-         default_ring_widths.WindRingWidths.offsets,
-       )..addAll(ringOffsets ?? {})),
-       containers = (Map<String, int>.from(default_containers.containers)
-         ..addAll(containers ?? {})),
-       screens = (Map<String, int>.from(default_screens.screens)
-         ..addAll(screens ?? {})),
-       opacities = (Map<String, double>.from(default_opacities.opacities)
-         ..addAll(opacities ?? {})),
-       zIndices = (Map<String, int>.from(default_z_indices.zIndices)
-         ..addAll(zIndices ?? {})),
-       shadows = (Map<String, List<BoxShadow>>.from(WindBoxShadows.shadows)
-         ..addAll(shadows ?? {})),
-       transitionDurations = (Map<String, Duration>.from(
-         default_transitions.transitionDurations,
-       )..addAll(transitionDurations ?? {})),
-       transitionCurves = (Map<String, Curve>.from(
-         default_transitions.transitionCurves,
-       )..addAll(transitionCurves ?? {})),
-       animations = (Map<String, WindAnimationType>.from(
-         default_animations.animations,
-       )..addAll(animations ?? {}));
+  })  : colors = (Map<String, MaterialColor>.from(_initColors())
+          ..addAll(colors ?? {})),
+        fontSizes = (Map<String, double>.from(default_font_sizes.fontSizes)
+          ..addAll(fontSizes ?? {})),
+        fontWeights = (Map<String, FontWeight>.from(
+          default_font_weights.fontWeights,
+        )..addAll(fontWeights ?? {})),
+        tracking = (Map<String, double>.from(default_tracking.tracking)
+          ..addAll(tracking ?? {})),
+        leading = (Map<String, double>.from(default_leading.leading)
+          ..addAll(leading ?? {})),
+        borderWidths = (Map<String, double>.from(
+          default_border_widths.borderWidths,
+        )..addAll(borderWidths ?? {})),
+        borderRadius = (Map<String, double>.from(
+          default_border_radius.borderRadius,
+        )..addAll(borderRadius ?? {})),
+        fontFamilies = (Map<String, String>.from(
+          default_font_families.fontFamilies,
+        )..addAll(fontFamilies ?? {})),
+        ringWidths = (Map<String, double>.from(
+          default_ring_widths.WindRingWidths.widths,
+        )..addAll(ringWidths ?? {})),
+        ringOffsets = (Map<String, double>.from(
+          default_ring_widths.WindRingWidths.offsets,
+        )..addAll(ringOffsets ?? {})),
+        containers = (Map<String, int>.from(default_containers.containers)
+          ..addAll(containers ?? {})),
+        screens = (Map<String, int>.from(default_screens.screens)
+          ..addAll(screens ?? {})),
+        opacities = (Map<String, double>.from(default_opacities.opacities)
+          ..addAll(opacities ?? {})),
+        zIndices = (Map<String, int>.from(default_z_indices.zIndices)
+          ..addAll(zIndices ?? {})),
+        shadows = (Map<String, List<BoxShadow>>.from(WindBoxShadows.shadows)
+          ..addAll(shadows ?? {})),
+        transitionDurations = (Map<String, Duration>.from(
+          default_transitions.transitionDurations,
+        )..addAll(transitionDurations ?? {})),
+        transitionCurves = (Map<String, Curve>.from(
+          default_transitions.transitionCurves,
+        )..addAll(transitionCurves ?? {})),
+        animations = (Map<String, WindAnimationType>.from(
+          default_animations.animations,
+        )..addAll(animations ?? {}));
 
   /// Initializes the default colors from the predefined color map.
   ///
@@ -243,16 +243,17 @@ class WindThemeData {
   static Map<String, MaterialColor> _initColors() {
     return default_colors.colors.map((key, value) {
       if (value is Map<int, Color>) {
-        return MapEntry(key, MaterialColor(value[500]!.value, value));
+        return MapEntry(key, MaterialColor(value[500]!.toARGB32(), value));
       }
       if (value is Color) {
         final shades = {
           for (var i = 50; i <= 900; i += (i == 50 ? 50 : 100)) i: value,
         };
-        return MapEntry(key, MaterialColor(value.value, shades));
+        return MapEntry(key, MaterialColor(value.toARGB32(), shades));
       }
       return MapEntry(key, MaterialColor(0, {}));
-    })..removeWhere((key, value) => value.value == 0);
+    })
+      ..removeWhere((key, value) => value.toARGB32() == 0);
   }
 
   /// Returns a color from the theme.
@@ -413,9 +414,8 @@ class WindThemeData {
   /// If currently light, returns dark. If currently dark, returns light.
   WindThemeData toggleTheme() {
     return copyWith(
-      brightness: brightness == Brightness.light
-          ? Brightness.dark
-          : Brightness.light,
+      brightness:
+          brightness == Brightness.light ? Brightness.dark : Brightness.light,
     );
   }
 
@@ -430,7 +430,7 @@ class WindThemeData {
     // Helper to safely fetch default material color
     MaterialColor getDefault(String name) {
       final raw = default_colors.colors[name] as Map<int, Color>;
-      return MaterialColor(raw[500]!.value, raw);
+      return MaterialColor(raw[500]!.toARGB32(), raw);
     }
 
     // Resolve colors or use defaults

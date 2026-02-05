@@ -17,7 +17,8 @@ class ResponsiveTypographyExamplePage extends StatelessWidget {
         children: [
           // Header
           WDiv(
-            className: 'w-full p-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500',
+            className:
+                'w-full p-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500',
             children: [
               WText(
                 'Responsive Typography',
@@ -54,7 +55,8 @@ class ResponsiveTypographyExamplePage extends StatelessWidget {
               // Heading
               WText(
                 'Heading',
-                className: 'text-2xl md:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white',
+                className:
+                    'text-2xl md:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white',
               ),
               WText(
                 'text-2xl → md:text-4xl → lg:text-5xl',
@@ -66,7 +68,8 @@ class ResponsiveTypographyExamplePage extends StatelessWidget {
               // Subheading
               WText(
                 'Subheading text that scales with screen size',
-                className: 'text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-400',
+                className:
+                    'text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-400',
               ),
               WText(
                 'text-base → md:text-lg → lg:text-xl',
@@ -80,7 +83,8 @@ class ResponsiveTypographyExamplePage extends StatelessWidget {
                 'Body text with responsive sizing. On mobile, this uses a smaller '
                 'font size for better readability. On larger screens, the text size '
                 'increases proportionally for comfortable reading.',
-                className: 'text-sm md:text-base lg:text-lg text-gray-500 dark:text-gray-500',
+                className:
+                    'text-sm md:text-base lg:text-lg text-gray-500 dark:text-gray-500',
               ),
               WText(
                 'text-sm → md:text-base → lg:text-lg',

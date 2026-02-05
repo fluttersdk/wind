@@ -148,8 +148,7 @@ class BackgroundImagePage extends StatelessWidget {
         className: 'flex flex-col gap-1',
         children: [
           WDiv(
-            className:
-                '''
+            className: '''
               $sizeClass bg-center bg-no-repeat h-32 rounded-lg border border-gray-300
               bg-[url(https://picsum.photos/200/300)]
             ''',
@@ -168,8 +167,7 @@ class BackgroundImagePage extends StatelessWidget {
       className: 'flex flex-col gap-1',
       children: [
         WDiv(
-          className:
-              '''
+          className: '''
             $position bg-no-repeat w-20 h-20 rounded-lg border border-gray-300
             bg-[url(https://picsum.photos/50/50)]
           ''',
@@ -188,8 +186,7 @@ class BackgroundImagePage extends StatelessWidget {
         className: 'flex flex-col gap-1',
         children: [
           WDiv(
-            className:
-                '''
+            className: '''
               $repeat bg-left-top h-24 rounded-lg border border-gray-300
               bg-[url(https://picsum.photos/30/30)]
             ''',

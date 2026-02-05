@@ -143,7 +143,7 @@ class WindParser {
     final Map<String, List<String>> map = {};
     final classes =
         className?.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toSet() ??
-        <String>{};
+            <String>{};
     final resolvedClasses = resolveClasses(classes.toList(), windContext);
 
     for (final cls in resolvedClasses) {
@@ -194,9 +194,8 @@ class WindParser {
 
     for (final cls in classes) {
       final parts = cls.split(':');
-      final prefixes = parts.length > 1
-          ? parts.sublist(0, parts.length - 1)
-          : <String>[];
+      final prefixes =
+          parts.length > 1 ? parts.sublist(0, parts.length - 1) : <String>[];
 
       bool isActive = true;
 

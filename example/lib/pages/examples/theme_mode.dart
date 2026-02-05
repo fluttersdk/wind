@@ -73,7 +73,8 @@ class ThemeModeExamplePage extends StatelessWidget {
                 ),
                 WText(
                   "Wind automatically detects your system preference by default.",
-                  className: "text-sm text-slate-600 dark:text-slate-300 flex-1",
+                  className:
+                      "text-sm text-slate-600 dark:text-slate-300 flex-1",
                 ),
               ],
             ),
