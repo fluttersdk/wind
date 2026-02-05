@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 /// - 100 <-> 800
 /// ...and so on.
 MaterialColor invertMaterialColor(MaterialColor color) {
-  return MaterialColor(color.toARGB32(), <int, Color>{
+  return MaterialColor(color.value, <int, Color>{
     50: color.shade900,
     100: color.shade800,
     200: color.shade700,

@@ -1,6 +1,6 @@
 name: fluttersdk_wind
 description: Utility-first styling framework for Flutter inspired by Tailwind CSS. Build UIs with WDiv, WText, WButton using intuitive className syntax.
-version: 1.0.0-alpha.2
+version: 1.0.0-alpha.3
 homepage: https://wind.fluttersdk.com
 repository: https://github.com/fluttersdk/wind
 issue_tracker: https://github.com/fluttersdk/wind/issues
