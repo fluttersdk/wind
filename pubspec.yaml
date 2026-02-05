@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.2.3
+  flutter_svg: ^2.0.0
   keyboard_actions: ^4.2.1
 
 dev_dependencies:
