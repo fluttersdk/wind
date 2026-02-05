@@ -1,9 +1,16 @@
 name: fluttersdk_wind
-description: "A Flutter plugin designed with a utility-first approach, inspired by Tailwind CSS, for building responsive, modular, and efficient UI components."
+description: Utility-first styling framework for Flutter inspired by Tailwind CSS. Build UIs with WDiv, WText, WButton using intuitive className syntax like 'flex gap-4 bg-blue-500 hover:bg-blue-600'.
 version: 1.0.0-alpha.1
 homepage: https://wind.fluttersdk.com
 repository: https://github.com/fluttersdk/wind
 issue_tracker: https://github.com/fluttersdk/wind/issues
+topics:
+  - ui
+  - widgets
+  - tailwind
+  - utility-first
+  - styling
+  - responsive-design
 
 environment:
   sdk: ">=3.4.0 <4.0.0"

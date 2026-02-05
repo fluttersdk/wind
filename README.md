@@ -1,6 +1,25 @@
 # Wind v1 - Utility-First Styling for Flutter
 
+[![pub package](https://img.shields.io/pub/v/fluttersdk_wind.svg)](https://pub.dev/packages/fluttersdk_wind)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/fluttersdk/wind/pulls)
+
+> ⚠️ **Alpha Release** - This is v1.0.0-alpha.1, a preview release. APIs may change before stable v1.0.0.
+
 **Wind** is a utility-first styling framework for Flutter, inspired by TailwindCSS. Build beautiful, responsive UIs using simple class names directly in your widget trees.
+
+## 📋 Table of Contents
+
+- [What's New in v1](#-whats-new-in-v1)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Core Widgets](#-core-widgets)
+- [Supported Utilities](#-supported-utilities)
+- [Dark Mode](#-dark-mode)
+- [Responsive Design](#-responsive-design)
+- [Custom Theme](#-custom-theme)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
 
 ## 🚀 What's New in v1
 
@@ -17,11 +36,24 @@ Wind v1 is a **complete architectural rewrite** with a new parsing engine, widge
 - **Platform Prefixes**: `ios:`, `android:`, `web:`, `mobile:` modifiers
 - **CSS-like Text Inheritance**: Text styles cascade through `DefaultTextStyle`
 
+## ✨ Features
+
+- 🎨 **Tailwind-Inspired** - Familiar utility classes from Tailwind CSS
+- 🧩 **Composable Widgets** - `WDiv`, `WText`, `WButton`, `WInput`, and more
+- 🎯 **State-Based Styling** - `hover:`, `focus:`, `disabled:`, `loading:` prefixes
+- 📱 **Responsive Design** - `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoints
+- 🌙 **Dark Mode** - Built-in dark mode with `dark:` prefix
+- 🔌 **Platform-Specific** - `ios:`, `android:`, `web:`, `mobile:` modifiers
+- 🎭 **Custom States** - Define your own state prefixes (`error:`, `success:`, etc.)
+- 🎨 **Theme Customization** - Override colors, spacing, fonts, and more
+- 📦 **Zero Dependencies** - Only `flutter_svg` and `keyboard_actions` for specific widgets
+- ✅ **Type-Safe** - Full Dart type safety with autocomplete support
+
 ## 📦 Installation
 
 ```yaml
 dependencies:
-  fluttersdk_wind: ^1.0.0
+  fluttersdk_wind: ^1.0.0-alpha.1
 ```
 
 ```sh
@@ -29,6 +61,8 @@ flutter pub get
 ```
 
 ## 🛠 Quick Start
+
+### 1. Wrap your app with WindTheme
 
 ```dart
 import 'package:flutter/material.dart';
@@ -42,15 +76,51 @@ class MyApp extends StatelessWidget {
     return WindTheme(
       data: WindThemeData(),
       child: MaterialApp(
-        home: Scaffold(
-          body: WDiv(
-            className: 'flex flex-col gap-4 p-6 bg-gray-100',
-            children: [
-              WText('Hello Wind!', className: 'text-2xl font-bold text-blue-600'),
-              WText('Utility-first styling for Flutter', className: 'text-gray-500'),
-            ],
+        home: HomePage(),
+      ),
+    );
+  }
+}
+```
+
+### 2. Build UIs with utility classes
+
+```dart
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: WDiv(
+        className: 'flex flex-col gap-4 p-6 bg-gray-100 min-h-screen',
+        children: [
+          // Header
+          WText(
+            'Hello Wind!',
+            className: 'text-3xl font-bold text-blue-600',
           ),
-        ),
+
+          // Card
+          WDiv(
+            className: 'bg-white rounded-xl shadow-lg p-6 hover:shadow-xl duration-300',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                WText('Welcome', className: 'text-xl font-semibold mb-2'),
+                WText(
+                  'Build UIs faster with utility-first styling',
+                  className: 'text-gray-600',
+                ),
+              ],
+            ),
+          ),
+
+          // Button
+          WButton(
+            onTap: () => print('Clicked!'),
+            className: 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors',
+            child: Text('Get Started'),
+          ),
+        ],
       ),
     );
   }

@@ -8,13 +8,84 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [1.0.0-alpha.1] - 2026-02-05
 
-### 🚀 Preparation for First Alpha Release
+### 🎉 First Alpha Release
 
-- Fixed dependency constraints for CI compatibility
-- Downgraded flutter_lints to 5.0.0 for Flutter 3.27.1
-- Updated SDK constraints (Dart >=3.4.0 <4.0.0, Flutter >=3.22.0)
-- Cleaned up test imports and warnings
-- Ready for automated publishing via GitHub Actions
+Wind v1.0.0-alpha.1 marks the first public preview of the complete architectural rewrite. This release focuses on code quality, CI/CD infrastructure, and ensuring a solid foundation for the v1 stable release.
+
+### ✨ What's Included
+
+**Core Widgets:**
+- `WDiv` - Utility-first container with flex, grid, and overflow support
+- `WText` - Typography widget with cascading text styles
+- `WInput` / `WFormInput` - Form inputs with validation and state styling
+- `WButton` - Interactive button with loading states
+- `WCheckbox` / `WFormCheckbox` - Checkbox with custom styling
+- `WSelect` / `WFormSelect` / `WFormMultiSelect` - Dropdown with search and tagging
+- `WDatePicker` / `WFormDatePicker` - Calendar-based date picker
+- `WPopover` - Overlay positioning system
+- `WIcon`, `WImage`, `WSvg`, `WSpacer` - Media and spacing utilities
+- `WAnchor` - State management for hover/focus/custom states
+- `WKeyboardActions` - iOS keyboard toolbar management
+
+**Utility Classes:**
+- Layout: `flex`, `grid`, `wrap`, `flex-row`, `flex-col`, `gap-*`
+- Sizing: `w-*`, `h-*`, `min-*`, `max-*`, `w-1/2`, `aspect-*`, `w-[200px]`
+- Spacing: `p-*`, `px-*`, `py-*`, `m-*`, `mx-*`, `my-*`
+- Typography: `text-*`, `font-*`, `uppercase`, `underline`, `truncate`
+- Colors: `bg-*`, `text-*`, `border-*` with `/50` opacity modifiers
+- Effects: `shadow-*`, `opacity-*`, `ring-*`, `rounded-*`
+- Transitions: `duration-*`, `ease-*`, `animate-*`
+- States: `hover:`, `focus:`, `disabled:`, `loading:`, custom states
+- Responsive: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
+- Platform: `ios:`, `android:`, `web:`, `mobile:`
+- Dark Mode: `dark:` prefix for all utilities
+
+**Theme System:**
+- `WindTheme` / `WindThemeData` - Customizable design tokens
+- Runtime theme toggling with reactive updates
+- Default Tailwind-compatible color palette
+- Typography, spacing, and sizing scales
+
+### 🔧 Code Quality & Infrastructure
+
+- **Zero Analyzer Issues**: Full compliance with `flutter_lints` 5.0.0
+- **835 Tests Passing**: Comprehensive test coverage across all widgets and parsers
+- **CI/CD Ready**: Automated publishing via GitHub Actions with OIDC
+- **Flutter 3.29+ Support**: Using latest stable APIs (`toARGB32()`)
+- **Clean Code Standards**: No custom linter exceptions, proper formatting
+
+### 🐛 Bug Fixes
+
+- Fixed hover state test timing issues with `addPostFrameCallback`
+- Resolved deprecated `.value` usage by migrating to `.toARGB32()`
+- Fixed curly braces in flow control structures
+- Replaced unnecessary `Container` with `SizedBox` for whitespace
+- Updated `.where()` type checks to use `.whereType<T>()`
+
+### 📦 Dependencies
+
+- `flutter_svg: ^2.0.0` - SVG rendering support
+- `keyboard_actions: ^4.2.1` - iOS keyboard management
+- `flutter_lints: ^5.0.0` - Code quality enforcement
+
+### ⚠️ Breaking Changes from v0
+
+This is a **complete rewrite**. Migration from v0 requires updating all widget names and class syntax. See [README.md](README.md) for the new API.
+
+### 📚 Documentation
+
+- Full widget documentation: [wind.fluttersdk.com](https://wind.fluttersdk.com)
+- AI agent integration guides: `docs/claude/`
+- Example application included in `/example`
+
+### 🚀 What's Next
+
+This alpha release is feature-complete for core functionality. Upcoming releases will focus on:
+- Community feedback and bug fixes
+- Performance optimizations
+- Additional widgets (WFormTextArea, WSlider, etc.)
+- Enhanced documentation and examples
+- Stable v1.0.0 release
 
 ## [1.0.0-alpha.9] - 2026-02-04
 

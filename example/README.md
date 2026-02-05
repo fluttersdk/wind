@@ -1,16 +1,116 @@
-# fluttersdk_wind
+# Wind Example Application
 
-A new Flutter project.
+This example app demonstrates the capabilities of the Wind utility-first styling framework for Flutter.
 
-## Getting Started
+## 📱 What's Included
 
-This project is a starting point for a Flutter application.
+The example app showcases:
 
-A few resources to get you started if this is your first Flutter project:
+- **Layout System**: Flex, Grid, and Wrap layouts with gap spacing
+- **Typography**: Text styles, fonts, sizes, and decorations
+- **Colors & Backgrounds**: Solid colors, gradients, and background images
+- **Borders & Effects**: Rounded corners, shadows, rings, and opacity
+- **Responsive Design**: Breakpoint-based layouts (sm, md, lg, xl, 2xl)
+- **State Styling**: Hover, focus, disabled, and loading states
+- **Dark Mode**: Theme toggling and dark mode utilities
+- **Forms**: Inputs, checkboxes, selects, and date pickers
+- **Interactive Widgets**: Buttons, popovers, and anchors
+- **Transitions**: Duration, easing, and animations
+- **Platform-Specific**: iOS, Android, and web modifiers
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🚀 Running the Example
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+# Install dependencies
+flutter pub get
+
+# Run on web
+flutter run -d chrome
+
+# Run on mobile
+flutter run
+
+# Run on desktop
+flutter run -d macos  # or windows, linux
+```
+
+## 📂 Project Structure
+
+```
+example/
+├── lib/
+│   ├── main.dart              # App entry point
+│   ├── play.dart              # Interactive playground
+│   ├── playground.dart        # Experimental features
+│   └── pages/
+│       ├── animation/         # Animation examples
+│       ├── backgrounds/       # Background utilities
+│       ├── borders/           # Border and radius examples
+│       ├── effects/           # Shadow, opacity, ring
+│       ├── examples/          # Complete UI examples
+│       ├── forms/             # Form widgets
+│       ├── layout/            # Flex, grid, wrap
+│       ├── popover/           # Popover examples
+│       ├── responsive/        # Responsive design
+│       └── test/              # Test pages
+└── pubspec.yaml
+```
+
+## 🎯 Key Examples
+
+### Basic Layout
+```dart
+WDiv(
+  className: 'flex flex-col gap-4 p-6 bg-white rounded-xl shadow-lg',
+  children: [
+    WText('Title', className: 'text-2xl font-bold'),
+    WText('Subtitle', className: 'text-gray-600'),
+  ],
+)
+```
+
+### Responsive Card
+```dart
+WDiv(
+  className: 'w-full md:w-1/2 lg:w-1/3 p-4',
+  child: WDiv(
+    className: 'bg-white dark:bg-gray-800 rounded-lg p-6 shadow hover:shadow-xl transition-shadow',
+    child: // ... content
+  ),
+)
+```
+
+### Interactive Button
+```dart
+WButton(
+  onTap: () => print('Clicked'),
+  className: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-6 py-3 rounded-lg transition-colors',
+  child: Text('Click Me'),
+)
+```
+
+## 📚 Learn More
+
+- **Documentation**: [wind.fluttersdk.com](https://wind.fluttersdk.com)
+- **GitHub**: [github.com/fluttersdk/wind](https://github.com/fluttersdk/wind)
+- **Pub.dev**: [pub.dev/packages/fluttersdk_wind](https://pub.dev/packages/fluttersdk_wind)
+
+## 🎮 Interactive Playground
+
+Open `/play` route in the app to access the interactive playground where you can:
+- Experiment with utility classes in real-time
+- See live updates as you type
+- Build custom widget configurations
+- Test responsive breakpoints
+
+## 💡 Tips
+
+1. **Hot Reload**: Use hot reload (r) to see changes instantly
+2. **Dark Mode**: Toggle dark mode from the app header
+3. **Breakpoints**: Resize the window to see responsive behavior
+4. **State Styles**: Hover over buttons and inputs to see state changes
+5. **Code Examples**: Each page includes code snippets you can copy
+
+## 🐛 Issues?
+
+Found a bug or have a suggestion? Please open an issue on [GitHub](https://github.com/fluttersdk/wind/issues).
