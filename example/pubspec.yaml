@@ -41,7 +41,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.1.0  # Downgraded for Dart 3.6.0 compatibility
   web: ^1.1.1
-  # mcp_toolkit: ^0.3.0  # Requires Dart 3.8.0, temporarily disabled
 
 dev_dependencies:
   flutter_test:
