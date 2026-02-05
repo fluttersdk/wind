@@ -1,0 +1,23 @@
+# AI Development & Documentation
+.claude/
+CLAUDE.md
+.mcp.json
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# CI/CD
+.github/
+
+# Development
+coverage/
+.dart_tool/packages
+.packages
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
