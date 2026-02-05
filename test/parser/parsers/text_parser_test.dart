@@ -67,7 +67,7 @@ void main() {
           context.theme.getColor('red', 500)!,
           0.5,
         );
-        expect(updatedStyles.color!.toARGB32(), expectedColor.toARGB32());
+        expect(updatedStyles.color!.value, expectedColor.value);
       });
 
       test('last class wins for conflicting text color classes', () {

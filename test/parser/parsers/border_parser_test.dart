@@ -120,7 +120,7 @@ void main() {
           context.theme.getColor('red', 500)!,
           0.5,
         );
-        expect(border.top.color.toARGB32(), expectedColor.toARGB32());
+        expect(border.top.color.value, expectedColor.value);
       });
 
       test('parses arbitrary hex color', () {
