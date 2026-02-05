@@ -1,1 +1,6 @@
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Using .value for Flutter 3.27.1 compatibility (toARGB32 not available)
+    deprecated_member_use: ignore
