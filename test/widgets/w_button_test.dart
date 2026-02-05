@@ -291,7 +291,8 @@ void main() {
         await gesture.addPointer(location: Offset.zero);
         addTearDown(gesture.removePointer);
         await gesture.moveTo(tester.getCenter(find.text('Hover Me')));
-        await tester.pump();
+        await tester.pump(); // First pump processes hover event
+        await tester.pump(); // Second pump processes postFrameCallback setState
 
         // Get container after hover
         final containerAfter = tester.widget<Container>(
