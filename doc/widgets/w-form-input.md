@@ -1,121 +1,212 @@
 # WFormInput
 
-A utility-first form input widget that integrates with Flutter's native Form validation system.
+A Wind-styled input that integrates seamlessly with Flutter's native Form validation system. It extends `FormField` to provide automatic error handling, label management, and state-based styling through utility classes.
 
-<x-preview path="forms/form_input_basic" size="md" source="example/lib/pages/forms/form_input_basic.dart"></x-preview>
-
-## Basic Usage
-
-```dart
-Form(
-  key: _formKey,
-  child: WFormInput(
-    controller: _emailController,
-    type: InputType.email,
-    placeholder: 'Enter your email',
-    className: 'p-3 border border-gray-300 rounded-lg error:border-red-500',
-    validator: (value) {
-      if (value == null || value.isEmpty) return 'Email is required';
-      return null;
-    },
-  ),
-)
-```
-
-## Error Styling
-
-When validation fails, the `error` state is automatically added:
-
-```dart
-WFormInput(
-  className: '''
-    p-3 border border-gray-300 rounded-lg
-    error:border-red-500 error:ring-2 error:ring-red-200
-  ''',
-  validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
-)
-```
-
-## Label
-
-Show a label above the input:
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-form-input" action="CREATE" -->
+<!-- Description: Basic form with WFormInput showing validation and label usage -->
+<x-preview path="widgets/w-form-input" size="md" source="example/lib/pages/widgets/w_form_input.dart"></x-preview>
 
 ```dart
 WFormInput(
   label: 'Email Address',
-  labelClassName: 'text-sm font-semibold text-gray-800 mb-2',
   placeholder: 'you@example.com',
-  className: 'p-3 border rounded-lg',
+  className: 'p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 error:border-red-500',
+  validator: (value) {
+    if (value == null || value.isEmpty) return 'Email is required';
+    if (!value.contains('@')) return 'Invalid email address';
+    return null;
+  },
 )
 ```
 
-## Hint
+## Basic Usage
 
-Show helpful text below the input:
+The `WFormInput` widget wraps a standard `WInput` with a `FormField`. It automatically manages its own internal `TextEditingController` if one isn't provided, and synchronizes its state with the parent `Form` widget.
+
+When validation fails, the widget automatically activates the `error` state, enabling any `error:` prefixed utility classes in your `className`.
 
 ```dart
-WFormInput(
-  hint: 'We will never share your email.',
-  hintClassName: 'text-gray-400 text-xs italic mt-1',
-  className: 'p-3 border rounded-lg',
+Form(
+  key: _formKey,
+  child: Column(
+    children: [
+      WFormInput(
+        label: 'Username',
+        className: 'border p-2 error:bg-red-50',
+        validator: (v) => v!.length < 3 ? 'Too short' : null,
+      ),
+      WButton(
+        onTap: () => _formKey.currentState!.validate(),
+        child: Text('Submit'),
+      ),
+    ],
+  ),
 )
 ```
 
-> [!NOTE]
-> The hint is automatically hidden when a validation error is displayed.
-
-## Prefix & Suffix
-
-Add icons inside the input:
+## Constructor
 
 ```dart
-WFormInput(
-  prefix: Icon(Icons.email, size: 20),
-  suffix: Icon(Icons.check, color: Colors.green),
-  className: 'p-3 border rounded-lg',
-)
+WFormInput({
+  Key? key,
+  TextEditingController? controller,
+  String? initialValue,
+  String? Function(String?)? validator,
+  void Function(String?)? onSaved,
+  AutovalidateMode? autovalidateMode,
+  bool enabled = true,
+  
+  // WInput props
+  InputType type = InputType.text,
+  String? placeholder,
+  String? className,
+  String? placeholderClassName,
+  TextInputAction? textInputAction,
+  ValueChanged<String>? onSubmitted,
+  ValueChanged<String>? onChanged,
+  VoidCallback? onEditingComplete,
+  VoidCallback? onTap,
+  TapRegionCallback? onTapOutside,
+  bool readOnly = false,
+  bool autofocus = false,
+  int? maxLines,
+  int minLines = 1,
+  Set<String>? states,
+  List<TextInputFormatter>? inputFormatters,
+  TextCapitalization textCapitalization = TextCapitalization.none,
+  bool autocorrect = true,
+  bool enableSuggestions = true,
+  
+  // Layout props
+  String? label,
+  String labelClassName = 'text-sm font-medium text-gray-700 mb-1',
+  String? hint,
+  String hintClassName = 'text-gray-500 text-xs mt-1',
+  bool showError = true,
+  String errorClassName = 'text-red-500 text-xs mt-1',
+  
+  // Prefix/Suffix
+  Widget? prefix,
+  Widget? suffix,
+})
 ```
 
 ## Props
 
 | Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `controller` | `TextEditingController?` | `null` | External controller |
-| `initialValue` | `String?` | `null` | Initial value if no controller |
-| `validator` | `FormFieldValidator<String>?` | `null` | Validation function |
-| `onSaved` | `FormFieldSetter<String>?` | `null` | Called on `Form.save()` |
-| `autovalidateMode` | `AutovalidateMode?` | `null` | When to validate |
-| `label` | `String?` | `null` | Label text above input |
-| `labelClassName` | `String` | `'text-sm font-medium...'` | Label styling |
-| `hint` | `String?` | `null` | Hint text below input |
-| `hintClassName` | `String` | `'text-gray-500 text-xs mt-1'` | Hint styling |
-| `showError` | `bool` | `true` | Show error message below |
-| `errorClassName` | `String` | `'text-red-500 text-xs mt-1'` | Error styling |
-| `prefix` | `Widget?` | `null` | Widget before input |
-| `suffix` | `Widget?` | `null` | Widget after input |
+|:-----|:-----|:--------|:------------|
+| `className` | `String?` | `null` | Utility classes for the input field. Supports `error:`, `focus:`, and `disabled:` prefixes. |
+| `label` | `String?` | `null` | Label text displayed above the input. |
+| `labelClassName` | `String` | `'text-sm...'` | Styling for the label text. |
+| `hint` | `String?` | `null` | Helper text displayed below the input. Hidden when validation error is active. |
+| `hintClassName` | `String` | `'text-gray-500...'` | Styling for the hint text. |
+| `showError` | `bool` | `true` | Whether to display the error message string below the input. |
+| `errorClassName` | `String` | `'text-red-500...'` | Styling for the validation error message text. |
+| `controller` | `TextEditingController?` | `null` | Optional external controller for manual text management. |
+| `validator` | `String? Function(String?)?` | `null` | Form validation logic returning error string or null. |
+| `type` | `InputType` | `InputType.text` | Determines keyboard layout and visual masking (e.g., `password`). |
+| `prefix` | `Widget?` | `null` | Widget (like an Icon) displayed before the input text. |
+| `suffix` | `Widget?` | `null` | Widget (like a visibility toggle) displayed after the input text. |
 
-All [WInput properties](./w-input.md#props) are also supported.
+## Layout Modes
 
-## State Prefixes
+### Vertical Stack (Default)
+`WFormInput` organizes its components in a vertical column: label at the top, followed by the input field, and then the hint or error message at the bottom.
 
-| Prefix | Activates When |
-| :--- | :--- |
-| `focus:` | Input is focused |
-| `error:` | Validation fails |
-| `disabled:` | `enabled: false` |
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-form-input_layout" action="CREATE" -->
+<!-- Description: WFormInput showing the vertical stack of label, input, and hint -->
+<x-preview path="widgets/w-form-input_layout" size="md" source="example/lib/pages/widgets/w_form_input_layout.dart"></x-preview>
+
+```dart
+WFormInput(
+  label: 'Account Number',
+  hint: 'Enter the 12-digit number found on your statement.',
+  className: 'border p-3 rounded',
+)
+```
+
+## Event Handling
+
+`WFormInput` supports all standard text input events. `onChanged` automatically notifies the internal `FormFieldState` to track validation in real-time if `autovalidateMode` is enabled.
+
+```dart
+WFormInput(
+  className: 'border p-2',
+  onChanged: (value) => print('Typing: $value'),
+  onSubmitted: (value) => print('Final value: $value'),
+)
+```
+
+## State Variants
+
+Interactive styling is achieved through state prefixes. `WFormInput` automatically manages the `error` state based on validation results.
+
+```dart
+WFormInput(
+  className: '''
+    border border-gray-300 
+    focus:border-blue-500 focus:ring-1 
+    error:border-red-500 error:bg-red-50
+    disabled:bg-gray-100 disabled:text-gray-400
+  ''',
+  validator: (v) => v!.isEmpty ? 'Required' : null,
+)
+```
+
+## Styling Examples
+
+### Custom Error Feedback
+You can completely customize how the error appears by using `error:` classes on the main input and styling the error message specifically.
+
+```dart
+WFormInput(
+  label: 'Password',
+  type: InputType.password,
+  className: 'border-b-2 error:border-red-600',
+  errorClassName: 'text-red-600 font-bold mt-2 italic',
+  validator: (v) => v!.length < 8 ? 'Password too short' : null,
+)
+```
+
+### Minimalist Style
+Removing the default labels and hints for a tighter, cleaner UI.
+
+```dart
+WFormInput(
+  placeholder: 'Search...',
+  className: 'bg-gray-100 rounded-full px-4 py-2 border-none focus:bg-white focus:ring-2 focus:ring-blue-500/50',
+  showError: false, // Only use error: styling on the input itself
+)
+```
 
 ## All Supported Classes
 
-| Category | Classes | Description |
-| :--- | :--- | :--- |
-| **Sizing** | `w-*`, `h-*`, `w-full` | Input dimensions |
-| **Padding** | `p-*`, `px-*`, `py-*` | Content padding |
-| **Background** | `bg-*` | Fill color |
-| **Border** | `border-*`, `rounded-*` | Border style |
-| **Error** | `error:border-*`, `error:ring-*` | Error styling |
-| **Typography** | `text-*`, `font-*` | Text styling |
+Since `WFormInput` uses `WInput` internally, it supports all standard utility categories.
+
+| Category | Classes |
+|:---------|:--------|
+| Layout | `flex`, `grid`, `block`, `hidden` |
+| Spacing | `p-{n}`, `m-{n}`, `gap-{n}` |
+| Sizing | `w-{size}`, `h-{size}` |
+| Typography | `text-{size}`, `font-{weight}` |
+| Colors | `bg-{color}`, `text-{color}` |
+| Borders | `border`, `rounded`, `ring` |
+| State | `hover:`, `focus:`, `disabled:`, `error:` |
+
+## Customizing Theme
+
+Default styles for labels, hints, and error messages can be influenced globally through `WindThemeData`.
+
+```dart
+WindThemeData(
+  // The base spacing unit affects all p-{n}, m-{n}, and gap-{n} classes
+  baseSpacingUnit: 4.0,
+)
+```
 
 ## Related Documentation
 
-- [WInput](./w-input.md) - Base input widget
-- [WFormCheckbox](./w-form-checkbox.md) - Form checkbox widget
+- [WInput](./w-input.md) - The base input widget.
+- [WButton](./w-button.md) - Standard button for form submission.
+- [WFormCheckbox](./w-form-checkbox.md) - Form-integrated checkbox.
+- [WText](./w-text.md) - The underlying typography system.

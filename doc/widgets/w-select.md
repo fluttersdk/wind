@@ -1,154 +1,214 @@
 # WSelect
 
-A utility-first dropdown select component with multi-select, tagging, and pagination support.
+A highly customizable, utility-first select component that supports single selection, multi-selection, searching, and remote data fetching.
 
-<x-preview path="forms/select_basic" size="md" source="example/lib/pages/forms/select_basic.dart"></x-preview>
-
-## Basic Usage
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-select" action="CREATE" -->
+<!-- Description: Basic single-select usage showing the dropdown trigger and items. -->
+<x-preview path="widgets/w-select" size="md" source="example/lib/pages/widgets/w_select_page.dart"></x-preview>
 
 ```dart
 WSelect<String>(
   value: _selected,
   options: [
-    SelectOption(value: 'a', label: 'Option A'),
-    SelectOption(value: 'b', label: 'Option B'),
+    SelectOption(value: 'dart', label: 'Dart'),
+    SelectOption(value: 'flutter', label: 'Flutter'),
   ],
   onChange: (value) => setState(() => _selected = value),
-  className: 'w-64 bg-white border rounded-lg p-3',
-  menuClassName: 'bg-white shadow-lg max-h-48',
+  className: 'w-64 bg-white border border-gray-300 rounded-lg',
 )
 ```
 
-## Multi-Select
+## Basic Usage
 
-<x-preview path="forms/select_multi" size="md" source="example/lib/pages/forms/select_multi.dart"></x-preview>
-
-Enable multi-select mode with `isMulti: true`. Selected items appear as chips.
+The `WSelect` widget replaces the standard Material Dropdown with a utility-first approach. It manages its own open state while providing a controlled interface for selection.
 
 ```dart
-WSelect<String>(
-  isMulti: true,
-  values: _selectedTags,
-  options: _tagOptions,
-  onMultiChange: (values) => setState(() => _selectedTags = values),
-  placeholder: 'Select tags...',
-  className: 'w-80 bg-white border rounded-lg p-2 min-h-10',
+WSelect<int>(
+  placeholder: 'Choose a number',
+  options: List.generate(5, (i) => SelectOption(value: i, label: 'Option $i')),
+  onChange: (val) => print('Selected: $val'),
+  className: 'bg-white border p-3 rounded-md',
 )
 ```
 
-## Searchable
-
-<x-preview path="forms/select_searchable" size="md" source="example/lib/pages/forms/select_searchable.dart"></x-preview>
-
-Add search input with `searchable: true`.
+## Constructor
 
 ```dart
-WSelect<String>(
-  options: _options,
-  searchable: true,
-  searchPlaceholder: 'Type to search...',
-  onSearch: (query) async => await api.search(query),
-)
-```
-
-## Tagging (Create Options)
-
-Allow users to create new options with `onCreateOption`.
-
-```dart
-WSelect<String>(
-  isMulti: true,
-  values: _tags,
-  searchable: true,
-  onCreateOption: (query) async {
-    return SelectOption(value: query.toLowerCase(), label: query);
-  },
-)
-```
-
-## Pagination (Infinite Scroll)
-
-<x-preview path="forms/select_pagination" size="md" source="example/lib/pages/forms/select_pagination.dart"></x-preview>
-
-Load more options on scroll with `onLoadMore` and `hasMore`.
-
-```dart
-WSelect<User>(
-  options: _users,
-  searchable: true,
-  onSearch: (query) => _fetchUsers(query, page: 1),
-  onLoadMore: () => _fetchUsers(_query, page: _page + 1),
-  hasMore: _hasMore,
-)
-```
-
-## Active States
-
-WSelect automatically manages these states for styling:
-
-| State | Condition |
-| :--- | :--- |
-| `hover` | Mouse over the select trigger |
-| `focus` | Select widget is focused |
-| `open` | Dropdown menu is currently open |
-| `disabled` | Widget is disabled |
-| `selected` | A value is currently selected |
-
-Use with state prefixes:
-
-```dart
-WSelect(
-  className: 'border border-gray-300 open:border-blue-500 selected:bg-blue-50',
-)
+const WSelect({
+  Key? key,
+  T? value,
+  ValueChanged<T>? onChange,
+  bool isMulti = false,
+  List<T>? values,
+  ValueChanged<List<T>>? onMultiChange,
+  SelectedChipBuilder<T>? selectedChipBuilder,
+  required List<SelectOption<T>> options,
+  bool searchable = false,
+  Future<List<SelectOption<T>>> Function(String)? onSearch,
+  String searchPlaceholder = 'Search...',
+  Future<SelectOption<T>> Function(String)? onCreateOption,
+  CreateOptionBuilder? createOptionBuilder,
+  Future<List<SelectOption<T>>> Function()? onLoadMore,
+  bool hasMore = false,
+  String? className,
+  String? menuClassName,
+  String placeholder = 'Select an option',
+  bool disabled = false,
+  double? menuWidth,
+  double maxMenuHeight = 300,
+  Set<String>? states,
+  SelectTriggerBuilder<T>? triggerBuilder,
+  MultiSelectTriggerBuilder<T>? multiTriggerBuilder,
+  SelectItemBuilder<T>? itemBuilder,
+  EmptyStateBuilder? emptyBuilder,
+  LoadingBuilder? loadingBuilder,
+})
 ```
 
 ## Props
 
 | Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `value` | `T?` | - | Selected value (single-select) |
-| `values` | `List<T>?` | - | Selected values (multi-select) |
-| `isMulti` | `bool` | `false` | Enable multi-select mode |
-| `onChange` | `ValueChanged<T>?` | - | Single-select callback |
-| `onMultiChange` | `ValueChanged<List<T>>?` | - | Multi-select callback |
-| `options` | `List<SelectOption<T>>` | required | Available options |
-| `searchable` | `bool` | `false` | Show search input |
-| `searchPlaceholder` | `String` | `'Search...'` | Search placeholder |
-| `onSearch` | `Future<List> Function(String)?` | - | Async search callback |
-| `onCreateOption` | `Future<SelectOption> Function(String)?` | - | Create new option |
-| `onLoadMore` | `Future<List> Function()?` | - | Pagination callback |
-| `hasMore` | `bool` | `false` | More pages available |
-| `className` | `String?` | - | Trigger styling |
-| `menuClassName` | `String?` | - | Menu styling |
-| `placeholder` | `String` | `'Select...'` | Placeholder text |
-| `disabled` | `bool` | `false` | Disable widget |
-| `states` | `Set<String>?` | - | Custom states |
+|:-----|:-----|:--------|:------------|
+| `className` | `String?` | `null` | Utility classes for the trigger container |
+| `menuClassName` | `String?` | `null` | Utility classes for the dropdown menu |
+| `options` | `List<SelectOption<T>>` | **Required** | List of items to display |
+| `value` | `T?` | `null` | Selected value in single-select mode |
+| `onChange` | `ValueChanged<T>?` | `null` | Callback for single selection changes |
+| `isMulti` | `bool` | `false` | Enables multi-select mode |
+| `values` | `List<T>?` | `null` | Selected values in multi-select mode |
+| `onMultiChange` | `ValueChanged<List<T>>?` | `null` | Callback for multi-selection changes |
+| `searchable` | `bool` | `false` | Shows a search input in the menu |
+| `placeholder` | `String` | `'Select an option'` | Text shown when no value is selected |
+| `disabled` | `bool` | `false` | Prevents interaction |
+| `maxMenuHeight`| `double` | `300` | Maximum height of the dropdown list |
 
-## Custom Builders
+## Layout Modes
 
-| Builder | Description |
-| :--- | :--- |
-| `triggerBuilder` | Custom trigger (single) |
-| `multiTriggerBuilder` | Custom trigger (multi) |
-| `itemBuilder` | Custom option items |
-| `selectedChipBuilder` | Custom chips |
-| `emptyBuilder` | Custom empty state |
-| `loadingBuilder` | Custom loading indicator |
-| `createOptionBuilder` | Custom create button |
+### Single Select
+The default mode for selecting a single item. It displays the label of the selected option in the trigger.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-select_single" action="CREATE" -->
+<x-preview path="widgets/w-select_single" size="md" source="example/lib/pages/widgets/w_select_single.dart"></x-preview>
+
+```dart
+WSelect<String>(
+  value: 'apple',
+  options: [
+    SelectOption(value: 'apple', label: 'Apple'),
+    SelectOption(value: 'banana', label: 'Banana'),
+  ],
+  onChange: (v) => print(v),
+)
+```
+
+### Multi Select
+Enable `isMulti: true` to allow multiple selections. By default, it displays selected items as chips.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-select_multi" action="CREATE" -->
+<x-preview path="widgets/w-select_multi" size="md" source="example/lib/pages/widgets/w_select_multi.dart"></x-preview>
+
+```dart
+WSelect<String>(
+  isMulti: true,
+  values: ['red', 'blue'],
+  options: [
+    SelectOption(value: 'red', label: 'Red'),
+    SelectOption(value: 'blue', label: 'Blue'),
+    SelectOption(value: 'green', label: 'Green'),
+  ],
+  onMultiChange: (list) => print(list),
+)
+```
+
+## Event Handling
+
+`WSelect` provides callbacks for selection changes and remote interactions.
+
+```dart
+WSelect<String>(
+  onChange: (value) {
+    // Handle single selection
+  },
+  onSearch: (query) async {
+    // Return list of options based on search query
+    return fetchRemoteOptions(query);
+  },
+  onLoadMore: () async {
+    // Load next page of options
+    return fetchNextPage();
+  },
+)
+```
+
+## State Variants
+
+`WSelect` automatically manages several states that you can style using prefixes in `className`:
+
+- `hover:` - When the mouse is over the trigger.
+- `focus:` - When the dropdown is open.
+- `disabled:` - When the widget is disabled.
+- `selected:` - When a value is selected.
+
+```dart
+WSelect(
+  className: 'border-gray-300 hover:border-blue-500 focus:ring-2 focus:ring-blue-200',
+)
+```
+
+## Styling Examples
+
+### Searchable Select
+Combine `searchable: true` with custom menu styling for a robust selection experience.
+
+```dart
+WSelect<String>(
+  searchable: true,
+  searchPlaceholder: 'Search countries...',
+  menuClassName: 'bg-white shadow-xl rounded-xl border border-gray-100',
+  options: countries,
+  onChange: (val) => _country = val,
+)
+```
+
+### Tagging (Create Option)
+Allow users to create new options if a search yields no results.
+
+```dart
+WSelect<String>(
+  searchable: true,
+  onCreateOption: (query) async {
+    final newOpt = SelectOption(value: query.toLowerCase(), label: query);
+    // Add to your local state/database
+    return newOpt;
+  },
+  options: existingTags,
+)
+```
 
 ## All Supported Classes
 
-| Category | Classes | Description |
-| :--- | :--- | :--- |
-| **Sizing** | `w-*`, `h-*`, `min-h-*` | Trigger dimensions |
-| **Padding** | `p-*`, `px-*`, `py-*` | Content padding |
-| **Background** | `bg-*` | Fill color |
-| **Border** | `border-*`, `rounded-*` | Border style |
-| **Shadow** | `shadow-*` | Drop shadow |
-| **Menu** | `max-h-*` | Menu max height |
-| **States** | `hover:*`, `focus:*`, `open:*` | State styling |
+| Category | Classes |
+|:---------|:--------|
+| Layout | `flex`, `hidden`, `w-{size}`, `h-{size}` |
+| Spacing | `p-{n}`, `m-{n}`, `gap-{n}` |
+| Visuals | `bg-{color}`, `border`, `rounded`, `shadow` |
+| States | `hover:`, `focus:`, `disabled:`, `dark:` |
+| Custom | `open:`, `selected:` |
+
+## Customizing Theme
+
+The default styling for `WSelect` and its chips can be influenced by the `WindThemeData`.
+
+```dart
+WindThemeData(
+  colors: {
+    'primary': Colors.indigo,
+  },
+)
+```
 
 ## Related Documentation
 
-- [WInput](./w-input.md) - Text input widget
-- [WFormCheckbox](./w-form-checkbox.md) - Form checkbox widget
+- [WFormSelect](./w-form-select.md) - Form-integrated version with validation
+- [WPopover](./w-popover.md) - The underlying overlay engine
+- [WInput](./w-input.md) - Used for the internal search field
