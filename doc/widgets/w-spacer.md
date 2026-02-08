@@ -111,5 +111,6 @@ WindThemeData(
 ## Related Documentation
 
 - [WDiv](./w-div.md)
-- [Sizing Utilities](../utilities/sizing.md)
+- [Sizing Utilities](../layout/sizing.md)
+- [Spacing Utilities](../layout/spacing.md)
 - [Responsive Design](../core-concepts/responsive-design.md)

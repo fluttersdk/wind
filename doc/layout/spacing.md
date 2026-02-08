@@ -156,3 +156,4 @@ WDiv(
 - [Sizing](./sizing.md) - Width and height
 - [Flexbox](./flexbox.md) - Gap utilities in flex layouts
 - [Grid](./grid.md) - Gap utilities in grid layouts
+- [WSpacer Widget](../widgets/w-spacer.md) - Widget for explicit spacing

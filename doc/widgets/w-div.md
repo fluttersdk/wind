@@ -179,8 +179,9 @@ WindTheme(
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [Flexbox & Grid Layouts](/docs/utilities/flexbox-grid)
-- [Sizing Utilities](/docs/utilities/sizing)
-- [Spacing & Margins](/docs/utilities/spacing)
-- [Interaction State Prefixes](/docs/core-concepts/states)
-- [WAnchor Widget](/docs/widgets/w-anchor)
+- [Flexbox](../layout/flexbox.md) & [Grid](../layout/grid.md)
+- [Sizing Utilities](../layout/sizing.md)
+- [Spacing & Margins](../layout/spacing.md)
+- [Interaction State Prefixes](../core-concepts/state-management.md)
+- [WAnchor Widget](./w-anchor.md)
+- [WSpacer Widget](./w-spacer.md)
