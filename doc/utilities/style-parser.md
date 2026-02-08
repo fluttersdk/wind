@@ -1,61 +1,105 @@
 # Style Parser
 
-Parse Wind utility classes into a WindStyle object.
+- [Introduction](#introduction)
+- [The wStyle Helper](#wstyle-helper)
+- [WindParser Engine](#windparser-engine)
+- [Performance & Caching](#performance-and-caching)
+- [Context Extensions](#context-extensions)
 
-## wStyle Function
+<a name="introduction"></a>
+## Introduction
 
-Parse utility classes programmatically:
+While Wind widgets like `WDiv` and `WText` are the primary way to use utility classes, you may sometimes need to parse utility strings programmatically. The Style Parser API allows you to convert any `className` string into a structured `WindStyle` object that can be applied to standard Flutter widgets.
+
+<a name="wstyle-helper"></a>
+## The wStyle Helper
+
+The `wStyle` function is a global helper that provides the simplest way to parse utility classes on the fly.
 
 ```dart
-WindStyle style = wStyle(context, 'bg-red-500 p-4 rounded-lg');
-
-// Access parsed values
-Color? bgColor = style.decoration?.color;
-EdgeInsets? padding = style.padding;
-BorderRadius? radius = style.borderRadius;
+WindStyle wStyle(BuildContext context, String className)
 ```
 
-## Context Extension
+### Usage Example
 
-Use the shortcut extension:
-
-```dart
-WindStyle style = context.wStyleExt('p-4 bg-blue-500');
-```
-
-## Use Cases
-
-### Custom Widget Styling
+This is particularly useful when building custom widgets that need to accept Wind utilities for styling:
 
 ```dart
-Widget buildCard(BuildContext context, String className) {
-  final style = wStyle(context, className);
+Widget buildCustomCard(BuildContext context, {String? className}) {
+  final style = wStyle(context, className ?? 'bg-white p-4 shadow-md');
   
   return Container(
     decoration: style.decoration,
     padding: style.padding,
-    child: Text('Styled card'),
+    child: Text('Styled with WindStyle'),
   );
 }
 ```
 
-### Debugging
+<a name="windparser-engine"></a>
+## WindParser Engine
+
+For more advanced scenarios, you can interface directly with `WindParser.parse`. This method allows for base style merging and manual state injection.
 
 ```dart
-// Check what gets parsed
-WindStyle style = wStyle(context, 'p-4 bg-red-500');
-print('Padding: ${style.padding}');
-print('Background: ${style.decoration?.color}');
+static WindStyle parse(
+  String className,
+  BuildContext context, {
+  WindStyle? baseStyle,
+  Set<String>? states,
+})
 ```
 
-## Function Reference
+### Parameters
 
-| Function | Description |
-| :--- | :--- |
-| `wStyle(context, className)` | Parses class string into WindStyle |
-| `context.wStyleExt(className)` | Extension shortcut |
+| Parameter | Type | Description |
+|:---|:---|:---|
+| `className` | `String` | The utility class string to parse. |
+| `context` | `BuildContext` | Used to resolve theme values, breakpoints, and platform. |
+| `baseStyle` | `WindStyle?` | An optional base style to merge the new utilities into. |
+| `states` | `Set<String>?` | Manual state overrides (e.g., `{'loading', 'active'}`). |
 
-## Related
+### Accessing Parsed Values
 
-- [Responsive Helpers](./responsive-helpers.md)
+The resulting `WindStyle` object contains resolved Flutter properties:
+
+```dart
+final style = wStyle(context, 'bg-red-500 text-lg font-bold');
+
+Color? color = style.decoration?.color; // Resolved bg-red-500
+TextStyle? textStyle = style.textStyle;  // Resolved text-lg and font-bold
+EdgeInsets? padding = style.padding;     // resolved p-* classes
+```
+
+<a name="performance-and-caching"></a>
+## Performance & Caching
+
+Wind uses an internal memoization system to ensure that parsing is extremely fast. The `WindParser` maintains a static cache keyed by a combination of:
+
+1. The raw `className` string.
+2. The current active breakpoint (`sm`, `md`, etc.).
+3. The current brightness (Light/Dark mode).
+4. The target platform (iOS/Android/Web).
+5. The active interaction states (`hover`, `focus`, etc.).
+
+> [!NOTE]
+> Because of this caching, calling `wStyle` multiple times with the same parameters in a build method has negligible performance impact.
+
+<a name="context-extensions"></a>
+## Context Extensions
+
+For cleaner syntax, Wind provides a BuildContext extension that mirrors the global helper:
+
+```dart
+// Using global helper
+final style = wStyle(context, 'p-4');
+
+// Using extension
+final style = context.wStyleExt('p-4');
+```
+
+### Related Documentation
+
 - [Context Extensions](./context-extensions.md)
+- [Color Helpers](./color-helpers.md)
+- [Theming Concepts](../core-concepts/theming.md)

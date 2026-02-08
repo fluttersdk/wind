@@ -1,88 +1,168 @@
 # Context Extensions
 
-BuildContext extensions for convenient theme access.
+- [Overview](#overview)
+- [Theme Extensions](#theme-extensions)
+- [Responsive Extensions](#responsive-extensions)
+- [Helper Extensions](#helper-extensions)
+- [API Reference](#api-reference)
+- [Common Patterns](#common-patterns)
 
-## Theme Access
+<a name="overview"></a>
+## Overview
 
-```dart
-// Get theme controller (for toggling)
-WindThemeController controller = context.windTheme;
-controller.toggleTheme();
+Wind provides a set of ergonomic extensions on `BuildContext` to make accessing theme data, responsive breakpoints, and styling helpers as concise as possible. Instead of verbose provider lookups, you can access the entire Wind ecosystem directly from the `context`.
 
-// Get theme data (read-only)
-WindThemeData data = context.windThemeData;
-```
+<a name="theme-extensions"></a>
+## Theme Extensions
 
-## Theme Properties
+These extensions provide direct access to the `WindTheme` configuration and its underlying data.
 
-```dart
-// Colors map
-Map<String, MaterialColor> colors = context.windColors;
-
-// Breakpoints map
-Map<String, int> screens = context.windScreens;
-
-// Brightness
-Brightness brightness = context.windBrightness;
-bool isDark = context.windIsDark;
-```
-
-## Responsive Shortcuts
+### Theme Control
+Use `windTheme` to interact with the theme controller, typically for toggling between light and dark modes.
 
 ```dart
-// Device type checks
-bool isMobile = context.wIsMobile;    // < md
-bool isTablet = context.wIsTablet;    // >= md && < lg
-bool isDesktop = context.wIsDesktop;  // >= lg
+// Toggle the current theme
+context.windTheme.toggleTheme();
 
-// Current breakpoint
-String bp = context.wActiveBreakpoint;
+// Set a specific brightness
+context.windTheme.setBrightness(Brightness.dark);
 ```
 
-## Helper Shortcuts
+### Theme Data
+Access the raw `WindThemeData` or specific properties like colors and brightness.
 
 ```dart
-// Color
-Color? blue = context.wColorExt('blue', shade: 500);
+// Access the full theme data object
+final theme = context.windThemeData;
 
-// Spacing
-double space = context.wSpacingExt(4);
+// Quick access to the colors map
+final primary = context.windColors['blue'];
 
-// Font size
-double? size = context.wFontSizeExt('lg');
-
-// Font weight
-FontWeight? weight = context.wFontWeightExt('bold');
-
-// Screen check
-bool isLarge = context.wScreenIsExt('lg');
-
-// Style parsing
-WindStyle style = context.wStyleExt('p-4 bg-blue-500');
+// Check current brightness state
+if (context.windIsDark) {
+  // Apply dark mode logic
+}
 ```
 
-## Extension Reference
+<a name="responsive-extensions"></a>
+## Responsive Extensions
 
-| Extension | Description |
-| :--- | :--- |
-| `context.windTheme` | Get WindThemeController |
-| `context.windThemeData` | Get WindThemeData |
-| `context.windColors` | Get colors map |
-| `context.windScreens` | Get breakpoints map |
-| `context.windBrightness` | Get current brightness |
-| `context.windIsDark` | Check if dark mode |
-| `context.wIsMobile` | Check if < md |
-| `context.wIsTablet` | Check if md <= screen < lg |
-| `context.wIsDesktop` | Check if >= lg |
-| `context.wActiveBreakpoint` | Current breakpoint name |
-| `context.wColorExt(...)` | Color helper shortcut |
-| `context.wSpacingExt(...)` | Spacing helper shortcut |
-| `context.wFontSizeExt(...)` | Font size helper shortcut |
-| `context.wFontWeightExt(...)` | Font weight helper shortcut |
-| `context.wScreenIsExt(...)` | Screen check shortcut |
-| `context.wStyleExt(...)` | Style parser shortcut |
+Responsive extensions allow you to make layout decisions in your widget tree based on the current screen size and defined breakpoints.
 
-## Related
+### Breakpoint Shortcuts
+Quickly determine the current device category. These are based on your theme's `screens` configuration (defaults to Tailwind breakpoints).
 
+```dart
+if (context.wIsMobile) {
+  return MobileLayout(); // < md
+}
+
+if (context.wIsTablet) {
+  return TabletLayout(); // >= md && < lg
+}
+
+if (context.wIsDesktop) {
+  return DesktopLayout(); // >= lg
+}
+```
+
+### Active Breakpoint
+You can also retrieve the exact name of the active breakpoint.
+
+```dart
+WText('Current breakpoint: ${context.wActiveBreakpoint}');
+```
+
+<a name="helper-extensions"></a>
+## Helper Extensions
+
+These extensions are shorthand for Wind's global helper functions, allowing you to resolve specific values from the theme without passing the context manually.
+
+### Colors and Spacing
+Resolve colors and spacing values based on your theme's unit scale.
+
+```dart
+// Get 'red-500' from the theme
+final alertColor = context.wColorExt('red', shade: 500);
+
+// Get 4 units of spacing (4 * baseSpacingUnit)
+final padding = context.wSpacingExt(4);
+```
+
+### Typography and Styling
+Directly resolve font properties or even parse full class strings into a `WindStyle` object.
+
+```dart
+final weight = context.wFontWeightExt('bold');
+final size = context.wFontSizeExt('lg');
+
+// Parse a class string manually
+final style = context.wStyleExt('p-4 bg-blue-500 rounded-lg');
+```
+
+<a name="api-reference"></a>
+## API Reference
+
+| Property / Method | Returns | Description |
+|:---|:---|:---|
+| `windTheme` | `WindThemeController` | Access the controller for toggling or updating the theme. |
+| `windThemeData` | `WindThemeData` | Access the read-only theme configuration. |
+| `windColors` | `Map<String, MaterialColor>` | Returns the full color palette from the theme. |
+| `windScreens` | `Map<String, int>` | Returns the breakpoint map (e.g., `md: 768`). |
+| `windBrightness` | `Brightness` | Returns the current theme brightness (`light` or `dark`). |
+| `windIsDark` | `bool` | Convenience getter for `brightness == Brightness.dark`. |
+| `wActiveBreakpoint` | `String` | Returns the name of the currently active breakpoint. |
+| `wIsMobile` | `bool` | Returns `true` if screen width is less than `md`. |
+| `wIsTablet` | `bool` | Returns `true` if screen width is between `md` and `lg`. |
+| `wIsDesktop` | `bool` | Returns `true` if screen width is `lg` or larger. |
+| `wColorExt(name, {shade})`| `Color?` | Resolves a theme color by name and optional shade. |
+| `wSpacingExt(multiplier)` | `double` | Returns spacing calculated by `multiplier * baseSpacingUnit`. |
+| `wFontSizeExt(name)` | `double?` | Returns the font size value for a key (e.g., `xl`). |
+| `wFontWeightExt(name)` | `FontWeight?` | Returns the font weight for a key (e.g., `bold`). |
+| `wScreenIsExt(name)` | `bool` | Checks if a specific breakpoint is currently active. |
+| `wStyleExt(className)` | `WindStyle` | Parses a utility string into a `WindStyle` object. |
+
+<a name="common-patterns"></a>
+## Common Patterns
+
+### Conditional Layouts
+Using responsive extensions to change widget parameters.
+
+```dart
+WDiv(
+  className: 'bg-white rounded-lg',
+  // Use extension to adjust padding dynamically in logic
+  child: Padding(
+    padding: EdgeInsets.all(context.wIsMobile ? 12 : 24),
+    child: Content(),
+  ),
+)
+```
+
+### Manual Style Resolution
+Sometimes you need to apply Wind styles to standard Flutter widgets that don't support `className`.
+
+```dart
+final style = context.wStyleExt('text-blue-600 font-bold italic');
+
+return Text(
+  'Direct Styling',
+  style: style.textStyle,
+);
+```
+
+### Theme Toggling
+Implementing a theme switcher is trivial with the `windTheme` extension.
+
+```dart
+IconButton(
+  icon: Icon(context.windIsDark ? Icons.light_mode : Icons.dark_mode),
+  onPressed: () => context.windTheme.toggleTheme(),
+)
+```
+
+## Related Documentation
+
+- [Theming Concepts](../core-concepts/theming.md)
+- [Responsive Design](../core-concepts/responsive-design.md)
 - [Color Helpers](./color-helpers.md)
-- [Responsive Helpers](./responsive-helpers.md)
