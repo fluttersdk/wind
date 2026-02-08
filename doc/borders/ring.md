@@ -1,144 +1,157 @@
-# Ring
+# Ring Width, Color, and Offset
 
-Utilities for creating focus rings and outline effects.
+Utilities for creating outline rings with box-shadows. These are useful for focus states or highlighting elements without affecting layout.
 
-Ring is implemented as a box shadow with spread radius only (no blur), similar to Tailwind CSS's ring utility.
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-## Ring Width
-
-Control the width of the ring.
-
+<!-- TODO: [VERIFY] path="effects/ring_basic" action="VERIFY" -->
+<!-- Description: Verify ring basic example matches new documentation structure -->
 <x-preview path="effects/ring_basic" size="md" source="example/lib/pages/effects/ring_basic.dart"></x-preview>
 
 ```dart
-WDiv(className: "ring ring-blue-500 p-4")
-WDiv(className: "ring-2 ring-blue-500 p-4")
-WDiv(className: "ring-4 ring-blue-500 p-4")
+// Default ring (3px blue-500)
+WDiv(className: 'ring')
+
+// Custom width and color
+WDiv(className: 'ring-4 ring-red-500')
+
+// With offset
+WDiv(className: 'ring-2 ring-offset-2')
 ```
 
-| Class | Width |
-| :--- | :--- |
-| `ring-0` | 0px |
-| `ring-1` | 1px |
-| `ring-2` | 2px |
-| `ring` | 3px (default) |
-| `ring-4` | 4px |
-| `ring-8` | 8px |
+## Basic Usage
 
----
+Use `ring-{width}` utilities to apply a solid box-shadow to an element. By default, this adds a 3px blue ring.
 
-## Ring Color
+> [!NOTE]
+> Rings in Wind are implemented using `BoxShadow` with a spread radius and zero blur. They do not take up space in the layout, unlike borders.
 
-Control the color of the ring.
+```dart
+WDiv(
+  className: 'ring-4 ring-blue-500 rounded-lg p-4',
+  child: WText('Ring Example'),
+)
+```
 
+## Quick Reference
+
+| Class | Value | Description |
+|:------|:------|:------------|
+| `ring-0` | 0px | No ring |
+| `ring-1` | 1px | 1px ring width |
+| `ring-2` | 2px | 2px ring width |
+| `ring` | 3px | Default ring width (3px) |
+| `ring-4` | 4px | 4px ring width |
+| `ring-8` | 8px | 8px ring width |
+| `ring-inset` | - | Forces ring to be on the inside |
+| `ring-offset-{width}` | - | Simulates an offset by adding a transparent gap |
+
+## Variants
+
+### Ring Color
+
+Use `ring-{color}` to set the color of the ring. You can also use opacity modifiers like `/50`.
+
+<!-- TODO: [VERIFY] path="effects/ring_colors" action="VERIFY" -->
+<!-- Description: Verify ring colors example matches -->
 <x-preview path="effects/ring_colors" size="md" source="example/lib/pages/effects/ring_colors.dart"></x-preview>
 
 ```dart
-WDiv(className: "ring-4 ring-red-500 p-4")
-WDiv(className: "ring-4 ring-green-500 p-4")
-WDiv(className: "ring-4 ring-[#1da1f2] p-4")
+WDiv(className: 'ring-2 ring-blue-500')
+WDiv(className: 'ring-2 ring-red-500/50') // 50% opacity
 ```
 
-| Class | Behavior |
-| :--- | :--- |
-| `ring-{color}-{shade}` | Sets the ring color |
-| `ring-[#hex]` | Sets arbitrary ring color |
+### Ring Offset
 
-### Opacity
-
-You can control the opacity of the ring color using the color opacity modifier.
-
-<x-preview path="effects/ring_opacity" size="md" source="example/lib/pages/effects/ring_opacity.dart"></x-preview>
-
-| Class | Behavior |
-| :--- | :--- |
-| `ring-red-500/50` | Ring color with 50% opacity |
-| `ring-blue-500/[0.25]` | Ring color with 25% opacity |
+Use `ring-offset-{width}` to simulate space between the element and the ring. This is helpful for focus states on colored backgrounds.
 
 ```dart
-WDiv(className: "ring-4 ring-red-500/50 p-4")
-WDiv(className: "ring-4 ring-blue-500/25 p-4")
+// Creates a 2px gap between the element and the ring
+WDiv(className: 'ring-2 ring-offset-2 ring-offset-white')
 ```
 
----
+| Class | Value | Description |
+|:------|:------|:------------|
+| `ring-offset-0` | 0px | No offset |
+| `ring-offset-1` | 1px | 1px offset |
+| `ring-offset-2` | 2px | 2px offset |
+| `ring-offset-4` | 4px | 4px offset |
+| `ring-offset-8` | 8px | 8px offset |
 
-## Ring Offset
+### Ring Inset
 
-Add offset between the ring and the element.
+Use `ring-inset` to force the ring to render on the inside of the element instead of the outside. This is useful for elements that shouldn't overflow their container.
 
 ```dart
-WDiv(className: "ring-4 ring-offset-2 ring-blue-500 p-4")
-WDiv(className: "ring-4 ring-offset-4 ring-blue-500 p-4")
+WDiv(className: 'ring-2 ring-inset ring-pink-500')
 ```
 
-| Class | Offset |
-| :--- | :--- |
-| `ring-offset-0` | 0px |
-| `ring-offset-1` | 1px |
-| `ring-offset-2` | 2px |
-| `ring-offset-4` | 4px |
-| `ring-offset-8` | 8px |
+## Responsive Design
 
----
-
-## Ring Inset
-
-Render the ring on the inside of the element.
+Apply different ring utilities at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
 
 ```dart
-WDiv(className: "ring-4 ring-inset ring-blue-500 p-4")
+WDiv(className: 'ring-2 md:ring-4 lg:ring-8')
 ```
 
----
+## Dark Mode
+
+Use the `dark:` prefix to apply different ring styles when the application is in dark mode.
+
+```dart
+WDiv(className: 'ring-slate-900/5 dark:ring-white/10')
+```
+
+## Arbitrary Values
+
+If the built-in scale doesn't meet your needs, use bracket notation to apply custom values directly.
+
+```dart
+// Custom color
+WDiv(className: 'ring-[#50d71e]')
+
+// Custom color with opacity
+WDiv(className: 'ring-[#50d71e]/50')
+```
+
+> [!NOTE]
+> Currently, arbitrary values are supported for **colors only** (`ring-[#hex]`). Arbitrary widths (`ring-[10px]`) are not yet supported in the parser.
 
 ## Customizing Theme
 
-You can customize ring properties in `WindThemeData`.
-
-### Default Ring Color
-
-When no ring color is specified (e.g., just `ring`), this color will be used instead of the default blue-500.
+To extend or override the default scale for rings, modify the `WindThemeData` in your app root.
 
 ```dart
-WindThemeData(
-  ringColor: Colors.purple,
+WindTheme(
+  data: WindThemeData(
+    // Default color when no ring color class is present
+    ringColor: Colors.blue, 
+    
+    // Custom ring widths
+    ringWidths: {
+      'DEFAULT': 3,
+      '6': 6,
+      '10': 10,
+    },
+    
+    // Custom offset widths
+    ringOffsets: {
+      '3': 3,
+      '6': 6,
+    },
+  ),
+  child: MyApp(),
 )
 ```
-
-### Ring Widths
-
-Override available values for `ring-{width}` classes.
-
-```dart
-WindThemeData(
-  ringWidths: {
-    'DEFAULT': 3,
-    '0': 0,
-    '10': 10,
-  },
-)
-```
-
-Usage: `ring-10`.
-
-### Ring Offsets
-
-Override available values for `ring-offset-{width}` classes.
-
-```dart
-WindThemeData(
-  ringOffsets: {
-    '0': 0,
-    '2': 2,
-    'loose': 12,
-  },
-)
-```
-
-Usage: `ring-offset-loose`.
 
 ## Related Documentation
 
-- [Borders](./borders.md) - Border utilities
-- [Outline](./outline.md) - Outline utilities
-- [Shadow](../styling/shadow.md) - Box shadow utilities
+- [Borders](./borders.md)
+- [Box Shadow](../styling/shadow.md)

@@ -1,181 +1,187 @@
-# Borders
+# Border Width, Color, & Radius
 
-Utilities for controlling border width, color, style, and radius.
+Utilities for controlling border width, color, style, and border radius.
 
-## Border Radius
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-Utilities for rounded corners.
+<a name="basic-usage"></a>
+## Basic Usage
 
-<x-preview path="borders/radius_basic" size="md" class="min-h-64" source="example/lib/pages/borders/radius_basic.dart"></x-preview>
-
-| Class | Radius |
-| :--- | :--- |
-| `rounded-none` | 0px |
-| `rounded-sm` | 2px |
-| `rounded` | 4px |
-| `rounded-md` | 6px |
-| `rounded-lg` | 8px |
-| `rounded-xl` | 12px |
-| `rounded-2xl` | 16px |
-| `rounded-3xl` | 24px |
-| `rounded-full` | 9999px (Circle/Pill) |
+<!-- TODO: [EXAMPLE_NEEDED] path="borders/borders_preview" action="CREATE" -->
+<!-- Description: Show a grid of boxes demonstrating different border widths, colors, styles, and radii. -->
+<x-preview path="borders/borders_preview" size="md" source="example/lib/pages/borders/borders_preview.dart"></x-preview>
 
 ```dart
-WDiv(className: "w-10 h-10 bg-blue-500 rounded-full") // Circle
+// Basic border (1px solid gray-200 by default)
+WDiv(className: 'border')
+
+// Thicker border with color
+WDiv(className: 'border-2 border-blue-500')
+
+// Rounded corners
+WDiv(className: 'border rounded-lg p-4')
+
+// Specific side border
+WDiv(className: 'border-b-2 border-red-500')
 ```
 
-### Directional Radius
+<a name="quick-reference"></a>
+## Quick Reference
 
-Apply radius to specific corners or sides.
+### Border Width
 
-```dart
-WDiv(className: "rounded-t-lg ...")   // Top corners
-WDiv(className: "rounded-r-lg ...")   // Right corners
-WDiv(className: "rounded-b-lg ...")   // Bottom corners
-WDiv(className: "rounded-l-lg ...")   // Left corners
-WDiv(className: "rounded-tl-lg ...")  // Top-left only
-WDiv(className: "rounded-tr-lg ...")  // Top-right only
-WDiv(className: "rounded-bl-lg ...")  // Bottom-left only
-WDiv(className: "rounded-br-lg ...")  // Bottom-right only
-```
+| Class | CSS Equivalent | Description |
+|:--- |:--- |:--- |
+| `border-0` | `border-width: 0px` | No border |
+| `border` | `border-width: 1px` | 1px border |
+| `border-2` | `border-width: 2px` | 2px border |
+| `border-4` | `border-width: 4px` | 4px border |
+| `border-8` | `border-width: 8px` | 8px border |
 
-## Border Width
+### Border Style
 
-<x-preview path="borders/width_basic" size="md" source="example/lib/pages/borders/width_basic.dart"></x-preview>
-
-| Class | Description |
-| :--- | :--- |
-| `border` | 1px border all sides |
-| `border-0` | 0px |
-| `border-2` | 2px |
-| `border-4` | 4px |
-| `border-8` | 8px |
-
-### Individual Sides
-
-Control border width on specific sides.
-
-<x-preview path="borders/width_sides" size="md" source="example/lib/pages/borders/width_sides.dart"></x-preview>
-
-```dart
-WDiv(className: "border-t-4 border-indigo-500 ...")  // Top only
-WDiv(className: "border-r-4 border-indigo-500 ...")  // Right only
-WDiv(className: "border-b-4 border-indigo-500 ...")  // Bottom only
-WDiv(className: "border-l-4 border-indigo-500 ...")  // Left only
-```
-
-### Arbitrary Width
-
-Use bracket notation for custom border widths.
-
-```dart
-WDiv(className: "border-[3px] border-indigo-500 ...")
-WDiv(className: "border-[0.5px] border-gray-300 ...")
-```
-
-## Border Style
-
-Control the style of the border.
-
-| Class | Description |
-| :--- | :--- |
-| `border-solid` | Solid border (default) |
-| `border-none` | Remove border |
-
-```dart
-WDiv(className: "border-2 border-solid border-gray-500 ...")
-WDiv(className: "border-none ...")  // Remove border
-```
-
-## Border Color
-
-Use `border-{color}-{shade}` utilities to set the border color.
-
-<x-preview path="borders/colors_theme" size="md" source="example/lib/pages/borders/colors_theme.dart"></x-preview>
-
-```dart
-WDiv(className: "border-2 border-gray-200 ...")
-WDiv(className: "border-2 border-red-500 ...")
-WDiv(className: "border-2 border-transparent ...")
-```
-
-### Color Opacity
-
-Control border color opacity with the `/` modifier.
-
-```dart
-WDiv(className: "border-2 border-red-500 ...")     // 100% opacity
-WDiv(className: "border-2 border-red-500/75 ...")  // 75% opacity
-WDiv(className: "border-2 border-red-500/50 ...")  // 50% opacity
-WDiv(className: "border-2 border-red-500/25 ...")  // 25% opacity
-```
-
-### Arbitrary Colors
-
-<x-preview path="borders/colors_arbitrary" size="md" source="example/lib/pages/borders/colors_arbitrary.dart"></x-preview>
-
-```dart
-WDiv(className: "border-2 border-[#FF5733] ...")
-WDiv(className: "border-2 border-[#1da1f2] ...")
-```
-
-## All Classes
-
-| Class | Description |
-| :--- | :--- |
-| `rounded-{size}` | Uniform border radius |
-| `rounded-{dir}-{size}` | Directional radius (t/r/b/l/tl/tr/bl/br) |
-| `border` / `border-{width}` | Border width |
-| `border-{dir}-{width}` | Directional border width |
-| `border-[value]` | Arbitrary border width |
-| `border-{color}-{shade}` | Border color |
-| `border-{color}/opacity` | Color with opacity |
-| `border-[#hex]` | Arbitrary color |
-| `border-solid` / `border-none` | Border style |
-
-## Customizing Theme
-
-You can customize border properties in `WindThemeData`.
+| Class | CSS Equivalent | Description |
+|:--- |:--- |:--- |
+| `border-solid` | `border-style: solid` | Solid border (default) |
+| `border-none` | `border-style: none` | No border |
 
 ### Border Radius
 
-Override or extend values for `rounded-{key}` classes.
+| Class | Value | Description |
+|:--- |:--- |:--- |
+| `rounded-none` | `0px` | No rounding |
+| `rounded-sm` | `2px` | Small radius |
+| `rounded` | `4px` | Default radius |
+| `rounded-md` | `6px` | Medium radius |
+| `rounded-lg` | `8px` | Large radius |
+| `rounded-xl` | `12px` | Extra large radius |
+| `rounded-2xl` | `16px` | 2x Extra large |
+| `rounded-3xl` | `24px` | 3x Extra large |
+| `rounded-full` | `9999px` | Fully rounded (pill/circle) |
+
+<a name="variants"></a>
+## Variants
+
+### Individual Sides
+
+Control border width for specific sides using `-t`, `-r`, `-b`, and `-l` suffixes.
 
 ```dart
-WindThemeData(
-  borderRadius: {
-    'none': 0,
-    'sm': 2,
-    'DEFAULT': 4, // 'rounded'
-    'md': 6,
-    'lg': 8,
-    'xl': 12,
-    'mega': 50, // Custom key: rounded-mega
-  },
+// Top border only
+WDiv(className: 'border-t-4 border-indigo-500')
+
+// Right and Left borders
+WDiv(className: 'border-r border-l border-gray-300')
+```
+
+### Corner Radius
+
+Control radius for specific corners or sides.
+
+```dart
+// Top corners only
+WDiv(className: 'rounded-t-lg bg-white')
+
+// Top-left corner only
+WDiv(className: 'rounded-tl-md bg-blue-100')
+```
+
+| Class | Sides/Corner |
+|:--- |:--- |
+| `rounded-t-*` | Top-left & Top-right |
+| `rounded-r-*` | Top-right & Bottom-right |
+| `rounded-b-*` | Bottom-left & Bottom-right |
+| `rounded-l-*` | Top-left & Bottom-left |
+| `rounded-tl-*` | Top-left only |
+| `rounded-tr-*` | Top-right only |
+| `rounded-br-*` | Bottom-right only |
+| `rounded-bl-*` | Bottom-left only |
+
+### Color Opacity
+
+You can control the opacity of border colors using the color opacity modifier.
+
+```dart
+// 50% opacity red border
+WDiv(className: 'border-2 border-red-500/50')
+```
+
+<a name="responsive-design"></a>
+## Responsive Design
+
+Prefix any border utility with a breakpoint variant to apply it at specific screen sizes.
+
+```dart
+// No border on mobile, 2px border on tablet+
+WDiv(className: 'border-0 md:border-2')
+
+// Square on mobile, rounded on desktop
+WDiv(className: 'rounded-none lg:rounded-xl')
+```
+
+<a name="dark-mode"></a>
+## Dark Mode
+
+Use the `dark:` prefix to style borders differently in dark mode.
+
+```dart
+WDiv(
+  className: 'border border-gray-200 dark:border-gray-700'
 )
 ```
 
-Usage: `rounded-mega`.
+<a name="arbitrary-values"></a>
+## Arbitrary Values
 
-### Border Widths
+If you need a value that doesn't fit the theme, use square bracket notation.
 
-Override or extend values for `border-{key}` classes.
+```dart
+// Specific pixel width
+WDiv(className: 'border-[3px]')
+
+// Specific hex color
+WDiv(className: 'border-[#1da1f2]')
+
+// Specific radius
+WDiv(className: 'rounded-[10px]')
+```
+
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+Customize standard values in `WindThemeData`.
 
 ```dart
 WindThemeData(
+  // Custom border widths
   borderWidths: {
-    'DEFAULT': 1, // 'border'
-    '0': 0,
-    '2': 2,
-    'thin': 0.5, // Custom key: border-thin
+    'DEFAULT': 1.0,
+    '3': 3.0, // adds border-3
+    'thin': 0.5, // adds border-thin
+  },
+  
+  // Custom border radius
+  borderRadius: {
+    'DEFAULT': 4.0,
+    'xl': 12.0,
+    'mega': 32.0, // adds rounded-mega
+  },
+  
+  // Custom colors
+  colors: {
+    'brand': Colors.indigo, // adds border-brand
   },
 )
 ```
 
-Usage: `border-thin`.
-
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Ring](./ring.md) - Focus ring utilities
-- [Outline](./outline.md) - Outline utilities
-- [Shadow](../styling/shadow.md) - Box shadow utilities
+- [Ring Utilities](/doc/borders/ring.md) - Focus rings and outlines
