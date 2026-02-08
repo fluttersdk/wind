@@ -143,6 +143,5 @@ WindThemeData(
 
 - [Transitions](./transition.md) - Smooth property changes
 - [Hover States](../core-concepts/state-management.md) - Interactive triggers
-- [Transforms](../styling/transform.md) - Moving and scaling elements
 
 That's all.
