@@ -1,329 +1,186 @@
 # WDiv
 
-The fundamental building block of Wind UI. A smart container that dynamically builds `Container`, `Row`, `Column`, `Grid`, or `Wrap` layouts based on utility classes.
+The fundamental building block of Wind. `WDiv` acts as a multi-purpose container that replaces standard Flutter widgets like `Container`, `Row`, `Column`, `Flex`, `Grid`, `Wrap`, and `SingleChildScrollView`.
 
-<x-preview path="widgets/w_div" size="lg" source="example/lib/pages/widgets/w_div.dart"></x-preview>
+It embodies the "Intelligent Composition" philosophy, dynamically constructing the most efficient widget tree based on the provided utility classes. Instead of blindly wrapping content, `WDiv` inspects the `className` and selectively applies specialized widgets like `Padding`, `Align`, `Row`, or `GridView` only when necessary.
 
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_div_basic" action="CREATE" -->
+<!-- Description: Basic demonstration of WDiv as a styled container with flex layout -->
+<x-preview path="widgets/w_div_basic" size="md" source="example/lib/pages/widgets/w_div_basic.dart"></x-preview>
+
+```dart
+WDiv(
+  className: 'flex flex-col gap-4 p-6 bg-white rounded-xl shadow-lg',
+  children: [
+    WText('Hello Wind', className: 'text-2xl font-bold'),
+    WText('This is a styled container.', className: 'text-gray-600'),
+  ],
+)
+```
+
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
+<a name="basic-usage"></a>
 ## Basic Usage
 
-```dart
-WDiv(
-  className: 'p-4 bg-white rounded-lg shadow-sm',
-  child: Text('I am a card'),
-)
-```
-
-## Layout Types
-
-WDiv supports multiple layout modes determined by classes:
-
-| Class | Layout Type | Description |
-| :--- | :--- | :--- |
-| (none) | Block | Default, single child container |
-| `flex` | Flexbox | Row/Column layout |
-| `grid` | Grid | Grid with columns |
-| `wrap` | Wrap | Flowing wrap layout |
-| `hidden` | None | Returns SizedBox.shrink() |
-
-## Flex Layout
-
-Use `flex` with `flex-row` or `flex-col` for flexbox layouts:
+Use `WDiv` with a single `child` for simple wrapping or with `children` when using layout modes like `flex` or `grid`.
 
 ```dart
-// Horizontal row
+// Simple container
 WDiv(
-  className: 'flex flex-row gap-4 items-center',
-  children: [
-    WDiv(className: 'w-10 h-10 bg-red-500 rounded'),
-    WText('User Name'),
-  ],
+  className: 'p-4 bg-blue-500 rounded',
+  child: WText('Single Child', className: 'text-white'),
 )
 
-// Vertical column
+// Flex row
 WDiv(
-  className: 'flex flex-col gap-2',
+  className: 'flex flex-row gap-2',
   children: [
-    WText('Item 1'),
-    WText('Item 2'),
+    WDiv(className: 'w-10 h-10 bg-red-500'),
+    WDiv(className: 'w-10 h-10 bg-green-500'),
   ],
 )
 ```
 
-### Alignment
-
-| Class | Description |
-| :--- | :--- |
-| `items-start` | Align items to start |
-| `items-center` | Center items on cross axis |
-| `items-end` | Align items to end |
-| `items-baseline` | Align to text baseline |
-| `items-stretch` | Stretch items |
-| `justify-start` | Justify to start |
-| `justify-center` | Center on main axis |
-| `justify-end` | Justify to end |
-| `justify-between` | Space between |
-| `justify-around` | Space around |
-| `justify-evenly` | Space evenly |
-
-### Main Axis Size
-
-Control how flex containers size along the main axis:
-
-| Class | Description |
-| :--- | :--- |
-| `axis-min` | Shrink to fit content (MainAxisSize.min) |
-| `axis-max` | Expand to fill available space (MainAxisSize.max) |
-
-### Flex Child Properties
-
-Control how children behave within a flex container:
-
-| Class | Description |
-| :--- | :--- |
-| `flex-1`, `flex-2`... | Flex grow factor |
-| `flex-grow` | Same as flex-1 |
-| `flex-auto` | Flexible with loose fit |
-| `flex-initial` | Initial size, can shrink |
-| `flex-none` | No flex, fixed size |
-| `shrink` | Allow shrinking (FlexFit.loose) |
-| `shrink-0` | Prevent shrinking (FlexFit.tight) |
-| `align-self-start` | Align self to start |
-| `align-self-center` | Align self to center |
-| `align-self-end` | Align self to end |
-
-## Grid Layout
-
-Use `grid` with `grid-cols-{n}` for grid layouts:
+<a name="constructor"></a>
+## Constructor
 
 ```dart
-WDiv(
-  className: 'grid grid-cols-3 gap-4',
-  children: [
-    WDiv(className: 'bg-blue-100 p-4', child: Text('1')),
-    WDiv(className: 'bg-blue-200 p-4', child: Text('2')),
-    WDiv(className: 'bg-blue-300 p-4', child: Text('3')),
-  ],
-)
+const WDiv({
+  Key? key,
+  String? className,
+  Widget? child,
+  List<Widget>? children,
+  WindStyle? style,
+  Set<String>? states,
+  bool scrollPrimary = false,
+})
 ```
 
-| Class | Description |
-| :--- | :--- |
-| `grid-cols-1` to `grid-cols-12` | Number of columns |
-
-## Wrap Layout
-
-Use `wrap` for flowing layouts:
-
-```dart
-WDiv(
-  className: 'wrap gap-2',
-  children: chips,
-)
-```
-
-### Align Content (Wrap only)
-
-| Class | Description |
-| :--- | :--- |
-| `align-content-start` | Align runs to start |
-| `align-content-center` | Center runs |
-| `align-content-end` | Align runs to end |
-| `align-content-between` | Space between runs |
-| `align-content-around` | Space around runs |
-| `align-content-evenly` | Even spacing |
-
-## Sizing
-
-| Class | Description |
-| :--- | :--- |
-| `w-{n}` | Fixed width (0-96, rem units) |
-| `w-px` | 1px width |
-| `w-full` | 100% width |
-| `w-screen` | Viewport width |
-| `w-1/2`, `w-1/3`, `w-2/3` | Fractional width |
-| `w-auto` | Auto width |
-| `h-{n}` | Fixed height |
-| `h-full`, `h-screen` | Full/viewport height |
-| `min-w-{n}`, `max-w-{n}` | Width constraints |
-| `min-h-{n}`, `max-h-{n}` | Height constraints |
-| `aspect-square`, `aspect-video` | Aspect ratio |
-
-Arbitrary values: `w-[200px]`, `h-[50vh]`
-
-## Spacing
-
-### Padding
-
-| Class | Description |
-| :--- | :--- |
-| `p-{n}` | All sides |
-| `px-{n}` | Horizontal |
-| `py-{n}` | Vertical |
-| `pt-{n}`, `pb-{n}` | Top/Bottom |
-| `pl-{n}`, `pr-{n}` | Left/Right |
-
-### Margin
-
-| Class | Description |
-| :--- | :--- |
-| `m-{n}` | All sides |
-| `mx-{n}` | Horizontal |
-| `my-{n}` | Vertical |
-| `mx-auto` | Center horizontally |
-| `mt-{n}`, `mb-{n}` | Top/Bottom |
-| `ml-{n}`, `mr-{n}` | Left/Right |
-
-### Gap
-
-| Class | Description |
-| :--- | :--- |
-| `gap-{n}` | All directions |
-| `gap-x-{n}` | Horizontal gap |
-| `gap-y-{n}` | Vertical gap |
-
-## Backgrounds
-
-| Class | Description |
-| :--- | :--- |
-| `bg-{color}` | Solid color (e.g., `bg-blue-500`) |
-| `bg-transparent` | Transparent |
-| `bg-gradient-to-r` | Gradient right |
-| `bg-gradient-to-b` | Gradient bottom |
-| `from-{color}` | Gradient start |
-| `to-{color}` | Gradient end |
-| `via-{color}` | Gradient middle |
-| `bg-opacity-{n}` | Background opacity |
-
-## Borders
-
-| Class | Description |
-| :--- | :--- |
-| `border` | 1px border |
-| `border-{n}` | Border width (0, 2, 4, 8) |
-| `border-{color}` | Border color |
-| `border-t`, `border-b` | Top/bottom only |
-| `border-l`, `border-r` | Left/right only |
-| `rounded` | Small radius |
-| `rounded-{size}` | none, sm, md, lg, xl, 2xl, 3xl, full |
-
-## Shadows
-
-| Class | Description |
-| :--- | :--- |
-| `shadow` | Default shadow |
-| `shadow-sm` | Small shadow |
-| `shadow-md` | Medium shadow |
-| `shadow-lg` | Large shadow |
-| `shadow-xl` | Extra large |
-| `shadow-2xl` | 2x extra large |
-| `shadow-none` | No shadow |
-| `ring-{n}` | Focus ring |
-| `ring-{color}` | Ring color |
-
-## Effects
-
-| Class | Description |
-| :--- | :--- |
-| `opacity-{n}` | 0-100 in steps of 5 |
-
-## Overflow
-
-| Class | Description |
-| :--- | :--- |
-| `overflow-hidden` | Clip content |
-| `overflow-auto` | Scroll if needed |
-| `overflow-scroll` | Always scroll |
-| `overflow-x-auto` | Horizontal scroll |
-| `overflow-y-auto` | Vertical scroll |
-
-## Animation
-
-| Class | Description |
-| :--- | :--- |
-| `animate-pulse` | Pulse animation |
-| `animate-bounce` | Bounce animation |
-| `animate-spin` | Spin animation |
-| `animate-ping` | Ping animation |
-
-## Transitions
-
-| Class | Description |
-| :--- | :--- |
-| `transition-all` | All properties |
-| `transition-colors` | Color changes |
-| `transition-opacity` | Opacity changes |
-| `duration-{n}` | 75, 100, 150, 200, 300, 500, 700, 1000ms |
-| `ease-in`, `ease-out` | Timing functions |
-| `ease-in-out`, `ease-linear` | More timing |
-
-## Interactive States
-
-> **Note:** States require wrapping with `WAnchor` or use `WButton`.
-
-| Prefix | Description |
-| :--- | :--- |
-| `hover:` | Mouse hover state |
-| `focus:` | Focus state |
-| `active:` | Active/pressed state |
-| `dark:` | Dark mode |
-| `sm:`, `md:`, `lg:`, `xl:` | Responsive breakpoints |
-
-```dart
-WAnchor(
-  child: WDiv(
-    className: 'bg-blue-500 hover:bg-blue-600 transition-colors',
-    child: Text('Hover me'),
-  ),
-)
-```
-
-## Child vs Children
-
-WDiv enforces a strict rule:
-
-> **Rule:** Provide either `child` OR `children`, never both.
-
-- `child` - Single widget, block layout
-- `children` - Multiple widgets, flex/grid/wrap layout
-
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `className` | `String?` | - | Utility classes |
-| `child` | `Widget?` | - | Single child widget |
-| `children` | `List<Widget>?` | - | Multiple children |
-| `style` | `WindStyle?` | - | Base WindStyle |
-| `states` | `Set<String>?` | - | Custom states |
+|:-----|:-----|:--------|:------------|
+| `className` | `String?` | `null` | Utility class string defining layout and styles. |
+| `child` | `Widget?` | `null` | Single child widget. Mutually exclusive with `children`. |
+| `children` | `List<Widget>?` | `null` | List of children widgets. Mutually exclusive with `child`. |
+| `style` | `WindStyle?` | `null` | Explicit style object that serves as a base for `className`. |
+| `states` | `Set<String>?` | `null` | Custom states to activate prefix classes (e.g., `loading:bg-blue-500`). |
+| `scrollPrimary` | `bool` | `false` | Whether this is the primary scroll view for iOS tap-to-top and desktop scrollbar integration. |
 
+<a name="layout-modes"></a>
+## Layout Modes
+
+`WDiv` dynamically switches its internal structure based on the `display` utility classes provided in `className`.
+
+- **Block (Default)**: Standard vertical stack or single child wrapper. If `children` is used without `flex` or `grid`, it defaults to a `Column`.
+- **Flex**: Enabled via `flex`. Supports `flex-row`, `flex-col`, `gap-*`, `items-*`, `justify-*`. It mimics CSS Flexbox behavior, including automatic `Flexible` wrapping for children in rows.
+- **Grid**: Enabled via `grid`. Uses a combination of `Wrap` and `LayoutBuilder` to achieve Tailwind-like grid behavior (`grid-cols-*`) with intrinsic item heights.
+- **Wrap**: Enabled via `wrap`. Elements wrap to the next line when space is insufficient, similar to `flex-wrap` in CSS.
+- **Hidden**: Enabled via `hidden`. The widget short-circuits to `SizedBox.shrink()` to save resources.
+
+<a name="event-handling"></a>
+## Event Handling
+
+`WDiv` automatically becomes interactive when state-based prefixes like `hover:`, `focus:`, or `active:` are used in the `className`. Under the hood, it wraps the content in a `WAnchor` to detect gestures and focus.
+
+For direct gesture support (taps, long presses) or to create semantic buttons, use [WAnchor](/docs/widgets/w-anchor) or [WButton](/docs/widgets/w-button).
+
+<a name="state-variants"></a>
+## State Variants
+
+`WDiv` supports all Wind state prefixes, allowing you to change styles based on interaction or environment.
+
+```dart
+WDiv(
+  className: 'bg-blue-500 hover:bg-blue-600 active:scale-95 duration-200',
+  child: WText('Interactive', className: 'text-white'),
+)
+```
+
+Common prefixes:
+- `hover:` - Applies when the mouse pointer is over the element.
+- `focus:` - Applies when the element has keyboard focus.
+- `disabled:` - Applies when the element or parent is disabled.
+- `dark:` - Applies when the application is in dark mode.
+- `active:` - Applies while the element is being pressed.
+
+<a name="styling-examples"></a>
+## Styling Examples
+
+### Backgrounds & Borders
+Combine background colors, gradients, and border properties.
+
+```dart
+WDiv(className: 'bg-red-500 border-2 border-red-700 rounded-lg')
+```
+
+### Shadows & Rings
+Apply depth with shadows or focus indicators with rings.
+
+```dart
+WDiv(className: 'shadow-xl ring-2 ring-blue-500 ring-offset-2')
+```
+
+### Responsive Design
+`WDiv` uses mobile-first breakpoints to adapt layouts to different screen sizes.
+
+```dart
+// Stacked on mobile, side-by-side on tablet/desktop
+WDiv(className: 'flex flex-col md:flex-row gap-4')
+
+// Variable widths
+WDiv(className: 'w-full md:w-1/2 lg:w-1/3')
+```
+
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
-| Category | Classes | Description |
-| :--- | :--- | :--- |
-| **Display** | `block`, `flex`, `grid`, `wrap`, `hidden` | Layout mode |
-| **Flex Direction** | `flex-row`, `flex-col` | Direction |
-| **Alignment** | `items-*`, `justify-*`, `align-content-*` | Axis alignment |
-| **Axis Size** | `axis-min`, `axis-max` | Main axis sizing |
-| **Flex Children** | `flex-1`, `flex-grow`, `shrink`, `shrink-0`, `align-self-*` | Child behavior |
-| **Grid** | `grid-cols-{n}` | Grid columns |
-| **Gap** | `gap-*`, `gap-x-*`, `gap-y-*`, `space-x-*`, `space-y-*` | Spacing |
-| **Sizing** | `w-*`, `h-*`, `min-*`, `max-*`, `aspect-*` | Dimensions |
-| **Spacing** | `p-*`, `m-*`, `mx-auto` | Padding/margin |
-| **Background** | `bg-*`, `bg-gradient-*`, `from-*`, `to-*`, `via-*` | Backgrounds |
-| **Border** | `border-*`, `rounded-*` | Borders |
-| **Shadow** | `shadow-*`, `ring-*` | Shadows |
-| **Effects** | `opacity-*` | Visual effects |
-| **Overflow** | `overflow-*`, `overflow-x-*`, `overflow-y-*` | Scroll/clip |
-| **Animation** | `animate-*` | Animations |
-| **Transition** | `transition-*`, `duration-*`, `ease-*` | Transitions |
-| **States** | `hover:*`, `focus:*`, `active:*`, `dark:*` | Interactive |
-| **Responsive** | `sm:*`, `md:*`, `lg:*`, `xl:*` | Breakpoints |
+| Category | Classes |
+|:---------|:--------|
+| **Display** | `block`, `flex`, `grid`, `wrap`, `hidden` |
+| **Flexbox** | `flex-row`, `flex-col`, `justify-*`, `items-*`, `gap-*`, `flex-1`, `flex-2`, etc. |
+| **Grid** | `grid-cols-*`, `gap-x-*`, `gap-y-*` |
+| **Sizing** | `w-*`, `h-*`, `min-w-*`, `max-w-*`, `aspect-*` |
+| **Spacing** | `p-*`, `px-*`, `py-*`, `m-*`, `mx-*`, `my-*`, `space-x-*`, `space-y-*` |
+| **Background** | `bg-*`, `bg-gradient-*`, `bg-opacity-*` |
+| **Borders** | `border-*`, `rounded-*`, `border-opacity-*` |
+| **Effects** | `shadow-*`, `opacity-*`, `ring-*`, `ring-offset-*` |
+| **Overflow** | `overflow-hidden`, `overflow-scroll`, `overflow-auto`, `overflow-x-*`, `overflow-y-*` |
+| **Animation** | `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping` |
+| **Transitions** | `transition-*`, `duration-*`, `ease-*` |
 
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+`WDiv` respects the configuration defined in `WindThemeData`.
+
+```dart
+WindTheme(
+  data: WindThemeData(
+    baseSpacingUnit: 4.0, // Multiplier for p-1, m-4, etc.
+    colors: { ... },      // Custom color palette for bg-*, border-*
+    breakpoints: { ... }, // Custom screen sizes for md:, lg:, etc.
+  ),
+  child: ...,
+)
+```
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [WText](./w-text.md) - Text widget
-- [WButton](./w-button.md) - Button widget
-- [WAnchor](./w-anchor.md) - Interactive wrapper
-- [Sizing](../layout/sizing.md) - Width/height utilities
-- [Spacing](../layout/spacing.md) - Padding/margin utilities
-- [Colors](../effects/colors.md) - Color utilities
+- [Flexbox & Grid Layouts](/docs/utilities/flexbox-grid)
+- [Sizing Utilities](/docs/utilities/sizing)
+- [Spacing & Margins](/docs/utilities/spacing)
+- [Interaction State Prefixes](/docs/core-concepts/states)
+- [WAnchor Widget](/docs/widgets/w-anchor)

@@ -1,212 +1,143 @@
 # WText
 
-A utility-first text widget that wraps Flutter's `Text` or `SelectableText` with Tailwind-like styling classes.
+A utility-first text component that translates Tailwind-like class strings into optimized Flutter typography.
 
-<x-preview path="widgets/w_text" size="lg" source="example/lib/pages/widgets/w_text.dart"></x-preview>
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-text" action="UPDATE" -->
+<!-- Description: Show a high-impact example of WText with typography, color, and composition utilities. -->
+<x-preview path="widgets/w-text" size="md" source="example/lib/pages/widgets/w_text.dart"></x-preview>
+
+```dart
+WText(
+  'Design is not just what it looks like and feels like.',
+  className: 'text-2xl font-bold text-slate-900 text-center leading-tight',
+)
+```
 
 ## Basic Usage
 
-```dart
-WText(
-  'Hello World',
-  className: 'text-2xl font-bold text-gray-900 text-center',
-)
-```
-
-## Font Size
-
-Control text size with `text-{size}` utilities:
-
-| Class | Size |
-| :--- | :--- |
-| `text-xs` | 12px |
-| `text-sm` | 14px |
-| `text-base` | 16px |
-| `text-lg` | 18px |
-| `text-xl` | 20px |
-| `text-2xl` | 24px |
-| `text-3xl` | 30px |
-| `text-4xl` | 36px |
-| `text-5xl` | 48px |
-
-Arbitrary values: `text-[20px]`
-
-## Font Weight
-
-Control font weight with `font-{weight}`:
-
-| Class | Weight |
-| :--- | :--- |
-| `font-thin` | 100 |
-| `font-extralight` | 200 |
-| `font-light` | 300 |
-| `font-normal` | 400 |
-| `font-medium` | 500 |
-| `font-semibold` | 600 |
-| `font-bold` | 700 |
-| `font-extrabold` | 800 |
-| `font-black` | 900 |
-
-Arbitrary values: `font-[600]`
-
-## Font Style
-
-| Class | Description |
-| :--- | :--- |
-| `italic` | Italic text |
-| `not-italic` | Normal text |
-
-## Text Color
-
-Apply colors with `text-{color}`:
-
-```dart
-WText('Red text', className: 'text-red-500')
-WText('Blue text', className: 'text-blue-600')
-WText('With opacity', className: 'text-gray-900 text-opacity-50')
-```
-
-Arbitrary values: `text-[#FF5500]`
-
-## Text Transform
-
-<x-preview path="typography/text_transform" size="sm" source="example/lib/pages/typography/text_transform.dart"></x-preview>
-
-| Class | Description |
-| :--- | :--- |
-| `uppercase` | UPPERCASE TEXT |
-| `lowercase` | lowercase text |
-| `capitalize` | Capitalize First Letter |
-| `normal-case` | Original case |
-
-## Text Decoration
-
-| Class | Description |
-| :--- | :--- |
-| `underline` | Underlined text |
-| `overline` | Overlined text |
-| `line-through` | Strikethrough text |
-| `no-underline` | Remove decoration |
-
-### Decoration Styling
-
-| Class | Description |
-| :--- | :--- |
-| `decoration-{color}` | Decoration color (e.g., `decoration-red-500`) |
-| `decoration-wavy` | Wavy line |
-| `decoration-dotted` | Dotted line |
-| `decoration-dashed` | Dashed line |
-| `decoration-{n}` | Thickness (e.g., `decoration-2`, `decoration-4`) |
-
-## Letter Spacing (Tracking)
-
-| Class | Value |
-| :--- | :--- |
-| `tracking-tighter` | -0.05em |
-| `tracking-tight` | -0.025em |
-| `tracking-normal` | 0 |
-| `tracking-wide` | 0.025em |
-| `tracking-wider` | 0.05em |
-| `tracking-widest` | 0.1em |
-
-## Line Height (Leading)
-
-| Class | Value |
-| :--- | :--- |
-| `leading-none` | 1 |
-| `leading-tight` | 1.25 |
-| `leading-snug` | 1.375 |
-| `leading-normal` | 1.5 |
-| `leading-relaxed` | 1.625 |
-| `leading-loose` | 2 |
-
-## Text Alignment
-
-| Class | Description |
-| :--- | :--- |
-| `text-left` | Left align |
-| `text-center` | Center align |
-| `text-right` | Right align |
-| `text-justify` | Justify text |
-
-## Text Overflow
-
-<x-preview path="typography/text_overflow" size="md" source="example/lib/pages/typography/text_overflow.dart"></x-preview>
-
-| Class | Description |
-| :--- | :--- |
-| `truncate` | Single line with ellipsis |
-| `text-ellipsis` | Ellipsis overflow |
-| `line-clamp-{n}` | Limit to n lines (1-6) |
-
-## Whitespace
-
-| Class | Description |
-| :--- | :--- |
-| `whitespace-normal` | Normal wrapping |
-| `whitespace-nowrap` | Prevent wrapping |
-| `whitespace-pre` | Preserve whitespace |
-
-## Selectable Text
-
-Make text selectable with the `selectable` prop or class:
+The `WText` widget handles all text rendering in Wind. Unlike standard Flutter `Text` widgets, it supports direct styling via the `className` property, including responsive and state-based modifiers.
 
 ```dart
 WText(
-  'Copy me!',
-  selectable: true,
-  className: 'text-blue-600',
+  'Utility-first styling for Flutter',
+  className: 'text-lg text-blue-600 font-semibold italic p-4',
 )
-
-// Or via class
-WText('Copy me!', className: 'selectable text-blue-600')
 ```
 
-## Style Inheritance
-
-WText inherits styles from parent WDiv via DefaultTextStyle:
+## Constructor
 
 ```dart
-WDiv(
-  className: 'text-gray-500',  // Parent style
-  child: WText('I am gray'),   // Inherits gray
-)
-
-WDiv(
-  className: 'text-gray-500',
-  child: WText('I am red', className: 'text-red-500'),  // Override
-)
+const WText(
+  String data, {
+  Key? key,
+  String? className,
+  WindStyle? style,
+  TextStyle? textStyle,
+  bool selectable = false,
+  Set<String>? states,
+})
 ```
 
 ## Props
 
 | Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `data` | `String` | required | Text to display |
-| `className` | `String?` | - | Utility classes |
-| `style` | `WindStyle?` | - | Base WindStyle |
-| `textStyle` | `TextStyle?` | - | Flutter TextStyle to merge |
-| `selectable` | `bool` | `false` | Make text selectable |
-| `states` | `Set<String>?` | - | Custom states |
+|:-----|:-----|:--------|:------------|
+| `data` | `String` | `required` | The text string to display. |
+| `className` | `String?` | `null` | Tailwind-like utility classes. |
+| `style` | `WindStyle?` | `null` | Explicit WindStyle object as a base. |
+| `textStyle` | `TextStyle?` | `null` | Standard Flutter TextStyle to merge (className takes precedence). |
+| `selectable` | `bool` | `false` | Whether the text should be selectable (renders `SelectableText`). |
+| `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., 'loading'). |
+
+## Typography Styling
+
+WText supports a wide range of typography utilities that map directly to Flutter's `TextStyle`.
+
+### Alignment and Transform
+
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-text-transform" action="CREATE" -->
+<!-- Description: Demonstrate text-center, uppercase, and capitalize utilities. -->
+<x-preview path="widgets/w-text-transform" size="sm" source="example/lib/pages/widgets/w_text_transform.dart"></x-preview>
+
+```dart
+WText('CENTERED UPPERCASE', className: 'text-center uppercase')
+WText('capitalize me', className: 'capitalize')
+```
+
+### Overflow and Clamping
+
+Handle long text gracefully using truncation or line clamping.
+
+```dart
+WText(
+  'A very long text that will be truncated with an ellipsis after two lines.',
+  className: 'line-clamp-2 text-gray-500',
+)
+```
+
+## State Variants
+
+Text colors and weights can react to states when provided via the `states` prop or when nested within state-aware widgets like `WButton`.
+
+```dart
+WText(
+  'Hover me',
+  className: 'text-gray-500 hover:text-blue-600 transition-colors',
+)
+```
+
+## Styling Examples
+
+### Gradient and Opacity
+While standard text uses `text-{color}`, you can also apply opacity modifiers.
+
+```dart
+WText(
+  'Faded Text',
+  className: 'text-blue-500/50 font-medium',
+)
+```
+
+### Composition Pipeline
+WText uniquely supports layout utilities (padding, margin, alignment) by automatically wrapping the text in the necessary layout widgets.
+
+```dart
+WText(
+  'Alert Message',
+  className: 'bg-red-100 text-red-700 p-4 rounded-lg border border-red-200',
+)
+```
 
 ## All Supported Classes
 
-| Category | Classes | Description |
-| :--- | :--- | :--- |
-| **Size** | `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`... | Font size |
-| **Weight** | `font-thin`, `font-normal`, `font-bold`... | Font weight |
-| **Style** | `italic`, `not-italic` | Font style |
-| **Color** | `text-{color}`, `text-opacity-{n}` | Text color |
-| **Transform** | `uppercase`, `lowercase`, `capitalize` | Text case |
-| **Decoration** | `underline`, `line-through`, `overline` | Text decoration |
-| **Decoration Style** | `decoration-{color}`, `decoration-wavy` | Decoration styling |
-| **Spacing** | `tracking-*`, `leading-*` | Letter/line spacing |
-| **Align** | `text-left`, `text-center`, `text-right` | Text alignment |
-| **Overflow** | `truncate`, `line-clamp-{n}` | Overflow handling |
-| **Whitespace** | `whitespace-nowrap`, `whitespace-normal` | Wrapping |
-| **Layout** | `p-*`, `m-*`, `flex-1` | Composition |
+| Category | Classes |
+|:---------|:--------|
+| **Font Size** | `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl` ... `text-6xl` |
+| **Font Weight** | `font-thin`, `font-light`, `font-normal`, `font-medium`, `font-bold` ... `font-black` |
+| **Color** | `text-{color}`, `text-{color}/{opacity}`, `text-[rgb(...)]` |
+| **Align** | `text-left`, `text-center`, `text-right`, `text-justify` |
+| **Transform** | `uppercase`, `lowercase`, `capitalize`, `normal-case` |
+| **Decoration** | `underline`, `line-through`, `no-underline` |
+| **Spacing** | `leading-{size}` (Line Height), `tracking-{size}` (Letter Spacing) |
+| **Overflow** | `truncate`, `text-ellipsis`, `line-clamp-{n}` |
+
+## Customizing Theme
+
+Override default typography scales in your `WindThemeData`.
+
+```dart
+WindThemeData(
+  fontSizes: {
+    'huge': 120.0,
+  },
+  fontWeights: {
+    'thick': FontWeight.w900,
+  },
+)
+```
 
 ## Related Documentation
 
-- [WDiv](./w-div.md) - Container widget
-- [Colors](../effects/colors.md) - Color utilities
+- [WDiv](./w-div.md) - For complex layouts and containers.
+- [Typography Settings](../typography/font-size.md) - Deep dive into font sizes and scales.
+- [State Management](../core-concepts/state-management.md) - How `hover:` and `focus:` work.

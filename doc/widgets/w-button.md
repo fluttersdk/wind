@@ -1,119 +1,186 @@
 # WButton
 
-A utility-first button widget with loading states, hover effects, and native cursor behavior.
+`WButton` is an interactive component that combines `WAnchor` state management with Tailwind-like utility styling and built-in loading states.
 
-<x-preview path="buttons/button_basic" size="md" source="example/lib/pages/buttons/button_basic.dart"></x-preview>
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-button" action="CREATE" -->
+<!-- Description: Basic WButton with hover and rounded corners -->
+<x-preview path="widgets/w-button" size="md" source="example/lib/pages/widgets/w-button.dart"></x-preview>
+
+```dart
+WButton(
+  onTap: () => print('Button tapped'),
+  className: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors',
+  child: WText('Click Me'),
+)
+```
 
 ## Basic Usage
 
-```dart
-WButton(
-  onTap: () => print('Clicked!'),
-  className: 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg',
-  child: Text('Click Me'),
-)
-```
-
-> [!TIP]
-> WButton automatically shows `pointer` cursor on hover and `forbidden` cursor when disabled.
-
-## Button Variants
-
-```dart
-// Primary
-WButton(
-  onTap: () {},
-  className: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg duration-200',
-  child: Text('Primary'),
-)
-
-// Secondary
-WButton(
-  onTap: () {},
-  className: 'bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg duration-200',
-  child: Text('Secondary'),
-)
-
-// Outline
-WButton(
-  onTap: () {},
-  className: 'border-2 border-blue-600 hover:bg-blue-50 text-blue-600 px-4 py-2 rounded-lg duration-200',
-  child: Text('Outline'),
-)
-
-// Danger
-WButton(
-  onTap: () {},
-  className: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg duration-200',
-  child: Text('Delete'),
-)
-```
-
-## Loading State
-
-Show a loading spinner while processing:
+The `WButton` widget handles common interactive states automatically. It provides a simple way to create buttons that react to hover, focus, and disabled states without manual state management.
 
 ```dart
 WButton(
   onTap: _submit,
-  isLoading: _isSubmitting,
-  loadingText: 'Submitting...',
-  className: 'bg-blue-600 loading:opacity-70 text-white px-4 py-2 rounded-lg',
-  child: Text('Submit'),
+  className: 'bg-indigo-500 text-white p-3 rounded shadow hover:shadow-lg',
+  child: WText('Submit Form'),
 )
 ```
 
-## Disabled State
+## Constructor
 
 ```dart
-WButton(
-  onTap: () {},
-  disabled: true,
-  className: 'bg-blue-600 disabled:bg-gray-400 disabled:opacity-50 text-white px-4 py-2 rounded-lg',
-  child: Text('Disabled'),
-)
+const WButton({
+  Key? key,
+  required Widget child,
+  VoidCallback? onTap,
+  VoidCallback? onLongPress,
+  VoidCallback? onDoubleTap,
+  bool isLoading = false,
+  bool disabled = false,
+  String? className,
+  String? loadingText,
+  Widget? loadingWidget,
+  double loadingSize = 16,
+  Color? loadingColor,
+  Set<String>? states,
+})
 ```
 
 ## Props
 
 | Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `child` | `Widget` | required | Button content |
-| `onTap` | `VoidCallback?` | `null` | Tap callback |
-| `onLongPress` | `VoidCallback?` | `null` | Long press callback |
-| `onDoubleTap` | `VoidCallback?` | `null` | Double tap callback |
-| `isLoading` | `bool` | `false` | Shows loading spinner |
-| `disabled` | `bool` | `false` | Disables interaction |
-| `className` | `String?` | `null` | Utility classes |
-| `states` | `Set<String>?` | `null` | Custom states |
-| `loadingText` | `String?` | `null` | Text shown with spinner |
-| `loadingWidget` | `Widget?` | `null` | Custom spinner widget |
-| `loadingSize` | `double` | `16` | Spinner size |
-| `loadingColor` | `Color?` | `null` | Spinner color |
+|:-----|:-----|:--------|:------------|
+| `child` | `Widget` | **Required** | The button content (usually `WText` or `WIcon`). |
+| `className` | `String?` | `null` | Wind utility classes for styling. |
+| `onTap` | `VoidCallback?` | `null` | Callback when the button is tapped. Disabled if `isLoading` or `disabled` is true. |
+| `onLongPress` | `VoidCallback?` | `null` | Callback for long press gestures. |
+| `onDoubleTap` | `VoidCallback?` | `null` | Callback for double tap gestures. |
+| `isLoading` | `bool` | `false` | Activates loading state: disables interaction and shows a spinner. |
+| `disabled` | `bool` | `false` | Activates disabled state: disables interaction and changes cursor. |
+| `loadingText` | `String?` | `null` | Text to display next to the loading spinner. |
+| `loadingWidget` | `Widget?` | `null` | Custom widget to replace the default spinner. |
+| `loadingSize` | `double` | `16` | Size of the default loading spinner. |
+| `loadingColor` | `Color?` | `null` | Color of the spinner. Defaults to text color or white. |
+| `states` | `Set<String>?` | `null` | Custom state prefixes (e.g., `{'error'}` for `error:` classes). |
 
-## State Prefixes
+## Layout Modes
 
-| Prefix | Activates When |
-| :--- | :--- |
-| `hover:` | Mouse is over button |
-| `focus:` | Button is focused |
-| `disabled:` | `disabled: true` |
-| `loading:` | `isLoading: true` |
+`WButton` uses flexbox-like behavior internally. You can control content alignment using standard utility classes.
+
+### Centered Content
+
+By default, using `justify-center` in the `className` will center the child within the button's constraints.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-button_centered" action="CREATE" -->
+<!-- Description: WButton with fixed width and centered content -->
+<x-preview path="widgets/w-button_centered" size="md" source="example/lib/pages/widgets/w-button_centered.dart"></x-preview>
+
+```dart
+WButton(
+  className: 'w-full bg-blue-500 justify-center py-3 text-white',
+  child: WText('Centered Full Width'),
+)
+```
+
+## Event Handling
+
+`WButton` exposes standard gesture callbacks. All interaction is automatically suppressed when `isLoading` or `disabled` is set to `true`.
+
+```dart
+WButton(
+  onTap: () => print('Tapped'),
+  onLongPress: () => print('Long Pressed'),
+  className: 'bg-gray-200 p-4',
+  child: WText('Press Me'),
+)
+```
+
+## State Variants
+
+`WButton` supports multiple state-based prefixes. These classes are applied only when the corresponding state is active.
+
+```dart
+WButton(
+  onTap: _submit,
+  className: 'bg-blue-600 hover:bg-blue-700 focus:ring-2 disabled:bg-gray-400 loading:opacity-50',
+  child: WText('Stateful Button'),
+)
+```
+
+| Prefix | Trigger |
+|:-------|:--------|
+| `hover:` | When the mouse pointer is over the button. |
+| `focus:` | When the button has keyboard focus. |
+| `disabled:` | When the `disabled` prop is `true`. |
+| `loading:` | When the `isLoading` prop is `true`. |
+
+## Styling Examples
+
+### Loading States
+
+When `isLoading` is true, `WButton` replaces the `child` with a spinner. You can add text or a custom widget.
+
+```dart
+// Basic spinner
+WButton(
+  isLoading: true,
+  className: 'bg-blue-500 text-white p-2',
+  child: WText('Login'),
+)
+
+// Spinner with text
+WButton(
+  isLoading: true,
+  loadingText: 'Processing...',
+  className: 'bg-green-600 text-white px-4 py-2',
+  child: WText('Submit'),
+)
+```
+
+### Icon Buttons
+
+Combine `WButton` with `WIcon` for utility-styled icon buttons.
+
+```dart
+WButton(
+  className: 'bg-red-500 hover:bg-red-600 p-3 rounded-full text-white shadow-lg',
+  child: WIcon(Icons.delete),
+)
+```
 
 ## All Supported Classes
 
-| Category | Classes | Description |
-| :--- | :--- | :--- |
-| **Sizing** | `w-*`, `h-*`, `w-full`, `h-full` | Button dimensions |
-| **Spacing** | `p-*`, `px-*`, `py-*`, `m-*` | Padding and margin |
-| **Background** | `bg-*`, `hover:bg-*` | Background colors |
-| **Text** | `text-*`, `font-*` | Text styling |
-| **Border** | `rounded-*`, `border-*` | Border radius and width |
-| **Layout** | `flex`, `items-*`, `justify-*` | Internal layout |
-| **Transition** | `duration-*`, `ease-*` | Smooth hover transitions |
+Since `WButton` uses `WDiv` and `WAnchor` internally, it supports the full range of Wind utilities.
+
+| Category | Classes |
+|:---------|:--------|
+| Layout | `flex`, `grid`, `block`, `hidden`, `justify-center`, `items-center` |
+| Spacing | `p-{n}`, `px-{n}`, `py-{n}`, `m-{n}`, `gap-{n}` |
+| Sizing | `w-{size}`, `h-{size}`, `min-w-{size}`, `max-w-{size}` |
+| Typography | `text-{size}`, `font-{weight}`, `text-{color}`, `uppercase` |
+| Background | `bg-{color}`, `bg-gradient-to-{dir}`, `bg-opacity-{n}` |
+| Borders | `border`, `border-{n}`, `rounded`, `rounded-{size}`, `ring` |
+| Effects | `shadow`, `opacity-{n}`, `duration-{n}`, `ease-{type}` |
+
+## Customizing Theme
+
+You can customize the default behavior and appearance of buttons by modifying `WindThemeData`.
+
+```dart
+WindThemeData(
+  // Customize the base spacing unit used for p-4, m-2, etc.
+  baseSpacingUnit: 4.0,
+  // Add custom colors for specific button brands
+  colors: {
+    'brand': Colors.deepPurple,
+  },
+)
+```
 
 ## Related Documentation
 
-- [WAnchor](./w-anchor.md) - Low-level state wrapper
-- [Transition](../interactivity/transition.md) - Transition utilities
-- [Colors](../styling/colors.md) - Color utilities
+- [WAnchor](./w-anchor.md) - The base interactive wrapper
+- [WText](./w-text.md) - For styling button labels
+- [Background Color](../styling/background-color.md) - Color utilities
+- [Text Color](../typography/text-color.md) - Typography color utilities
+- [Spacing](../layout/spacing.md) - Padding and margin utilities
