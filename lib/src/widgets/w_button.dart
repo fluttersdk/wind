@@ -131,6 +131,9 @@ class WButton extends StatelessWidget {
       onDoubleTap: isInteractive ? onDoubleTap : null,
       isDisabled: disabled,
       states: states,
+      mouseCursor: isInteractive
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.forbidden,
       child: Builder(
         builder: (innerContext) {
           // Now we can access the hover state from WindAnchorStateProvider
@@ -181,14 +184,6 @@ class WButton extends StatelessWidget {
           if (!isInteractive) {
             styledButton = AbsorbPointer(child: styledButton);
           }
-
-          // Add cursor pointer for web/desktop native feel
-          styledButton = MouseRegion(
-            cursor: isInteractive
-                ? SystemMouseCursors.click
-                : SystemMouseCursors.forbidden,
-            child: styledButton,
-          );
 
           return styledButton;
         },
