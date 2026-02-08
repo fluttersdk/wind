@@ -1,234 +1,207 @@
 # Sizing
 
-Utilities for setting width, height, and size constraints.
+Utilities for setting the width and height of elements.
 
-<x-preview path="sizing/sizing_overview" size="md" source="example/lib/pages/sizing/sizing_overview.dart"></x-preview>
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Width](#width)
+- [Height](#height)
+- [Min & Max Dimensions](#min--max-dimensions)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-## Width
-
-Control element width using fixed values, percentages, or screen-relative units.
-
-<x-preview path="sizing/width" size="md" source="example/lib/pages/sizing/width.dart"></x-preview>
-
-### Fixed Width
+<!-- TODO: [EXAMPLE_NEEDED] path="layout/sizing_basic" action="CREATE" -->
+<!-- Description: Show various sizing utilities including fixed width, percentage width, and max-width containers. -->
+<x-preview path="layout/sizing_basic" size="md" source="example/lib/pages/layout/sizing_basic.dart"></x-preview>
 
 ```dart
-WDiv(className: 'w-8 h-8 bg-blue-500')   // 32px
-WDiv(className: 'w-16 h-8 bg-blue-500')  // 64px
-WDiv(className: 'w-32 h-8 bg-blue-500')  // 128px
-WDiv(className: 'w-48 h-8 bg-indigo-500') // 192px
+// Fixed width and height
+WDiv(className: 'w-64 h-32 bg-blue-500')
+
+// Percentage based
+WDiv(className: 'w-1/2 h-full bg-green-500')
+
+// Viewport relative
+WDiv(className: 'w-screen h-screen bg-gray-900')
 ```
 
-| Class | Width |
-| :--- | :--- |
-| `w-0` | 0px |
-| `w-4` | 16px |
-| `w-8` | 32px |
-| `w-16` | 64px |
-| `w-32` | 128px |
-| `w-48` | 192px |
-| `w-64` | 256px |
+<a name="basic-usage"></a>
+## Basic Usage
 
-### Fractional Width
+Use `w-{size}` and `h-{size}` to set fixed dimensions based on the global spacing scale, or use fraction/percentage utilities like `w-1/2` or `w-full`.
 
 ```dart
-WDiv(className: 'w-1/4 h-8 bg-purple-500')  // 25%
-WDiv(className: 'w-1/2 h-8 bg-purple-500')  // 50%
-WDiv(className: 'w-3/4 h-8 bg-violet-500')  // 75%
-WDiv(className: 'w-full h-8 bg-fuchsia-500') // 100%
-```
-
-| Class | Width |
-| :--- | :--- |
-| `w-1/4` | 25% |
-| `w-1/3` | 33.333% |
-| `w-1/2` | 50% |
-| `w-2/3` | 66.667% |
-| `w-3/4` | 75% |
-| `w-full` | 100% |
-| `w-screen` | 100vw (viewport width) |
-
-### Arbitrary Width
-
-```dart
-WDiv(className: 'w-[100px] h-8 bg-emerald-500')  // Exact 100px
-WDiv(className: 'w-[50%] h-8 bg-teal-500')       // 50% of parent
-```
-
-## Height
-
-Control element height using the same patterns as width.
-
-<x-preview path="sizing/height" size="md" source="example/lib/pages/sizing/height.dart"></x-preview>
-
-### Fixed Height
-
-```dart
-WDiv(className: 'h-8 w-16 bg-emerald-500')   // 32px
-WDiv(className: 'h-12 w-16 bg-emerald-500')  // 48px
-WDiv(className: 'h-16 w-16 bg-teal-500')     // 64px
-WDiv(className: 'h-24 w-16 bg-cyan-500')     // 96px
-WDiv(className: 'h-32 w-16 bg-sky-500')      // 128px
-```
-
-| Class | Height |
-| :--- | :--- |
-| `h-8` | 32px |
-| `h-12` | 48px |
-| `h-16` | 64px |
-| `h-24` | 96px |
-| `h-32` | 128px |
-| `h-full` | 100% |
-| `h-screen` | 100vh (viewport height) |
-
-### Arbitrary Height
-
-```dart
-WDiv(className: 'h-[50px] w-20 bg-amber-500')
-WDiv(className: 'h-[80px] w-20 bg-orange-500')
-```
-
-## Max Width
-
-Constrain maximum width. Useful for readable content and responsive containers.
-
-### Named Max-Width Sizes
-
-| Class | Width | Use Case |
-| :--- | :--- | :--- |
-| `max-w-xs` | 320px | Extra small containers |
-| `max-w-sm` | 384px | Small cards, modals |
-| `max-w-md` | 448px | Medium containers |
-| `max-w-lg` | 512px | Large cards |
-| `max-w-xl` | 576px | Wide containers |
-| `max-w-2xl` | 672px | Article content |
-| `max-w-3xl` | 768px | Wide content |
-| `max-w-4xl` | 896px | Dashboard panels |
-| `max-w-5xl` | 1024px | Large layouts |
-| `max-w-6xl` | 1152px | Extra wide |
-| `max-w-7xl` | 1280px | Full width constrained |
-| `max-w-prose` | 65ch (~1040px) | Optimal reading width |
-| `max-w-full` | 100% | No constraint |
-| `max-w-screen` | 100vw | Viewport width |
-
-```dart
-// Content container with readable width
 WDiv(
-  className: 'max-w-2xl mx-auto p-6',
-  child: WText('Article content...'),
+  className: 'w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg',
+  child: WText('Centered Content'),
 )
 ```
 
-## Min Width
+<a name="quick-reference"></a>
+## Quick Reference
 
-Set minimum width constraints.
+### Fixed Sizes
+
+Values follow the global spacing scale (1 unit = 4px).
+
+| Class | Value | Description |
+|:------|:------|:------------|
+| `w-0` / `h-0` | 0px | Zero width/height |
+| `w-px` / `h-px` | 1px | 1px width/height |
+| `w-1` / `h-1` | 4px | Tiny |
+| `w-4` / `h-4` | 16px | Small |
+| `w-16` / `h-16` | 64px | Medium |
+| `w-96` / `h-96` | 384px | Large |
+
+### Percentages & Viewport
+
+| Class | Value | Description |
+|:------|:------|:------------|
+| `w-full` / `h-full` | 100% | Full parent width/height |
+| `w-screen` / `h-screen` | 100vw / 100vh | Full viewport width/height |
+| `w-1/2` / `h-1/2` | 50% | Half parent size |
+| `w-1/3` / `h-1/3` | 33.33% | Third parent size |
+| `w-2/3` / `h-2/3` | 66.66% | Two-thirds parent size |
+| `w-1/4` / `h-1/4` | 25% | Quarter parent size |
+| `w-3/4` / `h-3/4` | 75% | Three-quarters parent size |
+
+<a name="width"></a>
+## Width
+
+Set the width of an element using `w-{number}` or `w-{fraction}`.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="layout/sizing_width" action="CREATE" -->
+<!-- Description: Examples of width utilities including fixed, fractional, and full widths. -->
+<x-preview path="layout/sizing_width" size="md" source="example/lib/pages/layout/sizing_width.dart"></x-preview>
 
 ```dart
-WDiv(className: 'min-w-32 h-10 bg-amber-500')  // At least 128px
-WDiv(className: 'min-w-0')                      // Remove min-width
-WDiv(className: 'min-w-full')                   // At least 100%
+// Fixed width (128px)
+WDiv(className: 'w-32 bg-blue-200')
+
+// Fractional width (50%)
+WDiv(className: 'w-1/2 bg-blue-300')
+
+// Full width (100%)
+WDiv(className: 'w-full bg-blue-400')
 ```
 
-| Class | Min Width |
-| :--- | :--- |
+<a name="height"></a>
+## Height
+
+Set the height of an element using `h-{number}`, `h-{fraction}`, or `h-screen`.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="layout/sizing_height" action="CREATE" -->
+<!-- Description: Examples of height utilities including fixed, fractional, and full screen heights. -->
+<x-preview path="layout/sizing_height" size="md" source="example/lib/pages/layout/sizing_height.dart"></x-preview>
+
+```dart
+// Fixed height (64px)
+WDiv(className: 'h-16 bg-red-200')
+
+// Full screen height
+WDiv(className: 'h-screen bg-red-300')
+```
+
+<a name="min--max-dimensions"></a>
+## Min & Max Dimensions
+
+Constrain the size of elements using `min-w`, `max-w`, `min-h`, and `max-h` utilities.
+
+### Max-Width Scale
+
+Wind includes a comprehensive max-width scale, perfect for keeping text readable ("measure") or constraining layout width.
+
+| Class | Value |
+|:------|:------|
+| `max-w-0` | 0px |
+| `max-w-none` | No limit (Infinity) |
+| `max-w-xs` | 320px |
+| `max-w-sm` | 384px |
+| `max-w-md` | 448px |
+| `max-w-lg` | 512px |
+| `max-w-xl` | 576px |
+| `max-w-2xl` | 672px |
+| `max-w-3xl` | 768px |
+| `max-w-4xl` | 896px |
+| `max-w-5xl` | 1024px |
+| `max-w-6xl` | 1152px |
+| `max-w-7xl` | 1280px |
+| `max-w-full` | 100% |
+| `max-w-screen` | 100vw |
+| `max-w-prose` | 65ch (~1040px) |
+
+```dart
+// Constrain content width and center it
+WDiv(
+  className: 'max-w-2xl mx-auto p-4',
+  child: WText('Readable content...'),
+)
+```
+
+### Other Constraints
+
+| Class | Value |
+|:------|:------|
 | `min-w-0` | 0px |
-| `min-w-{n}` | n × 4px |
 | `min-w-full` | 100% |
-
-## Max Height
-
-Constrain maximum height.
-
-```dart
-WDiv(className: 'max-h-64 overflow-y-auto')  // 256px max, scrollable
-WDiv(className: 'max-h-screen')              // Viewport height max
-```
-
-| Class | Max Height |
-| :--- | :--- |
-| `max-h-{n}` | n × 4px |
+| `min-w-screen` | 100vw |
+| `min-h-0` | 0px |
+| `min-h-full` | 100% |
+| `min-h-screen` | 100vh |
 | `max-h-full` | 100% |
 | `max-h-screen` | 100vh |
 
-## Min Height
+<a name="responsive-design"></a>
+## Responsive Design
 
-Set minimum height constraints.
+Apply different sizing utilities at different breakpoints using standard prefixes.
 
 ```dart
-WDiv(className: 'min-h-screen')  // At least viewport height
-WDiv(className: 'min-h-64')      // At least 256px
+// Full width on mobile, 50% on tablet, 33% on desktop
+WDiv(className: 'w-full md:w-1/2 lg:w-1/3')
 ```
 
-| Class | Min Height |
-| :--- | :--- |
-| `min-h-0` | 0px |
-| `min-h-{n}` | n × 4px |
-| `min-h-full` | 100% |
-| `min-h-screen` | 100vh |
+<a name="dark-mode"></a>
+## Dark Mode
 
-## Responsive Sizing
-
-Combine with responsive prefixes for adaptive layouts:
+While sizing rarely changes based on theme, you can use `dark:` modifiers if needed.
 
 ```dart
-WDiv(
-  className: '''
-    w-full
-    md:w-1/2
-    lg:w-1/3
-    xl:max-w-xs
-  ''',
-  child: card,
+WDiv(className: 'w-64 dark:w-full')
+```
+
+<a name="arbitrary-values"></a>
+## Arbitrary Values
+
+Use square brackets to apply specific values that aren't in the theme scale.
+
+```dart
+// Specific pixels
+WDiv(className: 'w-[350px] h-[50px]')
+
+// Specific percentage
+WDiv(className: 'w-[33%] h-[45%]')
+```
+
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+To extend the sizing scale, modify the `spacing` section of your `WindThemeData`. This affects width, height, padding, margin, and positioning.
+
+```dart
+WindThemeData(
+  spacing: {
+    '128': 512.0, // Adds w-128, h-128, p-128...
+  },
 )
 ```
 
-## Common Patterns
-
-### Full-Screen Container
-
-```dart
-WDiv(
-  className: 'w-screen h-screen flex items-center justify-center',
-  child: content,
-)
-```
-
-### Scrollable Content Area
-
-```dart
-WDiv(
-  className: 'max-h-96 overflow-y-auto',
-  children: longList,
-)
-```
-
-### Centered Content with Max Width
-
-```dart
-WDiv(
-  className: 'w-full max-w-4xl mx-auto px-4',
-  child: pageContent,
-)
-```
-
-## Notes
-
-### Full Sizing Inside Scroll Views
-
-When using `w-full` or `h-full` inside a scrollable container, Wind automatically uses screen dimensions for proper layout:
-
-```dart
-WDiv(
-  className: 'w-full h-full overflow-auto',
-  child: WDiv(
-    className: 'w-full h-full flex items-center justify-center',
-    child: WText('Centered Content'),
-  ),
-)
-```
-
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Spacing](./spacing.md) - Padding and margin
-- [Aspect Ratio](./aspect-ratio.md) - Aspect ratio constraints
-- [Flexbox](./flexbox.md) - Flex layouts with sizing
+- [Padding & Margin](./spacing.md)
+- [Flexbox & Grid](./flexbox.md)
+- [Aspect Ratio](./aspect_ratio.md)

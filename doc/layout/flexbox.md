@@ -1,270 +1,284 @@
-# Flexbox
+# Flexbox & Layout
 
-Utilities for creating flexible layouts using CSS Flexbox concepts in Flutter.
+Utilities for controlling flex containers, direction, alignment, wrapping, and spacing.
 
-## Flex Direction & Wrap
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Flex Direction](#flex-direction)
+- [Wrapping](#wrapping)
+- [Justify Content](#justify-content)
+- [Align Items](#align-items)
+- [Align Content](#align-content)
+- [Align Self](#align-self)
+- [Flex, Grow & Shrink](#flex-grow--shrink)
+- [Gap & Spacing](#gap--spacing)
+- [Responsive Design](#responsive-design)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-Control how flex items are arranged and whether they wrap.
-
-<x-preview path="layout/flex_basic" size="md" source="example/lib/pages/layout/flex_basic.dart"></x-preview>
+<!-- TODO: [CREATE] path="layout/flexbox_basic" action="CREATE" -->
+<!-- Description: A basic flex container showing flex-row vs flex-col with gap -->
+<x-preview path="layout/flexbox_basic" size="md" source="example/lib/pages/layout/flexbox_basic.dart"></x-preview>
 
 ```dart
-// Flex Row (default - items arranged horizontally)
-WDiv(
-  className: 'flex gap-2 p-4 bg-gray-100 rounded-lg',
-  children: [
-    WDiv(className: 'w-12 h-12 bg-blue-500 rounded-lg'),
-    WDiv(className: 'w-12 h-12 bg-blue-500 rounded-lg'),
-    WDiv(className: 'w-12 h-12 bg-blue-500 rounded-lg'),
-  ],
-)
+// Basic flex row
+WDiv(className: 'flex gap-4 items-center')
 
-// Flex Column (items arranged vertically)
-WDiv(
-  className: 'flex flex-col gap-2 p-4 bg-gray-100 rounded-lg',
-  children: [
-    WDiv(className: 'w-12 h-12 bg-green-500 rounded-lg'),
-    WDiv(className: 'w-12 h-12 bg-green-500 rounded-lg'),
-    WDiv(className: 'w-12 h-12 bg-green-500 rounded-lg'),
-  ],
-)
-
-// Flex Wrap (items wrap to next line)
-WDiv(
-  className: 'flex flex-wrap gap-2 p-4 bg-gray-100 rounded-lg',
-  children: [
-    WDiv(className: 'w-12 h-12 bg-purple-500 rounded-lg'),
-    WDiv(className: 'w-12 h-12 bg-purple-500 rounded-lg'),
-    // ... more items wrap automatically
-  ],
-)
+// Vertical column
+WDiv(className: 'flex flex-col gap-2')
 ```
 
-| Class | Description |
-| :--- | :--- |
-| `flex` | Enable flex layout (Row by default) |
-| `flex-row` | Arrange items horizontally |
-| `flex-col` | Arrange items vertically |
-| `flex-wrap` | Allow items to wrap to next line |
-| `flex-nowrap` | Prevent wrapping (default) |
+<a name="basic-usage"></a>
+## Basic Usage
 
-## Flex Grow & Shrink
-
-Control how flex items grow and shrink to fill available space.
-
-<x-preview path="layout/flex_grow" size="md" source="example/lib/pages/layout/flex_grow.dart"></x-preview>
-
-```dart
-// flex-1: Item grows to fill available space
-WDiv(
-  className: 'flex gap-2',
-  children: [
-    WDiv(className: 'flex-none w-16 h-12 bg-blue-500'),  // Fixed size
-    WDiv(className: 'flex-1 h-12 bg-purple-500'),         // Grows to fill
-    WDiv(className: 'flex-none w-16 h-12 bg-blue-500'),  // Fixed size
-  ],
-)
-
-// Multiple flex-1: Items share space equally
-WDiv(
-  className: 'flex gap-2',
-  children: [
-    WDiv(className: 'flex-1 h-12 bg-emerald-500'),
-    WDiv(className: 'flex-1 h-12 bg-emerald-500'),
-    WDiv(className: 'flex-1 h-12 bg-emerald-500'),
-  ],
-)
-```
-
-| Class | Description |
-| :--- | :--- |
-| `flex-1` | Grow and shrink, ignoring initial size |
-| `flex-auto` | Grow and shrink, considering initial size |
-| `flex-initial` | Shrink but don't grow |
-| `flex-none` | Don't grow or shrink |
-| `flex-grow` | Allow item to grow |
-| `flex-grow-0` | Prevent item from growing |
-| `shrink` | Allow shrinking (FlexFit.loose) |
-| `shrink-0` | Prevent shrinking (FlexFit.tight) |
-
-## Main Axis Size
-
-Control how the flex container sizes along the main axis:
-
-| Class | Description |
-| :--- | :--- |
-| `axis-min` | Shrink to fit content (MainAxisSize.min) |
-| `axis-max` | Expand to fill space (MainAxisSize.max) |
-
-## Align Self
-
-Control alignment of individual flex items:
-
-| Class | Description |
-| :--- | :--- |
-| `align-self-start` | Align self to start |
-| `align-self-center` | Align self to center |
-| `align-self-end` | Align self to end |
-
-## Justify Content
-
-Control how items are positioned along the **main axis** (horizontal for row, vertical for column).
-
-<x-preview path="layout/flex_justify" size="md" source="example/lib/pages/layout/flex_justify.dart"></x-preview>
-
-```dart
-// justify-start: Pack items at start
-WDiv(
-  className: 'flex justify-start gap-2 p-4 bg-gray-100',
-  children: [Box(), Box(), Box()],
-)
-
-// justify-center: Pack items at center
-WDiv(
-  className: 'flex justify-center gap-2 p-4 bg-gray-100',
-  children: [Box(), Box(), Box()],
-)
-
-// justify-between: Distribute with space between
-WDiv(
-  className: 'flex justify-between p-4 bg-gray-100',
-  children: [Box(), Box(), Box()],
-)
-
-// justify-around: Distribute with space around
-WDiv(
-  className: 'flex justify-around p-4 bg-gray-100',
-  children: [Box(), Box(), Box()],
-)
-
-// justify-evenly: Distribute with equal space
-WDiv(
-  className: 'flex justify-evenly p-4 bg-gray-100',
-  children: [Box(), Box(), Box()],
-)
-```
-
-| Class | Description |
-| :--- | :--- |
-| `justify-start` | Pack items at start |
-| `justify-end` | Pack items at end |
-| `justify-center` | Pack items at center |
-| `justify-between` | Distribute with space between |
-| `justify-around` | Distribute with space around |
-| `justify-evenly` | Distribute with equal space |
-
-## Align Items
-
-Control how items are positioned along the **cross axis** (vertical for row, horizontal for column).
-
-<x-preview path="layout/flex_align" size="md" source="example/lib/pages/layout/flex_align.dart"></x-preview>
-
-```dart
-// items-start: Align items to start
-WDiv(
-  className: 'flex items-start gap-2 h-24 p-4 bg-gray-100',
-  children: [
-    WDiv(className: 'w-12 h-8 bg-amber-500'),
-    WDiv(className: 'w-12 h-12 bg-amber-500'),
-    WDiv(className: 'w-12 h-6 bg-amber-500'),
-  ],
-)
-
-// items-center: Center items vertically
-WDiv(
-  className: 'flex items-center gap-2 h-24 p-4 bg-gray-100',
-  children: [
-    WDiv(className: 'w-12 h-8 bg-amber-500'),
-    WDiv(className: 'w-12 h-12 bg-amber-500'),
-    WDiv(className: 'w-12 h-6 bg-amber-500'),
-  ],
-)
-
-// items-stretch: Stretch to fill container height
-WDiv(
-  className: 'flex items-stretch gap-2 h-24 p-4 bg-gray-100',
-  children: [
-    WDiv(className: 'w-12 bg-amber-500'),
-    WDiv(className: 'w-12 bg-amber-500'),
-    WDiv(className: 'w-12 bg-amber-500'),
-  ],
-)
-```
-
-| Class | Description |
-| :--- | :--- |
-| `items-start` | Align items to start |
-| `items-end` | Align items to end |
-| `items-center` | Center items |
-| `items-baseline` | Align to text baseline |
-| `items-stretch` | Stretch to fill container |
-
-## Gap
-
-Control spacing between flex items.
+Flexbox in Wind mirrors CSS Flexbox behavior but maps to Flutter's `Row` and `Column` widgets. Use `flex` to initialize a flex container, then apply utilities to control direction, alignment, and spacing.
 
 ```dart
 WDiv(
-  className: 'flex gap-4',  // 16px gap between all items
-  children: [...],
-)
-
-WDiv(
-  className: 'flex gap-x-4 gap-y-2',  // Different horizontal/vertical gaps
-  children: [...],
-)
-```
-
-| Class | Description |
-| :--- | :--- |
-| `gap-{n}` | Gap on all sides (n × 4px) |
-| `gap-x-{n}` | Horizontal gap only |
-| `gap-y-{n}` | Vertical gap only |
-
-## Common Patterns
-
-### Centering Content
-
-```dart
-WDiv(
-  className: 'flex items-center justify-center h-64',
-  child: WText('Perfectly Centered'),
-)
-```
-
-### Header with Logo and Nav
-
-```dart
-WDiv(
-  className: 'flex justify-between items-center p-4',
+  className: 'flex flex-col md:flex-row justify-between items-center gap-4 p-6 bg-white',
   children: [
-    WText('Logo', className: 'font-bold'),
+    WText('Logo'),
     WDiv(
-      className: 'flex gap-4',
+      className: 'flex gap-2',
       children: [
         WText('Home'),
         WText('About'),
-        WText('Contact'),
       ],
     ),
   ],
 )
 ```
 
-### Sidebar Layout
+<a name="quick-reference"></a>
+## Quick Reference
+
+| Class | CSS Equivalent | Flutter Equivalent |
+|:------|:---------------|:-------------------|
+| `flex` | `display: flex` | `Row` / `Column` |
+| `wrap` | `flex-wrap: wrap` | `Wrap` |
+| `flex-row` | `flex-direction: row` | `Row()` |
+| `flex-col` | `flex-direction: column` | `Column()` |
+| `justify-{alignment}` | `justify-content: ...` | `MainAxisAlignment` |
+| `items-{alignment}` | `align-items: ...` | `CrossAxisAlignment` |
+| `gap-{n}` | `gap: {n}` | `SizedBox` (spacer) |
+| `flex-1` | `flex: 1` | `Expanded()` |
+| `shrink-0` | `flex-shrink: 0` | `Flexible(fit: FlexFit.tight)` |
+
+<a name="flex-direction"></a>
+## Flex Direction
+
+Control the axis of your layout.
+
+<!-- TODO: [CREATE] path="layout/flexbox_direction" action="CREATE" -->
+<!-- Description: Example comparing flex-row and flex-col -->
+<x-preview path="layout/flexbox_direction" size="md" source="example/lib/pages/layout/flexbox_direction.dart"></x-preview>
 
 ```dart
+// Row (Horizontal) - Default for 'flex'
+WDiv(className: 'flex flex-row')
+
+// Column (Vertical)
+WDiv(className: 'flex flex-col')
+```
+
+<a name="wrapping"></a>
+## Wrapping
+
+Use `wrap` to create a wrapping layout (Flutter's `Wrap` widget).
+
+> [!WARNING]
+> Flutter's `Row` and `Column` do **not** wrap. You must use the `wrap` class instead of `flex` if you want wrapping behavior.
+
+```dart
+// Items wrap to the next line when they run out of space
 WDiv(
-  className: 'flex h-screen',
+  className: 'wrap gap-2',
   children: [
-    WDiv(className: 'flex-none w-64 bg-slate-800'),  // Fixed sidebar
-    WDiv(className: 'flex-1 bg-white'),               // Flexible content
+    WDiv(className: 'px-2 py-1 bg-gray-200 rounded', child: WText('Tag 1')),
+    WDiv(className: 'px-2 py-1 bg-gray-200 rounded', child: WText('Tag 2')),
+    // ...
   ],
 )
 ```
 
+<a name="justify-content"></a>
+## Justify Content
+
+Controls how children are distributed along the **main axis** (Horizontal for `row`, Vertical for `col`).
+
+| Class | Flutter `MainAxisAlignment` |
+|:------|:----------------------------|
+| `justify-start` | `start` |
+| `justify-end` | `end` |
+| `justify-center` | `center` |
+| `justify-between` | `spaceBetween` |
+| `justify-around` | `spaceAround` |
+| `justify-evenly` | `spaceEvenly` |
+
+```dart
+WDiv(
+  className: 'flex justify-between',
+  children: [
+    WDiv(className: 'w-10 h-10 bg-red-500'),
+    WDiv(className: 'w-10 h-10 bg-blue-500'),
+  ],
+)
+```
+
+<a name="align-items"></a>
+## Align Items
+
+Controls how children are distributed along the **cross axis** (Vertical for `row`, Horizontal for `col`).
+
+| Class | Flutter `CrossAxisAlignment` |
+|:------|:-----------------------------|
+| `items-start` | `start` |
+| `items-end` | `end` |
+| `items-center` | `center` |
+| `items-baseline` | `baseline` |
+| `items-stretch` | `stretch` |
+
+```dart
+// Vertically center items in a row
+WDiv(className: 'flex items-center h-20')
+```
+
+<a name="align-content"></a>
+## Align Content
+
+Only applicable when using `wrap`. Controls how lines of wrapped content are aligned.
+
+| Class | Flutter `WrapAlignment` |
+|:------|:------------------------|
+| `align-content-start` | `start` |
+| `align-content-end` | `end` |
+| `align-content-center` | `center` |
+| `align-content-between` | `spaceBetween` |
+| `align-content-around` | `spaceAround` |
+| `align-content-evenly` | `spaceEvenly` |
+| `align-content-stretch` | `start` (Flutter limitation) |
+
+<a name="align-self"></a>
+## Align Self
+
+Control alignment of an individual flex item, overriding the container's `items-*` setting.
+
+| Class | Flutter `Alignment` |
+|:------|:--------------------|
+| `align-self-start` | `topCenter` |
+| `align-self-end` | `bottomCenter` |
+| `align-self-center` | `center` |
+| `align-self-stretch` | `center` |
+| `align-self-auto` | `center` |
+
+```dart
+WDiv(
+  className: 'flex items-start h-20',
+  children: [
+    WDiv(className: '...'),
+    // This item centers itself
+    WDiv(className: 'align-self-center ...'),
+  ],
+)
+```
+
+<a name="flex-grow--shrink"></a>
+## Flex, Grow & Shrink
+
+Control how individual children resize to fill available space.
+
+| Class | Description |
+|:------|:------------|
+| `flex-1` | Allow child to grow and fill available space (`Expanded`). |
+| `flex-grow` | Alias for `flex-1`. |
+| `flex-{n}` | Specific flex factor (e.g., `flex-2`). |
+| `shrink` | Allow child to shrink if needed (`FlexFit.loose`). |
+| `shrink-0` | Prevent child from shrinking (`FlexFit.tight`). |
+| `flex-none` | Do not grow or shrink. |
+
+<!-- TODO: [CREATE] path="layout/flexbox_grow" action="CREATE" -->
+<!-- Description: Example showing sidebar (fixed) and content (flex-1) -->
+<x-preview path="layout/flexbox_grow" size="md" source="example/lib/pages/layout/flexbox_grow.dart"></x-preview>
+
+```dart
+WDiv(
+  className: 'flex',
+  children: [
+    // Sidebar: Fixed width, won't shrink
+    WDiv(className: 'w-16 shrink-0 bg-gray-200'),
+    
+    // Content: Fills remaining space
+    WDiv(
+      className: 'flex-1 bg-white p-4',
+      child: WText('Main Content'),
+    ),
+  ],
+)
+```
+
+<a name="gap--spacing"></a>
+## Gap & Spacing
+
+Wind's `gap` utilities add space between flex or grid items without using margin on the children themselves.
+
+| Class | Value (Default) | Description |
+|:------|:----------------|:------------|
+| `gap-0` | 0px | No gap |
+| `gap-1` | 4px | Small gap |
+| `gap-2` | 8px | Medium gap |
+| `gap-4` | 16px | Large gap |
+| `gap-x-{n}` | - | Horizontal gap only |
+| `gap-y-{n}` | - | Vertical gap only |
+
+> [!NOTE]
+> `space-x-{n}` and `space-y-{n}` are supported as aliases for `gap`, but `gap` is preferred for consistency with Grid.
+
+```dart
+// 16px gap horizontally and vertically
+WDiv(className: 'flex gap-4')
+
+// 8px horizontal, 16px vertical
+WDiv(className: 'flex flex-col gap-x-2 gap-y-4')
+```
+
+<a name="responsive-design"></a>
+## Responsive Design
+
+Change layout direction or spacing based on screen size. This is extremely powerful for mobile-first designs.
+
+```dart
+// Column on mobile, Row on tablet+
+WDiv(className: 'flex flex-col md:flex-row gap-4 md:gap-8')
+```
+
+<a name="arbitrary-values"></a>
+## Arbitrary Values
+
+Need a specific gap or flex value not in the theme? Use bracket notation.
+
+```dart
+// Specific 23px gap
+WDiv(className: 'flex gap-[23px]')
+
+// Specific pixel gap
+WDiv(className: 'flex gap-[1.5rem]')
+```
+
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+To change the default spacing scale used by `gap`, modify `baseSpacingUnit` or the `containers` map in `WindThemeData`.
+
+```dart
+WindThemeData(
+  baseSpacingUnit: 8.0, // Now gap-1 = 8px, gap-2 = 16px
+)
+```
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Grid](./grid.md) - Grid layout utilities
-- [Spacing](./spacing.md) - Padding and margin
-- [Responsive Design](../core-concepts/responsive-design.md) - Responsive flex layouts
+- [Grid Layout](./grid.md)
+- [Display Modes](./display.md)
+- [Sizing](../sizing/width.md)

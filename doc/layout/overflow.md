@@ -2,141 +2,134 @@
 
 Utilities for controlling how an element handles content that is too large for the container.
 
-<x-preview path="effects/overflow_basic" size="lg" source="example/lib/pages/effects/overflow_basic.dart"></x-preview>
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-## General Overflow
+<x-preview path="effects/overflow_basic" size="md" source="example/lib/pages/effects/overflow_basic.dart"></x-preview>
 
-### overflow-visible
+```dart
+// Basic examples
+WDiv(className: 'overflow-hidden')
+WDiv(className: 'overflow-scroll')
+WDiv(className: 'overflow-x-auto')
+```
 
-Allow content to overflow outside container bounds (default):
+<a name="basic-usage"></a>
+## Basic Usage
+
+Use `overflow-{mode}` to control how content behaves when it exceeds the container's bounds.
+
+### Hidden
+
+Use `overflow-hidden` to clip any content that extends beyond the container's edges. This applies `Clip.hardEdge` to the widget.
 
 ```dart
 WDiv(
-  className: 'overflow-visible w-20 h-20 bg-blue-500 rounded-lg',
-  child: WDiv(
-    className: 'w-32 h-32 bg-blue-300 rounded-lg flex items-center justify-center',
-    child: WText('120x120', className: 'text-blue-900 text-xs font-mono'),
-  ),
+  className: 'overflow-hidden w-20 h-20 bg-white rounded-lg',
+  child: WDiv(className: 'w-40 h-40 bg-red-500'),
 )
 ```
 
-### overflow-hidden
+### Scroll
 
-Clip content that overflows the container:
+Use `overflow-scroll` to enable scrolling regardless of whether content overflows. This generally wraps the content in a `SingleChildScrollView`.
 
 ```dart
 WDiv(
-  className: 'overflow-hidden w-20 h-20 bg-red-500 rounded-lg',
-  child: WDiv(
-    className: 'w-32 h-32 bg-red-300 rounded-lg flex items-center justify-center',
-    child: WText('120x120', className: 'text-red-900 text-xs font-mono'),
-  ),
+  className: 'overflow-scroll w-64 h-64 bg-white',
+  child: LongContentWidget(),
 )
 ```
 
-### overflow-scroll
+### Auto
 
-Enable scrolling for overflow content:
+Use `overflow-auto` to enable scrolling only when content actually overflows the container bounds.
 
 ```dart
 WDiv(
-  className: 'overflow-scroll w-24 h-24 bg-green-500 rounded-lg',
-  child: WDiv(
-    className: 'w-48 h-48 bg-green-300 rounded-lg flex items-center justify-center',
-    child: WText('192x192', className: 'text-green-900 text-xs font-mono'),
-  ),
+  className: 'overflow-auto max-h-48 bg-gray-100',
+  child: LongContentWidget(),
 )
 ```
 
-### overflow-auto
+### Visible
 
-Auto scrolling (scroll only when needed):
+Use `overflow-visible` to allow content to spill out of the container. This applies `Clip.none` and prevents the container from introducing a scroll context.
 
 ```dart
 WDiv(
-  className: 'overflow-auto w-24 h-24 bg-amber-500 rounded-lg',
-  child: WDiv(
-    className: 'w-48 h-48 bg-amber-300 rounded-lg flex items-center justify-center',
-    child: WText('192x192', className: 'text-amber-900 text-xs font-mono'),
-  ),
+  className: 'overflow-visible',
+  child: LargeContentWidget(),
 )
 ```
 
-| Class | Behavior |
-| :--- | :--- |
-| `overflow-visible` | Allow content to overflow (default) |
-| `overflow-hidden` | Clip content using `ClipRect` |
-| `overflow-scroll` | Enable scrolling via `SingleChildScrollView` |
-| `overflow-auto` | Auto scrolling when content overflows |
+<a name="quick-reference"></a>
+## Quick Reference
 
-## Directional Overflow
+| Class | Flutter Equivalent | Description |
+|:------|:-------------------|:------------|
+| `overflow-auto` | `SingleChildScrollView` (conditional) | Scroll only if content overflows |
+| `overflow-hidden` | `Clip.hardEdge` | Clip overflowing content |
+| `overflow-visible` | `Clip.none` | Content flows outside container |
+| `overflow-scroll` | `SingleChildScrollView` | Always enable scrolling |
 
-Control overflow for specific axes.
+<a name="variants"></a>
+## Variants
 
-<x-preview path="effects/overflow_directional" size="lg" source="example/lib/pages/effects/overflow_directional.dart"></x-preview>
+### Directional Overflow
 
-### overflow-x-scroll
+Use `overflow-x-{mode}` and `overflow-y-{mode}` to control overflow on a specific axis independently.
 
-Horizontal scroll only:
+<x-preview path="effects/overflow_directional" size="md" source="example/lib/pages/effects/overflow_directional.dart"></x-preview>
 
 ```dart
-WDiv(
-  className: 'overflow-x-scroll w-48 h-20 bg-purple-500 rounded-lg',
-  child: WDiv(
-    className: 'w-96 h-20 bg-purple-300 flex items-center justify-center',
-    child: WText('Wide content (384px)', className: 'text-purple-900 font-mono text-sm'),
-  ),
-)
+WDiv(className: 'overflow-x-scroll overflow-y-hidden')
 ```
 
-### overflow-y-scroll
+| Class | Description |
+|:------|:------------|
+| `overflow-x-auto` | Scroll horizontally if needed |
+| `overflow-y-scroll` | Always scroll vertically |
+| `overflow-x-hidden` | Clip horizontal overflow |
+| `overflow-y-visible` | Allow vertical overflow |
 
-Vertical scroll only:
+<a name="responsive-design"></a>
+## Responsive Design
+
+Apply different overflow behaviors at different breakpoints using standard modifiers like `sm:`, `md:`, `lg:`, `xl:`, and `2xl:`.
 
 ```dart
-WDiv(
-  className: 'overflow-y-scroll w-48 h-24 bg-teal-500 rounded-lg',
-  child: WDiv(
-    className: 'w-48 h-64 bg-teal-300 flex items-center justify-center',
-    child: WText('Tall content (256px)', className: 'text-teal-900 font-mono text-sm'),
-  ),
-)
+// Scroll on mobile, but show full content on desktop
+WDiv(className: 'overflow-scroll md:overflow-visible')
 ```
 
-### overflow-x-hidden / overflow-y-hidden
+<a name="dark-mode"></a>
+## Dark Mode
 
-Clip overflow on specific axis:
+Change overflow behavior in dark mode using the `dark:` prefix.
 
 ```dart
-// Clip horizontal overflow
-WDiv(
-  className: 'overflow-x-hidden w-48 h-20 bg-orange-500 rounded-lg',
-  child: WDiv(className: 'w-96 h-20 bg-orange-300'),
-)
-
-// Clip vertical overflow
-WDiv(
-  className: 'overflow-y-hidden w-48 h-24 bg-pink-500 rounded-lg',
-  child: WDiv(className: 'w-48 h-64 bg-pink-300'),
-)
+WDiv(className: 'overflow-visible dark:overflow-hidden')
 ```
 
-## All Overflow Classes
+<a name="arbitrary-values"></a>
+## Arbitrary Values
 
-| Category | Classes | Description |
-| :--- | :--- | :--- |
-| **General** | `overflow-visible` | Allow overflow (default) |
-| **General** | `overflow-hidden` | Clip overflow with ClipRect |
-| **General** | `overflow-scroll` | Always scrollable (both axes) |
-| **General** | `overflow-auto` | Scroll when content overflows |
-| **X-Axis** | `overflow-x-hidden` | Clip horizontal overflow |
-| **X-Axis** | `overflow-x-scroll` | Horizontal scroll |
-| **X-Axis** | `overflow-x-auto` | Horizontal auto scroll |
-| **Y-Axis** | `overflow-y-hidden` | Clip vertical overflow |
-| **Y-Axis** | `overflow-y-scroll` | Vertical scroll |
-| **Y-Axis** | `overflow-y-auto` | Vertical auto scroll |
+The overflow utility does not support arbitrary values. You must use one of the defined keywords (`hidden`, `visible`, `scroll`, `auto`).
 
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+Overflow utilities are hardcoded behavior toggles and cannot be customized via `WindThemeData`.
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Sizing](../sizing/sizing.md) - Width and height utilities
-- [Display](./display.md) - Display utilities
+- [Sizing](../layout/sizing.md)
+- [Display](../layout/display.md)

@@ -1,151 +1,105 @@
-# Grid System
+# Grid Template Columns
 
-Utilities for creating grid layouts with automatic wrapping and gap control.
+Utilities for specifying the columns in a grid layout.
 
-## Grid Template Columns
-
-Use `grid-cols-{n}` to create a grid with a specific number of columns.
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Responsive](#responsive)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Related Documentation](#related-documentation)
 
 <x-preview path="layout/grid_cols" size="md" source="example/lib/pages/layout/grid_cols.dart"></x-preview>
 
 ```dart
-// 2 Column Grid
-WDiv(
-  className: 'grid grid-cols-2 gap-2',
-  children: [
-    WDiv(className: 'bg-rose-500 h-12 rounded-lg'),
-    WDiv(className: 'bg-rose-500 h-12 rounded-lg'),
-    WDiv(className: 'bg-rose-500 h-12 rounded-lg'),
-    WDiv(className: 'bg-rose-500 h-12 rounded-lg'),
-  ],
-)
-
-// 3 Column Grid
-WDiv(
-  className: 'grid grid-cols-3 gap-2',
-  children: List.generate(6, (i) => 
-    WDiv(className: 'bg-pink-500 h-12 rounded-lg'),
-  ),
-)
-
-// 4 Column Grid
-WDiv(
-  className: 'grid grid-cols-4 gap-2',
-  children: List.generate(8, (i) => 
-    WDiv(className: 'bg-fuchsia-500 h-12 rounded-lg'),
-  ),
-)
-```
-
-| Class | Description |
-| :--- | :--- |
-| `grid` | Enable grid layout |
-| `grid-cols-1` | 1 column |
-| `grid-cols-2` | 2 columns |
-| `grid-cols-3` | 3 columns |
-| `grid-cols-4` | 4 columns |
-| `grid-cols-{n}` | n columns (1-12) |
-
-## Gap
-
-Control spacing between grid items using gap utilities.
-
-<x-preview path="layout/grid_gap" size="md" source="example/lib/pages/layout/grid_gap.dart"></x-preview>
-
-```dart
-// Uniform gap (16px)
+// Basic grid with 3 columns
 WDiv(
   className: 'grid grid-cols-3 gap-4',
-  children: [...],
-)
-
-// Different horizontal/vertical gaps
-WDiv(
-  className: 'grid grid-cols-3 gap-x-4 gap-y-2',
-  children: [...],
+  children: [
+    WDiv(className: 'bg-blue-500 h-12'),
+    WDiv(className: 'bg-blue-500 h-12'),
+    WDiv(className: 'bg-blue-500 h-12'),
+  ],
 )
 ```
 
-| Class | Description |
-| :--- | :--- |
-| `gap-{n}` | Gap on all sides (n × 4px) |
-| `gap-x-{n}` | Horizontal gap only |
-| `gap-y-{n}` | Vertical gap only |
+<a name="basic-usage"></a>
+## Basic Usage
 
-### Gap Scale
+Use `grid-cols-{n}` to create a grid with `n` equally sized columns.
 
-| Class | Size |
-| :--- | :--- |
-| `gap-0` | 0px |
-| `gap-1` | 4px |
-| `gap-2` | 8px |
-| `gap-3` | 12px |
-| `gap-4` | 16px |
-| `gap-6` | 24px |
-| `gap-8` | 32px |
+This utility must be used alongside the `grid` class (or `inline-grid` if supported) to activate the grid layout model.
 
-## Responsive Grid
+```dart
+WDiv(
+  className: 'grid grid-cols-4 gap-4',
+  children: [
+    // ... 4 items per row
+  ],
+)
+```
 
-Combine grid with responsive prefixes for adaptive layouts.
+<a name="quick-reference"></a>
+## Quick Reference
 
+| Class | Properties |
+|:--- |:--- |
+| `grid-cols-1` | `crossAxisCount: 1` |
+| `grid-cols-2` | `crossAxisCount: 2` |
+| `grid-cols-3` | `crossAxisCount: 3` |
+| `grid-cols-4` | `crossAxisCount: 4` |
+| `grid-cols-5` | `crossAxisCount: 5` |
+| `grid-cols-6` | `crossAxisCount: 6` |
+| `grid-cols-12` | `crossAxisCount: 12` |
+
+> [!NOTE]
+> Wind's parser supports **any integer** value for `grid-cols-{n}`, not just the standard Tailwind scale (1-12).
+
+<a name="responsive"></a>
+## Responsive
+
+Prefix grid utilities with breakpoint variants like `md:` or `lg:` to change the column count at different screen sizes.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="layout/grid_responsive" action="VERIFY" -->
+<!-- Description: Verify this responsive grid example matches the existing codebase -->
 <x-preview path="layout/grid_responsive" size="lg" source="example/lib/pages/layout/grid_responsive.dart"></x-preview>
 
 ```dart
 WDiv(
-  className: '''
-    grid gap-4
-    grid-cols-1
-    sm:grid-cols-2
-    lg:grid-cols-3
-    xl:grid-cols-4
-  ''',
-  children: products.map((p) => ProductCard(product: p)).toList(),
-)
-```
-
-## Common Patterns
-
-### Photo Gallery
-
-```dart
-WDiv(
-  className: 'grid grid-cols-3 gap-2',
-  children: images.map((img) => WImage(
-    src: img.url,
-    className: 'aspect-square object-cover rounded-lg',
-  )).toList(),
-)
-```
-
-### Dashboard Cards
-
-```dart
-WDiv(
-  className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4',
+  className: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4',
   children: [
-    StatCard(title: 'Users', value: '1,234'),
-    StatCard(title: 'Revenue', value: '\$5,678'),
-    StatCard(title: 'Orders', value: '890'),
-    StatCard(title: 'Visitors', value: '12,345'),
+    // 1 col on mobile, 3 on tablet, 6 on desktop
   ],
 )
 ```
 
-### Form Layout
+<a name="dark-mode"></a>
+## Dark Mode
+
+While column counts rarely change based on theme, you can use `dark:` if needed.
 
 ```dart
 WDiv(
-  className: 'grid grid-cols-2 gap-4',
-  children: [
-    WInput(label: 'First Name'),
-    WInput(label: 'Last Name'),
-    WInput(label: 'Email', className: 'col-span-2'),
-  ],
+  className: 'grid grid-cols-2 dark:grid-cols-4',
+  children: [...],
 )
 ```
 
+<a name="arbitrary-values"></a>
+## Arbitrary Values
+
+Wind supports any integer for grid columns directly in the utility class. You do not need square brackets `[]` for this property.
+
+```dart
+// Create a grid with exactly 16 columns
+WDiv(
+  className: 'grid grid-cols-16 gap-1',
+  children: [...],
+)
+```
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Flexbox](./flexbox.md) - Flexible layouts
-- [Spacing](./spacing.md) - Padding and margin
-- [Responsive Design](../core-concepts/responsive-design.md) - Responsive grids
+- [Flexbox & Gap](./flexbox.md) - For `gap-{n}`, `gap-x-{n}`, and `gap-y-{n}` utilities.
+- [Display](./display.md) - For the `grid` class.

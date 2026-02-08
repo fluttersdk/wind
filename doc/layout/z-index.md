@@ -2,101 +2,136 @@
 
 Utilities for controlling the stack order of an element.
 
-<x-preview path="layout/z_index" size="lg" source="example/lib/pages/layout/z_index.dart"></x-preview>
+## Table of Contents
 
-> [!IMPORTANT]
-> Flutter doesn't have CSS-like positioning (`absolute`, `relative`, `fixed`). Z-index only works within `Stack` widgets where children are ordered by index.
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
+<!-- TODO: [EXAMPLE_NEEDED] path="layout/z_index_basic" action="CREATE" -->
+<!-- Description: A stack of overlapping boxes showing different z-index levels -->
+<x-preview path="layout/z_index_basic" size="md" source="example/lib/pages/layout/z_index_basic.dart"></x-preview>
+
+```dart
+// Standard values
+WDiv(className: 'z-0')
+WDiv(className: 'z-50')
+
+// Arbitrary values
+WDiv(className: 'z-[100]')
+WDiv(className: 'z-[-1]')
+```
+
+<a name="basic-usage"></a>
 ## Basic Usage
 
-Control the stack order using `z-{value}` utilities inside a `Stack`:
+Use `z-{index}` to set the stack order of an element. This utility is primarily used with `Stack` widgets to determine which element appears on top.
 
 ```dart
 Stack(
   children: [
-    Positioned(
-      left: 0, top: 0,
-      child: WDiv(
-        className: 'z-10 w-24 h-24 bg-blue-500 rounded-lg flex items-center justify-center',
-        child: WText('z-10', className: 'text-white font-bold'),
-      ),
-    ),
-    Positioned(
-      left: 40, top: 30,
-      child: WDiv(
-        className: 'z-20 w-24 h-24 bg-red-500 rounded-lg flex items-center justify-center',
-        child: WText('z-20', className: 'text-white font-bold'),
-      ),
-    ),
-    Positioned(
-      left: 80, top: 60,
-      child: WDiv(
-        className: 'z-30 w-24 h-24 bg-green-500 rounded-lg flex items-center justify-center',
-        child: WText('z-30', className: 'text-white font-bold'),
-      ),
-    ),
+    WDiv(className: 'z-0 bg-blue-500 w-20 h-20'),
+    WDiv(className: 'z-10 bg-red-500 w-20 h-20 ml-10 mt-10'),
+    WDiv(className: 'z-20 bg-green-500 w-20 h-20 ml-20 mt-20'),
   ],
 )
 ```
 
-## Preset Values
+<a name="quick-reference"></a>
+## Quick Reference
 
-Standard z-index values from the theme:
+| Class | Value | Description |
+|:------|:------|:------------|
+| `z-0` | 0 | Stack level 0 |
+| `z-10` | 10 | Stack level 10 |
+| `z-20` | 20 | Stack level 20 |
+| `z-30` | 30 | Stack level 30 |
+| `z-40` | 40 | Stack level 40 |
+| `z-50` | 50 | Stack level 50 |
+| `z-auto` | `null` | Resets stack level (default) |
 
-| Class | Value |
-| :--- | :--- |
-| `z-0` | 0 |
-| `z-10` | 10 |
-| `z-20` | 20 |
-| `z-30` | 30 |
-| `z-40` | 40 |
-| `z-50` | 50 |
-| `z-auto` | Reset/unset |
+<a name="variants"></a>
+## Variants
 
+### Hover & Focus
+
+Control the stack order on interaction. This is useful for "pop-out" effects where an item should rise above others when hovered.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="layout/z_index_hover" action="CREATE" -->
+<!-- Description: Elements that increase z-index on hover to appear on top -->
+<x-preview path="layout/z_index_hover" size="md" source="example/lib/pages/layout/z_index_hover.dart"></x-preview>
+
+```dart
+WDiv(className: 'z-0 hover:z-50 bg-white shadow-sm hover:shadow-xl')
+```
+
+<a name="responsive-design"></a>
+## Responsive Design
+
+Apply different z-indices at specific breakpoints using the `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
+
+```dart
+// z-0 on mobile, z-50 on medium screens and up
+WDiv(className: 'z-0 md:z-50')
+```
+
+<a name="dark-mode"></a>
+## Dark Mode
+
+Use the `dark:` prefix to apply specific z-indices when the application is in dark mode.
+
+```dart
+WDiv(className: 'z-10 dark:z-20')
+```
+
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-For custom z-index values, use the bracket notation:
+Use square brackets `[]` to apply custom z-index values that aren't part of the theme. This supports both positive and negative integers.
 
 ```dart
-WDiv(className: 'z-[100]')  // z-index: 100
-WDiv(className: 'z-[1000]') // z-index: 1000
-WDiv(className: 'z-[-1]')   // z-index: -1
+// Custom positive value
+WDiv(className: 'z-[100]')
+
+// Custom negative value
+WDiv(className: 'z-[-5]')
 ```
 
-## Programmatic Access
-
-You can access the parsed `zIndex` value from `WindStyle`:
-
-```dart
-final style = WindParser.parse('z-20', context);
-print(style.zIndex); // 20
-```
-
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-Customize available Z-Index values in `WindThemeData`:
+To extend or override the default z-index scale, modify the `zIndices` property in `WindThemeData`.
 
 ```dart
 WindThemeData(
   zIndices: {
+    // Override defaults
     '0': 0,
-    '10': 10,
-    'dropdown': 1000,
-    'modal': 9000,
-  }
+    '50': 50,
+    
+    // Add custom values
+    '100': 100,
+    'modal': 9999,
+    'popover': 5000,
+  },
 )
 ```
 
-Usage: `z-dropdown`, `z-modal`.
+Usage with custom theme:
 
-## All Z-Index Classes
+```dart
+WDiv(className: 'z-modal')   // Applies z-index: 9999
+WDiv(className: 'z-popover') // Applies z-index: 5000
+```
 
-| Category | Classes | Description |
-| :--- | :--- | :--- |
-| **Preset** | `z-0`, `z-10`...`z-50` | Standard stack layers |
-| **Auto** | `z-auto` | Reset/unset z-index |
-| **Arbitrary** | `z-[100]`, `z-[-1]` | Custom z-index value |
-
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Display](./display.md) - Display and visibility utilities
+- [Position](/doc/layout/position.md)
+- [Display](/doc/layout/display.md)
+- [WindTheme](/doc/core-concepts/theming.md)

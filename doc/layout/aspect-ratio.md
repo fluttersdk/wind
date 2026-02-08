@@ -2,85 +2,122 @@
 
 Utilities for controlling the aspect ratio of an element.
 
-<x-preview path="sizing/aspectratio" size="lg" source="example/lib/pages/sizing/aspectratio.dart"></x-preview>
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-## Preset Aspect Ratios
+<!-- TODO: [CREATE] path="layout/aspect_ratio_basic" action="CREATE" -->
+<!-- Description: Show aspect-square, aspect-video, and arbitrary aspect ratios with images or colored containers -->
+<x-preview path="layout/aspect_ratio_basic" size="md" source="example/lib/pages/layout/aspect_ratio_basic.dart"></x-preview>
 
-### aspect-square
+```dart
+// Basic examples showing the syntax
+WDiv(className: 'aspect-square')
+WDiv(className: 'aspect-video')
+```
 
-Square aspect ratio (1:1):
+<a name="basic-usage"></a>
+## Basic Usage
+
+Use `aspect-{ratio}` to set the preferred aspect ratio of an element. This is particularly useful for images, video players, or ensuring consistent card sizing.
+
+### Video (16:9)
+
+Use `aspect-video` to force a 16:9 ratio, perfect for video content.
 
 ```dart
 WDiv(
-  className: 'w-32 aspect-square bg-blue-500 rounded-lg flex items-center justify-center',
-  child: WText('1:1', className: 'text-white font-bold'),
+  className: 'w-full aspect-video bg-black',
+  child: WText('Video Placeholder', className: 'text-white'),
 )
 ```
 
-### aspect-video
+### Square (1:1)
 
-Video aspect ratio (16:9):
+Use `aspect-square` to create a perfect square, regardless of width.
 
 ```dart
 WDiv(
-  className: 'w-64 aspect-video bg-red-500 rounded-lg flex items-center justify-center',
-  child: WText('16:9', className: 'text-white font-bold'),
+  className: 'w-1/2 aspect-square bg-blue-500',
 )
 ```
 
-### aspect-auto
+### Auto
 
-No aspect ratio constraint:
+Use `aspect-auto` to remove any applied aspect ratio constraints.
 
 ```dart
-WDiv(
-  className: 'w-32 h-24 aspect-auto bg-green-500 rounded-lg flex items-center justify-center',
-  child: WText('auto', className: 'text-white font-bold'),
-)
+WDiv(className: 'aspect-auto')
 ```
 
-| Class | Aspect Ratio |
-| :--- | :--- |
-| `aspect-square` | 1 / 1 |
-| `aspect-video` | 16 / 9 |
-| `aspect-auto` | No constraint |
+<a name="quick-reference"></a>
+## Quick Reference
 
+| Class | Ratio | Description |
+|:------|:------|:------------|
+| `aspect-auto` | `null` | Default behavior (no ratio) |
+| `aspect-square` | `1 / 1` | Square (1:1) |
+| `aspect-video` | `16 / 9` | Standard video (16:9) |
+
+<a name="variants"></a>
+## Variants
+
+Wind supports standard state variants for aspect ratios.
+
+```dart
+// Change aspect ratio on hover
+WDiv(className: 'aspect-square hover:aspect-video transition-all')
+```
+
+<a name="responsive-design"></a>
+## Responsive Design
+
+Apply different aspect ratios at different breakpoints using standard responsive prefixes.
+
+```dart
+// Square on mobile, Video on desktop
+WDiv(className: 'aspect-square md:aspect-video')
+```
+
+<a name="dark-mode"></a>
+## Dark Mode
+
+While less common for layout structure, you can conditionally apply aspect ratios in dark mode.
+
+```dart
+WDiv(className: 'aspect-square dark:aspect-video')
+```
+
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-For custom aspect ratios, use the bracket notation:
+Use the bracket syntax `aspect-[w/h]` to apply any specific aspect ratio that isn't included in the default theme.
 
 ```dart
-// 4:3 aspect ratio
-WDiv(
-  className: 'w-48 aspect-[4/3] bg-purple-500 rounded-lg flex items-center justify-center',
-  child: WText('4:3', className: 'text-white font-bold'),
-)
+// 4:3 ratio (Classic TV)
+WDiv(className: 'aspect-[4/3]')
 
-// 21:9 ultrawide
-WDiv(
-  className: 'w-64 aspect-[21/9] bg-orange-500 rounded-lg flex items-center justify-center',
-  child: WText('21:9', className: 'text-white font-bold'),
-)
-
-// 3:2 classic photo
-WDiv(
-  className: 'w-48 aspect-[3/2] bg-teal-500 rounded-lg flex items-center justify-center',
-  child: WText('3:2', className: 'text-white font-bold'),
-)
+// 21:9 ratio (Ultrawide)
+WDiv(className: 'aspect-[21/9]')
 ```
 
-## Common Aspect Ratios
+> [!NOTE]
+> Arbitrary values must use the format `width/height` where both are numbers (e.g., `[4/3]`, `[16/10]`).
 
-| Ratio | Usage |
-| :--- | :--- |
-| `aspect-[1/1]` | Square images, profile pictures |
-| `aspect-[4/3]` | Classic TV, old photos |
-| `aspect-[16/9]` | HD video, modern screens |
-| `aspect-[21/9]` | Ultrawide cinema |
-| `aspect-[3/2]` | Classic 35mm photography |
-| `aspect-[9/16]` | Vertical/portrait video |
+<a name="customizing-theme"></a>
+## Customizing Theme
 
+Currently, the aspect ratio scale is hardcoded to standard Tailwind defaults (`auto`, `square`, `video`) and cannot be extended via `WindThemeData`.
+
+To use custom ratios, we recommend using [Arbitrary Values](#arbitrary-values) or creating a custom parser if you need named utilities for specific ratios.
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Sizing](./sizing.md) - Width and height utilities
-- [Width](../sizing/width.md) - Width utilities
+- [Sizing](./sizing.md)
+- [Display](./display.md)

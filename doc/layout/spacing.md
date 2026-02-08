@@ -1,159 +1,149 @@
 # Spacing
 
-Utilities for controlling padding and margin.
+Utilities for controlling the padding and margin of elements.
 
-## Padding
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-Control inner spacing of elements.
+<x-preview path="spacing/padding_margin_basic" size="md" source="example/lib/pages/spacing/padding_margin_basic.dart"></x-preview>
 
-<x-preview path="spacing/padding" size="md" source="example/lib/pages/spacing/padding.dart"></x-preview>
-
-### All Sides
+<!-- TODO: [EXAMPLE_NEEDED] path="spacing/padding_margin_basic" action="CREATE" -->
+<!-- Description: Show a container with p-6 (padding) and m-4 (margin) to demonstrate basic spacing. -->
 
 ```dart
-WDiv(className: 'p-2 bg-rose-500')  // 8px all sides
-WDiv(className: 'p-4 bg-rose-500')  // 16px all sides
-WDiv(className: 'p-6 bg-pink-500')  // 24px all sides
+// Adds 16px padding inside, 16px margin outside
+WDiv(className: 'p-4 m-4 bg-white')
 ```
 
-### Axis Padding
+## Basic Usage
+
+Control the spacing of an element using the `p-{size}` (padding) and `m-{size}` (margin) utilities.
+
+### Padding
+
+Padding adds space **inside** the element's boundary.
 
 ```dart
-WDiv(className: 'px-6 py-1 bg-purple-500')  // Horizontal padding
-WDiv(className: 'py-6 px-2 bg-violet-500')  // Vertical padding
+// Add padding to all sides
+WDiv(className: 'p-6 bg-blue-100', child: WText('Padding'))
 ```
 
-### Individual Sides
+### Margin
+
+Margin adds space **outside** the element's boundary.
 
 ```dart
-WDiv(className: 'pt-4 bg-indigo-500')  // Top only
-WDiv(className: 'pb-4 bg-blue-500')    // Bottom only
-WDiv(className: 'pl-6 bg-cyan-500')    // Left only
-WDiv(className: 'pr-6 bg-teal-500')    // Right only
+// Add margin to all sides
+WDiv(className: 'm-4 bg-red-100', child: WText('Margin'))
 ```
 
-| Class | Description |
-| :--- | :--- |
-| `p-{n}` | All sides |
-| `px-{n}` | Left and right |
-| `py-{n}` | Top and bottom |
-| `pt-{n}` | Top only |
-| `pr-{n}` | Right only |
-| `pb-{n}` | Bottom only |
-| `pl-{n}` | Left only |
+## Quick Reference
 
-## Margin
+The default spacing scale is based on a **4px** unit (`baseSpacingUnit: 4.0`).
 
-Control outer spacing of elements.
+| Class | Value (Default) | Description |
+|:------|:----------------|:------------|
+| `p-0` / `m-0` | 0px | No spacing |
+| `p-1` / `m-1` | 4px | Tiny spacing |
+| `p-2` / `m-2` | 8px | Small spacing |
+| `p-4` / `m-4` | 16px | Normal spacing |
+| `p-8` / `m-8` | 32px | Large spacing |
+| `p-16` / `m-16` | 64px | Extra large spacing |
+| `px-{n}` / `mx-{n}` | - | Horizontal (Left + Right) |
+| `py-{n}` / `my-{n}` | - | Vertical (Top + Bottom) |
+| `pt-{n}` / `mt-{n}` | - | Top only |
+| `pr-{n}` / `mr-{n}` | - | Right only |
+| `pb-{n}` / `mb-{n}` | - | Bottom only |
+| `pl-{n}` / `ml-{n}` | - | Left only |
 
-<x-preview path="spacing/margin" size="md" source="example/lib/pages/spacing/margin.dart"></x-preview>
+## Variants
 
-### All Sides
+### Directional Spacing
+
+Target specific sides or axes using direction prefixes.
+
+<x-preview path="spacing/directional" size="md" source="example/lib/pages/spacing/directional.dart"></x-preview>
+
+<!-- TODO: [EXAMPLE_NEEDED] path="spacing/directional" action="CREATE" -->
+<!-- Description: Show various directional spacing examples (px-4, py-2, mt-4, pl-2). -->
 
 ```dart
-WDiv(className: 'm-2 bg-amber-500')  // 8px all sides
-WDiv(className: 'm-4 bg-amber-500')  // 16px all sides
-```
+// Horizontal padding (Left + Right)
+WDiv(className: 'px-4 bg-green-100')
 
-### Axis Margin
+// Vertical margin (Top + Bottom)
+WDiv(className: 'my-6 bg-yellow-100')
 
-```dart
-WDiv(className: 'mx-6 bg-orange-500')  // Horizontal margin
-WDiv(className: 'my-4 bg-red-500')     // Vertical margin
+// Top padding only
+WDiv(className: 'pt-8 bg-purple-100')
 ```
 
 ### Horizontal Centering
 
-Use `mx-auto` to center an element horizontally:
+Use `mx-auto` to center a container horizontally. This sets the left and right margins to align the element within its parent.
+
+> [!NOTE]
+> `mx-auto` only works when the element has a defined width less than its parent. Explicit `mx-{value}` classes (like `mx-0`) will override `mx-auto`.
 
 ```dart
 WDiv(
-  className: 'mx-auto w-32 bg-emerald-500',
+  className: 'mx-auto w-32 bg-blue-500',
   child: WText('Centered'),
 )
 ```
 
-| Class | Description |
-| :--- | :--- |
-| `m-{n}` | All sides |
-| `mx-{n}` | Left and right |
-| `my-{n}` | Top and bottom |
-| `mt-{n}` | Top only |
-| `mr-{n}` | Right only |
-| `mb-{n}` | Bottom only |
-| `ml-{n}` | Left only |
-| `mx-auto` | Horizontally center element |
+## Responsive Design
 
-## Spacing Scale
+Apply different spacing at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
 
-| Value | Size |
-| :--- | :--- |
-| `0` | 0px |
-| `1` | 4px |
-| `2` | 8px |
-| `3` | 12px |
-| `4` | 16px |
-| `5` | 20px |
-| `6` | 24px |
-| `8` | 32px |
-| `10` | 40px |
-| `12` | 48px |
+```dart
+// p-4 on mobile, p-8 on medium screens, p-12 on large screens
+WDiv(className: 'p-4 md:p-8 lg:p-12')
+```
+
+## Dark Mode
+
+Use the `dark:` prefix to apply different spacing in dark mode.
+
+```dart
+WDiv(className: 'p-4 dark:p-6')
+```
 
 ## Arbitrary Values
 
-Use square brackets for exact pixel values:
+If the built-in scale doesn't meet your needs, use bracket notation to apply exact pixel values.
+
+> [!WARNING]
+> Wind parsers for padding and margin currently support **pixels** (`[10px]`, `[10]`) but do NOT support percentages (`[10%]`).
 
 ```dart
-WDiv(className: 'p-[10px] bg-amber-500')   // Exact 10px
-WDiv(className: 'mt-[20px] bg-orange-500') // Exact 20px margin-top
+// Exact 13px padding
+WDiv(className: 'p-[13px]')
+
+// Exact 50px top margin
+WDiv(className: 'mt-[50px]')
 ```
 
 ## Customizing Theme
 
-### Base Spacing Unit
+To extend or override the default spacing scale, modify the `WindThemeData` in your app root.
 
-Wind uses a grid system divisible by 4. Customize in `WindThemeData`:
+The `baseSpacingUnit` controls the multiplier for all spacing utilities (`p-`, `m-`, `gap-`, `w-`, `h-`).
 
 ```dart
 WindThemeData(
-  baseSpacingUnit: 8.0, // Now 'p-1' is 8px, 'p-4' is 32px
+  baseSpacingUnit: 8.0, // Sets 'p-1' to 8px, 'p-4' to 32px
 )
 ```
-
-This affects all utilities using the spacing scale:
-
-- Padding (`p-*`)
-- Margin (`m-*`)
-- Width (`w-*`, except percentages)
-- Height (`h-*`, except percentages)
-- Gap (`gap-*`)
-
-## Space Between Items
-
-Aliases for gap utilities in flex/grid layouts:
-
-```dart
-// Horizontal spacing between children
-WDiv(
-  className: 'flex space-x-4',
-  children: [...],
-)
-
-// Vertical spacing between children
-WDiv(
-  className: 'flex flex-col space-y-2',
-  children: [...],
-)
-```
-
-| Class | Description |
-| :--- | :--- |
-| `space-x-{n}` | Horizontal gap (alias for `gap-x-{n}`) |
-| `space-y-{n}` | Vertical gap (alias for `gap-y-{n}`) |
 
 ## Related Documentation
 
-- [Sizing](./sizing.md) - Width and height
-- [Flexbox](./flexbox.md) - Gap utilities in flex layouts
-- [Grid](./grid.md) - Gap utilities in grid layouts
-- [WSpacer Widget](../widgets/w-spacer.md) - Widget for explicit spacing
+- [Sizing](./sizing.md)
+- [Flexbox](./flexbox.md) (Gap utilities)
+- [Grid](./grid.md) (Gap utilities)
