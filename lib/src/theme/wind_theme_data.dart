@@ -243,17 +243,17 @@ class WindThemeData {
   static Map<String, MaterialColor> _initColors() {
     return default_colors.colors.map((key, value) {
       if (value is Map<int, Color>) {
-        return MapEntry(key, MaterialColor(value[500]!.value, value));
+        return MapEntry(key, MaterialColor(value[500]!.toARGB32(), value));
       }
       if (value is Color) {
         final shades = {
           for (var i = 50; i <= 900; i += (i == 50 ? 50 : 100)) i: value,
         };
-        return MapEntry(key, MaterialColor(value.value, shades));
+        return MapEntry(key, MaterialColor(value.toARGB32(), shades));
       }
       return MapEntry(key, MaterialColor(0, {}));
     })
-      ..removeWhere((key, value) => value.value == 0);
+      ..removeWhere((key, value) => value.toARGB32() == 0);
   }
 
   /// Returns a color from the theme.
@@ -430,7 +430,7 @@ class WindThemeData {
     // Helper to safely fetch default material color
     MaterialColor getDefault(String name) {
       final raw = default_colors.colors[name] as Map<int, Color>;
-      return MaterialColor(raw[500]!.value, raw);
+      return MaterialColor(raw[500]!.toARGB32(), raw);
     }
 
     // Resolve colors or use defaults
