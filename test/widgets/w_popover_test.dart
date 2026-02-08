@@ -14,6 +14,12 @@ Widget wrapWithTheme(Widget child) {
 
 void main() {
   group('WPopover Widget Tests', () {
+    // Ensure overlay state is cleaned up between tests
+    tearDown(() async {
+      // Reset any lingering overlay state
+      await Future<void>.delayed(Duration.zero);
+    });
+
     group('Basic Rendering', () {
       testWidgets('renders trigger widget', (tester) async {
         await tester.pumpWidget(

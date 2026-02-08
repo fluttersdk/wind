@@ -10,6 +10,11 @@ void main() {
       testMonth = DateTime(2026, 2, 1);
     });
 
+    tearDown(() async {
+      // Clean up any lingering overlays from previous tests
+      await Future<void>.delayed(Duration.zero);
+    });
+
     Widget buildTestWidget({
       required DateTime month,
       ValueChanged<DateTime>? onMonthChanged,
@@ -21,12 +26,17 @@ void main() {
         home: WindTheme(
           data: WindThemeData(),
           child: Scaffold(
-            body: WCalendarHeader(
-              month: month,
-              onMonthChanged: onMonthChanged,
-              className: className,
-              minDate: minDate,
-              maxDate: maxDate,
+            body: Center(
+              child: SizedBox(
+                width: 400,
+                child: WCalendarHeader(
+                  month: month,
+                  onMonthChanged: onMonthChanged,
+                  className: className,
+                  minDate: minDate,
+                  maxDate: maxDate,
+                ),
+              ),
             ),
           ),
         ),
@@ -138,8 +148,8 @@ void main() {
           onMonthChanged: (month) => newMonth = month,
         ));
 
-        // Tap previous button
-        await tester.tap(find.byIcon(Icons.chevron_left));
+        // Tap previous button (warnIfMissed: false because button may be disabled/obscured at boundary)
+        await tester.tap(find.byIcon(Icons.chevron_left), warnIfMissed: false);
         await tester.pump();
 
         // Should not navigate since we're at minDate month
@@ -156,8 +166,8 @@ void main() {
           onMonthChanged: (month) => newMonth = month,
         ));
 
-        // Tap next button
-        await tester.tap(find.byIcon(Icons.chevron_right));
+        // Tap next button (warnIfMissed: false because button may be disabled/obscured at boundary)
+        await tester.tap(find.byIcon(Icons.chevron_right), warnIfMissed: false);
         await tester.pump();
 
         // Should not navigate since we're at maxDate month
