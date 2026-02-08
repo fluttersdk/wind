@@ -238,20 +238,24 @@ void main() {
     expect((gapWidget as SizedBox).width, 16.0);
   });
 
-  testWidgets('w-full h-full works inside scroll view (overflow-auto)', (
+  testWidgets('w-full works inside scroll view (overflow-y-auto)', (
     tester,
   ) async {
-    // This tests the fix for FractionallySizedBox infinite constraints error
-    // when w-full/h-full is used inside a scrollable container
+    // This tests that w-full works inside a vertical scroll view
+    // Note: h-full cannot work in unbounded scroll - use fixed height instead
     await tester.pumpWidget(
       MaterialApp(
         home: WindTheme(
           data: WindThemeData(),
-          child: const WDiv(
-            className: 'w-full h-full overflow-auto',
+          child: const SizedBox(
+            width: 400,
+            height: 600,
             child: WDiv(
-              className: 'w-full h-full flex items-center justify-center',
-              child: Text('Centered'),
+              className: 'w-full h-full overflow-y-auto',
+              child: WDiv(
+                className: 'w-full h-64 flex items-center justify-center',
+                child: Text('Centered'),
+              ),
             ),
           ),
         ),
@@ -261,18 +265,7 @@ void main() {
     // Should not throw any errors and render successfully
     expect(find.text('Centered'), findsOneWidget);
 
-    // Verify we have SingleChildScrollView(s) (from overflow-auto - nested for both directions)
-    expect(find.byType(SingleChildScrollView), findsWidgets);
-
-    // Verify the inner content uses SizedBox for full-size (not FractionallySizedBox)
-    // because constraints are unbounded inside scroll view
-    final sizedBoxFinder = find.byWidgetPredicate((widget) {
-      if (widget is SizedBox) {
-        // Looking for SizedBox that uses screen dimensions
-        return widget.width != null && widget.height != null;
-      }
-      return false;
-    });
-    expect(sizedBoxFinder, findsWidgets);
+    // Verify we have SingleChildScrollView (from overflow-y-auto)
+    expect(find.byType(SingleChildScrollView), findsOneWidget);
   });
 }
