@@ -1,105 +1,194 @@
 # WCalendarGrid
 
-A reusable calendar grid component for displaying month views with selectable day cells.
+A calendar grid widget that displays a month view with weekday headers and selectable day cells. It supports single date selection, date range highlighting, and date constraints.
 
-<!-- TODO: x-preview - implement live preview component -->
-<x-preview path="calendar/calendar_grid_basic" size="md" source="example/lib/pages/calendar/calendar_grid_basic.dart"></x-preview>
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_calendar_grid" action="CREATE" -->
+<!-- Description: Demonstrate basic calendar grid with date selection and range highlighting. -->
+<x-preview path="widgets/w_calendar_grid" size="md" source="example/lib/pages/widgets/w_calendar_grid.dart"></x-preview>
 
+```dart
+WCalendarGrid(
+  month: DateTime(2026, 2, 1),
+  selectedDate: DateTime(2026, 2, 15),
+  onDateSelected: (date) => print('Selected: $date'),
+)
+```
+
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
+<a name="basic-usage"></a>
 ## Basic Usage
 
-```dart
-WCalendarGrid(
-  month: DateTime(2026, 2, 1),
-  selectedDate: _selectedDate,
-  onDateSelected: (date) => setState(() => _selectedDate = date),
-)
-```
-
-## Date Range Highlighting
-
-<!-- TODO: x-preview - implement live preview component -->
-<x-preview path="calendar/calendar_grid_range" size="md" source="example/lib/pages/calendar/calendar_grid_range.dart"></x-preview>
-
-Display a highlighted date range:
+The `WCalendarGrid` widget renders a 7-column grid representing a specific month. It handles the logic for date offsets, previous/next month day padding, and date selection states.
 
 ```dart
 WCalendarGrid(
-  month: DateTime(2026, 2, 1),
-  selectedRange: DateTimeRange(
-    start: DateTime(2026, 2, 10),
-    end: DateTime(2026, 2, 20),
-  ),
-  onDateSelected: (date) => _handleDateTap(date),
+  month: DateTime.now(),
+  onDateSelected: (date) {
+    // Handle date selection
+  },
 )
 ```
 
-## Date Constraints
-
-Disable dates outside a valid range:
+<a name="constructor"></a>
+## Constructor
 
 ```dart
-WCalendarGrid(
-  month: DateTime(2026, 2, 1),
-  minDate: DateTime(2026, 2, 5),
-  maxDate: DateTime(2026, 2, 25),
-  onDateSelected: (date) => setState(() => _date = date),
-)
+const WCalendarGrid({
+  Key? key,
+  required DateTime month,
+  DateTime? selectedDate,
+  DateTimeRange? selectedRange,
+  DateTime? minDate,
+  DateTime? maxDate,
+  ValueChanged<DateTime>? onDateSelected,
+  String? className,
+  String? dayClassName,
+  String? selectedDayClassName,
+  String? disabledDayClassName,
+  String? rangeDayClassName,
+  String? todayClassName,
+  String? weekdayHeaderClassName,
+  int firstDayOfWeek = DateTime.sunday,
+})
 ```
 
-## Custom Styling
-
-```dart
-WCalendarGrid(
-  month: DateTime(2026, 2, 1),
-  className: 'bg-gray-50 dark:bg-gray-900 p-2 rounded-lg',
-  dayClassName: 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full',
-  selectedDayClassName: 'bg-primary text-white rounded-full font-medium',
-  disabledDayClassName: 'text-gray-300 dark:text-gray-600 cursor-not-allowed',
-  rangeDayClassName: 'bg-primary/10 dark:bg-primary/20 text-gray-900 dark:text-gray-100',
-  todayClassName: 'border border-primary text-primary rounded-full font-medium',
-  weekdayHeaderClassName: 'text-xs font-medium text-gray-500 dark:text-gray-400',
-)
-```
-
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `month` | `DateTime` | required | Month to display |
-| `selectedDate` | `DateTime?` | - | Single selected date |
-| `selectedRange` | `DateTimeRange?` | - | Selected date range |
-| `minDate` | `DateTime?` | - | Minimum selectable date |
-| `maxDate` | `DateTime?` | - | Maximum selectable date |
-| `onDateSelected` | `ValueChanged<DateTime>?` | - | Date tap callback |
-| `className` | `String?` | - | Grid container styling |
-| `dayClassName` | `String?` | - | Day cell styling |
-| `selectedDayClassName` | `String?` | - | Selected day styling |
-| `disabledDayClassName` | `String?` | - | Disabled day styling |
-| `rangeDayClassName` | `String?` | - | Range day styling |
-| `todayClassName` | `String?` | - | Today styling |
-| `weekdayHeaderClassName` | `String?` | - | Weekday header styling |
-| `firstDayOfWeek` | `int` | `DateTime.sunday` | First day of week |
+|:-----|:-----|:--------|:------------|
+| `month` | `DateTime` | **Required** | The month to display (only year and month are used) |
+| `selectedDate` | `DateTime?` | `null` | Currently selected single date |
+| `selectedRange` | `DateTimeRange?` | `null` | Currently selected date range for highlighting |
+| `minDate` | `DateTime?` | `null` | Minimum selectable date |
+| `maxDate` | `DateTime?` | `null` | Maximum selectable date |
+| `onDateSelected` | `ValueChanged<DateTime>?` | `null` | Callback when a day cell is tapped |
+| `className` | `String?` | `null` | Wind utility classes for the grid container |
+| `dayClassName` | `String?` | `null` | Utility classes for standard day cells |
+| `selectedDayClassName` | `String?` | `null` | Utility classes for the selected day cell |
+| `disabledDayClassName` | `String?` | `null` | Utility classes for disabled/out-of-month cells |
+| `rangeDayClassName` | `String?` | `null` | Utility classes for days within a selected range |
+| `todayClassName` | `String?` | `null` | Utility classes for the current date cell |
+| `weekdayHeaderClassName` | `String?` | `null` | Utility classes for the weekday initials (Su, Mo, etc.) |
+| `firstDayOfWeek` | `int` | `DateTime.sunday` | Starting day of the week (1-7) |
 
-## Grid Structure
+<a name="layout-modes"></a>
+## Layout Modes
 
-The calendar grid displays:
+`WCalendarGrid` is a specialized grid component. It automatically calculates a 6-week grid (42 days) to ensure consistent height across different months, including leading and trailing days from adjacent months.
 
-- **7 weekday headers** (Su, Mo, Tu, We, Th, Fr, Sa)
-- **6 rows of day cells** (42 total cells)
-- **Previous/next month days** shown with faded styling
+### Custom Grid Container
+You can style the outer container of the grid using the `className` prop.
 
-## Visual States
+```dart
+WCalendarGrid(
+  month: DateTime.now(),
+  className: 'bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700',
+)
+```
 
-| State | Styling Applied |
-| :--- | :--- |
-| Selected | `selectedDayClassName` |
-| In Range | `rangeDayClassName` |
-| Today | `todayClassName` |
-| Disabled | `disabledDayClassName` |
-| Normal | `dayClassName` |
-| Other Month | Faded/disabled |
+<a name="event-handling"></a>
+## Event Handling
 
+The primary event is `onDateSelected`, which triggers when a user taps a valid, non-disabled day cell.
+
+```dart
+WCalendarGrid(
+  month: DateTime.now(),
+  onDateSelected: (date) {
+    setState(() => _selected = date);
+  },
+)
+```
+
+<a name="state-variants"></a>
+## State Variants
+
+Unlike most Wind widgets that use `hover:` or `focus:` prefixes in a single `className`, `WCalendarGrid` provides specific props for different date states:
+
+- **Selected**: Applied when `date == selectedDate`.
+- **Range**: Applied to dates between `selectedRange.start` and `selectedRange.end`.
+- **Today**: Applied to the current system date.
+- **Disabled**: Applied to dates outside `minDate`/`maxDate` or outside the current month.
+
+```dart
+WCalendarGrid(
+  month: DateTime.now(),
+  selectedDayClassName: 'bg-indigo-600 text-white shadow-md',
+  todayClassName: 'border-2 border-indigo-600 text-indigo-600',
+  rangeDayClassName: 'bg-indigo-50 text-indigo-900',
+)
+```
+
+<a name="styling-examples"></a>
+## Styling Examples
+
+### Custom Weekday Headers
+Modify the appearance of the "Su", "Mo", etc., labels.
+
+```dart
+WCalendarGrid(
+  month: DateTime.now(),
+  weekdayHeaderClassName: 'text-[10px] uppercase tracking-wider text-gray-400 font-bold',
+)
+```
+
+### Subtle Range Selection
+Creating a soft highlight for date ranges.
+
+```dart
+WCalendarGrid(
+  month: DateTime.now(),
+  selectedRange: DateTimeRange(
+    start: DateTime.now(),
+    end: DateTime.now().add(const Duration(days: 5)),
+  ),
+  rangeDayClassName: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
+  selectedDayClassName: 'bg-blue-600 text-white',
+)
+```
+
+<a name="all-supported-classes"></a>
+## All Supported Classes
+
+The grid container and individual cell props support the standard Wind utility categories.
+
+| Category | Classes |
+|:---------|:--------|
+| Layout | `flex`, `grid`, `block`, `hidden` |
+| Spacing | `p-{n}`, `m-{n}`, `gap-{n}` |
+| Sizing | `w-{size}`, `h-{size}` |
+| Typography | `text-{size}`, `font-{weight}`, `italic`, `uppercase` |
+| Colors | `bg-{color}`, `text-{color}` |
+| Borders | `border`, `rounded`, `ring`, `shadow` |
+
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+Default styling for `WCalendarGrid` relies on the theme's primary color and gray scales.
+
+```dart
+WindThemeData(
+  colors: {
+    'primary': Colors.indigo, // Affects default selected/range colors
+  },
+)
+```
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [WCalendarHeader](./w-calendar-header.md) - Month navigation header
-- [WDatePicker](./w-date-picker.md) - Complete date picker widget
+- [WDatePicker](./w-date-picker.md)
+- [WCalendarHeader](./w-calendar-header.md)
+- [Background Color](../background/background-color.md)
+- [Border Radius](../borders/border-radius.md)
