@@ -1,294 +1,157 @@
-# State-Based Styling
+# State Management & Interactive Styles
 
-Wind allows you to easily manage hover, disabled, and other state-based styles in Flutter widgets using utility class names. With utilities like `hover:bg-blue-500` or `disabled:bg-gray-300`, you can define styles that adapt to a widget's state seamlessly.
+- [Introduction](#introduction)
+- [How It Works](#how-it-works)
+- [Built-in State Prefixes](#built-in-state-prefixes)
+- [Quick Reference](#quick-reference)
+- [Interactive Widgets](#interactive-widgets)
+  - [WAnchor: The Core Wrapper](#wanchor-the-core-wrapper)
+  - [WButton: The High-Level Action](#wbutton-the-high-level-action)
+  - [WInput: Focus States](#winput-focus-states)
+- [Custom States](#custom-states)
+- [State Propagation](#state-propagation)
+- [Related Documentation](#related-documentation)
 
-## Core Concept
+<a name="introduction"></a>
+## Introduction
 
-Wind dynamically parses class names based on widget states and applies the corresponding styles efficiently. This allows you to create interactive UI elements without complex manual state handling.
+Interactive styles allow you to define how your UI reacts to user input without managing complex state variables. Instead of nesting multiple `MouseRegion`, `GestureDetector`, and `Focus` widgets, Wind provides a declarative way to handle states directly in your `className` string.
 
-```dart
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: 'bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded',
-    children: [WText('Hover me', className: 'text-white')],
-  ),
-)
-```
+By using prefixes like `hover:`, `focus:`, and `active:`, you can build responsive, tactile interfaces that feel native to both web and mobile platforms.
 
-## Built-in States
-
-Wind supports three built-in interaction states that are automatically managed by **`WAnchor`** and **`WButton`** widgets:
-
-| Widget | Description |
-| :--- | :--- |
-| `WAnchor` | Low-level state wrapper. Wraps any widget to enable `hover:`, `focus:`, `disabled:` styling. |
-| `WButton` | High-level button component. Internally uses `WAnchor` + adds `isLoading`, `disabled` props and loading spinner. |
-
-> **Tip:** Use `WButton` for buttons (it handles everything automatically). Use `WAnchor` when you need state management on custom widgets like cards or list items.
-
-### Hover State
-
-<x-preview path="effects/states_basic" size="md" source="example/lib/pages/effects/states_basic.dart"></x-preview>
-
-Apply styles when the user hovers over the element.
-
-```dart
-// Using WAnchor (for custom widgets)
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: 'bg-blue-500 hover:bg-blue-700 px-6 py-3 rounded-lg',
-    children: [
-      WText('Hover me', className: 'text-white font-medium'),
-    ],
-  ),
-)
-
-// Using WButton (recommended for buttons)
-WButton(
-  onTap: () {},
-  className: 'bg-blue-500 hover:bg-blue-700 text-white px-6 py-3 rounded-lg',
-  child: Text('Hover me'),
-)
-```
-
-| Prefix | Condition |
-| :--- | :--- |
-| `hover:` | Applied when pointer is over the element |
-
-### Focus State
-
-Apply styles when the element has focus.
-
-```dart
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: '''
-      bg-white border border-gray-300
-      focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-      px-6 py-3 rounded-lg
-    ''',
-    children: [
-      WText('Click to focus', className: 'text-gray-700 font-medium'),
-    ],
-  ),
-)
-```
-
-| Prefix | Condition |
-| :--- | :--- |
-| `focus:` | Applied when element has focus (after tap) |
-
-### Disabled State
-
-Apply styles when the element is disabled.
-
-```dart
-// WAnchor: disabled when onTap is null
-WAnchor(
-  onTap: null,
-  child: WDiv(
-    className: 'bg-green-500 disabled:bg-gray-400 px-6 py-3 rounded-lg',
-    children: [WText('Disabled', className: 'text-white font-medium')],
-  ),
-)
-
-// WButton: use disabled prop
-WButton(
-  onTap: () {},
-  disabled: true,
-  className: 'bg-green-500 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg',
-  child: Text('Disabled'),
-)
-```
-
-| Prefix | Condition |
-| :--- | :--- |
-| `disabled:` | Applied when `WAnchor.onTap` is null or `WButton.disabled` is true |
-
-### Loading State (WButton only)
-
-`WButton` has built-in loading state with automatic spinner:
-
-```dart
-WButton(
-  onTap: _submit,
-  isLoading: _isSubmitting,
-  loadingText: 'Submitting...',
-  className: '''
-    bg-blue-600 text-white px-4 py-2 rounded-lg
-    loading:opacity-70
-  ''',
-  child: Text('Submit'),
-)
-```
-
-| Prefix | Condition |
-| :--- | :--- |
-| `loading:` | Applied when `WButton.isLoading` is true |
-
-## Custom States
-
-<x-preview path="effects/states_custom" size="lg" source="example/lib/pages/effects/states_custom.dart"></x-preview>
-
-Wind also supports custom states that you define yourself. This is powerful for creating complex UI patterns.
-
-### Using Custom States
-
-Pass a `Set<String>` of active states to the `states` parameter of any Wind widget:
-
-#### Loading State Example
-
-```dart
-class MyWidget extends StatefulWidget {
-  @override
-  State<MyWidget> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  bool isLoading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => setState(() => isLoading = !isLoading),
-      child: WDiv(
-        className: 'bg-blue-500 loading:bg-gray-400 px-6 py-3 rounded-lg',
-        states: isLoading ? {'loading'} : {},
-        children: [
-          WText(
-            isLoading ? 'Loading...' : 'Click to toggle loading',
-            className: 'text-white font-medium',
-          ),
-        ],
-      ),
-    );
-  }
-}
-```
-
-#### Selected State Example
-
-```dart
-WDiv(
-  className: '''
-    bg-white border-2 border-gray-300
-    selected:border-blue-500 selected:bg-blue-50
-    px-6 py-3 rounded-lg
-  ''',
-  states: isSelected ? {'selected'} : {},
-  children: [
-    WText(isSelected ? 'Selected' : 'Click to select'),
-  ],
-)
-```
-
-#### WText with States
-
-```dart
-WText(
-  'Status message',
-  className: 'text-gray-600 error:text-red-500 success:text-green-500',
-  states: {if (hasError) 'error', if (isSuccess) 'success'},
-)
-```
-
-#### WButton with States
-
-```dart
-WButton(
-  onTap: _submit,
-  className: 'bg-blue-500 error:bg-red-500 success:bg-green-500 text-white px-4 py-2',
-  states: {if (hasError) 'error', if (isSuccess) 'success'},
-  child: Text('Submit'),
-)
-```
-
-#### WAnchor (Propagates to Children)
-
-```dart
-WAnchor(
-  onTap: () {},
-  states: {'loading'},  // Propagated to all child widgets
-  child: WDiv(
-    className: 'bg-blue-500 loading:bg-gray-400 loading:opacity-70',
-    children: [WText('Content')],
-  ),
-)
-```
-
-## Combining States with Transitions
-
-Combine state prefixes with transition utilities for smooth animations:
-
-```dart
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: '''
-      bg-purple-500 hover:bg-purple-700 hover:shadow-lg
-      px-6 py-3 rounded-lg duration-300
-    ''',
-    children: [
-      WText('Smooth transition', className: 'text-white font-medium'),
-    ],
-  ),
-)
-```
-
-## Platform States
-
-Wind also supports platform-specific prefixes:
-
-| Prefix | Condition |
-| :--- | :--- |
-| `ios:` | Applied on iOS platform |
-| `android:` | Applied on Android platform |
-| `web:` | Applied on web platform |
-| `mobile:` | Applied on mobile (iOS or Android) |
-
-```dart
-WDiv(
-  className: 'p-4 ios:p-6 android:p-5',
-  children: [...],
-)
-```
-
-## Responsive States
-
-Combine state prefixes with responsive breakpoints:
-
-```dart
-WDiv(
-  className: 'bg-gray-100 md:hover:bg-blue-100 lg:hover:bg-green-100',
-  children: [...],
-)
-```
-
+<a name="how-it-works"></a>
 ## How It Works
 
-Under the hood, Wind uses a unified `activeStates` system:
+<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/state_management_overview" action="CREATE" -->
+<!-- Description: A demonstration of a card that changes color on hover, scales on click, and shows focus rings. -->
+<x-preview path="core-concepts/state_management_overview" size="md" source="example/lib/pages/core-concepts/state_management_overview.dart"></x-preview>
 
-1. **WAnchor** detects hover, focus, and disabled states
-2. States are passed to **WindContext** as a `Set<String>`
-3. **WindParser** filters classes based on state prefixes
-4. Only matching classes are applied to the widget
+Wind's parsing engine identifies state prefixes in your class string and stores them in a separate style map. When the widget's internal state changes (e.g., a user hovers over it), the widget rebuilds and applies the corresponding styles.
 
-This architecture allows infinite extensibility - any string can be a state prefix!
+Consider this basic button example:
 
 ```dart
-// These are all valid state prefixes:
-'loading:opacity-50'
-'selected:ring-2'
-'error:border-red-500'
-'success:bg-green-100'
-'dragging:shadow-xl'
+WButton(
+  onTap: () => print('Action triggered'),
+  className: 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 p-4 rounded-lg duration-200',
+  child: WText('Save Changes', className: 'text-white'),
+)
 ```
 
+In this case, the background color transitions smoothly between shades based on the interaction state.
+
+> [!NOTE]
+> For state prefixes to work, the widget must be wrapped in an interactive component like `WAnchor`, `WButton`, or `WInput`. A standard `WDiv` is passive and will not trigger interaction states on its own.
+
+<a name="built-in-state-prefixes"></a>
+## Built-in State Prefixes
+
+Wind supports several interactive states out of the box. These are automatically managed when using interactive widgets:
+
+- **hover**: Triggered when a pointer enters the widget bounds.
+- **focus**: Triggered when the widget receives keyboard or input focus.
+- **active**: Triggered while the widget is being pressed or tapped.
+- **disabled**: Triggered when the widget's interactivity is disabled (e.g., `onTap` is null).
+
+<a name="quick-reference"></a>
+## Quick Reference
+
+| Prefix | Trigger | Typical Use Case |
+|:-------|:--------|:-----------------|
+| `hover:` | Pointer entry | Changing background or elevation on desktop. |
+| `focus:` | Keyboard focus | Showing a ring or border on input fields. |
+| `active:` | Pointer press | Scaling down or darkening a button on tap. |
+| `disabled:` | Interactivity off | Reducing opacity or greying out actions. |
+
+<a name="interactive-widgets"></a>
+## Interactive Widgets
+
+Wind provides specific widgets designed to manage and propagate these states.
+
+<a name="wanchor-the-core-wrapper"></a>
+### WAnchor: The Core Wrapper
+
+`WAnchor` is the low-level engine behind Wind's interactivity. It provides no visual styling itself; its sole purpose is to detect gestures and share that state with its child tree. This is useful for making entire cards or complex layouts interactive.
+
+```dart
+WAnchor(
+  onTap: () {},
+  child: WDiv(
+    className: 'bg-white hover:bg-slate-50 border p-6 rounded-xl duration-300',
+    children: [
+      WText('Interactive Card', className: 'group-hover:text-blue-600'),
+    ],
+  ),
+)
+```
+
+<a name="wbutton-the-high-level-action"></a>
+### WButton: The High-Level Action
+
+While `WAnchor` is for generic wrappers, `WButton` is optimized for actions. It includes built-in support for loading states, padding defaults, and button-specific accessibility.
+
+```dart
+WButton(
+  onTap: _submit,
+  className: 'bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-8 py-3 rounded',
+  child: Text('Submit'),
+)
+```
+
+<a name="winput-focus-states"></a>
+### WInput: Focus States
+
+`WInput` manages its own focus state. It is common to use `focus:` prefixes here to highlight the active field or show a focus ring.
+
+```dart
+WInput(
+  placeholder: 'Search...',
+  className: 'border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 p-3 rounded-lg',
+)
+```
+
+<a name="custom-states"></a>
+## Custom States
+
+Sometimes you need to style a widget based on a state that isn't built-in, such as whether an item is "selected" or "loading". You can pass custom strings to the `states` parameter.
+
+```dart
+WDiv(
+  className: 'border-2 border-gray-200 selected:border-blue-500 bg-white selected:bg-blue-50 p-4',
+  states: isSelected ? {'selected'} : {},
+  child: WText('Selection Item'),
+)
+```
+
+If the `states` set contains "selected", any class prefixed with `selected:` will be applied.
+
+<a name="state-propagation"></a>
+## State Propagation
+
+Interactivity in Wind is shared through `WindContext`. When an ancestor widget like `WAnchor` changes state, it propagates that state to all children in its subtree.
+
+Let's look at a nested example:
+
+```dart
+WAnchor(
+  onTap: () {},
+  child: WDiv(
+    className: 'p-4 bg-white hover:bg-gray-50',
+    children: [
+      WText('Title', className: 'font-bold hover:text-blue-600'),
+      WText('Description', className: 'text-gray-500'),
+    ],
+  ),
+)
+```
+
+Even if the mouse is only hovering over the padding of the `WDiv`, the `WText` widget will receive the "hover" state and update its color accordingly.
+
+That's all.
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Utility-First Fundamentals](./utility-first.md) - Core concepts
-- [Responsive Design](./responsive-design.md) - Breakpoint prefixes
-- [Transitions](../effects/transition.md) - Smooth state changes
+- [Responsive Design](./responsive-design.md) - Combining states with breakpoints.
+- [Dark Mode](./dark-mode.md) - Styling for night owls.
+- [WAnchor Widget](../widgets/w-anchor.md) - Technical reference for the anchor engine.

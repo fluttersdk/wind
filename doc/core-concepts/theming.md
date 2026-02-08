@@ -1,177 +1,177 @@
 # Theme Configuration
 
-Wind uses a centralized, immutable theme system to configure all design tokens. You can customize the look and feel of your application by defining values in `WindTheme`.
+- [Introduction](#introduction)
+- [The WindTheme Widget](#the-windtheme-widget)
+- [Colors](#colors)
+- [Typography](#typography)
+- [Spacing and Sizing](#spacing-and-sizing)
+- [Borders and Shadows](#borders-and-shadows)
+- [Customizing Defaults](#customizing-defaults)
+- [Quick Reference](#quick-reference)
 
-## Setup
+<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/theming" action="CREATE" -->
+<!-- Description: Showcase a customized WindThemeData with unique colors, spacing, and typography scales. -->
+<x-preview path="core-concepts/theming" size="md" source="example/lib/pages/core-concepts/theming_example.dart"></x-preview>
 
-To customize the theme, wrap your app (or a specific subtree) with `WindTheme`.
+<a name="introduction"></a>
+## Introduction
+
+Wind is designed to be fully customizable from the ground up. If you've ever used Tailwind CSS, you'll feel right at home with how we handle "design tokens." Instead of hunting through nested widget properties to change a color or a font size, you define your design system once in your theme configuration.
+
+Everything in Wind—from the colors in `bg-blue-500` to the spacing in `p-4`—is driven by `WindThemeData`. This ensures that your UI remains consistent across the entire application while giving you the freedom to break away from defaults whenever you need to.
+
+<a name="the-windtheme-widget"></a>
+## The WindTheme Widget
+
+To start customizing your design system, you need to wrap your application with the `WindTheme` widget. This widget acts as a provider, making your theme configuration available to all `W` widgets in the tree.
+
+> [!IMPORTANT]
+> Always use the `data:` parameter when providing your theme configuration. Earlier alpha versions used `theme:`, but this has been updated for consistency.
+
+Let's look at a basic setup:
 
 ```dart
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return WindTheme(
-      theme: WindThemeData(
-        colors: {
-          'brand': Colors.indigo, // Automatically generates 50-900 shades
-          'accent': Colors.teal,
-        },
-        baseSpacingUnit: 4.0,
-        fontFamilies: {
-          'sans': 'Inter',
-          'serif': 'Merriweather',
-        },
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+
+void main() {
+  runApp(
+    WindTheme(
+      data: WindThemeData(
+        // We'll customize this in the next sections
       ),
       child: MaterialApp(
-        title: 'My App',
-        home: HomePage(),
+        home: MyHome(),
       ),
-    );
-  }
+    ),
+  );
 }
 ```
 
-## Configurable Options
+<a name="colors"></a>
+## Colors
 
-### 1. General Settings
+Colors in Wind are defined as palettes. When you add a color to your theme, Wind expects a `MaterialColor` (or a Map of shades) so it can resolve utilities like `bg-brand-50` through `bg-brand-950`.
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `brightness` | `Brightness` | `light` | Sets theme mode. In `dark`, colors are automatically inverted unless manually overridden. |
-| `baseSpacingUnit` | `double` | `4.0` | Base pixel value for spacing utilities (`p-4` = 4 * 4.0 = 16px). |
-| `applyDefaultFontFamily` | `bool` | `true` | If true, applies `font-sans` globally via `DefaultTextStyle`. |
+Here's how to define custom colors:
 
-### 2. Typography
+```dart
+WindThemeData(
+  colors: {
+    // Single color - Wind automatically generates shades
+    'brand': Colors.indigo, 
+    
+    // Explicit shades for fine-tuned control
+    'accent': MaterialColor(0xFF3B82F6, {
+      50: Color(0xFFEFF6FF),
+      500: Color(0xFF3B82F6),
+      900: Color(0xFF1E3A8A),
+    }),
+  },
+)
+```
 
-Define your typographic scale and font families.
+Once defined, these become available as utility classes immediately: `text-brand-600`, `bg-accent-500/50`, or `border-brand-900`.
+
+<a name="typography"></a>
+## Typography
+
+You can take full control of your app's typography by overriding font families, sizes, and weights. Wind applies a "sans" font family globally by default, mimicking Tailwind's behavior.
 
 ```dart
 WindThemeData(
   fontFamilies: {
-    'sans': 'Roboto',      // Used by default
-    'display': 'Oswald',   // Use as font-display
-    'mono': 'Fira Code',   // Use as font-mono
+    'sans': 'Inter',      // The default global font
+    'display': 'Oswald',   // Accessible via font-display
   },
   fontSizes: {
     'xs': 12.0,
-    'sm': 14.0,
     'base': 16.0,
-    'lg': 18.0,
     'xl': 20.0,
-    '2xl': 24.0,
-    // ...
+    '4xl': 36.0,
   },
   fontWeights: {
     'thin': FontWeight.w100,
-    'normal': FontWeight.w400,
     'bold': FontWeight.w700,
   },
 )
 ```
 
-### 3. Colors
+But what if you don't want Wind to inject a global `DefaultTextStyle`? You can simply set `applyDefaultFontFamily: false` in your configuration.
 
-Wind generates a full Material palette (50-900) from a single `Color`.
+<a name="spacing-and-sizing"></a>
+## Spacing and Sizing
+
+Wind uses a numeric scale for spacing (`p-4`, `m-2`, `gap-6`). By default, each unit is equal to `4.0` logical pixels. This means `p-4` translates to `16.0` pixels.
+
+If your design system is built on a different grid (like a 5px or 8px grid), you can adjust the `baseSpacingUnit`:
 
 ```dart
 WindThemeData(
-  colors: {
-    'primary': Color(0xFF3B82F6), // Generates primary-50 to primary-900
-    'secondary': Colors.purple,
-    'custom': {
-      50: Color(0xFFF0F9FF),
-      500: Color(0xFF0EA5E9),
-      900: Color(0xFF0C4A6E),
-    }, // Manual definition
-  },
+  baseSpacingUnit: 5.0, // Now p-4 = 20px
 )
 ```
 
-**Usage:** `bg-primary-500`, `text-secondary-600`, `border-custom-900`
-
-### 4. Spacing & Sizing
-
-Customize breakpoints and spacing logic.
+You can also customize the "container" sizes or "screen" breakpoints if the default Tailwind values don't fit your needs:
 
 ```dart
 WindThemeData(
   screens: {
-    'sm': 640,
-    'md': 768,
-    'lg': 1024,
-    'xl': 1280,
-  },
-  // Custom container max-widths per breakpoint
-  containers: {
     'sm': 600,
-    'md': 720,
-    'lg': 960,
-    'xl': 1140,
+    'md': 900,
+    'lg': 1200,
   },
 )
 ```
 
-### 5. Borders & Effects
+<a name="borders-and-shadows"></a>
+## Borders and Shadows
 
-Fine-tune radii, shadows, and transitions.
+The "feel" of your app often comes down to its borders and shadows. Wind allows you to define these scales explicitly so your `rounded-lg` or `shadow-xl` classes are always consistent.
 
 ```dart
 WindThemeData(
   borderRadius: {
     'none': 0,
     'sm': 2,
-    'DEFAULT': 4, // Used for 'rounded'
-    'md': 6,
+    'DEFAULT': 4, // Applied by 'rounded' class
     'lg': 8,
     'full': 9999,
   },
   shadows: {
-    'sm': [BoxShadow(blurRadius: 2, color: Colors.black12)],
-    'DEFAULT': [BoxShadow(blurRadius: 4, color: Colors.black26)],
+    'sm': [BoxShadow(color: Colors.black12, blurRadius: 2)],
+    'md': [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
   },
 )
 ```
 
-## Programmatic Access
+<a name="customizing-defaults"></a>
+## Customizing Defaults
 
-Access theme data programmatically using context extensions.
+Wind provides a comprehensive default theme that matches Tailwind CSS v3. When you provide your own `WindThemeData`, your values are **merged** with the defaults.
 
-### Reading Values
-
-```dart
-// Get raw theme data
-final theme = context.windThemeData;
-
-// Get specific resolved values
-final primaryColor = theme.getColor('primary', 500);
-final padding = theme.getSpacing('4'); // 16.0
-final isDark = context.windIsDark;
-```
-
-### Modifying Theme (Runtime)
-
-Use the controller to toggle or update the theme dynamically.
+If you want to tweak just one or two things from an existing configuration, use `copyWith`:
 
 ```dart
-// Toggle Dark/Light Mode
-context.windTheme.toggleTheme();
-
-// Update Theme
-context.windTheme.updateTheme(
-  colors: {'primary': Colors.red},
+final darkTheme = myDefaultTheme.copyWith(
+  brightness: Brightness.dark,
+  ringColor: Colors.amber,
 );
 ```
 
-## Default Theme Reference
+<a name="quick-reference"></a>
+## Quick Reference
 
-Wind comes pre-configured with a default theme inspired by Tailwind CSS v3.
+| Property | Type | Description |
+|:---------|:-----|:------------|
+| `brightness` | `Brightness` | Sets the default mode (`light` or `dark`). |
+| `colors` | `Map<String, MaterialColor>` | Custom color palettes for your app. |
+| `baseSpacingUnit` | `double` | The multiplier for numeric spacing (default: 4.0). |
+| `fontFamilies` | `Map<String, String>` | Font aliases (sans, serif, mono, etc.). |
+| `fontSizes` | `Map<String, double>` | Numeric scale for text sizes. |
+| `borderRadius` | `Map<String, double>` | Corner radius scale for `rounded-*`. |
+| `shadows` | `Map<String, List<BoxShadow>>` | Shadow definitions for `shadow-*`. |
+| `syncWithSystem` | `bool` | Whether to automatically follow OS brightness. |
 
-- **Colors:** Full Tailwind palette (Slate, Gray, Zinc, Neutral, Stone, Red, Orange, Amber, Yellow, Lime, Green, Emerald, Teal, Cyan, Sky, Blue, Indigo, Violet, Purple, Fuchsia, Pink, Rose).
-- **Screens:** `sm` (640px), `md` (768px), `lg` (1024px), `xl` (1280px), `2xl` (1536px).
-- **Spacing:** Base unit is `4.0` pixels.
+For more details on how to sync these values with Flutter's standard Material components, check out the [Theme Binding](./theme-binding.md) guide.
 
-## Integration
-
-To ensure seamless integration with standard Flutter widgets, you can bind your Wind theme to Flutter's `ThemeData`. This allows standard Material widgets to automatically reflect your Wind configuration.
-
-Learn more in the [Theme Binding](./theme-binding.md) guide.
+That's all.
