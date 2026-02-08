@@ -2,6 +2,16 @@
 
 A utility-first text component that translates Tailwind-like class strings into optimized Flutter typography.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Typography Styling](#typography-styling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-text" action="UPDATE" -->
 <!-- Description: Show a high-impact example of WText with typography, color, and composition utilities. -->
 <x-preview path="widgets/w-text" size="md" source="example/lib/pages/widgets/w_text.dart"></x-preview>

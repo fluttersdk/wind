@@ -2,18 +2,6 @@
 
 A calendar grid widget that displays a month view with weekday headers and selectable day cells. It supports single date selection, date range highlighting, and date constraints.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_calendar_grid" action="CREATE" -->
-<!-- Description: Demonstrate basic calendar grid with date selection and range highlighting. -->
-<x-preview path="widgets/w_calendar_grid" size="md" source="example/lib/pages/widgets/w_calendar_grid.dart"></x-preview>
-
-```dart
-WCalendarGrid(
-  month: DateTime(2026, 2, 1),
-  selectedDate: DateTime(2026, 2, 15),
-  onDateSelected: (date) => print('Selected: $date'),
-)
-```
-
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
 - [Props](#props)
@@ -24,6 +12,8 @@ WCalendarGrid(
 - [All Supported Classes](#all-supported-classes)
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
+
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_calendar_grid" action="CREATE" -->
 
 <a name="basic-usage"></a>
 ## Basic Usage

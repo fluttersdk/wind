@@ -4,6 +4,17 @@ The fundamental building block of Wind. `WDiv` acts as a multi-purpose container
 
 It embodies the "Intelligent Composition" philosophy, dynamically constructing the most efficient widget tree based on the provided utility classes. Instead of blindly wrapping content, `WDiv` inspects the `className` and selectively applies specialized widgets like `Padding`, `Align`, `Row`, or `GridView` only when necessary.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_div_basic" action="CREATE" -->
 <!-- Description: Basic demonstration of WDiv as a styled container with flex layout -->
 <x-preview path="widgets/w_div_basic" size="md" source="example/lib/pages/widgets/w_div_basic.dart"></x-preview>
@@ -17,17 +28,6 @@ WDiv(
   ],
 )
 ```
-
-- [Basic Usage](#basic-usage)
-- [Constructor](#constructor)
-- [Props](#props)
-- [Layout Modes](#layout-modes)
-- [Event Handling](#event-handling)
-- [State Variants](#state-variants)
-- [Styling Examples](#styling-examples)
-- [All Supported Classes](#all-supported-classes)
-- [Customizing Theme](#customizing-theme)
-- [Related Documentation](#related-documentation)
 
 <a name="basic-usage"></a>
 ## Basic Usage

@@ -2,6 +2,17 @@
 
 The utility-first icon component for displaying vector icons with Tailwind-like styling. It wraps Flutter's `Icon` widget and applies utility classes for sizing, coloring, and animations while inheriting styles from the surrounding text context.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-icon" action="CREATE" -->
 <!-- Description: Basic WIcon showing star icon with yellow color and large size -->
 <x-preview path="widgets/w-icon" size="md" source="example/lib/pages/widgets/w_icon.dart"></x-preview>

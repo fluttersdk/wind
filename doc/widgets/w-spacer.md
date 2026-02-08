@@ -1,5 +1,7 @@
 # WSpacer
 
+The `WSpacer` is a lightweight widget designed specifically for adding consistent gaps between elements. Unlike `WDiv`, which supports a full range of decorations and layout properties, `WSpacer` renders as a simple `SizedBox`, making it highly efficient for layouts where you only need spacing.
+
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
 - [Props](#props)
@@ -8,8 +10,6 @@
 - [All Supported Classes](#all-supported-classes)
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
-
-The `WSpacer` is a lightweight widget designed specifically for adding consistent gaps between elements. Unlike `WDiv`, which supports a full range of decorations and layout properties, `WSpacer` renders as a simple `SizedBox`, making it highly efficient for layouts where you only need spacing.
 
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_spacer_basic" action="CREATE" -->
 <!-- Description: Demonstrates WSpacer providing vertical gap between form fields -->

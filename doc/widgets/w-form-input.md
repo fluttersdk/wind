@@ -2,6 +2,17 @@
 
 A Wind-styled input that integrates seamlessly with Flutter's native Form validation system. It extends `FormField` to provide automatic error handling, label management, and state-based styling through utility classes.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-form-input" action="CREATE" -->
 <!-- Description: Basic form with WFormInput showing validation and label usage -->
 <x-preview path="widgets/w-form-input" size="md" source="example/lib/pages/widgets/w_form_input.dart"></x-preview>

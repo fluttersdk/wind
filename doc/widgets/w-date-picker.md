@@ -2,18 +2,6 @@
 
 WDatePicker is a utility-first date selection component that provides a sleek, customizable calendar popup for picking single dates or date ranges.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-date-picker" action="CREATE" -->
-<!-- Description: Basic WDatePicker usage showing a single date selection -->
-<x-preview path="widgets/w-date-picker" size="md" source="example/lib/pages/widgets/w-date-picker.dart"></x-preview>
-
-```dart
-WDatePicker(
-  value: selectedDate,
-  onChanged: (date) => setState(() => selectedDate = date),
-  placeholder: 'Select a date',
-)
-```
-
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
 - [Props](#props)
@@ -24,6 +12,8 @@ WDatePicker(
 - [All Supported Classes](#all-supported-classes)
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
+
+<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-date-picker" action="CREATE" -->
 
 <a name="basic-usage"></a>
 ## Basic Usage

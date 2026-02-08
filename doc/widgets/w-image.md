@@ -2,6 +2,17 @@
 
 The `WImage` widget brings utility-first styling to images in Flutter, providing HTML-like semantics with Tailwind-inspired classes for sizing, object fitting, and decoration.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_image_basic" action="CREATE" -->
 <!-- Description: Basic WImage usage with a network source and rounded corners -->
 <x-preview path="widgets/w_image_basic" size="md" source="example/lib/pages/widgets/w_image_basic.dart"></x-preview>

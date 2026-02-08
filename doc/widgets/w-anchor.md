@@ -2,6 +2,17 @@
 
 The foundational state wrapper that detects user gestures (Hover, Focus, Press) and propagates that state down to all descendant widgets via `WindStateProvider`.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-anchor" action="CREATE" -->
 <!-- Description: Basic WAnchor usage showing hover and tap interaction -->
 <x-preview path="widgets/w-anchor" size="md" source="example/lib/pages/widgets/w_anchor_example.dart"></x-preview>

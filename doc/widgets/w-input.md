@@ -2,6 +2,17 @@
 
 The `WInput` widget is a utility-first form input that combines React-style controlled state management with Tailwind-like styling. It replaces the standard `TextField` with a more flexible, composable alternative.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-input-main" action="CREATE" -->
 <!-- Description: A standard email input with custom border and focus ring -->
 <x-preview path="widgets/w-input-main" size="md" source="example/lib/pages/widgets/w_input_main.dart"></x-preview>

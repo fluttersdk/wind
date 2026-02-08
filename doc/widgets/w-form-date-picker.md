@@ -2,19 +2,6 @@
 
 A form-integrated date picker widget that wraps `WDatePicker` with `FormField` to provide built-in validation, labels, hints, and error messaging.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="forms/form_date_picker_basic" action="CREATE" -->
-<!-- Description: Basic form date picker with label and validation -->
-<x-preview path="forms/form_date_picker_basic" size="md" source="example/lib/pages/forms/form_date_picker_basic.dart"></x-preview>
-
-```dart
-WFormDatePicker(
-  label: 'Start Date',
-  placeholder: 'Select a date',
-  validator: (date) => date == null ? 'Please select a date' : null,
-  onChanged: (date) => print('Date selected: $date'),
-)
-```
-
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
 - [Props](#props)
@@ -25,6 +12,8 @@ WFormDatePicker(
 - [All Supported Classes](#all-supported-classes)
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
+
+<!-- TODO: [EXAMPLE_NEEDED] path="forms/form_date_picker_basic" action="CREATE" -->
 
 <a name="basic-usage"></a>
 ## Basic Usage

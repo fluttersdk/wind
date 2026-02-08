@@ -2,6 +2,17 @@
 
 A flexible popover component for creating dropdown menus, notification panels, user menus, tooltips, and similar overlay patterns.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-popover" action="CREATE" -->
 <!-- Description: Basic popover example with a button trigger and a simple list content -->
 <x-preview path="widgets/w-popover" size="md" source="example/lib/pages/widgets/w_popover_page.dart"></x-preview>

@@ -2,6 +2,17 @@
 
 A utility-first checkbox component that translates Tailwind-style classes into a fully customizable checkbox widget. It sidesteps the limitations of native Flutter checkboxes by using a composable architecture of `WAnchor` and `WDiv`.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-checkbox" action="CREATE" -->
 <!-- Description: Basic checkbox example with state management -->
 <x-preview path="widgets/w-checkbox" size="md" source="example/lib/pages/widgets/w-checkbox.dart"></x-preview>

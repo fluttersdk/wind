@@ -2,6 +2,17 @@
 
 `WButton` is an interactive component that combines `WAnchor` state management with Tailwind-like utility styling and built-in loading states.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-button" action="CREATE" -->
 <!-- Description: Basic WButton with hover and rounded corners -->
 <x-preview path="widgets/w-button" size="md" source="example/lib/pages/widgets/w-button.dart"></x-preview>

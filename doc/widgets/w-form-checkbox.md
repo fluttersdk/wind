@@ -2,6 +2,17 @@
 
 A Wind-styled checkbox that integrates with Flutter's Form validation, providing built-in support for labels, hints, and error states.
 
+- [Basic Usage](#basic-usage)
+- [Constructor](#constructor)
+- [Props](#props)
+- [Layout Modes](#layout-modes)
+- [Event Handling](#event-handling)
+- [State Variants](#state-variants)
+- [Styling Examples](#styling-examples)
+- [All Supported Classes](#all-supported-classes)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
 <!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_form_checkbox" action="CREATE" -->
 <!-- Description: Basic form checkbox with validation and label -->
 <x-preview path="widgets/w_form_checkbox" size="md" source="example/lib/pages/widgets/w_form_checkbox.dart"></x-preview>
