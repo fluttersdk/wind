@@ -1,31 +1,63 @@
 # Debugging
 
-Wind includes a built-in debugging system to help you understand how your styles are being resolved and the widget composition tree.
+- [Introduction](#introduction)
+- [Enabling Debug Mode](#enabling-debug-mode)
+- [Understanding the Output](#understanding-the-output)
+    - [Composition Tree](#composition-tree)
+    - [Final Styles](#final-styles)
+    - [Build Time](#build-time)
+- [How WindLogger Works](#how-windlogger-works)
+- [Quick Reference](#quick-reference)
+- [Common Scenarios](#common-scenarios)
 
-## Enabling Debug Mode
+<a name="introduction"></a>
+## Introduction
 
-Add the `debug` utility class to any Wind widget's className to enable detailed logging:
+Today, I'll show you how to peek under the hood of your Wind widgets. If you've ever wondered how your `className` string transforms into a complex Flutter widget tree, you're in the right place.
+
+Wind includes a powerful debugging system that explains exactly what's happening during the "parsing → styling → building" pipeline. It's built directly into the core engine, so you don't need any external tools to see what's going on.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/debugging_basic" action="CREATE" -->
+<!-- Description: Show a basic widget with the 'debug' class enabled to demonstrate logging -->
+<x-preview path="core-concepts/debugging_basic" size="md" source="example/lib/pages/core-concepts/debugging_basic.dart"></x-preview>
 
 ```dart
 WDiv(
-  className: 'debug flex flex-col p-4 bg-blue-100',
-  children: [
-    WText('Debugging Enabled'),
-  ],
+  className: 'debug flex p-4 bg-blue-500 rounded-lg',
+  child: WText('Debugging is active!'),
 )
 ```
 
-This works on all Wind widgets: `WDiv`, `WText`, `WButton`, `WImage`, `WIcon`, etc.
+<a name="enabling-debug-mode"></a>
+## Enabling Debug Mode
 
-## What Gets Logged
+Let's start with the easiest way to see what's going on. You just need to add the `debug` utility class to any Wind widget's `className`. 
 
-When debug mode is active, `WindLogger` prints a structured report showing:
+That's it. No global flags, no complex configuration.
 
-1. **Composition Tree**: The widget wrapper stack in pseudo-Dart format
-2. **Final Styles**: All resolved `WindStyle` properties
-3. **Build Time**: Performance metrics in microseconds
+```dart
+// Add 'debug' anywhere in your className string
+WButton(
+  className: 'debug bg-red-500 hover:bg-red-600 px-4 py-2 rounded',
+  onTap: () => print('Hello!'),
+  child: WText('Debug Me'),
+)
+```
 
-### Example Output
+When Wind sees the `debug` class, it triggers a detailed report to your console.
+
+> [!NOTE]
+> Since `debug` is just a utility class, it only affects the specific widget you've added it to. This is great for isolating layout issues without drowning in logs from the rest of your app.
+
+<a name="understanding-the-output"></a>
+## Understanding the Output
+
+Let's look at what actually shows up in your console. The output is structured into three main parts to give you a full picture of the widget's lifecycle.
+
+<a name="composition-tree"></a>
+### Composition Tree
+
+The Composition Tree shows you the "Atomic Widget" stack. Because Wind translates a single `className` into multiple Flutter widgets (like `Padding`, `DecoratedBox`, `ConstrainedBox`), this tree shows you the exact order and configuration of those widgets.
 
 ```text
 --- [WIND DEBUG] START: WDiv ---
@@ -34,86 +66,65 @@ Padding(
   padding: EdgeInsets.all(16.0),
   child:
   Container(
-    decoration: BoxDecoration(color: Color(0xFFDBEAFE)),
-    child:
-    Column(
-      children: [...],
+    decoration: BoxDecoration(
+      color: Color(0xFF3B82F6), 
+      borderRadius: BorderRadius.circular(8.0)
     ),
+    child: ...
   )
 )
---- [WIND DEBUG] Final Styles: WindStyle{padding: EdgeInsets.all(16.0), ...} ---
---- [WIND DEBUG] Build Time: 450µs ---
+```
+
+<a name="final-styles"></a>
+### Final Styles
+
+This section shows the resolved `WindStyle` object. This is the "source of truth" after all your classes, responsive modifiers, and state-based styles have been parsed and merged.
+
+```text
+--- [WIND DEBUG] Final Styles: WindStyle(
+  padding: EdgeInsets.all(16.0),
+  backgroundColor: Color(0xFF3B82F6),
+  borderRadius: BorderRadius.circular(8.0),
+  isFlex: true,
+) ---
+```
+
+<a name="build-time"></a>
+### Build Time
+
+Performance matters! Wind tells you exactly how long it took to parse the classes and build the widget tree.
+
+```text
+--- [WIND DEBUG] Build Time: 142µs ---
 --- [WIND DEBUG] END: WDiv ---
 ```
 
-## Alternative: WindStyle Property
+Let's give it a shot. If you see a build time significantly higher than average (usually >1ms), it might be a sign of overly complex nesting or a large number of custom state resolutions.
 
-If you're using `WindStyle` objects directly, set the `debug` property:
+<a name="how-windlogger-works"></a>
+## How WindLogger Works
 
-```dart
-final styles = WindParser.parse('flex p-4 bg-blue-100', context);
+Behind the scenes, Wind uses a dedicated `WindLogger` service. When the `WindParser` finishes resolving a `className`, it checks if the `debug` flag is active in the resulting `WindStyle`.
 
-WDiv(
-  style: styles.copyWith(debug: true),
-  child: Text('Debug via style'),
-)
-```
+If it is, the parser hands over the resolved style and the generated widget tree to the logger. The logger then formats this data into the structured report you see in your console. It uses microsecond-precision timing to ensure the performance metrics are as accurate as possible.
 
-## Common Debugging Scenarios
+<a name="quick-reference"></a>
+## Quick Reference
 
-### Layout Issues
+| Field | Description | Purpose |
+|:------|:------------|:--------|
+| `debug` | The utility class name | Enables logging for the specific widget. |
+| `Composition Tree` | Pseudo-Dart widget stack | Visualizes how Flutter widgets are nested. |
+| `Final Styles` | Resolved properties | Shows the final values used for styling. |
+| `Build Time` | Microseconds (µs) | Measures parsing and build performance. |
 
-When elements aren't positioned correctly:
+<a name="common-scenarios"></a>
+## Common Scenarios
 
-```dart
-WDiv(
-  className: 'debug flex justify-center items-center w-full h-64',
-  children: [WText('Center me')],
-)
+But what if you need to debug something specific? Here are a few ways I use the `debug` class:
 
-// Check the logs for:
-// - MainAxisAlignment and CrossAxisAlignment values
-// - Width/Height constraints
-// - Flex direction
-```
+- **Layout Shifts**: Check the `Composition Tree` to see if an unexpected `Padding` or `ConstrainedBox` is pushing your elements around.
+- **Color Mismatches**: Look at the `Final Styles` to see the exact ARGB value of the resolved color.
+- **Responsive Issues**: Resize your window while `debug` is active. You'll see the logs re-trigger as breakpoints change, showing you the new resolved styles in real-time.
 
-### Spacing Problems
-
-When padding/margin looks wrong:
-
-```dart
-WDiv(
-  className: 'debug p-4 m-2 bg-red-100',
-  child: WText('Check spacing'),
-)
-
-// The log will show EdgeInsets values:
-// padding: EdgeInsets.all(16.0)
-// margin: EdgeInsets.all(8.0)
-```
-
-### Color Resolution
-
-When colors don't match expectations:
-
-```dart
-WDiv(
-  className: 'debug bg-primary-500 text-white',
-  child: WText('Check colors'),
-)
-
-// Look for:
-// decoration: BoxDecoration(color: Color(0xFF...))
-// color (text): Color(0xFFFFFFFF)
-```
-
-## Performance Tips
-
-- Debug mode adds overhead - use only during development
-- The build time metric helps identify slow style parsing
-- Wind uses an LRU cache, so repeated classNames are faster after first parse
-
-## Related Documentation
-
-- [Utility-First Fundamentals](./utility-first.md) - Core concepts
-- [Theming](./theming.md) - Color and spacing configuration
+That's all. Have a nice day.
