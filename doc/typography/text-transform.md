@@ -1,30 +1,114 @@
 # Text Transform
 
-Utilities for controlling the transformation of text.
+Utilities for controlling the capitalization and wrapping of text.
 
-<x-preview path="typography/text_transform" size="md" source="example/lib/pages/typography/text_transform.dart"></x-preview>
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Whitespace & Wrapping](#whitespace--wrapping)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-## Basic Usage
+<x-preview path="typography/text_transform_preview" size="md" source="example/lib/pages/typography/text_transform_preview.dart"></x-preview>
 
-Transform text case using transform utilities:
+<!-- TODO: [CREATE] path="typography/text_transform_preview" action="CREATE" -->
+<!-- Description: Show examples of uppercase, lowercase, capitalize, and whitespace-nowrap -->
 
 ```dart
-WText('uppercase', className: 'uppercase')     // UPPERCASE
-WText('LOWERCASE', className: 'lowercase')     // lowercase
-WText('capitalize me', className: 'capitalize') // Capitalize Me
-WText('Normal Case', className: 'normal-case')  // Normal Case
+// Uppercase
+WText('Hello World', className: 'uppercase')
+
+// Capitalize
+WText('hello world', className: 'capitalize')
+
+// Prevent wrapping
+WText('Long text that should not wrap...', className: 'whitespace-nowrap')
 ```
 
-## All Transform Classes
+<a name="basic-usage"></a>
+## Basic Usage
 
-| Class | Description | Example |
-| :--- | :--- | :--- |
-| `uppercase` | Transform to uppercase | HELLO |
-| `lowercase` | Transform to lowercase | hello |
-| `capitalize` | Capitalize each word | Hello World |
-| `normal-case` | Preserve original case | Hello World |
+Use `uppercase` and `lowercase` to force text casing. `capitalize` converts the first character of each word to uppercase.
 
+```dart
+WDiv(
+  className: 'flex flex-col gap-4',
+  children: [
+    WText('uppercase text', className: 'uppercase'), // UPPERCASE TEXT
+    WText('LOWERCASE TEXT', className: 'lowercase'), // lowercase text
+    WText('capitalize this text', className: 'capitalize'), // Capitalize This Text
+    WText('Normal Case Text', className: 'normal-case'), // Normal Case Text
+  ],
+)
+```
+
+<a name="quick-reference"></a>
+## Quick Reference
+
+| Class | Transform | Description |
+|:------|:----------|:------------|
+| `uppercase` | Uppercase | Converts all text to uppercase. |
+| `lowercase` | Lowercase | Converts all text to lowercase. |
+| `capitalize` | Capitalize | Capitalizes the first letter of each word. |
+| `normal-case` | None | Resets text transformation (useful for overrides). |
+
+<a name="whitespace--wrapping"></a>
+## Whitespace & Wrapping
+
+Control how text handles whitespace and wrapping using `whitespace-` utilities.
+
+<x-preview path="typography/whitespace_preview" size="md" source="example/lib/pages/typography/whitespace_preview.dart"></x-preview>
+
+<!-- TODO: [CREATE] path="typography/whitespace_preview" action="CREATE" -->
+<!-- Description: Compare whitespace-normal (default) vs whitespace-nowrap with overflow scrolling -->
+
+```dart
+// Prevent text from wrapping
+WText(
+  'This is a long sentence that will not wrap to the next line.',
+  className: 'whitespace-nowrap',
+)
+```
+
+| Class | Wrap | Description |
+|:------|:-----|:------------|
+| `whitespace-normal` | Yes | Allow text to wrap normally (default). |
+| `whitespace-nowrap` | No | Prevent text from wrapping. |
+| `text-wrap` | Yes | Alias for `whitespace-normal`. |
+| `text-nowrap` | No | Alias for `whitespace-nowrap`. |
+| `text-balance` | Balance | Balances text across lines for better readability. |
+
+<a name="responsive-design"></a>
+## Responsive Design
+
+Apply transforms or whitespace rules conditionally at different breakpoints.
+
+```dart
+// Uppercase on mobile, normal case on tablet+
+WText('Responsive Text', className: 'uppercase md:normal-case')
+
+// Wrap on mobile, no-wrap on large screens
+WText('Responsive Wrap', className: 'whitespace-normal lg:whitespace-nowrap')
+```
+
+<a name="dark-mode"></a>
+## Dark Mode
+
+While text transforms rarely change based on theme, you can apply them conditionally if needed.
+
+```dart
+WText('Dark Mode Text', className: 'normal-case dark:uppercase')
+```
+
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+Text transform and whitespace utilities are hardcoded in the parser and **cannot be customized** via `WindThemeData`.
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Font Weight](./font-weight.md) - Font weight utilities
-- [Letter Spacing](./letter-spacing.md) - Letter spacing utilities
+- [Text Overflow](./text-overflow.md)
+- [Font Weight](./font-weight.md)
+- [Letter Spacing](./letter-spacing.md)

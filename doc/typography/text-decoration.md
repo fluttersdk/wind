@@ -1,42 +1,71 @@
 # Text Decoration
 
-Utilities for controlling text decoration.
+Utilities for controlling the decoration of text.
+
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
 <x-preview path="typography/decoration" size="md" source="example/lib/pages/typography/decoration.dart"></x-preview>
 
+```dart
+// Basic decoration
+WText('Underline', className: 'underline')
+
+// With color, style, and thickness
+WText('Styled', className: 'underline decoration-blue-500 decoration-wavy decoration-2')
+```
+
+<a name="basic-usage"></a>
 ## Basic Usage
 
-Control text decoration using decoration utilities:
+Use `underline`, `overline`, or `line-through` to decorate text. Use `no-underline` to remove existing decorations.
 
 ```dart
-WText('Underlined', className: 'underline')
-WText('Overline', className: 'overline')
-WText('Strikethrough', className: 'line-through')
-WText('No decoration', className: 'no-underline')
+WText('The quick brown fox...', className: 'underline')
+WText('The quick brown fox...', className: 'overline')
+WText('The quick brown fox...', className: 'line-through')
+WText('Link without underline', className: 'no-underline')
 ```
 
-## Decoration Types
+<a name="quick-reference"></a>
+## Quick Reference
 
-| Class | Description |
-| :--- | :--- |
-| `underline` | Underline text |
-| `overline` | Overline text |
-| `line-through` | Strikethrough |
-| `no-underline` | Remove decoration |
+| Class | Properties | Description |
+|:------|:-----------|:------------|
+| `underline` | `decoration: underline` | Adds an underline. |
+| `overline` | `decoration: overline` | Adds an overline. |
+| `line-through` | `decoration: line-through` | Adds a strikethrough. |
+| `no-underline` | `decoration: none` | Removes decorations. |
 
-## Decoration Color
+<a name="variants"></a>
+## Variants
 
-Style the decoration color:
+### Decoration Color
+
+Use the `decoration-{color}` utilities to change the color of the text decoration.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="typography/decoration_color" action="CREATE" -->
+<!-- Description: Examples of colored text decorations -->
+<x-preview path="typography/decoration_color" size="md" source="example/lib/pages/typography/decoration_color.dart"></x-preview>
 
 ```dart
-WText('Red underline', className: 'underline decoration-red-500')
-WText('Blue line', className: 'underline decoration-blue-600')
-WText('Custom', className: 'underline decoration-[#FF00FF]')
+WText('Error', className: 'underline decoration-red-500')
+WText('Success', className: 'underline decoration-green-600')
 ```
 
-## Decoration Style
+### Decoration Style
 
-Control the decoration style:
+Use the `decoration-{style}` utilities to change the style of the text decoration.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="typography/decoration_style" action="CREATE" -->
+<!-- Description: Examples of solid, double, dotted, dashed, and wavy decorations -->
+<x-preview path="typography/decoration_style" size="md" source="example/lib/pages/typography/decoration_style.dart"></x-preview>
 
 ```dart
 WText('Solid', className: 'underline decoration-solid')
@@ -46,45 +75,79 @@ WText('Dashed', className: 'underline decoration-dashed')
 WText('Wavy', className: 'underline decoration-wavy')
 ```
 
-| Class | Style |
-| :--- | :--- |
-| `decoration-solid` | Solid line |
-| `decoration-double` | Double line |
-| `decoration-dotted` | Dotted line |
-| `decoration-dashed` | Dashed line |
-| `decoration-wavy` | Wavy line |
+| Class | Description |
+|:------|:------------|
+| `decoration-solid` | Sets the decoration style to solid. |
+| `decoration-double` | Sets the decoration style to double. |
+| `decoration-dotted` | Sets the decoration style to dotted. |
+| `decoration-dashed` | Sets the decoration style to dashed. |
+| `decoration-wavy` | Sets the decoration style to wavy. |
 
-## Decoration Thickness
+### Decoration Thickness
 
-Control the thickness of the decoration:
+Use the `decoration-{width}` utilities to change the thickness of the text decoration.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="typography/decoration_thickness" action="CREATE" -->
+<!-- Description: Examples of decoration thickness 1, 2, 4, 8 -->
+<x-preview path="typography/decoration_thickness" size="md" source="example/lib/pages/typography/decoration_thickness.dart"></x-preview>
 
 ```dart
-WText('Thin', className: 'underline decoration-1')
-WText('Normal', className: 'underline decoration-2')
-WText('Thick', className: 'underline decoration-4')
-WText('Very thick', className: 'underline decoration-8')
-WText('Custom', className: 'underline decoration-[3px]')
+WText('1px', className: 'underline decoration-1')
+WText('2px', className: 'underline decoration-2')
+WText('4px', className: 'underline decoration-4')
+WText('8px', className: 'underline decoration-8')
 ```
 
-| Class | Thickness |
-| :--- | :--- |
-| `decoration-1` | 1px |
-| `decoration-2` | 2px |
-| `decoration-4` | 4px |
-| `decoration-8` | 8px |
-| `decoration-[n]` | Custom |
+<a name="responsive-design"></a>
+## Responsive Design
 
-## Combined Example
-
-Combine multiple decoration properties:
+Apply different decoration utilities at different breakpoints using standard responsive modifiers.
 
 ```dart
-WText(
-  'Styled decoration',
-  className: 'underline decoration-red-500 decoration-wavy decoration-2',
+WText('Responsive decoration', className: 'no-underline md:underline')
+```
+
+<a name="dark-mode"></a>
+## Dark Mode
+
+Use the `dark:` prefix to apply different decoration styles in dark mode.
+
+```dart
+WText('Link', className: 'text-gray-900 underline decoration-gray-900 dark:text-white dark:decoration-white')
+```
+
+<a name="arbitrary-values"></a>
+## Arbitrary Values
+
+Use bracket notation for custom decoration colors or thickness.
+
+```dart
+// Custom color
+WText('Brand underline', className: 'underline decoration-[#50d71e]')
+
+// Custom thickness
+WText('3px underline', className: 'underline decoration-[3px]')
+```
+
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+### Decoration Color
+
+Decoration colors use your theme's `colors` configuration.
+
+```dart
+WindThemeData(
+  colors: {
+    'brand': {
+      '500': Color(0xFF1E88E5),
+    },
+  },
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Text Color](./text-color.md) - Text color utilities
+- [Text Color](./text-color.md)
+- [Font Weight](./font-weight.md)

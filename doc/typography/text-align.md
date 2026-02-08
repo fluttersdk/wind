@@ -2,42 +2,93 @@
 
 Utilities for controlling the alignment of text.
 
-<x-preview path="typography/alignment" size="md" source="example/lib/pages/typography/alignment.dart"></x-preview>
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-## Basic Usage
-
-Control text alignment using `text-{align}` utilities:
+<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_align_basic" action="CREATE" -->
+<!-- Description: Show a column of text blocks with different alignments (left, center, right, justify) -->
+<x-preview path="typography/text_align_basic" size="md" source="example/lib/pages/typography/text_align_basic.dart"></x-preview>
 
 ```dart
+// Basic alignment examples
 WText('Left aligned', className: 'text-left')
 WText('Center aligned', className: 'text-center')
 WText('Right aligned', className: 'text-right')
-WText('Justified text', className: 'text-justify')
 ```
 
-## All Alignment Classes
+<a name="basic-usage"></a>
+## Basic Usage
 
-| Class | Alignment |
-| :--- | :--- |
-| `text-left` | Align left |
-| `text-center` | Align center |
-| `text-right` | Align right |
-| `text-justify` | Justify text |
-| `text-start` | Align to start (RTL aware) |
-| `text-end` | Align to end (RTL aware) |
-
-## RTL Support
-
-Use `text-start` and `text-end` for right-to-left language support:
+Use `text-left`, `text-center`, `text-right`, and `text-justify` to control the text alignment of an element.
 
 ```dart
-// Left in LTR, Right in RTL
-WText('Start aligned', className: 'text-start')
-
-// Right in LTR, Left in RTL
-WText('End aligned', className: 'text-end')
+WDiv(
+  className: 'flex flex-col gap-4',
+  children: [
+    WText('Left aligned text.', className: 'text-left'),
+    WText('Center aligned text.', className: 'text-center'),
+    WText('Right aligned text.', className: 'text-right'),
+    WText('Justified text.', className: 'text-justify'),
+  ],
+)
 ```
 
+<a name="quick-reference"></a>
+## Quick Reference
+
+| Class | Value | Description |
+|:------|:------|:------------|
+| `text-left` | `TextAlign.left` | Align text to the left. |
+| `text-center` | `TextAlign.center` | Align text to the center. |
+| `text-right` | `TextAlign.right` | Align text to the right. |
+| `text-justify` | `TextAlign.justify` | Stretch lines of text to equal width. |
+| `text-start` | `TextAlign.start` | Align text to the start (direction-aware). |
+| `text-end` | `TextAlign.end` | Align text to the end (direction-aware). |
+
+<a name="responsive-design"></a>
+## Responsive Design
+
+Apply different alignment at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_align_responsive" action="CREATE" -->
+<!-- Description: Show text that is centered on mobile but left-aligned on desktop -->
+<x-preview path="typography/text_align_responsive" size="md" source="example/lib/pages/typography/text_align_responsive.dart"></x-preview>
+
+```dart
+// Center on mobile, left on medium screens and up
+WText(
+  'Responsive Alignment',
+  className: 'text-center md:text-left',
+)
+```
+
+<a name="dark-mode"></a>
+## Dark Mode
+
+Use the `dark:` prefix to apply different alignment in dark mode. While less common for alignment than colors, it is fully supported.
+
+```dart
+WText('Dark mode alignment', className: 'text-left dark:text-center')
+```
+
+<a name="arbitrary-values"></a>
+## Arbitrary Values
+
+The text alignment utility does not support arbitrary values because it maps directly to Flutter's `TextAlign` enum.
+
+<a name="customizing-theme"></a>
+## Customizing Theme
+
+Text alignment values are hardcoded to map to Flutter's `TextAlign` enum and cannot be customized via `WindThemeData`.
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Text Overflow](./text-overflow.md) - Text overflow utilities
+- [Font Size](./font-size.md)
+- [Font Weight](./font-weight.md)
+- [Line Height](./line-height.md)
