@@ -1,28 +1,21 @@
 # Installation
 
-- [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Installation](#installation-step)
 - [Basic Setup](#basic-setup)
-    - [The Builder Pattern](#the-builder-pattern)
 - [Alternative Setup](#alternative-setup)
 - [Verify Installation](#verify-installation)
 
 <!-- TODO: [EXAMPLE_NEEDED] path="getting-started/installation_basic" action="CREATE" -->
-<!-- Description: Basic installation setup showing WindTheme with MaterialApp -->
+<!-- Description: Basic installation setup showing WindTheme with MaterialApp using the builder pattern -->
 <x-preview path="getting-started/installation_basic" size="md" source="example/lib/pages/getting-started/installation_basic.dart"></x-preview>
 
-<a name="introduction"></a>
-## Introduction
-
-Today, I'll show you how to get Wind up and running in your Flutter project. It's a quick process, and I'll walk you through the best way to set it up so you can start styling with utilities immediately.
-
-Wind is designed to be a drop-in replacement for traditional Flutter styling, but it needs a little bit of context to work its magic. Let's get started!
+Getting started with Wind requires a few configuration steps to ensure utility classes resolve correctly across your application.
 
 <a name="requirements"></a>
 ## Requirements
 
-Before we dive in, make sure your environment meets these minimum requirements. I recommend staying on the latest stable versions to get the best performance and features.
+Before adding Wind to your project, ensure your environment meets these minimum version requirements. We recommend staying on the latest stable versions for the best experience.
 
 | Dependency | Minimum Version | Recommended |
 |:-----------|:----------------|:------------|
@@ -32,25 +25,29 @@ Before we dive in, make sure your environment meets these minimum requirements. 
 <a name="installation-step"></a>
 ## Installation
 
-First, we need to add the package to your `pubspec.yaml`. You can do this easily from your terminal:
+Add `fluttersdk_wind` to your `pubspec.yaml` using the Flutter CLI:
 
 ```bash
 flutter pub add fluttersdk_wind
 ```
 
-That's it for the dependency. Now, let's look at how to hook it up to your app.
+Alternatively, add it manually to your dependencies:
+
+```yaml
+dependencies:
+  fluttersdk_wind: ^1.0.0-alpha.1
+```
 
 <a name="basic-setup"></a>
 ## Basic Setup
 
-To use Wind widgets and utilities, you must wrap your application with the `WindTheme` widget. This provides the necessary context for responsive breakpoints, dark mode, and theme resolution.
+To use Wind utilities, you must wrap your application with the `WindTheme` widget. This provides the context needed for responsive breakpoints, dark mode, and state resolution.
 
-<a name="the-builder-pattern"></a>
 ### The Builder Pattern (Recommended)
 
-I always recommend using the `builder` pattern. Why? Because it's the most reactive way to handle theme changes. When you use `builder`, Wind gives you a `controller` that you can use to sync Wind's theme state directly with your `MaterialApp`.
+The `builder` pattern is the preferred way to initialize Wind. It provides a `controller` that synchronizes Wind's theme state (like dark mode) directly with your `MaterialApp`.
 
-Let's look at the code:
+Let's look at a typical implementation:
 
 ```dart
 import 'package:flutter/material.dart';
@@ -64,12 +61,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WindTheme(
-      // We use 'data' to pass our theme configuration
+      // Always use the 'data' parameter for configuration
       data: WindThemeData(), 
       builder: (context, controller) {
         return MaterialApp(
           title: 'Wind App',
-          // This keeps MaterialApp in sync when you toggle dark mode!
+          // Automatically syncs Material theme with Wind's state
           theme: controller.toThemeData(),
           home: const HomePage(),
         );
@@ -79,31 +76,31 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-Let's give it a shot. By using this pattern, whenever you call `context.windTheme.toggleTheme()`, your entire app (including native Material components) will update instantly.
+By using the `builder` pattern, any theme changes triggered via `context.windTheme.toggleTheme()` will instantly propagate to both Wind widgets and native Material components.
 
 > [!NOTE]
-> Always use the `data:` parameter to provide your `WindThemeData`. The old `theme:` parameter is deprecated and will not work in v1.
+> Ensure you use the `data:` parameter. The `theme:` parameter found in earlier versions is deprecated and will result in compilation errors in v1.
 
 <a name="alternative-setup"></a>
 ## Alternative Setup
 
-If you don't need the `MaterialApp` to reactively update its own `ThemeData`, or if you're wrapping only a specific part of your app, you can use the `child` pattern:
+If you do not need reactive synchronization with `MaterialApp` or are only using Wind in a specific subtree, you can use the `child` pattern:
 
 ```dart
 WindTheme(
   data: WindThemeData(),
   child: MaterialApp(
-    home: HomePage(),
+    home: const HomePage(),
   ),
 )
 ```
 
-This works fine for Wind widgets (`WDiv`, `WText`, etc.), but native Material widgets won't know when the Wind theme changes unless you handle that state manually.
+While this setup works for Wind widgets like `WDiv` or `WText`, native Material widgets will not automatically react to Wind theme changes unless handled manually.
 
 <a name="verify-installation"></a>
 ## Verify Installation
 
-Now that we're set up, let's make sure everything is working. Drop a `WDiv` into your home page and try some utility classes:
+To verify that Wind is correctly configured, add a `WDiv` with a few utility classes to your project:
 
 ```dart
 class HomePage extends StatelessWidget {
@@ -126,8 +123,6 @@ class HomePage extends StatelessWidget {
 }
 ```
 
-If you see a blue rounded card with white text, you're all set!
+If you see a blue card with white text, the installation is successful.
 
-That's all for the installation. Now, we can move to the next part and explore some core concepts.
-
-Have a nice day.
+That's all.
