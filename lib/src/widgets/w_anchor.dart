@@ -67,6 +67,12 @@ class WAnchor extends StatefulWidget {
   /// - If `states` contains `'active'`, then `active:bg-blue-600` will activate.
   final Set<String>? states;
 
+  /// The cursor to use when the mouse pointer is over the widget.
+  ///
+  /// If not provided, it defaults to `SystemMouseCursors.click` if there are gestures
+  /// and the widget is not disabled, otherwise `SystemMouseCursors.basic`.
+  final MouseCursor? mouseCursor;
+
   /// Creates a `WAnchor` widget.
   ///
   /// The [child] argument is required and represents the interactive area.
@@ -79,6 +85,7 @@ class WAnchor extends StatefulWidget {
     this.onDoubleTap,
     this.isDisabled = false,
     this.states,
+    this.mouseCursor,
   });
 
   @override
@@ -99,6 +106,14 @@ class _WAnchorState extends State<WAnchor> {
   void initState() {
     super.initState();
     _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(covariant WAnchor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isDisabled && !oldWidget.isDisabled) {
+      _isHovering = false;
+    }
   }
 
   /// Cleans up the `FocusNode` and its listener to prevent memory leaks.
@@ -126,17 +141,14 @@ class _WAnchorState extends State<WAnchor> {
   ///
   /// Updates the `_isHovering` state via `setState` if the widget is not disabled,
   /// which triggers a rebuild to propagate the new state.
-  /// Uses addPostFrameCallback to avoid mouse_tracker conflicts.
   void _onHover(bool isHovering) {
     if (widget.isDisabled) return;
     if (isHovering != _isHovering) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _isHovering != isHovering) {
-          setState(() {
-            _isHovering = isHovering;
-          });
-        }
-      });
+      if (mounted) {
+        setState(() {
+          _isHovering = isHovering;
+        });
+      }
     }
   }
 
@@ -181,11 +193,12 @@ class _WAnchorState extends State<WAnchor> {
     return WindAnchorStateProvider(
       state: currentState,
       child: MouseRegion(
-        cursor: widget.isDisabled
-            ? SystemMouseCursors.basic
-            : hasGestures
-                ? SystemMouseCursors.click
-                : SystemMouseCursors.basic,
+        cursor: widget.mouseCursor ??
+            (widget.isDisabled
+                ? SystemMouseCursors.basic
+                : hasGestures
+                    ? SystemMouseCursors.click
+                    : SystemMouseCursors.basic),
         onEnter: widget.isDisabled ? null : (_) => _onHover(true),
         onExit: widget.isDisabled ? null : (_) => _onHover(false),
         child: innerChild,
