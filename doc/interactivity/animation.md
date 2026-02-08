@@ -1,119 +1,148 @@
 # Animation
 
-Utilities for animating elements with CSS-like animation classes.
+Utilities for animating elements with CSS-like animation classes. Whether you're building a loading state or adding some life to your UI, Wind's animation utilities make it easy to drop in common motion patterns.
 
-## Animate Classes (Explicit Animations)
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+  - [Spin](#spin)
+  - [Ping](#ping)
+  - [Pulse](#pulse)
+  - [Bounce](#bounce)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-Use these classes for continuous or one-off animations like spinners or bounces.
-
-<x-preview path="animation/animation_basic" size="md" source="example/lib/pages/animation/animation_basic.dart"></x-preview>
+<a name="preview"></a>
+<!-- TODO: [EXAMPLE_NEEDED] path="interactivity/animation_basic" action="CREATE" -->
+<!-- Description: Show basic examples of all animation variants (spin, ping, pulse, bounce) -->
+<x-preview path="interactivity/animation_basic" size="md" source="example/lib/pages/interactivity/animation_basic.dart"></x-preview>
 
 ```dart
-// Spinning loading indicator
-WDiv(className: 'w-8 h-8 border-4 border-blue-500 rounded-full animate-spin')
+// Spinning loader
+WDiv(className: 'animate-spin w-8 h-8 border-4 border-blue-500 rounded-full')
 
-// Pulsing skeleton loader
-WDiv(className: 'w-full h-4 bg-gray-300 rounded animate-pulse')
-
-// Bouncing scroll indicator
-WIcon(Icons.arrow_downward, className: 'text-blue-500 text-2xl animate-bounce')
+// Pulsing skeleton
+WDiv(className: 'animate-pulse w-full h-4 bg-gray-200 rounded')
 ```
 
-### Available Animations
+<a name="basic-usage"></a>
+## Basic Usage
 
-| Class | Effect | Usage |
-|-------|--------|-------|
-| `animate-spin` | Continuous rotation | Loading spinners |
-| `animate-pulse` | Opacity pulse | Skeleton loaders |
-| `animate-bounce` | Vertical bounce | Scroll indicators |
-| `animate-ping` | Scale + fade out | Notification badges |
-| `animate-none` | Remove animation | Stopping animation |
-
----
-
-## Implicit Animations (Transitions)
-
-Wind automatically uses Flutter's implicit animations (`AnimatedContainer`, `AnimatedOpacity`, `AnimatedAlign`) when you add a `duration-{n}` class. This makes state changes smooth without any boilerplate.
-
-<x-preview path="animation/animation_implicit" size="md" source="example/lib/pages/animation/animation_implicit.dart"></x-preview>
+Use the `animate-{type}` classes to add pre-defined animations to any widget. These are great for loading indicators, notification badges, or grabbing a user's attention.
 
 ```dart
-// 1. Smoothly animate hover effects (using WAnchor for clean state management)
-WAnchor(
-  child: WDiv(
-    className: 'w-20 h-20 rounded-lg flex items-center justify-center duration-300 bg-gray-300 hover:bg-green-500',
-    children: const [WText('Hover', className: 'text-sm')],
-  ),
-)
-
-// 2. Toggle Switch (Implicit Styling + Explicit Layout)
-WDiv(
-  states: {if (isToggled) 'toggled'},
-  className: 'w-12 h-6 rounded-full p-1 duration-200 ease-in-out bg-gray-300 toggled:bg-blue-500',
-  children: [
-    AnimatedAlign(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      alignment: isToggled ? Alignment.centerRight : Alignment.centerLeft,
-      child: const WDiv(
-        className: 'w-4 h-4 rounded-full bg-white shadow-sm',
-      ),
-    ),
-  ],
+WIcon(
+  Icons.refresh,
+  className: 'animate-spin text-blue-600',
 )
 ```
 
-### Supported Properties
+<a name="quick-reference"></a>
+## Quick Reference
 
-When `duration-{n}` is present, the following properties will animate:
+| Class | Value | Description |
+|:------|:------|:------------|
+| `animate-none` | none | Removes any active animation |
+| `animate-spin` | spin | Continuous 360-degree rotation |
+| `animate-ping` | ping | Scaling outward like a radar ping |
+| `animate-pulse` | pulse | Gentle opacity fade in/out |
+| `animate-bounce` | bounce | Vertical bouncing motion |
 
-- **Layout:** width, height, margin, padding
-- **Decoration:** color, border, border-radius, shadows
-- **Effects:** opacity, transforms
+<a name="variants"></a>
+## Variants
 
-### Controlling Timing
+### Spin
 
-| Class | Duration |
-|-------|----------|
-| `duration-75` | 75ms |
-| `duration-100` | 100ms |
-| `duration-150` | 150ms |
-| `duration-200` | 200ms |
-| `duration-300` | 300ms |
-| `duration-500` | 500ms |
-| `duration-700` | 700ms |
-| `duration-1000` | 1000ms |
-| `duration-[Xms]` | Arbitrary (e.g., `duration-[450ms]`) |
+Use `animate-spin` for things like loading indicators. It provides a smooth, linear rotation. Let's look at a basic spinner:
 
-### Controlling Easing
+```dart
+WDiv(className: 'animate-spin w-6 h-6 border-2 border-t-transparent border-blue-500 rounded-full')
+```
 
-| Class | Curve |
-|-------|-------|
-| `ease-linear` | Linear |
-| `ease-in` | Ease In |
-| `ease-out` | Ease Out |
-| `ease-in-out` | Ease In Out (Default) |
+### Ping
 
+The `animate-ping` utility makes an element scale and fade out, resembling a radar ping or notification alert. This is perfect for status indicators.
+
+```dart
+WDiv(className: 'relative flex h-3 w-3', children: [
+  WDiv(className: 'animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75'),
+  WDiv(className: 'relative inline-flex rounded-full h-3 w-3 bg-sky-500'),
+])
+```
+
+### Pulse
+
+Use `animate-pulse` to create a skeleton loading effect. It gently fades the opacity of the element, making it ideal for content that is still loading.
+
+```dart
+WDiv(className: 'animate-pulse flex space-x-4', children: [
+  WDiv(className: 'rounded-full bg-slate-200 h-10 w-10'),
+  WDiv(className: 'flex-1 space-y-6 py-1', children: [
+    WDiv(className: 'h-2 bg-slate-200 rounded'),
+    WDiv(className: 'grid grid-cols-3 gap-4', children: [
+      WDiv(className: 'h-2 bg-slate-200 rounded col-span-2'),
+      WDiv(className: 'h-2 bg-slate-200 rounded col-span-1'),
+    ]),
+  ]),
+])
+```
+
+### Bounce
+
+The `animate-bounce` utility is perfect for scroll indicators or call-to-action buttons that need a bit of personality.
+
+```dart
+WIcon(Icons.keyboard_arrow_down, className: 'animate-bounce text-slate-400')
+```
+
+<a name="responsive-design"></a>
+## Responsive Design
+
+You can enable or disable animations at specific breakpoints. For example, you might want to only animate an element on larger screens to keep the mobile experience "quiet".
+
+```dart
+WDiv(className: 'animate-none md:animate-spin')
+```
+
+<a name="dark-mode"></a>
+## Dark Mode
+
+Animations work seamlessly with dark mode. You'll typically just change the colors of the animated element when switching to dark mode.
+
+```dart
+WDiv(className: 'animate-pulse bg-gray-200 dark:bg-gray-700')
+```
+
+<a name="arbitrary-values"></a>
+## Arbitrary Values
+
+If the built-in animations don't quite fit, you can use arbitrary values to specify custom animation strings.
+
+```dart
+WDiv(className: 'animate-[wiggle_1s_ease-in-out_infinite]')
+```
+
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can customize the available explicit animations in `WindThemeData`.
-Note: The value must be a `WindAnimationType` or a custom implementation if you extend the parser.
+Want to add your own animations to the system? You can extend the `animations` map in your `WindThemeData`.
 
 ```dart
-WindTheme(
-  theme: WindThemeData(
-    animations: {
-      'spin-slow': WindAnimationType.spinSlow, // Assuming you have added this to enum or similar
-    },
-  ),
-  child: MyApp(),
+WindThemeData(
+  animations: {
+    'wiggle': WindAnimationType.bounce, // Map to existing logic or custom type
+  },
 )
 ```
 
-Currently, `WindAnimationType` supports `spin`, `pulse`, `bounce`, and `ping`. For completely custom animations (keyframes), you would typically use a custom parser or `WAnimation` widget directly, as `WindThemeData` currently maps names to predefined types.
-
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Hover States](./hover.md) - Interactive hover effects
-- [Transforms](../styling/transform.md) - Transform utilities
-- [Opacity](../styling/opacity.md) - Opacity utilities
+- [Transitions](./transition.md) - Smooth property changes
+- [Hover States](../core-concepts/state-management.md) - Interactive triggers
+- [Transforms](../styling/transform.md) - Moving and scaling elements
+
+That's all.

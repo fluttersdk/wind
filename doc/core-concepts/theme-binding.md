@@ -1,41 +1,50 @@
-# Binding with Flutter Theme
+# Theme Binding
 
-Wind allows you to bind your custom `WindThemeData` to Flutter's standard `ThemeData`. This creates a seamless integration where standard Material widgets (like `AppBar`, `FloatingActionButton`, `TextField`) automatically reflect your Wind configuration.
+Theme binding allows you to sync your Wind configuration with Flutter's native `ThemeData` system. This ensures that standard Material widgets automatically reflect your Wind tokens, creating a cohesive visual experience across your entire application.
 
+- [Why Bind Themes?](#why-bind-themes)
+- [Reactive Binding](#reactive-binding)
+- [Toggling Themes](#toggling-themes)
+- [Static Binding](#static-binding)
+- [Mapping Reference](#mapping-reference)
+
+<a name="why-bind-themes"></a>
 ## Why Bind Themes?
 
-By binding Wind to Flutter's theme system, you ensure consistency across your app:
-- **Colors:** `bg-primary-500` will match `Theme.of(context).primaryColor`.
-- **Typography:** `font-sans` will be used by `Text` widgets by default.
-- **Brightness:** Toggling Wind's theme also updates `ThemeData.brightness`.
+By default, Wind manages its own styling tokens (colors, spacing, typography). However, Flutter's built-in widgets (like `AppBar`, `FloatingActionButton`, or `TextField`) rely on the standard `Theme.of(context)` to determine their appearance.
 
-## Reactive Theme Binding
+Binding the two systems ensures:
+- **Consistency:** A button using `bg-primary-500` matches a standard `ElevatedButton`.
+- **Inheritance:** Standard Flutter widgets automatically pick up your Wind font families and colors.
+- **Automation:** Toggling dark mode in Wind automatically updates the `brightness` of your standard Material theme.
 
-Use the `builder` pattern to create a reactive binding. This ensures your entire app rebuilds automatically when you toggle the theme (e.g., Dark Mode).
+<a name="reactive-binding"></a>
+## Reactive Binding
+
+To ensure your entire application rebuilds when the theme changes (e.g., switching to dark mode), use the `builder` pattern. This provides a `WindController` that dynamically generates a new `ThemeData` whenever the state updates.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/theme_binding" action="CREATE" -->
+<!-- Description: Demonstrate WindTheme syncing with MaterialApp and a theme toggle button -->
+<x-preview path="core-concepts/theme_binding" size="md" source="example/lib/pages/core-concepts/theme_binding.dart"></x-preview>
 
 ```dart
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // 1. Define your Wind Theme
     final windTheme = WindThemeData(
       colors: {
         'primary': Colors.indigo,
         'secondary': Colors.teal,
-        'background': Colors.white, // In dark mode: auto-inverted or override
       },
-      fontFamilies: {'sans': 'Inter'},
     );
 
-    // 2. Wrap MaterialApp with WindTheme
     return WindTheme(
       data: windTheme,
       builder: (context, controller) {
-        // 3. Use controller.toThemeData() to generate Flutter ThemeData
+        // controller.toThemeData() produces a standard Flutter ThemeData
         return MaterialApp(
-          title: 'Wind App',
           theme: controller.toThemeData(),
-          home: HomePage(),
+          home: const HomePage(),
         );
       },
     );
@@ -43,18 +52,20 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-### Toggling Theme
+<a name="toggling-themes"></a>
+## Toggling Themes
 
-When using reactive binding, changing the theme state automatically rebuilds `MaterialApp`.
+When using the reactive `builder` pattern, you can trigger a global theme update from anywhere in the widget tree. This will automatically update both Wind utilities and standard Material widgets.
 
 ```dart
 // Toggle between Light and Dark mode
 context.windTheme.toggleTheme();
 ```
 
-## Static Theme Binding
+<a name="static-binding"></a>
+## Static Binding
 
-If you don't need dynamic theme switching (e.g., force dark mode or static branding), you can bind the theme once.
+If you do not need dynamic theme switching at runtime, you can bind the theme once during initialization. This is useful for apps with a fixed brand identity or forced dark/light modes.
 
 ```dart
 final windTheme = WindThemeData(
@@ -65,19 +76,19 @@ final windTheme = WindThemeData(
 return WindTheme(
   data: windTheme,
   child: MaterialApp(
-    // Generate ThemeData once
     theme: windTheme.toThemeData(),
-    home: HomePage(),
+    home: const HomePage(),
   ),
 );
 ```
 
-## How it works
+<a name="mapping-reference"></a>
+## Mapping Reference
 
-The `toThemeData()` method converts your `WindThemeData` into a standard Flutter `ThemeData` object. It maps tokens intelligently:
+The `toThemeData()` method intelligently maps Wind tokens to their standard Flutter counterparts:
 
 | Wind Token | Flutter Theme Property |
-|------------|------------------------|
+|:-----------|:-----------------------|
 | `colors['primary']` | `colorScheme.primary` |
 | `colors['secondary']` | `colorScheme.secondary` |
 | `colors['error']` | `colorScheme.error` |
@@ -85,4 +96,7 @@ The `toThemeData()` method converts your `WindThemeData` into a standard Flutter
 | `brightness` | `brightness` |
 | `fontFamilies['sans']` | `textTheme.fontFamily` |
 
-This ensures that a button styled with `bg-primary-500` looks identical to a standard `ElevatedButton` using the primary color.
+This mapping ensures that your utility-first styles and native widgets stay perfectly in sync.
+
+That's all.
+

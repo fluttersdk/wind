@@ -1,173 +1,158 @@
-# Transition
+# Transitions
 
-Utilities for controlling the transition duration and timing function of elements.
+Utilities for controlling the duration, easing, and delay of state transitions in Wind.
 
-## Duration
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+  - [Duration](#duration)
+  - [Easing](#easing)
+  - [Delay](#delay)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-Control the transition duration using `duration-{ms}` utilities.
+<a name="basic-usage"></a>
+## Basic Usage
 
-| Class | Duration |
-| :--- | :--- |
-| `duration-75` | 75ms |
-| `duration-100` | 100ms |
-| `duration-150` | 150ms |
-| `duration-200` | 200ms |
-| `duration-300` | 300ms |
-| `duration-500` | 500ms |
-| `duration-700` | 700ms |
-| `duration-1000` | 1000ms |
+Transitions allow you to change property values smoothly over a given duration. In Wind, these are typically paired with state modifiers like `hover:`, `focus:`, or `active:`.
 
-### Arbitrary Values
-
-```dart
-WDiv(className: "duration-[250ms] ...")
-WDiv(className: "duration-[400] ...")
-```
-
-<x-preview path="effects/transition_duration" size="md" source="example/lib/pages/effects/transition_duration.dart"></x-preview>
+<!-- TODO: [EXAMPLE_NEEDED] path="interactivity/transition_basic" action="CREATE" -->
+<!-- Description: Basic transition demonstration showing duration and easing effects -->
+<x-preview path="interactivity/transition_basic" size="md" source="example/lib/pages/interactivity/transition_basic.dart"></x-preview>
 
 ```dart
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: 'bg-blue-500 hover:bg-indigo-600 duration-300 px-6 py-4 rounded-xl shadow-md hover:shadow-xl',
-    child: WText('300ms', className: 'text-white font-bold text-lg'),
-  ),
-)
-```
-
----
-
-## Timing Function (Ease)
-
-Control the timing function using `ease-{curve}` utilities.
-
-| Class | Curve |
-| :--- | :--- |
-| `ease-linear` | Linear |
-| `ease-in` | Ease In |
-| `ease-out` | Ease Out |
-| `ease-in-out` | Ease In Out |
-
-<x-preview path="effects/transition_ease" size="md" source="example/lib/pages/effects/transition_ease.dart"></x-preview>
-
-```dart
-// Each box has a different ease curve with same 700ms duration
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: 'bg-emerald-500 hover:bg-emerald-700 duration-700 ease-linear w-[140px] py-5 rounded-xl',
-    child: WText('Linear', className: 'text-white font-bold text-center'),
-  ),
-)
-
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: 'bg-sky-500 hover:bg-sky-700 duration-700 ease-in w-[140px] py-5 rounded-xl',
-    child: WText('Ease In', className: 'text-white font-bold text-center'),
-  ),
-)
-```
-
----
-
-## Combined Examples
-
-Real-world patterns combining duration, ease, and hover states.
-
-<x-preview path="effects/transition_combined" size="lg" source="example/lib/pages/effects/transition_combined.dart"></x-preview>
-
-### Button Hover Effect
-
-```dart
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: 'bg-blue-500 hover:bg-blue-700 duration-200 ease-in-out px-8 py-3 rounded-lg shadow-md hover:shadow-lg',
-    child: WText('Primary', className: 'text-white font-semibold'),
-  ),
-)
-```
-
-### Card Hover Effect
-
-```dart
-WAnchor(
-  onTap: () {},
-  child: WDiv(
-    className: 'bg-white hover:bg-gray-50 shadow-md hover:shadow-2xl duration-300 ease-out p-6 rounded-2xl w-[320px]',
-    children: [
-      WText('Card Title', className: 'text-xl font-bold text-gray-900'),
-      WDiv(className: 'h-3'),
-      WText('Hover to see the shadow transition.', className: 'text-gray-500'),
-    ],
-  ),
-)
-```
-
-### Color Palette Transitions
-
-```dart
+// Smoothly transition background color on hover
 WDiv(
-  className: 'flex flex-row gap-3',
-  children: [
-    _colorBox('bg-red-400 hover:bg-red-600'),
-    _colorBox('bg-orange-400 hover:bg-orange-600'),
-    _colorBox('bg-emerald-400 hover:bg-emerald-600'),
-    // ... more colors
-  ],
+  className: 'bg-blue-500 hover:bg-blue-700 duration-300 ease-in-out',
+  child: WText('Hover Me', className: 'text-white'),
 )
-
-Widget _colorBox(String colorClasses) {
-  return WAnchor(
-    onTap: () {},
-    child: WDiv(
-      className: '$colorClasses duration-300 ease-in-out w-[56px] h-[56px] rounded-xl shadow-sm hover:shadow-lg',
-    ),
-  );
-}
 ```
 
+By adding `duration-200`, the background color shift happens over 200 milliseconds instead of snapping instantly.
+
+<a name="quick-reference"></a>
+## Quick Reference
+
+### Duration
+| Class | Value | Description |
+|:------|:------|:------------|
+| `duration-75` | 75ms | Very fast transition |
+| `duration-100` | 100ms | Fast transition |
+| `duration-150` | 150ms | |
+| `duration-200` | 200ms | Standard UI transition |
+| `duration-300` | 300ms | |
+| `duration-500` | 500ms | Noticeable transition |
+| `duration-700` | 700ms | |
+| `duration-1000` | 1000ms | Slow transition |
+
+### Easing (Timing Function)
+| Class | Value | Description |
+|:------|:------|:------------|
+| `ease-linear` | `Curves.linear` | Constant speed |
+| `ease-in` | `Curves.easeIn` | Starts slow, ends fast |
+| `ease-out` | `Curves.easeOut` | Starts fast, ends slow |
+| `ease-in-out` | `Curves.easeInOut` | Slow start and end |
+
+### Delay
+| Class | Value | Description |
+|:------|:------|:------------|
+| `delay-75` | 75ms | |
+| `delay-100` | 100ms | |
+| `delay-150` | 150ms | |
+| `delay-200` | 200ms | |
+| `delay-300` | 300ms | |
+| `delay-500` | 500ms | |
+| `delay-700` | 700ms | |
+| `delay-1000` | 1000ms | |
+
+<a name="variants"></a>
+## Variants
+
+<a name="duration"></a>
+### Duration
+
+Use the `duration-{ms}` utility to set the length of the transition animation.
+
+```dart
+WDiv(className: 'duration-500 ...')
+```
+
+<a name="easing"></a>
+### Easing
+
+Control the rate of change with `ease-{curve}` utilities. This defines the "feel" of the animation.
+
+```dart
+WDiv(className: 'ease-out duration-300 ...')
+```
+
+<a name="delay"></a>
+### Delay
+
+If you need to wait before starting a transition, use the `delay-{ms}` utility.
+
+```dart
+WDiv(className: 'delay-150 duration-300 ...')
+```
+
+<a name="responsive-design"></a>
+## Responsive Design
+
+Apply different transition speeds or curves at different breakpoints using the standard responsive prefixes.
+
+```dart
+// Slow transition on desktop, fast on mobile
+WDiv(className: 'duration-150 lg:duration-500')
+```
+
+<a name="dark-mode"></a>
+## Dark Mode
+
+Use the `dark:` prefix to apply different transition styles when the application is in dark mode.
+
+```dart
+WDiv(className: 'duration-200 dark:duration-500')
+```
+
+<a name="arbitrary-values"></a>
+## Arbitrary Values
+
+If the standard scale doesn't fit your specific animation needs, use bracket notation to provide a custom millisecond value.
+
+```dart
+WDiv(className: 'duration-[420ms] ease-[Curves.bounceOut]')
+```
+
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can customize the default values for durations and animation curves in `WindThemeData`.
-
-### Durations
+To extend or override the default transition scales, modify `WindThemeData` in your app configuration.
 
 ```dart
 WindTheme(
-  theme: WindThemeData(
+  data: WindThemeData(
     transitionDurations: {
-        'fast': Duration(milliseconds: 100),
-        'slow': Duration(milliseconds: 1000),
-        '2000': Duration(milliseconds: 2000), // Override default or add new
+      'snappy': Duration(milliseconds: 50),
+      'lazy': Duration(milliseconds: 2000),
     },
-  ),
-  child: MyApp(),
-)
-```
-
-Usage: `duration-fast`, `duration-slow`.
-
-### Curves
-
-```dart
-WindTheme(
-  theme: WindThemeData(
     transitionCurves: {
-        'bounce': Curves.bounceOut,
-        'elastic': Curves.elasticIn,
+      'bounce': Curves.bounceOut,
     },
   ),
   child: MyApp(),
 )
 ```
 
-Usage: `ease-bounce`, `ease-elastic`.
+Usage: `duration-snappy`, `ease-bounce`.
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Animation](./animation.md) - Explicit animation utilities
-- [Hover States](./hover.md) - Interactive hover effects
-- [Opacity](../styling/opacity.md) - Opacity utilities
+- [Animation](./animation.md) - Explicit keyframe animations
+- [Hover States](../core-concepts/state-management.md) - Handling interactions
+- [Opacity](../styling/opacity.md) - Fade transitions
+
+That's all.
