@@ -2,62 +2,121 @@
 
 Utilities for controlling the font weight of an element.
 
-<x-preview path="typography/font_weight" size="md" source="example/lib/pages/typography/font_weight.dart"></x-preview>
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
+
+<!-- TODO: [EXAMPLE_NEEDED] path="typography/font_weight_basic" action="CREATE" -->
+<!-- Description: Show a list of text elements with different font weights (thin to black) -->
+<x-preview path="typography/font_weight_basic" size="md" source="example/lib/pages/typography/font_weight_basic.dart"></x-preview>
+
+```dart
+WDiv(
+  className: 'flex flex-col gap-4',
+  children: [
+    WText('The quick brown fox', className: 'font-light'),
+    WText('The quick brown fox', className: 'font-normal'),
+    WText('The quick brown fox', className: 'font-bold'),
+  ],
+)
+```
 
 ## Basic Usage
 
-Control font weight using `font-{weight}` utilities:
+Control the font weight of an element using the `font-{weight}` utilities.
 
 ```dart
-WText('Thin text', className: 'font-thin')
-WText('Light text', className: 'font-light')
-WText('Normal text', className: 'font-normal')
-WText('Medium text', className: 'font-medium')
-WText('Semibold text', className: 'font-semibold')
-WText('Bold text', className: 'font-bold')
-WText('Extrabold text', className: 'font-extrabold')
-WText('Black text', className: 'font-black')
+WText('Most text uses font-normal', className: 'font-normal')
+WText('Important text uses font-bold', className: 'font-bold')
 ```
 
-## All Font Weights
+## Quick Reference
 
-| Class | Weight |
-| :--- | :--- |
-| `font-thin` | 100 |
-| `font-extralight` | 200 |
-| `font-light` | 300 |
-| `font-normal` | 400 |
-| `font-medium` | 500 |
-| `font-semibold` | 600 |
-| `font-bold` | 700 |
-| `font-extrabold` | 800 |
-| `font-black` | 900 |
+| Class | Weight | Description |
+|:------|:-------|:------------|
+| `font-thin` | 100 | Thin |
+| `font-extralight` | 200 | Extra Light |
+| `font-light` | 300 | Light |
+| `font-normal` | 400 | Normal |
+| `font-medium` | 500 | Medium |
+| `font-semibold` | 600 | Semi Bold |
+| `font-bold` | 700 | Bold |
+| `font-extrabold` | 800 | Extra Bold |
+| `font-black` | 900 | Black |
+
+## Variants
+
+### Font Style
+
+Control the font style of an element using the `italic` and `not-italic` utilities.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="typography/font_style_basic" action="CREATE" -->
+<!-- Description: Show italic and not-italic usage -->
+<x-preview path="typography/font_style_basic" size="md" source="example/lib/pages/typography/font_style_basic.dart"></x-preview>
+
+```dart
+WText('This text is italicized.', className: 'italic')
+WText('This text is normal.', className: 'not-italic')
+```
+
+| Class | Style | Description |
+|:------|:------|:------------|
+| `italic` | `FontStyle.italic` | Renders text in italics |
+| `not-italic` | `FontStyle.normal` | Renders text normally (useful for resetting) |
+
+## Responsive Design
+
+Apply different font weights at specific breakpoints using standard responsive prefixes.
+
+```dart
+// Normal on mobile, bold on medium screens and up
+WText('Responsive Weight', className: 'font-normal md:font-bold')
+```
+
+## Dark Mode
+
+Adjust font weight based on the theme brightness. This is useful for maintaining legibility against dark backgrounds, where lighter weights might appear too thin.
+
+```dart
+// Lighter weight in dark mode for better readability
+WText('Adaptive Weight', className: 'font-medium dark:font-normal')
+```
 
 ## Arbitrary Values
 
-For custom font weights, use the bracket notation:
+If you need a specific font weight that isn't included in your theme, use square bracket notation.
 
 ```dart
-WText('Custom weight', className: 'font-[700]')
-WText('Variable weight', className: 'font-[550]')
+// Maps to the nearest standard FontWeight (e.g. 700 -> Bold)
+WText('Custom Weight', className: 'font-[700]')
+WText('Variable Weight', className: 'font-[550]')
 ```
 
 ## Customizing Theme
 
-Override or extend font weights in `WindThemeData`:
+You can customize the `fontWeights` scale in your `WindThemeData` configuration.
 
 ```dart
-WindThemeData(
-  fontWeights: {
-    'heavy': FontWeight.w900,
-    'custom': FontWeight.w450,  // variable font
-  }
+WindTheme(
+  data: WindThemeData(
+    fontWeights: {
+      'hairline': FontWeight.w100,
+      'heavy': FontWeight.w900,
+      // Override default
+      'bold': FontWeight.w600,
+    },
+  ),
+  child: MyApp(),
 )
 ```
 
-Usage: `font-heavy`
-
 ## Related Documentation
 
-- [Font Size](./font-size.md) - Font size utilities
-- [Font Family](./font-family.md) - Font family utilities
+- [Font Size](./font-size.md)
+- [Font Family](./font-family.md)
+- [Text Color](./text-color.md)
