@@ -2,94 +2,132 @@
 
 Utilities for controlling the box shadow of an element.
 
-<x-preview path="effects/shadow" size="md" source="example/lib/pages/effects/shadow.dart"></x-preview>
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Variants](#variants)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
-## Shadow Sizes
-
-Control shadow intensity with preset sizes:
+<x-preview path="effects/shadow_basic" size="md" source="example/lib/pages/effects/shadow_basic.dart"></x-preview>
 
 ```dart
-WDiv(className: 'shadow-sm bg-white rounded-lg')   // Subtle
-WDiv(className: 'shadow bg-white rounded-lg')      // Default
-WDiv(className: 'shadow-md bg-white rounded-lg')   // Medium
-WDiv(className: 'shadow-lg bg-white rounded-lg')   // Large
-WDiv(className: 'shadow-xl bg-white rounded-lg')   // Extra large
-WDiv(className: 'shadow-2xl bg-white rounded-lg')  // Dramatic
+// Basic examples
+WDiv(className: 'shadow')
+WDiv(className: 'shadow-lg')
+WDiv(className: 'shadow-red-500')
+WDiv(className: 'shadow-none')
+```
+
+## Basic Usage
+
+Use `shadow-{size}` utilities to apply different shadow intensities to an element.
+
+```dart
+WDiv(
+  className: 'shadow-lg bg-white rounded-lg p-6',
+  child: WText('Shadow Example'),
+)
+```
+
+## Quick Reference
+
+| Class | Properties | Description |
+|:------|:-----------|:------------|
+| `shadow-sm` | `blur: 2` | Subtle shadow |
+| `shadow` | `blur: 3` | Default shadow |
+| `shadow-md` | `blur: 6` | Medium shadow |
+| `shadow-lg` | `blur: 15` | Large shadow |
+| `shadow-xl` | `blur: 25` | Extra large shadow |
+| `shadow-2xl` | `blur: 50` | Dramatic shadow |
+| `shadow-none` | `none` | Removes shadow |
+
+## Variants
+
+### Shadow Colors
+
+Use `shadow-{color}` utilities to change the color of the shadow. This preserves the original shadow's opacity structure while tinting it with the specified color.
+
+<x-preview path="effects/shadow_color" size="md" source="example/lib/pages/effects/shadow_color.dart"></x-preview>
+
+```dart
+// Blue tinted shadow
+WDiv(className: 'shadow-lg shadow-blue-500')
+
+// Red tinted shadow
+WDiv(className: 'shadow-md shadow-red-500')
 ```
 
 | Class | Description |
-| :--- | :--- |
-| `shadow-sm` | Subtle shadow (blur: 2) |
-| `shadow` | Default shadow (blur: 3) |
-| `shadow-md` | Medium shadow (blur: 6) |
-| `shadow-lg` | Large shadow (blur: 15) |
-| `shadow-xl` | Extra large shadow (blur: 25) |
-| `shadow-2xl` | Dramatic shadow (blur: 50) |
-| `shadow-none` | Removes shadow |
+|:------|:------------|
+| `shadow-{color}` | Tints the shadow with the specified color (e.g., `shadow-red-500`) |
 
-## Shadow Colors
+### Shadow Opacity
 
-Colorize shadows using theme colors:
+Control shadow color opacity with the `/` modifier.
 
 ```dart
-WDiv(className: 'shadow-xl shadow-blue-500')   // Blue shadow
-WDiv(className: 'shadow-xl shadow-red-500')    // Red shadow
-WDiv(className: 'shadow-xl shadow-green-500')  // Green shadow
+WDiv(className: 'shadow-xl shadow-red-500/50')
 ```
 
-### Arbitrary Colors
+### Removing Shadows
 
-Use custom hex colors with bracket notation:
+Use `shadow-none` to remove any existing box shadows from an element. This is useful for resetting shadows at specific breakpoints.
 
 ```dart
-WDiv(className: 'shadow-xl shadow-[#1da1f2]')  // Twitter blue
-WDiv(className: 'shadow-xl shadow-[#FF5733]')  // Custom hex
+WDiv(className: 'shadow-lg md:shadow-none')
 ```
 
-## Shadow Opacity
+## Responsive Design
 
-Control shadow color opacity with the `/` modifier:
+Apply different shadow utilities at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
 
 ```dart
-WDiv(className: 'shadow-xl shadow-red-500')      // 100%
-WDiv(className: 'shadow-xl shadow-red-500/75')   // 75%
-WDiv(className: 'shadow-xl shadow-red-500/50')   // 50%
-WDiv(className: 'shadow-xl shadow-red-500/25')   // 25%
+WDiv(className: 'shadow-sm md:shadow-lg xl:shadow-2xl')
 ```
 
-## All Classes
+## Dark Mode
 
-| Class | Description |
-| :--- | :--- |
-| `shadow-sm` | Subtle shadow |
-| `shadow` | Default shadow |
-| `shadow-md` | Medium shadow |
-| `shadow-lg` | Large shadow |
-| `shadow-xl` | Extra large shadow |
-| `shadow-2xl` | Dramatic shadow |
-| `shadow-none` | Remove shadow |
-| `shadow-{color}-{shade}` | Colored shadow |
-| `shadow-[#hex]` | Arbitrary color |
-| `shadow-{color}/opacity` | Opacity modifier |
+Use the `dark:` prefix to apply different shadow styles when the application is in dark mode.
+
+```dart
+WDiv(className: 'shadow-lg bg-white dark:bg-gray-800 dark:shadow-black/30')
+```
+
+## Arbitrary Values
+
+If the built-in scale doesn't meet your needs, use bracket notation to apply custom shadow colors.
+
+```dart
+// Custom shadow color hex
+WDiv(className: 'shadow-lg shadow-[#50d71e]')
+```
+
+> [!NOTE]
+> Currently, arbitrary values only support custom colors. For custom shadow sizes (offsets, blur), use the theme customization options.
 
 ## Customizing Theme
 
-Add custom shadow presets in `WindThemeData`:
+To extend or override the default shadow scale, modify the `shadows` property in `WindThemeData`.
 
 ```dart
 WindThemeData(
   shadows: {
-    'custom': [
+    // Add a custom shadow preset
+    'soft': [
       BoxShadow(
-        color: Colors.black12,
+        color: Colors.black.withOpacity(0.05),
         blurRadius: 10,
         offset: Offset(0, 4),
       ),
     ],
-    'deep': [
+    // Override the default 'xl' shadow
+    'xl': [
       BoxShadow(
-        color: Colors.black.withOpacity(0.5),
-        blurRadius: 20,
+        color: Colors.blue.withOpacity(0.2),
+        blurRadius: 30,
         spreadRadius: 5,
       ),
     ],
@@ -97,9 +135,14 @@ WindThemeData(
 )
 ```
 
-Usage: `shadow-custom`, `shadow-deep`
+Usage:
+
+```dart
+WDiv(className: 'shadow-soft')
+```
 
 ## Related Documentation
 
-- [Ring](../borders/ring.md) - Focus ring utilities
-- [Opacity](./opacity.md) - Opacity utilities
+- [Opacity](./opacity.md)
+- [Ring](../borders/ring.md)
+- [Background Color](../styling/background-color.md)

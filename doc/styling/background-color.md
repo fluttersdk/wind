@@ -1,103 +1,138 @@
 # Background Color
 
-Utilities for controlling the background color of an element.
+Utilities for controlling an element's background color.
 
-<x-preview path="backgrounds/colors" size="md" source="example/lib/pages/backgrounds/colors.dart"></x-preview>
+- [Basic Usage](#basic-usage)
+- [Quick Reference](#quick-reference)
+- [Opacity Modifier](#opacity-modifier)
+- [Responsive Design](#responsive-design)
+- [Dark Mode](#dark-mode)
+- [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
+- [Related Documentation](#related-documentation)
 
+<!-- TODO: [EXAMPLE_NEEDED] path="styling/background_color_basic" action="CREATE" -->
+<!-- Description: Show a grid of boxes with different background colors (solid, white, black, transparent) -->
+<x-preview path="styling/background_color_basic" size="md" source="example/lib/pages/styling/background_color_basic.dart"></x-preview>
+
+```dart
+// Solid color
+WDiv(className: 'bg-blue-500 h-12 w-12 rounded')
+
+// With opacity
+WDiv(className: 'bg-blue-500/50 h-12 w-12 rounded')
+
+// White and Black
+WDiv(className: 'bg-white h-12 w-12 rounded')
+WDiv(className: 'bg-black h-12 w-12 rounded')
+```
+
+<a name="basic-usage"></a>
 ## Basic Usage
 
-Control background color using `bg-{color}-{shade}` utilities:
+Use `bg-{color}-{shade}` to set the background color of an element. Wind includes a comprehensive palette of colors (slate, gray, red, blue, etc.) with shades from 50 to 950.
 
 ```dart
-WDiv(className: 'bg-red-500 p-4')    // Red background
-WDiv(className: 'bg-blue-600 p-4')   // Blue background
-WDiv(className: 'bg-green-500 p-4')  // Green background
+WDiv(
+  className: 'bg-blue-500 p-4 rounded-lg',
+  child: WText('Blue Background', className: 'text-white'),
+)
 ```
 
-## Color Shades
-
-Each color has shades from 50 (lightest) to 900 (darkest):
+You can also use standalone colors like `bg-white`, `bg-black`, and `bg-transparent`.
 
 ```dart
-WDiv(className: 'bg-blue-50')   // Very light
-WDiv(className: 'bg-blue-500')  // Default
-WDiv(className: 'bg-blue-900')  // Very dark
+WDiv(className: 'bg-white shadow-md p-6')
+WDiv(className: 'bg-transparent border border-gray-300')
 ```
 
-| Shade | Description |
-| :--- | :--- |
-| `50` | Lightest |
-| `100-300` | Light |
-| `400-600` | Medium |
-| `700-900` | Dark |
+<a name="quick-reference"></a>
+## Quick Reference
 
-## Background Opacity
+| Class | Description |
+|:------|:------------|
+| `bg-{color}-{shade}` | Sets background color (e.g., `bg-red-500`, `bg-slate-900`). |
+| `bg-white` | Sets background to white. |
+| `bg-black` | Sets background to black. |
+| `bg-transparent` | Sets background to transparent. |
+| `bg-current` | Sets background to the current text color. |
 
-Control background color opacity with the `/` modifier:
+<a name="opacity-modifier"></a>
+## Opacity Modifier
+
+Control the opacity of a background color using the slash modifier `/{opacity}`. The value ranges from 0 to 100.
+
+<!-- TODO: [EXAMPLE_NEEDED] path="styling/background_color_opacity" action="CREATE" -->
+<!-- Description: Show the same color with different opacity levels side by side -->
+<x-preview path="styling/background_color_opacity" size="md" source="example/lib/pages/styling/background_color_opacity.dart"></x-preview>
 
 ```dart
-WDiv(className: 'bg-red-500')      // 100% opacity
-WDiv(className: 'bg-red-500/75')   // 75% opacity
-WDiv(className: 'bg-red-500/50')   // 50% opacity
-WDiv(className: 'bg-red-500/25')   // 25% opacity
-WDiv(className: 'bg-red-500/10')   // 10% opacity
+WDiv(className: 'bg-blue-500/100') // 100% (Default)
+WDiv(className: 'bg-blue-500/75')  // 75%
+WDiv(className: 'bg-blue-500/50')  // 50%
+WDiv(className: 'bg-blue-500/25')  // 25%
 ```
 
-### Arbitrary Opacity
+<a name="responsive-design"></a>
+## Responsive Design
 
-Use bracket notation for precise values:
+Change the background color at specific breakpoints using standard responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`).
 
 ```dart
-WDiv(className: 'bg-blue-500/[0.35]')  // 35% opacity
-WDiv(className: 'bg-green-500/[0.8]')  // 80% opacity
+// Red on mobile, Blue on medium screens and up
+WDiv(className: 'bg-red-500 md:bg-blue-500 h-32 w-full')
 ```
 
+<a name="dark-mode"></a>
+## Dark Mode
+
+Use the `dark:` prefix to apply a different background color when dark mode is active.
+
+```dart
+WDiv(
+  className: 'bg-white dark:bg-slate-900 p-6 rounded-lg',
+  child: WText('Adaptive Background', className: 'text-gray-900 dark:text-white'),
+)
+```
+
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-For custom colors, use the bracket notation:
+If you need a specific color not in your theme, use square bracket notation `bg-[#RRGGBB]`.
 
 ```dart
-WDiv(className: 'bg-[#1da1f2]')  // Twitter blue
-WDiv(className: 'bg-[#FF5733]')  // Custom hex
-WDiv(className: 'bg-[#6B5B95]')  // Custom purple
+WDiv(className: 'bg-[#1da1f2] text-white p-4') // Twitter Blue
+WDiv(className: 'bg-[#ff0000]') // Bright Red
 ```
 
-## Special Values
-
-| Class | Description |
-| :--- | :--- |
-| `bg-transparent` | Transparent background |
-| `bg-white` | White background |
-| `bg-black` | Black background |
-
-## All Classes
-
-| Class | Description |
-| :--- | :--- |
-| `bg-{color}-{shade}` | Theme color (e.g. `bg-red-500`) |
-| `bg-{color}-{shade}/{opacity}` | With opacity (e.g. `bg-red-500/50`) |
-| `bg-[#hex]` | Arbitrary hex color |
-| `bg-transparent` | Transparent |
-| `bg-white` | White |
-| `bg-black` | Black |
-
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-Extend the color palette in `WindThemeData`:
+To add your own colors, modify the `colors` map in `WindThemeData`.
 
 ```dart
 WindThemeData(
   colors: {
-    'brand': Colors.blue,
-    'surface': Color(0xFF1E293B),
+    // Add a custom brand color
+    'brand': {
+      '500': Color(0xFF1DA1F2),
+      '600': Color(0xFF1A91DA),
+    },
+    // Extend existing palette
+    'gray': {
+      ...WindThemeData.defaultColors['gray']!,
+      '1000': Color(0xFF0F0F0F),
+    },
   },
 )
 ```
 
-Usage: `bg-brand-500`, `bg-surface`
+Now you can use `bg-brand-500` or `bg-gray-1000`.
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Background Gradient](./background-gradient.md) - Gradient backgrounds
-- [Text Color](../typography/text-color.md) - Text color utilities
-- [Border Color](../borders/borders.md) - Border color utilities
+- [Background Gradient](./background-gradient.md)
+- [Background Image](./background-image.md)
+- [Text Color](./text-color.md)
+- [Border Color](./border-color.md)
