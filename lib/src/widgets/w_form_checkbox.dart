@@ -30,7 +30,7 @@ class WFormCheckbox extends FormField<bool> {
   /// Creates a Wind-styled form checkbox.
   WFormCheckbox({
     super.key,
-    bool value = false,
+    this.value = false,
     super.validator,
     super.onSaved,
     super.autovalidateMode,
@@ -79,6 +79,15 @@ class WFormCheckbox extends FormField<bool> {
           },
         );
 
+  /// The current value of the checkbox.
+  ///
+  /// When this changes between rebuilds, the form field state
+  /// is automatically synchronized via [didUpdateWidget].
+  final bool value;
+
+  @override
+  FormFieldState<bool> createState() => _WFormCheckboxState();
+
   /// Called when the checkbox value changes.
   final ValueChanged<bool>? onChanged;
 
@@ -119,6 +128,24 @@ class WFormCheckbox extends FormField<bool> {
 
   /// Tailwind-like classes for error message.
   final String errorClassName;
+}
+
+/// Custom [FormFieldState] that syncs the form state when the parent
+/// widget's [WFormCheckbox.value] changes between rebuilds.
+///
+/// Without this, [FormField.initialValue] is only read once on creation,
+/// and subsequent value changes from the parent are silently ignored.
+class _WFormCheckboxState extends FormFieldState<bool> {
+  @override
+  WFormCheckbox get widget => super.widget as WFormCheckbox;
+
+  @override
+  void didUpdateWidget(covariant WFormCheckbox oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      setValue(widget.value);
+    }
+  }
 }
 
 /// Internal widget for WFormCheckbox.

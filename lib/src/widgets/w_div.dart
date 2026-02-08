@@ -762,9 +762,18 @@ class WDiv extends StatelessWidget {
     // ---------------------------------------------------------
 
     // Apply Fractional Sizing (e.g., w-1/2, w-full, h-full)
-    // Optimized: w-full (factor 1.0) uses SizedBox.expand directly without
-    // LayoutBuilder to avoid expensive cascade rebuilds. LayoutBuilder is only
-    // used for partial fractions (w-1/2, w-1/3) or when max constraints exist.
+    //
+    // IMPORTANT: LayoutBuilder must be avoided when child widgets contain
+    // TextField/EditableText. LayoutBuilder runs a buildScope inside
+    // performLayout, and if a child's updateRenderObject triggers
+    // markNeedsLayout (e.g. textScaler change), it causes a debug assertion:
+    //   _debugRelayoutBoundaryAlreadyMarkedNeedsLayout() is not true
+    //
+    // Strategy:
+    //   - w-full: SizedBox(width: infinity) — no LayoutBuilder needed
+    //   - w-full + max-w-*: ConstrainedBox + SizedBox — no LayoutBuilder needed
+    //   - w-1/2, w-1/3 etc: FractionallySizedBox — no LayoutBuilder needed
+    //   - h-full: LayoutBuilder only when vertical axis is unbounded
     if (styles.widthFactor != null || styles.heightFactor != null) {
       final innerChild = widgetToBuild;
 
@@ -775,36 +784,118 @@ class WDiv extends StatelessWidget {
 
       final bool isFullWidth = styles.widthFactor == 1.0;
       final bool isFullHeight = styles.heightFactor == 1.0;
-      // Fast path only for w-full WITHOUT h-full. h-full needs LayoutBuilder
-      // because vertical axis is often unbounded (inside ScrollView/Column)
-      // and SizedBox(height: double.infinity) would cause infinite size errors.
-      final bool canUseFastPath = isFullWidth &&
-          styles.heightFactor == null &&
-          !hasMaxWidthConstraint &&
-          !hasMaxHeightConstraint;
 
-      if (canUseFastPath) {
-        logger.wrapWith("SizedBox", "w-full (no LayoutBuilder)");
-        widgetToBuild = SizedBox(
-          width: double.infinity,
-          child: innerChild,
-        );
-      } else {
-        // Slow path: partial fractions or max constraints need LayoutBuilder
-        widgetToBuild = LayoutBuilder(
-          builder: (context, constraints) {
-            final bool widthUnbounded = !constraints.hasBoundedWidth;
-            final bool heightUnbounded = !constraints.hasBoundedHeight;
+      // Fast path: width-only sizing (no heightFactor) — avoids LayoutBuilder
+      // Covers: w-full, w-full max-w-*, w-1/2, w-1/3, etc.
+      if (styles.heightFactor == null) {
+        if (isFullWidth) {
+          // w-full: expand to fill available width
+          logger.wrapWith("SizedBox", "w-full (no LayoutBuilder)");
+          widgetToBuild = SizedBox(
+            width: double.infinity,
+            child: innerChild,
+          );
+        } else {
+          // w-1/2, w-1/3, etc: use FractionallySizedBox (render-layer, no LayoutBuilder)
+          logger.wrapWith("FractionallySizedBox", "w-fraction");
+          widgetToBuild = FractionallySizedBox(
+            widthFactor: styles.widthFactor,
+            child: innerChild,
+          );
+        }
 
-            // Full-size in unbounded context → use screen dimensions
-            if ((widthUnbounded && isFullWidth) ||
-                (heightUnbounded && isFullHeight)) {
-              final screenSize = MediaQuery.of(context).size;
-              Widget result = SizedBox(
-                width: isFullWidth ? screenSize.width : null,
-                height: isFullHeight ? screenSize.height : null,
+        // Apply max constraints via ConstrainedBox if present
+        if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
+          logger.wrapWith("ConstrainedBox", "max constraints");
+          widgetToBuild = ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: hasMaxWidthConstraint
+                  ? styles.constraints!.maxWidth
+                  : double.infinity,
+              maxHeight: hasMaxHeightConstraint
+                  ? styles.constraints!.maxHeight
+                  : double.infinity,
+            ),
+            child: widgetToBuild,
+          );
+        }
+      } else if (styles.widthFactor == null) {
+        // Height-only fractional sizing (h-full, h-1/2, etc.)
+        // Vertical axis is often unbounded (ScrollView/Column), so we need
+        // LayoutBuilder only for h-full in unbounded contexts.
+        if (isFullHeight) {
+          // h-full needs LayoutBuilder to handle unbounded vertical axis
+          widgetToBuild = LayoutBuilder(
+            builder: (context, constraints) {
+              if (!constraints.hasBoundedHeight) {
+                final screenHeight = MediaQuery.of(context).size.height;
+                Widget result = SizedBox(
+                  height: screenHeight,
+                  child: innerChild,
+                );
+                if (hasMaxHeightConstraint) {
+                  result = ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: styles.constraints!.maxHeight,
+                    ),
+                    child: result,
+                  );
+                }
+                return result;
+              }
+              // Bounded context: use FractionallySizedBox
+              return FractionallySizedBox(
+                heightFactor: 1.0,
                 child: innerChild,
               );
+            },
+          );
+        } else {
+          // h-1/2, h-1/3, etc: FractionallySizedBox (no LayoutBuilder)
+          logger.wrapWith("FractionallySizedBox", "h-fraction");
+          widgetToBuild = FractionallySizedBox(
+            heightFactor: styles.heightFactor,
+            child: innerChild,
+          );
+          if (hasMaxHeightConstraint) {
+            widgetToBuild = ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: styles.constraints!.maxHeight,
+              ),
+              child: widgetToBuild,
+            );
+          }
+        }
+      } else {
+        // Both width and height factors (e.g., w-full h-full, w-1/2 h-1/2)
+        // Use LayoutBuilder only when needed for unbounded axis
+        final bool needsLayoutBuilder = isFullHeight; // h-full may be unbounded
+        if (needsLayoutBuilder) {
+          widgetToBuild = LayoutBuilder(
+            builder: (context, constraints) {
+              final bool heightUnbounded = !constraints.hasBoundedHeight;
+              final double? effectiveHeight = heightUnbounded
+                  ? MediaQuery.of(context).size.height *
+                      (styles.heightFactor ?? 1.0)
+                  : null;
+
+              Widget result;
+              if (effectiveHeight != null) {
+                // Unbounded height: use calculated size
+                result = SizedBox(
+                  width: isFullWidth ? double.infinity : null,
+                  height: effectiveHeight,
+                  child: innerChild,
+                );
+              } else {
+                // Bounded context: FractionallySizedBox handles both axes
+                result = FractionallySizedBox(
+                  widthFactor: styles.widthFactor,
+                  heightFactor: styles.heightFactor,
+                  child: innerChild,
+                );
+              }
+
               if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
                 result = ConstrainedBox(
                   constraints: BoxConstraints(
@@ -819,58 +910,30 @@ class WDiv extends StatelessWidget {
                 );
               }
               return result;
-            }
-
-            final double? effectiveWidthFactor =
-                widthUnbounded ? null : styles.widthFactor;
-            final double? effectiveHeightFactor =
-                heightUnbounded ? null : styles.heightFactor;
-
-            if (effectiveWidthFactor == null && effectiveHeightFactor == null) {
-              return innerChild ?? const SizedBox.shrink();
-            }
-
-            // Max constraints: calculate actual size
-            if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
-              double? width;
-              double? height;
-
-              if (effectiveWidthFactor != null) {
-                final parentWidth = constraints.maxWidth;
-                final calculatedWidth = parentWidth * effectiveWidthFactor;
-                if (hasMaxWidthConstraint) {
-                  width =
-                      calculatedWidth.clamp(0, styles.constraints!.maxWidth);
-                } else {
-                  width = calculatedWidth;
-                }
-              }
-
-              if (effectiveHeightFactor != null) {
-                final parentHeight = constraints.maxHeight;
-                final calculatedHeight = parentHeight * effectiveHeightFactor;
-                if (hasMaxHeightConstraint) {
-                  height = calculatedHeight.clamp(
-                    0,
-                    styles.constraints!.maxHeight,
-                  );
-                } else {
-                  height = calculatedHeight;
-                }
-              }
-
-              logger.wrapWith("SizedBox", "fractional + max constraint");
-              return SizedBox(width: width, height: height, child: innerChild);
-            }
-
-            logger.wrapWith("FractionallySizedBox", "factor");
-            return FractionallySizedBox(
-              widthFactor: effectiveWidthFactor,
-              heightFactor: effectiveHeightFactor,
-              child: innerChild,
+            },
+          );
+        } else {
+          // Both fractional, neither h-full: FractionallySizedBox handles it
+          logger.wrapWith("FractionallySizedBox", "w+h fraction");
+          widgetToBuild = FractionallySizedBox(
+            widthFactor: styles.widthFactor,
+            heightFactor: styles.heightFactor,
+            child: innerChild,
+          );
+          if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
+            widgetToBuild = ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: hasMaxWidthConstraint
+                    ? styles.constraints!.maxWidth
+                    : double.infinity,
+                maxHeight: hasMaxHeightConstraint
+                    ? styles.constraints!.maxHeight
+                    : double.infinity,
+              ),
+              child: widgetToBuild,
             );
-          },
-        );
+          }
+        }
       }
     }
 

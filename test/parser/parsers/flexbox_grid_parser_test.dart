@@ -148,6 +148,28 @@ void main() {
         expect(styles.flexFit, FlexFit.loose);
       });
 
+      test('parses shrink class', () {
+        final styles = parser.parse(WindStyle(), ['shrink'], context);
+        expect(styles.flexFit, FlexFit.loose);
+      });
+
+      test('parses shrink-0 class', () {
+        final styles = parser.parse(WindStyle(), ['shrink-0'], context);
+        expect(styles.flexFit, FlexFit.tight);
+      });
+
+      test('parses items-baseline class', () {
+        final styles = parser.parse(WindStyle(), ['items-baseline'], context);
+        expect(styles.crossAxisAlignment, CrossAxisAlignment.baseline);
+        expect(styles.textBaseline, TextBaseline.alphabetic);
+      });
+
+      test('applies last-class-wins for shrink', () {
+        final styles =
+            parser.parse(WindStyle(), ['shrink', 'shrink-0'], context);
+        expect(styles.flexFit, FlexFit.tight);
+      });
+
       test('returns unchanged styles when classes is null', () {
         final initialStyles = WindStyle();
         final styles = parser.parse(initialStyles, null, context);
@@ -161,6 +183,9 @@ void main() {
         expect(parser.canParse('flex-row'), isTrue);
         expect(parser.canParse('justify-center'), isTrue);
         expect(parser.canParse('items-start'), isTrue);
+        expect(parser.canParse('items-baseline'), isTrue);
+        expect(parser.canParse('shrink'), isTrue);
+        expect(parser.canParse('shrink-0'), isTrue);
         expect(parser.canParse('gap-4'), isTrue);
         expect(parser.canParse('axis-min'), isTrue);
       });

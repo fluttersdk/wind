@@ -27,7 +27,7 @@ Utility-first Flutter UI. Styling via `className` strings → `WindParser` → `
 | `WImage` | Image | `src` (url/`asset://`), `alt`, `placeholder`, `errorBuilder` |
 | `WSvg` | SVG | `src` or `WSvg.string(svgString:)` |
 | `WIcon` | Icon | `icon` (IconData), `semanticLabel` |
-| `WPopover` | Overlay | `triggerBuilder`, `contentBuilder`, `alignment`, `controller` |
+| `WPopover` | Overlay | `triggerBuilder`, `contentBuilder`, `alignment`, `controller`, `offset`, `maxHeight` |
 | `WSpacer` | Spacing | `className` — lightweight SizedBox (`h-*`/`w-*`) |
 | `WFormInput` | Validated input | `validator`, `label`, `hint`, `labelClassName`, `errorClassName` |
 | `WFormSelect<T>` | Validated select | Same as WSelect + `validator`, `label` |
@@ -67,6 +67,9 @@ WDiv(className: 'flex flex-col md:flex-row gap-4 p-6')
 
 // Grid
 WDiv(className: 'grid grid-cols-2 md:grid-cols-3 gap-4')
+
+// Wrapping layout (for badges, pills, tags that should flow to next line)
+WDiv(className: 'wrap gap-2', children: [...])
 
 // Centered
 WDiv(className: 'flex justify-center items-center h-full')
@@ -179,7 +182,7 @@ Access: `WindTheme.of(context)` (controller), `WindTheme.dataOf(context)` (data)
 3. **Arbitrary values** — bracket syntax: `w-[200px]`, `text-[#FF0000]`, `aspect-[16/9]`
 4. **Opacity shorthand** — `bg-red-500/50`, `text-blue-500/75`
 5. **Fraction sizing** — `w-1/2`, `w-1/3`, `w-2/3`, `w-1/4`, `w-3/4`
-6. **WSelect uses WPopover** — debug WPopover for dropdown issues
+6. **WPopover auto-flips** — `alignment` is a *preferred* alignment. If the popover would overflow screen bounds, it automatically flips to the opposite side (horizontal, vertical, or both). `bottomRight` → `bottomLeft` when left edge overflow, `bottomLeft` → `topLeft` when bottom overflow. Center-aligned popovers (`bottomCenter`, `topCenter`) only flip vertically. Height estimation uses `maxHeight` (conservative).
 7. **Cache** — WindParser caches results; call `WindParser.clearCache()` in tests if needed
 
 ## Gotchas
@@ -192,6 +195,7 @@ Access: `WindTheme.of(context)` (controller), `WindTheme.dataOf(context)` (data)
 | Input in same context inconsistent | All inputs must use identical padding (`py-3` everywhere) |
 | Dark mode missing | Every bg/text/border needs `dark:` variant |
 | WDiv auto-wrapping in WAnchor | Happens when className has `hover:`/`focus:`/`active:` |
+| **`flex-wrap` is a NO-OP** | Wind has 3 display types: `flex`, `grid`, `wrap`. Use `wrap` (creates Flutter `Wrap` widget). `flex flex-wrap` does NOT work — `flex` always creates `Row`/`Column` which cannot wrap. **NEVER use `flex-wrap` or `flex flex-row flex-wrap`**. Use `wrap gap-2` instead. `wrap` supports `items-center`, `justify-between`, `gap-*`. |
 
 ## References
 

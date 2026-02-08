@@ -21,17 +21,24 @@ void main() {
       String? className,
     }) {
       return MaterialApp(
+        locale: const Locale('en', 'US'),
         home: WindTheme(
           data: WindThemeData(),
           child: Scaffold(
-            body: WCalendarGrid(
-              month: month,
-              selectedDate: selectedDate,
-              selectedRange: selectedRange,
-              minDate: minDate,
-              maxDate: maxDate,
-              onDateSelected: onDateSelected,
-              className: className,
+            body: Center(
+              child: SizedBox(
+                width: 400,
+                height: 500,
+                child: WCalendarGrid(
+                  month: month,
+                  selectedDate: selectedDate,
+                  selectedRange: selectedRange,
+                  minDate: minDate,
+                  maxDate: maxDate,
+                  onDateSelected: onDateSelected,
+                  className: className,
+                ),
+              ),
             ),
           ),
         ),

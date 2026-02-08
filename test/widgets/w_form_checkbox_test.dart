@@ -386,5 +386,73 @@ void main() {
         expect(changed, isNull);
       });
     });
+
+    group('External Value Updates', () {
+      testWidgets('syncs when parent updates value from false to true',
+          (tester) async {
+        bool externalValue = false;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  children: [
+                    WFormCheckbox(
+                      value: externalValue,
+                      className: 'w-5 h-5',
+                    ),
+                    WButton(
+                      onTap: () => setState(() => externalValue = true),
+                      child: const Text('Set True'),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+
+        expect(tester.widget<WCheckbox>(find.byType(WCheckbox)).value, isFalse);
+
+        await tester.tap(find.text('Set True'));
+        await tester.pump();
+
+        expect(tester.widget<WCheckbox>(find.byType(WCheckbox)).value, isTrue);
+      });
+
+      testWidgets('syncs when parent updates value from true to false',
+          (tester) async {
+        bool externalValue = true;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  children: [
+                    WFormCheckbox(
+                      value: externalValue,
+                      className: 'w-5 h-5',
+                    ),
+                    WButton(
+                      onTap: () => setState(() => externalValue = false),
+                      child: const Text('Set False'),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+
+        expect(tester.widget<WCheckbox>(find.byType(WCheckbox)).value, isTrue);
+
+        await tester.tap(find.text('Set False'));
+        await tester.pump();
+
+        expect(tester.widget<WCheckbox>(find.byType(WCheckbox)).value, isFalse);
+      });
+    });
   });
 }

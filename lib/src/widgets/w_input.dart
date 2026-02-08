@@ -380,9 +380,6 @@ class _WInputState extends State<WInput> {
     logger.setCoreWidget("TextField");
     logger.printFinalCode();
 
-    logger.setCoreWidget("TextField");
-    logger.printFinalCode();
-
     Widget result = TextField(
       controller: _controller,
       focusNode: _focusNode,

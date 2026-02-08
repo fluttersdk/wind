@@ -40,6 +40,28 @@ typedef PopoverTriggerBuilder = Widget Function(
 typedef PopoverContentBuilder = Widget Function(
     BuildContext context, VoidCallback close);
 
+/// Computes effective alignment by flipping when overflow would occur.
+///
+/// Returns [requested] alignment if it fits, or a flipped variant if
+/// overflow detected.
+PopoverAlignment computeEffectiveAlignment({
+  required PopoverAlignment requested,
+  required Offset triggerPosition,
+  required Size triggerSize,
+  required Size popoverSize,
+  required Size screenSize,
+  required Offset offset,
+}) {
+  return _WPopoverState.computeEffectiveAlignment(
+    requested: requested,
+    triggerPosition: triggerPosition,
+    triggerSize: triggerSize,
+    popoverSize: popoverSize,
+    screenSize: screenSize,
+    offset: offset,
+  );
+}
+
 /// Controller for programmatic popover control
 class PopoverController extends ChangeNotifier {
   bool _isOpen = false;
@@ -191,6 +213,81 @@ class _WPopoverState extends State<WPopover> {
   bool _isOpen = false;
   bool _isHovering = false;
 
+  /// Computes effective alignment by flipping when overflow would occur.
+  ///
+  /// Returns [requested] alignment if it fits, or a flipped variant if
+  /// overflow detected.
+  static PopoverAlignment computeEffectiveAlignment({
+    required PopoverAlignment requested,
+    required Offset triggerPosition,
+    required Size triggerSize,
+    required Size popoverSize,
+    required Size screenSize,
+    required Offset offset,
+  }) {
+    PopoverAlignment effective = requested;
+
+    final bool isRight = effective == PopoverAlignment.bottomRight ||
+        effective == PopoverAlignment.topRight;
+    final bool isLeft = effective == PopoverAlignment.bottomLeft ||
+        effective == PopoverAlignment.topLeft;
+
+    if (isRight) {
+      final double leftEdge = triggerPosition.dx +
+          triggerSize.width -
+          popoverSize.width +
+          offset.dx;
+      if (leftEdge < 0) {
+        effective = effective == PopoverAlignment.bottomRight
+            ? PopoverAlignment.bottomLeft
+            : PopoverAlignment.topLeft;
+      }
+    } else if (isLeft) {
+      final double rightEdge =
+          triggerPosition.dx + popoverSize.width + offset.dx;
+      if (rightEdge > screenSize.width) {
+        effective = effective == PopoverAlignment.bottomLeft
+            ? PopoverAlignment.bottomRight
+            : PopoverAlignment.topRight;
+      }
+    }
+
+    final bool isBottom = effective == PopoverAlignment.bottomLeft ||
+        effective == PopoverAlignment.bottomCenter ||
+        effective == PopoverAlignment.bottomRight;
+    final bool isTop = effective == PopoverAlignment.topLeft ||
+        effective == PopoverAlignment.topCenter ||
+        effective == PopoverAlignment.topRight;
+
+    if (isBottom) {
+      final double bottomEdge = triggerPosition.dy +
+          triggerSize.height +
+          offset.dy +
+          popoverSize.height;
+      if (bottomEdge > screenSize.height) {
+        effective = switch (effective) {
+          PopoverAlignment.bottomLeft => PopoverAlignment.topLeft,
+          PopoverAlignment.bottomCenter => PopoverAlignment.topCenter,
+          PopoverAlignment.bottomRight => PopoverAlignment.topRight,
+          _ => effective,
+        };
+      }
+    } else if (isTop) {
+      final double topEdge =
+          triggerPosition.dy - offset.dy - popoverSize.height;
+      if (topEdge < 0) {
+        effective = switch (effective) {
+          PopoverAlignment.topLeft => PopoverAlignment.bottomLeft,
+          PopoverAlignment.topCenter => PopoverAlignment.bottomCenter,
+          PopoverAlignment.topRight => PopoverAlignment.bottomRight,
+          _ => effective,
+        };
+      }
+    }
+
+    return effective;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -269,8 +366,8 @@ class _WPopoverState extends State<WPopover> {
     });
   }
 
-  Alignment get _targetAnchor {
-    return switch (widget.alignment) {
+  Alignment _targetAnchorFor(PopoverAlignment alignment) {
+    return switch (alignment) {
       PopoverAlignment.bottomLeft => Alignment.bottomLeft,
       PopoverAlignment.bottomRight => Alignment.bottomRight,
       PopoverAlignment.bottomCenter => Alignment.bottomCenter,
@@ -280,8 +377,8 @@ class _WPopoverState extends State<WPopover> {
     };
   }
 
-  Alignment get _followerAnchor {
-    return switch (widget.alignment) {
+  Alignment _followerAnchorFor(PopoverAlignment alignment) {
+    return switch (alignment) {
       PopoverAlignment.bottomLeft => Alignment.topLeft,
       PopoverAlignment.bottomRight => Alignment.topRight,
       PopoverAlignment.bottomCenter => Alignment.topCenter,
@@ -291,8 +388,8 @@ class _WPopoverState extends State<WPopover> {
     };
   }
 
-  Alignment get _overlayAlignment {
-    return switch (widget.alignment) {
+  Alignment _overlayAlignmentFor(PopoverAlignment alignment) {
+    return switch (alignment) {
       PopoverAlignment.bottomLeft => Alignment.topLeft,
       PopoverAlignment.bottomRight => Alignment.topRight,
       PopoverAlignment.bottomCenter => Alignment.topCenter,
@@ -388,21 +485,38 @@ class _WPopoverState extends State<WPopover> {
     // Use parsed width or fallback to trigger width
     final double? parsedWidth = styles.width;
 
+    PopoverAlignment effectiveAlignment = widget.alignment;
+    if (triggerBox != null && triggerBox.hasSize) {
+      final Offset triggerPosition = triggerBox.localToGlobal(Offset.zero);
+      final Size screenSize = MediaQuery.sizeOf(context);
+      final double popoverWidth = parsedWidth ?? triggerWidth;
+      final double popoverHeight = widget.maxHeight;
+      effectiveAlignment = computeEffectiveAlignment(
+        requested: widget.alignment,
+        triggerPosition: triggerPosition,
+        triggerSize: triggerBox.size,
+        popoverSize: Size(popoverWidth, popoverHeight),
+        screenSize: screenSize,
+        offset: widget.offset,
+      );
+    }
+
     // For top alignments, invert the Y offset
-    final bool isTopAlignment = widget.alignment == PopoverAlignment.topLeft ||
-        widget.alignment == PopoverAlignment.topCenter ||
-        widget.alignment == PopoverAlignment.topRight;
+    final bool isTopAlignment =
+        effectiveAlignment == PopoverAlignment.topLeft ||
+            effectiveAlignment == PopoverAlignment.topCenter ||
+            effectiveAlignment == PopoverAlignment.topRight;
     final effectiveOffset = isTopAlignment
         ? Offset(widget.offset.dx, -widget.offset.dy)
         : widget.offset;
 
     return CompositedTransformFollower(
       link: _layerLink,
-      targetAnchor: _targetAnchor,
-      followerAnchor: _followerAnchor,
+      targetAnchor: _targetAnchorFor(effectiveAlignment),
+      followerAnchor: _followerAnchorFor(effectiveAlignment),
       offset: effectiveOffset,
       child: Align(
-        alignment: _overlayAlignment,
+        alignment: _overlayAlignmentFor(effectiveAlignment),
         child: TapRegion(
           groupId: _tapRegionGroupId,
           onTapOutside: (_) => close(),
