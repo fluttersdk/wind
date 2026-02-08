@@ -123,9 +123,8 @@ void main() {
         addTearDown(gesture.removePointer);
         await gesture.moveTo(tester.getCenter(find.text('Hover: false')));
 
-        // Critical: Pump once for event, wait for post-frame callback
+        // Critical: Pump once for event
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
 
         expect(find.text('Hover: true'), findsOneWidget);
       });
@@ -226,6 +225,30 @@ void main() {
         await tester.pump();
         expect(pressed, isTrue);
       });
+
+      testWidgets('onDoubleTap callback fires', (tester) async {
+        bool doubleTapped = false;
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onDoubleTap: () => doubleTapped = true,
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.green,
+                child: const Text('Double Tap Me'),
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Double Tap Me'));
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.tap(find.text('Double Tap Me'));
+        await tester.pumpAndSettle();
+
+        expect(doubleTapped, isTrue);
+      });
     });
 
     // -------------------------------------------------------------------------
@@ -252,7 +275,6 @@ void main() {
         await gesture.moveTo(tester.getCenter(find.text('Hover: false')));
 
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
 
         // Should NOT change
         expect(find.text('Hover: false'), findsOneWidget);
@@ -376,10 +398,68 @@ void main() {
         // Move to Child
         await gesture.moveTo(tester.getCenter(find.text('ChildHover: false')));
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
 
         // Child should hover
         expect(find.text('ChildHover: true'), findsOneWidget);
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // 7. Regression Tests
+    // -------------------------------------------------------------------------
+    group('Regression Tests', () {
+      testWidgets(
+          'updates hover state synchronously without post-frame callback',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              child: AnchorStateReader(
+                builder: (context, state) =>
+                    Text('Hover: ${state?.isHovering}'),
+              ),
+            ),
+          ),
+        );
+
+        final gesture =
+            await tester.createGesture(kind: PointerDeviceKind.mouse);
+        await gesture.addPointer(location: Offset.zero);
+        addTearDown(gesture.removePointer);
+
+        await gesture.moveTo(tester.getCenter(find.text('Hover: false')));
+
+        // Sync update - pump() should be enough
+        await tester.pump();
+        expect(find.text('Hover: true'), findsOneWidget);
+      });
+
+      testWidgets('rapid enter-exit does not get stuck (race condition fix)',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              child: AnchorStateReader(
+                builder: (context, state) =>
+                    Text('Hover: ${state?.isHovering}'),
+              ),
+            ),
+          ),
+        );
+
+        final gesture =
+            await tester.createGesture(kind: PointerDeviceKind.mouse);
+        await gesture.addPointer(location: Offset.zero);
+        addTearDown(gesture.removePointer);
+
+        // Enter
+        await gesture.moveTo(tester.getCenter(find.text('Hover: false')));
+        // Exit immediately (simulate rapid movement)
+        await gesture.moveTo(Offset.zero);
+
+        await tester.pump();
+
+        expect(find.text('Hover: false'), findsOneWidget);
       });
     });
   });

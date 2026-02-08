@@ -350,6 +350,70 @@ void main() {
       });
     });
 
+    group('Cursor Delegation', () {
+      testWidgets('uses click cursor when interactive', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(onTap: () {}, child: const Text('Interactive')),
+          ),
+        );
+
+        final mouseRegion = tester.widget<MouseRegion>(
+          find
+              .descendant(
+                of: find.byType(WButton),
+                matching: find.byType(MouseRegion),
+              )
+              .first,
+        );
+        expect(mouseRegion.cursor, equals(SystemMouseCursors.click));
+      });
+
+      testWidgets('uses forbidden cursor when disabled', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              disabled: true,
+              child: const Text('Disabled'),
+            ),
+          ),
+        );
+
+        final mouseRegion = tester.widget<MouseRegion>(
+          find
+              .descendant(
+                of: find.byType(WButton),
+                matching: find.byType(MouseRegion),
+              )
+              .first,
+        );
+        expect(mouseRegion.cursor, equals(SystemMouseCursors.forbidden));
+      });
+
+      testWidgets('uses forbidden cursor when loading', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              isLoading: true,
+              child: const Text('Loading'),
+            ),
+          ),
+        );
+
+        final mouseRegion = tester.widget<MouseRegion>(
+          find
+              .descendant(
+                of: find.byType(WButton),
+                matching: find.byType(MouseRegion),
+              )
+              .first,
+        );
+        expect(mouseRegion.cursor, equals(SystemMouseCursors.forbidden));
+      });
+    });
+
     group('onDoubleTap Callback', () {
       testWidgets('calls onDoubleTap when double tapped', (tester) async {
         bool wasDoubleTapped = false;
