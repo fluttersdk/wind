@@ -265,6 +265,7 @@ final Map<String, Widget> appRoutes = {
   '/forms/input_basic': const InputBasicExamplePage(),
   '/forms/input_states': const InputStatesExamplePage(),
   '/forms/form_checkbox_basic': const FormCheckboxBasicExamplePage(),
+  '/forms/form_date_picker_basic': const FormDatePickerBasicExamplePage(),
   '/forms/form_input_basic': const FormInputBasicExamplePage(),
   '/forms/form_select_basic': const FormSelectBasicExamplePage(),
   '/forms/input_styled': const InputStyledExamplePage(),
@@ -379,6 +380,7 @@ final Map<String, Widget> appRoutes = {
   // Widgets
   '/widgets/w-input-multiline': const WInputMultilineExamplePage(),
   '/widgets/w-input-search': const WInputSearchExamplePage(),
+  '/widgets/w_date_picker': const WDatePickerExamplePage(),
   '/widgets/w_image_fit': const WImageFitExamplePage(),
   '/widgets/w_image_ratio': const WImageRatioExamplePage(),
   '/widgets/w-select_single': const WSelectSingleExamplePage(),

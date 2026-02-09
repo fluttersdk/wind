@@ -180,6 +180,14 @@ class WPopover extends StatefulWidget {
   /// Callback when popover closes
   final VoidCallback? onClose;
 
+  /// Whether to automatically flip alignment when overflow would occur.
+  ///
+  /// When true, WPopover calculates optimal direction BEFORE opening the overlay,
+  /// preventing the popover from appearing off-screen.
+  ///
+  /// Default: `true`
+  final bool autoFlip;
+
   /// Creates a new [WPopover] instance.
   const WPopover({
     super.key,
@@ -195,6 +203,7 @@ class WPopover extends StatefulWidget {
     this.closeOnContentTap = false,
     this.onOpen,
     this.onClose,
+    this.autoFlip = true,
   });
 
   @override
@@ -212,6 +221,9 @@ class _WPopoverState extends State<WPopover> {
 
   bool _isOpen = false;
   bool _isHovering = false;
+
+  /// Pre-calculated effective alignment (computed before opening).
+  PopoverAlignment? _effectiveAlignment;
 
   /// Computes effective alignment by flipping when overflow would occur.
   ///
@@ -341,6 +353,14 @@ class _WPopoverState extends State<WPopover> {
 
   void open() {
     if (_isOpen || widget.disabled) return;
+
+    // Calculate effective alignment BEFORE showing overlay
+    if (widget.autoFlip) {
+      _calculateEffectiveAlignment();
+    } else {
+      _effectiveAlignment = widget.alignment;
+    }
+
     setState(() {
       _isOpen = true;
       _overlayController.show();
@@ -350,6 +370,31 @@ class _WPopoverState extends State<WPopover> {
         widget.controller!.show();
       }
     });
+  }
+
+  /// Calculate effective alignment before opening based on available space.
+  void _calculateEffectiveAlignment() {
+    final RenderBox? triggerBox =
+        _triggerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (triggerBox != null && triggerBox.hasSize) {
+      final triggerPosition = triggerBox.localToGlobal(Offset.zero);
+      final screenSize = MediaQuery.of(context).size;
+
+      // Estimate popover size using maxHeight and trigger width as fallback
+      final double popoverHeight = widget.maxHeight;
+      final double popoverWidth = triggerBox.size.width;
+
+      _effectiveAlignment = computeEffectiveAlignment(
+        requested: widget.alignment,
+        triggerPosition: triggerPosition,
+        triggerSize: triggerBox.size,
+        popoverSize: Size(popoverWidth, popoverHeight),
+        screenSize: screenSize,
+        offset: widget.offset,
+      );
+    } else {
+      _effectiveAlignment = widget.alignment;
+    }
   }
 
   /// Close the popover.
@@ -485,20 +530,27 @@ class _WPopoverState extends State<WPopover> {
     // Use parsed width or fallback to trigger width
     final double? parsedWidth = styles.width;
 
-    PopoverAlignment effectiveAlignment = widget.alignment;
-    if (triggerBox != null && triggerBox.hasSize) {
-      final Offset triggerPosition = triggerBox.localToGlobal(Offset.zero);
-      final Size screenSize = MediaQuery.sizeOf(context);
-      final double popoverWidth = parsedWidth ?? triggerWidth;
-      final double popoverHeight = widget.maxHeight;
-      effectiveAlignment = computeEffectiveAlignment(
-        requested: widget.alignment,
-        triggerPosition: triggerPosition,
-        triggerSize: triggerBox.size,
-        popoverSize: Size(popoverWidth, popoverHeight),
-        screenSize: screenSize,
-        offset: widget.offset,
-      );
+    // Use pre-calculated alignment if available, otherwise calculate now
+    PopoverAlignment effectiveAlignment =
+        _effectiveAlignment ?? widget.alignment;
+
+    // If autoFlip is enabled and we don't have a pre-calculated alignment,
+    // calculate it now (fallback for edge cases)
+    if (widget.autoFlip && _effectiveAlignment == null) {
+      if (triggerBox != null && triggerBox.hasSize) {
+        final Offset triggerPosition = triggerBox.localToGlobal(Offset.zero);
+        final Size screenSize = MediaQuery.sizeOf(context);
+        final double popoverWidth = parsedWidth ?? triggerWidth;
+        final double popoverHeight = widget.maxHeight;
+        effectiveAlignment = computeEffectiveAlignment(
+          requested: widget.alignment,
+          triggerPosition: triggerPosition,
+          triggerSize: triggerBox.size,
+          popoverSize: Size(popoverWidth, popoverHeight),
+          screenSize: screenSize,
+          offset: widget.offset,
+        );
+      }
     }
 
     // For top alignments, invert the Y offset

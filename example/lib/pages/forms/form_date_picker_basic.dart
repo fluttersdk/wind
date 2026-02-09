@@ -65,7 +65,7 @@ class _FormDatePickerBasicExamplePageState
                   description: 'Validates that a date must be selected.',
                   child: WFormDatePicker(
                     label: 'Pick a Date',
-                    value: _selectedDate,
+                    initialValue: _selectedDate,
                     onChanged: (date) => setState(() => _selectedDate = date),
                     validator: (value) =>
                         value == null ? 'Please select a date' : null,

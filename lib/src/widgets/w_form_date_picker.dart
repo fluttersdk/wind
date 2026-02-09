@@ -32,7 +32,7 @@ class WFormDatePicker extends FormField<DateTime> {
     super.autovalidateMode,
     super.enabled = true,
     // WDatePicker params
-    DateTime? initialValue,
+    super.initialValue,
     this.initialRange,
     this.mode = DatePickerMode.single,
     this.onChanged,
@@ -52,7 +52,6 @@ class WFormDatePicker extends FormField<DateTime> {
     this.hint,
     this.hintClassName = 'text-gray-500 text-xs mt-1',
   }) : super(
-          initialValue: initialValue,
           builder: (FormFieldState<DateTime> state) {
             return _WFormDatePickerContent(
               state: state,
@@ -242,16 +241,13 @@ class _WFormDatePickerContentState extends State<_WFormDatePickerContent> {
     }
 
     return WDiv(
-      className: 'flex flex-col',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.label != null)
-            WText(widget.label!, className: widget.labelClassName),
-          datePicker,
-          if (bottomText != null) bottomText,
-        ],
-      ),
+      className: 'flex flex-col justify-start items-start gap-1',
+      children: [
+        if (widget.label != null)
+          WText(widget.label!, className: widget.labelClassName),
+        datePicker,
+        if (bottomText != null) bottomText,
+      ],
     );
   }
 }
