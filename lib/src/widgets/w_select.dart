@@ -690,6 +690,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
       offset: Offset(0, _openUpward ? -4 : 4),
       child: Align(
         alignment: _openUpward ? Alignment.bottomLeft : Alignment.topLeft,
+        widthFactor: 1,
+        heightFactor: 1,
         child: TapRegion(
           onTapOutside: (_) => _closeMenu(),
           child: Material(
