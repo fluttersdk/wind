@@ -576,6 +576,8 @@ class _WPopoverState extends State<WPopover> {
       offset: effectiveOffset,
       child: Align(
         alignment: _overlayAlignmentFor(effectiveAlignment),
+        widthFactor: 1,
+        heightFactor: 1,
         child: TapRegion(
           groupId: _tapRegionGroupId,
           onTapOutside: (_) => close(),
