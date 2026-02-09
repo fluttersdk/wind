@@ -13,8 +13,6 @@ Utilities for setting the width and height of elements.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="layout/sizing_basic" action="CREATE" -->
-<!-- Description: Show various sizing utilities including fixed width, percentage width, and max-width containers. -->
 <x-preview path="layout/sizing_basic" size="md" source="example/lib/pages/layout/sizing_basic.dart"></x-preview>
 
 ```dart
@@ -73,8 +71,6 @@ Values follow the global spacing scale (1 unit = 4px).
 
 Set the width of an element using `w-{number}` or `w-{fraction}`.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="layout/sizing_width" action="CREATE" -->
-<!-- Description: Examples of width utilities including fixed, fractional, and full widths. -->
 <x-preview path="layout/sizing_width" size="md" source="example/lib/pages/layout/sizing_width.dart"></x-preview>
 
 ```dart
@@ -93,8 +89,6 @@ WDiv(className: 'w-full bg-blue-400')
 
 Set the height of an element using `h-{number}`, `h-{fraction}`, or `h-screen`.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="layout/sizing_height" action="CREATE" -->
-<!-- Description: Examples of height utilities including fixed, fractional, and full screen heights. -->
 <x-preview path="layout/sizing_height" size="md" source="example/lib/pages/layout/sizing_height.dart"></x-preview>
 
 ```dart

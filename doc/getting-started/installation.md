@@ -6,9 +6,7 @@
 - [Alternative Setup](#alternative-setup)
 - [Verify Installation](#verify-installation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="getting-started/installation_basic" action="CREATE" -->
-<!-- Description: Basic installation setup showing WindTheme with MaterialApp using the builder pattern -->
-<x-preview path="getting-started/installation_basic" size="md" source="example/lib/pages/getting-started/installation_basic.dart"></x-preview>
+<x-preview path="getting-started/installation_basic" size="lg" source="example/lib/pages/getting-started/installation_basic.dart"></x-preview>
 
 Getting started with Wind requires a few configuration steps to ensure utility classes resolve correctly across your application.
 
@@ -124,5 +122,3 @@ class HomePage extends StatelessWidget {
 ```
 
 If you see a blue card with white text, the installation is successful.
-
-That's all.

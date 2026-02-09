@@ -11,7 +11,7 @@ Utilities for controlling the box shadow of an element.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<x-preview path="effects/shadow_basic" size="md" source="example/lib/pages/effects/shadow_basic.dart"></x-preview>
+<x-preview path="effects/shadows_basic" size="md" source="example/lib/pages/effects/shadows_basic.dart"></x-preview>
 
 ```dart
 // Basic examples
@@ -50,7 +50,7 @@ WDiv(
 
 Use `shadow-{color}` utilities to change the color of the shadow. This preserves the original shadow's opacity structure while tinting it with the specified color.
 
-<x-preview path="effects/shadow_color" size="md" source="example/lib/pages/effects/shadow_color.dart"></x-preview>
+<x-preview path="effects/shadows_colored" size="md" source="example/lib/pages/effects/shadows_colored.dart"></x-preview>
 
 ```dart
 // Blue tinted shadow

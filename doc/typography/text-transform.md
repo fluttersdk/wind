@@ -10,10 +10,7 @@ Utilities for controlling the capitalization and wrapping of text.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<x-preview path="typography/text_transform_preview" size="md" source="example/lib/pages/typography/text_transform_preview.dart"></x-preview>
-
-<!-- TODO: [CREATE] path="typography/text_transform_preview" action="CREATE" -->
-<!-- Description: Show examples of uppercase, lowercase, capitalize, and whitespace-nowrap -->
+<x-preview path="typography/text_transform" size="md" source="example/lib/pages/typography/text_transform.dart"></x-preview>
 
 ```dart
 // Uppercase
@@ -59,9 +56,6 @@ WDiv(
 Control how text handles whitespace and wrapping using `whitespace-` utilities.
 
 <x-preview path="typography/whitespace_preview" size="md" source="example/lib/pages/typography/whitespace_preview.dart"></x-preview>
-
-<!-- TODO: [CREATE] path="typography/whitespace_preview" action="CREATE" -->
-<!-- Description: Compare whitespace-normal (default) vs whitespace-nowrap with overflow scrolling -->
 
 ```dart
 // Prevent text from wrapping

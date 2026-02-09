@@ -16,8 +16,6 @@ Utilities for controlling the layout mode of an element.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [UPDATE] path="layout/display" action="VERIFY" -->
-<!-- Description: Ensure example covers block, flex, grid, and hidden modes -->
 <x-preview path="layout/display" size="lg" source="example/lib/pages/layout/display.dart"></x-preview>
 
 ```dart

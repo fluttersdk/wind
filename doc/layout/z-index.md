@@ -13,8 +13,6 @@ Utilities for controlling the stack order of an element.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="layout/z_index_basic" action="CREATE" -->
-<!-- Description: A stack of overlapping boxes showing different z-index levels -->
 <x-preview path="layout/z_index_basic" size="md" source="example/lib/pages/layout/z_index_basic.dart"></x-preview>
 
 ```dart
@@ -62,8 +60,6 @@ Stack(
 
 Control the stack order on interaction. This is useful for "pop-out" effects where an item should rise above others when hovered.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="layout/z_index_hover" action="CREATE" -->
-<!-- Description: Elements that increase z-index on hover to appear on top -->
 <x-preview path="layout/z_index_hover" size="md" source="example/lib/pages/layout/z_index_hover.dart"></x-preview>
 
 ```dart

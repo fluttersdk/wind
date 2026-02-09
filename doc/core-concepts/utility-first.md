@@ -14,8 +14,6 @@ Utility-first styling is the core philosophy of Wind. Instead of building comple
 
 Wind translates utility strings into high-performance Flutter widget trees. This approach moves styling from the "implementation" phase into the "composition" phase, allowing you to build UIs by combining functional building blocks.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/utility_first_hero" action="CREATE" -->
-<!-- Description: A beautiful card showing a profile or product using various Wind utilities to demonstrate the utility-first approach. -->
 <x-preview path="core-concepts/utility_first_hero" size="md" source="example/lib/pages/core-concepts/utility_first_hero.dart"></x-preview>
 
 ```dart
@@ -127,5 +125,3 @@ Wind uses a syntax that matches Tailwind CSS, supporting standard values, arbitr
 | **Arbitrary** | `w-[350px]` | Uses exact values inside square brackets for one-off styles. |
 | **Opacity** | `bg-blue-500/50` | Appends a percentage to a color to set alpha transparency. |
 | **Modifiers** | `md:flex-row` | Conditionally applies styles based on screen size or state. |
-
-That's all.

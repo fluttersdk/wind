@@ -10,8 +10,6 @@ Utilities for controlling the tracking (letter spacing) of an element.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [VERIFY] path="typography/letter_spacing" action="VERIFY" -->
-<!-- Description: Verify this example demonstrates tighter, normal, and widest tracking variations -->
 <x-preview path="typography/letter_spacing" size="md" source="example/lib/pages/typography/letter_spacing.dart"></x-preview>
 
 ```dart

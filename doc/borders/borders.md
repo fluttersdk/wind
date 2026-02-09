@@ -14,8 +14,6 @@ Utilities for controlling border width, color, style, and border radius.
 <a name="basic-usage"></a>
 ## Basic Usage
 
-<!-- TODO: [EXAMPLE_NEEDED] path="borders/borders_preview" action="CREATE" -->
-<!-- Description: Show a grid of boxes demonstrating different border widths, colors, styles, and radii. -->
 <x-preview path="borders/borders_preview" size="md" source="example/lib/pages/borders/borders_preview.dart"></x-preview>
 
 ```dart

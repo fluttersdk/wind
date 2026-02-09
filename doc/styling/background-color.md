@@ -11,8 +11,6 @@ Utilities for controlling an element's background color.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="styling/background_color_basic" action="CREATE" -->
-<!-- Description: Show a grid of boxes with different background colors (solid, white, black, transparent) -->
 <x-preview path="styling/background_color_basic" size="md" source="example/lib/pages/styling/background_color_basic.dart"></x-preview>
 
 ```dart
@@ -62,8 +60,6 @@ WDiv(className: 'bg-transparent border border-gray-300')
 
 Control the opacity of a background color using the slash modifier `/{opacity}`. The value ranges from 0 to 100.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="styling/background_color_opacity" action="CREATE" -->
-<!-- Description: Show the same color with different opacity levels side by side -->
 <x-preview path="styling/background_color_opacity" size="md" source="example/lib/pages/styling/background_color_opacity.dart"></x-preview>
 
 ```dart

@@ -17,8 +17,6 @@ Wind includes a specialized debugging system designed to peel back the abstracti
 
 The system is built directly into the core engine, requiring no external configuration or devtools extensions to inspect the "parsing → styling → building" pipeline.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/debugging_basic" action="CREATE" -->
-<!-- Description: Show a basic widget with the 'debug' class enabled to demonstrate logging output -->
 <x-preview path="core-concepts/debugging_basic" size="md" source="example/lib/pages/core-concepts/debugging_basic.dart"></x-preview>
 
 ```dart
@@ -122,5 +120,3 @@ Let's look at common debugging workflows using the `debug` class:
 - **Inspecting Responsive Styles**: Resize the viewport while `debug` is active. The logger will re-trigger and show the new `Final Styles` for the active breakpoint.
 - **Verifying State Variants**: Hover over or focus a widget with state-based classes (like `hover:bg-blue-600`). The log will update to show the merged style.
 - **Analyzing Layout Layers**: Use the `Composition Tree` to determine which utility class is responsible for a specific Flutter wrapper, helping identify unexpected padding or alignment issues.
-
-That's all.

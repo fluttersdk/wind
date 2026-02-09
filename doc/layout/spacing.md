@@ -13,9 +13,6 @@ Utilities for controlling the padding and margin of elements.
 
 <x-preview path="spacing/padding_margin_basic" size="md" source="example/lib/pages/spacing/padding_margin_basic.dart"></x-preview>
 
-<!-- TODO: [EXAMPLE_NEEDED] path="spacing/padding_margin_basic" action="CREATE" -->
-<!-- Description: Show a container with p-6 (padding) and m-4 (margin) to demonstrate basic spacing. -->
-
 ```dart
 // Adds 16px padding inside, 16px margin outside
 WDiv(className: 'p-4 m-4 bg-white')
@@ -69,9 +66,6 @@ The default spacing scale is based on a **4px** unit (`baseSpacingUnit: 4.0`).
 Target specific sides or axes using direction prefixes.
 
 <x-preview path="spacing/directional" size="md" source="example/lib/pages/spacing/directional.dart"></x-preview>
-
-<!-- TODO: [EXAMPLE_NEEDED] path="spacing/directional" action="CREATE" -->
-<!-- Description: Show various directional spacing examples (px-4, py-2, mt-4, pl-2). -->
 
 ```dart
 // Horizontal padding (Left + Right)

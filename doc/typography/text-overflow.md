@@ -12,7 +12,7 @@ Utilities for controlling how text behaves when it overflows its container.
 - [Arbitrary Values](#arbitrary-values)
 - [Related Documentation](#related-documentation)
 
-<x-preview path="typography/text_overflow_basic" size="md" source="example/lib/pages/typography/text_overflow_basic.dart"></x-preview>
+<x-preview path="typography/text_overflow" size="md" source="example/lib/pages/typography/text_overflow.dart"></x-preview>
 
 ```dart
 // Basic truncation
@@ -62,8 +62,6 @@ The `truncate` utility is a shorthand that sets three properties at once:
 2. Disables `softWrap`
 3. Sets `overflow` to `TextOverflow.ellipsis`
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_overflow_truncate" action="CREATE" -->
-<!-- Description: Show a long text string in a constrained container with truncate applied -->
 <x-preview path="typography/text_overflow_truncate" size="md" source="example/lib/pages/typography/text_overflow_truncate.dart"></x-preview>
 
 ```dart
@@ -81,8 +79,6 @@ Use `text-ellipsis` or `text-clip` to control the visual overflow behavior speci
 - **text-ellipsis**: Renders an ellipsis (...) when text overflows.
 - **text-clip**: Simply cuts off the text at the boundary.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_overflow_clip" action="CREATE" -->
-<!-- Description: Compare text-ellipsis vs text-clip side by side -->
 <x-preview path="typography/text_overflow_clip" size="md" source="example/lib/pages/typography/text_overflow_clip.dart"></x-preview>
 
 ```dart
@@ -100,8 +96,6 @@ Use `line-clamp-{n}` to limit text to a specific number of lines. This automatic
 
 Supported values are any integer number (e.g., `line-clamp-2`, `line-clamp-5`) and `line-clamp-none`.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_overflow_line_clamp" action="CREATE" -->
-<!-- Description: Show multi-line text clamped to 3 lines -->
 <x-preview path="typography/text_overflow_line_clamp" size="md" source="example/lib/pages/typography/text_overflow_line_clamp.dart"></x-preview>
 
 ```dart

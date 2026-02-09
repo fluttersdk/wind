@@ -10,8 +10,6 @@ Utilities for controlling the alignment of text.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_align_basic" action="CREATE" -->
-<!-- Description: Show a column of text blocks with different alignments (left, center, right, justify) -->
 <x-preview path="typography/text_align_basic" size="md" source="example/lib/pages/typography/text_align_basic.dart"></x-preview>
 
 ```dart
@@ -55,8 +53,6 @@ WDiv(
 
 Apply different alignment at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_align_responsive" action="CREATE" -->
-<!-- Description: Show text that is centered on mobile but left-aligned on desktop -->
 <x-preview path="typography/text_align_responsive" size="md" source="example/lib/pages/typography/text_align_responsive.dart"></x-preview>
 
 ```dart

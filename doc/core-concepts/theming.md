@@ -9,9 +9,7 @@
 - [Customizing Defaults](#customizing-defaults)
 - [Quick Reference](#quick-reference)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/theming" action="CREATE" -->
-<!-- Description: Showcase a customized WindThemeData with unique colors, spacing, and typography scales. -->
-<x-preview path="core-concepts/theming" size="md" source="example/lib/pages/core-concepts/theming_example.dart"></x-preview>
+<x-preview path="core-concepts/theming_example" size="md" source="example/lib/pages/core-concepts/theming_example.dart"></x-preview>
 
 <a name="introduction"></a>
 ## Introduction
@@ -173,5 +171,3 @@ final darkTheme = myDefaultTheme.copyWith(
 | `syncWithSystem` | `bool` | Whether to automatically follow OS brightness. |
 
 For more details on how to sync these values with Flutter's standard Material components, check out the [Theme Binding](./theme-binding.md) guide.
-
-That's all.

@@ -22,8 +22,6 @@ By using prefixes like `hover:`, `focus:`, and `active:`, you can build responsi
 <a name="how-it-works"></a>
 ## How It Works
 
-<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/state_management_overview" action="CREATE" -->
-<!-- Description: A demonstration of a card that changes color on hover, scales on click, and shows focus rings. -->
 <x-preview path="core-concepts/state_management_overview" size="md" source="example/lib/pages/core-concepts/state_management_overview.dart"></x-preview>
 
 Wind's parsing engine identifies state prefixes in your class string and stores them in a separate style map. When the widget's internal state changes (e.g., a user hovers over it), the widget rebuilds and applies the corresponding styles.
@@ -146,8 +144,6 @@ WAnchor(
 ```
 
 Even if the mouse is only hovering over the padding of the `WDiv`, the `WText` widget will receive the "hover" state and update its color accordingly.
-
-That's all.
 
 <a name="related-documentation"></a>
 ## Related Documentation

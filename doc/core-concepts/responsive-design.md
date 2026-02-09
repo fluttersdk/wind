@@ -2,9 +2,13 @@
 
 Building interfaces that adapt to any screen size is a core requirement for modern applications. Wind makes this process declarative using a mobile-first, utility-based approach.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="core/responsive_basic" action="CREATE" -->
-<!-- Description: A card that changes layout from vertical (mobile) to horizontal (desktop) with color changes at each breakpoint. -->
-<x-preview path="core/responsive_basic" size="md" source="example/lib/pages/core/responsive_basic.dart"></x-preview>
+- [Mobile-First Approach](#mobile-first-approach)
+- [Breakpoint Reference](#breakpoint-reference)
+- [Platform Prefixes](#platform-prefixes)
+- [Combining Modifiers](#combining-modifiers)
+- [Customizing Breakpoints](#customizing-breakpoints)
+
+<x-preview path="core-concepts/responsive_basic" size="md" source="example/lib/pages/core-concepts/responsive_basic.dart"></x-preview>
 
 ```dart
 // Stacked on mobile (default), horizontal on medium screens and up
@@ -16,12 +20,6 @@ WDiv(
   ],
 )
 ```
-
-- [Mobile-First Approach](#mobile-first-approach)
-- [Breakpoint Reference](#breakpoint-reference)
-- [Platform Prefixes](#platform-prefixes)
-- [Combining Modifiers](#combining-modifiers)
-- [Customizing Breakpoints](#customizing-breakpoints)
 
 <a name="mobile-first-approach"></a>
 ## Mobile-First Approach
@@ -111,8 +109,6 @@ WindTheme(
 ```
 
 Once defined, these custom keys can be used as prefixes: `tablet:p-4`, `laptop:flex-row`, etc.
-
-That's all.
 
 ## Related Documentation
 

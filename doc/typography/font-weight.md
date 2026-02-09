@@ -11,8 +11,6 @@ Utilities for controlling the font weight of an element.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/font_weight_basic" action="CREATE" -->
-<!-- Description: Show a list of text elements with different font weights (thin to black) -->
 <x-preview path="typography/font_weight_basic" size="md" source="example/lib/pages/typography/font_weight_basic.dart"></x-preview>
 
 ```dart
@@ -55,8 +53,6 @@ WText('Important text uses font-bold', className: 'font-bold')
 
 Control the font style of an element using the `italic` and `not-italic` utilities.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/font_style_basic" action="CREATE" -->
-<!-- Description: Show italic and not-italic usage -->
 <x-preview path="typography/font_style_basic" size="md" source="example/lib/pages/typography/font_style_basic.dart"></x-preview>
 
 ```dart

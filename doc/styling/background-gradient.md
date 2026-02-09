@@ -11,8 +11,6 @@ Utilities for creating linear gradients with customizable directions and color s
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [UPDATE] path="styling/background_gradient_basic" action="CREATE" -->
-<!-- Description: Basic gradient example showing standard direction and colors -->
 <x-preview path="styling/background_gradient_basic" size="md" source="example/lib/pages/styling/background_gradient_basic.dart"></x-preview>
 
 ```dart
@@ -58,8 +56,6 @@ If you only provide a `from` color, the gradient will fade to transparent by def
 
 Use `from-*`, `via-*`, and `to-*` utilities to define the color stops of your gradient.
 
-<!-- TODO: [UPDATE] path="styling/background_gradient_stops" action="CREATE" -->
-<!-- Description: Examples of gradients with via stops and different color combinations -->
 <x-preview path="styling/background_gradient_stops" size="md" source="example/lib/pages/styling/background_gradient_stops.dart"></x-preview>
 
 ```dart

@@ -13,8 +13,6 @@ Utilities for controlling the opacity of an element.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [UPDATE] path="effects/opacity" action="verify" -->
-<!-- Description: Ensure example demonstrates opacity scale and arbitrary values -->
 <x-preview path="effects/opacity" size="md" source="example/lib/pages/effects/opacity.dart"></x-preview>
 
 ```dart

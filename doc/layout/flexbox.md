@@ -17,9 +17,7 @@ Utilities for controlling flex containers, direction, alignment, wrapping, and s
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [CREATE] path="layout/flexbox_basic" action="CREATE" -->
-<!-- Description: A basic flex container showing flex-row vs flex-col with gap -->
-<x-preview path="layout/flexbox_basic" size="md" source="example/lib/pages/layout/flexbox_basic.dart"></x-preview>
+<x-preview path="layout/flex_intro" size="md" source="example/lib/pages/layout/flex_intro.dart"></x-preview>
 
 ```dart
 // Basic flex row
@@ -70,9 +68,7 @@ WDiv(
 
 Control the axis of your layout.
 
-<!-- TODO: [CREATE] path="layout/flexbox_direction" action="CREATE" -->
-<!-- Description: Example comparing flex-row and flex-col -->
-<x-preview path="layout/flexbox_direction" size="md" source="example/lib/pages/layout/flexbox_direction.dart"></x-preview>
+<x-preview path="layout/flex_basic" size="md" source="example/lib/pages/layout/flex_basic.dart"></x-preview>
 
 ```dart
 // Row (Horizontal) - Default for 'flex'
@@ -197,9 +193,7 @@ Control how individual children resize to fill available space.
 | `shrink-0` | Prevent child from shrinking (`FlexFit.tight`). |
 | `flex-none` | Do not grow or shrink. |
 
-<!-- TODO: [CREATE] path="layout/flexbox_grow" action="CREATE" -->
-<!-- Description: Example showing sidebar (fixed) and content (flex-1) -->
-<x-preview path="layout/flexbox_grow" size="md" source="example/lib/pages/layout/flexbox_grow.dart"></x-preview>
+<x-preview path="layout/flex_grow" size="md" source="example/lib/pages/layout/flex_grow.dart"></x-preview>
 
 ```dart
 WDiv(

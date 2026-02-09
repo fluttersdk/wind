@@ -11,8 +11,6 @@ Utilities for controlling the aspect ratio of an element.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [CREATE] path="layout/aspect_ratio_basic" action="CREATE" -->
-<!-- Description: Show aspect-square, aspect-video, and arbitrary aspect ratios with images or colored containers -->
 <x-preview path="layout/aspect_ratio_basic" size="md" source="example/lib/pages/layout/aspect_ratio_basic.dart"></x-preview>
 
 ```dart

@@ -50,8 +50,6 @@ WText('Link without underline', className: 'no-underline')
 
 Use the `decoration-{color}` utilities to change the color of the text decoration.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/decoration_color" action="CREATE" -->
-<!-- Description: Examples of colored text decorations -->
 <x-preview path="typography/decoration_color" size="md" source="example/lib/pages/typography/decoration_color.dart"></x-preview>
 
 ```dart
@@ -63,8 +61,6 @@ WText('Success', className: 'underline decoration-green-600')
 
 Use the `decoration-{style}` utilities to change the style of the text decoration.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/decoration_style" action="CREATE" -->
-<!-- Description: Examples of solid, double, dotted, dashed, and wavy decorations -->
 <x-preview path="typography/decoration_style" size="md" source="example/lib/pages/typography/decoration_style.dart"></x-preview>
 
 ```dart
@@ -87,8 +83,6 @@ WText('Wavy', className: 'underline decoration-wavy')
 
 Use the `decoration-{width}` utilities to change the thickness of the text decoration.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/decoration_thickness" action="CREATE" -->
-<!-- Description: Examples of decoration thickness 1, 2, 4, 8 -->
 <x-preview path="typography/decoration_thickness" size="md" source="example/lib/pages/typography/decoration_thickness.dart"></x-preview>
 
 ```dart

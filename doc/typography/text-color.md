@@ -11,8 +11,6 @@ Utilities for controlling the text color of an element.
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_color_basic" action="CREATE" -->
-<!-- Description: Show various text colors like error (red), success (green), and info (blue) -->
 <x-preview path="typography/text_color_basic" size="md" source="example/lib/pages/typography/text_color_basic.dart"></x-preview>
 
 ```dart
@@ -54,8 +52,6 @@ Wind includes the standard Tailwind color palette. Here are some examples:
 
 Control the opacity of the text color using the color opacity modifier. Add a forward slash and the opacity percentage value to any color utility.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="typography/text_color_opacity" action="CREATE" -->
-<!-- Description: Show a stack of text with decreasing opacity (100%, 75%, 50%, 25%) using blue-500 -->
 <x-preview path="typography/text_color_opacity" size="md" source="example/lib/pages/typography/text_color_opacity.dart"></x-preview>
 
 ```dart

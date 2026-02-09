@@ -19,8 +19,6 @@ Utilities for controlling the duration, easing, and delay of state transitions i
 
 Transitions allow you to change property values smoothly over a given duration. In Wind, these are typically paired with state modifiers like `hover:`, `focus:`, or `active:`.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="interactivity/transition_basic" action="CREATE" -->
-<!-- Description: Basic transition demonstration showing duration and easing effects -->
 <x-preview path="interactivity/transition_basic" size="md" source="example/lib/pages/interactivity/transition_basic.dart"></x-preview>
 
 ```dart
@@ -154,5 +152,3 @@ Usage: `duration-snappy`, `ease-bounce`.
 - [Animation](./animation.md) - Explicit keyframe animations
 - [Hover States](../core-concepts/state-management.md) - Handling interactions
 - [Opacity](../styling/opacity.md) - Fade transitions
-
-That's all.

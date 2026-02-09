@@ -8,9 +8,7 @@ Wind makes it incredibly easy to support dark mode using the `dark:` variant mod
 - [Best Practices](#best-practices)
 
 <a name="basic-usage"></a>
-<!-- TODO: [EXAMPLE_NEEDED] path="core_concepts/dark_mode_basic" action="CREATE" -->
-<!-- Description: Show a card that adapts to light/dark mode with background, text, and border changes. -->
-<x-preview path="core_concepts/dark_mode_basic" size="md" source="example/lib/pages/core_concepts/dark_mode_basic.dart"></x-preview>
+<x-preview path="core-concepts/dark_mode_basic" size="md" source="example/lib/pages/core-concepts/dark_mode_basic.dart"></x-preview>
 
 ```dart
 WDiv(
@@ -104,5 +102,3 @@ Borders that look great in light mode might appear too harsh in dark mode. Consi
 ```dart
 WDiv(className: "border border-gray-200 dark:border-gray-700")
 ```
-
-That's all.

@@ -16,8 +16,6 @@ Utilities for animating elements with CSS-like animation classes. Whether you're
 - [Related Documentation](#related-documentation)
 
 <a name="preview"></a>
-<!-- TODO: [EXAMPLE_NEEDED] path="interactivity/animation_basic" action="CREATE" -->
-<!-- Description: Show basic examples of all animation variants (spin, ping, pulse, bounce) -->
 <x-preview path="interactivity/animation_basic" size="md" source="example/lib/pages/interactivity/animation_basic.dart"></x-preview>
 
 ```dart
@@ -143,5 +141,3 @@ WindThemeData(
 
 - [Transitions](./transition.md) - Smooth property changes
 - [Hover States](../core-concepts/state-management.md) - Interactive triggers
-
-That's all.

@@ -60,8 +60,6 @@ WDiv(
 
 Prefix grid utilities with breakpoint variants like `md:` or `lg:` to change the column count at different screen sizes.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="layout/grid_responsive" action="VERIFY" -->
-<!-- Description: Verify this responsive grid example matches the existing codebase -->
 <x-preview path="layout/grid_responsive" size="lg" source="example/lib/pages/layout/grid_responsive.dart"></x-preview>
 
 ```dart

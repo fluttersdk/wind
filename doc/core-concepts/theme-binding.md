@@ -23,8 +23,6 @@ Binding the two systems ensures:
 
 To ensure your entire application rebuilds when the theme changes (e.g., switching to dark mode), use the `builder` pattern. This provides a `WindController` that dynamically generates a new `ThemeData` whenever the state updates.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="core-concepts/theme_binding" action="CREATE" -->
-<!-- Description: Demonstrate WindTheme syncing with MaterialApp and a theme toggle button -->
 <x-preview path="core-concepts/theme_binding" size="md" source="example/lib/pages/core-concepts/theme_binding.dart"></x-preview>
 
 ```dart
@@ -97,6 +95,4 @@ The `toThemeData()` method intelligently maps Wind tokens to their standard Flut
 | `fontFamilies['sans']` | `textTheme.fontFamily` |
 
 This mapping ensures that your utility-first styles and native widgets stay perfectly in sync.
-
-That's all.
 

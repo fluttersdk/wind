@@ -11,8 +11,6 @@ Utilities for creating outline rings with box-shadows. These are useful for focu
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [VERIFY] path="effects/ring_basic" action="VERIFY" -->
-<!-- Description: Verify ring basic example matches new documentation structure -->
 <x-preview path="effects/ring_basic" size="md" source="example/lib/pages/effects/ring_basic.dart"></x-preview>
 
 ```dart
@@ -59,8 +57,6 @@ WDiv(
 
 Use `ring-{color}` to set the color of the ring. You can also use opacity modifiers like `/50`.
 
-<!-- TODO: [VERIFY] path="effects/ring_colors" action="VERIFY" -->
-<!-- Description: Verify ring colors example matches -->
 <x-preview path="effects/ring_colors" size="md" source="example/lib/pages/effects/ring_colors.dart"></x-preview>
 
 ```dart
