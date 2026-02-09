@@ -346,6 +346,7 @@ class _WDatePickerState extends State<WDatePicker> {
     return WPopover(
       controller: _popoverController,
       alignment: PopoverAlignment.bottomLeft,
+      maxHeight: 400,
       disabled: widget.disabled,
       className:
           'w-[320px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4',
