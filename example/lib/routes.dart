@@ -71,8 +71,6 @@ import 'pages/forms/select_basic.dart';
 import 'pages/forms/select_multi.dart';
 import 'pages/forms/select_pagination.dart';
 import 'pages/forms/select_searchable.dart';
-import 'pages/forms/form_date_picker_basic.dart';
-import 'pages/forms/form_date_range_picker_basic.dart';
 
 // Popover
 import 'pages/popover/popover_alignment.dart';
@@ -195,11 +193,7 @@ import 'pages/widgets/w_form_select.dart';
 import 'pages/widgets/w_form_multiselect.dart';
 import 'pages/widgets/w_form_checkbox.dart';
 import 'pages/widgets/w_form_checkbox_layout.dart';
-import 'pages/widgets/w_date_picker.dart';
-import 'pages/widgets/w_date_picker_single.dart';
-import 'pages/widgets/w_date_picker_range.dart';
-import 'pages/widgets/w_calendar_grid.dart';
-import 'pages/widgets/calendar_header_basic.dart';
+
 import 'pages/widgets/w_svg.dart';
 
 final Map<String, Widget> appRoutes = {
@@ -278,9 +272,6 @@ final Map<String, Widget> appRoutes = {
   '/forms/select_multi': const SelectMultiExamplePage(),
   '/forms/select_pagination': const SelectPaginationExamplePage(),
   '/forms/select_searchable': const SelectSearchableExamplePage(),
-  '/forms/form_date_picker_basic': const FormDatePickerBasicExamplePage(),
-  '/forms/form_date_range_picker_basic':
-      const FormDateRangePickerBasicExamplePage(),
 
   // Popover
   '/popover/popover_basic': const PopoverBasicExamplePage(),
@@ -405,10 +396,6 @@ final Map<String, Widget> appRoutes = {
   '/widgets/w-form-multiselect': const WFormMultiSelectExamplePage(),
   '/widgets/w_form_checkbox': const WFormCheckboxExamplePage(),
   '/widgets/w_form_checkbox_layout': const WFormCheckboxLayoutExamplePage(),
-  '/widgets/w-date-picker': const WDatePickerExamplePage(),
-  '/widgets/w-date-picker_single': const WDatePickerSingleExamplePage(),
-  '/widgets/w-date-picker_range': const WDatePickerRangeExamplePage(),
-  '/widgets/w_calendar_grid': const WCalendarGridExamplePage(),
-  '/widgets/calendar_header_basic': const CalendarHeaderBasicExamplePage(),
+
   '/widgets/w_svg': const WSvgExamplePage(),
 };
