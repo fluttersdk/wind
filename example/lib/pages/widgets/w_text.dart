@@ -1,195 +1,212 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// WText Widget Showcase
 class WTextExamplePage extends StatelessWidget {
   const WTextExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
+      className:
+          'w-full h-full overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900',
+      scrollPrimary: true,
       child: WDiv(
-        className: 'flex flex-col gap-6',
+        className: 'flex flex-col gap-6 max-w-4xl mx-auto pb-12',
         children: [
-          // Header
-          WDiv(
-            className: 'w-full p-4 rounded-xl bg-indigo-500',
-            children: const [
-              WText('WText', className: 'text-lg font-bold text-white'),
-              WText(
-                'Utility-first text widget',
-                className: 'text-sm text-indigo-100',
-              ),
-            ],
+          _buildHeader(),
+          _buildSection(
+            title: 'Typography Scale',
+            description: 'Responsive font sizes from text-xs to text-6xl',
+            child: WDiv(
+              className: 'flex flex-col gap-4',
+              children: [
+                _buildDemoRow(
+                    'text-xs', 'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow(
+                    'text-sm', 'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow(
+                    'text-base', 'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow(
+                    'text-lg', 'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow(
+                    'text-xl', 'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow(
+                    'text-2xl', 'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow('text-3xl', 'The quick brown fox'),
+              ],
+            ),
           ),
-
-          // Font Size
-          _section('Font Size', 'Control size with text-{size}', const [
-            WText(
-              'text-xs',
-              className: 'text-xs text-gray-800 dark:text-white',
+          _buildSection(
+            title: 'Font Weights',
+            description: 'Control font weight from thin (100) to black (900)',
+            child: WDiv(
+              className: 'flex flex-col gap-4',
+              children: [
+                _buildDemoRow(
+                    'font-thin', 'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow('font-light',
+                    'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow('font-normal',
+                    'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow('font-medium',
+                    'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow('font-semibold',
+                    'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow(
+                    'font-bold', 'The quick brown fox jumps over the lazy dog'),
+                _buildDemoRow('font-black',
+                    'The quick brown fox jumps over the lazy dog'),
+              ],
             ),
-            WText(
-              'text-sm',
-              className: 'text-sm text-gray-800 dark:text-white',
+          ),
+          _buildSection(
+            title: 'Colors & Opacity',
+            description: 'Apply theme colors and opacity modifiers',
+            child: WDiv(
+              className: 'grid grid-cols-1 md:grid-cols-2 gap-4',
+              children: [
+                WText('text-blue-500',
+                    className: 'text-lg font-bold text-blue-500'),
+                WText('text-purple-600',
+                    className: 'text-lg font-bold text-purple-600'),
+                WText('text-green-500/50',
+                    className: 'text-lg font-bold text-green-500/50'),
+                WText('text-red-500/25',
+                    className: 'text-lg font-bold text-red-500/25'),
+              ],
             ),
-            WText(
-              'text-base',
-              className: 'text-base text-gray-800 dark:text-white',
+          ),
+          _buildSection(
+            title: 'Decorations',
+            description: 'Visual styling for text content',
+            child: WDiv(
+              className: 'flex flex-col gap-4',
+              children: [
+                WText('Underlined text', className: 'underline text-lg'),
+                WText('Line-through text',
+                    className: 'line-through text-lg text-gray-500'),
+                WText('No underline', className: 'no-underline text-lg'),
+                WDiv(
+                  className: 'flex gap-2 items-center',
+                  children: [
+                    WText('Decoration Style:', className: 'text-gray-500'),
+                    WText('Wavy',
+                        className:
+                            'underline decoration-wavy decoration-red-500 text-lg'),
+                    WText('Dotted',
+                        className:
+                            'underline decoration-dotted decoration-blue-500 text-lg'),
+                  ],
+                ),
+              ],
             ),
-            WText(
-              'text-lg',
-              className: 'text-lg text-gray-800 dark:text-white',
+          ),
+          _buildSection(
+            title: 'Spacing & Line Height',
+            description:
+                'Control tracking (letter spacing) and leading (line height)',
+            child: WDiv(
+              className: 'flex flex-col gap-6',
+              children: [
+                WDiv(
+                  className: 'space-y-2',
+                  children: [
+                    WText('Tracking (Letter Spacing)',
+                        className: 'text-sm font-bold text-gray-500 uppercase'),
+                    WText('tracking-tighter',
+                        className:
+                            'tracking-tighter text-lg bg-gray-100 dark:bg-gray-800 p-2 rounded'),
+                    WText('tracking-widest',
+                        className:
+                            'tracking-widest text-lg bg-gray-100 dark:bg-gray-800 p-2 rounded'),
+                  ],
+                ),
+                WDiv(
+                  className: 'space-y-2',
+                  children: [
+                    WText('Leading (Line Height)',
+                        className: 'text-sm font-bold text-gray-500 uppercase'),
+                    WDiv(
+                      className: 'grid grid-cols-1 md:grid-cols-2 gap-4',
+                      children: [
+                        WDiv(
+                          className: 'p-3 bg-gray-100 dark:bg-gray-800 rounded',
+                          children: [
+                            WText('leading-none',
+                                className: 'text-xs text-gray-500 mb-1'),
+                            WText(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                              className: 'leading-none text-sm',
+                            ),
+                          ],
+                        ),
+                        WDiv(
+                          className: 'p-3 bg-gray-100 dark:bg-gray-800 rounded',
+                          children: [
+                            WText('leading-loose',
+                                className: 'text-xs text-gray-500 mb-1'),
+                            WText(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                              className: 'leading-loose text-sm',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
-            WText(
-              'text-xl',
-              className: 'text-xl text-gray-800 dark:text-white',
-            ),
-            WText(
-              'text-2xl',
-              className: 'text-2xl text-gray-800 dark:text-white',
-            ),
-          ]),
-
-          // Font Weight
-          _section('Font Weight', 'Control weight with font-{weight}', const [
-            WText(
-              'font-light',
-              className: 'font-light text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'font-normal',
-              className: 'font-normal text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'font-medium',
-              className: 'font-medium text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'font-semibold',
-              className: 'font-semibold text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'font-bold',
-              className: 'font-bold text-lg text-gray-800 dark:text-white',
-            ),
-          ]),
-
-          // Font Style
-          _section('Font Style', 'Italic text', const [
-            WText(
-              'italic',
-              className: 'italic text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'not-italic',
-              className: 'not-italic text-lg text-gray-800 dark:text-white',
-            ),
-          ]),
-
-          // Text Transform
-          _section('Text Transform', 'Change case', const [
-            WText(
-              'uppercase',
-              className: 'uppercase text-gray-800 dark:text-white',
-            ),
-            WText(
-              'LOWERCASE',
-              className: 'lowercase text-gray-800 dark:text-white',
-            ),
-            WText(
-              'capitalize me',
-              className: 'capitalize text-gray-800 dark:text-white',
-            ),
-          ]),
-
-          // Text Decoration
-          _section('Text Decoration', 'Underline and strikethrough', const [
-            WText(
-              'underline',
-              className: 'underline text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'line-through',
-              className: 'line-through text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'overline',
-              className: 'overline text-lg text-gray-800 dark:text-white',
-            ),
-          ]),
-
-          // Tracking
-          _section('Letter Spacing', 'tracking-{value}', const [
-            WText(
-              'tracking-tight',
-              className: 'tracking-tight text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'tracking-normal',
-              className:
-                  'tracking-normal text-lg text-gray-800 dark:text-white',
-            ),
-            WText(
-              'tracking-wide',
-              className: 'tracking-wide text-lg text-gray-800 dark:text-white',
-            ),
-          ]),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _ref('text-{size}', 'xs, sm, base, lg, xl, 2xl'),
-                  _ref('font-{weight}', 'light, normal, bold'),
-                  _ref('italic', 'Italic text'),
-                  _ref('uppercase', 'Transform case'),
-                  _ref('underline', 'Text decoration'),
-                  _ref('tracking-*', 'Letter spacing'),
-                ],
-              ),
-            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _section(String title, String desc, List<Widget> items) {
+  Widget _buildHeader() {
     return WDiv(
-      className: 'flex flex-col gap-2',
+      className:
+          'bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-8 shadow-lg',
       children: [
         WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+          'WText',
+          className: 'text-3xl font-bold text-white mb-2',
         ),
-        WText(desc, className: 'text-sm text-gray-500 dark:text-gray-400'),
-        WDiv(
-          className:
-              'flex flex-wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
-          children: items,
+        WText(
+          'Utility-first typography component that translates class strings into optimized Flutter text widgets.',
+          className: 'text-blue-100 text-lg max-w-2xl leading-relaxed',
         ),
       ],
     );
   }
 
-  Widget _ref(String cls, String desc) {
+  Widget _buildSection({
+    required String title,
+    required String description,
+    required Widget child,
+  }) {
     return WDiv(
-      className: 'flex gap-4',
+      className:
+          'flex flex-col p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700',
       children: [
-        WText(
-          cls,
-          className: 'font-mono text-sm text-indigo-600 dark:text-indigo-400',
-        ),
-        WText(desc, className: 'text-sm text-gray-600 dark:text-gray-300'),
+        WText(title,
+            className: 'text-xl font-bold text-gray-900 dark:text-white mb-1'),
+        WText(description,
+            className: 'text-sm text-gray-500 dark:text-gray-400 mb-6'),
+        child,
+      ],
+    );
+  }
+
+  Widget _buildDemoRow(String className, String text) {
+    return WDiv(
+      className:
+          'flex flex-col md:flex-row md:items-center gap-2 md:gap-4 border-b border-gray-100 dark:border-gray-700 last:border-0 pb-3 last:pb-0',
+      children: [
+        WText(className,
+            className:
+                'text-xs font-mono text-purple-600 dark:text-purple-400 w-32 shrink-0'),
+        WText(text, className: '$className text-gray-900 dark:text-gray-100'),
       ],
     );
   }
