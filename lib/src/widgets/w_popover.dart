@@ -380,9 +380,16 @@ class _WPopoverState extends State<WPopover> {
       final triggerPosition = triggerBox.localToGlobal(Offset.zero);
       final screenSize = MediaQuery.of(context).size;
 
-      // Estimate popover size using maxHeight and trigger width as fallback
+      // Parse width from className if available
+      double popoverWidth = triggerBox.size.width;
+      if (widget.className != null) {
+        final styles = WindParser.parse(widget.className!, context);
+        if (styles.width != null) {
+          popoverWidth = styles.width!;
+        }
+      }
+
       final double popoverHeight = widget.maxHeight;
-      final double popoverWidth = triggerBox.size.width;
 
       _effectiveAlignment = computeEffectiveAlignment(
         requested: widget.alignment,

@@ -345,7 +345,7 @@ class _WDatePickerState extends State<WDatePicker> {
 
     return WPopover(
       controller: _popoverController,
-      // WPopover handles autoFlip automatically - no manual direction needed
+      // WPopover handles autoFlip automatically - /no manual direction needed
       alignment: PopoverAlignment.bottomLeft,
       maxHeight: 400,
       disabled: widget.disabled,
