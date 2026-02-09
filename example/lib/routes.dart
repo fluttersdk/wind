@@ -59,8 +59,7 @@ import 'pages/examples/theme_mode.dart';
 
 // Forms
 import 'pages/forms/input_basic.dart';
-
-// Getting Started
+import 'pages/forms/form_date_picker_basic.dart';
 import 'pages/getting-started/installation_basic.dart';
 import 'pages/forms/input_states.dart';
 import 'pages/forms/form_checkbox_basic.dart';
@@ -174,6 +173,7 @@ import 'pages/typography/font_style_basic.dart';
 import 'pages/typography/whitespace_preview.dart';
 
 // Widgets
+import 'pages/widgets/w_date_picker.dart';
 import 'pages/widgets/w_input_multiline.dart';
 import 'pages/widgets/w_input_search.dart';
 import 'pages/widgets/w_image_fit.dart';
