@@ -165,6 +165,12 @@ class _WDatePickerState extends State<WDatePicker> {
   /// Whether the trigger is being hovered.
   bool _isHovering = false;
 
+  /// Whether to open the popover upward (calculated before opening).
+  bool _openUpward = false;
+
+  /// Key for measuring trigger position.
+  final GlobalKey _triggerKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -323,6 +329,22 @@ class _WDatePickerState extends State<WDatePicker> {
     });
   }
 
+  /// Calculate whether to open upward based on available screen space.
+  /// This must be called BEFORE opening the popover.
+  void _calculateOpenDirection() {
+    final RenderBox? triggerBox =
+        _triggerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (triggerBox != null && triggerBox.hasSize) {
+      final triggerPosition = triggerBox.localToGlobal(Offset.zero);
+      final screenHeight = MediaQuery.of(context).size.height;
+      final spaceBelow =
+          screenHeight - triggerPosition.dy - triggerBox.size.height;
+      const popoverHeight = 400.0; // Matches maxHeight
+      _openUpward =
+          spaceBelow < popoverHeight && triggerPosition.dy > spaceBelow;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Set<String> activeStates = {
@@ -345,7 +367,8 @@ class _WDatePickerState extends State<WDatePicker> {
 
     return WPopover(
       controller: _popoverController,
-      alignment: PopoverAlignment.bottomLeft,
+      alignment:
+          _openUpward ? PopoverAlignment.topLeft : PopoverAlignment.bottomLeft,
       maxHeight: 400,
       disabled: widget.disabled,
       className:
@@ -367,6 +390,11 @@ class _WDatePickerState extends State<WDatePicker> {
         });
       },
       triggerBuilder: (context, isOpen, isHovering) {
+        // Calculate open direction when hover starts (before click)
+        if (isHovering && !_isOpen) {
+          _calculateOpenDirection();
+        }
+
         // Deferred state update to avoid conflicts
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && _isHovering != isHovering) {
@@ -374,29 +402,32 @@ class _WDatePickerState extends State<WDatePicker> {
           }
         });
 
-        return MouseRegion(
-          cursor: widget.disabled
-              ? SystemMouseCursors.forbidden
-              : SystemMouseCursors.click,
-          child: WDiv(
-            className: triggerClassName,
-            states: activeStates,
-            child: Row(
-              children: [
-                Expanded(
-                  child: WText(
-                    _getDisplayText(),
-                    className: _hasValue
-                        ? 'text-gray-800 dark:text-gray-100'
-                        : 'text-gray-400 dark:text-gray-500',
+        return KeyedSubtree(
+          key: _triggerKey,
+          child: MouseRegion(
+            cursor: widget.disabled
+                ? SystemMouseCursors.forbidden
+                : SystemMouseCursors.click,
+            child: WDiv(
+              className: triggerClassName,
+              states: activeStates,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: WText(
+                      _getDisplayText(),
+                      className: _hasValue
+                          ? 'text-gray-800 dark:text-gray-100'
+                          : 'text-gray-400 dark:text-gray-500',
+                    ),
                   ),
-                ),
-                Icon(
-                  Icons.calendar_today,
-                  size: 18,
-                  color: styles.color ?? Colors.grey.shade600,
-                ),
-              ],
+                  Icon(
+                    Icons.calendar_today,
+                    size: 18,
+                    color: styles.color ?? Colors.grey.shade600,
+                  ),
+                ],
+              ),
             ),
           ),
         );
