@@ -489,7 +489,8 @@ class _CalendarHeader extends StatelessWidget {
         ),
         WText(
           _monthYearText,
-          className: 'text-sm font-semibold text-gray-800 dark:text-gray-100',
+          className:
+              'text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap',
         ),
         GestureDetector(
           onTap: onNextMonth,
