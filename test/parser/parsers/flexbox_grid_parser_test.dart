@@ -177,6 +177,55 @@ void main() {
       });
     });
 
+    group('Flex Shrink & Baseline', () {
+      test('shrink -> FlexFit.loose', () {
+        final styles = parser.parse(WindStyle(), ['shrink'], context);
+        expect(styles.flexFit, FlexFit.loose);
+      });
+
+      test('shrink-0 -> FlexFit.tight', () {
+        final styles = parser.parse(WindStyle(), ['shrink-0'], context);
+        expect(styles.flexFit, FlexFit.tight);
+      });
+
+      test(
+          'items-baseline -> CrossAxisAlignment.baseline and TextBaseline.alphabetic',
+          () {
+        final styles = parser.parse(WindStyle(), ['items-baseline'], context);
+        expect(styles.crossAxisAlignment, CrossAxisAlignment.baseline);
+        expect(styles.textBaseline, TextBaseline.alphabetic);
+      });
+
+      test('last-class-wins override logic', () {
+        // Flex shrink overrides
+        expect(
+          parser.parse(WindStyle(), ['shrink', 'shrink-0'], context).flexFit,
+          FlexFit.tight,
+        );
+        expect(
+          parser.parse(WindStyle(), ['shrink-0', 'shrink'], context).flexFit,
+          FlexFit.loose,
+        );
+
+        // Baseline overrides
+        final baselineStyles = parser.parse(
+          WindStyle(),
+          ['items-center', 'items-baseline'],
+          context,
+        );
+        expect(baselineStyles.crossAxisAlignment, CrossAxisAlignment.baseline);
+        expect(baselineStyles.textBaseline, TextBaseline.alphabetic);
+
+        final centerStyles = parser.parse(
+          WindStyle(),
+          ['items-baseline', 'items-center'],
+          context,
+        );
+        expect(centerStyles.crossAxisAlignment, CrossAxisAlignment.center);
+        expect(centerStyles.textBaseline, isNull);
+      });
+    });
+
     group('canParse', () {
       test('returns true for flex related classes', () {
         expect(parser.canParse('flex'), isTrue);

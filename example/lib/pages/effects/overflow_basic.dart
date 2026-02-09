@@ -35,25 +35,34 @@ class OverflowBasicExamplePage extends StatelessWidget {
                 'Content can overflow outside container bounds (default)',
             children: [
               WDiv(
-                className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                child: WDiv(
-                  className: 'flex justify-center',
-                  child: WDiv(
-                    className:
-                        'overflow-visible w-20 h-20 bg-blue-500 rounded-lg',
-                    child: WDiv(
+                className:
+                    'p-8 bg-gray-100 dark:bg-slate-800 rounded-lg h-40 flex items-center justify-center',
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // Container boundary (visible border)
+                    WDiv(
                       className:
-                          'w-32 h-32 bg-blue-300 rounded-lg flex items-center justify-center',
-                      child: WText(
-                        '120x120',
-                        className: 'text-blue-900 text-xs font-mono',
+                          'w-20 h-20 border-2 border-dashed border-blue-500 rounded-lg',
+                    ),
+                    // Overflowing content
+                    Positioned(
+                      top: -16,
+                      left: -16,
+                      child: WDiv(
+                        className:
+                            'w-32 h-32 bg-blue-400/80 rounded-lg flex items-center justify-center',
+                        child: WText(
+                          '128x128',
+                          className: 'text-white text-xs font-mono font-bold',
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
               WText(
-                'Container is 80x80, content is 120x120 → content visible outside',
+                'Container is 80x80 (dashed border), content is 128x128 → content visible outside',
                 className: 'text-xs text-gray-500 mt-1',
               ),
             ],
@@ -65,25 +74,48 @@ class OverflowBasicExamplePage extends StatelessWidget {
             description: 'Clip content that overflows the container',
             children: [
               WDiv(
-                className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                child: WDiv(
-                  className: 'flex justify-center',
-                  child: WDiv(
-                    className:
-                        'overflow-hidden w-20 h-20 bg-red-500 rounded-lg',
-                    child: WDiv(
+                className:
+                    'p-8 bg-gray-100 dark:bg-slate-800 rounded-lg h-40 flex items-center justify-center',
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // Container boundary (visible border) - same as visible section
+                    WDiv(
                       className:
-                          'w-32 h-32 bg-red-300 rounded-lg flex items-center justify-center',
-                      child: WText(
-                        '120x120',
-                        className: 'text-red-900 text-xs font-mono',
+                          'w-20 h-20 border-2 border-dashed border-red-500 rounded-lg',
+                    ),
+                    // Container with overflow-hidden (clipped content)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(
+                        width: 80,
+                        height: 80,
+                        child: Stack(
+                          clipBehavior: Clip.hardEdge,
+                          children: [
+                            // Overflowing content (will be clipped)
+                            Positioned(
+                              top: -16,
+                              left: -16,
+                              child: WDiv(
+                                className:
+                                    'w-32 h-32 bg-red-500/80 rounded-lg flex items-center justify-center',
+                                child: WText(
+                                  '128x128',
+                                  className:
+                                      'text-white text-xs font-mono font-bold',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
               WText(
-                'Container is 80x80, content is 120x120 → content clipped',
+                'Container is 80x80 (dashed border), content is 128x128 → only visible inside container',
                 className: 'text-xs text-gray-500 mt-1',
               ),
             ],
