@@ -13,8 +13,6 @@ A calendar navigation header component that displays the current month and year 
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/calendar_header_basic" action="CREATE" -->
-<!-- Description: Basic calendar header with month navigation -->
 <x-preview path="widgets/calendar_header_basic" size="md" source="example/lib/pages/widgets/calendar_header_basic.dart"></x-preview>
 
 ```dart

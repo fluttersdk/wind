@@ -13,9 +13,7 @@ The `WImage` widget brings utility-first styling to images in Flutter, providing
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_image_basic" action="CREATE" -->
-<!-- Description: Basic WImage usage with a network source and rounded corners -->
-<x-preview path="widgets/w_image_basic" size="md" source="example/lib/pages/widgets/w_image_basic.dart"></x-preview>
+<x-preview path="images/image_basic" size="md" source="example/lib/pages/images/image_basic.dart"></x-preview>
 
 ```dart
 WImage(
@@ -83,8 +81,6 @@ const WImage({
 
 Control how the image content should be resized to fit its container using `object-{fit}` classes.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_image_fit" action="CREATE" -->
-<!-- Description: Comparison of different object-fit modes -->
 <x-preview path="widgets/w_image_fit" size="md" source="example/lib/pages/widgets/w_image_fit.dart"></x-preview>
 
 ```dart
@@ -98,8 +94,6 @@ WImage(
 
 Ensure the image maintains a specific aspect ratio regardless of its content dimensions.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_image_ratio" action="CREATE" -->
-<!-- Description: WImage using aspect-video and aspect-square -->
 <x-preview path="widgets/w_image_ratio" size="md" source="example/lib/pages/widgets/w_image_ratio.dart"></x-preview>
 
 ```dart

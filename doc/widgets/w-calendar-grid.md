@@ -13,7 +13,7 @@ A calendar grid widget that displays a month view with weekday headers and selec
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_calendar_grid" action="CREATE" -->
+<x-preview path="widgets/w_calendar_grid" size="md" source="example/lib/pages/widgets/w_calendar_grid.dart"></x-preview>
 
 <a name="basic-usage"></a>
 ## Basic Usage

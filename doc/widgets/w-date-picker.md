@@ -13,7 +13,7 @@ WDatePicker is a utility-first date selection component that provides a sleek, c
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-date-picker" action="CREATE" -->
+<x-preview path="widgets/w-date-picker" size="md" source="example/lib/pages/widgets/w_date_picker.dart"></x-preview>
 
 <a name="basic-usage"></a>
 ## Basic Usage
@@ -77,9 +77,7 @@ const WDatePicker({
 ### Single Date Mode
 In single date mode (default), the picker displays a single calendar month.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-date-picker_single" action="CREATE" -->
-<!-- Description: WDatePicker in single date selection mode -->
-<x-preview path="widgets/w-date-picker_single" size="md" source="example/lib/pages/widgets/w-date-picker_single.dart"></x-preview>
+<x-preview path="widgets/w-date-picker_single" size="md" source="example/lib/pages/widgets/w_date_picker_single.dart"></x-preview>
 
 ```dart
 WDatePicker(
@@ -92,9 +90,7 @@ WDatePicker(
 ### Date Range Mode
 When `isRange` is true, the picker displays two side-by-side calendars for selecting a start and end date.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-date-picker_range" action="CREATE" -->
-<!-- Description: WDatePicker in range selection mode with presets -->
-<x-preview path="widgets/w-date-picker_range" size="md" source="example/lib/pages/widgets/w-date-picker_range.dart"></x-preview>
+<x-preview path="widgets/w-date-picker_range" size="md" source="example/lib/pages/widgets/w_date_picker_range.dart"></x-preview>
 
 ```dart
 WDatePicker(

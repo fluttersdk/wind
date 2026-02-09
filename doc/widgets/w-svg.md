@@ -13,7 +13,6 @@ The utility-first SVG component. `WSvg` brings HTML SVG semantics to Flutter wit
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_svg" action="CREATE" -->
 <!-- Description: Demonstrate WSvg with asset source and string source, showing fill/stroke and sizing. -->
 <x-preview path="widgets/w_svg" size="md" source="example/lib/pages/widgets/w_svg.dart"></x-preview>
 

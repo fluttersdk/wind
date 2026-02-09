@@ -13,8 +13,6 @@ A Wind-styled checkbox that integrates with Flutter's Form validation, providing
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_form_checkbox" action="CREATE" -->
-<!-- Description: Basic form checkbox with validation and label -->
 <x-preview path="widgets/w_form_checkbox" size="md" source="example/lib/pages/widgets/w_form_checkbox.dart"></x-preview>
 
 ```dart
@@ -94,8 +92,6 @@ WFormCheckbox({
 
 `WFormCheckbox` automatically handles the layout of the checkbox, label, and hint/error text. It uses a vertical flex container where the checkbox and label are aligned horizontally, and the hint or error is positioned below them.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_form_checkbox_layout" action="CREATE" -->
-<!-- Description: Checkbox showing label and hint positioning -->
 <x-preview path="widgets/w_form_checkbox_layout" size="md" source="example/lib/pages/widgets/w_form_checkbox_layout.dart"></x-preview>
 
 ```dart

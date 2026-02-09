@@ -11,7 +11,6 @@ The `WSpacer` is a lightweight widget designed specifically for adding consisten
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_spacer_basic" action="CREATE" -->
 <!-- Description: Demonstrates WSpacer providing vertical gap between form fields -->
 <x-preview path="widgets/w_spacer_basic" size="md" source="example/lib/pages/widgets/w_spacer_basic.dart"></x-preview>
 
@@ -70,7 +69,6 @@ const WSpacer({
 
 You can adjust spacing based on screen size using responsive prefixes. This is particularly useful for increasing margins on tablet or desktop layouts.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_spacer_responsive" action="CREATE" -->
 <!-- Description: Demonstrates h-4 on mobile and h-8 on desktop -->
 <x-preview path="widgets/w_spacer_responsive" size="md" source="example/lib/pages/widgets/w_spacer_responsive.dart"></x-preview>
 

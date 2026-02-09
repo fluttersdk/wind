@@ -13,7 +13,7 @@ A form-integrated date picker widget that wraps `WDatePicker` with `FormField` t
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="forms/form_date_picker_basic" action="CREATE" -->
+<x-preview path="forms/form_date_picker_basic" size="md" source="example/lib/pages/forms/form_date_picker_basic.dart"></x-preview>
 
 <a name="basic-usage"></a>
 ## Basic Usage
@@ -93,8 +93,6 @@ WFormDatePicker({
 ### Date Range Selection
 Use `WFormDateRangePicker` for selecting start and end date pairs within a form.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="forms/form_date_range_picker_basic" action="CREATE" -->
-<!-- Description: Form date range picker with presets -->
 <x-preview path="forms/form_date_range_picker_basic" size="md" source="example/lib/pages/forms/form_date_range_picker_basic.dart"></x-preview>
 
 ```dart

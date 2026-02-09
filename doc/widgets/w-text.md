@@ -12,9 +12,7 @@ A utility-first text component that translates Tailwind-like class strings into 
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-text" action="UPDATE" -->
-<!-- Description: Show a high-impact example of WText with typography, color, and composition utilities. -->
-<x-preview path="widgets/w-text" size="md" source="example/lib/pages/widgets/w_text.dart"></x-preview>
+<x-preview path="widgets/w_text" size="md" source="example/lib/pages/widgets/w_text.dart"></x-preview>
 
 ```dart
 WText(
@@ -65,8 +63,6 @@ WText supports a wide range of typography utilities that map directly to Flutter
 
 ### Alignment and Transform
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-text-transform" action="CREATE" -->
-<!-- Description: Demonstrate text-center, uppercase, and capitalize utilities. -->
 <x-preview path="widgets/w-text-transform" size="sm" source="example/lib/pages/widgets/w_text_transform.dart"></x-preview>
 
 ```dart

@@ -14,9 +14,7 @@ A Wind-styled single or multi-select dropdown that integrates seamlessly with Fl
 - [Related Documentation](#related-documentation)
 
 <a name="basic-usage"></a>
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-form-select" action="CREATE" -->
-<!-- Description: Basic WFormSelect with validation in a Form -->
-<x-preview path="widgets/w-form-select" size="md" source="example/lib/pages/widgets/w_form_select_basic.dart"></x-preview>
+<x-preview path="widgets/w-form-select" size="md" source="example/lib/pages/widgets/w_form_select.dart"></x-preview>
 
 ```dart
 WFormSelect<String>(
@@ -181,9 +179,7 @@ WFormSelect<String>(
 
 The `WFormMultiSelect` variation handles lists of values and provides a different set of styling options for selected chips.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-form-multiselect" action="CREATE" -->
-<!-- Description: WFormMultiSelect with validation -->
-<x-preview path="widgets/w-form-multiselect" size="md" source="example/lib/pages/widgets/w_form_multiselect_basic.dart"></x-preview>
+<x-preview path="widgets/w-form-multiselect" size="md" source="example/lib/pages/widgets/w_form_multiselect.dart"></x-preview>
 
 ```dart
 WFormMultiSelect<String>(

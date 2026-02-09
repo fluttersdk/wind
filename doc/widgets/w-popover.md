@@ -13,9 +13,7 @@ A flexible popover component for creating dropdown menus, notification panels, u
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-popover" action="CREATE" -->
-<!-- Description: Basic popover example with a button trigger and a simple list content -->
-<x-preview path="widgets/w-popover" size="md" source="example/lib/pages/widgets/w_popover_page.dart"></x-preview>
+<x-preview path="popover/popover_basic" size="md" source="example/lib/pages/popover/popover_basic.dart"></x-preview>
 
 ```dart
 WPopover(
@@ -97,9 +95,7 @@ While `WPopover` itself isn't a layout container, it supports various **Alignmen
 
 `WPopover` intelligently "flips" the alignment if the requested position would cause the overlay to overflow the screen edges.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-popover-alignment" action="CREATE" -->
-<!-- Description: Demonstrates different PopoverAlignment options (bottomLeft, topRight, etc.) -->
-<x-preview path="widgets/w-popover-alignment" size="md" source="example/lib/pages/widgets/w_popover_alignment_page.dart"></x-preview>
+<x-preview path="widgets/w-popover-alignment" size="md" source="example/lib/pages/widgets/w_popover_alignment.dart"></x-preview>
 
 | Alignment | Description |
 |:----------|:------------|

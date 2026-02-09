@@ -13,9 +13,7 @@ A highly customizable, utility-first select component that supports single selec
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-select" action="CREATE" -->
-<!-- Description: Basic single-select usage showing the dropdown trigger and items. -->
-<x-preview path="widgets/w-select" size="md" source="example/lib/pages/widgets/w_select_page.dart"></x-preview>
+<x-preview path="forms/select_basic" size="md" source="example/lib/pages/forms/select_basic.dart"></x-preview>
 
 ```dart
 WSelect<String>(
@@ -98,7 +96,6 @@ const WSelect({
 ### Single Select
 The default mode for selecting a single item. It displays the label of the selected option in the trigger.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-select_single" action="CREATE" -->
 <x-preview path="widgets/w-select_single" size="md" source="example/lib/pages/widgets/w_select_single.dart"></x-preview>
 
 ```dart
@@ -115,7 +112,6 @@ WSelect<String>(
 ### Multi Select
 Enable `isMulti: true` to allow multiple selections. By default, it displays selected items as chips.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-select_multi" action="CREATE" -->
 <x-preview path="widgets/w-select_multi" size="md" source="example/lib/pages/widgets/w_select_multi.dart"></x-preview>
 
 ```dart

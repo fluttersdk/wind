@@ -13,9 +13,7 @@ The foundational state wrapper that detects user gestures (Hover, Focus, Press) 
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-anchor" action="CREATE" -->
-<!-- Description: Basic WAnchor usage showing hover and tap interaction -->
-<x-preview path="widgets/w-anchor" size="md" source="example/lib/pages/widgets/w_anchor_example.dart"></x-preview>
+<x-preview path="interactivity/anchor_basic" size="md" source="example/lib/pages/interactivity/anchor_basic.dart"></x-preview>
 
 ```dart
 WAnchor(
@@ -77,9 +75,7 @@ const WAnchor({
 
 ### Flex Layout Wrapper
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-anchor_flex" action="CREATE" -->
-<!-- Description: WAnchor wrapping a flex layout for a navigation item -->
-<x-preview path="widgets/w-anchor_flex" size="md" source="example/lib/pages/widgets/w_anchor_flex.dart"></x-preview>
+<x-preview path="widgets/w_anchor_flex" size="md" source="example/lib/pages/widgets/w_anchor_flex.dart"></x-preview>
 
 ```dart
 WAnchor(

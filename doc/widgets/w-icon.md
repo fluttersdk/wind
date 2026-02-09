@@ -13,9 +13,7 @@ The utility-first icon component for displaying vector icons with Tailwind-like 
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-icon" action="CREATE" -->
-<!-- Description: Basic WIcon showing star icon with yellow color and large size -->
-<x-preview path="widgets/w-icon" size="md" source="example/lib/pages/widgets/w_icon.dart"></x-preview>
+<x-preview path="icons/icon_basic" size="md" source="example/lib/pages/icons/icon_basic.dart"></x-preview>
 
 ```dart
 WIcon(
@@ -64,9 +62,7 @@ While icons don't have complex layout modes, `WIcon` supports two primary sizing
 
 ### Sizing Modes
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-icon-sizing" action="CREATE" -->
-<!-- Description: Comparison of text-based sizing vs explicit w/h sizing for icons -->
-<x-preview path="widgets/w-icon-sizing" size="md" source="example/lib/pages/widgets/w_icon_sizing.dart"></x-preview>
+<x-preview path="widgets/w_icon_sizing" size="md" source="example/lib/pages/widgets/w_icon_sizing.dart"></x-preview>
 
 ```dart
 // Typography-based sizing (inherits line-height context)

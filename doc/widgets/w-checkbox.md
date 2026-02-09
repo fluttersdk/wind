@@ -13,9 +13,7 @@ A utility-first checkbox component that translates Tailwind-style classes into a
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-checkbox" action="CREATE" -->
-<!-- Description: Basic checkbox example with state management -->
-<x-preview path="widgets/w-checkbox" size="md" source="example/lib/pages/widgets/w-checkbox.dart"></x-preview>
+<x-preview path="checkbox/checkbox_basic" size="md" source="example/lib/pages/checkbox/checkbox_basic.dart"></x-preview>
 
 ```dart
 WCheckbox(

@@ -13,9 +13,7 @@ The `WInput` widget is a utility-first form input that combines React-style cont
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-input-main" action="CREATE" -->
-<!-- Description: A standard email input with custom border and focus ring -->
-<x-preview path="widgets/w-input-main" size="md" source="example/lib/pages/widgets/w_input_main.dart"></x-preview>
+<x-preview path="forms/input_basic" size="md" source="example/lib/pages/forms/input_basic.dart"></x-preview>
 
 ```dart
 WInput(
@@ -102,8 +100,6 @@ const WInput({
 
 For text areas, set the `type` to `InputType.multiline`. You can control the height using `minLines` or standard sizing classes.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-input-multiline" action="CREATE" -->
-<!-- Description: A multiline text area with fixed height and scrollable content -->
 <x-preview path="widgets/w-input-multiline" size="md" source="example/lib/pages/widgets/w_input_multiline.dart"></x-preview>
 
 ```dart
@@ -151,8 +147,6 @@ WInput(
 
 You can use the `prefix` prop to add icons while maintaining the utility-first styling of the input.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-input-search" action="CREATE" -->
-<!-- Description: A rounded search input with a magnifying glass icon -->
 <x-preview path="widgets/w-input-search" size="md" source="example/lib/pages/widgets/w_input_search.dart"></x-preview>
 
 ```dart

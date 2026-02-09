@@ -13,9 +13,7 @@
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-button" action="CREATE" -->
-<!-- Description: Basic WButton with hover and rounded corners -->
-<x-preview path="widgets/w-button" size="md" source="example/lib/pages/widgets/w-button.dart"></x-preview>
+<x-preview path="buttons/button_basic" size="md" source="example/lib/pages/buttons/button_basic.dart"></x-preview>
 
 ```dart
 WButton(
@@ -82,9 +80,7 @@ const WButton({
 
 By default, using `justify-center` in the `className` will center the child within the button's constraints.
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w-button_centered" action="CREATE" -->
-<!-- Description: WButton with fixed width and centered content -->
-<x-preview path="widgets/w-button_centered" size="md" source="example/lib/pages/widgets/w-button_centered.dart"></x-preview>
+<x-preview path="widgets/w_button_centered" size="md" source="example/lib/pages/widgets/w_button_centered.dart"></x-preview>
 
 ```dart
 WButton(

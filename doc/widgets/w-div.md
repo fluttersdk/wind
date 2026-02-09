@@ -15,7 +15,6 @@ It embodies the "Intelligent Composition" philosophy, dynamically constructing t
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_div_basic" action="CREATE" -->
 <!-- Description: Basic demonstration of WDiv as a styled container with flex layout -->
 <x-preview path="widgets/w_div_basic" size="md" source="example/lib/pages/widgets/w_div_basic.dart"></x-preview>
 
