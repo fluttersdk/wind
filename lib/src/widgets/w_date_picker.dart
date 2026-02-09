@@ -348,7 +348,7 @@ class _WDatePickerState extends State<WDatePicker> {
       alignment: PopoverAlignment.bottomLeft,
       disabled: widget.disabled,
       className:
-          'w-[300px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4',
+          'w-[320px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4',
       onOpen: () {
         setState(() {
           _isOpen = true;
