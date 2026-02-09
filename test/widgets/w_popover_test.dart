@@ -517,6 +517,125 @@ void main() {
       });
     });
 
+    group('Smart Flip - prefer direction with more space', () {
+      test(
+          'bottomLeft stays when bottom overflows but top has LESS space (iPhone SE regression)',
+          () {
+        // iPhone SE: 375×667, trigger at y=300, height=48
+        // spaceBelow = 667 - 300 - 48 - 4 = 315
+        // spaceAbove = 300 - 4 = 296
+        // bottomEdge = 300 + 48 + 4 + 400 = 752 > 667 (overflows)
+        // spaceAbove (296) < spaceBelow (315) → DO NOT flip
+        final result = computeEffectiveAlignment(
+          requested: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(20, 300),
+          triggerSize: const Size(335, 48),
+          popoverSize: const Size(320, 400),
+          screenSize: const Size(375, 667),
+          offset: const Offset(0, 4),
+        );
+
+        expect(result, PopoverAlignment.bottomLeft);
+      });
+
+      test('topLeft stays when top overflows but bottom has LESS space', () {
+        // Trigger at y=350 on 667 screen, triggerHeight=48
+        // spaceAbove = 350 - 4 = 346
+        // spaceBelow = 667 - 350 - 48 - 4 = 265
+        // topEdge = 350 - 4 - 400 = -54 < 0 (overflows)
+        // spaceBelow (265) < spaceAbove (346) → DO NOT flip
+        final result = computeEffectiveAlignment(
+          requested: PopoverAlignment.topLeft,
+          triggerPosition: const Offset(20, 350),
+          triggerSize: const Size(335, 48),
+          popoverSize: const Size(320, 400),
+          screenSize: const Size(375, 667),
+          offset: const Offset(0, 4),
+        );
+
+        expect(result, PopoverAlignment.topLeft);
+      });
+
+      test('bottomCenter stays when bottom overflows but top has less space',
+          () {
+        // trigger at y=180, height=40, screen height=500
+        // spaceBelow = 500 - 180 - 40 - 4 = 276
+        // spaceAbove = 180 - 4 = 176
+        // bottomEdge = 180 + 40 + 4 + 300 = 524 > 500 (overflows)
+        // spaceAbove (176) < spaceBelow (276) → DO NOT flip
+        final result = computeEffectiveAlignment(
+          requested: PopoverAlignment.bottomCenter,
+          triggerPosition: const Offset(100, 180),
+          triggerSize: const Size(200, 40),
+          popoverSize: const Size(250, 300),
+          screenSize: const Size(400, 500),
+          offset: const Offset(0, 4),
+        );
+
+        expect(result, PopoverAlignment.bottomCenter);
+      });
+
+      test(
+          'bottomLeft DOES flip to topLeft when bottom overflows and top has MORE space',
+          () {
+        // Trigger near bottom: y=500, height=40, screen=600
+        // spaceBelow = 600 - 500 - 40 - 4 = 56
+        // spaceAbove = 500 - 4 = 496
+        // bottomEdge = 500 + 40 + 4 + 300 = 844 > 600 (overflows)
+        // spaceAbove (496) > spaceBelow (56) → FLIP
+        final result = computeEffectiveAlignment(
+          requested: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(50, 500),
+          triggerSize: const Size(100, 40),
+          popoverSize: const Size(200, 300),
+          screenSize: const Size(400, 600),
+          offset: const Offset(0, 4),
+        );
+
+        expect(result, PopoverAlignment.topLeft);
+      });
+
+      test(
+          'topCenter DOES flip to bottomCenter when top overflows and bottom has MORE space',
+          () {
+        // Trigger near top: y=30, height=40, screen=600
+        // spaceAbove = 30 - 4 = 26
+        // spaceBelow = 600 - 30 - 40 - 4 = 526
+        // topEdge = 30 - 4 - 200 = -174 < 0 (overflows)
+        // spaceBelow (526) > spaceAbove (26) → FLIP
+        final result = computeEffectiveAlignment(
+          requested: PopoverAlignment.topCenter,
+          triggerPosition: const Offset(100, 30),
+          triggerSize: const Size(200, 40),
+          popoverSize: const Size(250, 200),
+          screenSize: const Size(400, 600),
+          offset: const Offset(0, 4),
+        );
+
+        expect(result, PopoverAlignment.bottomCenter);
+      });
+
+      test(
+          'bottomLeft stays when both directions overflow with exactly equal space',
+          () {
+        // Trigger exactly at center: y=280, height=40, screen=600
+        // spaceBelow = 600 - 280 - 40 - 4 = 276
+        // spaceAbove = 280 - 4 = 276
+        // bottomEdge = 280 + 40 + 4 + 400 = 724 > 600 (overflows)
+        // spaceAbove (276) == spaceBelow (276), NOT > → DO NOT flip
+        final result = computeEffectiveAlignment(
+          requested: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(50, 280),
+          triggerSize: const Size(100, 40),
+          popoverSize: const Size(200, 400),
+          screenSize: const Size(400, 600),
+          offset: const Offset(0, 4),
+        );
+
+        expect(result, PopoverAlignment.bottomLeft);
+      });
+    });
+
     group('Auto-Flip Widget Integration', () {
       testWidgets('right edge trigger with bottomRight and w-56 stays visible',
           (tester) async {
