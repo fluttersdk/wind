@@ -271,12 +271,18 @@ class _WPopoverState extends State<WPopover> {
         effective == PopoverAlignment.topCenter ||
         effective == PopoverAlignment.topRight;
 
+    // Calculate available space in both directions
+    final double spaceBelow =
+        screenSize.height - triggerPosition.dy - triggerSize.height - offset.dy;
+    final double spaceAbove = triggerPosition.dy - offset.dy;
+
     if (isBottom) {
       final double bottomEdge = triggerPosition.dy +
           triggerSize.height +
           offset.dy +
           popoverSize.height;
-      if (bottomEdge > screenSize.height) {
+      // Only flip to top if bottom overflows AND top has more space
+      if (bottomEdge > screenSize.height && spaceAbove > spaceBelow) {
         effective = switch (effective) {
           PopoverAlignment.bottomLeft => PopoverAlignment.topLeft,
           PopoverAlignment.bottomCenter => PopoverAlignment.topCenter,
@@ -287,7 +293,8 @@ class _WPopoverState extends State<WPopover> {
     } else if (isTop) {
       final double topEdge =
           triggerPosition.dy - offset.dy - popoverSize.height;
-      if (topEdge < 0) {
+      // Only flip to bottom if top overflows AND bottom has more space
+      if (topEdge < 0 && spaceBelow > spaceAbove) {
         effective = switch (effective) {
           PopoverAlignment.topLeft => PopoverAlignment.bottomLeft,
           PopoverAlignment.topCenter => PopoverAlignment.bottomCenter,
