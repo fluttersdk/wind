@@ -175,6 +175,7 @@ import 'pages/widgets/w_date_picker.dart';
 import 'pages/widgets/date_picker_basic.dart';
 import 'pages/widgets/date_picker_range.dart';
 import 'pages/widgets/date_picker_styled.dart';
+import 'pages/widgets/w_dynamic_basic.dart';
 import 'pages/widgets/w_input_multiline.dart';
 import 'pages/widgets/w_input_search.dart';
 import 'pages/widgets/w_image_fit.dart';
@@ -383,6 +384,7 @@ final Map<String, Widget> appRoutes = {
   '/widgets/date_picker_basic': const DatePickerBasicExamplePage(),
   '/widgets/date_picker_range': const DatePickerRangeExamplePage(),
   '/widgets/date_picker_styled': const DatePickerStyledExamplePage(),
+  '/widgets/w_dynamic_basic': WDynamicBasicExamplePage(),
   '/widgets/w_image_fit': const WImageFitExamplePage(),
   '/widgets/w_image_ratio': const WImageRatioExamplePage(),
   '/widgets/w-select_single': const WSelectSingleExamplePage(),

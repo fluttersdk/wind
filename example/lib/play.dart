@@ -40,7 +40,8 @@ class PlaygroundScreen extends StatefulWidget {
 }
 
 class _PlaygroundScreenState extends State<PlaygroundScreen> {
-  Widget? _renderedWidget;
+  Map<String, dynamic>? _jsonData;
+  Widget? _errorWidget;
   bool _autoCenter = true;
   bool _autoOverflow = true;
   String _themeMode = 'dark';
@@ -50,7 +51,6 @@ class _PlaygroundScreenState extends State<PlaygroundScreen> {
   @override
   void initState() {
     super.initState();
-    _renderDefaultState();
 
     if (kIsWeb) {
       _listenToWebMessages();
@@ -61,14 +61,6 @@ class _PlaygroundScreenState extends State<PlaygroundScreen> {
   void dispose() {
     _messageSubscription?.cancel();
     super.dispose();
-  }
-
-  void _renderDefaultState() {
-    // Don't render default widget - wait for actual content from parent
-    // This prevents the default "Wind Playground" card from briefly appearing
-    setState(() {
-      _renderedWidget = null;
-    });
   }
 
   void _listenToWebMessages() {
@@ -106,9 +98,9 @@ class _PlaygroundScreenState extends State<PlaygroundScreen> {
     }
 
     if (payload is Map<String, dynamic>) {
-      _renderJson(payload);
+      setState(() => _jsonData = payload);
     } else if (payload is Map) {
-      _renderJson(Map<String, dynamic>.from(payload));
+      setState(() => _jsonData = Map<String, dynamic>.from(payload));
     }
   }
 
@@ -133,20 +125,10 @@ class _PlaygroundScreenState extends State<PlaygroundScreen> {
     });
   }
 
-  void _renderJson(Map<String, dynamic> jsonData) {
-    try {
-      final widgetTree = DynamicRenderer.buildFromJson(jsonData);
-      setState(() {
-        _renderedWidget = widgetTree;
-      });
-    } catch (e) {
-      _showError("Render Error: $e");
-    }
-  }
-
   void _showError(String message) {
     setState(() {
-      _renderedWidget = Center(
+      _jsonData = null;
+      _errorWidget = Center(
         child: WDiv(
           className: 'p-4 bg-red-500/10 border border-red-500/50 rounded-lg',
           child: WText(
@@ -198,8 +180,35 @@ class _PlaygroundScreenState extends State<PlaygroundScreen> {
   }
 
   Widget _buildBody() {
-    // If no widget yet, show empty - loading state is handled by parent container
-    Widget content = _renderedWidget ?? const SizedBox.shrink();
+    // Show error widget if present
+    if (_errorWidget != null) {
+      return Center(child: _errorWidget!);
+    }
+
+    // If no JSON yet, show empty - loading state is handled by parent container
+    if (_jsonData == null) {
+      return const SizedBox.shrink();
+    }
+
+    Widget content = WDynamic(
+      json: _jsonData!,
+      actions: {
+        'log': (Map<String, dynamic> args) {
+          debugPrint("Playground action: $args");
+        },
+      },
+      onError: (type, error) => Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.red),
+          color: Colors.red.shade50,
+        ),
+        child: Text(
+          'Error ($type): $error',
+          style: const TextStyle(color: Colors.red, fontSize: 12),
+        ),
+      ),
+    );
 
     // When autoOverflow is enabled, wrap in ScrollView
     if (_autoOverflow) {
@@ -239,232 +248,6 @@ class _PlaygroundScreenState extends State<PlaygroundScreen> {
     return Align(
       alignment: Alignment.topLeft,
       child: content,
-    );
-  }
-}
-
-/// Dynamic JSON to Widget renderer
-class DynamicRenderer {
-  static Map<String, dynamic> _deepConvertMap(Map map) {
-    return map.map((key, value) {
-      final newKey = key.toString();
-      dynamic newValue = value;
-      if (value is Map) {
-        newValue = _deepConvertMap(value);
-      } else if (value is List) {
-        newValue = value.map((e) => e is Map ? _deepConvertMap(e) : e).toList();
-      }
-      return MapEntry(newKey, newValue);
-    });
-  }
-
-  static Widget buildFromJson(Map<String, dynamic>? json) {
-    if (json == null || json.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final String type = json['type'] ?? 'Unknown';
-    final props = json['props'];
-    final Map<String, dynamic> safeProps =
-        props is Map ? _deepConvertMap(props) : <String, dynamic>{};
-    final List<dynamic> childrenRaw = json['children'] ?? [];
-
-    List<Widget> children = childrenRaw.map((childJson) {
-      if (childJson is Map) {
-        return buildFromJson(_deepConvertMap(childJson));
-      }
-      return const SizedBox.shrink();
-    }).toList();
-
-    try {
-      switch (type) {
-        // Wind Widgets
-        case 'WDiv':
-          return _buildWDiv(safeProps, children);
-        case 'WText':
-          return _buildWText(safeProps);
-        case 'WButton':
-          return _buildWButton(safeProps, children);
-        case 'WImage':
-          return _buildWImage(safeProps);
-        case 'WIcon':
-          return _buildWIcon(safeProps);
-        case 'WAnchor':
-          return _buildWAnchor(safeProps, children);
-        case 'WInput':
-          return _buildWInput(safeProps);
-        case 'WCheckbox':
-          return _buildWCheckbox(safeProps);
-        case 'WSvg':
-          return _buildWSvg(safeProps);
-
-        // Flutter Core Widgets
-        case 'Column':
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: children,
-          );
-        case 'Row':
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: children,
-          );
-        case 'Center':
-          return Center(child: children.isNotEmpty ? children.first : null);
-        case 'SizedBox':
-          return SizedBox(
-            width: _parseDouble(safeProps['width']),
-            height: _parseDouble(safeProps['height']),
-            child: children.isNotEmpty ? children.first : null,
-          );
-        case 'Expanded':
-          return Expanded(
-            flex: safeProps['flex'] ?? 1,
-            child: children.isNotEmpty ? children.first : const SizedBox(),
-          );
-        case 'Container':
-          return SizedBox(
-            width: _parseDouble(safeProps['width']),
-            height: _parseDouble(safeProps['height']),
-            child: children.isNotEmpty ? children.first : null,
-          );
-
-        default:
-          return _buildErrorWidget("Unknown: $type");
-      }
-    } catch (e) {
-      return _buildErrorWidget("Error ($type): $e");
-    }
-  }
-
-  static double? _parseDouble(dynamic value) {
-    if (value == null) return null;
-    if (value is num) return value.toDouble();
-    if (value is String) return double.tryParse(value);
-    return null;
-  }
-
-  static Widget _buildWDiv(Map<String, dynamic> props, List<Widget> children) {
-    return WDiv(
-      className: props['className'],
-      child: children.length == 1 ? children.first : null,
-      children: children.length > 1 ? children : null,
-    );
-  }
-
-  static Widget _buildWText(Map<String, dynamic> props) {
-    final String textContent = props['text'] ?? props['value'] ?? '';
-    return WText(textContent, className: props['className']);
-  }
-
-  static Widget _buildWButton(
-    Map<String, dynamic> props,
-    List<Widget> children,
-  ) {
-    return WButton(
-      onTap: () => debugPrint("Playground: Button tapped"),
-      className: props['className'],
-      disabled: props['disabled'] == true,
-      isLoading: props['isLoading'] == true,
-      child: children.isNotEmpty ? children.first : const SizedBox.shrink(),
-    );
-  }
-
-  static Widget _buildWImage(Map<String, dynamic> props) {
-    return WImage(
-      src: props['src'] ?? 'https://via.placeholder.com/150',
-      className: props['className'],
-    );
-  }
-
-  static Widget _buildWIcon(Map<String, dynamic> props) {
-    final iconName = props['icon'] ?? 'help';
-    return WIcon(_parseIcon(iconName), className: props['className']);
-  }
-
-  static Widget _buildWAnchor(
-    Map<String, dynamic> props,
-    List<Widget> children,
-  ) {
-    return WAnchor(
-      onTap: () => debugPrint("Playground: Anchor clicked"),
-      child: children.isNotEmpty
-          ? (children.length == 1 ? children.first : WDiv(children: children))
-          : const SizedBox.shrink(),
-    );
-  }
-
-  static Widget _buildWInput(Map<String, dynamic> props) {
-    return WInput(
-      value: props['value'] ?? '',
-      onChanged: (v) => debugPrint("Playground: Input -> $v"),
-      type: _parseInputType(props['type']),
-      placeholder: props['placeholder'],
-      className: props['className'],
-    );
-  }
-
-  static Widget _buildWCheckbox(Map<String, dynamic> props) {
-    return WCheckbox(
-      value: props['checked'] == true,
-      onChanged: (v) => debugPrint("Playground: Checkbox -> $v"),
-      className: props['className'],
-    );
-  }
-
-  static Widget _buildWSvg(Map<String, dynamic> props) {
-    final String? svgContent = props['svgContent'];
-    if (svgContent != null && svgContent.isNotEmpty) {
-      return WSvg.string(svgContent, className: props['className']);
-    }
-    return WIcon(Icons.image_outlined, className: props['className']);
-  }
-
-  static InputType _parseInputType(String? type) {
-    return switch (type) {
-      'email' => InputType.email,
-      'password' => InputType.password,
-      'number' => InputType.number,
-      'multiline' || 'textarea' => InputType.multiline,
-      _ => InputType.text,
-    };
-  }
-
-  static IconData _parseIcon(String? iconName) {
-    const iconMap = {
-      'star': Icons.star,
-      'home': Icons.home,
-      'person': Icons.person,
-      'check': Icons.check,
-      'close': Icons.close,
-      'settings': Icons.settings,
-      'search': Icons.search,
-      'add': Icons.add,
-      'edit': Icons.edit,
-      'delete': Icons.delete,
-      'favorite': Icons.favorite,
-      'mail': Icons.mail,
-      'menu': Icons.menu,
-      'info': Icons.info,
-      'warning': Icons.warning,
-      'error': Icons.error,
-      'help': Icons.help,
-      'code': Icons.code,
-    };
-    return iconMap[iconName] ?? Icons.help_outline;
-  }
-
-  static Widget _buildErrorWidget(String message) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.red),
-        color: Colors.red.shade50,
-      ),
-      child: Text(
-        message,
-        style: const TextStyle(color: Colors.red, fontSize: 12),
-      ),
     );
   }
 }
