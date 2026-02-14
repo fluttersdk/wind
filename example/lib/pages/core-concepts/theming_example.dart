@@ -106,7 +106,7 @@ class ThemingExamplePage extends StatelessWidget {
                 className: 'w-8 bg-blue-500 rounded',
                 child: SizedBox(height: pixels.toDouble()),
               ),
-              WText('$value', className: 'text-xs text-slate-500'),
+              WText(value, className: 'text-xs text-slate-500'),
               WText('${pixels.toInt()}px', className: 'text-xs text-slate-400'),
             ],
           );

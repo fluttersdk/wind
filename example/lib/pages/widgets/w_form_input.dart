@@ -52,8 +52,9 @@ class _WFormInputExamplePageState extends State<WFormInputExamplePage> {
                     type: InputType.text,
                     maxLines: 1,
                     validator: (v) {
-                      if (v == null || v.length < 6)
+                      if (v == null || v.length < 6) {
                         return 'Password must be at least 6 characters';
+                      }
                       return null;
                     },
                     className:

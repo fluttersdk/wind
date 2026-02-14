@@ -125,7 +125,7 @@ class WPopoverAlignmentExamplePage extends StatelessWidget {
         className: 'flex flex-col gap-2',
         children: [
           WText(
-            'Aligned: ${label}',
+            'Aligned: $label',
             className: 'font-bold text-sm text-slate-800 dark:text-slate-200',
           ),
           WText(

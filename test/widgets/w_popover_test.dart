@@ -1096,7 +1096,6 @@ void main() {
         });
 
         bool? wasOpenCallbackInvoked;
-        PopoverAlignment? alignmentOnOpen;
 
         await tester.pumpWidget(
           wrapWithTheme(

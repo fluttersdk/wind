@@ -89,7 +89,7 @@ class AspectRatioBasicExamplePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.3),
+                    color: color.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -110,7 +110,7 @@ class AspectRatioBasicExamplePage extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         WText(
-          '${ratio.toStringAsFixed(2)}',
+          ratio.toStringAsFixed(2),
           className: 'text-xs font-mono text-slate-500',
         ),
       ],

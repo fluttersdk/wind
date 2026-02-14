@@ -20,8 +20,6 @@ Widget wrapWithTheme(Widget child) {
 void main() {
   // Fixed date for consistent testing: Jan 15, 2025
   final DateTime testDate = DateTime(2025, 1, 15);
-  final DateTime nextMonthDate = DateTime(2025, 2, 15);
-
   group('WDatePicker', () {
     group('Construction & Defaults', () {
       testWidgets('renders with default placeholder', (tester) async {

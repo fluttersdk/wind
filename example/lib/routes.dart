@@ -60,6 +60,7 @@ import 'pages/examples/theme_mode.dart';
 // Forms
 import 'pages/forms/input_basic.dart';
 import 'pages/forms/form_date_picker_basic.dart';
+import 'pages/forms/form_date_picker_range.dart';
 import 'pages/getting-started/installation_basic.dart';
 import 'pages/forms/input_states.dart';
 import 'pages/forms/form_checkbox_basic.dart';
@@ -74,9 +75,6 @@ import 'pages/forms/select_searchable.dart';
 // Popover
 import 'pages/popover/popover_alignment.dart';
 import 'pages/popover/popover_basic.dart';
-
-// Home
-import 'pages/home.dart';
 
 // Icons
 import 'pages/icons/icon_basic.dart';
@@ -174,6 +172,9 @@ import 'pages/typography/whitespace_preview.dart';
 
 // Widgets
 import 'pages/widgets/w_date_picker.dart';
+import 'pages/widgets/date_picker_basic.dart';
+import 'pages/widgets/date_picker_range.dart';
+import 'pages/widgets/date_picker_styled.dart';
 import 'pages/widgets/w_input_multiline.dart';
 import 'pages/widgets/w_input_search.dart';
 import 'pages/widgets/w_image_fit.dart';
@@ -197,9 +198,6 @@ import 'pages/widgets/w_form_checkbox_layout.dart';
 import 'pages/widgets/w_svg.dart';
 
 final Map<String, Widget> appRoutes = {
-  // Root
-  '/': const HomePage(),
-
   // Animation
   '/animation/animation_basic': const AnimationBasicExamplePage(),
   '/animation/animation_implicit': const AnimationImplicitExamplePage(),
@@ -259,13 +257,14 @@ final Map<String, Widget> appRoutes = {
   '/examples/theme_mode': const ThemeModeExamplePage(),
 
   // Getting Started
-  '/getting-started/installation_basic': const InstallationBasicExamplePage(),
+  '/': const InstallationBasicExamplePage(),
 
   // Forms
   '/forms/input_basic': const InputBasicExamplePage(),
   '/forms/input_states': const InputStatesExamplePage(),
   '/forms/form_checkbox_basic': const FormCheckboxBasicExamplePage(),
   '/forms/form_date_picker_basic': const FormDatePickerBasicExamplePage(),
+  '/forms/form_date_picker_range': const FormDatePickerRangeExamplePage(),
   '/forms/form_input_basic': const FormInputBasicExamplePage(),
   '/forms/form_select_basic': const FormSelectBasicExamplePage(),
   '/forms/input_styled': const InputStyledExamplePage(),
@@ -381,6 +380,9 @@ final Map<String, Widget> appRoutes = {
   '/widgets/w-input-multiline': const WInputMultilineExamplePage(),
   '/widgets/w-input-search': const WInputSearchExamplePage(),
   '/widgets/w_date_picker': const WDatePickerExamplePage(),
+  '/widgets/date_picker_basic': const DatePickerBasicExamplePage(),
+  '/widgets/date_picker_range': const DatePickerRangeExamplePage(),
+  '/widgets/date_picker_styled': const DatePickerStyledExamplePage(),
   '/widgets/w_image_fit': const WImageFitExamplePage(),
   '/widgets/w_image_ratio': const WImageRatioExamplePage(),
   '/widgets/w-select_single': const WSelectSingleExamplePage(),
