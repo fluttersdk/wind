@@ -179,7 +179,7 @@ Access: `WindTheme.of(context)` (controller), `WindTheme.dataOf(context)` (data)
 
 1. **Last class wins** — later classes override earlier ones for same property
 2. **Spacing scale** — N * 4px: `p-4` = 16px, `gap-2` = 8px
-3. **Arbitrary values** — bracket syntax: `w-[200px]`, `text-[#FF0000]`, `aspect-[16/9]`
+3. **Arbitrary values** — bracket syntax: `w-[200px]`, `text-[#FF0000]`
 4. **Opacity shorthand** — `bg-red-500/50`, `text-blue-500/75`
 5. **Fraction sizing** — `w-1/2`, `w-1/3`, `w-2/3`, `w-1/4`, `w-3/4`
 6. **WPopover auto-flips** — `alignment` is a *preferred* alignment. If the popover would overflow screen bounds, it automatically flips to the opposite side (horizontal, vertical, or both). `bottomRight` → `bottomLeft` when left edge overflow, `bottomLeft` → `topLeft` when bottom overflow. Center-aligned popovers (`bottomCenter`, `topCenter`) only flip vertically. Height estimation uses `maxHeight` (conservative).

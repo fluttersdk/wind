@@ -6,7 +6,7 @@
 - [Alternative Setup](#alternative-setup)
 - [Verify Installation](#verify-installation)
 
-<x-preview path="getting-started/installation_basic" size="lg" source="example/lib/pages/getting-started/installation_basic.dart"></x-preview>
+<x-preview path="" size="lg" source="example/lib/pages/getting-started/installation_basic.dart"></x-preview>
 
 Getting started with Wind requires a few configuration steps to ensure utility classes resolve correctly across your application.
 

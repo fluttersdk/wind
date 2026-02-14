@@ -43,7 +43,7 @@ class _InstallationBasicExamplePageState
   Widget _buildHero() {
     return WDiv(
       className:
-          'bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl p-8 shadow-2xl',
+          'w-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl p-8 shadow-2xl',
       child: WDiv(
         className: 'flex flex-col md:flex-row items-center gap-6',
         children: [
@@ -68,7 +68,7 @@ class _InstallationBasicExamplePageState
                 className: 'text-3xl md:text-4xl font-bold text-white',
               ),
               WText(
-                'Utility-first styling for Flutter, inspired by TailwindCSS. Write className strings, get beautiful UIs.',
+                'Utility-first styling for Flutter, inspired by TailwindCSS.',
                 className: 'text-lg text-white/90',
               ),
               WDiv(
