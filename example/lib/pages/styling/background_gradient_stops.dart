@@ -126,7 +126,8 @@ class BackgroundGradientStopsExamplePage extends StatelessWidget {
           className: '$className h-32 w-full flex items-center justify-center',
         ),
         WDiv(
-          className: 'w-full p-4 bg-white dark:bg-slate-800 flex flex-col gap-1',
+          className:
+              'w-full p-4 bg-white dark:bg-slate-800 flex flex-col gap-1',
           children: [
             WText(
               title,
