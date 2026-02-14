@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-import 'wind_action_handler.dart';
-import 'wind_dynamic_config.dart';
-import 'wind_dynamic_controller.dart';
-import 'wind_dynamic_renderer.dart';
-import 'wind_dynamic_state.dart';
+import 'w_action_handler.dart';
+import 'w_dynamic_config.dart';
+import 'w_dynamic_controller.dart';
+import 'w_dynamic_renderer.dart';
+import 'w_dynamic_state.dart';
 
 /// Main widget for rendering dynamic UI from JSON configuration.
 ///
@@ -14,7 +14,7 @@ import 'wind_dynamic_state.dart';
 ///
 /// Example:
 /// ```dart
-/// WindDynamic(
+/// WDynamic(
 ///   json: {
 ///     "type": "WDiv",
 ///     "props": {"className": "flex gap-4 p-6"},
@@ -38,22 +38,22 @@ import 'wind_dynamic_state.dart';
 ///   },
 /// )
 /// ```
-class WindDynamic extends StatefulWidget {
+class WDynamic extends StatefulWidget {
   /// JSON configuration defining the widget tree.
   final Map<String, dynamic> json;
 
   /// Action handlers keyed by name. Called when interactive widgets trigger events.
-  /// Signature: `(Map<String, dynamic> args)` or `(Map<String, dynamic> args, WindDynamicState state)`.
+  /// Signature: `(Map<String, dynamic> args)` or `(Map<String, dynamic> args, WDynamicState state)`.
   final Map<String, Function> actions;
 
   /// Optional controller for external state access.
-  final WindDynamicController? controller;
+  final WDynamicController? controller;
 
   /// Widget types to deny (remove from default whitelist).
   final Set<String>? denyWidgets;
 
   /// Custom widget builders keyed by type name.
-  final Map<String, WindWidgetBuilder>? builders;
+  final Map<String, WWidgetBuilder>? builders;
 
   /// Maximum recursion depth for nested widgets. Default: 50.
   final int maxDepth;
@@ -65,7 +65,7 @@ class WindDynamic extends StatefulWidget {
   final Widget Function(String type, Map<String, dynamic> props)?
       onUnknownWidget;
 
-  const WindDynamic({
+  const WDynamic({
     super.key,
     required this.json,
     this.actions = const {},
@@ -78,11 +78,11 @@ class WindDynamic extends StatefulWidget {
   });
 
   @override
-  State<WindDynamic> createState() => _WindDynamicState();
+  State<WDynamic> createState() => _WDynamicState();
 }
 
-class _WindDynamicState extends State<WindDynamic> {
-  late final WindDynamicState _state;
+class _WDynamicState extends State<WDynamic> {
+  late final WDynamicState _state;
   late final bool _ownsState;
 
   @override
@@ -92,7 +92,7 @@ class _WindDynamicState extends State<WindDynamic> {
       _state = widget.controller!.state;
       _ownsState = false;
     } else {
-      _state = WindDynamicState();
+      _state = WDynamicState();
       _ownsState = true;
     }
   }
@@ -107,7 +107,7 @@ class _WindDynamicState extends State<WindDynamic> {
 
   @override
   Widget build(BuildContext context) {
-    final config = WindDynamicConfig(
+    final config = WDynamicConfig(
       denyWidgets: widget.denyWidgets ?? const {},
       builders: widget.builders ?? const {},
       maxDepth: widget.maxDepth,
@@ -115,12 +115,12 @@ class _WindDynamicState extends State<WindDynamic> {
       onUnknownWidget: widget.onUnknownWidget,
     );
 
-    final actionHandler = WindActionHandler(
+    final actionHandler = WActionHandler(
       actions: widget.actions,
       state: _state,
     );
 
-    final renderer = WindDynamicRenderer(
+    final renderer = WDynamicRenderer(
       config: config,
       actionHandler: actionHandler,
       state: _state,

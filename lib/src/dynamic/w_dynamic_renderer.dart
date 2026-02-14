@@ -23,12 +23,12 @@ import '../../fluttersdk_wind.dart';
 ///   ]
 /// }
 /// ```
-class WindDynamicRenderer {
-  final WindDynamicConfig config;
-  final WindActionHandler actionHandler;
-  final WindDynamicState state;
+class WDynamicRenderer {
+  final WDynamicConfig config;
+  final WActionHandler actionHandler;
+  final WDynamicState state;
 
-  const WindDynamicRenderer({
+  const WDynamicRenderer({
     required this.config,
     required this.actionHandler,
     required this.state,
@@ -185,7 +185,8 @@ class WindDynamicRenderer {
   }
 
   Widget _buildWText(Map<String, dynamic> props) {
-    final String text = props['text']?.toString() ?? props['value']?.toString() ?? '';
+    final String text =
+        props['text']?.toString() ?? props['value']?.toString() ?? '';
     return WText(text, className: props['className']);
   }
 
@@ -251,12 +252,12 @@ class WindDynamicRenderer {
 
   Widget _buildWCheckbox(Map<String, dynamic> props) {
     final String? id = props['id'];
-    final bool initialValue = props['checked'] == true || props['value'] == true;
+    final bool initialValue =
+        props['checked'] == true || props['value'] == true;
 
     // Read current value from state if id exists
-    final bool value = id != null && state.has(id)
-        ? (state.get(id) == true)
-        : initialValue;
+    final bool value =
+        id != null && state.has(id) ? (state.get(id) == true) : initialValue;
 
     // Parse onChange action
     final onChanged = actionHandler.parseValueAction<bool>(
@@ -296,7 +297,8 @@ class WindDynamicRenderer {
         final optMap = _deepConvertMap(opt);
         return SelectOption(
           value: optMap['value'],
-          label: optMap['label']?.toString() ?? optMap['value']?.toString() ?? '',
+          label:
+              optMap['label']?.toString() ?? optMap['value']?.toString() ?? '',
         );
       }
       // Simple string option
@@ -304,9 +306,8 @@ class WindDynamicRenderer {
     }).toList();
 
     // Read current value from state if id exists
-    final dynamic value = id != null && state.has(id)
-        ? state.get(id)
-        : initialValue;
+    final dynamic value =
+        id != null && state.has(id) ? state.get(id) : initialValue;
 
     // Parse onChange action
     final onChanged = actionHandler.parseValueAction<dynamic>(
@@ -325,8 +326,10 @@ class WindDynamicRenderer {
 
   Widget _buildWPopover(Map<String, dynamic> props, List<Widget> children) {
     // First child is trigger, second is content
-    final Widget triggerWidget = children.isNotEmpty ? children.first : const SizedBox.shrink();
-    final Widget contentWidget = children.length > 1 ? children[1] : const SizedBox.shrink();
+    final Widget triggerWidget =
+        children.isNotEmpty ? children.first : const SizedBox.shrink();
+    final Widget contentWidget =
+        children.length > 1 ? children[1] : const SizedBox.shrink();
 
     return WPopover(
       triggerBuilder: (context, isOpen, isHovering) => triggerWidget,
@@ -499,7 +502,8 @@ class WindDynamicRenderer {
 
   Widget _buildClipRRect(Map<String, dynamic> props, List<Widget> children) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(_parseDouble(props['borderRadius']) ?? 0),
+      borderRadius:
+          BorderRadius.circular(_parseDouble(props['borderRadius']) ?? 0),
       child: children.isNotEmpty ? children.first : null,
     );
   }

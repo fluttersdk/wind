@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 
-import 'wind_dynamic_state.dart';
+import 'w_dynamic_state.dart';
 
-/// Controller for external access to [WindDynamic] state.
+/// Controller for external access to [WDynamic] state.
 ///
 /// Allows reading/writing form values and listening for changes
 /// from outside the dynamic widget tree.
 ///
 /// ```dart
-/// final controller = WindDynamicController();
+/// final controller = WDynamicController();
 ///
 /// // Pre-fill values
 /// controller.setValue('email', 'user@example.com');
@@ -24,20 +24,20 @@ import 'wind_dynamic_state.dart';
 /// // Clean up
 /// controller.dispose();
 /// ```
-class WindDynamicController {
+class WDynamicController {
   /// The internal state store.
-  final WindDynamicState state;
+  final WDynamicState state;
 
   /// Whether this controller owns the state (should dispose it).
   final bool _ownsState;
 
   /// Creates a controller with a new internal state.
-  WindDynamicController()
-      : state = WindDynamicState(),
+  WDynamicController()
+      : state = WDynamicState(),
         _ownsState = true;
 
   /// Creates a controller wrapping an existing state.
-  WindDynamicController.fromState(this.state) : _ownsState = false;
+  WDynamicController.fromState(this.state) : _ownsState = false;
 
   /// Get a value by id.
   dynamic getValue(String id) => state.get(id);

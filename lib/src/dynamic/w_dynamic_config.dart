@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart';
 
 /// Builder function for custom widget types.
-typedef WindWidgetBuilder = Widget Function(
+typedef WWidgetBuilder = Widget Function(
   Map<String, dynamic> props,
   List<Widget> children,
 );
 
 /// Configuration for [WindDynamic] rendering.
-class WindDynamicConfig {
+class WDynamicConfig {
   /// Default Wind widget types that are always available.
   static const Set<String> defaultWindWidgets = {
     'WDiv',
@@ -49,7 +49,7 @@ class WindDynamicConfig {
   final Set<String> denyWidgets;
 
   /// Custom widget builders keyed by type name.
-  final Map<String, WindWidgetBuilder> builders;
+  final Map<String, WWidgetBuilder> builders;
 
   /// Maximum recursion depth for nested widgets.
   final int maxDepth;
@@ -61,7 +61,7 @@ class WindDynamicConfig {
   /// Called when a widget build throws an error.
   final Widget Function(String type, Object error)? onError;
 
-  const WindDynamicConfig({
+  const WDynamicConfig({
     this.denyWidgets = const {},
     this.builders = const {},
     this.maxDepth = 50,

@@ -57,6 +57,12 @@ export 'src/widgets/w_date_picker.dart';
 export 'src/widgets/w_form_date_picker.dart';
 export 'src/widgets/w_keyboard_actions.dart';
 export 'src/widgets/w_spacer.dart';
+export 'src/dynamic/w_dynamic.dart';
+export 'src/dynamic/w_dynamic_controller.dart';
+export 'src/dynamic/w_dynamic_state.dart';
+export 'src/dynamic/w_action_handler.dart';
+export 'src/dynamic/w_dynamic_config.dart';
+export 'src/dynamic/w_dynamic_renderer.dart';
 
 // Re-export keyboard_actions for convenience
 export 'package:keyboard_actions/keyboard_actions.dart';

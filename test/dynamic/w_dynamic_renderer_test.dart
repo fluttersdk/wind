@@ -13,17 +13,17 @@ Widget wrapWithTheme(Widget child) {
 }
 
 void main() {
-  group('WindDynamicRenderer Tests', () {
-    late WindDynamicState state;
-    late WindActionHandler actionHandler;
-    late WindDynamicConfig config;
-    late WindDynamicRenderer renderer;
+  group('WDynamicRenderer Tests', () {
+    late WDynamicState state;
+    late WActionHandler actionHandler;
+    late WDynamicConfig config;
+    late WDynamicRenderer renderer;
 
     setUp(() {
-      state = WindDynamicState();
-      actionHandler = WindActionHandler(actions: {}, state: state);
-      config = const WindDynamicConfig();
-      renderer = WindDynamicRenderer(
+      state = WDynamicState();
+      actionHandler = WActionHandler(actions: {}, state: state);
+      config = const WDynamicConfig();
+      renderer = WDynamicRenderer(
         config: config,
         actionHandler: actionHandler,
         state: state,
@@ -102,10 +102,10 @@ void main() {
 
     group('Security - Whitelist', () {
       testWidgets('rejects denied widget types', (tester) async {
-        final customConfig = const WindDynamicConfig(
+        final customConfig = const WDynamicConfig(
           denyWidgets: {'WButton'},
         );
-        final customRenderer = WindDynamicRenderer(
+        final customRenderer = WDynamicRenderer(
           config: customConfig,
           actionHandler: actionHandler,
           state: state,
@@ -126,14 +126,14 @@ void main() {
 
       testWidgets('calls onUnknownWidget for denied types', (tester) async {
         bool onUnknownCalled = false;
-        final customConfig = WindDynamicConfig(
+        final customConfig = WDynamicConfig(
           denyWidgets: const {'WButton'},
           onUnknownWidget: (type, props) {
             onUnknownCalled = true;
             return const Text('Custom Unknown Widget');
           },
         );
-        final customRenderer = WindDynamicRenderer(
+        final customRenderer = WDynamicRenderer(
           config: customConfig,
           actionHandler: actionHandler,
           state: state,
@@ -153,8 +153,8 @@ void main() {
 
     group('Depth Limiting', () {
       testWidgets('enforces maxDepth limit', (tester) async {
-        final customConfig = const WindDynamicConfig(maxDepth: 2);
-        final customRenderer = WindDynamicRenderer(
+        final customConfig = const WDynamicConfig(maxDepth: 2);
+        final customRenderer = WDynamicRenderer(
           config: customConfig,
           actionHandler: actionHandler,
           state: state,
@@ -190,14 +190,14 @@ void main() {
 
     group('Custom Builders', () {
       testWidgets('custom builder is used for custom types', (tester) async {
-        final customConfig = WindDynamicConfig(
+        final customConfig = WDynamicConfig(
           builders: {
             'CustomWidget': (props, children) {
               return Text('Custom: ${props['name']}');
             },
           },
         );
-        final customRenderer = WindDynamicRenderer(
+        final customRenderer = WDynamicRenderer(
           config: customConfig,
           actionHandler: actionHandler,
           state: state,
@@ -214,14 +214,14 @@ void main() {
       });
 
       testWidgets('custom builder error is caught', (tester) async {
-        final customConfig = WindDynamicConfig(
+        final customConfig = WDynamicConfig(
           builders: {
             'ErrorWidget': (props, children) {
               throw Exception('Builder error');
             },
           },
         );
-        final customRenderer = WindDynamicRenderer(
+        final customRenderer = WDynamicRenderer(
           config: customConfig,
           actionHandler: actionHandler,
           state: state,
@@ -244,7 +244,7 @@ void main() {
         bool actionFired = false;
         Map<String, dynamic>? receivedArgs;
 
-        final customActionHandler = WindActionHandler(
+        final customActionHandler = WActionHandler(
           actions: {
             'testAction': (args) {
               actionFired = true;
@@ -254,7 +254,7 @@ void main() {
           state: state,
         );
 
-        final customRenderer = WindDynamicRenderer(
+        final customRenderer = WDynamicRenderer(
           config: config,
           actionHandler: customActionHandler,
           state: state,
@@ -291,7 +291,7 @@ void main() {
       testWidgets('WInput onChange updates state', (tester) async {
         String? capturedValue;
 
-        final customActionHandler = WindActionHandler(
+        final customActionHandler = WActionHandler(
           actions: {
             'inputChanged': (args, state) {
               capturedValue = args['_value'];
@@ -300,7 +300,7 @@ void main() {
           state: state,
         );
 
-        final customRenderer = WindDynamicRenderer(
+        final customRenderer = WDynamicRenderer(
           config: config,
           actionHandler: customActionHandler,
           state: state,
@@ -333,7 +333,7 @@ void main() {
       testWidgets('WCheckbox onChange updates state', (tester) async {
         bool? capturedValue;
 
-        final customActionHandler = WindActionHandler(
+        final customActionHandler = WActionHandler(
           actions: {
             'checkboxChanged': (args, state) {
               capturedValue = args['_value'];
@@ -342,7 +342,7 @@ void main() {
           state: state,
         );
 
-        final customRenderer = WindDynamicRenderer(
+        final customRenderer = WDynamicRenderer(
           config: config,
           actionHandler: customActionHandler,
           state: state,
@@ -398,8 +398,14 @@ void main() {
             'mainAxisAlignment': 'center',
           },
           'children': [
-            {'type': 'WText', 'props': {'text': 'Item 1'}},
-            {'type': 'WText', 'props': {'text': 'Item 2'}},
+            {
+              'type': 'WText',
+              'props': {'text': 'Item 1'}
+            },
+            {
+              'type': 'WText',
+              'props': {'text': 'Item 2'}
+            },
           ],
         };
 
@@ -417,8 +423,14 @@ void main() {
             'mainAxisAlignment': 'spaceBetween',
           },
           'children': [
-            {'type': 'WText', 'props': {'text': 'Left'}},
-            {'type': 'WText', 'props': {'text': 'Right'}},
+            {
+              'type': 'WText',
+              'props': {'text': 'Left'}
+            },
+            {
+              'type': 'WText',
+              'props': {'text': 'Right'}
+            },
           ],
         };
 
@@ -437,7 +449,10 @@ void main() {
             'height': 50,
           },
           'children': [
-            {'type': 'WText', 'props': {'text': 'Content'}},
+            {
+              'type': 'WText',
+              'props': {'text': 'Content'}
+            },
           ],
         };
 
@@ -456,14 +471,20 @@ void main() {
               'type': 'Expanded',
               'props': {'flex': 2},
               'children': [
-                {'type': 'WText', 'props': {'text': 'Flex 2'}},
+                {
+                  'type': 'WText',
+                  'props': {'text': 'Flex 2'}
+                },
               ],
             },
             {
               'type': 'Expanded',
               'props': {'flex': 1},
               'children': [
-                {'type': 'WText', 'props': {'text': 'Flex 1'}},
+                {
+                  'type': 'WText',
+                  'props': {'text': 'Flex 1'}
+                },
               ],
             },
           ],
@@ -478,7 +499,7 @@ void main() {
     group('Error Handling', () {
       testWidgets('calls onError when build throws', (tester) async {
         bool onErrorCalled = false;
-        final customConfig = WindDynamicConfig(
+        final customConfig = WDynamicConfig(
           onError: (type, error) {
             onErrorCalled = true;
             return Text('Error in $type');
@@ -490,7 +511,7 @@ void main() {
           },
         );
 
-        final customRenderer = WindDynamicRenderer(
+        final customRenderer = WDynamicRenderer(
           config: customConfig,
           actionHandler: actionHandler,
           state: state,

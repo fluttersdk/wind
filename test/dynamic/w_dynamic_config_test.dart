@@ -1,32 +1,34 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/dynamic/wind_dynamic_config.dart';
+import 'package:fluttersdk_wind/src/dynamic/w_dynamic_config.dart';
 
 void main() {
-  group('WindDynamicConfig', () {
+  group('WDynamicConfig', () {
     test('default config allows all Wind widgets', () {
-      const config = WindDynamicConfig();
+      const config = WDynamicConfig();
 
-      for (final type in WindDynamicConfig.defaultWindWidgets) {
-        expect(config.isAllowed(type), isTrue, reason: '$type should be allowed');
+      for (final type in WDynamicConfig.defaultWindWidgets) {
+        expect(config.isAllowed(type), isTrue,
+            reason: '$type should be allowed');
       }
     });
 
     test('default config allows Flutter core widgets', () {
-      const config = WindDynamicConfig();
+      const config = WDynamicConfig();
 
-      for (final type in WindDynamicConfig.defaultFlutterWidgets) {
-        expect(config.isAllowed(type), isTrue, reason: '$type should be allowed');
+      for (final type in WDynamicConfig.defaultFlutterWidgets) {
+        expect(config.isAllowed(type), isTrue,
+            reason: '$type should be allowed');
       }
     });
 
     test('unknown widget type is not allowed', () {
-      const config = WindDynamicConfig();
+      const config = WDynamicConfig();
       expect(config.isAllowed('CustomUnknown'), isFalse);
     });
 
     test('denyWidgets blocks specific widgets', () {
-      const config = WindDynamicConfig(
+      const config = WDynamicConfig(
         denyWidgets: {'WInput', 'WSelect'},
       );
 
@@ -37,7 +39,7 @@ void main() {
     });
 
     test('custom builders are always allowed', () {
-      final config = WindDynamicConfig(
+      final config = WDynamicConfig(
         builders: {
           'ProductCard': (props, children) => const SizedBox(),
         },
@@ -47,7 +49,7 @@ void main() {
     });
 
     test('custom builders bypass deny list', () {
-      final config = WindDynamicConfig(
+      final config = WDynamicConfig(
         denyWidgets: {'ProductCard'},
         builders: {
           'ProductCard': (props, children) => const SizedBox(),
@@ -58,7 +60,7 @@ void main() {
     });
 
     test('maxDepth defaults to 50', () {
-      const config = WindDynamicConfig();
+      const config = WDynamicConfig();
       expect(config.maxDepth, 50);
     });
   });

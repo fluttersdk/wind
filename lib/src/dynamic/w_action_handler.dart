@@ -2,20 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import 'wind_dynamic_state.dart';
+import 'w_dynamic_state.dart';
 
 /// Dispatches actions from dynamic widgets to registered handlers.
 ///
 /// Supports two callback signatures:
 /// - `(Map<String, dynamic> args)` — simple action without state
-/// - `(Map<String, dynamic> args, WindDynamicState state)` — action with state access
-class WindActionHandler {
+/// - `(Map<String, dynamic> args, WDynamicState state)` — action with state access
+class WActionHandler {
   final Map<String, Function> _actions;
-  final WindDynamicState _state;
+  final WDynamicState _state;
 
-  WindActionHandler({
+  WActionHandler({
     required Map<String, Function> actions,
-    required WindDynamicState state,
+    required WDynamicState state,
   })  : _actions = actions,
         _state = state;
 
@@ -31,7 +31,7 @@ class WindActionHandler {
 
     try {
       // Try stateful signature first (args, state), fallback to simple (args)
-      if (handler is Function(Map<String, dynamic>, WindDynamicState)) {
+      if (handler is Function(Map<String, dynamic>, WDynamicState)) {
         return handler(args, _state);
       } else if (handler is Function(Map<String, dynamic>)) {
         return handler(args);

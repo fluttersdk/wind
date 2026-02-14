@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 ///
 /// Tracks form field values (inputs, checkboxes, selects) by their `id` prop.
 /// Action handlers receive this state to read current form values.
-class WindDynamicState extends ChangeNotifier {
+class WDynamicState extends ChangeNotifier {
   final Map<String, dynamic> _values = {};
   final Map<String, List<ValueChanged<dynamic>>> _listeners = {};
 

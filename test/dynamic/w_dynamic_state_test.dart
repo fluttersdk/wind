@@ -1,18 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/dynamic/wind_dynamic_state.dart';
+import 'package:fluttersdk_wind/src/dynamic/w_dynamic_state.dart';
 
 void main() {
-  late WindDynamicState state;
+  late WDynamicState state;
 
   setUp(() {
-    state = WindDynamicState();
+    state = WDynamicState();
   });
 
   tearDown(() {
     state.dispose();
   });
 
-  group('WindDynamicState', () {
+  group('WDynamicState', () {
     test('get returns null for unknown id', () {
       expect(state.get('unknown'), isNull);
     });

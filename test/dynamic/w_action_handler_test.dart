@@ -1,22 +1,22 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/dynamic/wind_action_handler.dart';
-import 'package:fluttersdk_wind/src/dynamic/wind_dynamic_state.dart';
+import 'package:fluttersdk_wind/src/dynamic/w_action_handler.dart';
+import 'package:fluttersdk_wind/src/dynamic/w_dynamic_state.dart';
 
 void main() {
-  late WindDynamicState state;
+  late WDynamicState state;
 
   setUp(() {
-    state = WindDynamicState();
+    state = WDynamicState();
   });
 
   tearDown(() {
     state.dispose();
   });
 
-  group('WindActionHandler', () {
+  group('WActionHandler', () {
     test('dispatch calls simple action with args', () {
       Map<String, dynamic>? receivedArgs;
-      final handler = WindActionHandler(
+      final handler = WActionHandler(
         actions: {
           'test': (Map<String, dynamic> args) => receivedArgs = args,
         },
@@ -29,10 +29,10 @@ void main() {
 
     test('dispatch calls stateful action with args and state', () {
       Map<String, dynamic>? receivedArgs;
-      WindDynamicState? receivedState;
-      final handler = WindActionHandler(
+      WDynamicState? receivedState;
+      final handler = WActionHandler(
         actions: {
-          'test': (Map<String, dynamic> args, WindDynamicState s) {
+          'test': (Map<String, dynamic> args, WDynamicState s) {
             receivedArgs = args;
             receivedState = s;
           },
@@ -49,14 +49,14 @@ void main() {
     });
 
     test('dispatch ignores unknown action silently', () {
-      final handler = WindActionHandler(actions: {}, state: state);
+      final handler = WActionHandler(actions: {}, state: state);
       // Should not throw
       handler.dispatch('unknown', {});
     });
 
     test('parseAction returns VoidCallback from JSON', () {
       bool called = false;
-      final handler = WindActionHandler(
+      final handler = WActionHandler(
         actions: {
           'doSomething': (Map<String, dynamic> args) => called = true,
         },
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('parseAction returns null for invalid input', () {
-      final handler = WindActionHandler(actions: {}, state: state);
+      final handler = WActionHandler(actions: {}, state: state);
 
       expect(handler.parseAction(null), isNull);
       expect(handler.parseAction('string'), isNull);
@@ -84,7 +84,7 @@ void main() {
 
     test('parseValueAction returns typed callback', () {
       Map<String, dynamic>? receivedArgs;
-      final handler = WindActionHandler(
+      final handler = WActionHandler(
         actions: {
           'inputChanged': (Map<String, dynamic> args) => receivedArgs = args,
         },
@@ -92,7 +92,10 @@ void main() {
       );
 
       final callback = handler.parseValueAction<String>(
-        {'action': 'inputChanged', 'args': {'field': 'email'}},
+        {
+          'action': 'inputChanged',
+          'args': {'field': 'email'}
+        },
         stateId: 'email',
       );
 
@@ -105,7 +108,7 @@ void main() {
     });
 
     test('parseValueAction without stateId does not update state', () {
-      final handler = WindActionHandler(
+      final handler = WActionHandler(
         actions: {
           'test': (Map<String, dynamic> args) {},
         },

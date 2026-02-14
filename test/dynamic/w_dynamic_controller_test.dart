@@ -1,17 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/dynamic/wind_dynamic_controller.dart';
-import 'package:fluttersdk_wind/src/dynamic/wind_dynamic_state.dart';
+import 'package:fluttersdk_wind/src/dynamic/w_dynamic_controller.dart';
+import 'package:fluttersdk_wind/src/dynamic/w_dynamic_state.dart';
 
 void main() {
-  group('WindDynamicController', () {
+  group('WDynamicController', () {
     test('creates own state when constructed without arguments', () {
-      final controller = WindDynamicController();
+      final controller = WDynamicController();
       expect(controller.state, isNotNull);
       controller.dispose();
     });
 
     test('getValue and setValue work through controller', () {
-      final controller = WindDynamicController();
+      final controller = WDynamicController();
 
       controller.setValue('email', 'test@example.com');
       expect(controller.getValue('email'), 'test@example.com');
@@ -20,7 +20,7 @@ void main() {
     });
 
     test('getAll returns all values', () {
-      final controller = WindDynamicController();
+      final controller = WDynamicController();
 
       controller.setValue('a', 1);
       controller.setValue('b', 2);
@@ -30,7 +30,7 @@ void main() {
     });
 
     test('reset clears all values', () {
-      final controller = WindDynamicController();
+      final controller = WDynamicController();
 
       controller.setValue('a', 1);
       controller.reset();
@@ -40,7 +40,7 @@ void main() {
     });
 
     test('addListener fires on value change', () {
-      final controller = WindDynamicController();
+      final controller = WDynamicController();
 
       dynamic lastValue;
       final dispose = controller.addListener('email', (v) => lastValue = v);
@@ -53,10 +53,10 @@ void main() {
     });
 
     test('fromState wraps existing state without owning it', () {
-      final state = WindDynamicState();
+      final state = WDynamicState();
       state.set('pre', 'existing');
 
-      final controller = WindDynamicController.fromState(state);
+      final controller = WDynamicController.fromState(state);
       expect(controller.getValue('pre'), 'existing');
 
       // Dispose controller should NOT dispose the state
