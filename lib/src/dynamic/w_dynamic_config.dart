@@ -51,6 +51,9 @@ class WDynamicConfig {
   /// Custom widget builders keyed by type name.
   final Map<String, WWidgetBuilder> builders;
 
+  /// Custom icon mappings keyed by name. Merged with built-in defaults.
+  final Map<String, IconData> customIcons;
+
   /// Maximum recursion depth for nested widgets.
   final int maxDepth;
 
@@ -64,6 +67,7 @@ class WDynamicConfig {
   const WDynamicConfig({
     this.denyWidgets = const {},
     this.builders = const {},
+    this.customIcons = const {},
     this.maxDepth = 50,
     this.onUnknownWidget,
     this.onError,

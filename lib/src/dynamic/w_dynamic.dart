@@ -55,6 +55,9 @@ class WDynamic extends StatefulWidget {
   /// Custom widget builders keyed by type name.
   final Map<String, WWidgetBuilder>? builders;
 
+  /// Custom icon mappings keyed by name. Merged with built-in defaults.
+  final Map<String, IconData>? customIcons;
+
   /// Maximum recursion depth for nested widgets. Default: 50.
   final int maxDepth;
 
@@ -72,6 +75,7 @@ class WDynamic extends StatefulWidget {
     this.controller,
     this.denyWidgets,
     this.builders,
+    this.customIcons,
     this.maxDepth = 50,
     this.onError,
     this.onUnknownWidget,
@@ -110,6 +114,7 @@ class _WDynamicState extends State<WDynamic> {
     final config = WDynamicConfig(
       denyWidgets: widget.denyWidgets ?? const {},
       builders: widget.builders ?? const {},
+      customIcons: widget.customIcons ?? const {},
       maxDepth: widget.maxDepth,
       onError: widget.onError,
       onUnknownWidget: widget.onUnknownWidget,

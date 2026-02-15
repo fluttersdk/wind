@@ -560,7 +560,7 @@ class WDynamicRenderer {
     if (iconName is IconData) return iconName;
     if (iconName is! String) return Icons.help_outline;
 
-    const iconMap = {
+    const defaultIcons = {
       'star': Icons.star,
       'star_outline': Icons.star_outline,
       'home': Icons.home,
@@ -587,7 +587,8 @@ class WDynamicRenderer {
       'arrow_forward': Icons.arrow_forward,
     };
 
-    return iconMap[iconName.toLowerCase()] ?? Icons.help_outline;
+    final key = iconName.toLowerCase();
+    return config.customIcons[key] ?? defaultIcons[key] ?? Icons.help_outline;
   }
 
   MainAxisSize _parseMainAxisSize(dynamic value) {
