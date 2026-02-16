@@ -4,13 +4,21 @@ import 'wind_parser_interface.dart';
 
 /// **Aspect Ratio Parser**
 ///
-/// Handles `aspect-*` utility classes.
+/// Handles `aspect-*` utility classes to control the aspect ratio of an element.
 ///
 /// ### Supported Utility Classes:
-/// - **Presets:** `aspect-auto`, `aspect-square` (1/1), `aspect-video` (16/9)
-/// - **Arbitrary:** `aspect-[4/3]`, `aspect-[16/9]`
+/// - **Presets:**
+///   - `aspect-auto`: No aspect ratio constraint.
+///   - `aspect-square`: 1/1 aspect ratio.
+///   - `aspect-video`: 16/9 aspect ratio.
+/// - **Arbitrary Values:**
+///   - `aspect-[{width}/{height}]`: Define custom ratios (e.g., `aspect-[4/3]`, `aspect-[21/9]`).
 ///
-/// Returns a [WindStyle] with `aspectRatio`.
+/// ### Prefixes:
+/// Prefixes like `md:`, `hover:`, `dark:`, and `ios:` are resolved by [WindParser]
+/// before classes reach this parser.
+///
+/// Returns a [WindStyle] with the `aspectRatio` property set.
 class AspectRatioParser implements WindParserInterface {
   const AspectRatioParser();
 

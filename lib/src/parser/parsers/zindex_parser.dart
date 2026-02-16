@@ -4,14 +4,14 @@ import 'wind_parser_interface.dart';
 
 /// **Z-Index Parser**
 ///
-/// Handles `z-*` utility classes for controlling stack order.
+/// Controls the stack order of elements within a `Stack` widget.
 ///
 /// ### Supported Utility Classes:
-/// - **Presets:** `z-0`, `z-10`, `z-20`... `z-50`
-/// - **Arbitrary:** `z-[100]`
-/// - **Auto:** `z-auto` (null)
+/// - **Presets:** `z-0`, `z-10`, `z-20`, `z-30`, `z-40`, `z-50`
+/// - **Arbitrary:** `z-[{number}]`
+/// - **Auto:** `z-auto` (resets to null)
 ///
-/// Returns a [WindStyle] with `zIndex` (int). Only affects widgets inside a Stack.
+/// Returns a [WindStyle] with a `zIndex` integer. Only effective inside `Stack` containers.
 class ZIndexParser implements WindParserInterface {
   const ZIndexParser();
 

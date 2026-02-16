@@ -6,14 +6,20 @@ import 'wind_parser_interface.dart';
 
 /// **Padding Parser**
 ///
-/// Handles `p-*`, `px-*`, `py-*`, etc.
+/// Handles padding utility classes. Prefixes (like `hover:`, `md:`, `dark:`) are
+/// resolved by the core parser before being passed to this parser.
 ///
 /// ### Supported Utility Classes:
-/// - **All Sides:** `p-4`, `p-[10px]`
-/// - **Axis:** `px-4`, `py-2`
-/// - **Sides:** `pt-4` (top), `pr-4` (right), `pb-4` (bottom), `pl-4` (left)
+/// - **All Sides:** `p-{value}`
+/// - **Horizontal Axis:** `px-{value}`
+/// - **Vertical Axis:** `py-{value}`
+/// - **Specific Sides:** `pt-{value}` (top), `pr-{value}` (right), `pb-{value}` (bottom), `pl-{value}` (left)
 ///
-/// Returns a [WindStyle] with resolved `padding` property.
+/// ### Values:
+/// - **Theme Scale:** `p-4`, `px-1.5`, `py-1/2` (resolves via `WindThemeData.getSpacing`)
+/// - **Arbitrary Values:** `p-[10px]`, `pt-[5]` (supports numeric values with optional `px` suffix)
+///
+/// Returns a [WindStyle] with resolved `padding` property using "Last Class Wins" logic.
 class PaddingParser implements WindParserInterface {
   const PaddingParser();
 

@@ -6,14 +6,25 @@ import 'wind_parser_interface.dart';
 
 /// **Sizing Parser**
 ///
-/// Handles width, height, and constraint utilities.
+/// Handles width, height, and constraint utilities for widgets.
 ///
 /// ### Supported Utility Classes:
-/// - **Width:** `w-4`, `w-full`, `w-screen`, `w-[50%]`
-/// - **Height:** `h-full`, `h-screen`, `h-[300px]`
-/// - **Min/Max:** `min-w-0`, `max-w-md`, `max-h-screen`
+/// - **Width (`w-`):** `w-4` (spacing), `w-full` (100%), `w-screen` (viewport width), `w-1/2` (factor), `w-[300px]` (arbitrary)
+/// - **Height (`h-`):** `h-4`, `h-full`, `h-screen`, `h-3/4`, `h-[50%]`
+/// - **Min Width (`min-w-`):** `min-w-0`, `min-w-full`, `min-w-screen`, `min-w-[100px]`
+/// - **Max Width (`max-w-`):** `max-w-md` (named), `max-w-7xl`, `max-w-full`, `max-w-prose`, `max-w-screen`
+/// - **Min Height (`min-h-`):** `min-h-0`, `min-h-full`, `min-h-screen`
+/// - **Max Height (`max-h-`):** `max-h-full`, `max-h-screen`
 ///
-/// Returns a [WindStyle] with `width`, `height`, and `constraints`.
+/// ### Features:
+/// - **Theme Spacing:** Numeric values like `w-4` use `WindThemeData.getSpacing()`.
+/// - **Fractions:** Supports fraction-based sizing like `w-1/2`, `h-3/5`, etc.
+/// - **Named Max-Widths:** Implements Tailwind scales from `xs` (320px) to `7xl` (1280px) and `prose`.
+/// - **Arbitrary Values:** Supports `[px]` and `[%]` values like `w-[500px]` or `h-[25%]`.
+/// - **Responsive & State:** Supports standard prefixes (e.g., `md:w-full`, `hover:h-20`) after they
+///   are resolved by the core parser.
+///
+/// Returns a [WindStyle] with `width`, `height`, `widthFactor`, `heightFactor`, and `constraints`.
 class SizingParser implements WindParserInterface {
   const SizingParser();
 

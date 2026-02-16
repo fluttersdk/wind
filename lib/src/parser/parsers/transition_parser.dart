@@ -6,11 +6,11 @@ import 'wind_parser_interface.dart';
 
 /// **Transition Parser**
 ///
-/// Handles animation duration and easing curves.
+/// Handles animation timing and easing curves for transitions.
 ///
 /// ### Supported Utility Classes:
-/// - **Duration:** `duration-300`, `duration-700`, `duration-[500ms]`
-/// - **Easing:** `ease-in`, `ease-out`, `ease-linear`, `ease-in-out`
+/// - **Duration:** `duration-{75|100|150|200|300|500|700|1000}`, `duration-[{ms}]`
+/// - **Easing:** `ease-linear`, `ease-in`, `ease-out`, `ease-in-out`
 ///
 /// Returns a [WindStyle] with `transitionDuration` and `transitionCurve`.
 class TransitionParser implements WindParserInterface {

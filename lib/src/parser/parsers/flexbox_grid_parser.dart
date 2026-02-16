@@ -6,14 +6,26 @@ import 'wind_parser_interface.dart';
 
 /// **Layout Parser (Flex & Grid)**
 ///
-/// Handles Flexbox and Grid layout properties.
+/// Handles Flexbox and Grid layout properties. This parser is responsible for
+/// translating utility classes into [WindStyle] properties that affect how
+/// [WDiv] and other layout-aware widgets arrange their children.
 ///
 /// ### Supported Utility Classes:
-/// - **Display:** `flex`, `grid`, `block`, `hidden`
+/// - **Display:** `flex`, `grid`, `wrap`, `block`, `hidden`
 /// - **Direction:** `flex-row`, `flex-col`
-/// - **Alignment:** `items-center`, `justify-between`
-/// - **Grid:** `grid-cols-3`, `gap-4`
-/// - **Flex Children:** `flex-1`, `flex-grow`
+/// - **Justify Content:** `justify-start`, `justify-end`, `justify-center`, `justify-between`, `justify-around`, `justify-evenly`
+/// - **Align Items:** `items-start`, `items-end`, `items-center`, `items-baseline`, `items-stretch`
+/// - **Align Content (Wrap only):** `align-content-start`, `align-content-end`, `align-content-center`, `align-content-between`, `align-content-around`, `align-content-evenly`, `align-content-stretch`
+/// - **Gap & Spacing:** `gap-*`, `gap-x-*`, `gap-y-*`, `space-x-*`, `space-y-*` (Supports theme values and arbitrary `-[...]`)
+/// - **Flex:** `flex-*` (numeric), `flex-1`, `flex-grow`, `flex-auto`, `flex-initial`, `flex-none`
+/// - **Flex Sizing:** `shrink`, `shrink-0`, `flex-shrink`
+/// - **Align Self:** `align-self-start`, `align-self-end`, `align-self-center`, `align-self-stretch`, `align-self-auto`
+/// - **Grid:** `grid-cols-*` (numeric values only)
+/// - **Axis Size:** `axis-min`, `axis-max` (Custom Wind utilities)
+///
+/// ### Prefixes:
+/// Prefixes such as `md:`, `hover:`, `dark:`, and `ios:` are resolved by the core parser
+/// before classes reach this parser.
 ///
 /// Returns a [WindStyle] affecting layout properties like `mainAxisAlignment`, `crossAxisAlignment`, etc.
 class FlexboxGridParser implements WindParserInterface {

@@ -8,15 +8,17 @@ import 'wind_parser_interface.dart';
 
 /// **Border & Radius Parser**
 ///
-/// Handles `border-*`, `rounded-*`, and `divide-*` (future) classes.
+/// Handles border widths, colors, styles, and corner radii.
 ///
 /// ### Supported Utility Classes:
-/// - **Width:** `border`, `border-2`, `border-t-4`
-/// - **Color:** `border-red-500`, `border-[#FF0000]/50`
+/// - **Width (Uniform):** `border`, `border-{value}`, `border-[{value}]`
+/// - **Width (Directional):** `border-{t|r|b|l}`, `border-{t|r|b|l}-{value}`
+/// - **Color:** `border-{color}-{shade}`, `border-[#hex]`, `border-{color}/{opacity}`
 /// - **Style:** `border-solid`, `border-none`
-/// - **Radius:** `rounded`, `rounded-lg`, `rounded-full`, `rounded-tl-md`
+/// - **Radius (Uniform):** `rounded`, `rounded-{preset}`, `rounded-full`, `rounded-none`
+/// - **Radius (Directional):** `rounded-{t|r|b|l|tl|tr|bl|br}`, `rounded-{t|r|b|l|tl|tr|bl|br}-{preset}`
 ///
-/// Returns a [WindStyle] with a resolved `BoxDecoration`, specifically `border` and `borderRadius`.
+/// Returns a [WindStyle] with resolved `BoxDecoration` border and borderRadius.
 class BorderParser implements WindParserInterface {
   const BorderParser();
 

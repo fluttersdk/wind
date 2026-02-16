@@ -7,16 +7,27 @@ import 'wind_parser_interface.dart';
 
 /// **Typography Parser**
 ///
-/// Handles all text-related styling properties.
+/// Handles text styling including colors, sizes, weights, and alignment.
 ///
 /// ### Supported Utility Classes:
-/// - **Color/Align:** `text-red-500`, `text-center`, `text-justify`
-/// - **Size/Weight:** `text-xl`, `font-bold`, `font-[700]`
-/// - **Formatting:** `italic`, `uppercase`, `underline`
-/// - **Space/Height:** `tracking-wide` (letter spacing), `leading-loose` (line height)
-/// - **Overflow:** `truncate`, `line-clamp-2`
+/// - **Color:** `text-{color}-{shade}`, `text-[#hex]`, `text-{color}/{opacity}`
+/// - **Alignment:** `text-left`, `text-center`, `text-right`, `text-justify`, `text-start`, `text-end`
+/// - **Font Size:** `text-{preset}`, `text-[{size}]`, `text-{size}/{lineHeight}`
+/// - **Font Weight:** `font-{preset}`, `font-[{100-900}]`
+/// - **Font Style:** `italic`, `not-italic`
+/// - **Font Family:** `font-{sans|serif|mono}`, `font-[{family}]`
+/// - **Decoration:** `underline`, `overline`, `line-through`, `no-underline`
+/// - **Decoration Style:** `decoration-{solid|double|dotted|dashed|wavy}`
+/// - **Decoration Color:** `decoration-{color}-{shade}`, `decoration-[#hex]`
+/// - **Decoration Thickness:** `decoration-{value}`, `decoration-[{value}]`
+/// - **Transform:** `uppercase`, `lowercase`, `capitalize`, `normal-case`
+/// - **Letter Spacing:** `tracking-{tighter|tight|normal|wide|wider|widest}`, `tracking-[{value}]`
+/// - **Line Height:** `leading-{preset|value}`, `leading-[{value}]`
+/// - **Text Overflow:** `truncate`, `text-ellipsis`, `text-clip`
+/// - **Line Clamp:** `line-clamp-{number|none}`
+/// - **Whitespace/Wrap:** `whitespace-{normal|nowrap}`, `text-{wrap|nowrap|balance}`
 ///
-/// Returns a [WindStyle] with `fontSize`, `fontWeight`, `color`, etc.
+/// Returns a [WindStyle] with typography-related properties.
 class TextParser implements WindParserInterface {
   const TextParser();
 

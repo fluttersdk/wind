@@ -9,9 +9,18 @@ import 'wind_parser_interface.dart';
 /// Handles `m-*`, `mx-*`, `my-*`, etc.
 ///
 /// ### Supported Utility Classes:
-/// - **All Sides:** `m-4`, `m-[10px]`
-/// - **Axis:** `mx-4`, `my-2`
-/// - **Sides:** `mt-4` (top), `mr-4` (right), `mb-4` (bottom), `ml-4` (left)
+/// - **All Sides:** `m-{value}`, `m-[{arbitrary}]`
+/// - **Axis:** `mx-{value}` (horizontal), `my-{value}` (vertical)
+/// - **Sides:** `mt-` (top), `mr-` (right), `mb-` (bottom), `ml-` (left)
+/// - **Special:** `mx-auto` (horizontal centering)
+///
+/// ### Values:
+/// - **Theme:** `m-4`, `mx-2`, `my-1/2` (fractions supported)
+/// - **Arbitrary:** `m-[10px]`, `mx-[3.5]` (px suffix optional)
+///
+/// ### Notes:
+/// - Negative margins (e.g., `-m-4`) are not supported by this parser.
+/// - Responsive (`md:`), state (`hover:`), and other prefixes are resolved by WindParser.
 ///
 /// Returns a [WindStyle] with resolved `margin` property.
 class MarginParser implements WindParserInterface {

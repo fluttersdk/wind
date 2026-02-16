@@ -7,14 +7,13 @@ import 'wind_parser_interface.dart';
 
 /// **Shadow Parser**
 ///
-/// Handles `shadow-*` utility classes.
+/// Handles box shadow effects including presets and custom colors.
 ///
 /// ### Supported Utility Classes:
-/// - **Presets:** `shadow-sm`, `shadow`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`
-/// - **Color:** `shadow-red-500` (recolors the shadow while keeping opacity)
-/// - **None:** `shadow-none`
+/// - **Presets:** `shadow`, `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`, `shadow-none`
+/// - **Color:** `shadow-{color}-{shade}`, `shadow-[#hex]`, `shadow-{color}/{opacity}`
 ///
-/// Returns a [WindStyle] with `boxShadow`.
+/// Returns a [WindStyle] with `boxShadow` and `shadowColor`.
 class ShadowParser implements WindParserInterface {
   const ShadowParser();
 
