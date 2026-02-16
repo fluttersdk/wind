@@ -26,23 +26,50 @@ import 'wind_style.dart';
 /// `WindParser` is responsible for converting utility class strings into
 /// structured [WindStyle] objects. It acts as the central orchestrator that:
 ///
-/// 1.  **Parses:** Splits className strings and delegates to specific parsers.
-/// 2.  **Resolves:** Handles responsive prefixes (`md:`) and state prefixes (`hover:`).
-/// 3.  **Caches:** Memoizes results for performance optimization.
+/// 1. **Parses:** Splits className strings and delegates to specialized parsers.
+/// 2. **Resolves:** Handles responsive (`md:`), state (`hover:`), dark (`dark:`), and platform (`ios:`) prefixes.
+/// 3. **Groups:** Uses first-match-wins strategy to assign classes to appropriate parsers.
+/// 4. **Caches:** Memoizes results using context-sensitive cache keys.
 ///
-/// ### How it works:
+/// ### Cache Key Composition
 ///
-/// When you use `className: "bg-red-500 hover:bg-blue-500"`, the parser:
-/// 1.  Checks if `hover` state is active in the current [WindContext].
-/// 2.  Delegates `bg-red-500` to [BackgroundParser].
-/// 3.  Merges the resulting styles into a final [WindStyle].
+/// Cache keys are generated from the [WindContext.cacheKey] method and include:
+/// - `className` - The input utility string
+/// - `activeBreakpoint` - Current responsive breakpoint ('base', 'sm', 'md', etc.)
+/// - `brightness` - Theme brightness (light/dark mode)
+/// - `platform` - Current platform ('ios', 'android', 'web', etc.)
+/// - `activeStates` - Sorted list of active states ('hover', 'focus', custom states)
+///
+/// ### Prefix Resolution
+///
+/// The parser resolves prefixed classes through [resolveClasses]:
+/// - **Responsive:** `md:bg-blue-500` applies only on medium+ screens
+/// - **State:** `hover:text-white` applies only when hovering
+/// - **Dark mode:** `dark:bg-gray-900` applies only in dark theme
+/// - **Platform:** `ios:rounded-lg` applies only on iOS
+/// - **Custom:** `loading:opacity-50` applies when 'loading' state is active
+///
+/// ### Parser Registration
+///
+/// Parsers are registered in [_parserMap] with unique keys:
+/// ```dart
+/// _parserMap = {
+///   'background': BackgroundParser(),
+///   'border': BorderParser(),
+///   // ... other parsers
+/// };
+/// ```
+///
+/// Classes are grouped by the first parser that returns `true` from `canParse()`.
+/// Multiple classes can be assigned to the same parser and are processed together.
 ///
 /// ### Example Usage:
 ///
 /// ```dart
 /// final style = WindParser.parse(
-///   "bg-red-500 text-lg hover:text-white",
+///   "bg-red-500 md:bg-blue-500 hover:bg-green-500",
 ///   context,
+///   states: {'loading'},
 /// );
 /// ```
 class WindParser {
@@ -70,16 +97,39 @@ class WindParser {
     'animation': const AnimationParser(),
   };
 
-  /// Clears the style cache
+  /// Clears the entire style cache.
+  ///
+  /// Use this when theme data changes or during testing to force
+  /// re-parsing of all cached styles. The cache is automatically
+  /// invalidated per unique context, so manual clearing is rarely needed.
   static void clearCache() {
     _styleCache.clear();
   }
 
-  /// Parses the given class name into a WindStyle
-  /// If a baseStyle is provided, it will be used as the starting point
-  /// for the parsed style.
-  /// If states is provided, it will be used to resolve custom state prefixes
-  /// (e.g., 'loading:', 'selected:').
+  /// Parses a className string into a [WindStyle] object.
+  ///
+  /// This is the main entry point for style parsing. It builds a [WindContext]
+  /// from the current [BuildContext], generates a cache key, and either returns
+  /// a cached result or delegates to [_parseAndCache].
+  ///
+  /// Parameters:
+  /// - [className]: Space-separated utility classes (e.g., "bg-red-500 p-4 hover:bg-blue-500")
+  /// - [context]: Flutter BuildContext for accessing theme and media queries
+  /// - [baseStyle]: Optional starting style to merge with parsed styles
+  /// - [states]: Optional custom states to activate (e.g., {'loading', 'selected'})
+  ///
+  /// The [states] parameter allows custom state prefixes beyond the built-in
+  /// `hover`, `focus`, and `disabled`. For example, passing `{'loading'}` enables
+  /// classes like `loading:opacity-50` to apply when that state is active.
+  ///
+  /// Example:
+  /// ```dart
+  /// final style = WindParser.parse(
+  ///   "bg-white loading:bg-gray-100 loading:opacity-50",
+  ///   context,
+  ///   states: isLoading ? {'loading'} : null,
+  /// );
+  /// ```
   static WindStyle parse(
     String className,
     BuildContext context, {
@@ -128,14 +178,32 @@ class WindParser {
     return parsedStyle;
   }
 
-  /// Finds and groups classes by the parser that can handle them
+  /// Groups classes by their designated parser using first-match-wins strategy.
+  ///
+  /// This method splits the className string, resolves prefixed classes through
+  /// [resolveClasses], then assigns each class to the first parser that returns
+  /// `true` from its `canParse()` method.
+  ///
+  /// The grouping process:
+  /// 1. Split className by whitespace and remove empty strings
+  /// 2. Resolve prefixes (responsive, state, dark, platform) via [resolveClasses]
+  /// 3. For each resolved class, find the first parser that can handle it
+  /// 4. Group classes by parser key for batch processing
   ///
   /// Example:
-  /// Input: "bg-red-500 text-lg md:bg-blue-500"
-  /// Output: {
-  ///   "background": ["bg-red-500", "md:bg-blue-500"],
+  /// ```dart
+  /// // Input
+  /// className: "bg-red-500 text-lg md:bg-blue-500 hover:text-white"
+  ///
+  /// // After prefix resolution (assuming md breakpoint and not hovering)
+  /// resolvedClasses: ["bg-red-500", "text-lg", "bg-blue-500"]
+  ///
+  /// // Output grouping
+  /// {
+  ///   "background": ["bg-red-500", "bg-blue-500"],
   ///   "text": ["text-lg"]
   /// }
+  /// ```
   static Map<String, List<String>> findAndGroupClasses(
     String? className,
     WindContext windContext,
@@ -159,16 +227,43 @@ class WindParser {
     return map;
   }
 
-  /// Resolves the state based classes and returns the winning class
-  /// Removes classes that do not apply based on the current context
-  /// and returns the remaining classes without prefixes.
+  /// Resolves prefixed classes based on the current [WindContext].
   ///
-  /// Example:
-  /// Input: ["bg-red-500", "md:bg-blue-500", "hover:bg-green-500"] (if the current breakpoint is "md" and not hovering)
-  /// Output: ["bg-red-500", "bg-blue-500"]
+  /// This method filters classes by evaluating their prefixes against the active
+  /// context (breakpoint, states, theme brightness, platform). Only classes whose
+  /// prefixes match the current context are returned, with prefixes stripped.
   ///
-  /// Input: ["bg-red-500", "md:bg-blue-500", "hover:bg-green-500"] (if the current breakpoint is "md" and hovering)
-  /// Output: ["bg-red-500", "bg-blue-500", "bg-green-500"]
+  /// ### Prefix Types and Resolution:
+  ///
+  /// **Responsive prefixes** (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`):
+  /// - Applied when current breakpoint matches or exceeds the prefix breakpoint
+  /// - Example: `md:bg-blue-500` applies on 'md', 'lg', 'xl', '2xl' breakpoints
+  ///
+  /// **State prefixes** (`hover:`, `focus:`, `disabled:`, custom):
+  /// - Applied when the state exists in [WindContext.activeStates]
+  /// - Built-in: `hover`, `focus`, `disabled`
+  /// - Custom: Any state passed via `states` parameter (e.g., `loading:`, `selected:`)
+  ///
+  /// **Dark mode prefix** (`dark:`):
+  /// - Applied when [WindContext.theme.brightness] is `Brightness.dark`
+  ///
+  /// **Platform prefixes** (`ios:`, `android:`, `web:`, `mobile:`):
+  /// - Applied when [WindContext.platform] or [WindContext.isMobile] matches
+  ///
+  /// ### Examples:
+  ///
+  /// ```dart
+  /// // Input classes
+  /// ["bg-red-500", "md:bg-blue-500", "hover:bg-green-500", "dark:bg-gray-900"]
+  ///
+  /// // Context: breakpoint='md', not hovering, light mode
+  /// // Output: ["bg-red-500", "bg-blue-500"]
+  ///
+  /// // Context: breakpoint='md', hovering, dark mode
+  /// // Output: ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-gray-900"]
+  /// ```
+  ///
+  /// Returns a list of unprefixed class names that apply to the current context.
   static List<String> resolveClasses(
     List<String>? classes,
     WindContext context,
