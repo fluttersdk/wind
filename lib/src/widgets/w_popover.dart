@@ -4,7 +4,7 @@ import '../parser/wind_parser.dart';
 import '../utils/wind_logger.dart';
 import 'w_div.dart';
 
-/// Popover alignment options.
+/// **Popover Alignment Options**
 ///
 /// Determines where the popover content is positioned relative to the trigger.
 enum PopoverAlignment {
@@ -96,7 +96,7 @@ class PopoverController extends ChangeNotifier {
 /// Uses Wind UI `className` for styling - supports all Wind utility classes.
 /// If no width specified in `className`, uses trigger width as minimum.
 ///
-/// ### Basic Usage:
+/// ### Example Usage:
 ///
 /// ```dart
 /// WPopover(
