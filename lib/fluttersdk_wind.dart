@@ -1,3 +1,62 @@
+/// # Wind - Utility-First Styling for Flutter
+///
+/// Wind is a utility-first styling framework for Flutter, inspired by TailwindCSS.
+/// It translates Tailwind-style utility class strings into Flutter widget trees,
+/// allowing you to build UIs using familiar CSS-like syntax directly in your widgets.
+///
+/// ## Core Concepts
+///
+/// - **Utility Classes**: Style widgets using `className` strings like `'flex gap-4 p-6 bg-blue-500 rounded-lg'`
+/// - **W-Prefixed Widgets**: Use `WDiv`, `WText`, `WButton`, `WInput`, and other W-widgets that accept `className`
+/// - **Responsive Design**: Apply breakpoint-specific styles with `sm:`, `md:`, `lg:`, `xl:`, `2xl:` prefixes
+/// - **State-Based Styling**: Use `hover:`, `focus:`, `disabled:`, `loading:` prefixes for interactive states
+/// - **Dark Mode**: Toggle themes and use `dark:` prefix for dark-mode-specific styles
+/// - **Platform-Specific**: Target platforms with `ios:`, `android:`, `web:`, `mobile:` prefixes
+///
+/// ## Getting Started
+///
+/// ```dart
+/// import 'package:flutter/material.dart';
+/// import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+///
+/// void main() => runApp(MyApp());
+///
+/// class MyApp extends StatelessWidget {
+///   @override
+///   Widget build(BuildContext context) {
+///     return WindTheme(
+///       data: WindThemeData(),
+///       child: MaterialApp(
+///         home: Scaffold(
+///           body: WDiv(
+///             className: 'flex flex-col gap-4 p-6 bg-gray-100 min-h-screen',
+///             children: [
+///               WText(
+///                 'Hello Wind!',
+///                 className: 'text-3xl font-bold text-blue-600',
+///               ),
+///               WDiv(
+///                 className: 'bg-white rounded-xl shadow-lg p-6 hover:shadow-xl',
+///                 child: WText(
+///                   'Build UIs faster with utility-first styling',
+///                   className: 'text-gray-600',
+///                 ),
+///               ),
+///               WButton(
+///                 onTap: () => print('Clicked!'),
+///                 className: 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg',
+///                 child: Text('Get Started'),
+///               ),
+///             ],
+///           ),
+///         ),
+///       ),
+///     );
+///   }
+/// }
+/// ```
+///
+/// For complete documentation, visit the [Wind documentation](https://wind.fluttersdk.com).
 library;
 
 export 'src/core/platform_service.dart';
