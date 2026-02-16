@@ -2,26 +2,155 @@ import 'package:flutter/material.dart';
 
 import '../../fluttersdk_wind.dart';
 
-/// Renders a widget tree from JSON configuration.
+/// Renders a widget tree from JSON configuration with security controls and state management.
 ///
-/// Supports Wind widgets, Flutter core widgets, and custom widget builders.
-/// Enforces security via whitelist, depth limits, and action handler integration.
+/// `WDynamicRenderer` is the core rendering engine for the Wind dynamic module. It transforms
+/// JSON widget definitions into Flutter widget trees, enforcing security through whitelisting,
+/// depth limits, and custom error handling.
 ///
-/// Example JSON structure:
+/// ## JSON Schema
+///
+/// Each widget definition follows this structure:
+///
 /// ```json
 /// {
-///   "type": "WDiv",
+///   "type": "WidgetType",
 ///   "props": {
-///     "className": "flex gap-4 p-6",
-///     "id": "container1"
+///     "className": "utility classes",
+///     "id": "optional-state-id",
+///     "onTap": {"action": "actionName", "args": {...}},
+///     "onChange": {"action": "actionName", "args": {...}}
 ///   },
 ///   "children": [
-///     {
-///       "type": "WText",
-///       "props": {"text": "Hello", "className": "text-xl"}
-///     }
+///     { "type": "ChildWidget", "props": {...} }
 ///   ]
 /// }
+/// ```
+///
+/// **Required fields:**
+/// - `type` (String): Widget type name (must be in whitelist or custom builders)
+///
+/// **Optional fields:**
+/// - `props` (Map): Widget-specific properties
+/// - `children` (List): Nested widget definitions
+///
+/// ## Supported Widget Types
+///
+/// **Wind Widgets:**
+/// - `WDiv`, `WText`, `WButton`, `WImage`, `WIcon`, `WAnchor`
+/// - `WInput`, `WCheckbox`, `WSvg`, `WSelect`, `WPopover`
+/// - `WDatePicker`, `WSpacer`
+///
+/// **Flutter Core Widgets:**
+/// - `Column`, `Row`, `Center`, `SizedBox`, `Expanded`, `Container`
+/// - `Wrap`, `Stack`, `Positioned`, `Padding`, `Align`
+/// - `Opacity`, `AspectRatio`, `FittedBox`, `ClipRRect`, `Spacer`
+///
+/// ## Security Model
+///
+/// Widget types are validated against a whitelist before rendering:
+///
+/// 1. **Custom builders** (highest priority): Types in `config.builders` are always allowed
+/// 2. **Default whitelist**: `WDynamicConfig.defaultWindWidgets` + `defaultFlutterWidgets`
+/// 3. **Deny list**: Types in `config.denyWidgets` are blocked even if in default whitelist
+///
+/// If a type is not allowed:
+/// - Calls `config.onUnknownWidget(type, props)` if provided
+/// - Otherwise renders a red error widget with "Widget type not allowed" message
+///
+/// ## State Binding
+///
+/// Widgets with an `id` prop automatically bind to `WDynamicState`:
+///
+/// - **WInput**: Reads/writes text value from `state.get(id)` / `state.set(id, value)`
+/// - **WCheckbox**: Reads/writes boolean value from state
+/// - **WSelect**: Reads/writes selected option value from state
+/// - **WDatePicker**: Reads/writes DateTime value from state
+///
+/// State updates trigger reactive rebuilds for all widgets observing the same state ID.
+///
+/// ## Action Integration
+///
+/// Actions are parsed from JSON and integrated with `WActionHandler`:
+///
+/// **Simple actions** (onTap):
+/// ```json
+/// {"onTap": {"action": "navigate", "args": {"route": "/home"}}}
+/// ```
+/// Parsed via `actionHandler.parseAction()` → returns `VoidCallback?`
+///
+/// **Value actions** (onChange):
+/// ```json
+/// {"onChange": {"action": "updateUser", "args": {"field": "email"}}}
+/// ```
+/// Parsed via `actionHandler.parseValueAction<T>()` → returns `ValueChanged<T>?`
+///
+/// If an `id` prop exists, value actions automatically call `state.set(id, value)` before
+/// dispatching the action. The value is injected into action args as `_value`.
+///
+/// ## Error Handling
+///
+/// **Depth limit exceeded** (`depth > config.maxDepth`):
+/// - Returns error widget: "Recursion depth exceeded {maxDepth}"
+/// - Default maxDepth: 50
+///
+/// **Widget build error** (exception during widget construction):
+/// - Calls `config.onError(type, error)` if provided
+/// - Otherwise renders red error widget with exception message
+///
+/// **Null/empty JSON**:
+/// - Returns `SizedBox.shrink()` (invisible widget)
+///
+/// **Unknown widget type**:
+/// - Calls `config.onUnknownWidget(type, props)` if provided
+/// - Otherwise renders error widget: "Widget type not allowed"
+///
+/// ## Example Usage
+///
+/// ```dart
+/// final renderer = WDynamicRenderer(
+///   config: WDynamicConfig(
+///     maxDepth: 50,
+///     denyWidgets: {'Container'}, // Block Container
+///     builders: {
+///       'CustomCard': (props, children) => Card(
+///         child: Column(children: children),
+///       ),
+///     },
+///     onError: (type, error) => Text('Failed to build $type'),
+///   ),
+///   actionHandler: WActionHandler(actions: {
+///     'showAlert': (args) => print('Alert: ${args['message']}'),
+///   }),
+///   state: WDynamicState(),
+/// );
+///
+/// final json = {
+///   "type": "WDiv",
+///   "props": {"className": "flex gap-4 p-6"},
+///   "children": [
+///     {
+///       "type": "WInput",
+///       "props": {
+///         "id": "email",
+///         "placeholder": "Enter email",
+///         "onChange": {"action": "validateEmail"}
+///       }
+///     },
+///     {
+///       "type": "WButton",
+///       "props": {
+///         "className": "bg-blue-500 text-white",
+///         "onTap": {"action": "showAlert", "args": {"message": "Clicked!"}}
+///       },
+///       "children": [
+///         {"type": "WText", "props": {"text": "Submit"}}
+///       ]
+///     }
+///   ]
+/// };
+///
+/// final widget = renderer.build(json);
 /// ```
 class WDynamicRenderer {
   final WDynamicConfig config;
