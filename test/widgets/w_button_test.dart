@@ -480,5 +480,133 @@ void main() {
         expect(wasDoubleTapped, isFalse);
       });
     });
+
+    group('Loading Spinner Color', () {
+      testWidgets(
+        'uses contrasting color on light background when no text color set',
+        (tester) async {
+          // BUG: White bg + no text color => spinner defaults to
+          // Colors.white => invisible on white background.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                isLoading: true,
+                className: 'bg-white p-3 rounded-xl',
+                child: const Text('Social Login'),
+              ),
+            ),
+          );
+
+          final indicator = tester.widget<CircularProgressIndicator>(
+            find.byType(CircularProgressIndicator),
+          );
+
+          final animation =
+              indicator.valueColor as AlwaysStoppedAnimation<Color>;
+          final spinnerColor = animation.value;
+
+          // Spinner should NOT be white on a white background.
+          expect(
+            spinnerColor,
+            isNot(equals(Colors.white)),
+            reason:
+                'Loading spinner should use a contrasting color, not white on white bg',
+          );
+        },
+      );
+
+      testWidgets(
+        'uses contrasting color on dark background when no text color set',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                isLoading: true,
+                className: 'bg-gray-900 p-3 rounded-xl',
+                child: const Text('Dark Button'),
+              ),
+            ),
+          );
+
+          final indicator = tester.widget<CircularProgressIndicator>(
+            find.byType(CircularProgressIndicator),
+          );
+
+          final animation =
+              indicator.valueColor as AlwaysStoppedAnimation<Color>;
+          final spinnerColor = animation.value;
+
+          // On dark background, spinner should be light (white is fine).
+          expect(
+            spinnerColor,
+            equals(Colors.white),
+            reason:
+                'Loading spinner should be white on dark background',
+          );
+        },
+      );
+
+      testWidgets(
+        'uses explicit text color from className for spinner',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                isLoading: true,
+                className: 'bg-white text-blue-600 p-3 rounded-xl',
+                child: const Text('Styled Button'),
+              ),
+            ),
+          );
+
+          final indicator = tester.widget<CircularProgressIndicator>(
+            find.byType(CircularProgressIndicator),
+          );
+
+          final animation =
+              indicator.valueColor as AlwaysStoppedAnimation<Color>;
+          final spinnerColor = animation.value;
+
+          // When text color is set, spinner should use it.
+          expect(
+            spinnerColor,
+            isNot(equals(Colors.white)),
+            reason:
+                'Loading spinner should use the explicit text color from className',
+          );
+        },
+      );
+
+      testWidgets(
+        'uses explicit loadingColor over all fallbacks',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                isLoading: true,
+                loadingColor: Colors.red,
+                className: 'bg-white p-3 rounded-xl',
+                child: const Text('Custom Color'),
+              ),
+            ),
+          );
+
+          final indicator = tester.widget<CircularProgressIndicator>(
+            find.byType(CircularProgressIndicator),
+          );
+
+          final animation =
+              indicator.valueColor as AlwaysStoppedAnimation<Color>;
+          final spinnerColor = animation.value;
+
+          // Explicit loadingColor should take precedence.
+          expect(spinnerColor, equals(Colors.red));
+        },
+      );
+    });
   });
 }

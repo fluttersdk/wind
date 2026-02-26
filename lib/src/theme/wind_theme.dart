@@ -45,9 +45,13 @@ class WindThemeController extends ChangeNotifier {
 
   /// Toggles between light and dark themes.
   ///
+  /// When called, this also disables [syncWithSystem] on the theme data,
+  /// preventing system brightness changes from overriding the user's
+  /// manual preference. Use [resetToSystem] to re-enable automatic sync.
+  ///
   /// This will notify all listeners and trigger a rebuild of the widget tree.
   void toggleTheme() {
-    _data = _data.toggleTheme();
+    _data = _data.toggleTheme().copyWith(syncWithSystem: false);
     notifyListeners();
   }
 
@@ -91,6 +95,21 @@ class WindThemeController extends ChangeNotifier {
 
   /// Returns the [ThemeData] for use with MaterialApp.
   ThemeData toThemeData() => _data.toThemeData();
+
+  /// Resets the theme to follow the system brightness.
+  ///
+  /// Re-enables [syncWithSystem] and immediately syncs with the current
+  /// platform brightness. After calling this, system brightness changes
+  /// will automatically update the theme again.
+  void resetToSystem() {
+    final systemBrightness =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    _data = _data.copyWith(
+      syncWithSystem: true,
+      brightness: systemBrightness,
+    );
+    notifyListeners();
+  }
 }
 
 /// Internal InheritedNotifier for propagating theme changes.
@@ -160,14 +179,35 @@ class WindTheme extends StatefulWidget {
   final Widget Function(BuildContext context, WindThemeController controller)?
       builder;
 
+  /// Callback fired when the user manually changes the theme.
+  ///
+  /// This is called when [toggleTheme] is invoked on the controller,
+  /// NOT when the system brightness changes automatically.
+  ///
+  /// Use this to persist the user's theme preference externally:
+  /// ```dart
+  /// WindTheme(
+  ///   onThemeChanged: (brightness) {
+  ///     Vault.set('theme_mode', brightness == Brightness.dark ? 'dark' : 'light');
+  ///   },
+  ///   // ...
+  /// )
+  /// ```
+  final ValueChanged<Brightness>? onThemeChanged;
+
   /// Creates a new [WindTheme] instance.
   ///
   /// [data] defaults to [WindThemeData()] if not provided.
-  const WindTheme({super.key, this.data, this.child, this.builder})
-      : assert(
-          child != null || builder != null,
-          'Either child or builder must be provided',
-        );
+  const WindTheme({
+    super.key,
+    this.data,
+    this.child,
+    this.builder,
+    this.onThemeChanged,
+  }) : assert(
+           child != null || builder != null,
+           'Either child or builder must be provided',
+         );
 
   /// Returns the [WindThemeController] from the closest [WindTheme] ancestor.
   ///
@@ -203,6 +243,13 @@ class WindTheme extends StatefulWidget {
 class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
   late WindThemeController _controller;
 
+  /// Tracks whether the current theme change originated from the system.
+  /// When true, [onThemeChanged] will NOT fire.
+  bool _isSystemChange = false;
+
+  /// Previous brightness — used to detect actual changes.
+  Brightness? _previousBrightness;
+
   @override
   void initState() {
     super.initState();
@@ -221,16 +268,23 @@ class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
     }
 
     _controller = WindThemeController(initialData);
+    _previousBrightness = _controller.brightness;
+
+    // Listen for controller changes to fire onThemeChanged callback
+    _controller.addListener(_onControllerChanged);
   }
 
   @override
   void didChangePlatformBrightness() {
     super.didChangePlatformBrightness();
-    // Update theme when system brightness changes (only if syncWithSystem is true)
+    // Update theme when system brightness changes (only if syncWithSystem is
+    // true). Mark as system-initiated so onThemeChanged does NOT fire.
     if (_controller.data.syncWithSystem) {
+      _isSystemChange = true;
       final brightness =
           WidgetsBinding.instance.platformDispatcher.platformBrightness;
       _controller.updateTheme(brightness: brightness);
+      _isSystemChange = false;
     }
   }
 
@@ -244,9 +298,19 @@ class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _controller.removeListener(_onControllerChanged);
     WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
+  }
+
+  /// Detects user-initiated brightness changes and fires [onThemeChanged].
+  void _onControllerChanged() {
+    final currentBrightness = _controller.brightness;
+    if (currentBrightness != _previousBrightness && !_isSystemChange) {
+      widget.onThemeChanged?.call(currentBrightness);
+    }
+    _previousBrightness = currentBrightness;
   }
 
   @override

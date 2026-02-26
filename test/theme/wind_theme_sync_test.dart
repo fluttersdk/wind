@@ -102,38 +102,45 @@ void main() {
       expect(WindTheme.of(context).brightness, equals(Brightness.light));
     });
 
-    testWidgets('Toggle works manually even with syncWithSystem=true',
-        (tester) async {
-      tester.binding.platformDispatcher.platformBrightnessTestValue =
-          Brightness.light;
+    testWidgets(
+      'toggleTheme disables syncWithSystem so system changes are ignored',
+      (tester) async {
+        tester.binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
 
-      await tester.pumpWidget(
-        WindTheme(
-          data: WindThemeData(syncWithSystem: true),
-          builder: (context, controller) {
-            return MaterialApp(
-              theme: controller.toThemeData(),
-              home: Scaffold(body: Container()),
-            );
-          },
-        ),
-      );
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(syncWithSystem: true),
+            builder: (context, controller) {
+              return MaterialApp(
+                theme: controller.toThemeData(),
+                home: Scaffold(body: Container()),
+              );
+            },
+          ),
+        );
 
-      var context = tester.element(find.byType(Scaffold));
-      expect(WindTheme.of(context).brightness, equals(Brightness.light));
+        var context = tester.element(find.byType(Scaffold));
+        expect(WindTheme.of(context).brightness, equals(Brightness.light));
 
-      // Manual toggle
-      WindTheme.of(context).toggleTheme();
-      await tester.pump();
+        // Manual toggle — should disable syncWithSystem
+        WindTheme.of(context).toggleTheme();
+        await tester.pump();
 
-      expect(WindTheme.of(context).brightness, equals(Brightness.dark));
+        expect(WindTheme.of(context).brightness, equals(Brightness.dark));
 
-      // System change overwrites manual toggle if it happens later
-      setMockBrightness(tester, Brightness.light);
-      await tester.pump();
+        // System brightness changes should be IGNORED after manual toggle
+        setMockBrightness(tester, Brightness.light);
+        await tester.pump();
 
-      expect(WindTheme.of(context).brightness, equals(Brightness.light));
-    });
+        expect(
+          WindTheme.of(context).brightness,
+          equals(Brightness.dark),
+          reason:
+              'After manual toggle, system brightness changes should be ignored',
+        );
+      },
+    );
 
     testWidgets(
         'Observer cleanup: no errors after dispose when brightness changes',
@@ -180,5 +187,161 @@ void main() {
 
       expect(buildCount, 2);
     });
+  });
+
+  group('WindTheme Manual Override', () {
+    // Helper to set mock system brightness.
+    void setMockBrightness(WidgetTester tester, Brightness brightness) {
+      tester.binding.platformDispatcher.platformBrightnessTestValue =
+          brightness;
+      tester.binding.handlePlatformBrightnessChanged();
+    }
+
+    testWidgets(
+      'toggleTheme sets syncWithSystem to false on the controller data',
+      (tester) async {
+        tester.binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
+
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(syncWithSystem: true),
+            builder: (context, controller) {
+              return MaterialApp(
+                theme: controller.toThemeData(),
+                home: Scaffold(body: Container()),
+              );
+            },
+          ),
+        );
+
+        final context = tester.element(find.byType(Scaffold));
+        final controller = WindTheme.of(context);
+
+        expect(controller.data.syncWithSystem, isTrue);
+
+        controller.toggleTheme();
+        await tester.pump();
+
+        expect(
+          controller.data.syncWithSystem,
+          isFalse,
+          reason:
+              'toggleTheme should disable syncWithSystem so user preference sticks',
+        );
+      },
+    );
+
+    testWidgets(
+      'resetToSystem re-enables syncWithSystem and syncs with platform',
+      (tester) async {
+        tester.binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
+
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(syncWithSystem: true),
+            builder: (context, controller) {
+              return MaterialApp(
+                theme: controller.toThemeData(),
+                home: Scaffold(body: Container()),
+              );
+            },
+          ),
+        );
+
+        final context = tester.element(find.byType(Scaffold));
+        final controller = WindTheme.of(context);
+
+        // 1. Manual toggle to dark.
+        controller.toggleTheme();
+        await tester.pump();
+        expect(controller.brightness, equals(Brightness.dark));
+        expect(controller.data.syncWithSystem, isFalse);
+
+        // 2. System is still light — change to dark.
+        setMockBrightness(tester, Brightness.dark);
+        await tester.pump();
+
+        // 3. Reset to system — should re-enable sync and pick up system.
+        controller.resetToSystem();
+        await tester.pump();
+        expect(controller.data.syncWithSystem, isTrue);
+        expect(controller.brightness, equals(Brightness.dark));
+
+        // 4. System changes should now be followed again.
+        setMockBrightness(tester, Brightness.light);
+        await tester.pump();
+        expect(controller.brightness, equals(Brightness.light));
+      },
+    );
+
+    testWidgets(
+      'onThemeChanged callback fires when theme toggles',
+      (tester) async {
+        Brightness? reportedBrightness;
+
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(brightness: Brightness.light),
+            onThemeChanged: (brightness) {
+              reportedBrightness = brightness;
+            },
+            builder: (context, controller) {
+              return MaterialApp(
+                theme: controller.toThemeData(),
+                home: Scaffold(body: Container()),
+              );
+            },
+          ),
+        );
+
+        final context = tester.element(find.byType(Scaffold));
+        WindTheme.of(context).toggleTheme();
+        await tester.pump();
+
+        expect(
+          reportedBrightness,
+          equals(Brightness.dark),
+          reason: 'onThemeChanged should fire with the new brightness',
+        );
+      },
+    );
+
+    testWidgets(
+      'onThemeChanged does NOT fire on system-initiated changes',
+      (tester) async {
+        int callCount = 0;
+
+        tester.binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
+
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(syncWithSystem: true),
+            onThemeChanged: (brightness) {
+              callCount++;
+            },
+            builder: (context, controller) {
+              return MaterialApp(
+                theme: controller.toThemeData(),
+                home: Scaffold(body: Container()),
+              );
+            },
+          ),
+        );
+
+        // System change should NOT trigger onThemeChanged
+        setMockBrightness(tester, Brightness.dark);
+        await tester.pump();
+
+        expect(
+          callCount,
+          equals(0),
+          reason:
+              'onThemeChanged should only fire on user-initiated theme changes',
+        );
+      },
+    );
   });
 }
