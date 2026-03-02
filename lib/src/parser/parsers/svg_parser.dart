@@ -13,8 +13,10 @@ import '../../theme/wind_theme_data.dart';
 /// ### Supported Utility Classes:
 /// - **Fill:** `fill-red-500`, `fill-none`, `fill-current`
 /// - **Stroke:** `stroke-blue-500`, `stroke-none`, `stroke-[2px]` (future)
+/// - **Preserve:** `preserve-colors` — disables any [ColorFilter] on the SVG,
+///   rendering embedded colours unchanged (ideal for QR codes and logos).
 ///
-/// Returns a [WindStyle] with `fillColor` and `strokeColor`.
+/// Returns a [WindStyle] with `fillColor`, `strokeColor`, and `preserveColors`.
 /// Used by [WSvg] and `flutter_svg`.
 class SvgParser implements WindParserInterface {
   const SvgParser();
@@ -23,6 +25,7 @@ class SvgParser implements WindParserInterface {
   bool canParse(String className) {
     if (className.startsWith('fill-')) return true;
     if (className.startsWith('stroke-')) return true;
+    if (className == 'preserve-colors') return true;
     return false;
   }
 
@@ -36,9 +39,15 @@ class SvgParser implements WindParserInterface {
 
     Color? fillColor;
     Color? strokeColor;
+    bool? preserveColors;
     final theme = context.theme;
 
     for (final className in classes) {
+      // Handle preserve-colors — disables ColorFilter entirely for multi-colour SVGs.
+      if (className == 'preserve-colors') {
+        preserveColors = true;
+      }
+
       // Handle fill classes
       if (className.startsWith('fill-')) {
         final value = className.substring(5); // Remove 'fill-'
@@ -67,7 +76,11 @@ class SvgParser implements WindParserInterface {
       }
     }
 
-    return styles.copyWith(fillColor: fillColor, strokeColor: strokeColor);
+    return styles.copyWith(
+      fillColor: fillColor,
+      strokeColor: strokeColor,
+      preserveColors: preserveColors ?? styles.preserveColors,
+    );
   }
 
   /// Parses a color from a className using theme.getColor

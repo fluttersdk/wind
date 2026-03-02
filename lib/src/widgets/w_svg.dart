@@ -102,9 +102,10 @@ class WSvg extends StatelessWidget {
         styles.color ??
         inheritedColor;
 
-    // Build the color filter - this colorizes the entire SVG
+    // Build the color filter — skipped entirely when `preserve-colors` is set,
+    // so multi-colour SVGs (QR codes, logos) render with their own embedded colours.
     ColorFilter? colorFilter;
-    if (color != null) {
+    if (!styles.preserveColors && color != null) {
       colorFilter = ColorFilter.mode(color, BlendMode.srcIn);
     }
 

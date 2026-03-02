@@ -204,6 +204,11 @@ class WindStyle {
   /// SVG stroke color e.g., stroke-blue-500, stroke-current
   final Color? strokeColor;
 
+  /// When true, no [ColorFilter] is applied to the SVG — the widget renders
+  /// with its own embedded colors unchanged. Use `preserve-colors` in className.
+  /// Ideal for QR codes, logos, and multi-colour illustrations.
+  final bool preserveColors;
+
   // ============== ANIMATION PROPERTIES ==============
 
   /// Animation type e.g., animate-spin, animate-pulse, animate-bounce
@@ -270,6 +275,7 @@ class WindStyle {
     this.fillColor,
     this.strokeColor,
     this.animationType,
+    this.preserveColors = false,
   });
 
   WindStyle copyWith({
@@ -333,6 +339,7 @@ class WindStyle {
     Color? fillColor,
     Color? strokeColor,
     WindAnimationType? animationType,
+    bool? preserveColors,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -411,6 +418,7 @@ class WindStyle {
       fillColor: fillColor ?? this.fillColor,
       strokeColor: strokeColor ?? this.strokeColor,
       animationType: animationType ?? this.animationType,
+      preserveColors: preserveColors ?? this.preserveColors,
     );
   }
 
@@ -478,7 +486,8 @@ class WindStyle {
           ringInset == other.ringInset &&
           fillColor == other.fillColor &&
           strokeColor == other.strokeColor &&
-          animationType == other.animationType;
+          animationType == other.animationType &&
+          preserveColors == other.preserveColors;
 
   @override
   int get hashCode =>
@@ -541,7 +550,8 @@ class WindStyle {
       ringInset.hashCode ^
       fillColor.hashCode ^
       strokeColor.hashCode ^
-      animationType.hashCode;
+      animationType.hashCode ^
+      preserveColors.hashCode;
 
   /// Calculates the effective line height as a multiplier for TextStyle.height.
   ///
@@ -642,7 +652,8 @@ class WindStyle {
         'ringInset: $ringInset, '
         'fillColor: $fillColor, '
         'strokeColor: $strokeColor, '
-        'animationType: $animationType'
+        'animationType: $animationType, '
+        'preserveColors: $preserveColors'
         '}';
   }
 }
