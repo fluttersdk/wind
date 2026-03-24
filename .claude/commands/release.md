@@ -63,10 +63,15 @@ Check README.md for any version-specific content that needs updating:
 
 ### Phase 5: Local Verification
 
-1. Run `dart format --set-exit-if-changed .` — must be clean
-2. Run `dart analyze` — must be zero issues
-3. Run `flutter test` — must all pass
-4. Review all changed files with `git diff`
+Run all checks locally. ALL must pass before proceeding:
+
+1. `dart format --set-exit-if-changed .` — must be clean
+2. `dart analyze` — must be zero issues
+3. `flutter test` — must all pass
+4. `dart pub publish --dry-run` — must be zero warnings
+5. Review all changed files with `git diff`
+
+If **dry-run fails** → STOP. Fix the issue before proceeding. The dry-run catches the same errors that pub.dev OIDC publish would catch.
 
 ### Phase 6: Commit & Push
 
@@ -76,7 +81,7 @@ Check README.md for any version-specific content that needs updating:
 
 ### Phase 7: Wait for CI
 
-The push triggers the **CI & Deploy** workflow (Lint & Test) on GitHub. Wait for it to pass before creating the release.
+The push triggers the **Lint & Test** workflow (`deploy.yml`) on GitHub. Wait for it to pass before creating the release.
 
 1. Get the run ID for the push commit:
    ```bash
@@ -94,7 +99,11 @@ The push triggers the **CI & Deploy** workflow (Lint & Test) on GitHub. Wait for
 
 ### Phase 8: Create GitHub Release
 
-CI is green. Create a GitHub Release using `gh` CLI. This automatically creates a tag, and the tag push triggers `publish.yml` → pub.dev publishing.
+CI is green. Create a GitHub Release using `gh` CLI. This does three things at once:
+
+1. **Creates the GitHub Release** with changelog notes
+2. **Creates the git tag** (e.g. `1.0.0-alpha.4`)
+3. **Triggers `publish.yml`** — the tag push activates the pub.dev OIDC publish workflow
 
 Determine if the version is a prerelease:
 - Contains `alpha` or `beta` or `rc` → add `--prerelease` flag
@@ -115,12 +124,22 @@ NOTES
 )"
 ```
 
+After creating the release, watch the publish workflow:
+
+```bash
+# Wait a few seconds for the workflow to trigger
+gh run list --workflow=publish.yml --limit 1 --json databaseId,status,headSha --jq '.[0]'
+gh run watch {run_id} --exit-status
+```
+
+If publish fails → report the error. The release and tag already exist — the user can fix and re-trigger manually.
+
 ### Output
 
 Present a summary:
 
 ```
-## Release {version} Published
+## Release {version} Complete
 
 **GitHub Release:** https://github.com/fluttersdk/wind/releases/tag/{version}
 
@@ -133,8 +152,7 @@ Present a summary:
 
 **Changelog:** {count} features, {count} fixes, {count} improvements
 
+**Local:** ✅ Tests ({count} passed) · ✅ Analyzer (0 issues) · ✅ Format clean · ✅ Dry-run (0 warnings)
 **CI:** ✅ Lint & Test passed (run #{run_id})
-**Local:** ✅ Tests ({count} passed) · ✅ Analyzer (0 issues) · ✅ Format clean
-
-**pub.dev:** Publishing triggered — check status: `gh run list --limit 1`
+**pub.dev:** ✅ Published (run #{publish_run_id}) — https://pub.dev/packages/fluttersdk_wind
 ```
