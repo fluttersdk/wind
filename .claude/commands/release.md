@@ -1,5 +1,5 @@
 ---
-description: Prepare a new release version — bumps version, updates changelog, syncs all docs, runs checks, commits and tags.
+description: Prepare a new release — bumps version, updates changelog, syncs docs, creates GitHub Release (which triggers pub.dev publish).
 ---
 
 ## Context
@@ -7,6 +7,7 @@ description: Prepare a new release version — bumps version, updates changelog,
 - Current version in pubspec.yaml: !`grep 'version:' pubspec.yaml`
 - Current branch: !`git branch --show-current`
 - Git tags: !`git tag -l | sort -V | tail -10`
+- GitHub releases: !`gh release list --limit 5`
 - Unreleased changes: !`sed -n '/## \[Unreleased\]/,/^## \[/p' CHANGELOG.md | head -40`
 - Recent commits since last tag: !`git log $(git describe --tags --abbrev=0 2>/dev/null || echo HEAD~20)..HEAD --oneline`
 - Test status: !`flutter test 2>&1 | tail -3`
@@ -14,7 +15,7 @@ description: Prepare a new release version — bumps version, updates changelog,
 
 ## Arguments
 
-$ARGUMENTS — The target version to release (e.g. `1.0.0-alpha.4`, `1.0.0-beta.1`, `1.0.0`). If empty, auto-increment the last alpha/beta/patch segment.
+$ARGUMENTS — The target version to release (e.g. `1.0.0-alpha.5`, `1.0.0-beta.1`, `1.0.0`). If empty, auto-increment the last alpha/beta/patch segment.
 
 ## Your task
 
@@ -58,31 +59,52 @@ Review the `[Unreleased]` section and the git log since the last tag:
 Check README.md for any version-specific content that needs updating:
 
 1. Version numbers in badges or install examples
-2. Feature counts (widget count, test count, doc count) — verify against actual codebase
-3. Any outdated code examples that don't match current API
+2. Any outdated code examples that don't match current API
 
 ### Phase 5: Final Verification
 
-1. Run `dart analyze` — must be zero issues
-2. Run `flutter test` — must all pass
-3. Run `dart format --set-exit-if-changed .` — must be clean
+1. Run `dart format --set-exit-if-changed .` — must be clean
+2. Run `dart analyze` — must be zero issues
+3. Run `flutter test` — must all pass
 4. Review all changed files with `git diff`
 
-### Phase 6: Commit & Tag
+### Phase 6: Commit & Push
 
 1. Stage all modified files
 2. Create a single commit: `chore(release): {version}`
-3. Create an annotated git tag: `git tag -a {version} -m "Release {version}"`
-4. Show the result: `git log --oneline -3` and `git tag -l | tail -5`
+3. Push to remote: `git push`
 
-**DO NOT push** — present the result and ask the user if they want to push. Pushing the tag triggers automatic pub.dev publishing via GitHub Actions.
+### Phase 7: GitHub Release
+
+Create a GitHub Release using `gh` CLI. This automatically creates the tag and triggers pub.dev publishing.
+
+Determine if the version is a prerelease:
+- Contains `alpha` or `beta` or `rc` → add `--prerelease` flag
+- Otherwise → stable release, no flag
+
+Determine the previous version tag for the changelog comparison link.
+
+```bash
+gh release create {version} \
+  --target v1 \
+  --title "v{version}" \
+  [--prerelease] \
+  --notes "$(cat <<'NOTES'
+{changelog content from Phase 3 — same categories and entries}
+
+**Full Changelog**: https://github.com/fluttersdk/wind/compare/{previous_tag}...{version}
+NOTES
+)"
+```
 
 ### Output
 
 Present a summary:
 
 ```
-## Release {version} Ready
+## Release {version} Published
+
+**GitHub Release:** https://github.com/fluttersdk/wind/releases/tag/{version}
 
 **Changed files:**
 - pubspec.yaml
@@ -91,9 +113,9 @@ Present a summary:
 - doc/getting-started/installation.md
 - (any others)
 
-**Changelog entries:** {count} features, {count} fixes, {count} improvements
+**Changelog:** {count} features, {count} fixes, {count} improvements
 
 **Verification:** ✅ Tests ({count} passed) · ✅ Analyzer (0 issues) · ✅ Format clean
 
-**Next step:** `git push && git push --tags` to publish to pub.dev
+**pub.dev:** Publishing triggered via GitHub Actions — check `gh run list` for status.
 ```
