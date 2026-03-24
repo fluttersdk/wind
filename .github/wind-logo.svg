@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- FlutterSDK Wind - Sky Blue (#0986E0) with wind flow effect -->
+
+    <!-- Layer 1 - Core (Sky Blue Primary) -->
+    <linearGradient id="w1-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0986E0"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="w1-dark" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0369A1"/>
+      <stop offset="100%" stop-color="#0986E0"/>
+    </linearGradient>
+
+    <!-- Layer 2 (Sky Light) -->
+    <linearGradient id="w2-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#7DD3FC"/>
+    </linearGradient>
+    <linearGradient id="w2-dark" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0986E0"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+
+    <!-- Layer 3 (Sky Dark) -->
+    <linearGradient id="w3-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0369A1"/>
+      <stop offset="100%" stop-color="#0986E0"/>
+    </linearGradient>
+    <linearGradient id="w3-dark" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#075985"/>
+      <stop offset="100%" stop-color="#0369A1"/>
+    </linearGradient>
+
+    <!-- Layer 4 - Outer (Deep Blue) -->
+    <linearGradient id="w4-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#075985"/>
+      <stop offset="100%" stop-color="#0369A1"/>
+    </linearGradient>
+    <linearGradient id="w4-dark" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0C4A6E"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+
+    <!-- Wind flow lines gradient - more prominent -->
+    <linearGradient id="wind-flow-1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7DD3FC" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#7DD3FC" stop-opacity="1"/>
+      <stop offset="80%" stop-color="#38BDF8" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="wind-flow-2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0"/>
+      <stop offset="15%" stop-color="#38BDF8" stop-opacity="0.9"/>
+      <stop offset="85%" stop-color="#7DD3FC" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#7DD3FC" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="wind-flow-3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0986E0" stop-opacity="0"/>
+      <stop offset="25%" stop-color="#0986E0" stop-opacity="0.8"/>
+      <stop offset="75%" stop-color="#38BDF8" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 3D chevrons with light top / dark bottom faces -->
+
+  <!-- Layer 4 - Outer (Deep Blue) -->
+  <path d="M280 56 L456 232 L280 320 L368 232 L280 144 Z" fill="url(#w4-light)"/>
+  <path d="M280 320 L456 232 L280 408 Z" fill="url(#w4-dark)"/>
+
+  <!-- Layer 3 (Sky Dark) -->
+  <path d="M216 88 L392 264 L216 352 L304 264 L216 176 Z" fill="url(#w3-light)"/>
+  <path d="M216 352 L392 264 L216 440 Z" fill="url(#w3-dark)"/>
+
+  <!-- Layer 2 (Sky Light) -->
+  <path d="M152 120 L328 296 L152 384 L240 296 L152 208 Z" fill="url(#w2-light)"/>
+  <path d="M152 384 L328 296 L152 472 Z" fill="url(#w2-dark)"/>
+
+  <!-- Layer 1 - Core (Sky Blue Primary) -->
+  <path d="M88 40 L264 216 L88 304 L176 216 L88 128 Z" fill="url(#w1-light)"/>
+  <path d="M88 304 L264 216 L88 392 Z" fill="url(#w1-dark)"/>
+
+  <!-- Wind flow accent lines - more prominent -->
+  <path d="M40 170 Q100 155 170 175 Q240 195 320 170 Q380 150 440 175" stroke="url(#wind-flow-1)" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M50 235 Q130 210 210 240 Q290 270 380 235 Q440 210 490 240" stroke="url(#wind-flow-2)" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M70 300 Q150 275 240 305 Q330 335 420 300 Q470 275 500 295" stroke="url(#wind-flow-3)" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://wind.fluttersdk.com/assets/wind-logo.svg" width="120" alt="Wind Logo" />
+  <img src=".github/wind-logo.svg" width="120" alt="Wind Logo" />
 </p>
 
 <h1 align="center">Wind</h1>
@@ -65,10 +65,8 @@ If you know Tailwind CSS, you already know Wind.
 | 🌙 | **Dark Mode** | `dark:` prefix with runtime toggle via `context.windTheme.toggleTheme()` |
 | 🎯 | **State Styling** | `hover:`, `focus:`, `disabled:`, `loading:`, and custom state prefixes |
 | 🔌 | **Platform Prefixes** | `ios:`, `android:`, `web:`, `mobile:` conditional styling |
-| 🎭 | **Theme System** | 16 customizable token scales — colors, spacing, typography, shadows, and more |
+| 🎭 | **Theme System** | Customizable token scales — colors, spacing, typography, shadows, and more |
 | 📡 | **Server-Driven UI** | `WDynamic` renders widget trees from JSON — build UIs without app updates |
-| ✅ | **922 Tests** | Comprehensive coverage across widgets, parsers, and theme system |
-| 📚 | **58 Doc Pages** | Full documentation at [wind.fluttersdk.com](https://wind.fluttersdk.com) |
 
 ## Quick Start
 
@@ -388,67 +386,27 @@ Widget.build()
 
 **Cache:** Parsed results are cached by `className + breakpoint + brightness + platform + states` for zero-cost re-renders.
 
-## Requirements
-
-| Dependency | Version |
-|:-----------|:--------|
-| Flutter | `>= 3.27.0` |
-| Dart | `>= 3.4.0` |
-
 ## AI Agent Integration
 
-Wind ships with an **LLM agent skill** — a comprehensive reference that teaches AI coding assistants how to use Wind correctly.
-
-**For Claude Code:**
-
-```bash
-# The skill is bundled at skills/wind-ui/SKILL.md
-# Claude Code discovers it automatically via .claude/skills/ symlink
-```
-
-**For other AI tools (Cursor, Copilot, etc.):**
-
-Copy `skills/wind-ui/SKILL.md` to your project's AI context directory and reference it in your AI configuration.
-
-The skill covers layout rules, widget API, token system, state modifiers, anti-patterns, and a pre-completion checklist — everything an AI needs to generate correct Wind code on the first try.
+Wind includes an LLM skill (`skills/wind-ui/SKILL.md`) that teaches AI coding assistants the correct className patterns, layout rules, and anti-patterns. Claude Code discovers it automatically; for other tools, copy it to your AI context directory.
 
 ## Documentation
 
-Full documentation with live examples: **[wind.fluttersdk.com](https://wind.fluttersdk.com)**
-
-- [Installation & Setup](https://wind.fluttersdk.com/getting-started/installation)
-- [Layout System](https://wind.fluttersdk.com/layout/flex)
-- [Widget Reference](https://wind.fluttersdk.com/widgets/wdiv)
-- [Theming Guide](https://wind.fluttersdk.com/core-concepts/theming)
-- [Responsive Design](https://wind.fluttersdk.com/core-concepts/responsive)
-- [Dark Mode](https://wind.fluttersdk.com/core-concepts/dark-mode)
+Full docs with live examples at **[wind.fluttersdk.com](https://wind.fluttersdk.com)**.
 
 ## Contributing
 
-We welcome contributions! Please read our contributing guidelines before submitting a PR.
-
 ```bash
-# Clone and setup
 git clone https://github.com/fluttersdk/wind.git
-cd wind && git checkout v1
-flutter pub get
-
-# Run tests
-flutter test
-
-# Check for issues
-dart analyze
-
-# Run the example app
-cd example && flutter run
+cd wind && git checkout v1 && flutter pub get
+flutter test && dart analyze
 ```
 
-**Found a bug?** [Open an issue](https://github.com/fluttersdk/wind/issues/new?template=bug_report.yml)
-**Have an idea?** [Request a feature](https://github.com/fluttersdk/wind/issues/new?template=feature_request.yml)
+[Report a bug](https://github.com/fluttersdk/wind/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/fluttersdk/wind/issues/new?template=feature_request.yml)
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
