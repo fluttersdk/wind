@@ -34,7 +34,7 @@ jobs:
   build:
     name: Build Web
     needs: ci
-    if: github.event_name == 'push'
+    if: false # TODO: re-enable when deploy infrastructure is ready
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -79,6 +79,7 @@ jobs:
   deploy-demo:
     name: Deploy Demo
     needs: build
+    if: false # TODO: re-enable when deploy infrastructure is ready
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'Demo Production' || 'Demo Development' }}
     steps:
@@ -122,6 +123,7 @@ jobs:
   deploy-play:
     name: Deploy Play
     needs: build
+    if: false # TODO: re-enable when deploy infrastructure is ready
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'Play Production' || 'Play Development' }}
     steps:
