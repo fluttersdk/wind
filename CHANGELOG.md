@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.0.0-alpha.4] - 2026-03-24
+
 ### ✨ New Features
 
 - **WDynamic Custom Icons**: `customIcons` prop for user-defined icon mappings in dynamic rendering
@@ -24,6 +28,8 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 - **CI/CD**: Replaced ci.yml with deploy.yml for web build and SSH deployment pipeline
 - **Security**: Added SECURITY.md and Dependabot configuration
+- **Developer Experience**: Added CLAUDE.md, path-scoped rules, and editor hooks for AI-assisted development
+- **Community**: Added GitHub issue templates (bug report, feature request, documentation) and LLM skill community features
 
 ---
 

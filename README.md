@@ -1,123 +1,132 @@
-# Wind v1 - Utility-First Styling for Flutter
+<p align="center">
+  <img src="https://wind.fluttersdk.com/assets/wind-logo.svg" width="120" alt="Wind Logo" />
+</p>
 
-[![pub package](https://img.shields.io/pub/v/fluttersdk_wind.svg)](https://pub.dev/packages/fluttersdk_wind)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/fluttersdk/wind/pulls)
+<h1 align="center">Wind</h1>
 
-> ⚠️ **Alpha Release** - This is v1.0.0-alpha.1, a preview release. APIs may change before stable v1.0.0.
+<p align="center">
+  <strong>Utility-first styling for Flutter, inspired by Tailwind CSS.</strong><br/>
+  Build beautiful, responsive UIs with familiar className syntax — no more nested style objects.
+</p>
 
-**Wind** is a utility-first styling framework for Flutter, inspired by TailwindCSS. Build beautiful, responsive UIs using simple class names directly in your widget trees.
+<p align="center">
+  <a href="https://pub.dev/packages/fluttersdk_wind"><img src="https://img.shields.io/pub/v/fluttersdk_wind.svg" alt="pub package"></a>
+  <a href="https://github.com/fluttersdk/wind/actions"><img src="https://img.shields.io/github/actions/workflow/status/fluttersdk/wind/deploy.yml?branch=v1&label=CI" alt="CI"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://pub.dev/packages/fluttersdk_wind/score"><img src="https://img.shields.io/pub/points/fluttersdk_wind" alt="pub points"></a>
+  <a href="https://github.com/fluttersdk/wind/stargazers"><img src="https://img.shields.io/github/stars/fluttersdk/wind?style=flat" alt="GitHub stars"></a>
+</p>
 
-## 📋 Table of Contents
+<p align="center">
+  <a href="https://wind.fluttersdk.com">Documentation</a> ·
+  <a href="https://wind.fluttersdk.com/play">Playground</a> ·
+  <a href="https://pub.dev/packages/fluttersdk_wind">pub.dev</a> ·
+  <a href="https://github.com/fluttersdk/wind/issues">Issues</a>
+</p>
 
-- [What's New in v1](#-whats-new-in-v1)
-- [Installation](#-installation)
-- [Quick Start](#-quick-start)
-- [Core Widgets](#-core-widgets)
-- [Supported Utilities](#-supported-utilities)
-- [Dark Mode](#-dark-mode)
-- [Responsive Design](#-responsive-design)
-- [Custom Theme](#-custom-theme)
-- [Documentation](#-documentation)
-- [Contributing](#-contributing)
+---
 
-## 🚀 What's New in v1
+> **Alpha Release** — v1 is under active development. APIs may change before stable. [Star the repo](https://github.com/fluttersdk/wind) to follow progress.
 
-Wind v1 is a **complete architectural rewrite** with a new parsing engine, widget system, and theme management.
+## Why Wind?
 
-### Major Changes from v0
+Flutter's styling is powerful but verbose. A simple card with padding, rounded corners, and a shadow requires deeply nested `Container`, `BoxDecoration`, `EdgeInsets`, and `BorderRadius` objects.
 
-- **New Widget System**: `WDiv`, `WText`, `WInput`, `WAnchor` replace old widgets
-- **Intelligent Composition**: Widgets dynamically build optimal Flutter widget trees
-- **Specialist Parsers**: Modular parsing engine with 7 dedicated parsers
-- **State-based Styling**: Built-in `hover:`, `focus:`, `disabled:` and custom states (`loading:`, `active:`)
-- **Color Opacity**: Support for `/50` opacity modifier on all colors
-- **Ring Utilities**: Tailwind-like focus rings with `ring-2`, `ring-offset`, `ring-inset`
-- **Platform Prefixes**: `ios:`, `android:`, `web:`, `mobile:` modifiers
-- **CSS-like Text Inheritance**: Text styles cascade through `DefaultTextStyle`
-
-## ✨ Features
-
-- 🎨 **Tailwind-Inspired** - Familiar utility classes from Tailwind CSS
-- 🧩 **Composable Widgets** - `WDiv`, `WText`, `WButton`, `WInput`, and more
-- 🎯 **State-Based Styling** - `hover:`, `focus:`, `disabled:`, `loading:` prefixes
-- 📱 **Responsive Design** - `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoints
-- 🌙 **Dark Mode** - Built-in dark mode with `dark:` prefix
-- 🔌 **Platform-Specific** - `ios:`, `android:`, `web:`, `mobile:` modifiers
-- 🎭 **Custom States** - Define your own state prefixes (`error:`, `success:`, etc.)
-- 🎨 **Theme Customization** - Override colors, spacing, fonts, and more
-- 📦 **Zero Dependencies** - Only `flutter_svg` and `keyboard_actions` for specific widgets
-- ✅ **Type-Safe** - Full Dart type safety with autocomplete support
-
-## 📦 Installation
-
-```yaml
-dependencies:
-  fluttersdk_wind: ^1.0.0-alpha.1
-```
-
-```sh
-flutter pub get
-```
-
-## 🛠 Quick Start
-
-### 1. Wrap your app with WindTheme
+**Wind fixes this.** Write the same UI in one line:
 
 ```dart
-import 'package:flutter/material.dart';
+// Before — Flutter way
+Container(
+  padding: EdgeInsets.all(24),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black12)],
+  ),
+  child: Text('Hello', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+)
+
+// After — Wind way
+WDiv(
+  className: 'bg-white rounded-xl shadow-lg p-6',
+  child: WText('Hello', className: 'text-xl font-bold'),
+)
+```
+
+If you know Tailwind CSS, you already know Wind.
+
+## Features
+
+| | Feature | Description |
+|:--|:--------|:------------|
+| 🧩 | **20 Widgets** | `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDynamic` and more |
+| 🎨 | **Tailwind Syntax** | Same utility classes: `flex`, `p-4`, `bg-blue-500`, `rounded-lg`, `shadow-md` |
+| 📱 | **Responsive** | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoint prefixes |
+| 🌙 | **Dark Mode** | `dark:` prefix with runtime toggle via `context.windTheme.toggleTheme()` |
+| 🎯 | **State Styling** | `hover:`, `focus:`, `disabled:`, `loading:`, and custom state prefixes |
+| 🔌 | **Platform Prefixes** | `ios:`, `android:`, `web:`, `mobile:` conditional styling |
+| 🎭 | **Theme System** | 16 customizable token scales — colors, spacing, typography, shadows, and more |
+| 📡 | **Server-Driven UI** | `WDynamic` renders widget trees from JSON — build UIs without app updates |
+| ✅ | **922 Tests** | Comprehensive coverage across widgets, parsers, and theme system |
+| 📚 | **58 Doc Pages** | Full documentation at [wind.fluttersdk.com](https://wind.fluttersdk.com) |
+
+## Quick Start
+
+### 1. Install
+
+```bash
+flutter pub add fluttersdk_wind
+```
+
+### 2. Wrap with WindTheme
+
+```dart
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return WindTheme(
       data: WindThemeData(),
-      child: MaterialApp(
-        home: HomePage(),
+      builder: (context, controller) => MaterialApp(
+        theme: controller.toThemeData(),
+        home: const HomePage(),
       ),
     );
   }
 }
 ```
 
-### 2. Build UIs with utility classes
+### 3. Build with className
 
 ```dart
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: WDiv(
-        className: 'flex flex-col gap-4 p-6 bg-gray-100 min-h-screen',
+        className: 'flex flex-col gap-6 p-6 bg-gray-50 dark:bg-gray-900 min-h-screen',
         children: [
-          // Header
           WText(
-            'Hello Wind!',
-            className: 'text-3xl font-bold text-blue-600',
+            'Welcome to Wind',
+            className: 'text-3xl font-bold text-gray-900 dark:text-white',
           ),
-
-          // Card
           WDiv(
-            className: 'bg-white rounded-xl shadow-lg p-6 hover:shadow-xl duration-300',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                WText('Welcome', className: 'text-xl font-semibold mb-2'),
-                WText(
-                  'Build UIs faster with utility-first styling',
-                  className: 'text-gray-600',
-                ),
-              ],
+            className: 'bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6',
+            child: WText(
+              'Utility-first styling, right in Flutter.',
+              className: 'text-gray-600 dark:text-gray-300',
             ),
           ),
-
-          // Button
           WButton(
-            onTap: () => print('Clicked!'),
-            className: 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors',
+            onTap: () => print('Wind!'),
+            className: 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg',
             child: Text('Get Started'),
           ),
         ],
@@ -127,103 +136,84 @@ class HomePage extends StatelessWidget {
 }
 ```
 
-## 📚 Core Widgets
+## Widgets
 
-### WDiv - The Container Widget
+### Layout & Container
 
 ```dart
-// Flex layout
+// Flex row with gap
 WDiv(
-  className: 'flex flex-row gap-4 p-4 bg-white rounded-lg',
-  children: [...],
+  className: 'flex flex-row gap-4 p-4 bg-white rounded-lg shadow',
+  children: [sidebar, content],
 )
 
-// Grid layout
+// Responsive grid
 WDiv(
-  className: 'grid grid-cols-3 gap-4',
-  children: [...],
+  className: 'grid grid-cols-1 md:grid-cols-3 gap-6',
+  children: cards,
 )
 
-// Single child
+// Scrollable container
 WDiv(
-  className: 'w-full h-screen bg-blue-500',
-  child: WText('Full screen'),
+  className: 'w-full h-full overflow-y-auto p-4',
+  child: longContent,
 )
 ```
 
-### WText - The Typography Widget
+### Typography
 
 ```dart
-WText(
-  'Styled Text',
-  className: 'text-xl font-bold text-red-500 uppercase underline',
-)
+WText('Heading', className: 'text-2xl font-bold text-gray-900 dark:text-white')
+WText('Body text', className: 'text-base text-gray-600 leading-relaxed')
+WText('LABEL', className: 'text-xs font-semibold uppercase tracking-wider text-gray-500')
 ```
 
-### WIcon, WImage, WSvg - Media Widgets
+### Forms
 
 ```dart
-// Icon with tailwind sizing/color
-WIcon(Icons.star, className: 'text-yellow-500 text-3xl')
-
-// Image with object-fit and aspect-ratio
-WImage(
-  src: 'https://via.placeholder.com/150',
-  className: 'w-full aspect-video object-cover rounded-xl',
-)
-
-// SVG with fill/stroke control
-WSvg(
-  src: 'assets/logo.svg',
-  className: 'fill-blue-600 w-12 h-12',
-)
-```
-
-### WInput - The Form Input Widget
-
-```dart
-WInput(
+// Text input with focus ring
+WFormInput(
+  label: 'Email',
   value: _email,
-  onChanged: (value) => setState(() => _email = value),
-  type: InputType.email,
-  placeholder: 'Enter email',
+  onChanged: (v) => setState(() => _email = v),
   className: 'p-3 border rounded-lg focus:ring-2 focus:ring-blue-500',
-  placeholderClassName: 'text-gray-400',
-)
-```
-
-### WCheckbox & WSelect - Selection Controls
-
-```dart
-// Utility-first Checkbox
-WCheckbox(
-  value: _isChecked,
-  onChanged: (v) => setState(() => _isChecked = v),
-  className: 'w-5 h-5 rounded checked:bg-blue-500 checked:border-transparent',
 )
 
-// Searchable Dropdown
-WSelect<String>(
-  value: _selected,
-  options: [
-    SelectOption(label: 'Flutter', value: 'flutter'),
-    SelectOption(label: 'React', value: 'react'),
-  ],
-  onChange: (val) => setState(() => _selected = val),
-  className: 'w-full p-2 border rounded',
+// Searchable dropdown
+WFormSelect<String>(
+  label: 'Country',
+  value: _country,
+  options: countries,
+  onChange: (v) => setState(() => _country = v),
   searchable: true,
 )
+
+// Date picker
+WFormDatePicker(
+  label: 'Start Date',
+  value: _date,
+  onChanged: (v) => setState(() => _date = v),
+)
 ```
 
-### WPopover - Overlay Widget
+### Interactive
 
 ```dart
+// Button with loading state
+WButton(
+  onTap: _submit,
+  isLoading: _isSubmitting,
+  className: 'bg-blue-600 hover:bg-blue-700 loading:bg-blue-400 text-white px-6 py-3 rounded-lg',
+  child: Text('Submit'),
+)
+
+// Popover menu
 WPopover(
   alignment: PopoverAlignment.bottomRight,
-  className: 'w-64 bg-white rounded-lg shadow-xl p-2',
+  className: 'w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-2',
   triggerBuilder: (context, isOpen, isHovering) => WButton(
-    className: 'bg-blue-600 text-white',
-    child: Text('Open Menu'),
+    className: 'bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg',
+    child: Text('Menu'),
   ),
   contentBuilder: (context, close) => Column(
     mainAxisSize: MainAxisSize.min,
@@ -235,158 +225,234 @@ WPopover(
 )
 ```
 
-### WAnchor - The Interactive Widget
+### Media
 
 ```dart
-WAnchor(
-  onTap: () => print('Tapped!'),
-  child: WDiv(
-    className: 'bg-blue-500 hover:bg-blue-600 p-4 rounded',
-    child: WText('Click me', className: 'text-white'),
+WIcon(Icons.star_outlined, className: 'text-yellow-500 text-3xl')
+WImage(src: 'https://example.com/photo.jpg', className: 'w-full aspect-video object-cover rounded-xl')
+WSvg(src: 'assets/logo.svg', className: 'fill-blue-600 w-12 h-12')
+```
+
+### Server-Driven UI
+
+```dart
+// Render UI from JSON — no app update needed
+WDynamic(
+  config: WDynamicConfig.fromJson(serverResponse),
+  customIcons: {'app-logo': Icons.flutter_dash},
+  customBuilders: {'chart': (node) => MyChartWidget(node.props)},
+)
+```
+
+## Supported Utilities
+
+<details>
+<summary><strong>Layout</strong> — flex, grid, positioning, overflow</summary>
+
+`flex` `flex-row` `flex-col` `flex-wrap` `flex-1` `grid` `grid-cols-{n}` `gap-{n}` `justify-center` `justify-between` `items-center` `items-start` `self-center` `wrap` `hidden` `overflow-hidden` `overflow-y-auto`
+
+</details>
+
+<details>
+<summary><strong>Sizing</strong> — width, height, constraints</summary>
+
+`w-full` `w-1/2` `w-[200px]` `h-screen` `h-full` `min-h-screen` `max-w-lg` `max-w-[600px]` `aspect-square` `aspect-video`
+
+</details>
+
+<details>
+<summary><strong>Spacing</strong> — padding, margin</summary>
+
+`p-{n}` `px-{n}` `py-{n}` `pt-{n}` `m-{n}` `mx-auto` `mt-{n}` `mb-{n}` `-mt-{n}` `space-x-{n}` `gap-{n}`
+
+</details>
+
+<details>
+<summary><strong>Typography</strong> — size, weight, style, alignment</summary>
+
+`text-xs` `text-sm` `text-base` `text-lg` `text-xl` `text-2xl` `text-3xl` `font-bold` `font-semibold` `font-medium` `font-light` `italic` `uppercase` `lowercase` `capitalize` `underline` `line-through` `truncate` `text-center` `text-right` `leading-tight` `leading-relaxed` `tracking-wider`
+
+</details>
+
+<details>
+<summary><strong>Colors</strong> — background, text, border, opacity</summary>
+
+`bg-{color}-{shade}` `text-{color}-{shade}` `border-{color}-{shade}` `bg-[#hex]` `text-[#hex]` `bg-red-500/50` (opacity modifier) `bg-transparent` `bg-white` `bg-black`
+
+</details>
+
+<details>
+<summary><strong>Borders & Effects</strong> — radius, shadow, ring, opacity</summary>
+
+`border` `border-2` `border-t` `rounded` `rounded-lg` `rounded-xl` `rounded-full` `shadow` `shadow-md` `shadow-lg` `shadow-xl` `shadow-blue-500/20` `ring-2` `ring-blue-500` `ring-offset-2` `ring-inset` `opacity-50`
+
+</details>
+
+<details>
+<summary><strong>Transitions & Animations</strong></summary>
+
+`duration-150` `duration-300` `duration-500` `ease-in` `ease-out` `ease-in-out` `animate-spin` `animate-pulse` `animate-bounce` `animate-ping`
+
+</details>
+
+<details>
+<summary><strong>Responsive & Conditional</strong></summary>
+
+**Breakpoints:** `sm:` `md:` `lg:` `xl:` `2xl:`
+**Dark mode:** `dark:`
+**Platform:** `ios:` `android:` `web:` `mobile:`
+**States:** `hover:` `focus:` `disabled:` `loading:` `checked:` `selected:` + custom
+
+</details>
+
+## Dark Mode
+
+```dart
+// Pair every color with its dark variant
+WDiv(
+  className: 'bg-white dark:bg-gray-900 border dark:border-gray-700',
+  child: WText(
+    'Adapts automatically',
+    className: 'text-gray-900 dark:text-white',
   ),
 )
-```
 
-## 🎨 Supported Utilities
-
-### Layout
-`flex`, `grid`, `block`, `wrap`, `hidden`, `flex-row`, `flex-col`, `justify-center`, `items-center`, `gap-4`
-
-### Sizing
-`w-full`, `h-screen`, `w-1/2`, `min-w-0`, `max-w-lg`, `w-[200px]`, `aspect-square`, `aspect-video`
-
-### Spacing
-`p-4`, `px-2`, `py-3`, `m-4`, `mx-auto`, `mt-8`
-
-### Typography
-`text-lg`, `font-bold`, `font-sans`, `font-serif`, `text-red-500`, `uppercase`, `underline`, `truncate`
-
-### Background
-`bg-blue-500`, `bg-[#FF5733]`, `bg-red-500/50`, `bg-[url(...)]`, `bg-cover`, `bg-center`
-
-### Borders & Effects
-`border`, `border-2`, `border-red-500/50`, `rounded-lg`, `shadow-md`, `shadow-blue-500/20`, `opacity-75`, `ring-2`, `ring-blue-500/50`, `ring-offset-2`
-
-### Transitions & Animations
-`duration-300`, `duration-500`, `ease-in`, `ease-out`, `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping`
-
-### Responsive
-`sm:`, `md:`, `lg:`, `xl:`, `2xl:`
-
-### State
-`hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, `custom:`
-
-### Dark Mode
-`dark:`
-
-### Platform
-`ios:`, `android:`, `web:`, `mobile:`
-
-## 🌙 Dark Mode
-
-```dart
-WindTheme(
-  data: WindThemeData(brightness: Brightness.dark),
-  child: MaterialApp(...),
-)
-```
-
-Use `dark:` prefix for dark-mode-only styles:
-
-```dart
-WDiv(className: 'bg-white dark:bg-gray-900')
-```
-
-### Toggle Theme at Runtime
-
-```dart
-// Toggle between light/dark
-WindTheme.of(context).toggleTheme();
-// or
+// Toggle at runtime
 context.windTheme.toggleTheme();
+
+// Reset to system preference
+context.windTheme.resetToSystem();
 ```
 
-For reactive `MaterialApp.theme` updates, use the `builder` pattern:
+## Responsive Design
 
 ```dart
-WindTheme(
-  data: windTheme,
-  builder: (context, controller) => MaterialApp(
-    theme: controller.toThemeData(), // Auto-updates on toggle
-    home: MyHomePage(),
-  ),
-)
-```
-
-## 📱 Responsive Design
-
-```dart
+// Stack on mobile, side-by-side on desktop
 WDiv(
   className: 'flex flex-col md:flex-row gap-4',
   children: [
-    WDiv(className: 'w-full md:w-1/2', child: ...),
-    WDiv(className: 'w-full md:w-1/2', child: ...),
+    WDiv(className: 'w-full md:w-1/3', child: sidebar),
+    WDiv(className: 'w-full md:w-2/3', child: content),
   ],
 )
+
+// Hide on mobile, show on desktop
+WDiv(className: 'hidden md:flex', child: desktopNav)
 ```
 
-## 🎯 Custom Theme
+## Custom Theme
 
 ```dart
 WindTheme(
   data: WindThemeData(
     colors: {
-      'primary': MaterialColor(0xFF0986E0, {
-        50: Color(0xFFA5D7FB),
-        100: Color(0xFF92CFFB),
-        // ... more shades
-        500: Color(0xFF0986E0),
-        900: Color(0xFF000508),
+      'primary': MaterialColor(0xFF6366F1, {
+        50: Color(0xFFEEF2FF),
+        500: Color(0xFF6366F1),
+        900: Color(0xFF312E81),
       }),
     },
     baseSpacingUnit: 4.0,
+    baseFontSize: 16.0,
   ),
-  child: MaterialApp(...),
+  builder: (context, controller) => MaterialApp(
+    theme: controller.toThemeData(),
+    home: const App(),
+  ),
 )
 ```
 
-## 🛠 Helper Functions & Extensions
-
-Access theme values and utilities programmatically:
+Use your custom colors anywhere:
 
 ```dart
-// BuildContext extensions
-Color primary = context.windColors['primary']!;
-bool isDark = context.windIsDark;
-bool isDesktop = context.wScreenIs('lg');
-
-// Helper functions
-double spacing = wSpacing(context, 4); // 16.0
-Color red = wColor(context, 'red', 500)!;
+WDiv(className: 'bg-primary-500 text-white p-4 rounded-lg')
 ```
 
-## 📚 Documentation
+## Architecture
 
-For full documentation and examples, visit: **[wind.fluttersdk.com](https://wind.fluttersdk.com)**
+Wind uses a modular parsing architecture — each utility domain has its own parser:
 
-## 🤖 AI Agent Integration
+```
+className string
+    ↓
+WindParser.parse()
+    ↓
+17 domain parsers (first match wins)
+    ↓
+WindStyle (immutable value object)
+    ↓
+Widget.build()
+```
 
-For AI coding assistants (Claude Code, GitHub Copilot, Cursor, etc.), see [`docs/claude/`](docs/claude/) for integration guides and usage patterns that can be added to your project's AI context files.
+**Parsers:** background, border, display, effect, flex, font, grid, margin, opacity, overflow, padding, position, shadow, sizing, spacing, text, transition
 
-**Files available:**
-- `docs/claude/CLAUDE.md` - Plugin usage guide for AI agents
-- `docs/claude/skills/wind-usage/SKILL.md` - Detailed usage patterns
+**Cache:** Parsed results are cached by `className + breakpoint + brightness + platform + states` for zero-cost re-renders.
 
-Copy these files to your project or reference them to help AI assistants correctly use Wind in your Flutter projects.
+## Requirements
 
-## 🤝 Contributing
+| Dependency | Version |
+|:-----------|:--------|
+| Flutter | `>= 3.27.0` |
+| Dart | `>= 3.4.0` |
 
-1. Fork the repository
-2. Create a new branch: `git checkout -b my-feature`
-3. Make your changes and commit: `git commit -m "Add my feature"`
-4. Push to your branch: `git push origin my-feature`
-5. Submit a pull request
+## AI Agent Integration
 
-## 📄 License
+Wind ships with an **LLM agent skill** — a comprehensive reference that teaches AI coding assistants how to use Wind correctly.
 
-This project is licensed under the **MIT License**.
+**For Claude Code:**
+
+```bash
+# The skill is bundled at skills/wind-ui/SKILL.md
+# Claude Code discovers it automatically via .claude/skills/ symlink
+```
+
+**For other AI tools (Cursor, Copilot, etc.):**
+
+Copy `skills/wind-ui/SKILL.md` to your project's AI context directory and reference it in your AI configuration.
+
+The skill covers layout rules, widget API, token system, state modifiers, anti-patterns, and a pre-completion checklist — everything an AI needs to generate correct Wind code on the first try.
+
+## Documentation
+
+Full documentation with live examples: **[wind.fluttersdk.com](https://wind.fluttersdk.com)**
+
+- [Installation & Setup](https://wind.fluttersdk.com/getting-started/installation)
+- [Layout System](https://wind.fluttersdk.com/layout/flex)
+- [Widget Reference](https://wind.fluttersdk.com/widgets/wdiv)
+- [Theming Guide](https://wind.fluttersdk.com/core-concepts/theming)
+- [Responsive Design](https://wind.fluttersdk.com/core-concepts/responsive)
+- [Dark Mode](https://wind.fluttersdk.com/core-concepts/dark-mode)
+
+## Contributing
+
+We welcome contributions! Please read our contributing guidelines before submitting a PR.
+
+```bash
+# Clone and setup
+git clone https://github.com/fluttersdk/wind.git
+cd wind && git checkout v1
+flutter pub get
+
+# Run tests
+flutter test
+
+# Check for issues
+dart analyze
+
+# Run the example app
+cd example && flutter run
+```
+
+**Found a bug?** [Open an issue](https://github.com/fluttersdk/wind/issues/new?template=bug_report.yml)
+**Have an idea?** [Request a feature](https://github.com/fluttersdk/wind/issues/new?template=feature_request.yml)
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <sub>Built with care by <a href="https://github.com/fluttersdk">FlutterSDK</a></sub><br/>
+  <sub>If Wind saves you time, <a href="https://github.com/fluttersdk/wind">give it a star</a> — it helps others discover it.</sub>
+</p>
