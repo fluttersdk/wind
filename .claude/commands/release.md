@@ -1,5 +1,5 @@
 ---
-description: Prepare a new release — bumps version, updates changelog, syncs docs, waits for CI, creates GitHub Release (which triggers pub.dev publish).
+description: Prepare a new release — bumps version, updates changelog, syncs docs, creates GitHub Release which triggers validate + publish to pub.dev.
 ---
 
 ## Context
@@ -71,7 +71,7 @@ Run all checks locally. ALL must pass before proceeding:
 4. `dart pub publish --dry-run` — must be zero warnings
 5. Review all changed files with `git diff`
 
-If **dry-run fails** → STOP. Fix the issue before proceeding. The dry-run catches the same errors that pub.dev OIDC publish would catch.
+If **dry-run fails** → STOP. Fix the issue before proceeding.
 
 ### Phase 6: Commit & Push
 
@@ -79,31 +79,13 @@ If **dry-run fails** → STOP. Fix the issue before proceeding. The dry-run catc
 2. Create a single commit: `chore(release): {version}`
 3. Push to remote: `git push`
 
-### Phase 7: Wait for CI
+### Phase 7: Create GitHub Release
 
-The push triggers the **Lint & Test** workflow (`deploy.yml`) on GitHub. Wait for it to pass before creating the release.
-
-1. Get the run ID for the push commit:
-   ```bash
-   gh run list --branch v1 --limit 1 --json databaseId,status,conclusion --jq '.[0]'
-   ```
-
-2. Wait for CI to complete:
-   ```bash
-   gh run watch {run_id} --exit-status
-   ```
-
-3. Evaluate:
-   - **CI passed** → proceed to Phase 8
-   - **CI failed** → STOP. Report the failure. Run `gh run view {run_id} --log-failed` to show the error. Do NOT create the release. The user must fix the issue and re-run `/release`.
-
-### Phase 8: Create GitHub Release
-
-CI is green. Create a GitHub Release using `gh` CLI. This does three things at once:
+Create a GitHub Release using `gh` CLI. This triggers the full pipeline at once:
 
 1. **Creates the GitHub Release** with changelog notes
 2. **Creates the git tag** (e.g. `1.0.0-alpha.4`)
-3. **Triggers `publish.yml`** — the tag push activates the pub.dev OIDC publish workflow
+3. **Triggers `publish.yml`** — tag push starts the `validate` job (analyze + format + test), then `publish` job (dry-run + publish to pub.dev via OIDC)
 
 Determine if the version is a prerelease:
 - Contains `alpha` or `beta` or `rc` → add `--prerelease` flag
@@ -153,6 +135,5 @@ Present a summary:
 **Changelog:** {count} features, {count} fixes, {count} improvements
 
 **Local:** ✅ Tests ({count} passed) · ✅ Analyzer (0 issues) · ✅ Format clean · ✅ Dry-run (0 warnings)
-**CI:** ✅ Lint & Test passed (run #{run_id})
-**pub.dev:** ✅ Published (run #{publish_run_id}) — https://pub.dev/packages/fluttersdk_wind
+**pub.dev:** ✅ Validate passed → Published (run #{publish_run_id}) — https://pub.dev/packages/fluttersdk_wind
 ```
