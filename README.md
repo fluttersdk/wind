@@ -388,7 +388,9 @@ Widget.build()
 
 ## AI Agent Integration
 
-Wind includes an LLM skill (`ai/skills/wind-ui/SKILL.md`) that teaches AI coding assistants the correct className patterns, layout rules, and anti-patterns. Claude Code discovers it automatically; for other tools, copy it to your AI context directory.
+Use Wind with AI coding assistants like Claude Code, Cursor, or GitHub Copilot. The **wind-ui** skill teaches your AI the correct className patterns, layout rules, widget API, and common anti-patterns — so it generates correct Wind code on the first try.
+
+Setup instructions and skill files: **[fluttersdk/ai](https://github.com/fluttersdk/ai)**
 
 ## Documentation
 
