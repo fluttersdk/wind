@@ -9,6 +9,7 @@ The utility-first SVG component. `WSvg` brings HTML SVG semantics to Flutter wit
 - [Event Handling](#event-handling)
 - [State Variants](#state-variants)
 - [Styling Examples](#styling-examples)
+- [Preserving Original Colors](#preserving-original-colors)
 - [All Supported Classes](#all-supported-classes)
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
@@ -136,6 +137,9 @@ WSvg(
 )
 ```
 
+> [!NOTE]
+> Adding the `preserve-colors` class bypasses the entire color priority chain. No `ColorFilter` is applied, and the SVG renders with its original embedded colors.
+
 ### Opacity and Transitions
 You can apply opacity and animate it using transition classes.
 
@@ -146,12 +150,31 @@ WSvg(
 )
 ```
 
+### Preserving Original Colors
+
+By default, `WSvg` applies a `ColorFilter` based on the color priority chain above. For SVGs that contain multiple colors you want to keep intact—like QR codes, branded logos, or multi-color illustrations—use the `preserve-colors` utility class.
+
+```dart
+// Multi-color logo — keep original colors
+WSvg(
+  src: 'assets/logo-colored.svg',
+  className: 'w-32 h-32 preserve-colors',
+)
+
+// QR code — must not be tinted
+WSvg(
+  src: 'assets/qr-code.svg',
+  className: 'w-48 h-48 preserve-colors',
+)
+```
+
 ## All Supported Classes
 
 | Category | Classes |
 |:---------|:--------|
 | Sizing | `w-{size}`, `h-{size}`, `text-{size}` |
 | Coloring | `fill-{color}`, `stroke-{color}`, `text-{color}` |
+| Preserve | `preserve-colors` |
 | Opacity | `opacity-{n}` |
 | Transitions| `duration-{ms}`, `ease-{curve}` |
 | Animations | `animate-spin`, `animate-pulse`, `animate-bounce` |

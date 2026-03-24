@@ -75,6 +75,7 @@ const WDynamic({
   WDynamicController? controller,
   Set<String>? denyWidgets,
   Map<String, WWidgetBuilder>? builders,
+  Map<String, IconData>? customIcons,
   int maxDepth = 50,
   Widget Function(String type, Object error)? onError,
   Widget Function(String type, Map<String, dynamic> props)? onUnknownWidget,
@@ -90,6 +91,7 @@ const WDynamic({
 | `controller` | `WDynamicController?` | `null` | Optional controller for external state access (read/write form values). |
 | `denyWidgets` | `Set<String>?` | `null` | Widget types to remove from the default whitelist. |
 | `builders` | `Map<String, WWidgetBuilder>?` | `null` | Custom widget builders keyed by type name. Signature: `Widget Function(Map<String, dynamic> props, List<Widget> children)`. |
+| `customIcons` | `Map<String, IconData>?` | `null` | Custom icon mappings for `WIcon` widgets. Keys are icon names used in the JSON `icon` prop, values are `IconData` instances. Extends the default Material icon map. |
 | `maxDepth` | `int` | `50` | Maximum recursion depth for nested widgets. Prevents infinite loops. |
 | `onError` | `Widget Function(String, Object)?` | `null` | Error handler for widget build failures. Returns a fallback widget. |
 | `onUnknownWidget` | `Widget Function(String, Map)?` | `null` | Handler for unknown or denied widget types. Returns a fallback widget. |
@@ -372,6 +374,34 @@ WDynamic(
 ```
 
 Custom builders have priority over default widgets. You can override built-in widgets by providing a builder with the same type name.
+
+### Custom Icons
+
+Map string icon names to `IconData` for use in JSON `WIcon` widget nodes. Custom icons extend (not replace) the built-in Material icon map.
+
+```dart
+WDynamic(
+  json: const {
+    'type': 'WDiv',
+    'props': {'className': 'flex gap-4 items-center'},
+    'children': [
+      {
+        'type': 'WIcon',
+        'props': {'icon': 'heart', 'className': 'text-red-500 text-2xl'},
+      },
+      {
+        'type': 'WIcon',
+        'props': {'icon': 'star', 'className': 'text-yellow-500 text-2xl'},
+      },
+    ],
+  },
+  customIcons: {
+    'heart': Icons.favorite,
+    'star': Icons.star,
+    'settings': Icons.settings,
+  },
+)
+```
 
 ## Security
 

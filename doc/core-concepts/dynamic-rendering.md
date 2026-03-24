@@ -9,6 +9,7 @@ Build Flutter UIs from JSON at runtime. WDynamic turns a Map structure into a li
 - [Form State Management](#form-state-management)
 - [Security & Whitelisting](#security-whitelisting)
 - [Custom Widget Builders](#custom-widget-builders)
+- [Custom Icons](#custom-icons)
 - [Error Handling](#error-handling)
 - [Related Documentation](#related-documentation)
 
@@ -392,6 +393,25 @@ Custom builders receive the parsed `props` map and any resolved `children` widge
 
 > [!WARNING]
 > Custom builders bypass the security whitelist. Only register builders for widgets you trust. Never pass user-provided builder functions.
+
+## Custom Icons
+
+For `WIcon` widgets in your JSON, you can provide custom icon mappings without building a full custom widget builder. Use the `customIcons` prop to map string names to `IconData`:
+
+```dart
+WDynamic(
+  json: {
+    'type': 'WIcon',
+    'props': {'icon': 'myCustomIcon'},
+  },
+  customIcons: {
+    'myCustomIcon': Icons.star,
+    'myOtherIcon': Icons.favorite,
+  },
+)
+```
+
+This is a lightweight alternative to custom builders when you only need to extend the icon library. See [WDynamic — Custom Icons](../widgets/w-dynamic.md#custom-icons) for complete configuration details.
 
 <a name="error-handling"></a>
 ## Error Handling

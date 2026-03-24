@@ -49,7 +49,7 @@ const WButton({
   String? className,
   String? loadingText,
   Widget? loadingWidget,
-  double loadingSize = 16,
+  double loadingSize = 20,
   Color? loadingColor,
   Set<String>? states,
 })
@@ -68,8 +68,8 @@ const WButton({
 | `disabled` | `bool` | `false` | Activates disabled state: disables interaction and changes cursor. |
 | `loadingText` | `String?` | `null` | Text to display next to the loading spinner. |
 | `loadingWidget` | `Widget?` | `null` | Custom widget to replace the default spinner. |
-| `loadingSize` | `double` | `16` | Size of the default loading spinner. |
-| `loadingColor` | `Color?` | `null` | Color of the spinner. Defaults to text color or white. |
+| `loadingSize` | `double` | `20` | Size of the default loading spinner. |
+| `loadingColor` | `Color?` | `null` | Color of the spinner. Falls back to text color, then auto-computes contrast via W3C luminance when no color is resolvable. |
 | `states` | `Set<String>?` | `null` | Custom state prefixes (e.g., `{'error'}` for `error:` classes). |
 
 ## Layout Modes
@@ -143,6 +143,9 @@ WButton(
   child: WText('Submit'),
 )
 ```
+
+> [!NOTE]
+> When no explicit `loadingColor` is set and no text color is available from the className, the spinner automatically picks a contrasting color (light or dark) based on the button's background luminance using the W3C relative luminance algorithm.
 
 ### Icon Buttons
 

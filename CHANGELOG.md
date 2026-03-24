@@ -6,6 +6,27 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### ✨ New Features
+
+- **WDynamic Custom Icons**: `customIcons` prop for user-defined icon mappings in dynamic rendering
+- **Theme Callbacks**: `onThemeChanged` callback on `WindTheme` — fires on user-initiated theme toggles for persistence
+- **Reset to System Theme**: `resetToSystem()` method on `WindThemeController` — re-enables automatic system brightness sync
+- **SVG Preserve Colors**: `preserve-colors` utility class to skip ColorFilter on `WSvg`, ideal for QR codes and multi-color logos
+
+### 🐛 Bug Fixes
+
+- **WButton Spinner Size**: Increased default loading spinner size from 16 to 20 for better visibility
+- **WButton Spinner Color**: Spinner now falls back to text color, then auto-computes contrast via W3C luminance when no color is resolvable
+
+### 🔧 Improvements
+
+- **CI/CD**: Replaced ci.yml with deploy.yml for web build and SSH deployment pipeline
+- **Security**: Added SECURITY.md and Dependabot configuration
+
+---
+
 ## [1.0.0-alpha.2] - 2026-02-05
 
 ### 📦 Package Improvements

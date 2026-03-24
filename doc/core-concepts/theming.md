@@ -2,6 +2,8 @@
 
 - [Introduction](#introduction)
 - [The WindTheme Widget](#the-windtheme-widget)
+- [Theme Change Callbacks](#theme-change-callbacks)
+- [Resetting to System Theme](#resetting-to-system-theme)
 - [Colors](#colors)
 - [Typography](#typography)
 - [Spacing and Sizing](#spacing-and-sizing)
@@ -37,6 +39,9 @@ void main() {
       data: WindThemeData(
         // We'll customize this in the next sections
       ),
+      onThemeChanged: (brightness) {
+        // Optional: persist user's theme preference
+      },
       child: MaterialApp(
         home: MyHome(),
       ),
@@ -44,6 +49,42 @@ void main() {
   );
 }
 ```
+
+<a name="theme-change-callbacks"></a>
+## Theme Change Callbacks
+
+When a user manually toggles the theme via `toggleTheme()`, you may want to persist their preference. The `onThemeChanged` callback fires only on user-initiated theme changes—it does **not** fire when the system brightness changes automatically.
+
+```dart
+WindTheme(
+  onThemeChanged: (brightness) {
+    // Persist user preference
+    Vault.set('theme_mode', brightness == Brightness.dark ? 'dark' : 'light');
+  },
+  data: WindThemeData(),
+  child: MaterialApp(
+    home: MyHome(),
+  ),
+)
+```
+
+> [!IMPORTANT]
+> `onThemeChanged` only fires when the user calls `toggleTheme()`. Automatic system brightness sync does not trigger this callback.
+
+<a name="resetting-to-system-theme"></a>
+## Resetting to System Theme
+
+After a user manually toggles the theme, the automatic system sync is disabled to respect their choice. To re-enable automatic system brightness sync, call `resetToSystem()`:
+
+```dart
+// Re-enable system brightness sync
+WindTheme.of(context).resetToSystem();
+
+// Or via extension
+context.windTheme.resetToSystem();
+```
+
+This immediately syncs the theme with the current platform brightness and re-enables the `syncWithSystem` flag so future OS changes are reflected automatically.
 
 <a name="colors"></a>
 ## Colors
@@ -169,5 +210,6 @@ final darkTheme = myDefaultTheme.copyWith(
 | `borderRadius` | `Map<String, double>` | Corner radius scale for `rounded-*`. |
 | `shadows` | `Map<String, List<BoxShadow>>` | Shadow definitions for `shadow-*`. |
 | `syncWithSystem` | `bool` | Whether to automatically follow OS brightness. |
+| `onThemeChanged` | `ValueChanged<Brightness>?` | Callback on user-initiated theme toggle. Does not fire on system changes. |
 
 For more details on how to sync these values with Flutter's standard Material components, check out the [Theme Binding](./theme-binding.md) guide.
