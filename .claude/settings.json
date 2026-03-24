@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | grep '\\.dart$' | xargs dart format 2>/dev/null || true",
+            "timeout": 10000
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | grep '\\.dart$' && dart analyze --no-fatal-infos || true",
+            "timeout": 15000
+          }
+        ]
+      }
+    ]
+  }
+}

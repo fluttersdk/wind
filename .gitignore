@@ -45,9 +45,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.sisyphus
-**/AGENTS.md
-.omc/
-.claude/
 .ac/
-CLAUDE.md
