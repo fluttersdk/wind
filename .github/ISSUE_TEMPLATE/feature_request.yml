@@ -10,7 +10,7 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Feature Description
+      label: Description
       description: What feature or improvement would you like to see?
       placeholder: A clear description of the feature and why it's needed.
     validations:
@@ -19,7 +19,7 @@ body:
   - type: textarea
     id: classname-syntax
     attributes:
-      label: Proposed className Syntax
+      label: Proposed Utility Class Syntax
       description: If this involves new utility classes, what syntax would you expect?
       placeholder: |
         backdrop-blur-sm

@@ -10,7 +10,7 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Bug Description
+      label: Description
       description: A clear and concise description of the bug.
       placeholder: What happened?
     validations:
@@ -48,7 +48,7 @@ body:
   - type: textarea
     id: classname
     attributes:
-      label: className Used
+      label: Utility Classes Used
       description: The className string that triggered the issue (if applicable).
       placeholder: "bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
       render: dart
