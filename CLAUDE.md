@@ -44,7 +44,7 @@ lib/src/
 After ANY source code change, these MUST be synced **before committing**:
 
 1. **`doc/`** — Update relevant documentation files (match existing format exactly)
-2. **`ai/skills/wind-ui/`** — Update SKILL.md and references if API/widget changes
+2. **`skills/wind-ui/`** — Update SKILL.md and references if API/widget changes
 3. **`example/lib/pages/`** — Update or create demo pages for changed/new features
 4. **`CHANGELOG.md`** — Add entry under `[Unreleased]` section
 5. **`README.md`** — Update if new widgets, features, or API changes affect the overview
@@ -87,5 +87,6 @@ setUp(() {
 
 ## Skills & Extensions
 
-- **`ai/skills/wind-ui/`** — Wind UI skill for LLM agents. Teaches className patterns, layout rules, component composition. Symlinked from `.claude/ai/skills/wind-ui/`
-- **CI:** `deploy.yml` (push to main/develop → lint + test + web build + SSH deploy), `publish.yml` (semver tag → pub.dev)
+- **`skills/wind-ui/`** — Wind UI skill for LLM agents. Teaches className patterns, layout rules, component composition. Symlinked from `.claude/skills/wind-ui/`
+- **Upstream sync:** When you modify any file under `skills/wind-ui/`, the same change MUST also be applied to the [`fluttersdk/ai`](https://github.com/fluttersdk/ai) repository (`skills/wind-ui/` path). Remind the user to sync after committing.
+- **CI:** `deploy.yml` (push to v1 → lint + test), `publish.yml` (GitHub Release → pub.dev)
