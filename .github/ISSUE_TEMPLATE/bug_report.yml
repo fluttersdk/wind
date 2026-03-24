@@ -1,0 +1,92 @@
+name: Bug Report
+description: Report a bug in Wind UI
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill in the details below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug.
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Create a WDiv with className '...'
+        2. Add children [...]
+        3. Run on [platform]
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: classname
+    attributes:
+      label: className Used
+      description: The className string that triggered the issue (if applicable).
+      placeholder: "bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+      render: dart
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Minimal Reproduction Code
+      description: A minimal code snippet to reproduce the issue.
+      render: dart
+
+  - type: input
+    id: wind-version
+    attributes:
+      label: Wind UI Version
+      placeholder: "1.0.0-alpha.3"
+    validations:
+      required: true
+
+  - type: input
+    id: flutter-version
+    attributes:
+      label: Flutter Version
+      placeholder: "3.27.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - iOS
+        - Android
+        - Web
+        - macOS
+        - Windows
+        - Linux
+        - All
+    validations:
+      required: true

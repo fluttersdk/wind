@@ -1,0 +1,45 @@
+name: Documentation Issue
+description: Report incorrect, missing, or unclear documentation
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve the Wind UI documentation!
+
+  - type: input
+    id: page
+    attributes:
+      label: Documentation Page
+      description: Which doc page has the issue?
+      placeholder: "doc/widgets/w-button.md or https://wind.fluttersdk.com/..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      options:
+        - Incorrect information
+        - Missing information
+        - Unclear explanation
+        - Broken code example
+        - Missing code example
+        - Typo
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What's wrong or missing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Fix
+      description: How should the documentation be corrected?
