@@ -388,7 +388,7 @@ Widget.build()
 
 ## AI Agent Integration
 
-Wind includes an LLM skill (`skills/wind-ui/SKILL.md`) that teaches AI coding assistants the correct className patterns, layout rules, and anti-patterns. Claude Code discovers it automatically; for other tools, copy it to your AI context directory.
+Wind includes an LLM skill (`ai/skills/wind-ui/SKILL.md`) that teaches AI coding assistants the correct className patterns, layout rules, and anti-patterns. Claude Code discovers it automatically; for other tools, copy it to your AI context directory.
 
 ## Documentation
 
