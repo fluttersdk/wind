@@ -205,9 +205,9 @@ class WindTheme extends StatefulWidget {
     this.builder,
     this.onThemeChanged,
   }) : assert(
-           child != null || builder != null,
-           'Either child or builder must be provided',
-         );
+          child != null || builder != null,
+          'Either child or builder must be provided',
+        );
 
   /// Returns the [WindThemeController] from the closest [WindTheme] ancestor.
   ///

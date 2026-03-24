@@ -542,8 +542,7 @@ void main() {
           expect(
             spinnerColor,
             equals(Colors.white),
-            reason:
-                'Loading spinner should be white on dark background',
+            reason: 'Loading spinner should be white on dark background',
           );
         },
       );
