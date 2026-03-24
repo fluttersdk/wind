@@ -1,5 +1,5 @@
 ---
-description: Prepare a new release — bumps version, updates changelog, syncs docs, creates GitHub Release (which triggers pub.dev publish).
+description: Prepare a new release — bumps version, updates changelog, syncs docs, waits for CI, creates GitHub Release (which triggers pub.dev publish).
 ---
 
 ## Context
@@ -61,7 +61,7 @@ Check README.md for any version-specific content that needs updating:
 1. Version numbers in badges or install examples
 2. Any outdated code examples that don't match current API
 
-### Phase 5: Final Verification
+### Phase 5: Local Verification
 
 1. Run `dart format --set-exit-if-changed .` — must be clean
 2. Run `dart analyze` — must be zero issues
@@ -74,9 +74,27 @@ Check README.md for any version-specific content that needs updating:
 2. Create a single commit: `chore(release): {version}`
 3. Push to remote: `git push`
 
-### Phase 7: GitHub Release
+### Phase 7: Wait for CI
 
-Create a GitHub Release using `gh` CLI. This automatically creates the tag and triggers pub.dev publishing.
+The push triggers the **CI & Deploy** workflow (Lint & Test) on GitHub. Wait for it to pass before creating the release.
+
+1. Get the run ID for the push commit:
+   ```bash
+   gh run list --branch v1 --limit 1 --json databaseId,status,conclusion --jq '.[0]'
+   ```
+
+2. Wait for CI to complete:
+   ```bash
+   gh run watch {run_id} --exit-status
+   ```
+
+3. Evaluate:
+   - **CI passed** → proceed to Phase 8
+   - **CI failed** → STOP. Report the failure. Run `gh run view {run_id} --log-failed` to show the error. Do NOT create the release. The user must fix the issue and re-run `/release`.
+
+### Phase 8: Create GitHub Release
+
+CI is green. Create a GitHub Release using `gh` CLI. This automatically creates a tag, and the tag push triggers `publish.yml` → pub.dev publishing.
 
 Determine if the version is a prerelease:
 - Contains `alpha` or `beta` or `rc` → add `--prerelease` flag
@@ -115,7 +133,8 @@ Present a summary:
 
 **Changelog:** {count} features, {count} fixes, {count} improvements
 
-**Verification:** ✅ Tests ({count} passed) · ✅ Analyzer (0 issues) · ✅ Format clean
+**CI:** ✅ Lint & Test passed (run #{run_id})
+**Local:** ✅ Tests ({count} passed) · ✅ Analyzer (0 issues) · ✅ Format clean
 
-**pub.dev:** Publishing triggered via GitHub Actions — check `gh run list` for status.
+**pub.dev:** Publishing triggered — check status: `gh run list --limit 1`
 ```
