@@ -2,7 +2,7 @@
 
 Utility-first Flutter UI plugin. Translates `className` strings (Tailwind syntax) into Flutter widget trees via modular parsing architecture.
 
-**Version:** 1.0.0-alpha.4 · **Branch:** `v1` (master = v0, do NOT touch) · **Dart:** >=3.4.0 · **Flutter:** >=3.27.0
+**Dart:** >=3.4.0 · **Flutter:** >=3.27.0
 
 ## Architecture
 
