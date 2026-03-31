@@ -417,6 +417,13 @@ class WDiv extends StatelessWidget {
               if (child is WText && _hasFlexClass(child.className)) {
                 return child;
               }
+              // Skip shrink-0 children (should not shrink — keep intrinsic size)
+              if (child is WDiv && _hasShrinkZero(child.className)) {
+                return child;
+              }
+              if (child is WText && _hasShrinkZero(child.className)) {
+                return child;
+              }
               return Flexible(child: child);
             }).toList()
           : gappedChildren;
@@ -430,6 +437,12 @@ class WDiv extends StatelessWidget {
         children: rowChildren,
       );
     }
+  }
+
+  /// Checks if a className contains shrink-0 class that should preserve intrinsic size
+  static bool _hasShrinkZero(String? className) {
+    if (className == null) return false;
+    return className.contains('shrink-0');
   }
 
   /// Checks if a className contains flex-N classes that produce Expanded widgets

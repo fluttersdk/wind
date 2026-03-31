@@ -250,6 +250,112 @@ void main() {
     );
 
     testWidgets(
+      'flex-row justify-between with flex-1 child should not wrap shrink-0 child with Flexible',
+      (tester) async {
+        // Bug: when needsSpaceDistribution is true, ALL non-flex children
+        // get wrapped with Flexible — including shrink-0 children that should
+        // keep their intrinsic size. The shrink-0 child must NOT be Flexible.
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: SizedBox(
+                width: 300,
+                child: const WDiv(
+                  className: 'flex flex-row justify-between',
+                  children: [
+                    WDiv(
+                      className: 'flex-1',
+                      child: WText('Grows to fill space'),
+                    ),
+                    WDiv(
+                      className: 'shrink-0',
+                      child: WText('Fixed size'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+
+        final row = tester.widget<Row>(find.byType(Row).first);
+
+        // The shrink-0 child should NOT be wrapped with Flexible.
+        // Only non-flex, non-shrink-0 children may receive Flexible wrapping.
+        // Count Flexible wrappers that are NOT Expanded (i.e. flex:1 children).
+        final flexibleCount = row.children
+            .where((child) => child is Flexible && child is! Expanded)
+            .length;
+
+        expect(
+          flexibleCount,
+          0,
+          reason:
+              'shrink-0 child must not be wrapped with Flexible when justify-between is used',
+        );
+      },
+    );
+
+    testWidgets(
+      'flex-row justify-between with flex-1 child preserves non-flex child intrinsic size',
+      (tester) async {
+        // Bug: the shrink-0 child gets wrapped in Flexible, which forces
+        // Flutter to give it a flex allocation instead of its natural size.
+        // After the fix, the non-flex child must render at its intrinsic width.
+
+        const fixedText = 'Badge';
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: SizedBox(
+                width: 400,
+                child: const WDiv(
+                  className: 'flex flex-row justify-between',
+                  children: [
+                    WDiv(
+                      className: 'flex-1',
+                      child: WText('Title that grows'),
+                    ),
+                    WDiv(
+                      className: 'shrink-0 px-2',
+                      child: WText(fixedText),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+
+        // The shrink-0 WDiv must NOT be a Flexible descendant directly inside
+        // the Row. Find the Row and inspect its direct children.
+        final row = tester.widget<Row>(find.byType(Row).first);
+
+        // None of the direct Row children that correspond to a shrink-0 WDiv
+        // should be a Flexible widget. We verify this by asserting zero
+        // non-Expanded Flexible wrappers exist at the Row's children level.
+        final nonExpandedFlexible = row.children
+            .where((child) => child is Flexible && child is! Expanded)
+            .toList();
+
+        expect(
+          nonExpandedFlexible,
+          isEmpty,
+          reason:
+              'shrink-0 child must retain intrinsic size — no Flexible wrapping allowed',
+        );
+      },
+    );
+
+    testWidgets(
       'flex-col should NOT auto-wrap children with Flexible',
       (tester) async {
         // Column direction doesn't need shrink behavior the same way

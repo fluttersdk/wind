@@ -61,7 +61,7 @@ WDiv(
 | `items-{alignment}` | `align-items: ...` | `CrossAxisAlignment` |
 | `gap-{n}` | `gap: {n}` | `SizedBox` (spacer) |
 | `flex-1` | `flex: 1` | `Expanded()` |
-| `shrink-0` | `flex-shrink: 0` | `Flexible(fit: FlexFit.tight)` |
+| `shrink-0` | `flex-shrink: 0` | No wrapper — preserves intrinsic size |
 
 <a name="flex-direction"></a>
 ## Flex Direction
@@ -190,7 +190,7 @@ Control how individual children resize to fill available space.
 | `flex-grow` | Alias for `flex-1`. |
 | `flex-{n}` | Specific flex factor (e.g., `flex-2`). |
 | `shrink` | Allow child to shrink if needed (`FlexFit.loose`). |
-| `shrink-0` | Prevent child from shrinking (`FlexFit.tight`). |
+| `shrink-0` | Preserve intrinsic size — no Flexible wrapper, child keeps its natural dimensions. |
 | `flex-none` | Do not grow or shrink. |
 
 <x-preview path="layout/flex_grow" size="md" source="example/lib/pages/layout/flex_grow.dart"></x-preview>

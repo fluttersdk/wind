@@ -155,7 +155,7 @@ void main() {
 
       test('parses shrink-0 class', () {
         final styles = parser.parse(WindStyle(), ['shrink-0'], context);
-        expect(styles.flexFit, FlexFit.tight);
+        expect(styles.flexFit, isNull);
       });
 
       test('parses items-baseline class', () {
@@ -167,7 +167,12 @@ void main() {
       test('applies last-class-wins for shrink', () {
         final styles =
             parser.parse(WindStyle(), ['shrink', 'shrink-0'], context);
-        expect(styles.flexFit, FlexFit.tight);
+        expect(styles.flexFit, FlexFit.loose);
+      });
+
+      test('shrink-0 should not set flexFit', () {
+        final styles = parser.parse(WindStyle(), ['shrink-0'], context);
+        expect(styles.flexFit, isNull);
       });
 
       test('returns unchanged styles when classes is null', () {
@@ -183,9 +188,9 @@ void main() {
         expect(styles.flexFit, FlexFit.loose);
       });
 
-      test('shrink-0 -> FlexFit.tight', () {
+      test('shrink-0 does not set flexFit', () {
         final styles = parser.parse(WindStyle(), ['shrink-0'], context);
-        expect(styles.flexFit, FlexFit.tight);
+        expect(styles.flexFit, isNull);
       });
 
       test(
@@ -197,10 +202,10 @@ void main() {
       });
 
       test('last-class-wins override logic', () {
-        // Flex shrink overrides
+        // Flex shrink overrides — shrink-0 no longer sets flexFit
         expect(
           parser.parse(WindStyle(), ['shrink', 'shrink-0'], context).flexFit,
-          FlexFit.tight,
+          FlexFit.loose,
         );
         expect(
           parser.parse(WindStyle(), ['shrink-0', 'shrink'], context).flexFit,
