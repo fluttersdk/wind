@@ -8,6 +8,11 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### 🐛 Bug Fixes
+
+- Fixed: flex-1 + justify-between space distribution broken by incorrect Flexible wrapping (#45)
+- Fixed: shrink-0 no longer creates Flexible wrapper — correctly preserves intrinsic size (#45)
+
 ---
 
 ## [1.0.0-alpha.4] - 2026-03-24

@@ -109,7 +109,6 @@ class FlexboxGridParser implements WindParserInterface {
   /// Maps flex child properties to `FlexFit`
   static const _flexFitMap = <String, FlexFit>{
     'shrink': FlexFit.loose, // flex-shrink: 1 (can shrink)
-    'shrink-0': FlexFit.tight, // flex-shrink: 0 (don't shrink)
     'flex-auto': FlexFit.loose,
     'flex-initial': FlexFit.loose,
     'flex-shrink': FlexFit.loose,
