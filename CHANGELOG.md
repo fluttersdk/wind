@@ -8,10 +8,18 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.0.0-alpha.5] - 2026-03-31
+
 ### 🐛 Bug Fixes
 
-- Fixed: flex-1 + justify-between space distribution broken by incorrect Flexible wrapping (#45)
-- Fixed: shrink-0 no longer creates Flexible wrapper — correctly preserves intrinsic size (#45)
+- **Flex Space Distribution**: flex-1 + justify-between no longer breaks layout — shrink-0 children are skipped during container-level Flexible wrapping (#45)
+- **shrink-0 Semantics**: shrink-0 no longer creates a Flexible wrapper — correctly preserves intrinsic size matching CSS flex-shrink: 0 behavior (#45)
+
+### 🔧 Improvements
+
+- **GitHub Copilot Config**: Added Copilot instructions converted from Claude Code configuration (#46)
 
 ---
 
