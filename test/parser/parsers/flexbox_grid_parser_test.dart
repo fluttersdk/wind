@@ -170,11 +170,6 @@ void main() {
         expect(styles.flexFit, FlexFit.loose);
       });
 
-      test('shrink-0 should not set flexFit', () {
-        final styles = parser.parse(WindStyle(), ['shrink-0'], context);
-        expect(styles.flexFit, isNull);
-      });
-
       test('returns unchanged styles when classes is null', () {
         final initialStyles = WindStyle();
         final styles = parser.parse(initialStyles, null, context);

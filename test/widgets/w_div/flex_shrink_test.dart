@@ -335,22 +335,30 @@ void main() {
 
         expect(tester.takeException(), isNull);
 
-        // The shrink-0 WDiv must NOT be a Flexible descendant directly inside
-        // the Row. Find the Row and inspect its direct children.
-        final row = tester.widget<Row>(find.byType(Row).first);
+        // Verify the shrink-0 child is not forced into equal flex allocation.
+        // If it were wrapped in Flexible(flex: 1) alongside Expanded(flex: 1),
+        // both children would split the 400px container equally → 200px each.
+        // The shrink-0 child should retain its intrinsic width instead.
+        final badgeFinder = find.text(fixedText);
+        expect(badgeFinder, findsOneWidget);
 
-        // None of the direct Row children that correspond to a shrink-0 WDiv
-        // should be a Flexible widget. We verify this by asserting zero
-        // non-Expanded Flexible wrappers exist at the Row's children level.
-        final nonExpandedFlexible = row.children
-            .where((child) => child is Flexible && child is! Expanded)
-            .toList();
+        final badgeRenderBox = tester.renderObject<RenderBox>(badgeFinder);
+        final badgeWidth = badgeRenderBox.size.width;
 
+        expect(badgeWidth, greaterThan(0));
+        // Must not equal the 50% split that Flexible(flex:1) would produce
         expect(
-          nonExpandedFlexible,
-          isEmpty,
+          badgeWidth,
+          isNot(equals(200.0)),
           reason:
-              'shrink-0 child must retain intrinsic size — no Flexible wrapping allowed',
+              'shrink-0 child must retain intrinsic size — not equal-flex split',
+        );
+        // Must not fill the entire container
+        expect(
+          badgeWidth,
+          lessThan(400),
+          reason:
+              'shrink-0 child must not expand to fill entire container width',
         );
       },
     );

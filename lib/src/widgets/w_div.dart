@@ -439,10 +439,18 @@ class WDiv extends StatelessWidget {
     }
   }
 
-  /// Checks if a className contains shrink-0 class that should preserve intrinsic size
+  /// Checks if a className contains shrink-0 token that should preserve
+  /// intrinsic size. Uses token-based matching to avoid false positives
+  /// from substring matches (e.g. a hypothetical `no-shrink-0`).
+  /// Matches both bare `shrink-0` and prefixed variants like `md:shrink-0`.
   static bool _hasShrinkZero(String? className) {
-    if (className == null) return false;
-    return className.contains('shrink-0');
+    if (className == null || className.isEmpty) return false;
+    for (final token in className.split(' ')) {
+      if (token == 'shrink-0' || token.endsWith(':shrink-0')) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Checks if a className contains flex-N classes that produce Expanded widgets
