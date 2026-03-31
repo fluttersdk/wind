@@ -15,12 +15,10 @@ for rule in "$RULES_DIR"/*.md; do
   name=$(basename "$rule" .md)
   target="$INSTRUCTIONS_DIR/${name}.instructions.md"
 
-  # Extract frontmatter fields
+  # Extract path: from frontmatter
   path_glob=$(sed -n '/^---$/,/^---$/{ /^path:/{ s/^path: *"*\(.*\)"*/\1/; p; } }' "$rule")
 
   # Extract body (everything after second ---)
-  body=$(sed '1,/^---$/{ /^---$/!d; }; /^---$/{ N; d; }' "$rule" | sed '1,/^---$/d')
-  # Simpler: skip first 3 lines (---, path:, ---) then take the rest
   body=$(awk 'BEGIN{c=0} /^---$/{c++; next} c>=2{print}' "$rule")
 
   # Generate human-readable name from filename
