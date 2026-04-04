@@ -75,7 +75,8 @@ void main() {
 
       test('returns true for arbitrary value tokens', () {
         expect(parser.canParse('top-[24px]'), isTrue);
-        expect(parser.canParse('left-[50%]'), isTrue);
+        expect(parser.canParse('left-[50%]'),
+            isTrue); // canParse only checks prefix, not value format
         expect(parser.canParse('-top-[10px]'), isTrue);
       });
 
@@ -195,11 +196,12 @@ void main() {
           expect(result.positionTop, 24.0);
         });
 
-        test('left-[50%] resolves to 50.0', () {
+        test('left-[50%] is ignored when percentage offsets are unsupported',
+            () {
           final styles = WindStyle();
           final result = parser.parse(styles, ['left-[50%]'], context);
 
-          expect(result.positionLeft, 50.0);
+          expect(result.positionLeft, isNull);
         });
       });
 

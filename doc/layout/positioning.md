@@ -152,21 +152,15 @@ WDiv(
 <a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-Use bracket notation when you need an exact pixel, percentage, or rem value not in the theme scale.
+Use bracket notation when you need an exact pixel value not in the theme scale. Only `px` values are supported — percentage (`%`) offsets are not supported because Flutter's `Positioned` widget uses logical pixels, not relative units.
 
 ```dart
 // Exact pixel value
-WDiv(className: 'absolute top-[24px] left-[24px]')
-
-// Percentage — center horizontally
-WDiv(className: 'absolute left-[50%]')
+WDiv(className: 'absolute top-[24px] left-[12px]')
 
 // Mixed — precise multi-side offset
 WDiv(className: 'absolute top-[12px] right-[8px] bottom-[12px] left-[8px]')
 ```
-
-> [!NOTE]
-> Percentage values like `left-[50%]` set the offset to 50% of the parent's width. To visually center an absolute element, pair it with a negative translate if needed (see Common Patterns below).
 
 <a name="common-patterns"></a>
 ## Common Patterns

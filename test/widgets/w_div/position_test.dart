@@ -2,6 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+/// Helper to wrap widget in MaterialApp with WindTheme.
+///
+/// Note: Scaffold is intentionally omitted here because several tests assert
+/// [find.byType(Stack)] with [findsOneWidget] — Scaffold internally renders
+/// its own Stack, which would cause those assertions to fail.
+Widget wrapWithTheme(Widget child) {
+  return MaterialApp(
+    home: WindTheme(
+      data: WindThemeData(),
+      child: child,
+    ),
+  );
+}
+
 void main() {
   setUp(() {
     WindParser.clearCache();
@@ -12,16 +26,13 @@ void main() {
       'relative parent with children renders Stack widget in tree',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'relative',
-                children: [
-                  WText('Child 1'),
-                  WText('Child 2'),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'relative',
+              children: [
+                WText('Child 1'),
+                WText('Child 2'),
+              ],
             ),
           ),
         );
@@ -35,19 +46,16 @@ void main() {
       'absolute child inside relative parent renders Positioned widget',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'relative',
-                children: [
-                  WText('Normal child'),
-                  WDiv(
-                    className: 'absolute',
-                    child: WText('Absolute child'),
-                  ),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'relative',
+              children: [
+                WText('Normal child'),
+                WDiv(
+                  className: 'absolute',
+                  child: WText('Absolute child'),
+                ),
+              ],
             ),
           ),
         );
@@ -62,23 +70,20 @@ void main() {
       'mixed layout: relative flex parent with normal + absolute children',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: SizedBox(
-                width: 400,
-                height: 400,
-                child: const WDiv(
-                  className: 'relative flex flex-row',
-                  children: [
-                    WText('Normal 1'),
-                    WText('Normal 2'),
-                    WDiv(
-                      className: 'absolute bottom-4 right-4',
-                      child: WText('Absolute'),
-                    ),
-                  ],
-                ),
+          wrapWithTheme(
+            SizedBox(
+              width: 400,
+              height: 400,
+              child: const WDiv(
+                className: 'relative flex flex-row',
+                children: [
+                  WText('Normal 1'),
+                  WText('Normal 2'),
+                  WDiv(
+                    className: 'absolute bottom-4 right-4',
+                    child: WText('Absolute'),
+                  ),
+                ],
               ),
             ),
           ),
@@ -106,19 +111,16 @@ void main() {
       'absolute inset-0 renders Positioned with all 4 sides = 0',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'relative',
-                children: [
-                  WText('Background'),
-                  WDiv(
-                    className: 'absolute inset-0',
-                    child: WText('Overlay'),
-                  ),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'relative',
+              children: [
+                WText('Background'),
+                WDiv(
+                  className: 'absolute inset-0',
+                  child: WText('Overlay'),
+                ),
+              ],
             ),
           ),
         );
@@ -140,18 +142,15 @@ void main() {
       'absolute child skips Expanded/Flexible wrapping',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'relative',
-                children: [
-                  WDiv(
-                    className: 'absolute top-4 left-2',
-                    child: WText('Positioned'),
-                  ),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'relative',
+              children: [
+                WDiv(
+                  className: 'absolute top-4 left-2',
+                  child: WText('Positioned'),
+                ),
+              ],
             ),
           ),
         );
@@ -175,13 +174,10 @@ void main() {
       'single child with relative wraps in Stack',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'relative',
-                child: WText('Single child'),
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'relative',
+              child: WText('Single child'),
             ),
           ),
         );
@@ -195,16 +191,13 @@ void main() {
       'relative without any absolute children still renders Stack',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'relative',
-                children: [
-                  WText('Normal 1'),
-                  WText('Normal 2'),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'relative',
+              children: [
+                WText('Normal 1'),
+                WText('Normal 2'),
+              ],
             ),
           ),
         );
@@ -219,19 +212,16 @@ void main() {
       'negative offset: absolute -top-2 renders Positioned(top: -8.0)',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'relative',
-                children: [
-                  WText('Content'),
-                  WDiv(
-                    className: 'absolute -top-2',
-                    child: WText('Negative offset'),
-                  ),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'relative',
+              children: [
+                WText('Content'),
+                WDiv(
+                  className: 'absolute -top-2',
+                  child: WText('Negative offset'),
+                ),
+              ],
             ),
           ),
         );

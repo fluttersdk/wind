@@ -19,7 +19,7 @@ import 'wind_parser_interface.dart';
 ///
 /// ### Values:
 /// - **Theme Scale:** `top-4`, `inset-x-2` (resolves via `WindThemeData.getSpacing`)
-/// - **Arbitrary Values:** `top-[24px]`, `left-[50%]` (supports px and % suffixes)
+/// - **Arbitrary Values:** `top-[24px]`, `left-[12px]` (supports px suffix only; `%` is unsupported)
 ///
 /// Returns a [WindStyle] with resolved position properties using "Last Class Wins" logic.
 class PositionParser implements WindParserInterface {
@@ -35,9 +35,11 @@ class PositionParser implements WindParserInterface {
   );
 
   /// Regex for arbitrary offset classes
-  /// e.g., top-[24px], left-[50%], -inset-[10px]
+  /// e.g., top-[24px], left-[12px], -inset-[10px]
+  /// Note: percentage values (e.g., left-[50%]) are intentionally unsupported —
+  /// Flutter's Positioned uses logical pixels, not percentages.
   static final _arbitraryOffsetRegex = RegExp(
-    r'^-?(?<root>top|bottom|left|right|inset-x|inset-y|inset)-\[(?<value>[0-9.]+(?:px|%)?)\]$',
+    r'^-?(?<root>top|bottom|left|right|inset-x|inset-y|inset)-\[(?<value>[0-9.]+(?:px)?)\]$',
   );
 
   @override
@@ -81,14 +83,12 @@ class PositionParser implements WindParserInterface {
       double? value;
       String? root;
 
-      // 2. Arbitrary Values (e.g., top-[24px], -left-[50%])
+      // 2. Arbitrary Values (e.g., top-[24px], left-[12px])
       final arbitraryMatch = _arbitraryOffsetRegex.firstMatch(className);
       if (arbitraryMatch != null) {
         root = arbitraryMatch.namedGroup('root')!;
         final valueStr = arbitraryMatch.namedGroup('value')!;
-        value = double.tryParse(
-          valueStr.replaceAll('px', '').replaceAll('%', ''),
-        );
+        value = double.tryParse(valueStr.replaceAll('px', ''));
       }
 
       // 3. Theme Values (e.g., top-4, inset-x-2)

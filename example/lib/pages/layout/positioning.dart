@@ -66,12 +66,12 @@ class _PositioningExamplePageState extends State<PositioningExamplePage> {
               children: [
                 WDiv(
                   className:
-                      'w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center',
+                      'w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-xl flex items-center justify-center',
                   child: WIcon(Icons.notifications_outlined),
                 ),
                 WDiv(
                   className:
-                      'absolute top-0 right-0 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center',
+                      'absolute top-0 right-0 w-5 h-5 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center',
                   child: WText('3', className: 'text-white text-xs font-bold'),
                 ),
               ],
@@ -82,12 +82,12 @@ class _PositioningExamplePageState extends State<PositioningExamplePage> {
               children: [
                 WDiv(
                   className:
-                      'w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center',
+                      'w-12 h-12 bg-green-500 dark:bg-green-600 rounded-xl flex items-center justify-center',
                   child: WIcon(Icons.shopping_cart_outlined),
                 ),
                 WDiv(
                   className:
-                      'absolute top-0 right-0 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center',
+                      'absolute top-0 right-0 w-5 h-5 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center',
                   child: WText('12', className: 'text-white text-xs font-bold'),
                 ),
               ],
@@ -98,12 +98,12 @@ class _PositioningExamplePageState extends State<PositioningExamplePage> {
               children: [
                 WDiv(
                   className:
-                      'w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center',
+                      'w-12 h-12 bg-indigo-500 dark:bg-indigo-600 rounded-xl flex items-center justify-center',
                   child: WIcon(Icons.chat_bubble_outlined),
                 ),
                 WDiv(
                   className:
-                      'absolute top-1 right-1 w-3 h-3 bg-green-400 rounded-full',
+                      'absolute top-1 right-1 w-3 h-3 bg-green-400 dark:bg-green-500 rounded-full',
                 ),
               ],
             ),
@@ -134,7 +134,7 @@ class _PositioningExamplePageState extends State<PositioningExamplePage> {
               className: 'absolute bottom-4 right-4',
               child: WDiv(
                 className:
-                    'w-12 h-12 bg-violet-600 rounded-full shadow-lg flex items-center justify-center',
+                    'w-12 h-12 bg-violet-600 dark:bg-violet-700 rounded-full shadow-lg flex items-center justify-center',
                 child: WIcon(Icons.add, className: 'text-white'),
               ),
             ),
@@ -151,7 +151,8 @@ class _PositioningExamplePageState extends State<PositioningExamplePage> {
           'absolute inset-0 stretches a child to cover the entire parent',
       children: [
         WDiv(
-          className: 'relative h-36 bg-blue-500 rounded-lg overflow-hidden',
+          className:
+              'relative h-36 bg-blue-500 dark:bg-blue-600 rounded-lg overflow-hidden',
           children: [
             WDiv(
               className: 'p-4 flex flex-col gap-1',
@@ -197,7 +198,7 @@ class _PositioningExamplePageState extends State<PositioningExamplePage> {
           children: [
             WDiv(
               className:
-                  'absolute -top-3 left-4 px-3 py-1 bg-violet-600 rounded-full',
+                  'absolute -top-3 left-4 px-3 py-1 bg-violet-600 dark:bg-violet-700 rounded-full',
               child: WText(
                 'Featured',
                 className: 'text-white text-xs font-semibold',
@@ -230,26 +231,27 @@ class _PositioningExamplePageState extends State<PositioningExamplePage> {
           children: [
             WDiv(
               className:
-                  'flex-1 h-16 bg-blue-400 rounded-lg flex items-center justify-center',
+                  'flex-1 h-16 bg-blue-400 dark:bg-blue-500 rounded-lg flex items-center justify-center',
               child: WText('flex item 1', className: 'text-white text-sm'),
             ),
             WDiv(
               className:
-                  'flex-1 h-16 bg-blue-400 rounded-lg flex items-center justify-center',
+                  'flex-1 h-16 bg-blue-400 dark:bg-blue-500 rounded-lg flex items-center justify-center',
               child: WText('flex item 2', className: 'text-white text-sm'),
             ),
             WDiv(
               className:
-                  'flex-1 h-16 bg-blue-400 rounded-lg flex items-center justify-center',
+                  'flex-1 h-16 bg-blue-400 dark:bg-blue-500 rounded-lg flex items-center justify-center',
               child: WText('flex item 3', className: 'text-white text-sm'),
             ),
             // Floating badge over the flex container
             WDiv(
               className:
-                  'absolute top-2 right-2 px-2 py-1 bg-amber-400 rounded-full',
+                  'absolute top-2 right-2 px-2 py-1 bg-amber-400 dark:bg-amber-500 rounded-full',
               child: WText(
                 'NEW',
-                className: 'text-amber-900 text-xs font-bold',
+                className:
+                    'text-amber-900 dark:text-amber-950 text-xs font-bold',
               ),
             ),
           ],
@@ -301,7 +303,7 @@ class _PositioningExamplePageState extends State<PositioningExamplePage> {
             WButton(
               onTap: () => setState(() => _showOverlay = !_showOverlay),
               className:
-                  'px-4 py-2 bg-violet-600 rounded-lg flex items-center gap-2',
+                  'px-4 py-2 bg-violet-600 dark:bg-violet-700 rounded-lg flex items-center gap-2',
               child: WText(
                 _showOverlay ? 'Hide Overlay' : 'Show Overlay',
                 className: 'text-white text-sm font-medium',

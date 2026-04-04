@@ -281,7 +281,7 @@ class WDiv extends StatelessWidget {
       // Relative positioning: wrap in Stack
       if (isRelative) {
         logger.setCoreWidget("Stack(relative, single child)");
-        if (_isAbsolutePositioned(child!)) {
+        if (_isAbsolutePositioned(child!, context)) {
           return Stack(
             clipBehavior: Clip.none,
             children: [_buildPositionedChild(child!, context)],
@@ -356,7 +356,7 @@ class WDiv extends StatelessWidget {
         final absoluteChildren = <Widget>[];
 
         for (final child in children!) {
-          if (_isAbsolutePositioned(child)) {
+          if (_isAbsolutePositioned(child, context)) {
             absoluteChildren.add(child);
           } else {
             normalChildren.add(child);
@@ -535,28 +535,45 @@ class WDiv extends StatelessWidget {
         className.contains('flex-5');
   }
 
-  /// Checks if a child widget has `absolute` in its className.
-  /// Uses token-based matching (same pattern as `_hasShrinkZero`).
-  /// Matches both bare `absolute` and prefixed variants like `md:absolute`.
-  static bool _isAbsolutePositioned(Widget child) {
-    String? className;
-    if (child is WDiv) className = child.className;
-    if (child is WText) className = child.className;
-    if (className == null || className.isEmpty) return false;
-    for (final token in className.split(' ')) {
-      if (token == 'absolute' || token.endsWith(':absolute')) return true;
+  /// Extracts `className` from any Wind widget via dynamic access.
+  static String? _extractChildClassName(Widget child) {
+    try {
+      final dynamic windChild = child;
+      final Object? className = windChild.className;
+      return className is String ? className : null;
+    } catch (_) {
+      return null;
     }
-    return false;
+  }
+
+  /// Extracts `states` from any Wind widget via dynamic access.
+  static Set<String>? _extractChildStates(Widget child) {
+    try {
+      final dynamic windChild = child;
+      final Object? states = windChild.states;
+      return states is Set<String> ? states : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Checks if a child widget resolves to `absolute` positioning
+  /// by parsing its className through WindParser (context-aware).
+  static bool _isAbsolutePositioned(Widget child, BuildContext context) {
+    final className = _extractChildClassName(child);
+    if (className == null || className.isEmpty) return false;
+    final states = _extractChildStates(child);
+    final childStyles = WindParser.parse(className, context, states: states);
+    return childStyles.positionType == WindPositionType.absolute;
   }
 
   /// Wraps an absolute-positioned child in a [Positioned] widget
   /// by parsing the child's className for offset values.
   Widget _buildPositionedChild(Widget child, BuildContext context) {
-    String? childClassName;
-    if (child is WDiv) childClassName = child.className;
-    if (child is WText) childClassName = child.className;
+    final childClassName = _extractChildClassName(child);
+    final childStates = _extractChildStates(child);
     final childStyles = childClassName != null
-        ? WindParser.parse(childClassName, context)
+        ? WindParser.parse(childClassName, context, states: childStates)
         : const WindStyle();
     return Positioned(
       top: childStyles.positionTop,

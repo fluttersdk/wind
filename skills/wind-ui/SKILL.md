@@ -184,7 +184,7 @@ WDiv(
 **Offsets (spacing scale):** `top-{n}` `right-{n}` `bottom-{n}` `left-{n}` (e.g., `top-4` = 16px)
 **Insets:** `inset-{n}` (all sides), `inset-x-{n}` (left+right), `inset-y-{n}` (top+bottom)
 **Negative offsets:** `-top-{n}`, `-inset-{n}` (prefix with `-`)
-**Arbitrary offsets:** `top-[24px]`, `left-[50%]`
+**Arbitrary offsets:** `top-[24px]`, `left-[24px]` (px only; `%` is unsupported)
 **Note:** `fixed` and `sticky` are not implemented. Absolute children must be inside a `relative` parent.
 
 ## 5. State & Modifier Prefixes
