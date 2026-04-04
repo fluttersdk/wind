@@ -8,6 +8,13 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- **CSS Positioning**: `relative` and `absolute` position types with Stack/Positioned rendering
+- **Offset Utilities**: `top-*`, `right-*`, `bottom-*`, `left-*` offset tokens using spacing scale
+- **Inset Shortcuts**: `inset-*`, `inset-x-*`, `inset-y-*` for multi-side offsets
+- **Negative Offsets**: `-top-*`, `-inset-*` for negative positioning
+- **Arbitrary Position Values**: `top-[24px]`, `left-[50%]` bracket syntax
+
 ---
 
 ## [1.0.0-alpha.5] - 2026-03-31

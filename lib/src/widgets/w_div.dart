@@ -181,6 +181,7 @@ class WDiv extends StatelessWidget {
     final Widget? coreContent = _buildCoreStructure(
       styles: styles,
       logger: logger,
+      context: context,
     );
 
     // 5. COMPOSE DECORATORS (The Decorator Layer)
@@ -271,9 +272,27 @@ class WDiv extends StatelessWidget {
   Widget? _buildCoreStructure({
     required WindStyle styles,
     required WindLogger logger,
+    required BuildContext context,
   }) {
+    final bool isRelative = styles.positionType == WindPositionType.relative;
+
     // Case A: Single Child
     if (child != null) {
+      // Relative positioning: wrap in Stack
+      if (isRelative) {
+        logger.setCoreWidget("Stack(relative, single child)");
+        if (_isAbsolutePositioned(child!)) {
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [_buildPositionedChild(child!, context)],
+          );
+        }
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [child!],
+        );
+      }
+
       // If flex display is specified, wrap single child in Row/Column for alignment
       if (styles.displayType == WindDisplayType.flex) {
         final direction = styles.flexDirection ?? Axis.horizontal;
@@ -330,6 +349,59 @@ class WDiv extends StatelessWidget {
 
     // Case B: Multiple Children (Layout required)
     if (children != null) {
+      // Relative positioning: separate normal vs absolute children,
+      // build normal layout, wrap absolutes in Positioned, combine in Stack.
+      if (isRelative) {
+        final normalChildren = <Widget>[];
+        final absoluteChildren = <Widget>[];
+
+        for (final child in children!) {
+          if (_isAbsolutePositioned(child)) {
+            absoluteChildren.add(child);
+          } else {
+            normalChildren.add(child);
+          }
+        }
+
+        final positionedWidgets = absoluteChildren
+            .map((child) => _buildPositionedChild(child, context))
+            .toList();
+
+        // Build normal children through existing layout pipeline
+        Widget? normalLayout;
+        if (normalChildren.isNotEmpty) {
+          final type = styles.displayType ?? WindDisplayType.block;
+          // Temporarily use normalChildren for layout building
+          final tempDiv = WDiv(
+            className: className,
+            children: normalChildren,
+          );
+          switch (type) {
+            case WindDisplayType.flex:
+              normalLayout = tempDiv._buildFlexStructure(styles, logger);
+            case WindDisplayType.grid:
+              normalLayout = tempDiv._buildGridStructure(styles, logger);
+            case WindDisplayType.wrap:
+              normalLayout = tempDiv._buildWrapStructure(styles, logger);
+            default:
+              normalLayout = tempDiv._buildBlockStructure(styles, logger);
+          }
+        }
+
+        logger.setCoreWidget(
+          "Stack(relative, ${normalChildren.length} normal + "
+          "${absoluteChildren.length} absolute)",
+        );
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            if (normalLayout != null) normalLayout,
+            ...positionedWidgets,
+          ],
+        );
+      }
+
       // If we have children but no display type specified, we fallback
       // to the default 'block' behavior.
       final type = styles.displayType ?? WindDisplayType.block;
@@ -461,6 +533,38 @@ class WDiv extends StatelessWidget {
         className.contains('flex-3') ||
         className.contains('flex-4') ||
         className.contains('flex-5');
+  }
+
+  /// Checks if a child widget has `absolute` in its className.
+  /// Uses token-based matching (same pattern as `_hasShrinkZero`).
+  /// Matches both bare `absolute` and prefixed variants like `md:absolute`.
+  static bool _isAbsolutePositioned(Widget child) {
+    String? className;
+    if (child is WDiv) className = child.className;
+    if (child is WText) className = child.className;
+    if (className == null || className.isEmpty) return false;
+    for (final token in className.split(' ')) {
+      if (token == 'absolute' || token.endsWith(':absolute')) return true;
+    }
+    return false;
+  }
+
+  /// Wraps an absolute-positioned child in a [Positioned] widget
+  /// by parsing the child's className for offset values.
+  Widget _buildPositionedChild(Widget child, BuildContext context) {
+    String? childClassName;
+    if (child is WDiv) childClassName = child.className;
+    if (child is WText) childClassName = child.className;
+    final childStyles = childClassName != null
+        ? WindParser.parse(childClassName, context)
+        : const WindStyle();
+    return Positioned(
+      top: childStyles.positionTop,
+      right: childStyles.positionRight,
+      bottom: childStyles.positionBottom,
+      left: childStyles.positionLeft,
+      child: child,
+    );
   }
 
   /// Builds a Grid layout using Wrap for flexible item heights.
@@ -990,6 +1094,12 @@ class WDiv extends StatelessWidget {
         alignment: Alignment.topCenter,
         child: widgetToBuild,
       );
+    }
+
+    // Absolute-positioned elements are out of normal flow —
+    // skip Expanded/Flexible wrapping (parent handles Positioned).
+    if (styles.positionType == WindPositionType.absolute) {
+      return widgetToBuild ?? const SizedBox.shrink();
     }
 
     // Apply Flex/Expanded (flex-*)

@@ -107,6 +107,7 @@ import 'pages/layout/sizing_basic.dart';
 import 'pages/layout/sizing_width.dart';
 import 'pages/layout/sizing_height.dart';
 import 'pages/layout/aspect_ratio_basic.dart';
+import 'pages/layout/positioning.dart';
 
 // Responsive
 import 'pages/responsive/card.dart';
@@ -309,6 +310,7 @@ final Map<String, Widget> appRoutes = {
   '/layout/sizing_width': const SizingWidthExamplePage(),
   '/layout/sizing_height': const SizingHeightExamplePage(),
   '/layout/aspect_ratio_basic': const AspectRatioBasicExamplePage(),
+  '/layout/positioning': const PositioningExamplePage(),
 
   // Responsive
   '/responsive/card': const ResponsiveCardExamplePage(),

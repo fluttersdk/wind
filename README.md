@@ -247,7 +247,7 @@ WDynamic(
 <details>
 <summary><strong>Layout</strong> — flex, grid, positioning, overflow</summary>
 
-`flex` `flex-row` `flex-col` `flex-wrap` `flex-1` `grid` `grid-cols-{n}` `gap-{n}` `justify-center` `justify-between` `items-center` `items-start` `self-center` `wrap` `hidden` `overflow-hidden` `overflow-y-auto`
+`flex` `flex-row` `flex-col` `flex-wrap` `flex-1` `grid` `grid-cols-{n}` `gap-{n}` `justify-center` `justify-between` `items-center` `items-start` `self-center` `wrap` `hidden` `overflow-hidden` `overflow-y-auto` `relative` `absolute` `top-{n}` `right-{n}` `bottom-{n}` `left-{n}` `inset-{n}` `inset-x-{n}` `inset-y-{n}` `top-[24px]` `left-[50%]` `-top-{n}` `-inset-{n}`
 
 </details>
 
