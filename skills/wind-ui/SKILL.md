@@ -45,6 +45,9 @@ Flutter constraint resolution differs fundamentally from CSS. Wind UI maps `clas
 | `flex flex-row` or `flex` | Row | Direction default |
 | `wrap` or `grid` | Wrap | NOT `flex-wrap` (no-op!) |
 | `overflow-y-auto` | SingleChildScrollView | Needs bounded height |
+| `relative` | Stack(clipBehavior: Clip.none) | Children split: normal layout + Positioned |
+| `absolute top-4 right-4` | Positioned(top: 16, right: 16) | Must be inside a `relative` parent |
+| `absolute inset-0` | Positioned(top: 0, right: 0, bottom: 0, left: 0) | Full overlay pattern |
 | `hidden` | SizedBox.shrink() | |
 
 **Critical Layout Gotchas:**
@@ -109,7 +112,26 @@ WDiv(
 )
 ```
 
-**Note:** `h-full` inside a scrollable parent results in an infinite height error. Use `min-h-screen` instead. Native Flutter widgets (e.g., `ListView.builder`, charts) inside a `Row` or `Column` MUST be wrapped in a manual `Expanded()`.
+```dart
+// ❌ WRONG — absolute without relative parent
+WDiv(
+  className: 'flex flex-row',
+  children: [
+    WDiv(className: 'absolute top-0 right-0', child: badge), // No Stack!
+  ],
+)
+
+// ✅ CORRECT — relative parent creates Stack
+WDiv(
+  className: 'relative flex flex-row',
+  children: [
+    WDiv(className: 'flex-1', child: content),
+    WDiv(className: 'absolute top-0 right-0', child: badge), // Positioned overlay
+  ],
+)
+```
+
+**Note:** `h-full` inside a scrollable parent results in an infinite height error. Use `min-h-screen` instead. Native Flutter widgets (e.g., `ListView.builder`, charts) inside a `Row` or `Column` MUST be wrapped in a manual `Expanded()`. `absolute` children only work inside a `relative` parent — only `WDiv` and `WText` are detected as absolute; wrap other widgets in a `WDiv`.
 
 ## 3. Widget Quick Reference
 
@@ -157,6 +179,13 @@ WDiv(
 **Typography Sizes:** `xs` (12), `sm` (14), `base` (16), `lg` (18), `xl` (20), `2xl` (24), `3xl` (30), `4xl` (36)
 
 **Border Radius:** `rounded` (4), `rounded-md` (6), `rounded-lg` (8), `rounded-xl` (12), `rounded-2xl` (16), `rounded-full` (9999)
+
+**Position Types:** `relative` (renders Stack), `absolute` (renders Positioned inside a Stack)
+**Offsets (spacing scale):** `top-{n}` `right-{n}` `bottom-{n}` `left-{n}` (e.g., `top-4` = 16px)
+**Insets:** `inset-{n}` (all sides), `inset-x-{n}` (left+right), `inset-y-{n}` (top+bottom)
+**Negative offsets:** `-top-{n}`, `-inset-{n}` (prefix with `-`)
+**Arbitrary offsets:** `top-[24px]`, `left-[24px]` (px only; `%` is unsupported)
+**Note:** `fixed` and `sticky` are not implemented. Absolute children must be inside a `relative` parent.
 
 ## 5. State & Modifier Prefixes
 

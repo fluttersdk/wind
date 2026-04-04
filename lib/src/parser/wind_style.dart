@@ -10,6 +10,9 @@ enum WindOverflow { visible, hidden, scroll, auto }
 /// Animation types for animate-* classes
 enum WindAnimationType { spin, ping, pulse, bounce, none }
 
+/// Position types for positioned elements e.g., relative, absolute
+enum WindPositionType { relative, absolute }
+
 /// **The Immutable Style Object**
 ///
 /// `WindStyle` represents a resolved set of style properties derived from
@@ -214,6 +217,23 @@ class WindStyle {
   /// Animation type e.g., animate-spin, animate-pulse, animate-bounce
   final WindAnimationType? animationType;
 
+  // ============== POSITIONING PROPERTIES ==============
+
+  /// Position type e.g., relative, absolute
+  final WindPositionType? positionType;
+
+  /// Top offset for positioned elements e.g., top-4, top-[10px]
+  final double? positionTop;
+
+  /// Right offset for positioned elements e.g., right-4, right-[10px]
+  final double? positionRight;
+
+  /// Bottom offset for positioned elements e.g., bottom-4, bottom-[10px]
+  final double? positionBottom;
+
+  /// Left offset for positioned elements e.g., left-4, left-[10px]
+  final double? positionLeft;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -276,6 +296,11 @@ class WindStyle {
     this.strokeColor,
     this.animationType,
     this.preserveColors = false,
+    this.positionType,
+    this.positionTop,
+    this.positionRight,
+    this.positionBottom,
+    this.positionLeft,
   });
 
   WindStyle copyWith({
@@ -340,6 +365,11 @@ class WindStyle {
     Color? strokeColor,
     WindAnimationType? animationType,
     bool? preserveColors,
+    WindPositionType? positionType,
+    double? positionTop,
+    double? positionRight,
+    double? positionBottom,
+    double? positionLeft,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -419,6 +449,11 @@ class WindStyle {
       strokeColor: strokeColor ?? this.strokeColor,
       animationType: animationType ?? this.animationType,
       preserveColors: preserveColors ?? this.preserveColors,
+      positionType: positionType ?? this.positionType,
+      positionTop: positionTop ?? this.positionTop,
+      positionRight: positionRight ?? this.positionRight,
+      positionBottom: positionBottom ?? this.positionBottom,
+      positionLeft: positionLeft ?? this.positionLeft,
     );
   }
 
@@ -487,7 +522,12 @@ class WindStyle {
           fillColor == other.fillColor &&
           strokeColor == other.strokeColor &&
           animationType == other.animationType &&
-          preserveColors == other.preserveColors;
+          preserveColors == other.preserveColors &&
+          positionType == other.positionType &&
+          positionTop == other.positionTop &&
+          positionRight == other.positionRight &&
+          positionBottom == other.positionBottom &&
+          positionLeft == other.positionLeft;
 
   @override
   int get hashCode =>
@@ -551,7 +591,12 @@ class WindStyle {
       fillColor.hashCode ^
       strokeColor.hashCode ^
       animationType.hashCode ^
-      preserveColors.hashCode;
+      preserveColors.hashCode ^
+      positionType.hashCode ^
+      positionTop.hashCode ^
+      positionRight.hashCode ^
+      positionBottom.hashCode ^
+      positionLeft.hashCode;
 
   /// Calculates the effective line height as a multiplier for TextStyle.height.
   ///
@@ -653,7 +698,12 @@ class WindStyle {
         'fillColor: $fillColor, '
         'strokeColor: $strokeColor, '
         'animationType: $animationType, '
-        'preserveColors: $preserveColors'
+        'preserveColors: $preserveColors, '
+        'positionType: $positionType, '
+        'positionTop: $positionTop, '
+        'positionRight: $positionRight, '
+        'positionBottom: $positionBottom, '
+        'positionLeft: $positionLeft'
         '}';
   }
 }
