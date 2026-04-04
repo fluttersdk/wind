@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.0.0-alpha.6] - 2026-04-04
+
 ### Added
 - **CSS Positioning**: `relative` and `absolute` position types with Stack/Positioned rendering
 - **Offset Utilities**: `top-*`, `right-*`, `bottom-*`, `left-*` offset tokens using spacing scale
