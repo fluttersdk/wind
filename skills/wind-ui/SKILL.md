@@ -136,7 +136,7 @@ WDiv(
 )
 ```
 
-**Note:** `h-full` inside a scrollable parent results in an infinite height error. Use `min-h-screen` instead. Native Flutter widgets (e.g., `ListView.builder`, charts) inside a `Row` or `Column` MUST be wrapped in a manual `Expanded()`. `absolute` children only work inside a `relative` parent. Only `WDiv` and `WText` are detected as absolute; wrap other widgets in a `WDiv`.
+**Note:** `h-full` inside a scrollable parent results in an infinite height error. Use `min-h-screen` instead. Native Flutter widgets (e.g., `ListView.builder`, charts) inside a `Row` or `Column` MUST be wrapped in `Expanded()` (allowed exception to Gate 1 for non-Wind widget bounding). `absolute` children only work inside a `relative` parent. Only `WDiv` and `WText` are detected as absolute; wrap other widgets in a `WDiv`.
 
 ## 3. Widget Quick Reference
 
@@ -365,14 +365,14 @@ Every line of Wind UI code must pass these 7 gates. Violating any gate is a buil
 | `Padding` | `WDiv(className: 'p-4')` |
 | `Row` | `WDiv(className: 'flex flex-row')` |
 | `Column` | `WDiv(className: 'flex flex-col')` |
-| `Spacer` | `WSpacer(className: 'h-4')` |
+| `Spacer` | `WDiv(className: 'flex-1')` |
 
 Exception: third-party library callbacks requiring native widgets. Mark with `// native: required by {library}`.
 
 **Gate 2: No hardcoded colors.** No `Color()` literals, no hex values, no raw ARGB. Use className tokens or Wind helpers: `wColor()`, `context.wColorExt()`, `context.windColors[]`.
 **Gate 3: Dark mode mandatory.** Every `bg-*`, `text-*`, `border-*` class has a `dark:` pair. No exceptions.
 **Gate 4: Touch targets >= 44pt.** Buttons with text: `py-3` minimum. Icon buttons: `p-3` minimum (12px padding + 24px icon = 48dp). See design-tokens.md Touch Target Rules for full table.
-**Gate 5: No className string interpolation.** Never use `'${condition ? "classA" : "classB"}'` in className. Use `states` parameter with state-prefixed classes. className must be a static string for cacheability. See Section 5 for full `states` pattern and examples.
+**Gate 5: No conditional styling via string interpolation.** Never use `'${condition ? "classA" : "classB"}'` to switch styling classes in className. Use `states` parameter with state-prefixed classes instead. Dynamic values (grid columns, layout direction) are allowed: `'grid grid-cols-$count'`. See Section 5 for full `states` pattern, examples, and the exact rule of thumb.
 **Gate 6: Multi-line className formatting.** When className exceeds 60 characters or has 3+ class groups, use triple-quote `'''` with one group per line. Group order: layout/size -> color/bg -> dark: variants -> state prefixes (hover/active/disabled/custom).
 **Gate 7: Component reuse.** Scan for inline widget trees that could be separate reusable components. Any visual element rebuilt that already exists in `lib/`? Replace with import. Page file over 150 lines? Extract components.
 

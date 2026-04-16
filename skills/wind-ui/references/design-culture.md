@@ -4,7 +4,6 @@ Actionable design rules for polished Flutter interfaces with Wind UI className t
 
 [Design Philosophy](#design-philosophy) | [Visual Hierarchy](#visual-hierarchy) | [Color System](#color-system) | [Typography](#typography) | [Spacing & Layout](#spacing--layout) | [Depth & Shadows](#depth--shadows) | [Mobile Patterns](#mobile-patterns) | [iOS Navigation Rules](#ios-navigation-rules) | [Anti-Patterns](#anti-patterns)
 
-<a name="design-philosophy"></a>
 ## Design Philosophy
 
 Three iOS HIG pillars:
@@ -31,7 +30,6 @@ Before writing any widget, answer four questions:
 
 Workflow: design core functionality first, not the shell. Grayscale until hierarchy is clear. Systems before details.
 
-<a name="visual-hierarchy"></a>
 ## Visual Hierarchy
 
 Every element sits at one of three levels. See design-tokens.md for className mappings.
@@ -55,7 +53,6 @@ Every element sits at one of three levels. See design-tokens.md for className ma
 
 Destructive actions: big and red on confirmation dialogs only. Tertiary styling on regular screens.
 
-<a name="color-system"></a>
 ## Color System
 
 See design-tokens.md for semantic colors, status badges, and dark mode surface pairs.
@@ -91,7 +88,6 @@ Lighter values = more elevation: `gray-900` (base) > `gray-800` (surface) > `gra
 
 Normal body text: 4.5:1 minimum. Large text (bold 18sp+ or regular 24sp+): 3:1 minimum. Never use color as the sole meaning channel; pair with icons, text, or shape.
 
-<a name="typography"></a>
 ## Typography
 
 See design-tokens.md for the full typography hierarchy className table.
@@ -112,7 +108,6 @@ Minimum: 12px (`text-xs`). Never go below this.
 
 Line height: small text taller (1.5-2.0), large headlines shorter (1.0-1.2), wider content taller. Letter spacing: tighten for headlines, increase for ALL-CAPS, trust the designer for body. Alignment: left by default, center only for headlines and blocks under 3 lines, right-align numbers in columns, baseline-align mixed sizes on one line.
 
-<a name="spacing--layout"></a>
 ## Spacing & Layout
 
 See design-tokens.md for the full spacing scale and className mappings.
@@ -138,7 +133,6 @@ Nest radii: `inner_radius = parent_radius - padding`. A parent with `rounded-2xl
 
 Fewer borders: too many = busy. Use box shadows, different background colors, or extra spacing instead.
 
-<a name="depth--shadows"></a>
 ## Depth & Shadows
 
 See design-tokens.md for the shadow scale className table.
@@ -149,7 +143,6 @@ Depth without shadows: lighter than background = raised, darker = inset.
 
 iOS depth style: subtle shadows, blur/frosted glass, minimal elevation. Premium: combine large soft shadow (direct light) with tight dark shadow (ambient occlusion).
 
-<a name="mobile-patterns"></a>
 ## Mobile Patterns
 
 ### Forms
@@ -178,7 +171,6 @@ Skeleton screens over spinners, always. Shimmer for placeholders. Pull to refres
 
 Min row height: 44pt. Support pull-to-refresh and swipe-to-delete.
 
-<a name="ios-navigation-rules"></a>
 ## iOS Navigation Rules
 
 | Pattern | When | Rules |
@@ -202,7 +194,6 @@ App bar types: standard (title + actions), search (integrated field), collapsing
 
 Never override system gestures (bottom/top swipe). Shortcuts supplement controls, never replace them.
 
-<a name="anti-patterns"></a>
 ## Anti-Patterns
 
 | Mistake | Wind-Specific Fix |
