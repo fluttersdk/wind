@@ -2,6 +2,8 @@
 
 This document maps `className` string tokens to their native Flutter semantics.
 
+[Layout & Flexbox](#1-layout--flexbox) | [Spacing](#2-spacing) | [Sizing](#3-sizing) | [Typography](#4-typography) | [Color & Background](#5-color--background) | [Borders & Radius](#6-borders--radius) | [Effects](#7-effects) | [Transitions](#8-transitions--animations) | [Position & Z-Index](#9-position--z-index) | [Overflow](#10-overflow--clipping) | [Modifiers](#modifiers-prefixes)
+
 ## 1. Layout & Flexbox
 
 **CRITICAL RULE:** Flutter constraints differ from CSS. Pay close attention to the Flutter Mapping column.

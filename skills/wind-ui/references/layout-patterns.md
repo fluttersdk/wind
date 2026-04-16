@@ -2,6 +2,8 @@
 
 This guide documents production-tested layout patterns for Wind UI v1 and provides a debugging guide for common Flutter layout constraints.
 
+[Full-Screen Page](#1-full-screen-page-with-scrollable-content) | [Responsive Sidebar](#2-responsive-sidebar--content-layout-desktopweb) | [Centered Content](#3-centered-content-with-max-width) | [Row with Growing Text](#4-row-with-growing-text--fixed-action) | [Responsive Grid](#5-responsive-grid-wrap) | [Modal / Bottom Sheet](#6-modal--bottom-sheet-layout) | [Safe Area](#7-safe-area-management) | [Debugging Guide](#layout-debugging-guide)
+
 ## 1. Full-Screen Page with Scrollable Content
 
 The standard mobile page layout: a fixed app bar (or header) with a scrollable body.

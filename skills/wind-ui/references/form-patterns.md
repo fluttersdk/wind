@@ -2,6 +2,8 @@
 
 Wind UI v1 provides a powerful, Laravel-inspired form handling system when integrated with the Magic Framework. It automatically wires up form state, handles validation errors, and provides consistent styling through utility classes.
 
+[MagicForm Overview](#magicform-overview) | [Form Setup Pattern](#form-setup-pattern) | [Form Field Widgets](#form-field-widgets) | [Form Styling Patterns](#form-styling-patterns) | [Form Layout Patterns](#form-layout-patterns) | [Complete Examples](#complete-examples)
+
 ## MagicForm Overview
 
 The core of the form system is `MagicFormData` and `MagicForm`. They work together to manage form state and provide a validation context without needing boilerplate `TextEditingController` management.

@@ -2,6 +2,8 @@
 
 Quick reference for common UI components built with Wind UI classNames. These patterns are extracted from real production applications and follow mobile-first touch target and spacing rules.
 
+[Quick Reference](#quick-reference) | [Detailed Patterns](#detailed-patterns)
+
 ## Quick Reference
 
 | Component | Key className pattern |
@@ -23,7 +25,7 @@ Quick reference for common UI components built with Wind UI classNames. These pa
 
 ## Detailed Patterns
 
-### 1. Card — Flat
+### 1. Card (Flat)
 Standard container for grouping content visually without elevation.
 ```dart
 WDiv(
@@ -46,7 +48,7 @@ WDiv(
 )
 ```
 
-### 2. Card — Elevated (with shadow)
+### 2. Card (Elevated, with shadow)
 Used when a card needs to visually float above other content.
 ```dart
 WDiv(
@@ -55,7 +57,7 @@ WDiv(
 )
 ```
 
-### 3. Card — Interactive (tappable)
+### 3. Card (Interactive, tappable)
 A card that acts as a large touch target, usually for navigation.
 ```dart
 WButton(

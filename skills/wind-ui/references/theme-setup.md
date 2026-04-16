@@ -2,6 +2,8 @@
 
 This guide covers how to set up `WindTheme`, configure custom colors/fonts via `WindThemeData`, toggle dark mode, and access theme values programmatically.
 
+[Basic Setup](#1-basic-setup) | [WindThemeData Options](#2-windthemedata-options) | [Dark Mode](#3-dark-mode) | [Custom Colors](#4-registering-custom-colors) | [Context Extensions](#5-context-extensions--helpers) | [Magic Framework](#6-using-with-magic-framework)
+
 ## 1. Basic Setup
 
 Wrap your `MaterialApp` with `WindTheme`. This provides the theme context to all Wind widgets (`WDiv`, `WText`, etc.).
@@ -21,7 +23,7 @@ void main() {
 
 ### Persisting Theme Preference
 
-Use the `onThemeChanged` callback to save the user's manual theme choice. This fires only on `toggleTheme()` — not on system brightness changes.
+Use the `onThemeChanged` callback to save the user's manual theme choice. This fires only on `toggleTheme()`, not on system brightness changes.
 
 ```dart
 WindTheme(

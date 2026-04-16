@@ -2,6 +2,8 @@
 
 Design system expressed purely as className mappings. No theory, only application.
 
+[Typography Hierarchy](#typography-hierarchy) | [Spacing Scale](#spacing-scale) | [Touch Target Rules](#touch-target-rules) | [Color System](#color-system) | [Shadow Scale](#shadow-scale) | [Visual Hierarchy Rules](#visual-hierarchy-rules) | [Border & Depth](#border--depth-without-shadows)
+
 ## Typography Hierarchy
 
 | Role | className | Notes |
