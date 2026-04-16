@@ -552,7 +552,7 @@ WFormCheckbox(
 | states | Set<String> | {} | Custom state triggers |
 | displayFormat | DateDisplayFormat? | null | Custom `(DateTime) => String` formatter |
 
-**DateRange:** `DateRange(start: DateTime, end: DateTime?)` — `isComplete` is true when both dates set.
+**DateRange:** `DateRange(start: DateTime, end: DateTime?)`. `isComplete` is true when both dates set.
 
 **Examples:**
 ```dart
@@ -601,7 +601,7 @@ WFormDatePicker(
 
 ## WSpacer
 
-**Purpose:** Lightweight spacing widget. Renders as a single `SizedBox` — no decoration, no composition overhead. Use instead of `WDiv` when you only need spacing.
+**Purpose:** Lightweight spacing widget. Renders as a single `SizedBox`, no decoration, no composition overhead. Use instead of `WDiv` when you only need spacing.
 
 **Constructor:**
 | Param | Type | Default | Description |
