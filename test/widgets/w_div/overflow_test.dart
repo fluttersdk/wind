@@ -2,7 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+Widget wrapWithTheme(Widget child) {
+  return MaterialApp(
+    home: WindTheme(
+      data: WindThemeData(),
+      child: Scaffold(body: child),
+    ),
+  );
+}
+
 void main() {
+  setUp(() {
+    WindParser.clearCache();
+  });
+
   group('WDiv Overflow Feature Tests', () {
     testWidgets('overflow-hidden uses ClipRRect', (
       tester,
@@ -196,16 +209,13 @@ void main() {
       'flex-1 children inside overflow-x-auto row do not assert',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'flex flex-row overflow-x-auto',
-                children: [
-                  WDiv(className: 'flex-1', child: Text('a')),
-                  WDiv(className: 'flex-1', child: Text('b')),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'flex flex-row overflow-x-auto',
+              children: [
+                WDiv(className: 'flex-1', child: Text('a')),
+                WDiv(className: 'flex-1', child: Text('b')),
+              ],
             ),
           ),
         );
@@ -221,16 +231,13 @@ void main() {
       'flex-1 children inside overflow-y-auto column do not assert',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'flex flex-col overflow-y-auto',
-                children: [
-                  WDiv(className: 'flex-1', child: Text('a')),
-                  WDiv(className: 'flex-1', child: Text('b')),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'flex flex-col overflow-y-auto',
+              children: [
+                WDiv(className: 'flex-1', child: Text('a')),
+                WDiv(className: 'flex-1', child: Text('b')),
+              ],
             ),
           ),
         );
@@ -244,16 +251,13 @@ void main() {
       'flex-1 in non-scrolling row still wraps with Expanded',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'flex flex-row',
-                children: [
-                  WDiv(className: 'flex-1', child: Text('a')),
-                  WDiv(className: 'flex-1', child: Text('b')),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'flex flex-row',
+              children: [
+                WDiv(className: 'flex-1', child: Text('a')),
+                WDiv(className: 'flex-1', child: Text('b')),
+              ],
             ),
           ),
         );
@@ -267,26 +271,43 @@ void main() {
       'nested non-scrolling flex subtree re-enables Expanded under scroll',
       (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: const WDiv(
-                className: 'flex flex-row overflow-x-auto',
-                children: [
-                  WDiv(
-                    className: 'flex flex-row w-96',
-                    children: [
-                      WDiv(className: 'flex-1', child: Text('inner')),
-                    ],
-                  ),
-                ],
-              ),
+          wrapWithTheme(
+            const WDiv(
+              className: 'flex flex-row overflow-x-auto',
+              children: [
+                WDiv(
+                  className: 'flex flex-row w-96',
+                  children: [
+                    WDiv(className: 'flex-1', child: Text('inner')),
+                  ],
+                ),
+              ],
             ),
           ),
         );
 
         expect(tester.takeException(), isNull);
         expect(find.byType(Expanded), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'flex-1 children inside overflow-auto (both axes) do not assert',
+      (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDiv(
+              className: 'flex flex-row overflow-auto',
+              children: [
+                WDiv(className: 'flex-1', child: Text('a')),
+                WDiv(className: 'flex-1', child: Text('b')),
+              ],
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.byType(Expanded), findsNothing);
       },
     );
 

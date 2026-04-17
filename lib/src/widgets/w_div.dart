@@ -324,11 +324,10 @@ class WDiv extends StatelessWidget {
           "${isColumn ? 'Column' : 'Row'}(child: single item)",
         );
 
-        final bool singleIsMainAxisScrollable = isColumn
-            ? (styles.overflowY == WindOverflow.auto ||
-                styles.overflowY == WindOverflow.scroll)
-            : (styles.overflowX == WindOverflow.auto ||
-                styles.overflowX == WindOverflow.scroll);
+        final bool singleIsMainAxisScrollable = _isMainAxisScrollable(
+          styles,
+          isColumn: isColumn,
+        );
 
         if (isColumn) {
           return WindFlexOverflowScope(
@@ -452,11 +451,10 @@ class WDiv extends StatelessWidget {
     // constraint is unbounded. Flex children wrapped in `Expanded`/`Flexible`
     // would assert in that case, so we signal them via `WindFlexOverflowScope`
     // to skip that wrapping for this render pass.
-    final bool isMainAxisScrollable = isColumn
-        ? (styles.overflowY == WindOverflow.auto ||
-            styles.overflowY == WindOverflow.scroll)
-        : (styles.overflowX == WindOverflow.auto ||
-            styles.overflowX == WindOverflow.scroll);
+    final bool isMainAxisScrollable = _isMainAxisScrollable(
+      styles,
+      isColumn: isColumn,
+    );
 
     // Inject gaps if necessary (SRP: delegated to helper)
     final gappedChildren = _buildGappedChildren(
@@ -547,6 +545,26 @@ class WDiv extends StatelessWidget {
         ),
       );
     }
+  }
+
+  /// Returns whether the container's main axis is scrollable.
+  ///
+  /// Covers both the per-axis fields (`overflow-x-auto` / `overflow-y-auto`)
+  /// and the single-field `overflow-auto` / `overflow-scroll` which renders
+  /// as nested scroll views (both axes scrollable).
+  static bool _isMainAxisScrollable(
+    WindStyle styles, {
+    required bool isColumn,
+  }) {
+    final bool bothAxes = styles.overflow == WindOverflow.auto ||
+        styles.overflow == WindOverflow.scroll;
+    if (bothAxes) return true;
+    if (isColumn) {
+      return styles.overflowY == WindOverflow.auto ||
+          styles.overflowY == WindOverflow.scroll;
+    }
+    return styles.overflowX == WindOverflow.auto ||
+        styles.overflowX == WindOverflow.scroll;
   }
 
   /// Checks if a className contains shrink-0 token that should preserve

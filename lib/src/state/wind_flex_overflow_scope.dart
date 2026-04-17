@@ -18,13 +18,11 @@ class WindFlexOverflowScope extends InheritedWidget {
     required super.child,
   });
 
-  /// Returns the nearest [WindFlexOverflowScope] without subscribing.
-  ///
-  /// Lookup is intentionally non-subscribing: the scope only needs to be
-  /// read once during build; if it changes the parent rebuild already
-  /// reaches this subtree via the child list.
+  /// Returns the nearest [WindFlexOverflowScope] and subscribes so dependents
+  /// rebuild when `skipExpanded` changes (e.g. parent toggles overflow via
+  /// `setState`).
   static WindFlexOverflowScope? maybeOf(BuildContext context) {
-    return context.getInheritedWidgetOfExactType<WindFlexOverflowScope>();
+    return context.dependOnInheritedWidgetOfExactType<WindFlexOverflowScope>();
   }
 
   @override
