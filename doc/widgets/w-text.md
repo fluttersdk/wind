@@ -5,6 +5,7 @@ A utility-first text component that translates Tailwind-like class strings into 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
 - [Props](#props)
+- [Runtime-Dynamic Colors](#runtime-dynamic-colors)
 - [Typography Styling](#typography-styling)
 - [State Variants](#state-variants)
 - [Styling Examples](#styling-examples)
@@ -43,6 +44,7 @@ const WText(
   TextStyle? textStyle,
   bool selectable = false,
   Set<String>? states,
+  Color? foregroundColor,
 })
 ```
 
@@ -56,6 +58,26 @@ const WText(
 | `textStyle` | `TextStyle?` | `null` | Standard Flutter TextStyle to merge (className takes precedence). |
 | `selectable` | `bool` | `false` | Whether the text should be selectable (renders `SelectableText`). |
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., 'loading'). |
+| `foregroundColor` | `Color?` | `null` | Inline text color for runtime-dynamic values. Overrides any `text-*` / `dark:text-*` from `className`. See [Runtime-Dynamic Colors](#runtime-dynamic-colors). |
+
+<a name="runtime-dynamic-colors"></a>
+## Runtime-Dynamic Colors
+
+Utility classes are for **design tokens** (`text-primary-500`, `text-red-500`). When the color is a **runtime value**, a user-picked brand color or a hex loaded from an API, use the `foregroundColor` prop instead of interpolating into `text-[#$hex]`.
+
+```dart
+// Good: runtime-dynamic color via inline prop
+WText(
+  'Brand',
+  foregroundColor: userBrandColor,
+  className: 'text-lg font-bold',
+)
+
+// Avoid: string interpolation bloats the parser cache, one entry per unique hex
+WText('Brand', className: 'text-lg font-bold text-[#${userBrandColor.hex}]')
+```
+
+Precedence: inline `foregroundColor` wins over any `text-*` / `dark:text-*` resolved from `className`. When `foregroundColor` is `null`, className behavior, including the `dark:` fallback, is unchanged. The inline color does not participate in the parser cache key.
 
 ## Typography Styling
 

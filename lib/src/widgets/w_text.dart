@@ -67,6 +67,17 @@ class WText extends StatelessWidget {
   /// Custom states for dynamic state styling (e.g., 'loading', 'selected').
   final Set<String>? states;
 
+  /// Inline text color for **runtime-dynamic** values (e.g. a user-picked
+  /// brand color).
+  ///
+  /// Use `className: 'text-*'` for static design tokens. Reach for this prop
+  /// only when the color is a runtime value that would otherwise bloat the
+  /// parser cache via `text-[#\$hex]` interpolation.
+  ///
+  /// When non-null, this overrides any `text-*` / `dark:text-*` resolved
+  /// from [className]. Does NOT participate in the parser cache key.
+  final Color? foregroundColor;
+
   const WText(
     this.data, {
     super.key,
@@ -75,6 +86,7 @@ class WText extends StatelessWidget {
     this.textStyle,
     this.selectable = false,
     this.states,
+    this.foregroundColor,
   });
 
   @override
@@ -150,7 +162,12 @@ class WText extends StatelessWidget {
     // Merge with explicit `textStyle` prop.
     // Note: We do NOT manually merge with DefaultTextStyle here.
     // The `Text` widget does that automatically for null properties.
-    final TextStyle finalTextStyle = windTextStyle.merge(textStyle);
+    TextStyle finalTextStyle = windTextStyle.merge(textStyle);
+
+    // Inline foregroundColor wins over any parsed text-* / dark:text-*.
+    if (foregroundColor != null) {
+      finalTextStyle = finalTextStyle.copyWith(color: foregroundColor);
+    }
 
     // B. Apply Text Transformation (uppercase, lowercase)
     final String transformedData = _applyTextTransform(

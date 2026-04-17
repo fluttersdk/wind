@@ -110,6 +110,12 @@ class WindParser {
     _styleCache.clear();
   }
 
+  /// Number of entries currently held in the style cache.
+  ///
+  /// Useful for tests that verify cache-key behavior (e.g. that inline
+  /// render-time props do not create extra cache entries).
+  static int get cacheSize => _styleCache.length;
+
   /// Parses a className string into a [WindStyle] object.
   ///
   /// This is the main entry point for style parsing. It builds a [WindContext]
