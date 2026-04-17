@@ -7,6 +7,7 @@ import 'parsers/padding_parser.dart';
 import 'parsers/sizing_parser.dart';
 import 'parsers/position_parser.dart';
 import 'parsers/flexbox_grid_parser.dart';
+import 'parsers/order_parser.dart';
 import 'parsers/wind_parser_interface.dart';
 import 'parsers/text_parser.dart';
 import 'parsers/debug_parser.dart';
@@ -85,6 +86,7 @@ class WindParser {
     'padding': const PaddingParser(),
     'margin': const MarginParser(),
     'position': const PositionParser(),
+    'order': const OrderParser(),
     'flexbox_grid': const FlexboxGridParser(),
     'text': const TextParser(),
     'debug': const DebugParser(),

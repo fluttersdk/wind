@@ -394,7 +394,8 @@ class WDiv extends StatelessWidget {
           );
           switch (type) {
             case WindDisplayType.flex:
-              normalLayout = tempDiv._buildFlexStructure(styles, logger);
+              normalLayout =
+                  tempDiv._buildFlexStructure(styles, logger, context);
             case WindDisplayType.grid:
               normalLayout = tempDiv._buildGridStructure(styles, logger);
             case WindDisplayType.wrap:
@@ -424,7 +425,7 @@ class WDiv extends StatelessWidget {
 
       switch (type) {
         case WindDisplayType.flex:
-          return _buildFlexStructure(styles, logger);
+          return _buildFlexStructure(styles, logger, context);
         case WindDisplayType.grid:
           return _buildGridStructure(styles, logger);
         case WindDisplayType.wrap:
@@ -439,7 +440,11 @@ class WDiv extends StatelessWidget {
   }
 
   /// Builds a Flexbox layout (`Row` or `Column`).
-  Widget _buildFlexStructure(WindStyle styles, WindLogger logger) {
+  Widget _buildFlexStructure(
+    WindStyle styles,
+    WindLogger logger,
+    BuildContext context,
+  ) {
     final direction = styles.flexDirection ?? Axis.horizontal;
     final isColumn = direction == Axis.vertical;
 
@@ -456,9 +461,18 @@ class WDiv extends StatelessWidget {
       isColumn: isColumn,
     );
 
+    // Resolve child ordering (order-*) before gap injection — sort stably by
+    // resolved order (children without `order-*` default to 0), then apply
+    // `flex-*-reverse` by reversing the sorted list.
+    final orderedChildren = _applyChildOrder(
+      children!,
+      context: context,
+      reverse: styles.flexReverse,
+    );
+
     // Inject gaps if necessary (SRP: delegated to helper)
     final gappedChildren = _buildGappedChildren(
-      children: children!,
+      children: orderedChildren,
       direction: direction,
       gapX: styles.gapX,
       gapY: styles.gapY,
@@ -611,6 +625,52 @@ class WDiv extends StatelessWidget {
     } catch (_) {
       return null;
     }
+  }
+
+  /// Resolves a child's `order-*` value (defaulting to 0) by parsing its
+  /// className through WindParser — mirrors the per-breakpoint / per-state
+  /// resolution used elsewhere so `sm:order-last` / `dark:order-first` just
+  /// work. Children without any `className` or `order-*` class sort at 0.
+  static int _extractChildOrder(Widget child, BuildContext context) {
+    final className = _extractChildClassName(child);
+    if (className == null || className.isEmpty) return 0;
+    final states = _extractChildStates(child);
+    final childStyles = WindParser.parse(className, context, states: states);
+    return childStyles.order ?? 0;
+  }
+
+  /// Stable-sorts [children] by resolved `order-*`, then reverses when the
+  /// parent is `flex-row-reverse` / `flex-col-reverse`. Preserves original
+  /// insertion order among equal-order children (and before reversing).
+  static List<Widget> _applyChildOrder(
+    List<Widget> children, {
+    required BuildContext context,
+    required bool reverse,
+  }) {
+    final bool anyHasOrder = children.any(
+      (c) => _extractChildOrder(c, context) != 0,
+    );
+
+    List<Widget> result;
+    if (!anyHasOrder) {
+      result = children;
+    } else {
+      final indexed = <({int order, int index, Widget child})>[];
+      for (var i = 0; i < children.length; i++) {
+        indexed.add((
+          order: _extractChildOrder(children[i], context),
+          index: i,
+          child: children[i],
+        ));
+      }
+      indexed.sort((a, b) {
+        final byOrder = a.order.compareTo(b.order);
+        return byOrder != 0 ? byOrder : a.index.compareTo(b.index);
+      });
+      result = indexed.map((e) => e.child).toList();
+    }
+
+    return reverse ? result.reversed.toList() : result;
   }
 
   /// Checks if a child widget resolves to `absolute` positioning

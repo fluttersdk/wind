@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- **Child Order**: `order-0` through `order-12`, `order-first`, `order-last`, `order-none`, and arbitrary `order-[n]` (including negatives) for reordering flex children without changing source order. Stable-sort preserves insertion order among equal-order children. (#53)
+- **Reverse Flex Direction**: `flex-row-reverse` and `flex-col-reverse` reverse the final child list (applied after `order-*` sorting). Works with responsive prefixes. (#53)
+
 ### 🐛 Bug Fixes
 
 - **Flex in Scrollable Axis**: `flex-1` / `flex-N` children inside `flex-row` + `overflow-x-auto|scroll` (or `flex-col` + `overflow-y-auto|scroll`) no longer throw "RenderFlex children have non-zero flex but incoming constraints are unbounded." The parent now signals via `WindFlexOverflowScope` so direct flex children skip `Expanded`/`Flexible` wrapping for that render pass. Responsive variants (`base:overflow-x-auto sm:overflow-visible` + `sm:flex-1`) work end-to-end. (#54)
