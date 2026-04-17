@@ -164,6 +164,7 @@ WDiv(
 | `WFormDatePicker`| (FormField) | `mode`, `className`, `firstDate`, `lastDate` | MagicForm-integrated date picker|
 | `WSpacer` | - | `className` | Semantic spacing between siblings |
 | `WDynamic` | `json` | `actions`, `controller`, `customIcons`, `builders`, `denyWidgets` | Server-driven UI from JSON |
+| `WBreakpoint` | `base` (builder) | `sm`, `md`, `lg`, `xl`, `xxl`, `custom` | Render a fully different widget tree per breakpoint — escape hatch when className prefixes + `hidden` aren't enough |
 
 **Rules:**
 - `child` and `children` are mutually exclusive on `WDiv`.
@@ -449,6 +450,7 @@ Before delivering any Wind UI code, run these checks:
 | `references/theme-setup.md` | WindTheme setup, dark mode, custom colors, context extensions | Theme configuration |
 | `references/component-patterns.md`| Card, button, badge, empty state, modal, nav components | Building UI components |
 | `references/design-culture.md`| iOS HIG, visual hierarchy, color theory, mobile patterns | Before any UI design work, component decisions, navigation patterns |
+| `references/responsive-decision-tree.md`| Step-by-step guide for choosing between className prefixes, `hidden`, `context.wIs*`, and `WBreakpoint` | Deciding how to vary layout by screen size |
 
 ## 13. Community Support
 
