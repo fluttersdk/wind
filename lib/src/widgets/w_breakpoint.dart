@@ -21,10 +21,11 @@ import '../parser/wind_context.dart';
 /// ### Resolution Semantics
 ///
 /// 1. Reads active breakpoint via [WindContext.build].
-/// 2. Walks the sorted breakpoint chain (ascending by min width).
-/// 3. Returns the builder for the highest defined breakpoint ≤ the active
-///    breakpoint.
-/// 4. Falls back to [base] if no higher builder matches.
+/// 2. Walks the breakpoint chain in descending order by min width, restricted
+///    to breakpoints whose min width ≤ the active breakpoint's min width.
+/// 3. Returns the first builder found — i.e. the builder for the highest
+///    defined breakpoint that is still ≤ the active breakpoint.
+/// 4. Falls back to [base] if no matching builder exists.
 ///
 /// ### Supported Features:
 /// - Built-in breakpoints: `base`, `sm`, `md`, `lg`, `xl`, `xxl` (named args)
@@ -109,6 +110,19 @@ class WBreakpoint extends StatelessWidget {
         .where((e) => e.value <= (screens[ctx.activeBreakpoint] ?? 0))
         .toList()
       ..sort((a, b) => b.value.compareTo(a.value));
+
+    assert(() {
+      for (final key in custom.keys) {
+        if (!screens.containsKey(key)) {
+          throw FlutterError(
+            'WBreakpoint: custom breakpoint "$key" is not defined in '
+            'WindThemeData.screens. Register it on the theme first, or remove '
+            'it from the custom map. Known screens: ${screens.keys.toList()}.',
+          );
+        }
+      }
+      return true;
+    }());
 
     for (final entry in sortedActive) {
       final builder = builders[entry.key];

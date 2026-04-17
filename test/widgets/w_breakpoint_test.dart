@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-Widget _wrap({
+Widget wrapWithTheme({
   required Size size,
   WindThemeData? theme,
   required Widget child,
@@ -19,11 +19,15 @@ Widget _wrap({
 }
 
 void main() {
+  setUp(() {
+    WindParser.clearCache();
+  });
+
   group('WBreakpoint resolution', () {
     testWidgets('falls back to base when no higher builder matches',
         (tester) async {
       await tester.pumpWidget(
-        _wrap(
+        wrapWithTheme(
           size: const Size(320, 800),
           child: WBreakpoint(
             base: (_) => const Text('BASE'),
@@ -38,7 +42,7 @@ void main() {
 
     testWidgets('resolves sm builder at sm width', (tester) async {
       await tester.pumpWidget(
-        _wrap(
+        wrapWithTheme(
           size: const Size(700, 800),
           child: WBreakpoint(
             base: (_) => const Text('BASE'),
@@ -54,7 +58,7 @@ void main() {
         (tester) async {
       // lg width (>=1024), but only sm and md defined → md wins
       await tester.pumpWidget(
-        _wrap(
+        wrapWithTheme(
           size: const Size(1200, 800),
           child: WBreakpoint(
             base: (_) => const Text('BASE'),
@@ -69,7 +73,7 @@ void main() {
 
     testWidgets('xl width with all built-ins picks xl', (tester) async {
       await tester.pumpWidget(
-        _wrap(
+        wrapWithTheme(
           size: const Size(1400, 800),
           child: WBreakpoint(
             base: (_) => const Text('BASE'),
@@ -87,7 +91,7 @@ void main() {
 
     testWidgets('2xl width picks xxl builder', (tester) async {
       await tester.pumpWidget(
-        _wrap(
+        wrapWithTheme(
           size: const Size(1600, 800),
           child: WBreakpoint(
             base: (_) => const Text('BASE'),
@@ -113,7 +117,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        _wrap(
+        wrapWithTheme(
           size: const Size(950, 800),
           theme: theme,
           child: WBreakpoint(
@@ -142,7 +146,7 @@ void main() {
 
       // At tablet width, but only md defined → md resolves.
       await tester.pumpWidget(
-        _wrap(
+        wrapWithTheme(
           size: const Size(950, 800),
           theme: theme,
           child: WBreakpoint(
@@ -157,7 +161,7 @@ void main() {
 
     testWidgets('no builders besides base returns base', (tester) async {
       await tester.pumpWidget(
-        _wrap(
+        wrapWithTheme(
           size: const Size(1200, 800),
           child: WBreakpoint(base: (_) => const Text('BASE')),
         ),
@@ -167,7 +171,7 @@ void main() {
     });
 
     testWidgets('rebuilds when size crosses breakpoint', (tester) async {
-      Widget app(Size size) => _wrap(
+      Widget app(Size size) => wrapWithTheme(
             size: size,
             child: WBreakpoint(
               base: (_) => const Text('BASE'),
@@ -215,6 +219,21 @@ void main() {
 
       // At 250px with inner screens, md (200) matches.
       expect(find.text('MD'), findsOneWidget);
+    });
+
+    testWidgets('asserts when custom key is missing from theme screens',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          size: const Size(800, 800),
+          child: WBreakpoint(
+            base: (_) => const Text('BASE'),
+            custom: {'unregistered': (_) => const Text('CUSTOM')},
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isA<FlutterError>());
     });
   });
 }

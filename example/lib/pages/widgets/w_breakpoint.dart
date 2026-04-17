@@ -10,6 +10,7 @@ class WBreakpointExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return WDiv(
       className: 'w-full h-full overflow-y-auto p-4',
+      scrollPrimary: true,
       child: WDiv(
         className: 'flex flex-col gap-6 max-w-3xl',
         children: [
