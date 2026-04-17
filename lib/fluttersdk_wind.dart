@@ -116,6 +116,7 @@ export 'src/widgets/w_date_picker.dart';
 export 'src/widgets/w_form_date_picker.dart';
 export 'src/widgets/w_keyboard_actions.dart';
 export 'src/widgets/w_spacer.dart';
+export 'src/widgets/w_breakpoint.dart';
 export 'src/dynamic/w_dynamic.dart';
 export 'src/dynamic/w_dynamic_controller.dart';
 export 'src/dynamic/w_dynamic_state.dart';
