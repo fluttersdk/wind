@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### 🐛 Bug Fixes
+
+- **Flex in Scrollable Axis**: `flex-1` / `flex-N` children inside `flex-row` + `overflow-x-auto|scroll` (or `flex-col` + `overflow-y-auto|scroll`) no longer throw "RenderFlex children have non-zero flex but incoming constraints are unbounded." The parent now signals via `WindFlexOverflowScope` so direct flex children skip `Expanded`/`Flexible` wrapping for that render pass. Responsive variants (`base:overflow-x-auto sm:overflow-visible` + `sm:flex-1`) work end-to-end. (#54)
+
 ---
 
 ## [1.0.0-alpha.6] - 2026-04-04

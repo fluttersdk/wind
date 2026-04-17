@@ -41,6 +41,7 @@ Flutter constraint resolution differs fundamentally from CSS. Wind UI maps `clas
 | Vertical scroll | `overflow-y-auto` + `scrollPrimary: true` | Parent MUST have bounded height |
 | Bounded height for scroll | `flex-1` on the scrollable `WDiv` | Inside a Column/Flex parent |
 | Horizontal scroll | `overflow-x-auto` | Same rules |
+| Flex children inside scrollable main axis | `flex-1` on child works (Wind skips `Expanded` automatically when parent scrolls that axis) | `flex flex-row + overflow-x-auto` or `flex flex-col + overflow-y-auto` — no unbounded-constraints assertion |
 
 **WDiv Composition Rules**
 
