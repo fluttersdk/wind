@@ -5,6 +5,8 @@ Utilities for controlling flex containers, direction, alignment, wrapping, and s
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
 - [Flex Direction](#flex-direction)
+- [Reversing Direction](#reversing-direction)
+- [Child Order](#child-order)
 - [Wrapping](#wrapping)
 - [Justify Content](#justify-content)
 - [Align Items](#align-items)
@@ -58,6 +60,9 @@ WDiv(
 | `wrap` | `flex-wrap: wrap` | `Wrap` |
 | `flex-row` | `flex-direction: row` | `Row()` |
 | `flex-col` | `flex-direction: column` | `Column()` |
+| `flex-row-reverse` | `flex-direction: row-reverse` | `Row(textDirection: mirrored)` |
+| `flex-col-reverse` | `flex-direction: column-reverse` | `Column(verticalDirection: up)` |
+| `order-{n}` | `order: {n}` | Stable-sort children before layout |
 | `justify-{alignment}` | `justify-content: ...` | `MainAxisAlignment` |
 | `items-{alignment}` | `align-items: ...` | `CrossAxisAlignment` |
 | `gap-{n}` | `gap: {n}` | `SizedBox` (spacer) |
@@ -78,6 +83,68 @@ WDiv(className: 'flex flex-row')
 // Column (Vertical)
 WDiv(className: 'flex flex-col')
 ```
+
+<a name="reversing-direction"></a>
+## Reversing Direction
+
+Use `flex-row-reverse` or `flex-col-reverse` to reverse the main-axis direction. Rather than reversing the children list, Wind flips the axis itself (via `Row.textDirection` / `Column.verticalDirection`), so alignment tokens mirror correctly: `justify-start` anchors to what is now the visual end, matching CSS's `flex-direction: *-reverse`. Cross-axis alignment is unaffected.
+
+```dart
+WDiv(
+  className: 'flex flex-row-reverse gap-2',
+  children: [
+    WText('First in code'),
+    WText('Last in code'),
+  ],
+)
+// Renders as: [Last in code] [First in code]
+```
+
+Responsive prefixes work as expected:
+
+```dart
+// Column on mobile, row-reverse on md+
+WDiv(className: 'flex flex-col md:flex-row-reverse gap-4')
+```
+
+<a name="child-order"></a>
+## Child Order
+
+Use `order-*` on individual flex children to override their paint order without changing the source order. The parent flex container stable-sorts children by their resolved `order` value before laying them out; children without `order-*` default to `0`.
+
+| Class | Behavior |
+|:------|:---------|
+| `order-0` .. `order-12` | Explicit index (integers only) |
+| `order-first` | Placed before everything else (sentinel `-9999`) |
+| `order-last` | Placed after everything else (sentinel `9999`) |
+| `order-none` | Resets to `0` |
+| `order-[n]` | Arbitrary integer (supports negative, e.g. `order-[-3]`) |
+
+```dart
+WDiv(
+  className: 'flex',
+  children: [
+    WDiv(className: 'order-3', child: WText('A')),
+    WDiv(className: 'order-1', child: WText('B')),
+    WDiv(className: 'order-2', child: WText('C')),
+  ],
+)
+// Visual order: B, C, A
+```
+
+Responsive reordering is a common use case — swap the layout per breakpoint without duplicating children:
+
+```dart
+WDiv(
+  className: 'flex flex-col md:flex-row gap-4',
+  children: [
+    WDiv(className: 'order-2 md:order-1', child: WText('Sidebar')),
+    WDiv(className: 'order-1 md:order-2', child: WText('Main content')),
+  ],
+)
+```
+
+When combined with `flex-*-reverse`, children are sorted by `order-*` first; the container then flips the main-axis direction so `justify-*` still applies against the (now reversed) axis.
 
 <a name="wrapping"></a>
 ## Wrapping

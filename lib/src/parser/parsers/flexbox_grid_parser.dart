@@ -58,10 +58,19 @@ class FlexboxGridParser implements WindParserInterface {
     'block': WindDisplayType.block,
   };
 
-  /// Maps flex-direction classes to `Axis`
+  /// Maps flex-direction classes to `Axis`. The `-reverse` variants set the
+  /// same axis but also flip the main-axis order via `flexReverse`.
   static const _directionMap = <String, Axis>{
     'flex-row': Axis.horizontal,
     'flex-col': Axis.vertical,
+    'flex-row-reverse': Axis.horizontal,
+    'flex-col-reverse': Axis.vertical,
+  };
+
+  /// Classes that flip the flex main-axis direction.
+  static const _reverseDirections = <String>{
+    'flex-row-reverse',
+    'flex-col-reverse',
   };
 
   /// Maps justify-content classes to `MainAxisAlignment`
@@ -142,6 +151,7 @@ class FlexboxGridParser implements WindParserInterface {
     // which values have been set.
     WindDisplayType? displayType;
     Axis? flexDirection;
+    bool? flexReverse;
     MainAxisAlignment? mainAxisAlignment;
     CrossAxisAlignment? crossAxisAlignment;
     WrapAlignment? runAlignment;
@@ -179,6 +189,7 @@ class FlexboxGridParser implements WindParserInterface {
       } else if (flexDirection == null &&
           _directionMap.containsKey(className)) {
         flexDirection = _directionMap[className];
+        flexReverse ??= _reverseDirections.contains(className);
       } else if (mainAxisAlignment == null &&
           _justifyMap.containsKey(className)) {
         mainAxisAlignment = _justifyMap[className];
@@ -252,6 +263,7 @@ class FlexboxGridParser implements WindParserInterface {
 
     final bool didChange = displayType != null ||
         flexDirection != null ||
+        flexReverse != null ||
         mainAxisAlignment != null ||
         crossAxisAlignment != null ||
         runAlignment != null ||
@@ -273,6 +285,7 @@ class FlexboxGridParser implements WindParserInterface {
     return styles.copyWith(
       displayType: displayType,
       flexDirection: flexDirection,
+      flexReverse: flexReverse,
       mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
       runAlignment: runAlignment,

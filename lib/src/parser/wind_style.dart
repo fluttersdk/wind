@@ -97,6 +97,14 @@ class WindStyle {
   /// Number of grid columns for grid display type e.g., grid-cols-3
   final int? gridCols;
 
+  /// Child order for flex reordering e.g., order-1, order-first, order-[5].
+  /// Children without an `order-*` class default to `0` during stable sort.
+  final int? order;
+
+  /// Whether the flex main axis should be mirrored (flex-row-reverse /
+  /// flex-col-reverse). Applied by the parent at layout time.
+  final bool flexReverse;
+
   /// Text color e.g., text-red-500
   final Color? color;
 
@@ -258,6 +266,8 @@ class WindStyle {
     this.alignment,
     this.textBaseline,
     this.gridCols,
+    this.order,
+    this.flexReverse = false,
     this.color,
     this.fontSize,
     this.fontWeight,
@@ -327,6 +337,8 @@ class WindStyle {
     Alignment? alignment,
     TextBaseline? textBaseline,
     int? gridCols,
+    int? order,
+    bool? flexReverse,
     Color? color,
     double? fontSize,
     FontWeight? fontWeight,
@@ -410,6 +422,8 @@ class WindStyle {
       alignment: alignment ?? this.alignment,
       textBaseline: textBaseline ?? this.textBaseline,
       gridCols: gridCols ?? this.gridCols,
+      order: order ?? this.order,
+      flexReverse: flexReverse ?? this.flexReverse,
       color: color ?? this.color,
       fontSize: fontSize ?? this.fontSize,
       fontWeight: fontWeight ?? this.fontWeight,
@@ -485,6 +499,8 @@ class WindStyle {
           alignment == other.alignment &&
           textBaseline == other.textBaseline &&
           gridCols == other.gridCols &&
+          order == other.order &&
+          flexReverse == other.flexReverse &&
           color == other.color &&
           fontSize == other.fontSize &&
           fontWeight == other.fontWeight &&
@@ -554,6 +570,8 @@ class WindStyle {
       alignment.hashCode ^
       textBaseline.hashCode ^
       gridCols.hashCode ^
+      order.hashCode ^
+      flexReverse.hashCode ^
       color.hashCode ^
       fontSize.hashCode ^
       fontWeight.hashCode ^
@@ -661,6 +679,8 @@ class WindStyle {
         'alignment: $alignment, '
         'textBaseline: $textBaseline, '
         'gridCols: $gridCols, '
+        'order: $order, '
+        'flexReverse: $flexReverse, '
         'color: $color, '
         'fontSize: $fontSize, '
         'fontWeight: $fontWeight, '
