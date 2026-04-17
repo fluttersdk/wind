@@ -92,6 +92,21 @@ void main() {
         expect(styles.order, isNull);
       });
 
+      test('rejects out-of-range numeric order (13)', () {
+        final styles = parser.parse(WindStyle(), ['order-13'], context);
+        expect(styles.order, isNull);
+      });
+
+      test('rejects out-of-range numeric order (99)', () {
+        final styles = parser.parse(WindStyle(), ['order-99'], context);
+        expect(styles.order, isNull);
+      });
+
+      test('accepts arbitrary values beyond the 0-12 scale', () {
+        final styles = parser.parse(WindStyle(), ['order-[99]'], context);
+        expect(styles.order, 99);
+      });
+
       test('returns unchanged styles for null classes', () {
         final initial = WindStyle();
         final styles = parser.parse(initial, null, context);

@@ -462,12 +462,12 @@ class WDiv extends StatelessWidget {
     );
 
     // Resolve child ordering (order-*) before gap injection — sort stably by
-    // resolved order (children without `order-*` default to 0), then apply
-    // `flex-*-reverse` by reversing the sorted list.
+    // resolved order (children without `order-*` default to 0). `flex-*-reverse`
+    // is applied via Row.textDirection / Column.verticalDirection below so the
+    // main-axis semantics (justify-start etc.) mirror correctly, matching CSS.
     final orderedChildren = _applyChildOrder(
       children!,
       context: context,
-      reverse: styles.flexReverse,
     );
 
     // Inject gaps if necessary (SRP: delegated to helper)
@@ -513,6 +513,9 @@ class WDiv extends StatelessWidget {
               styles.crossAxisAlignment ?? CrossAxisAlignment.start,
           mainAxisSize: effectiveMainAxisSize,
           textBaseline: styles.textBaseline,
+          verticalDirection: styles.flexReverse
+              ? VerticalDirection.up
+              : VerticalDirection.down,
           children: gappedChildren,
         ),
       );
@@ -546,6 +549,14 @@ class WDiv extends StatelessWidget {
             }).toList()
           : gappedChildren;
 
+      TextDirection? rowTextDirection;
+      if (styles.flexReverse) {
+        final ambient = Directionality.maybeOf(context) ?? TextDirection.ltr;
+        rowTextDirection = ambient == TextDirection.rtl
+            ? TextDirection.ltr
+            : TextDirection.rtl;
+      }
+
       return WindFlexOverflowScope(
         skipExpanded: isMainAxisScrollable,
         child: Row(
@@ -555,6 +566,7 @@ class WDiv extends StatelessWidget {
               styles.crossAxisAlignment ?? CrossAxisAlignment.start,
           mainAxisSize: effectiveMainAxisSize,
           textBaseline: styles.textBaseline,
+          textDirection: rowTextDirection,
           children: rowChildren,
         ),
       );
@@ -627,50 +639,50 @@ class WDiv extends StatelessWidget {
     }
   }
 
-  /// Resolves a child's `order-*` value (defaulting to 0) by parsing its
-  /// className through WindParser — mirrors the per-breakpoint / per-state
-  /// resolution used elsewhere so `sm:order-last` / `dark:order-first` just
-  /// work. Children without any `className` or `order-*` class sort at 0.
-  static int _extractChildOrder(Widget child, BuildContext context) {
-    final className = _extractChildClassName(child);
-    if (className == null || className.isEmpty) return 0;
-    final states = _extractChildStates(child);
-    final childStyles = WindParser.parse(className, context, states: states);
-    return childStyles.order ?? 0;
+  /// Cheap pre-check: does this className contain an `order-` token? Avoids
+  /// the full `WindParser.parse` round-trip for the common case where no
+  /// children opt into `order-*`.
+  static bool _classNameMentionsOrder(String? className) {
+    if (className == null || className.isEmpty) return false;
+    return className.contains('order-');
   }
 
-  /// Stable-sorts [children] by resolved `order-*`, then reverses when the
-  /// parent is `flex-row-reverse` / `flex-col-reverse`. Preserves original
-  /// insertion order among equal-order children (and before reversing).
+  /// Single-pass resolution: returns the child list, stable-sorted by any
+  /// `order-*` class on its children. Each child's className is parsed at
+  /// most once, and children whose className doesn't mention `order-` skip
+  /// `WindParser.parse` entirely. Preserves original insertion order among
+  /// equal-order children.
   static List<Widget> _applyChildOrder(
     List<Widget> children, {
     required BuildContext context,
-    required bool reverse,
   }) {
-    final bool anyHasOrder = children.any(
-      (c) => _extractChildOrder(c, context) != 0,
-    );
+    final orders = List<int>.filled(children.length, 0);
+    bool anyHasOrder = false;
 
-    List<Widget> result;
-    if (!anyHasOrder) {
-      result = children;
-    } else {
-      final indexed = <({int order, int index, Widget child})>[];
-      for (var i = 0; i < children.length; i++) {
-        indexed.add((
-          order: _extractChildOrder(children[i], context),
-          index: i,
-          child: children[i],
-        ));
+    for (var i = 0; i < children.length; i++) {
+      final child = children[i];
+      final className = _extractChildClassName(child);
+      if (!_classNameMentionsOrder(className)) continue;
+      final states = _extractChildStates(child);
+      final styles = WindParser.parse(className!, context, states: states);
+      final order = styles.order ?? 0;
+      if (order != 0) {
+        anyHasOrder = true;
+        orders[i] = order;
       }
-      indexed.sort((a, b) {
-        final byOrder = a.order.compareTo(b.order);
-        return byOrder != 0 ? byOrder : a.index.compareTo(b.index);
-      });
-      result = indexed.map((e) => e.child).toList();
     }
 
-    return reverse ? result.reversed.toList() : result;
+    if (!anyHasOrder) return children;
+
+    final indexed = <({int order, int index, Widget child})>[];
+    for (var i = 0; i < children.length; i++) {
+      indexed.add((order: orders[i], index: i, child: children[i]));
+    }
+    indexed.sort((a, b) {
+      final byOrder = a.order.compareTo(b.order);
+      return byOrder != 0 ? byOrder : a.index.compareTo(b.index);
+    });
+    return indexed.map((e) => e.child).toList();
   }
 
   /// Checks if a child widget resolves to `absolute` positioning

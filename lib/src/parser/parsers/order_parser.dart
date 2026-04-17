@@ -25,7 +25,7 @@ class OrderParser implements WindParserInterface {
   const OrderParser();
 
   static final RegExp _orderRegex = RegExp(
-    r'^order-(?<value>first|last|none|\d+|\[-?\d+\])$',
+    r'^order-(?<value>first|last|none|0|[1-9]|1[0-2]|\[-?\d+\])$',
   );
 
   static const int _first = -9999;

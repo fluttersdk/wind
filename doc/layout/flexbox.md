@@ -60,8 +60,8 @@ WDiv(
 | `wrap` | `flex-wrap: wrap` | `Wrap` |
 | `flex-row` | `flex-direction: row` | `Row()` |
 | `flex-col` | `flex-direction: column` | `Column()` |
-| `flex-row-reverse` | `flex-direction: row-reverse` | `Row()` with reversed children |
-| `flex-col-reverse` | `flex-direction: column-reverse` | `Column()` with reversed children |
+| `flex-row-reverse` | `flex-direction: row-reverse` | `Row(textDirection: mirrored)` |
+| `flex-col-reverse` | `flex-direction: column-reverse` | `Column(verticalDirection: up)` |
 | `order-{n}` | `order: {n}` | Stable-sort children before layout |
 | `justify-{alignment}` | `justify-content: ...` | `MainAxisAlignment` |
 | `items-{alignment}` | `align-items: ...` | `CrossAxisAlignment` |
@@ -87,7 +87,7 @@ WDiv(className: 'flex flex-col')
 <a name="reversing-direction"></a>
 ## Reversing Direction
 
-Use `flex-row-reverse` or `flex-col-reverse` to reverse the visual order of children along the main axis. The cross-axis alignment is unaffected.
+Use `flex-row-reverse` or `flex-col-reverse` to reverse the main-axis direction. Rather than reversing the children list, Wind flips the axis itself (via `Row.textDirection` / `Column.verticalDirection`), so alignment tokens mirror correctly: `justify-start` anchors to what is now the visual end, matching CSS's `flex-direction: *-reverse`. Cross-axis alignment is unaffected.
 
 ```dart
 WDiv(
@@ -144,7 +144,7 @@ WDiv(
 )
 ```
 
-When combined with `flex-*-reverse`, ordering happens first and the container then reverses the final list.
+When combined with `flex-*-reverse`, children are sorted by `order-*` first; the container then flips the main-axis direction so `justify-*` still applies against the (now reversed) axis.
 
 <a name="wrapping"></a>
 ## Wrapping

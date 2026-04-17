@@ -49,6 +49,8 @@ Flutter constraint resolution differs fundamentally from CSS. Wind UI maps `clas
 |-------------------|----------------|-------|
 | `flex flex-col` | Column | `flex` alone defaults to Row |
 | `flex flex-row` or `flex` | Row | Direction default |
+| `flex-row-reverse` / `flex-col-reverse` | Row/Column with flipped main axis | Uses `textDirection` / `verticalDirection` so `justify-start` mirrors (matches CSS) |
+| `order-{0..12}` / `order-first` / `order-last` / `order-[n]` | Child reorder inside flex parent | Parent stable-sorts; children without `order-*` default to 0 |
 | `wrap` or `grid` | Wrap | NOT `flex-wrap` (no-op!) |
 | `overflow-y-auto` | SingleChildScrollView | Needs bounded height |
 | `relative` | Stack(clipBehavior: Clip.none) | Children split: normal layout + Positioned |
