@@ -15,6 +15,7 @@ Utilities for controlling flex containers, direction, alignment, wrapping, and s
 - [Responsive Design](#responsive-design)
 - [Arbitrary Values](#arbitrary-values)
 - [Customizing Theme](#customizing-theme)
+- [Flex Children Inside a Scrollable Axis](#flex-and-overflow)
 - [Related Documentation](#related-documentation)
 
 <x-preview path="layout/flex_intro" size="md" source="example/lib/pages/layout/flex_intro.dart"></x-preview>
@@ -269,6 +270,25 @@ WindThemeData(
   baseSpacingUnit: 8.0, // Now gap-1 = 8px, gap-2 = 16px
 )
 ```
+
+<a name="flex-and-overflow"></a>
+## Flex Children Inside a Scrollable Axis
+
+When a flex container's own main axis is scrollable (`flex-row` with `overflow-x-auto|scroll`, or `flex-col` with `overflow-y-auto|scroll`), Flutter's `Expanded`/`Flexible` cannot resolve — the incoming constraint is unbounded. Wind detects this at resolution time and skips the `Expanded`/`Flexible` wrap for direct flex children in that pass, so `flex-N` becomes a no-op while the axis is scrollable.
+
+This enables the common responsive pattern of "scroll on narrow, distribute on wide":
+
+```dart
+WDiv(
+  className: 'flex flex-row gap-1 overflow-x-auto sm:overflow-visible',
+  children: [
+    for (final tab in tabs)
+      WDiv(className: 'flex-1', child: _tabBtn(tab)),
+  ],
+)
+```
+
+At `base` the row scrolls horizontally and children keep their intrinsic width. At `sm+` the overflow is removed and `flex-1` distributes width equally. Nested non-scrolling flex subtrees under a scrolling ancestor behave normally.
 
 <a name="related-documentation"></a>
 ## Related Documentation

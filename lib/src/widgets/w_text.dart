@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
+import '../state/wind_flex_overflow_scope.dart';
 import '../utils/wind_logger.dart';
 
 /// **The Utility-First Text Component**
@@ -117,10 +118,14 @@ class WText extends StatelessWidget {
 
     // 5. DELEGATE COMPOSITION PIPELINE (SRP)
     // Wraps the text in layout widgets (Padding, Container, Expanded, etc.)
+    final bool skipFlexWrap =
+        WindFlexOverflowScope.maybeOf(context)?.skipExpanded ?? false;
+
     final Widget finalWidget = _buildCompositionPipeline(
       styles: styles,
       content: coreContent,
       logger: logger,
+      skipFlexWrap: skipFlexWrap,
     );
 
     // 6. FINALIZE
@@ -188,6 +193,7 @@ class WText extends StatelessWidget {
     required WindStyle styles,
     required Widget content,
     required WindLogger logger,
+    bool skipFlexWrap = false,
   }) {
     Widget widgetToBuild = content;
 
@@ -237,13 +243,15 @@ class WText extends StatelessWidget {
       widgetToBuild = Align(alignment: styles.alignment!, child: widgetToBuild);
     }
 
-    // Step E: Flex (Expanded/Flexible)
-    if (styles.flex != null) {
-      logger.wrapWith("Expanded", "flex: ${styles.flex}");
-      widgetToBuild = Expanded(flex: styles.flex!, child: widgetToBuild);
-    } else if (styles.flexFit != null) {
-      logger.wrapWith("Flexible", "fit: ${styles.flexFit}");
-      widgetToBuild = Flexible(fit: styles.flexFit!, child: widgetToBuild);
+    // Step E: Flex (Expanded/Flexible) — skipped inside a scrollable main axis.
+    if (!skipFlexWrap) {
+      if (styles.flex != null) {
+        logger.wrapWith("Expanded", "flex: ${styles.flex}");
+        widgetToBuild = Expanded(flex: styles.flex!, child: widgetToBuild);
+      } else if (styles.flexFit != null) {
+        logger.wrapWith("Flexible", "fit: ${styles.flexFit}");
+        widgetToBuild = Flexible(fit: styles.flexFit!, child: widgetToBuild);
+      }
     }
 
     return widgetToBuild;

@@ -192,6 +192,104 @@ void main() {
       expect(find.byType(ClipRRect), findsOneWidget);
     });
 
+    testWidgets(
+      'flex-1 children inside overflow-x-auto row do not assert',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: const WDiv(
+                className: 'flex flex-row overflow-x-auto',
+                children: [
+                  WDiv(className: 'flex-1', child: Text('a')),
+                  WDiv(className: 'flex-1', child: Text('b')),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.byType(Expanded), findsNothing);
+        expect(find.text('a'), findsOneWidget);
+        expect(find.text('b'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'flex-1 children inside overflow-y-auto column do not assert',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: const WDiv(
+                className: 'flex flex-col overflow-y-auto',
+                children: [
+                  WDiv(className: 'flex-1', child: Text('a')),
+                  WDiv(className: 'flex-1', child: Text('b')),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.byType(Expanded), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'flex-1 in non-scrolling row still wraps with Expanded',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: const WDiv(
+                className: 'flex flex-row',
+                children: [
+                  WDiv(className: 'flex-1', child: Text('a')),
+                  WDiv(className: 'flex-1', child: Text('b')),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.byType(Expanded), findsNWidgets(2));
+      },
+    );
+
+    testWidgets(
+      'nested non-scrolling flex subtree re-enables Expanded under scroll',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: const WDiv(
+                className: 'flex flex-row overflow-x-auto',
+                children: [
+                  WDiv(
+                    className: 'flex flex-row w-96',
+                    children: [
+                      WDiv(className: 'flex-1', child: Text('inner')),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.byType(Expanded), findsOneWidget);
+      },
+    );
+
     testWidgets('no overflow class does not add ClipRect', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

@@ -5,6 +5,7 @@ import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
 import 'wind_animation_wrapper.dart';
 import '../state/wind_anchor_state_provider.dart';
+import '../state/wind_flex_overflow_scope.dart';
 import 'w_anchor.dart';
 import 'w_text.dart';
 
@@ -187,10 +188,14 @@ class WDiv extends StatelessWidget {
     // 5. COMPOSE DECORATORS (The Decorator Layer)
     // We wrap the core structure with styling widgets (Padding, Container)
     // in a specific order (from inside out) to achieve the desired effect.
+    final bool skipFlexWrap =
+        WindFlexOverflowScope.maybeOf(context)?.skipExpanded ?? false;
+
     Widget finalWidget = _buildCompositionPipeline(
       styles: styles,
       content: coreContent,
       logger: logger,
+      skipFlexWrap: skipFlexWrap,
     );
 
     /// 6. TEXT STYLES (If applicable)
@@ -319,25 +324,37 @@ class WDiv extends StatelessWidget {
           "${isColumn ? 'Column' : 'Row'}(child: single item)",
         );
 
+        final bool singleIsMainAxisScrollable = isColumn
+            ? (styles.overflowY == WindOverflow.auto ||
+                styles.overflowY == WindOverflow.scroll)
+            : (styles.overflowX == WindOverflow.auto ||
+                styles.overflowX == WindOverflow.scroll);
+
         if (isColumn) {
-          return Column(
-            mainAxisAlignment:
-                styles.mainAxisAlignment ?? MainAxisAlignment.start,
-            crossAxisAlignment:
-                styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-            mainAxisSize: effectiveMainAxisSize,
-            textBaseline: styles.textBaseline,
-            children: [child!],
+          return WindFlexOverflowScope(
+            skipExpanded: singleIsMainAxisScrollable,
+            child: Column(
+              mainAxisAlignment:
+                  styles.mainAxisAlignment ?? MainAxisAlignment.start,
+              crossAxisAlignment:
+                  styles.crossAxisAlignment ?? CrossAxisAlignment.start,
+              mainAxisSize: effectiveMainAxisSize,
+              textBaseline: styles.textBaseline,
+              children: [child!],
+            ),
           );
         } else {
-          return Row(
-            mainAxisAlignment:
-                styles.mainAxisAlignment ?? MainAxisAlignment.start,
-            crossAxisAlignment:
-                styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-            mainAxisSize: effectiveMainAxisSize,
-            textBaseline: styles.textBaseline,
-            children: [child!],
+          return WindFlexOverflowScope(
+            skipExpanded: singleIsMainAxisScrollable,
+            child: Row(
+              mainAxisAlignment:
+                  styles.mainAxisAlignment ?? MainAxisAlignment.start,
+              crossAxisAlignment:
+                  styles.crossAxisAlignment ?? CrossAxisAlignment.start,
+              mainAxisSize: effectiveMainAxisSize,
+              textBaseline: styles.textBaseline,
+              children: [child!],
+            ),
           );
         }
       }
@@ -430,6 +447,17 @@ class WDiv extends StatelessWidget {
     // Check if overflow-hidden is set (requires children to shrink)
     final hasOverflowClip = styles.clipBehavior == Clip.hardEdge;
 
+    // When the flex main axis is itself scrollable (overflow-x-auto/scroll on
+    // Row, overflow-y-auto/scroll on Column), the incoming main-axis
+    // constraint is unbounded. Flex children wrapped in `Expanded`/`Flexible`
+    // would assert in that case, so we signal them via `WindFlexOverflowScope`
+    // to skip that wrapping for this render pass.
+    final bool isMainAxisScrollable = isColumn
+        ? (styles.overflowY == WindOverflow.auto ||
+            styles.overflowY == WindOverflow.scroll)
+        : (styles.overflowX == WindOverflow.auto ||
+            styles.overflowX == WindOverflow.scroll);
+
     // Inject gaps if necessary (SRP: delegated to helper)
     final gappedChildren = _buildGappedChildren(
       children: children!,
@@ -464,18 +492,24 @@ class WDiv extends StatelessWidget {
     );
 
     if (isColumn) {
-      return Column(
-        mainAxisAlignment: styles.mainAxisAlignment ?? MainAxisAlignment.start,
-        crossAxisAlignment:
-            styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-        mainAxisSize: effectiveMainAxisSize,
-        textBaseline: styles.textBaseline,
-        children: gappedChildren,
+      return WindFlexOverflowScope(
+        skipExpanded: isMainAxisScrollable,
+        child: Column(
+          mainAxisAlignment:
+              styles.mainAxisAlignment ?? MainAxisAlignment.start,
+          crossAxisAlignment:
+              styles.crossAxisAlignment ?? CrossAxisAlignment.start,
+          mainAxisSize: effectiveMainAxisSize,
+          textBaseline: styles.textBaseline,
+          children: gappedChildren,
+        ),
       );
     } else {
       // For Row with space distribution OR overflow-hidden, wrap children with Flexible
-      // This mimics CSS flex-shrink: 1 default behavior
-      final needsFlexible = needsSpaceDistribution || hasOverflowClip;
+      // This mimics CSS flex-shrink: 1 default behavior. Inside a horizontally
+      // scrollable row, `Flexible` is also invalid — skip it too.
+      final needsFlexible =
+          (needsSpaceDistribution || hasOverflowClip) && !isMainAxisScrollable;
       final rowChildren = needsFlexible
           ? gappedChildren.map((child) {
               // Don't wrap SizedBox gaps or already-flex widgets with Flexible
@@ -500,13 +534,17 @@ class WDiv extends StatelessWidget {
             }).toList()
           : gappedChildren;
 
-      return Row(
-        mainAxisAlignment: styles.mainAxisAlignment ?? MainAxisAlignment.start,
-        crossAxisAlignment:
-            styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-        mainAxisSize: effectiveMainAxisSize,
-        textBaseline: styles.textBaseline,
-        children: rowChildren,
+      return WindFlexOverflowScope(
+        skipExpanded: isMainAxisScrollable,
+        child: Row(
+          mainAxisAlignment:
+              styles.mainAxisAlignment ?? MainAxisAlignment.start,
+          crossAxisAlignment:
+              styles.crossAxisAlignment ?? CrossAxisAlignment.start,
+          mainAxisSize: effectiveMainAxisSize,
+          textBaseline: styles.textBaseline,
+          children: rowChildren,
+        ),
       );
     }
   }
@@ -696,6 +734,7 @@ class WDiv extends StatelessWidget {
     required WindStyle styles,
     required Widget? content,
     required WindLogger logger,
+    bool skipFlexWrap = false,
   }) {
     Widget? widgetToBuild = content;
 
@@ -1119,19 +1158,23 @@ class WDiv extends StatelessWidget {
       return widgetToBuild ?? const SizedBox.shrink();
     }
 
-    // Apply Flex/Expanded (flex-*)
-    if (styles.flex != null) {
-      logger.wrapWith("Expanded", "flex: ${styles.flex}");
-      widgetToBuild = Expanded(
-        flex: styles.flex!,
-        child: widgetToBuild ?? const SizedBox.shrink(),
-      );
-    } else if (styles.flexFit != null) {
-      logger.wrapWith("Flexible", "fit: ${styles.flexFit}");
-      widgetToBuild = Flexible(
-        fit: styles.flexFit!,
-        child: widgetToBuild ?? const SizedBox.shrink(),
-      );
+    // Apply Flex/Expanded (flex-*). Skipped when an ancestor signals that
+    // the flex main axis is scrollable — `Expanded`/`Flexible` inside an
+    // unbounded-width/height flex would assert.
+    if (!skipFlexWrap) {
+      if (styles.flex != null) {
+        logger.wrapWith("Expanded", "flex: ${styles.flex}");
+        widgetToBuild = Expanded(
+          flex: styles.flex!,
+          child: widgetToBuild ?? const SizedBox.shrink(),
+        );
+      } else if (styles.flexFit != null) {
+        logger.wrapWith("Flexible", "fit: ${styles.flexFit}");
+        widgetToBuild = Flexible(
+          fit: styles.flexFit!,
+          child: widgetToBuild ?? const SizedBox.shrink(),
+        );
+      }
     }
 
     return widgetToBuild ?? const SizedBox.shrink();
