@@ -920,12 +920,21 @@ class WDiv extends StatelessWidget {
       }
 
       // Inline backgroundColor wins over any parsed bg-* / dark:bg-*.
-      // Applied last so it trumps className-resolved decoration color.
+      // Rebuild via the constructor (not copyWith) so gradient/image are
+      // truly cleared. `BoxDecoration.copyWith` falls back to `this.x` when
+      // a named arg is null, so it cannot clear fields.
       if (backgroundColor != null) {
         if (finalDecoration == null) {
           finalDecoration = BoxDecoration(color: backgroundColor);
         } else {
-          finalDecoration = finalDecoration.copyWith(color: backgroundColor);
+          finalDecoration = BoxDecoration(
+            color: backgroundColor,
+            border: finalDecoration.border,
+            borderRadius: finalDecoration.borderRadius,
+            boxShadow: finalDecoration.boxShadow,
+            shape: finalDecoration.shape,
+            backgroundBlendMode: finalDecoration.backgroundBlendMode,
+          );
         }
       }
 

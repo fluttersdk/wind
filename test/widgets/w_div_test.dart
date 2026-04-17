@@ -279,11 +279,13 @@ void main() {
         'paints Container color when backgroundColor is provided '
         'without any bg-* className', (tester) async {
       const color = Color(0xFF123456);
+      const testKey = Key('bg-only');
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
             data: WindThemeData(),
             child: const WDiv(
+              key: testKey,
               className: 'w-10 h-10',
               backgroundColor: color,
             ),
@@ -291,19 +293,27 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
-      expect(decoration.color, color);
+      final containerFinder = find.descendant(
+        of: find.byKey(testKey),
+        matching: find.byWidgetPredicate((widget) {
+          if (widget is! Container) return false;
+          final decoration = widget.decoration;
+          return decoration is BoxDecoration && decoration.color == color;
+        }),
+      );
+      expect(containerFinder, findsOneWidget);
     });
 
     testWidgets('inline backgroundColor wins over bg-* className',
         (tester) async {
       const override = Color(0xFFABCDEF);
+      const testKey = Key('bg-override');
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
             data: WindThemeData(),
             child: const WDiv(
+              key: testKey,
               className: 'w-10 h-10 bg-red-500',
               backgroundColor: override,
             ),
@@ -311,9 +321,45 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
+      final containerFinder = find.descendant(
+        of: find.byKey(testKey),
+        matching: find.byWidgetPredicate((widget) {
+          if (widget is! Container) return false;
+          final decoration = widget.decoration;
+          return decoration is BoxDecoration && decoration.color == override;
+        }),
+      );
+      expect(containerFinder, findsOneWidget);
+    });
+
+    testWidgets(
+        'inline backgroundColor clears className gradient so solid color '
+        'is not painted over', (tester) async {
+      const override = Color(0xFF00AA00);
+      const testKey = Key('bg-vs-gradient');
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              key: testKey,
+              className: 'w-10 h-10 bg-gradient-to-r from-red-500 to-blue-500',
+              backgroundColor: override,
+            ),
+          ),
+        ),
+      );
+
+      final container = tester.widget<Container>(
+        find.descendant(
+          of: find.byKey(testKey),
+          matching: find.byType(Container),
+        ),
+      );
       final decoration = container.decoration as BoxDecoration;
       expect(decoration.color, override);
+      expect(decoration.gradient, isNull);
+      expect(decoration.image, isNull);
     });
 
     testWidgets(
