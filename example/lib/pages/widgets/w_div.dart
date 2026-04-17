@@ -2,8 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 /// WDiv Widget Showcase
-class WDivExamplePage extends StatelessWidget {
+class WDivExamplePage extends StatefulWidget {
   const WDivExamplePage({super.key});
+
+  @override
+  State<WDivExamplePage> createState() => _WDivExamplePageState();
+}
+
+class _WDivExamplePageState extends State<WDivExamplePage> {
+  // Simulates a runtime-dynamic user/brand color (e.g. from a color picker
+  // or per-tenant config). Using `bg-[#$hex]` here would create a new parser
+  // cache entry for every tap; the inline `backgroundColor` prop does not.
+  static const List<Color> _brandPalette = <Color>[
+    Color(0xFFEF4444),
+    Color(0xFF10B981),
+    Color(0xFF3B82F6),
+    Color(0xFFF59E0B),
+    Color(0xFF8B5CF6),
+  ];
+  int _brandIndex = 0;
+
+  Color get _userBrandColor =>
+      _brandPalette[_brandIndex % _brandPalette.length];
 
   @override
   Widget build(BuildContext context) {
@@ -191,6 +211,59 @@ class WDivExamplePage extends StatelessWidget {
               ],
             ),
           ]),
+
+          // Runtime-Dynamic Color
+          _section(
+            'Runtime-Dynamic Color',
+            'Use the inline backgroundColor prop for values you cannot know at '
+                'compile time (color picker, per-tenant brand).',
+            [
+              WDiv(
+                className:
+                    'flex flex-col gap-3 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+                children: [
+                  WDiv(
+                    className: 'flex flex-row items-center gap-3',
+                    children: [
+                      WDiv(
+                        backgroundColor: _userBrandColor,
+                        className: 'w-16 h-16 rounded-xl',
+                      ),
+                      WDiv(
+                        className: 'flex flex-col gap-1',
+                        children: [
+                          WText(
+                            'Brand swatch',
+                            className:
+                                'text-sm font-semibold text-gray-800 dark:text-white',
+                          ),
+                          WText(
+                            '#${_userBrandColor.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}',
+                            className:
+                                'text-xs font-mono text-gray-500 dark:text-gray-400',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  WAnchor(
+                    onTap: () => setState(
+                      () => _brandIndex =
+                          (_brandIndex + 1) % _brandPalette.length,
+                    ),
+                    child: const WDiv(
+                      className:
+                          'px-3 py-2 rounded-md bg-blue-500 hover:bg-blue-600',
+                      child: WText(
+                        'Cycle brand color',
+                        className: 'text-white text-sm font-medium',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
 
           // Quick Reference
           WDiv(

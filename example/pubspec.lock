@@ -118,7 +118,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0-alpha.4"
+    version: "1.0.0-alpha.6"
   google_fonts:
     dependency: "direct main"
     description:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
+import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
 import 'package:fluttersdk_wind/src/widgets/w_div.dart';
 import 'package:fluttersdk_wind/src/theme/defaults/colors.dart'
     as default_colors;
@@ -267,5 +268,122 @@ void main() {
 
     // Verify we have SingleChildScrollView (from overflow-y-auto)
     expect(find.byType(SingleChildScrollView), findsOneWidget);
+  });
+
+  group('WDiv inline backgroundColor', () {
+    setUp(() {
+      WindParser.clearCache();
+    });
+
+    testWidgets(
+        'paints Container color when backgroundColor is provided '
+        'without any bg-* className', (tester) async {
+      const color = Color(0xFF123456);
+      const testKey = Key('bg-only');
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              key: testKey,
+              className: 'w-10 h-10',
+              backgroundColor: color,
+            ),
+          ),
+        ),
+      );
+
+      final containerFinder = find.descendant(
+        of: find.byKey(testKey),
+        matching: find.byWidgetPredicate((widget) {
+          if (widget is! Container) return false;
+          final decoration = widget.decoration;
+          return decoration is BoxDecoration && decoration.color == color;
+        }),
+      );
+      expect(containerFinder, findsOneWidget);
+    });
+
+    testWidgets('inline backgroundColor wins over bg-* className',
+        (tester) async {
+      const override = Color(0xFFABCDEF);
+      const testKey = Key('bg-override');
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              key: testKey,
+              className: 'w-10 h-10 bg-red-500',
+              backgroundColor: override,
+            ),
+          ),
+        ),
+      );
+
+      final containerFinder = find.descendant(
+        of: find.byKey(testKey),
+        matching: find.byWidgetPredicate((widget) {
+          if (widget is! Container) return false;
+          final decoration = widget.decoration;
+          return decoration is BoxDecoration && decoration.color == override;
+        }),
+      );
+      expect(containerFinder, findsOneWidget);
+    });
+
+    testWidgets(
+        'inline backgroundColor clears className gradient so solid color '
+        'is not painted over', (tester) async {
+      const override = Color(0xFF00AA00);
+      const testKey = Key('bg-vs-gradient');
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              key: testKey,
+              className: 'w-10 h-10 bg-gradient-to-r from-red-500 to-blue-500',
+              backgroundColor: override,
+            ),
+          ),
+        ),
+      );
+
+      final container = tester.widget<Container>(
+        find.descendant(
+          of: find.byKey(testKey),
+          matching: find.byType(Container),
+        ),
+      );
+      final decoration = container.decoration as BoxDecoration;
+      expect(decoration.color, override);
+      expect(decoration.gradient, isNull);
+      expect(decoration.image, isNull);
+    });
+
+    testWidgets(
+        'parser cache entry is shared across WDivs with different '
+        'backgroundColor but identical className', (tester) async {
+      WindParser.clearCache();
+      const sameClass = 'w-8 h-8 rounded-md';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const Column(
+              children: [
+                WDiv(className: sameClass, backgroundColor: Color(0xFF111111)),
+                WDiv(className: sameClass, backgroundColor: Color(0xFF222222)),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // Two WDivs parsed the same className; only one cache entry should exist.
+      expect(WindParser.cacheSize, 1);
+    });
   });
 }

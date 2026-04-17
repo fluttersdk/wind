@@ -7,6 +7,7 @@ It embodies the "Intelligent Composition" philosophy, dynamically constructing t
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
 - [Props](#props)
+- [Runtime-Dynamic Colors](#runtime-dynamic-colors)
 - [Layout Modes](#layout-modes)
 - [Event Handling](#event-handling)
 - [State Variants](#state-variants)
@@ -62,6 +63,7 @@ const WDiv({
   WindStyle? style,
   Set<String>? states,
   bool scrollPrimary = false,
+  Color? backgroundColor,
 })
 ```
 
@@ -76,6 +78,25 @@ const WDiv({
 | `style` | `WindStyle?` | `null` | Explicit style object that serves as a base for `className`. |
 | `states` | `Set<String>?` | `null` | Custom states to activate prefix classes (e.g., `loading:bg-blue-500`). |
 | `scrollPrimary` | `bool` | `false` | Whether this is the primary scroll view for iOS tap-to-top and desktop scrollbar integration. |
+| `backgroundColor` | `Color?` | `null` | Inline background color for runtime-dynamic values. Overrides any `bg-*` / `dark:bg-*` from `className`. See [Runtime-Dynamic Colors](#runtime-dynamic-colors). |
+
+<a name="runtime-dynamic-colors"></a>
+## Runtime-Dynamic Colors
+
+Utility classes are for **design tokens** (`bg-primary-500`, `bg-red-500`). When the color is a **runtime value**, a hex from a color picker or a brand color loaded per tenant, use the `backgroundColor` prop instead of interpolating into `bg-[#$hex]`.
+
+```dart
+// Good: runtime-dynamic color via inline prop
+WDiv(
+  backgroundColor: userBrandColor, // Color from a picker or API
+  className: 'w-16 h-16 rounded-xl',
+)
+
+// Avoid: string interpolation bloats the parser cache, one entry per unique hex
+WDiv(className: 'w-16 h-16 rounded-xl bg-[#${userBrandColor.hex}]')
+```
+
+Precedence: inline `backgroundColor` wins over any `bg-*` / `dark:bg-*` resolved from `className`. When `backgroundColor` is `null`, className behavior, including the `dark:` fallback, is unchanged. The inline color does not participate in the parser cache key.
 
 <a name="layout-modes"></a>
 ## Layout Modes

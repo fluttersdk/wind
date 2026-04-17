@@ -158,6 +158,33 @@ class WTextExamplePage extends StatelessWidget {
               ],
             ),
           ),
+          _buildSection(
+            title: 'Runtime-Dynamic Color',
+            description:
+                'Use foregroundColor for values you cannot know at compile '
+                'time (user-picked brand color, per-tenant accent). Inline '
+                'prop overrides any text-* / dark:text-* from className.',
+            child: WDiv(
+              className: 'flex flex-col gap-3',
+              children: const [
+                WText(
+                  'Tenant Acme',
+                  foregroundColor: Color(0xFFEF4444),
+                  className: 'text-xl font-bold',
+                ),
+                WText(
+                  'Tenant Globex',
+                  foregroundColor: Color(0xFF10B981),
+                  className: 'text-xl font-bold',
+                ),
+                WText(
+                  'Tenant Initech',
+                  foregroundColor: Color(0xFF3B82F6),
+                  className: 'text-xl font-bold',
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

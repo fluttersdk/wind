@@ -99,6 +99,17 @@ class WDiv extends StatelessWidget {
   /// Defaults to `false`.
   final bool scrollPrimary;
 
+  /// Inline background color for **runtime-dynamic** values (e.g. a color
+  /// picker, a brand color saved per tenant).
+  ///
+  /// Use `className: 'bg-*'` for static design tokens. Reach for this prop
+  /// only when the color is a runtime value that would otherwise bloat the
+  /// parser cache via `bg-[#\$hex]` interpolation.
+  ///
+  /// When non-null, this overrides any `bg-*` / `dark:bg-*` resolved from
+  /// [className]. Does NOT participate in the parser cache key.
+  final Color? backgroundColor;
+
   /// Creates a new [WDiv] instance.
   const WDiv({
     super.key,
@@ -108,6 +119,7 @@ class WDiv extends StatelessWidget {
     this.style,
     this.states,
     this.scrollPrimary = false,
+    this.backgroundColor,
   }) : assert(
           child == null || children == null,
           'WDiv Violation: You cannot provide both `child` and `children`. Please select one strategy.',
@@ -881,7 +893,8 @@ class WDiv extends StatelessWidget {
     final bool needsContainer = styles.decoration != null ||
         innerConstraints != null ||
         styles.boxShadow != null ||
-        styles.ringShadow != null;
+        styles.ringShadow != null ||
+        backgroundColor != null;
 
     // Track if padding is consumed by Container (so we don't apply it again)
     bool paddingConsumedByContainer = false;
@@ -902,6 +915,25 @@ class WDiv extends StatelessWidget {
         } else {
           finalDecoration = finalDecoration.copyWith(
             boxShadow: combinedShadows,
+          );
+        }
+      }
+
+      // Inline backgroundColor wins over any parsed bg-* / dark:bg-*.
+      // Rebuild via the constructor (not copyWith) so gradient/image are
+      // truly cleared. `BoxDecoration.copyWith` falls back to `this.x` when
+      // a named arg is null, so it cannot clear fields.
+      if (backgroundColor != null) {
+        if (finalDecoration == null) {
+          finalDecoration = BoxDecoration(color: backgroundColor);
+        } else {
+          finalDecoration = BoxDecoration(
+            color: backgroundColor,
+            border: finalDecoration.border,
+            borderRadius: finalDecoration.borderRadius,
+            boxShadow: finalDecoration.boxShadow,
+            shape: finalDecoration.shape,
+            backgroundBlendMode: finalDecoration.backgroundBlendMode,
           );
         }
       }
