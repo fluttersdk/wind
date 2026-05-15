@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -722,6 +723,48 @@ void main() {
           ); // Hint hidden
         },
       );
+    });
+
+    // -------------------------------------------------------------------------
+    // Accessibility / Semantics
+    //
+    // Step 1 of plan ai-test-v2 contract: WFormInput must surface a textField
+    // SemanticsNode labeled with either its `label` prop (preferred) or its
+    // `placeholder` (fallback), so Playwright `getByLabel(...)` resolves.
+    // -------------------------------------------------------------------------
+    group('Semantics', () {
+      testWidgets('emits textField role with label prop as Semantics label',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Form(
+              child: WFormInput(
+                label: 'Email Address',
+                placeholder: 'you@example.com',
+              ),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WInput));
+        expect(node.flagsCollection.isTextField, isTrue);
+        expect(node.label, 'Email Address');
+      });
+
+      testWidgets('falls back to placeholder when label is null',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Form(
+              child: WFormInput(placeholder: 'Search...'),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WInput));
+        expect(node.flagsCollection.isTextField, isTrue);
+        expect(node.label, 'Search...');
+      });
     });
   });
 }

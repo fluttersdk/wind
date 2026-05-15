@@ -1,4 +1,7 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
@@ -742,6 +745,104 @@ void main() {
         expect(decoration.enabledBorder, isA<OutlineInputBorder>());
         final border = decoration.enabledBorder as OutlineInputBorder;
         expect(border.borderSide.width, 1.0);
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // Accessibility / Semantics
+    //
+    // Step 1 of plan ai-test-v2 contract: WInput must wrap the inner TextField
+    // with `Semantics(textField: true, label: placeholder, value: value, ...)`
+    // so that Playwright `getByLabel(/email/i)` and `getByLabel(/password/i)`
+    // resolve via the Flutter web accessibility tree. The Flutter engine maps
+    // a textField SemanticsNode with `label: 'X'` to a real DOM
+    // `<input aria-label="X">` element (see
+    // `.ac/plans/ai-test-v2/research/librarian-semantics-deep-dive.md` ARIA
+    // mapping table).
+    //
+    // The CRITICAL password case is asserted explicitly: it locks the contract
+    // that Step 9's `loginViaSemantics` Playwright helper depends on.
+    // -------------------------------------------------------------------------
+    group('Semantics', () {
+      testWidgets('emits textField role with placeholder as label',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WInput(placeholder: 'Email', value: '')),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WInput));
+        expect(node.flagsCollection.isTextField, isTrue);
+        expect(node.flagsCollection.isEnabled, Tristate.isTrue);
+        expect(node.label, 'Email');
+      });
+
+      testWidgets('emits current value through Semantics.value',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(placeholder: 'Email', value: 'user@example.com'),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WInput));
+        expect(node.flagsCollection.isTextField, isTrue);
+        expect(node.label, 'Email');
+        expect(node.value, contains('user@example.com'));
+      });
+
+      testWidgets('reports disabled state when enabled is false',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(placeholder: 'Disabled', value: '', enabled: false),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WInput));
+        expect(node.flagsCollection.isTextField, isTrue);
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
+      });
+
+      // CRITICAL password regression test — locks the contract Step 9's
+      // `loginViaSemantics` Playwright helper depends on.
+      //
+      // Without this Semantics wrap, a password TextField surfaces no
+      // accessible name and `page.getByLabel(/password/i)` cannot resolve.
+      // With the wrap, the SemanticsNode exposes `isTextField + label:
+      // 'Password' + isObscured`, which the Flutter web engine then renders as
+      // `<input aria-label="Password" type="password">` per the ARIA mapping
+      // table.
+      testWidgets(
+          'password input surfaces label through Semantics (critical regression)',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(
+              type: InputType.password,
+              placeholder: 'Password',
+              value: '',
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WInput));
+        expect(
+          node.flagsCollection.isTextField,
+          isTrue,
+          reason: 'Password input must surface as textField in Semantics tree',
+        );
+        expect(
+          node.label,
+          'Password',
+          reason:
+              'Password input must surface placeholder as Semantics label so '
+              'Playwright getByLabel(/password/i) resolves',
+        );
+        expect(
+          node.flagsCollection.isObscured,
+          isTrue,
+          reason: 'Password input must still mark itself obscured',
+        );
       });
     });
   });

@@ -109,21 +109,39 @@ class WCheckbox extends StatelessWidget {
       logger.printFinalCode();
     }
 
-    return WAnchor(
-      onTap: disabled ? null : () => onChanged?.call(!value),
-      isDisabled: disabled,
-      states: activeStates,
-      child: WDiv(
-        className:
-            'w-5 h-5 rounded border border-gray-300 items-center justify-center checked:bg-blue-500 error:border-red-500 checked:bg-primary checked:border-transparent ${className != null ? ' $className' : ''}',
-        states: activeStates, // Pass states to WDiv for checked: prefix
-        children: [
-          if (value)
-            WIcon(
-              checkIcon ?? const IconData(0xe156, fontFamily: 'MaterialIcons'),
-              className: iconClassName ?? 'text-white text-sm',
-            ),
-        ],
+    // Accessibility: WCheckbox doesn't accept a child label parameter (its
+    // visual content is the check glyph only). Callers who want a labelled
+    // checkbox compose `Row(children: [WCheckbox(...), WText('label')])`
+    // externally. The Semantics wrap below surfaces the checked role + state
+    // so Playwright `getByRole('checkbox')` resolves; callers can pair with
+    // an explicit `Semantics(label: 'Accept terms', container: false, ...)`
+    // sibling if a screen-reader-friendly label is required.
+    return Semantics(
+      container: true,
+      checked: value,
+      enabled: !disabled,
+      // The presence of `checked` plus the standard interpretation of a
+      // tickable container surfaces this node as `role=checkbox` in the
+      // Flutter web accessibility tree.
+      child: MergeSemantics(
+        child: WAnchor(
+          onTap: disabled ? null : () => onChanged?.call(!value),
+          isDisabled: disabled,
+          states: activeStates,
+          child: WDiv(
+            className:
+                'w-5 h-5 rounded border border-gray-300 items-center justify-center checked:bg-blue-500 error:border-red-500 checked:bg-primary checked:border-transparent ${className != null ? ' $className' : ''}',
+            states: activeStates, // Pass states to WDiv for checked: prefix
+            children: [
+              if (value)
+                WIcon(
+                  checkIcon ??
+                      const IconData(0xe156, fontFamily: 'MaterialIcons'),
+                  className: iconClassName ?? 'text-white text-sm',
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

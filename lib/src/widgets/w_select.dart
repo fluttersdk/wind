@@ -487,16 +487,52 @@ class _WSelectState<T> extends State<WSelect<T>> {
     return widget.value == value;
   }
 
+  /// Resolves the Semantics label for the closed-trigger state.
+  ///
+  /// Preference order matches the public contract documented in
+  /// `.ac/plans/ai-test-v2/plan.md` Step 1: explicit `placeholder` wins
+  /// (it is the caller-supplied trigger label); when no placeholder is
+  /// supplied or the placeholder equals the default, the resolver falls
+  /// back to the selected option's label so a populated trigger still
+  /// surfaces a meaningful accessible name.
+  String? _resolveSemanticsLabel() {
+    if (widget.placeholder.isNotEmpty) {
+      return widget.placeholder;
+    }
+    if (widget.isMulti) {
+      final List<SelectOption<T>> selected = _selectedOptions;
+      if (selected.isNotEmpty) {
+        return selected.map((SelectOption<T> opt) => opt.label).join(', ');
+      }
+      return null;
+    }
+    return _selectedOption?.label;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return OverlayPortal(
-      controller: _overlayController,
-      overlayChildBuilder: _buildOverlay,
-      child: CompositedTransformTarget(
-        link: _layerLink,
-        child: Focus(
-          focusNode: _focusNode,
-          child: KeyedSubtree(key: _triggerKey, child: _buildTrigger(context)),
+    // Accessibility: surface the closed trigger as a `button` SemanticsNode
+    // labelled with the placeholder (or the selected option label as
+    // fallback) so Playwright `getByRole('button', { name: ... })` resolves
+    // on the collapsed dropdown. The MergeSemantics collapses the inner
+    // trigger subtree (icon + selected label text) into the parent node.
+    return Semantics(
+      container: true,
+      button: true,
+      enabled: !widget.disabled,
+      label: _resolveSemanticsLabel(),
+      child: MergeSemantics(
+        child: OverlayPortal(
+          controller: _overlayController,
+          overlayChildBuilder: _buildOverlay,
+          child: CompositedTransformTarget(
+            link: _layerLink,
+            child: Focus(
+              focusNode: _focusNode,
+              child:
+                  KeyedSubtree(key: _triggerKey, child: _buildTrigger(context)),
+            ),
+          ),
         ),
       ),
     );

@@ -429,6 +429,11 @@ class _WFormInputContentState extends State<_WFormInputContent> {
       if (widget.state.hasError) 'error',
     };
 
+    // Accessibility: WFormInput exposes a separate `label` prop rendered
+    // visually above the input. When set, we surface it as the Semantics
+    // label of the underlying WInput so Playwright `getByLabel(...)` resolves
+    // against the form field's label (preferred) and falls back to the
+    // placeholder when no label is supplied.
     final input = WInput(
       controller: _effectiveController,
       focusNode: widget.focusNode,
@@ -457,6 +462,7 @@ class _WFormInputContentState extends State<_WFormInputContent> {
       enableSuggestions: widget.enableSuggestions,
       prefix: widget.prefix,
       suffix: widget.suffix,
+      semanticLabel: widget.label ?? widget.placeholder,
     );
 
     // Determine bottom text: error takes priority over hint

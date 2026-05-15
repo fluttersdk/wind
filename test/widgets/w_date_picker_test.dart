@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide DatePickerMode;
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -316,6 +317,43 @@ void main() {
         await tester.tap(find.text('Outside'));
         await tester.pumpAndSettle();
         expect(find.text('January 2025'), findsNothing);
+      });
+    });
+
+    // -----------------------------------------------------------------------
+    // Accessibility / Semantics
+    //
+    // Step 1 of plan ai-test-v2 contract: WDatePicker must surface a
+    // textField SemanticsNode labelled with its `placeholder`, with the
+    // current ISO-formatted value as the Semantics value. Playwright
+    // `getByLabel(/select date/i)` resolves the trigger on the closed
+    // popover.
+    // -----------------------------------------------------------------------
+    group('Semantics', () {
+      testWidgets('emits textField role with placeholder as label',
+          (tester) async {
+        await tester.pumpWidget(wrapWithTheme(
+          const WDatePicker(placeholder: 'Pick a date'),
+        ));
+
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WDatePicker),
+        );
+        expect(node.flagsCollection.isTextField, isTrue);
+        expect(node.label, 'Pick a date');
+      });
+
+      testWidgets('emits ISO-formatted value when a date is selected',
+          (tester) async {
+        await tester.pumpWidget(wrapWithTheme(
+          WDatePicker(value: testDate, placeholder: 'Pick a date'),
+        ));
+
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WDatePicker),
+        );
+        expect(node.flagsCollection.isTextField, isTrue);
+        expect(node.value, contains(testDate.toIso8601String()));
       });
     });
   });

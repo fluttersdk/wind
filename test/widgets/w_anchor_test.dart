@@ -1,5 +1,8 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -460,6 +463,94 @@ void main() {
         await tester.pump();
 
         expect(find.text('Hover: false'), findsOneWidget);
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // 4. Accessibility / Semantics
+    //
+    // These tests lock the contract that Step 1 of plan ai-test-v2 introduces:
+    // WAnchor must emit a `Semantics(button: true, label: <child text>, ...)`
+    // node so Playwright `getByRole('button', { name: ... })` resolves on the
+    // Flutter web semantics tree. The contract is asserted at the Flutter
+    // SemanticsNode level; the Flutter engine deterministically maps that to
+    // `<flt-semantics role="button">label</flt-semantics>` in the DOM (see
+    // `.ac/plans/ai-test-v2/research/librarian-semantics-deep-dive.md` ARIA
+    // mapping table).
+    // -------------------------------------------------------------------------
+    group('Semantics', () {
+      testWidgets('emits button role with label resolved from child text',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onTap: () {},
+              child: const Text('Sign in'),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+        expect(node.flagsCollection.isButton, isTrue);
+        expect(node.flagsCollection.isEnabled, Tristate.isTrue);
+        expect(node.label, 'Sign in');
+      });
+
+      testWidgets('reports disabled state when isDisabled is true',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onTap: () {},
+              isDisabled: true,
+              child: const Text('Submit'),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+        expect(node.flagsCollection.isButton, isTrue);
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
+        expect(node.label, 'Submit');
+      });
+
+      testWidgets(
+          'concatenates multiple Text descendants into single-line label',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onTap: () {},
+              child: const Row(
+                children: [
+                  Text('Save'),
+                  Text(' '),
+                  Text('Changes'),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+        expect(node.label, contains('Save'));
+        expect(node.label, contains('Changes'));
+      });
+
+      testWidgets(
+          'emits button without label when child has no Text descendants',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onTap: () {},
+              child: const Icon(Icons.close),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+        expect(node.flagsCollection.isButton, isTrue);
       });
     });
   });
