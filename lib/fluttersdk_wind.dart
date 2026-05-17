@@ -60,6 +60,7 @@
 library;
 
 export 'src/core/platform_service.dart';
+export 'src/dusk_integration.dart';
 export 'src/parser/parsers/background_parser.dart';
 export 'src/parser/parsers/border_parser.dart';
 
