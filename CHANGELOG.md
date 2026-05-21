@@ -42,6 +42,12 @@ The intermediate alphas 1.0.0-alpha.7 through 1.0.0-alpha.10 were not published 
 - `fluttersdk_dusk` is no longer a Wind dependency at any level (was a prod dep in alpha-8 and earlier, briefly a dev_dep in alpha-9, fully dropped in alpha-10). Consumers that need Dusk for their own E2E tests add it to their own pubspec. (alpha-10)
 - The 50+ optional `WindStyle` fields the old dusk integration emitted in snapshot YAML are reduced to the 6 core fields the contracts package codifies: `className`, `breakpoint`, `brightness`, `platform`, `states`, `bgColor`, `textColor`. The provenance flag (`WindParser.parse(... trackProvenance: true)`) is dropped; revisit in v1.x if consumer demand surfaces.
 
+### Quality
+
+- Line coverage measured via `flutter test --coverage` raised from **81.4% to 93.4%** (~+520 covered lines across 16 source files). 9 new test files (`w_image_test.dart`, `w_dynamic_test.dart`, `wind_logger_test.dart`, `wind_facade_test.dart`, `platform_service_test.dart`, `wind_animation_wrapper_test.dart`, plus `test/widgets/w_div/coverage_padding_test.dart`), 5 extended files (`w_icon`, `w_text`, `w_svg`, `w_popover`, `w_date_picker`, `w_select`, `w_dynamic_renderer`). 149 new test cases (1081 → 1230).
+- Coverage infrastructure: `tool/coverage.sh` (portable threshold-aware lcov wrapper) and a GitHub Actions gate in `.github/workflows/deploy.yml` that fails any PR dropping below 90% line coverage.
+- Surgical `// coverage:ignore-line` pragmas applied to lines genuinely unreachable from `flutter test` (dart:io `Platform.isIOS/Android/Windows` branches in `lib/src/core/platform_service.dart`). Each pragma carries a one-line WHY comment.
+
 ### Migration from 1.0.0-alpha.6
 
 If your app already runs against `1.0.0-alpha.6`, the only mandatory change is the debug-bridge wiring. The W-widget surface, theming, and parser-token set are source-compatible additions on top of alpha-6.
