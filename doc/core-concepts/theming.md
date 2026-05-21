@@ -200,16 +200,48 @@ final darkTheme = myDefaultTheme.copyWith(
 <a name="quick-reference"></a>
 ## Quick Reference
 
+`WindThemeData` exposes 23 configurable fields. The table below groups them by concern.
+
+### Mode and Behavior
+
+| Property | Type | Default | Description |
+|:---------|:-----|:--------|:------------|
+| `brightness` | `Brightness` | `light` | Initial mode (`light` or `dark`) |
+| `syncWithSystem` | `bool` | `true` | Auto-follow OS brightness until the user calls `toggleTheme()` |
+| `applyDefaultFontFamily` | `bool` | `true` | Inject Wind's default font family as a global `DefaultTextStyle` |
+| `baseSpacingUnit` | `double` | `4.0` | Multiplier for numeric spacing (`p-4` → `4 * 4 = 16px`) |
+
+### Tokens
+
 | Property | Type | Description |
 |:---------|:-----|:------------|
-| `brightness` | `Brightness` | Sets the default mode (`light` or `dark`). |
-| `colors` | `Map<String, MaterialColor>` | Custom color palettes for your app. |
-| `baseSpacingUnit` | `double` | The multiplier for numeric spacing (default: 4.0). |
-| `fontFamilies` | `Map<String, String>` | Font aliases (sans, serif, mono, etc.). |
-| `fontSizes` | `Map<String, double>` | Numeric scale for text sizes. |
-| `borderRadius` | `Map<String, double>` | Corner radius scale for `rounded-*`. |
-| `shadows` | `Map<String, List<BoxShadow>>` | Shadow definitions for `shadow-*`. |
-| `syncWithSystem` | `bool` | Whether to automatically follow OS brightness. |
-| `onThemeChanged` | `ValueChanged<Brightness>?` | Callback on user-initiated theme toggle. Does not fire on system changes. |
+| `colors` | `Map<String, MaterialColor>` | Custom color palettes (`bg-brand-500`, etc.) |
+| `screens` | `Map<String, int>` | Breakpoint min-widths (`sm`, `md`, `lg`, `xl`, `2xl`, custom) |
+| `containers` | `Map<String, int>` | Container max-widths (`container` utility) |
+| `fontFamilies` | `Map<String, String>` | Font aliases (`sans`, `serif`, `mono`, custom) |
+| `fontSizes` | `Map<String, double>` | Text size scale (`text-xs` through `text-6xl`) |
+| `fontWeights` | `Map<String, FontWeight>` | Weight scale (`font-thin` through `font-black`) |
+| `tracking` | `Map<String, double>` | Letter spacing (`tracking-tight`, etc.) |
+| `leading` | `Map<String, double>` | Line height (`leading-none`, etc.) |
+| `borderWidths` | `Map<String, double>` | Border width scale (`border-2`, etc.) |
+| `borderRadius` | `Map<String, double>` | Corner radius scale (`rounded-lg`, etc.) |
+| `shadows` | `Map<String, List<BoxShadow>>` | Shadow definitions (`shadow-md`, etc.) |
+| `opacities` | `Map<String, double>` | Opacity scale (`opacity-50`, etc.) |
+| `zIndices` | `Map<String, int>` | Z-index scale (`z-10`, etc.) |
+| `transitionDurations` | `Map<String, Duration>` | Duration scale (`duration-200`, etc.) |
+| `transitionCurves` | `Map<String, Curve>` | Easing scale (`ease-in-out`, etc.) |
+| `animations` | `Map<String, WindAnimationType>` | Animation types (`animate-spin`, etc.) |
+
+### Ring (Focus) Effects
+
+| Property | Type | Default | Description |
+|:---------|:-----|:--------|:------------|
+| `ringColor` | `Color` | Tailwind blue-500 | Default ring color when not overridden by `ring-{color}` |
+| `ringWidths` | `Map<String, double>` | `0,1,2,4,8` | Ring width scale (`ring-2`, etc.) |
+| `ringOffsets` | `Map<String, double>` | `0,1,2,4,8` | Ring offset scale (`ring-offset-2`, etc.) |
+
+### Widget-level callback
+
+`onThemeChanged` is a `WindTheme` widget parameter, not a `WindThemeData` field. It fires on user-initiated `toggleTheme()` calls and is documented in the [Theme Change Callbacks](#theme-change-callbacks) section above.
 
 For more details on how to sync these values with Flutter's standard Material components, check out the [Theme Binding](./theme-binding.md) guide.

@@ -109,6 +109,9 @@ WindThemeData({
   Map<String, double>? opacities,
   Map<String, int>? zIndices,
   Map<String, List<BoxShadow>>? shadows,
+  Map<String, Duration>? transitionDurations,
+  Map<String, Curve>? transitionCurves,
+  Map<String, WindAnimationType>? animations,
 })
 ```
 
