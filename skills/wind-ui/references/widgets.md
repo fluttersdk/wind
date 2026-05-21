@@ -625,16 +625,31 @@ WDatePicker(
 ```
 
 ### WFormDatePicker
-Wraps `WDatePicker` with `FormField<DateTime>` for form validation.
+Wraps `WDatePicker` in a `FormField<DateTime>`.
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| initialValue | DateTime? | null | Initial selected date |
+| mode | DatePickerMode | .single | `.single` or `.range` |
+| initialValue | DateTime? | null | Initial date (single mode); from FormField super |
 | initialRange | DateRange? | null | Initial range (range mode) |
-| mode | DatePickerMode | .single | Selection mode |
-| label | String? | null | Label text above picker |
-| validator | FormFieldValidator<DateTime>? | null | Validation logic |
-| className | String? | null | Trigger styling |
+| onChanged | ValueChanged<DateTime>? | null | Single date callback |
+| onRangeChanged | ValueChanged<DateRange>? | null | Range callback |
+| minDate | DateTime? | null | Earliest selectable date |
+| maxDate | DateTime? | null | Latest selectable date |
+| className | String? | null | Trigger container styling |
+| placeholder | String? | null | Placeholder (defaults to `'Select date'`) |
+| states | Set<String>? | null | Custom state triggers |
+| displayFormat | DateDisplayFormat? | null | Custom `(DateTime) => String` formatter |
+| label | String? | null | Label text above the picker |
+| labelClassName | String | `'text-sm text-gray-700 mb-1'` | Label styling |
+| hint | String? | null | Hint text below |
+| hintClassName | String | `'text-gray-500 text-xs mt-1'` | Hint styling |
+| showError | bool | true | Display validation error |
+| errorClassName | String | `'text-red-500 text-xs mt-1'` | Error styling |
+| validator | FormFieldValidator<DateTime>? | null | Validation logic (FormField super) |
+| onSaved | FormFieldSetter<DateTime>? | null | Save callback (FormField super) |
+| autovalidateMode | AutovalidateMode? | null | Validation mode (FormField super) |
+| enabled | bool | true | Form field enabled (FormField super) |
 
 ```dart
 WFormDatePicker(
