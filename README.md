@@ -18,10 +18,6 @@
 </p>
 
 <p align="center">
-  <sub>Over 2K+ monthly downloads on <a href="https://pub.dev/packages/fluttersdk_wind">pub.dev</a>.</sub>
-</p>
-
-<p align="center">
   <a href="https://fluttersdk.com/wind">Documentation</a> ·
   <a href="https://fluttersdk.com/wind/play">Playground</a> ·
   <a href="https://pub.dev/packages/fluttersdk_wind">pub.dev</a> ·
@@ -66,6 +62,7 @@ WDiv(
 - 🧹 **Maintaining old code is easier** — `className` reads top-down. No more "what was this `Container` for?" archaeology six months later.
 - 📋 **Code is portable** — copy a `className` string between projects, between files, even between Wind and Tailwind on the web
 - 📉 **Your widget tree stops growing** — utility classes compose; the nesting stays flat as features pile up
+- 📦 **Battle-tested in real apps** — over 2K monthly downloads on [pub.dev](https://pub.dev/packages/fluttersdk_wind) and shipping in production Flutter apps today
 
 ## Features
 
