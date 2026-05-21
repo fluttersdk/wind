@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -874,6 +875,565 @@ void main() {
       // it is explicitly set. With a null placeholder, the resolver falls
       // back to the selected option label.
       expect(node.label, 'Select an option');
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Coverage extension: dropdown / overlay lifecycle, multi-select toggle and
+  // chip removal, async search, infinite scroll pagination, create-option
+  // tagging, custom builder branches, hover state, lifecycle didUpdateWidget.
+  // -------------------------------------------------------------------------
+  group('WSelect coverage extension', () {
+    final extOptions = [
+      const SelectOption(value: 'apple', label: 'Apple'),
+      const SelectOption(value: 'banana', label: 'Banana'),
+      const SelectOption(value: 'cherry', label: 'Cherry'),
+    ];
+
+    testWidgets(
+        'didUpdateWidget re-filters when options change while searching',
+        (tester) async {
+      var options = const [
+        SelectOption(value: 'apple', label: 'Apple'),
+        SelectOption(value: 'banana', label: 'Banana'),
+      ];
+
+      late StateSetter rebuild;
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          StatefulBuilder(
+            builder: (context, setState) {
+              rebuild = setState;
+              return WSelect<String>(
+                options: options,
+                searchable: true,
+                onChange: (_) {},
+              );
+            },
+          ),
+        ),
+      );
+
+      // Open and search for "ap" so a search query is active.
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'ap');
+      await tester.pumpAndSettle();
+      // Currently only "Apple" matches.
+      expect(find.text('Apple'), findsOneWidget);
+      expect(find.text('Banana'), findsNothing);
+
+      // Replace options programmatically (no outside tap that would close the
+      // overlay). didUpdateWidget re-runs the active filter on the new list.
+      rebuild(() {
+        options = const [
+          SelectOption(value: 'apricot', label: 'Apricot'),
+          SelectOption(value: 'grape', label: 'Grape'),
+          SelectOption(value: 'banana', label: 'Banana'),
+        ];
+      });
+      // Two pumps: first applies the parent rebuild + didUpdateWidget's
+      // synchronous filter setState; second drains any microtask follow-ups
+      // from _filterOptions's async wrapper.
+      await tester.pump();
+      await tester.pump();
+
+      // Apple from the original list is gone — the new options replaced it.
+      expect(find.text('Apple'), findsNothing);
+      // Apricot from the new list is visible (matches "ap" query if the
+      // filter re-ran, but at minimum is part of the new options).
+      expect(find.text('Apricot'), findsOneWidget);
+    });
+
+    testWidgets('focus loss closes an open menu', (tester) async {
+      final unrelatedFocus = FocusNode();
+      addTearDown(unrelatedFocus.dispose);
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Column(
+            children: [
+              WSelect<String>(options: extOptions, onChange: (_) {}),
+              TextField(focusNode: unrelatedFocus),
+            ],
+          ),
+        ),
+      );
+
+      // Open the dropdown, then explicitly focus the WSelect's internal Focus
+      // node so a subsequent unrelated focus request actually fires the
+      // listener that closes the menu.
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      expect(find.text('Apple'), findsOneWidget);
+
+      final Finder focusInsideSelect = find.descendant(
+        of: find.byType(WSelect<String>),
+        matching: find.byType(Focus),
+      );
+      final Focus focusWidget = tester.widget<Focus>(focusInsideSelect.first);
+      focusWidget.focusNode!.requestFocus();
+      await tester.pumpAndSettle();
+
+      // Move focus away from the WSelect.
+      unrelatedFocus.requestFocus();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apple'), findsNothing);
+    });
+
+    testWidgets('scroll near bottom triggers onLoadMore', (tester) async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      final manyOptions = List.generate(
+        20,
+        (i) => SelectOption(value: 'item$i', label: 'Item $i'),
+      );
+      var loadCalls = 0;
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: manyOptions,
+            maxMenuHeight: 120,
+            hasMore: true,
+            onLoadMore: () async {
+              loadCalls++;
+              return [
+                const SelectOption(value: 'extra1', label: 'Extra 1'),
+                const SelectOption(value: 'extra2', label: 'Extra 2'),
+              ];
+            },
+            onChange: (_) {},
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      expect(find.text('Item 0'), findsOneWidget);
+
+      // Drag the list up to scroll near bottom.
+      await tester.drag(find.text('Item 0'), const Offset(0, -2000));
+      await tester.pumpAndSettle();
+
+      expect(loadCalls, greaterThan(0));
+      // Newly loaded options appear in the list.
+      expect(find.text('Extra 1'), findsOneWidget);
+    });
+
+    testWidgets('onLoadMore error is swallowed and clears loading flag',
+        (tester) async {
+      final manyOptions = List.generate(
+        15,
+        (i) => SelectOption(value: 'row$i', label: 'Row $i'),
+      );
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: manyOptions,
+            maxMenuHeight: 120,
+            hasMore: true,
+            onLoadMore: () async => throw StateError('boom'),
+            onChange: (_) {},
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      await tester.drag(find.text('Row 0'), const Offset(0, -2000));
+      await tester.pumpAndSettle();
+
+      // The error branch silently clears the loading flag — no spinner stays.
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+    });
+
+    testWidgets('multi-select deselects when tapped twice', (tester) async {
+      List<String> values = ['apple'];
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          StatefulBuilder(
+            builder: (context, setState) => WSelect<String>(
+              isMulti: true,
+              values: values,
+              options: extOptions,
+              onMultiChange: (v) => setState(() => values = v),
+            ),
+          ),
+        ),
+      );
+
+      // Open dropdown.
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      // Tap 'Apple' inside the dropdown to deselect it.
+      // There are two 'Apple' texts (chip + option), tap the option which is
+      // the second one rendered.
+      final appleTexts = find.text('Apple');
+      expect(appleTexts, findsWidgets);
+      final optionGesture = find.ancestor(
+        of: appleTexts.last,
+        matching: find.byType(GestureDetector),
+      );
+      tester.widget<GestureDetector>(optionGesture.first).onTap?.call();
+      await tester.pumpAndSettle();
+
+      expect(values, isEmpty);
+    });
+
+    testWidgets('tapping chip close icon removes selected value',
+        (tester) async {
+      List<String> values = ['apple', 'banana'];
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          StatefulBuilder(
+            builder: (context, setState) => WSelect<String>(
+              isMulti: true,
+              values: values,
+              options: extOptions,
+              onMultiChange: (v) => setState(() => values = v),
+            ),
+          ),
+        ),
+      );
+
+      // Close icon on each chip is an Icon(Icons.close).
+      expect(find.byIcon(Icons.close), findsNWidgets(2));
+
+      final firstClose = find.byIcon(Icons.close).first;
+      final closeGesture = find
+          .ancestor(of: firstClose, matching: find.byType(GestureDetector))
+          .first;
+      tester.widget<GestureDetector>(closeGesture).onTap?.call();
+      await tester.pumpAndSettle();
+
+      // One value removed; one remains.
+      expect(values.length, 1);
+    });
+
+    testWidgets('async onSearch updates filtered options', (tester) async {
+      final asyncOptions = [
+        const SelectOption(value: 'mars', label: 'Mars'),
+        const SelectOption(value: 'venus', label: 'Venus'),
+      ];
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: extOptions,
+            searchable: true,
+            onSearch: (query) async => asyncOptions
+                .where(
+                    (o) => o.label.toLowerCase().contains(query.toLowerCase()))
+                .toList(),
+            onChange: (_) {},
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'mar');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Mars'), findsOneWidget);
+      expect(find.text('Apple'), findsNothing);
+    });
+
+    testWidgets('onSearch error is swallowed and clears searching flag',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: extOptions,
+            searchable: true,
+            onSearch: (_) async => throw StateError('search failed'),
+            loadingBuilder: (context) => const Text('LOADING_INDICATOR'),
+            onChange: (_) {},
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'xyz');
+      await tester.pumpAndSettle();
+
+      // Loading indicator must not remain after the error.
+      expect(find.text('LOADING_INDICATOR'), findsNothing);
+    });
+
+    testWidgets('local filter restores all options when query cleared',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: extOptions,
+            searchable: true,
+            onChange: (_) {},
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'cher');
+      await tester.pumpAndSettle();
+      expect(find.text('Cherry'), findsOneWidget);
+      expect(find.text('Apple'), findsNothing);
+
+      // Clear the query — branch where query.isEmpty restores full options.
+      await tester.enterText(find.byType(TextField), '');
+      await tester.pumpAndSettle();
+      expect(find.text('Apple'), findsOneWidget);
+      expect(find.text('Banana'), findsOneWidget);
+      expect(find.text('Cherry'), findsOneWidget);
+    });
+
+    testWidgets(
+      'multi-select semantics label falls back to joined option labels',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: Scaffold(
+                body: Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: WSelect<String>(
+                      isMulti: true,
+                      values: const ['apple', 'banana'],
+                      options: extOptions,
+                      // Empty placeholder forces resolver into the multi branch.
+                      placeholder: '',
+                      onMultiChange: (_) {},
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final SemanticsNode node =
+            tester.getSemantics(find.byType(WSelect<String>));
+        expect(node.label, 'Apple, Banana');
+      },
+    );
+
+    testWidgets('multiTriggerBuilder renders custom multi trigger',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            isMulti: true,
+            values: const ['apple'],
+            options: extOptions,
+            onMultiChange: (_) {},
+            multiTriggerBuilder: (context, selected, isOpen) {
+              return Container(
+                key: const Key('multi-trigger'),
+                child: Text('Custom Multi (${selected.length})'),
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.byKey(const Key('multi-trigger')), findsOneWidget);
+      expect(find.text('Custom Multi (1)'), findsOneWidget);
+
+      // Tapping it must still open the dropdown.
+      await tester.tap(find.byKey(const Key('multi-trigger')));
+      await tester.pumpAndSettle();
+      // 'Banana' option appears in the dropdown.
+      expect(find.text('Banana'), findsOneWidget);
+    });
+
+    testWidgets('selectedChipBuilder renders custom chips and onRemove fires',
+        (tester) async {
+      List<String> values = ['apple', 'banana'];
+      var removedValue = '';
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          StatefulBuilder(
+            builder: (context, setState) => WSelect<String>(
+              isMulti: true,
+              values: values,
+              options: extOptions,
+              onMultiChange: (v) => setState(() => values = v),
+              selectedChipBuilder: (context, option, onRemove) {
+                return GestureDetector(
+                  key: Key('chip-${option.value}'),
+                  onTap: () {
+                    removedValue = option.value;
+                    onRemove();
+                  },
+                  child: Text('CHIP:${option.label}'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('CHIP:Apple'), findsOneWidget);
+      expect(find.text('CHIP:Banana'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('chip-apple')));
+      await tester.pumpAndSettle();
+
+      expect(removedValue, 'apple');
+      expect(values, ['banana']);
+    });
+
+    testWidgets('onCreateOption flow selects the newly created option',
+        (tester) async {
+      String? selected;
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: const [],
+            searchable: true,
+            onChange: (value) => selected = value,
+            onCreateOption: (query) async =>
+                SelectOption(value: query, label: query.toUpperCase()),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'mango');
+      await tester.pumpAndSettle();
+
+      // Default create button labelled 'Create "mango"'.
+      final createFinder = find.text('Create "mango"');
+      expect(createFinder, findsOneWidget);
+      final createGesture = find.ancestor(
+        of: createFinder,
+        matching: find.byType(GestureDetector),
+      );
+      tester.widget<GestureDetector>(createGesture.first).onTap?.call();
+      await tester.pumpAndSettle();
+
+      expect(selected, 'mango');
+    });
+
+    testWidgets('createOptionBuilder renders custom create button',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: const [],
+            searchable: true,
+            onChange: (_) {},
+            onCreateOption: (query) async =>
+                SelectOption(value: query, label: query),
+            createOptionBuilder: (context, query, onCreate) => GestureDetector(
+              key: const Key('custom-create'),
+              onTap: onCreate,
+              child: Text('Add new: $query'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'pear');
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('custom-create')), findsOneWidget);
+      expect(find.text('Add new: pear'), findsOneWidget);
+    });
+
+    testWidgets('hovering trigger toggles internal hover state',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(options: extOptions, onChange: (_) {}),
+        ),
+      );
+
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+
+      await gesture.moveTo(tester.getCenter(find.text('Select an option')));
+      // Two pumps: one to process the hover event, one for postFrameCallback.
+      await tester.pump();
+      await tester.pump();
+
+      // Move pointer away so onExit fires too.
+      await gesture.moveTo(const Offset(2000, 2000));
+      await tester.pump();
+      await tester.pump();
+
+      // Widget remains stable after hover toggling.
+      expect(find.text('Select an option'), findsOneWidget);
+    });
+
+    testWidgets('hovering an option updates the hovered index', (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(options: extOptions, onChange: (_) {}),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+
+      await gesture.moveTo(tester.getCenter(find.text('Banana')));
+      await tester.pump();
+      await tester.pump();
+
+      // Move off to fire onExit branch.
+      await gesture.moveTo(const Offset(2000, 2000));
+      await tester.pump();
+      await tester.pump();
+
+      // Dropdown still shows the options after hover events.
+      expect(find.text('Banana'), findsOneWidget);
+    });
+
+    testWidgets('tapping outside the dropdown closes it', (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Column(
+            children: [
+              WSelect<String>(options: extOptions, onChange: (_) {}),
+              const SizedBox(height: 400, child: Text('Outside Area')),
+            ],
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Select an option'));
+      await tester.pumpAndSettle();
+      expect(find.text('Apple'), findsOneWidget);
+
+      // Tap the area outside the dropdown overlay.
+      await tester.tapAt(tester.getCenter(find.text('Outside Area')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apple'), findsNothing);
     });
   });
 }

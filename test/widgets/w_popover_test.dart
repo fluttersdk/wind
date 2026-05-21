@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
@@ -167,6 +168,84 @@ void main() {
         await tester.tap(find.text('Close Me'));
         await tester.pumpAndSettle();
         expect(find.text('Close Me'), findsNothing);
+      });
+    });
+
+    group('onOpen / onClose callbacks', () {
+      testWidgets('onOpen fires when popover opens', (tester) async {
+        int openCount = 0;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WPopover(
+              onOpen: () => openCount++,
+              triggerBuilder: (context, isOpen, isHovering) =>
+                  const Text('Trigger'),
+              contentBuilder: (context, close) =>
+                  const SizedBox(height: 50, child: Text('Content')),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Trigger'));
+        await tester.pumpAndSettle();
+
+        expect(openCount, 1);
+      });
+
+      testWidgets('onClose fires when popover closes via second trigger tap',
+          (tester) async {
+        int closeCount = 0;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WPopover(
+              onClose: () => closeCount++,
+              triggerBuilder: (context, isOpen, isHovering) =>
+                  const Text('Trigger'),
+              contentBuilder: (context, close) =>
+                  const SizedBox(height: 50, child: Text('Content')),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Trigger'));
+        await tester.pumpAndSettle();
+        expect(closeCount, 0);
+
+        await tester.tap(find.text('Trigger'));
+        await tester.pumpAndSettle();
+        expect(closeCount, 1);
+      });
+    });
+
+    group('Mouse hover state', () {
+      testWidgets('isHovering becomes true when mouse enters trigger region',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WPopover(
+              triggerBuilder: (context, isOpen, isHovering) =>
+                  Text(isHovering ? 'Hovering' : 'Not Hovering'),
+              contentBuilder: (context, close) => const Text('Content'),
+            ),
+          ),
+        );
+
+        expect(find.text('Not Hovering'), findsOneWidget);
+
+        // addPointer at Offset.zero, then moveTo trigger center — same pattern
+        // as wind_state_provider_test.dart which tests WAnchor hover.
+        // The postFrameCallback deferred setState is flushed by pumpAndSettle.
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.addPointer(location: Offset.zero);
+        addTearDown(gesture.removePointer);
+        await gesture.moveTo(tester.getCenter(find.text('Not Hovering')));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Hovering'), findsOneWidget);
       });
     });
 
@@ -368,6 +447,109 @@ void main() {
     });
   });
 
+  group('PopoverController', () {
+    test('toggle flips isOpen from false to true', () {
+      final controller = PopoverController();
+      expect(controller.isOpen, isFalse);
+
+      controller.toggle();
+      expect(controller.isOpen, isTrue);
+    });
+
+    test('toggle flips isOpen from true to false', () {
+      final controller = PopoverController();
+      controller.show();
+      expect(controller.isOpen, isTrue);
+
+      controller.toggle();
+      expect(controller.isOpen, isFalse);
+    });
+
+    test('toggle notifies listeners on each call', () {
+      final controller = PopoverController();
+      int notifyCount = 0;
+      controller.addListener(() => notifyCount++);
+
+      controller.toggle();
+      controller.toggle();
+
+      expect(notifyCount, 2);
+    });
+
+    testWidgets('controller.hide() closes an open popover', (tester) async {
+      final controller = PopoverController();
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WPopover(
+            controller: controller,
+            triggerBuilder: (context, isOpen, isHovering) =>
+                const Text('Trigger'),
+            contentBuilder: (context, close) =>
+                const SizedBox(height: 80, child: Text('Content')),
+          ),
+        ),
+      );
+
+      // Open via trigger tap.
+      await tester.tap(find.text('Trigger'));
+      await tester.pumpAndSettle();
+      expect(find.text('Content'), findsOneWidget);
+
+      // Close via controller.
+      controller.hide();
+      await tester.pumpAndSettle();
+      expect(find.text('Content'), findsNothing);
+    });
+
+    testWidgets('controller swapped via didUpdateWidget wires new controller',
+        (tester) async {
+      final controllerA = PopoverController();
+      final controllerB = PopoverController();
+
+      // Use a ValueNotifier to swap the controller in the widget tree.
+      final controllerNotifier = ValueNotifier<PopoverController>(controllerA);
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          ValueListenableBuilder<PopoverController>(
+            valueListenable: controllerNotifier,
+            builder: (context, ctrl, _) => WPopover(
+              controller: ctrl,
+              triggerBuilder: (context, isOpen, isHovering) =>
+                  const Text('Trigger'),
+              contentBuilder: (context, close) =>
+                  const SizedBox(height: 80, child: Text('Content')),
+            ),
+          ),
+        ),
+      );
+
+      // 1. Open via controllerA.
+      controllerA.show();
+      await tester.pumpAndSettle();
+      expect(find.text('Content'), findsOneWidget);
+
+      // 2. Close before swapping to avoid stale state.
+      controllerA.hide();
+      await tester.pumpAndSettle();
+
+      // 3. Swap to controllerB — triggers didUpdateWidget.
+      controllerNotifier.value = controllerB;
+      await tester.pumpAndSettle();
+
+      // 4. Old controller no longer drives the widget.
+      controllerA.show();
+      await tester.pumpAndSettle();
+      expect(find.text('Content'), findsNothing);
+
+      // 5. New controller does drive the widget.
+      controllerB.show();
+      await tester.pumpAndSettle();
+      expect(find.text('Content'), findsOneWidget);
+    });
+  });
+
   group('PopoverAlignment enum', () {
     test('has all expected values', () {
       expect(PopoverAlignment.values.length, 6);
@@ -510,6 +692,26 @@ void main() {
           triggerSize: const Size(60, 40),
           popoverSize: const Size(200, 120),
           screenSize: const Size(1200, 800),
+          offset: const Offset(0, 4),
+        );
+
+        expect(result, PopoverAlignment.bottomRight);
+      });
+
+      test(
+          'topRight where popover overflows above and bottom has more space returns bottomRight',
+          () {
+        // Trigger near top of screen, topRight requested.
+        // spaceAbove = 20 - 4 = 16
+        // spaceBelow = 600 - 20 - 40 - 4 = 536
+        // topEdge = 20 - 4 - 200 = -184 < 0 (overflows)
+        // spaceBelow (536) > spaceAbove (16) → FLIP to bottomRight.
+        final result = computeEffectiveAlignment(
+          requested: PopoverAlignment.topRight,
+          triggerPosition: const Offset(500, 20),
+          triggerSize: const Size(60, 40),
+          popoverSize: const Size(200, 200),
+          screenSize: const Size(1200, 600),
           offset: const Offset(0, 4),
         );
 
