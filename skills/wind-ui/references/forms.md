@@ -237,7 +237,7 @@ WFormInput(
 )
 ```
 
-`px-3` produces exactly 12 px horizontal inset (the alpha-10 `gapPadding: 0.0` fix). `maxLines: null` allows unbounded growth.
+`px-3` produces exactly 12 px horizontal inset (Wind overrides `OutlineInputBorder.gapPadding: 0.0` so `px-*` is exact — Material's default label-cutout reservation is bypassed). `maxLines: null` allows unbounded growth.
 
 ## WFormSelect / WFormMultiSelect
 

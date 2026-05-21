@@ -215,7 +215,7 @@ const WInput({
 })
 ```
 
-**Multiline**: set `type: InputType.multiline` AND `maxLines`/`minLines`. `OutlineInputBorder.gapPadding` is forced to `0.0` so `px-*` produces exact pixel insets (the alpha-10 fix).
+**Multiline**: set `type: InputType.multiline` AND `maxLines`/`minLines`. `OutlineInputBorder.gapPadding` is forced to `0.0` so `px-*` produces exact pixel insets (Material's label-cutout reservation is bypassed).
 
 ### `WCheckbox`
 

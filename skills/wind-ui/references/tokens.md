@@ -138,7 +138,7 @@ The `text-*` prefix has three meanings resolved by ordered regex:
 
 ### Gap (between flex/grid children)
 
-`gap-{N}`, `gap-x-{N}`, `gap-y-{N}`, `space-x-{N}`, `space-y-{N}` (legacy). Arbitrary `gap-[10px]`.
+`gap-{N}`, `gap-x-{N}`, `gap-y-{N}`, `space-x-{N}`, `space-y-{N}`. Arbitrary `gap-[10px]`. Prefer `gap-*` for new code; `space-x`/`space-y` work but `gap-*` is the canonical token.
 
 ### Self-alignment
 
@@ -162,7 +162,7 @@ The `text-*` prefix has three meanings resolved by ordered regex:
 
 `inset-{N}` (all four sides), `inset-x-{N}` (left + right), `inset-y-{N}` (top + bottom). Negative + arbitrary supported.
 
-## Order (`order_parser.dart`) — NEW in alpha-9
+## Order (`order_parser.dart`)
 
 `order-{0..12}`, `order-first` (-9999), `order-last` (9999), `order-none` (0), arbitrary `order-[-42]`. Controls flex child rendering order without changing source order.
 

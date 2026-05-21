@@ -210,7 +210,7 @@ The PostToolUse hooks defined in `.claude/settings.json` (if you copied them fro
 
 ## What you should NOT do
 
-- **Do not import any Wind sub-barrel.** The main barrel `package:fluttersdk_wind/fluttersdk_wind.dart` exports everything. The pre-1.0 sub-barrels (`dusk_integration.dart`, `telescope_integration.dart`) are gone in 1.0.0.
+- **Do not import any Wind sub-barrel.** The main barrel `package:fluttersdk_wind/fluttersdk_wind.dart` exports everything Wind offers. There are no sub-barrels.
 - **Do not call `WindParser.clearCache()` in production code.** It is a test-only function; calling it at runtime trashes the cache and recomputes every className from scratch.
 - **Do not wrap the app twice in `WindTheme`.** Nested wraps work but waste rebuilds.
 - **Do not put `Wind.installDebugResolver()` outside `kDebugMode`.** Already kDebugMode-gated internally, but the tree-shaker only strips the whole call when the outer guard is also `kDebugMode`.

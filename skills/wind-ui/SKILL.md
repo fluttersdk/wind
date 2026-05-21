@@ -210,8 +210,7 @@ Load these on-demand for depth. Each file is self-contained.
 | `className: 'bg-white'` alone | no dark pair = bug | `'bg-white dark:bg-gray-800'` |
 | `className: '${isOn ? "bg-blue-500" : "bg-gray-100"}'` | breaks parser cache | static className + `states: {'active'}` + `active:bg-blue-500` |
 | `BoxDecoration(color: ...)` / `TextStyle(fontSize: ...)` inline | Wind has a className for it | use the className |
-| `WindDuskIntegration.install()` (pre-1.0 API) | removed in alpha-9/10 | `Wind.installDebugResolver()` |
-| `import 'package:fluttersdk_wind/dusk_integration.dart'` | sub-barrel removed | main barrel only |
+| `import 'package:fluttersdk_wind/<anything>.dart'` (any sub-barrel) | only the main barrel exists | `import 'package:fluttersdk_wind/fluttersdk_wind.dart'` |
 | `group-hover:` / `peer-focus:` / `@container` / `@apply` / `!important` / `divide-*` / `cursor-*` / `filter` / `backdrop-blur` | not implemented | see `migrate-from-tailwind.md` |
 | `className: 'absolute top-0'` without `relative` parent | Stack required | `WDiv(className: 'relative ...', children: [..., WDiv(className: 'absolute top-0')])` |
 | `WText` inside Row without bounded width when using `truncate` | overflow | wrap in `flex-1` |
