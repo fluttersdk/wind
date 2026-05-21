@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 /// Font Size Example
-/// Demonstrates font size utilities: text-xs through text-9xl
+/// Demonstrates font size utilities: text-xs through text-6xl
 class FontSizeExamplePage extends StatelessWidget {
   const FontSizeExamplePage({super.key});
 
