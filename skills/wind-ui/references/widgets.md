@@ -430,12 +430,19 @@ WDynamic(
 **Constructor:**
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| triggerBuilder| PopoverTriggerBuilder| required | `(BuildContext context, bool isOpen, bool isHovering) => Widget` |
-| contentBuilder| PopoverContentBuilder| required | `(BuildContext context, VoidCallback close) => Widget` |
-| alignment | PopoverAlignment| .bottomLeft | Position relative to trigger |
+| triggerBuilder | PopoverTriggerBuilder | required | `(BuildContext context, bool isOpen, bool isHovering) => Widget` |
+| contentBuilder | PopoverContentBuilder | required | `(BuildContext context, VoidCallback close) => Widget` |
+| controller | PopoverController? | null | Programmatic open/close/toggle (`controller.show()` etc.) |
+| enableTriggerOnTap | bool | true | Tapping the trigger toggles the popover |
+| alignment | PopoverAlignment | .bottomLeft | Position relative to trigger |
 | className | String? | null | Overlay container styling |
-| autoFlip | bool | true | Prevent off-screen rendering |
-| offset | Offset | Offset(0, 4) | Gap between trigger and overlay |
+| offset | Offset | `Offset(0, 4)` | Gap between trigger and overlay |
+| maxHeight | double | 400 | Content max height (scrolls when exceeded) |
+| disabled | bool | false | Disables the trigger |
+| closeOnContentTap | bool | false | Tapping inside the content closes the popover |
+| autoFlip | bool | true | Flip alignment when off-screen |
+| onOpen | VoidCallback? | null | Fired when opened |
+| onClose | VoidCallback? | null | Fired when closed |
 
 **Examples:**
 ```dart

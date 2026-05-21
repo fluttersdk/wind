@@ -86,6 +86,7 @@ const WPopover({
 | `disabled` | `bool` | `false` | When true, the trigger will not respond to interactions. |
 | `onOpen` | `VoidCallback?` | `null` | Callback fired when the popover is opened. |
 | `onClose` | `VoidCallback?` | `null` | Callback fired when the popover is closed. |
+| `autoFlip` | `bool` | `true` | When true, the popover flips its alignment to the opposite side if the natural position would render off-screen. |
 
 ## Layout Modes
 
