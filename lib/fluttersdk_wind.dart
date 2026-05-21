@@ -126,3 +126,5 @@ export 'src/dynamic/w_dynamic_renderer.dart';
 
 // Re-export keyboard_actions for convenience
 export 'package:keyboard_actions/keyboard_actions.dart';
+export 'src/debug_resolver.dart';
+export 'src/wind_facade.dart';

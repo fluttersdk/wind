@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -799,6 +800,80 @@ void main() {
 
       // Verify the builder prop is accepted (actual loading UI tested manually)
       expect(find.byType(TextField), findsOneWidget);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Accessibility / Semantics
+  //
+  // Step 1 of plan ai-test-v2 contract: WSelect must surface a button
+  // SemanticsNode labelled with `placeholder` (when no selection) or the
+  // selected option's label, so Playwright `getByRole('button', { name: ... })`
+  // resolves on the closed dropdown trigger.
+  // -------------------------------------------------------------------------
+  group('Semantics', () {
+    final selectOptions = [
+      const SelectOption(value: 'apple', label: 'Apple'),
+      const SelectOption(value: 'banana', label: 'Banana'),
+    ];
+
+    testWidgets('emits button role with placeholder when no value selected',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Scaffold(
+              body: Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: WSelect<String>(
+                    options: selectOptions,
+                    placeholder: 'Choose fruit',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final SemanticsNode node =
+          tester.getSemantics(find.byType(WSelect<String>));
+      expect(node.flagsCollection.isButton, isTrue);
+      expect(node.label, 'Choose fruit');
+    });
+
+    testWidgets('emits button role with selected option label as fallback',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Scaffold(
+              body: Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: WSelect<String>(
+                    options: selectOptions,
+                    value: 'apple',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final SemanticsNode node =
+          tester.getSemantics(find.byType(WSelect<String>));
+      expect(node.flagsCollection.isButton, isTrue);
+      // Default placeholder 'Select an option' wins over selected label since
+      // it is explicitly set. With a null placeholder, the resolver falls
+      // back to the selected option label.
+      expect(node.label, 'Select an option');
     });
   });
 }

@@ -343,6 +343,35 @@ class _WDatePickerState extends State<WDatePicker> {
       states: activeStates,
     );
 
+    // Accessibility: surface the closed trigger as a `textField` SemanticsNode
+    // labelled with the placeholder (so Playwright `getByLabel(/select date/i)`
+    // resolves) and carrying the ISO-formatted selected date as its
+    // Semantics value. Wrapping at this level lets the existing WPopover +
+    // trigger sub-tree render its visual content while still surfacing a
+    // single, predictable Semantics node to the accessibility tree.
+    return Semantics(
+      container: true,
+      textField: true,
+      enabled: !widget.disabled,
+      label: widget.placeholder,
+      value: widget.value?.toIso8601String() ??
+          (widget.mode == DatePickerMode.range && widget.range != null
+              ? widget.range!.start.toIso8601String()
+              : null),
+      child: MergeSemantics(
+        child: _buildPopover(activeStates, styles, triggerClassName),
+      ),
+    );
+  }
+
+  /// Builds the WPopover trigger + content. Extracted so the build method
+  /// can wrap the entire interactive surface with a single Semantics node
+  /// without changing the existing popover/trigger composition.
+  Widget _buildPopover(
+    Set<String> activeStates,
+    WindStyle styles,
+    String triggerClassName,
+  ) {
     return WPopover(
       controller: _popoverController,
       // WPopover handles autoFlip automatically - /no manual direction needed

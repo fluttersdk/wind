@@ -6,13 +6,72 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
-## [Unreleased]
+## [1.0.0-alpha.10]
+
+### BREAKING
+
+- Removed `fluttersdk_dusk` dev_dependency entirely (was a dev_dep in alpha-9). Wind no longer compile-time depends on dusk for diagnostics; the new neutral bridge package `fluttersdk_wind_diagnostics_contracts` replaces that coupling.
+- DELETED `lib/src/dusk_integration.dart` (503 LoC, the old enricher), `lib/dusk_integration.dart` (sub-barrel), `test/dusk_integration_test.dart` (750 LoC, 43 tests; 40 reborn as `test/debug_resolver_test.dart`, 3 dropped).
+- `WindDuskIntegration.install()` REMOVED. Consumers migrate to `Wind.installDebugResolver()`.
+- Lost vs alpha-9: 50+ optional WindStyle fields in the snapshot YAML (alpha-10 emits only 6 core: className, breakpoint, brightness, platform, states, bgColor, textColor). Provenance feature dropped (revisit V1.x with consumer signal).
 
 ### Added
+
+- New production dep `fluttersdk_wind_diagnostics_contracts: ^1.0.0-alpha.1`: abstract `WindDebugResolver` contract + static `WindDebugRegistry`. Bridge between Wind and any debug-tooling package without compile-time coupling.
+- `lib/src/debug_resolver.dart`: concrete `WindDebugResolverImpl` implementing the contract.
+- `lib/src/wind_facade.dart`: `Wind` static facade exposing `Wind.installDebugResolver()` (kDebugMode-gated, idempotent).
+
+### Migration
+
+```dart
+// alpha-9:
+import 'package:fluttersdk_wind/dusk_integration.dart';
+if (kDebugMode) {
+  DuskPlugin.install();
+  WindDuskIntegration.install();
+}
+
+// alpha-10:
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';  // main barrel only
+if (kDebugMode) {
+  DuskPlugin.install();
+  Wind.installDebugResolver();
+}
+```
+
+---
+
+## [Unreleased]
+
+### BREAKING
+
+- Dependency migration: `fluttersdk_dusk` moved from `dependencies:` to `dev_dependencies:`. Vanilla wind consumers no longer pull dusk transitively. Consumers wanting the WindDuskIntegration enricher must add `fluttersdk_dusk` to their own pubspec and switch their import path (see migration below).
+- Barrel removal: `WindDuskIntegration` and `windClassNameEnricher` are no longer exported from the main `package:fluttersdk_wind/fluttersdk_wind.dart` barrel. The class and function names are unchanged; only the import path moves.
+- New opt-in sub-barrel at `lib/dusk_integration.dart`. Consumer migration:
+
+  Replace:
+  ```dart
+  import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+  // ... WindDuskIntegration.install();
+  ```
+  With:
+  ```dart
+  import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+  import 'package:fluttersdk_wind/dusk_integration.dart';
+  // ... WindDuskIntegration.install();
+  ```
+
+  The `package:fluttersdk_wind/fluttersdk_wind.dart` import stays for the W-widget surface (WDiv, WButton, WindParser, etc.).
+
+- Version bumped to `1.0.0-alpha.9` (BREAKING removal allowed in alpha cycle).
+
+### Added
+- **Accessibility / Semantics**: 6 interactive widgets now wrap their build tree with a `Semantics(...)` node so the Flutter web accessibility tree surfaces a role + label for each. `WAnchor` (and therefore the entire `WButton` family that wraps it) emits `button: true` with a merged label from its child Text/WText subtree via `MergeSemantics`. `WInput` and `WFormInput` emit `textField: true` with the placeholder (or the form-field `label`) as the Semantics label, the current text as Semantics value, and `obscured: true` for password inputs. `WCheckbox` emits a `checked` state. `WSelect` emits `button: true` with the placeholder or selected option label. `WDatePicker` emits `textField: true` with the placeholder as label and the ISO-formatted date as value. The wraps are additive: no existing styling, className, state, or callback behavior changes. New optional `WInput.semanticLabel` parameter lets form wrappers override the placeholder-derived Semantics label without changing the visual placeholder. Enables Playwright `getByRole` / `getByLabel` / `getByText` to resolve against the Flutter web build without per-widget caller-side annotation.
 - **Child Order**: `order-0` through `order-12`, `order-first`, `order-last`, `order-none`, and arbitrary `order-[n]` (including negatives) for reordering flex children without changing source order. Stable-sort preserves insertion order among equal-order children. (#53)
 - **Reverse Flex Direction**: `flex-row-reverse` and `flex-col-reverse` flip the main-axis direction via `Row.textDirection` / `Column.verticalDirection`, so `justify-start` mirrors to match CSS semantics (not just a visual list reversal). Applied after `order-*` sorting and works with responsive prefixes. (#53)
 - **WBreakpoint**: New widget for declarative breakpoint-keyed widget trees. Takes `base` plus optional `sm`/`md`/`lg`/`xl`/`xxl` builders and a `custom` map for user-defined screens from `WindThemeData.screens`. Walks the screen chain descending, returns the builder for the highest breakpoint ≤ active width, falls back to `base`. Escape hatch for cases where className prefixes aren't enough (different widget types, different child counts). (#55)
 - **Inline Color Props**: `WDiv.backgroundColor` and `WText.foregroundColor` for runtime-dynamic colors (color picker, per-tenant brand). Overrides any `bg-*` / `text-*` from `className` and does not participate in the parser cache key, so a dragging color picker no longer bloats the cache the way `bg-[#$hex]` interpolation would. Added `WindParser.cacheSize` for cache-behavior assertions in tests. (#59)
+- **Dusk Integration Enrichment (Wave 2)**: `WindStyle` gains an optional nullable `resolvedVia` field (debug metadata; excluded from `==` / `hashCode`, included in `toString`). `WindParser.parse()` gains an opt-in `bool trackProvenance = false` named argument (default OFF; dead-branch eliminated via const propagation at release; cache bypassed when flag is true to preserve stable cache identity). Wind dusk integration enricher now emits 60+ `WindStyle` fields additively under the existing YAML snapshot key (the 6 original field names are fully preserved). `WindDuskIntegration.enableProvenance(bool)` toggle gates `resolvedVia:` emission per enricher call. New `test/dusk_integration_test.dart` with 43 test cases covering enricher output, provenance toggle, and zero-cost default.
 
 ### 🐛 Bug Fixes
 

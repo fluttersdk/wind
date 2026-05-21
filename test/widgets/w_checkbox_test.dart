@@ -1,4 +1,7 @@
+import 'dart:ui' show CheckedState;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -146,6 +149,41 @@ void main() {
 
         final wDiv = tester.widget<WDiv>(find.byType(WDiv));
         expect(wDiv.states, contains('disabled'));
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // Accessibility / Semantics
+    //
+    // Step 1 of plan ai-test-v2 contract: WCheckbox must wrap its tree with
+    // `Semantics(checked: value, label: <resolved from child>)` so Playwright
+    // `getByRole('checkbox', { name: ... })` resolves. WCheckbox today renders
+    // its check glyph as the only child; the SemanticsNode label often stays
+    // empty unless the host widget passes a labelling child or sibling Text.
+    // -------------------------------------------------------------------------
+    group('Semantics', () {
+      testWidgets('emits checked state when value is true', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(WCheckbox(value: true, onChanged: (_) {})),
+        );
+        await tester.pump();
+
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WCheckbox),
+        );
+        expect(node.flagsCollection.isChecked, CheckedState.isTrue);
+      });
+
+      testWidgets('emits unchecked state when value is false', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(WCheckbox(value: false, onChanged: (_) {})),
+        );
+        await tester.pump();
+
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WCheckbox),
+        );
+        expect(node.flagsCollection.isChecked, CheckedState.isFalse);
       });
     });
   });

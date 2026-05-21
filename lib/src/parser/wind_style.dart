@@ -242,6 +242,22 @@ class WindStyle {
   /// Left offset for positioned elements e.g., left-4, left-[10px]
   final double? positionLeft;
 
+  // ============== DEBUG METADATA ==============
+
+  /// Opt-in provenance map populated by [WindParser.parse] when invoked with
+  /// `trackProvenance: true` AND `kDebugMode == true`.
+  ///
+  /// Maps a resolved (unprefixed) class token to the comma-separated prefix
+  /// path that activated it. Examples:
+  /// - `{'bg-blue-500': 'base'}` — class applied without any prefix
+  /// - `{'bg-blue-500': 'md,hover,dark'}` — class applied via `md:hover:dark:`
+  ///
+  /// Always `null` outside debug + opt-in flows. Excluded from [operator ==]
+  /// and [hashCode] so cache-key + cache-hit semantics stay consistent: a
+  /// `WindStyle` with provenance attached must equal the same `WindStyle`
+  /// without provenance.
+  final Map<String, String>? resolvedVia;
+
   const WindStyle({
     this.isHidden = false,
     this.displayType = WindDisplayType.block,
@@ -311,6 +327,7 @@ class WindStyle {
     this.positionRight,
     this.positionBottom,
     this.positionLeft,
+    this.resolvedVia,
   });
 
   WindStyle copyWith({
@@ -382,6 +399,7 @@ class WindStyle {
     double? positionRight,
     double? positionBottom,
     double? positionLeft,
+    Map<String, String>? resolvedVia,
   }) {
     final currentDec = this.decoration ?? const BoxDecoration();
 
@@ -468,6 +486,7 @@ class WindStyle {
       positionRight: positionRight ?? this.positionRight,
       positionBottom: positionBottom ?? this.positionBottom,
       positionLeft: positionLeft ?? this.positionLeft,
+      resolvedVia: resolvedVia ?? this.resolvedVia,
     );
   }
 
@@ -723,7 +742,8 @@ class WindStyle {
         'positionTop: $positionTop, '
         'positionRight: $positionRight, '
         'positionBottom: $positionBottom, '
-        'positionLeft: $positionLeft'
+        'positionLeft: $positionLeft, '
+        'resolvedVia: $resolvedVia'
         '}';
   }
 }

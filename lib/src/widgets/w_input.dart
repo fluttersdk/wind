@@ -197,6 +197,16 @@ class WInput extends StatefulWidget {
   /// ```
   final Widget? suffix;
 
+  /// Optional accessibility label override.
+  ///
+  /// When set, this string is used as the `label` of the underlying
+  /// `Semantics(textField: true, ...)` node (and therefore the resulting
+  /// `aria-label` on Flutter web). When `null` (default), the [placeholder]
+  /// is used as the Semantics label. Form-integrated wrappers such as
+  /// [WFormInput] supply this to override the placeholder with the form
+  /// field's `label`.
+  final String? semanticLabel;
+
   /// Creates a new [WInput] instance.
   const WInput({
     super.key,
@@ -225,6 +235,7 @@ class WInput extends StatefulWidget {
     this.enableSuggestions = true,
     this.prefix,
     this.suffix,
+    this.semanticLabel,
   });
 
   @override
@@ -413,6 +424,23 @@ class _WInputState extends State<WInput> {
       onEditingComplete: widget.onEditingComplete,
       onTap: widget.onTap,
       onTapOutside: widget.onTapOutside,
+    );
+
+    // Accessibility: surface this input as a `textField` SemanticsNode
+    // labelled with the placeholder. Wind routes labels through the parser
+    // (not through `InputDecoration.labelText`), so Material's TextField
+    // emits an empty Semantics label by default. The explicit wrap below
+    // keeps Playwright's `getByLabel(/email/i)` and obscured-input
+    // `getByLabel(/password/i)` resolution working on the Flutter web
+    // accessibility tree.
+    result = Semantics(
+      container: true,
+      textField: true,
+      label: widget.semanticLabel ?? widget.placeholder,
+      value: widget.value,
+      enabled: widget.enabled,
+      obscured: obscureText,
+      child: MergeSemantics(child: result),
     );
 
     // Apply Box Model (Margin, Width, Height)

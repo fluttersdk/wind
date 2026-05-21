@@ -190,7 +190,15 @@ class _WAnchorState extends State<WAnchor> {
       );
     }
 
-    return WindAnchorStateProvider(
+    // Accessibility: surface this anchor as a `button` in the Flutter
+    // Semantics tree so Playwright `getByRole('button', { name: ... })`
+    // resolves on the Flutter web build. We rely on `MergeSemantics` to
+    // collapse descendant Text/WText nodes into this single Semantics node so
+    // the merged label exposes the caller-supplied child text. This avoids
+    // the structural problem of WAnchor not knowing its eventual textual
+    // content when callers (e.g. WButton) interpose a Builder between
+    // WAnchor and its leaf widgets.
+    Widget result = WindAnchorStateProvider(
       state: currentState,
       child: MouseRegion(
         cursor: widget.mouseCursor ??
@@ -202,6 +210,14 @@ class _WAnchorState extends State<WAnchor> {
         onEnter: widget.isDisabled ? null : (_) => _onHover(true),
         onExit: widget.isDisabled ? null : (_) => _onHover(false),
         child: innerChild,
+      ),
+    );
+
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        enabled: !widget.isDisabled,
+        child: result,
       ),
     );
   }
