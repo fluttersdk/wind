@@ -87,9 +87,23 @@ const WSelect({
 | `values` | `List<T>?` | `null` | Selected values in multi-select mode |
 | `onMultiChange` | `ValueChanged<List<T>>?` | `null` | Callback for multi-selection changes |
 | `searchable` | `bool` | `false` | Shows a search input in the menu |
+| `searchPlaceholder` | `String` | `'Search...'` | Placeholder text in the search input |
+| `onSearch` | `Future<List<SelectOption<T>>> Function(String)?` | `null` | Async remote search handler; returns filtered options for the query |
+| `onCreateOption` | `Future<SelectOption<T>> Function(String)?` | `null` | Tagging handler; called when the user creates a new option from search input |
+| `createOptionBuilder` | `CreateOptionBuilder?` | `null` | Custom builder for the "create new option" row in the menu |
+| `onLoadMore` | `Future<List<SelectOption<T>>> Function()?` | `null` | Pagination handler; called when the user scrolls past the current list |
+| `hasMore` | `bool` | `false` | When true, indicates more pages are available for `onLoadMore` |
 | `placeholder` | `String` | `'Select an option'` | Text shown when no value is selected |
 | `disabled` | `bool` | `false` | Prevents interaction |
+| `menuWidth` | `double?` | `null` | Fixed dropdown width; defaults to the trigger width |
 | `maxMenuHeight`| `double` | `300` | Maximum height of the dropdown list |
+| `states` | `Set<String>?` | `null` | Custom states for dynamic styling |
+| `triggerBuilder` | `SelectTriggerBuilder<T>?` | `null` | Custom trigger renderer for single-select |
+| `multiTriggerBuilder` | `MultiSelectTriggerBuilder<T>?` | `null` | Custom trigger renderer for multi-select |
+| `selectedChipBuilder` | `SelectedChipBuilder<T>?` | `null` | Custom chip renderer for selected items in multi-select |
+| `itemBuilder` | `SelectItemBuilder<T>?` | `null` | Custom renderer for each option in the menu |
+| `emptyBuilder` | `EmptyStateBuilder?` | `null` | Custom widget when no options match the search |
+| `loadingBuilder` | `LoadingBuilder?` | `null` | Custom widget shown while `onSearch` or `onLoadMore` is pending |
 
 ## Layout Modes
 

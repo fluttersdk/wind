@@ -225,19 +225,32 @@ WInput(
 **Constructor:**
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| value | T? | null | Single: Selected value |
-| onChange | ValueChanged<T>?| null | Single: Selection callback |
+| value | T? | null | Single: selected value |
+| onChange | ValueChanged<T>? | null | Single: selection callback |
 | isMulti | bool | false | Enables multi-select mode |
-| values | List<T>? | null | Multi: Selected values |
-| onMultiChange | ValueChanged<List<T>>?| null | Multi: Selection callback |
-| options | List<SelectOption<T>>| required | Available options |
+| values | List<T>? | null | Multi: selected values |
+| onMultiChange | ValueChanged<List<T>>? | null | Multi: selection callback |
+| selectedChipBuilder | SelectedChipBuilder<T>? | null | Multi: custom chip renderer for selected items |
+| options | List<SelectOption<T>> | required | Available options |
 | searchable | bool | false | Shows search input |
-| onSearch | Future<List<SelectOption<T>>> Function(String)?| null | Async search callback |
-| onCreateOption | Future<SelectOption<T>> Function(String)?| null | Callback to create new option |
-| onLoadMore | Future<List<SelectOption<T>>> Function()?| null | Pagination callback |
+| searchPlaceholder | String | `'Search...'` | Search input placeholder |
+| onSearch | Future<List<SelectOption<T>>> Function(String)? | null | Async search callback |
+| onCreateOption | Future<SelectOption<T>> Function(String)? | null | Callback to create a new option (tagging) |
+| createOptionBuilder | CreateOptionBuilder? | null | Custom "create new option" row builder |
+| onLoadMore | Future<List<SelectOption<T>>> Function()? | null | Pagination callback |
 | hasMore | bool | false | Enables pagination |
 | className | String? | null | Trigger styling |
 | menuClassName | String? | null | Dropdown menu styling |
+| placeholder | String | `'Select an option'` | Trigger placeholder |
+| disabled | bool | false | Disables interaction |
+| menuWidth | double? | null | Fixed dropdown width |
+| maxMenuHeight | double | 300 | Dropdown max height |
+| states | Set<String>? | null | Custom state triggers |
+| triggerBuilder | SelectTriggerBuilder<T>? | null | Custom single-select trigger renderer |
+| multiTriggerBuilder | MultiSelectTriggerBuilder<T>? | null | Custom multi-select trigger renderer |
+| itemBuilder | SelectItemBuilder<T>? | null | Custom option renderer |
+| emptyBuilder | EmptyStateBuilder? | null | Custom empty-state renderer |
+| loadingBuilder | LoadingBuilder? | null | Custom loading renderer |
 
 **Special Behaviors:**
 - **Single vs Multi:** Use `value` + `onChange` for single select. Set `isMulti: true` and use `values` + `onMultiChange` for multi-select.
