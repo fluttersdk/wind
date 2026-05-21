@@ -97,6 +97,7 @@ WDiv intelligently selects the core Flutter widget based on the `className`:
 | textStyle | TextStyle? | null | Flutter native TextStyle override |
 | selectable | bool | false | If true, renders `SelectableText` |
 | states | Set<String>? | null | Custom state triggers |
+| foregroundColor | Color? | null | Inline text color for runtime-dynamic values (brand color, color picker). Wins over `text-*` / `dark:text-*` from className. Stays out of the parser cache key. |
 
 **Flutter Constraint Notes:**
 - **truncate:** Translates to `TextOverflow.ellipsis` with `maxLines: 1`. Inside a Row, a `WText` with `truncate` MUST be wrapped in an `Expanded` (e.g., `WDiv(className: 'flex-1')`) or have a fixed width. Otherwise, it takes infinite width and overflows.
