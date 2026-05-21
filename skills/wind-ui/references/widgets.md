@@ -317,12 +317,14 @@ WIcon(
 **Constructor:**
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| src | String? | null | Network URL or `asset://...` |
-| image | ImageProvider?| null | Explicit ImageProvider |
-| alt | String? | null | Accessibility label |
-| className | String? | null | Styling (`object-cover`, `aspect-video`) |
-| placeholder | Widget? | null | Loading widget |
-| errorBuilder | ImageErrorBuilder?| null | Custom error widget builder |
+| src | String? | null | Network URL or `asset://...` (either `src` or `image` must be provided) |
+| image | ImageProvider? | null | Explicit `ImageProvider` (NetworkImage, FileImage, MemoryImage) |
+| alt | String? | null | Accessibility label (semanticLabel on the underlying Image widget) |
+| className | String? | null | Styling (`object-cover`, `aspect-video`, etc.) |
+| states | Set<String>? | null | Custom state triggers |
+| placeholder | Widget? | null | Widget shown while the image is loading |
+| errorBuilder | ImageErrorBuilder? | null | Custom error widget builder |
+| loadingBuilder | ImageLoadingBuilder? | null | Custom loading indicator builder (overrides default) |
 
 **Examples:**
 ```dart
