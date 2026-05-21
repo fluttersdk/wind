@@ -118,7 +118,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0-alpha.9"
+    version: "1.0.0-alpha.10"
   google_fonts:
     dependency: "direct main"
     description:
@@ -404,6 +404,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  wind_diagnostics_contracts:
+    dependency: "direct overridden"
+    description:
+      path: "../../wind_diagnostics_contracts"
+      relative: true
+    source: path
+    version: "1.0.0-alpha.1"
   xdg_directories:
     dependency: transitive
     description:

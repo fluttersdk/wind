@@ -40,6 +40,10 @@ dependencies:
   google_fonts: ^6.1.0  # Downgraded for Dart 3.6.0 compatibility
   web: ^1.1.1
 
+dependency_overrides:
+  wind_diagnostics_contracts:
+    path: ../../wind_diagnostics_contracts
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
