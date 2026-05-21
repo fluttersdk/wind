@@ -49,7 +49,7 @@ const WButton({
   String? className,
   String? loadingText,
   Widget? loadingWidget,
-  double loadingSize = 20,
+  double loadingSize = 16,
   Color? loadingColor,
   Set<String>? states,
 })
@@ -68,7 +68,7 @@ const WButton({
 | `disabled` | `bool` | `false` | Activates disabled state: disables interaction and changes cursor. |
 | `loadingText` | `String?` | `null` | Text to display next to the loading spinner. |
 | `loadingWidget` | `Widget?` | `null` | Custom widget to replace the default spinner. |
-| `loadingSize` | `double` | `20` | Size of the default loading spinner. |
+| `loadingSize` | `double` | `16` | Size of the default loading spinner. |
 | `loadingColor` | `Color?` | `null` | Color of the spinner. Falls back to text color, then auto-computes contrast via W3C luminance when no color is resolvable. |
 | `states` | `Set<String>?` | `null` | Custom state prefixes (e.g., `{'error'}` for `error:` classes). |
 

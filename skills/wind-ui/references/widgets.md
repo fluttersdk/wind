@@ -138,7 +138,7 @@ WDiv(
 | className | String? | null | Utility class string |
 | loadingText | String? | null | Optional text beside spinner |
 | loadingWidget | Widget? | null | Custom spinner override |
-| loadingSize | double | 20 | Size of default spinner |
+| loadingSize | double | 16 | Size of default spinner |
 | loadingColor | Color? | null | Color of spinner. Falls back to text color, then auto-computes contrast via W3C luminance when no color is resolvable. |
 | states | Set<String>? | null | Custom state triggers |
 
