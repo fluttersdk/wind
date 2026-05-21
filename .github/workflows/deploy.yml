@@ -28,8 +28,11 @@ jobs:
       - name: Check formatting
         run: dart format --set-exit-if-changed .
 
-      - name: Run tests
-        run: flutter test
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
+
+      - name: Run tests with coverage
+        run: ./tool/coverage.sh 90
 
   build:
     name: Build Web
