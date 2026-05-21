@@ -9,6 +9,7 @@
 - [How WindLogger Works](#how-windlogger-works)
 - [Quick Reference](#quick-reference)
 - [Common Scenarios](#common-scenarios)
+- [External Tooling Integration](#external-tooling-integration)
 
 <a name="introduction"></a>
 ## Introduction
@@ -120,3 +121,55 @@ Let's look at common debugging workflows using the `debug` class:
 - **Inspecting Responsive Styles**: Resize the viewport while `debug` is active. The logger will re-trigger and show the new `Final Styles` for the active breakpoint.
 - **Verifying State Variants**: Hover over or focus a widget with state-based classes (like `hover:bg-blue-600`). The log will update to show the merged style.
 - **Analyzing Layout Layers**: Use the `Composition Tree` to determine which utility class is responsible for a specific Flutter wrapper, helping identify unexpected padding or alignment issues.
+
+<a name="external-tooling-integration"></a>
+## External Tooling Integration
+
+Beyond the `debug` className for in-console inspection, Wind exposes a contracts-based bridge so external debug tools (E2E drivers, runtime inspectors, IDE plugins) can read live Wind state per widget. The bridge ships in the production dependency `fluttersdk_wind_diagnostics_contracts` and is installed via a single facade call.
+
+### When you need this
+
+You need to call `Wind.installDebugResolver()` when one of these is true:
+
+- You are using `fluttersdk_dusk` to drive E2E tests against your app. Dusk reads Wind state (the active className, breakpoint, brightness, platform, dynamic states, resolved background color, resolved text color) via the contracts package during snapshot capture.
+- You are writing an inspector or IDE tool that needs the same per-widget Wind state at runtime.
+
+If neither applies, you can skip this step. Wind itself does not depend on the resolver being installed; widgets render the same with or without it.
+
+### Wiring it up
+
+Call `Wind.installDebugResolver()` once during app startup, inside a `kDebugMode` guard. The call is idempotent (safe to call multiple times) and is automatically a no-op in release builds, so the bridge is tree-shaken out of production binaries.
+
+```dart
+import 'package:flutter/foundation.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+
+void main() {
+  if (kDebugMode) {
+    Wind.installDebugResolver();
+  }
+  runApp(const MyApp());
+}
+```
+
+After the call, any consumer of `WindDebugRegistry.current` (from the contracts package) can call `resolver.resolve(element)` on a Wind widget's `Element` to receive a map of debug fields: `className`, `breakpoint`, `brightness`, `platform`, `states`, `bgColor`, `textColor`. Tools read this without depending on Wind directly.
+
+### What the contract emits
+
+`WindDebugResolverImpl.resolve(element)` returns at most six fields per widget element:
+
+| Field | Type | Notes |
+|:------|:-----|:------|
+| `className` | `String` | The active className resolved through breakpoints, dark mode, and state prefixes |
+| `breakpoint` | `String` | The currently-active named breakpoint (`sm` / `md` / `lg` / `xl` / `2xl` / `base`) |
+| `brightness` | `String` | `'light'` or `'dark'` |
+| `platform` | `String` | `'web'` / `'android'` / `'ios'` / etc. |
+| `states` | `List<String>` | Active dynamic states (`hover`, `focus`, `active`, custom keys) |
+| `bgColor` | `String?` | Resolved background color hex (8 digits including alpha) when set by className or inline prop |
+| `textColor` | `String?` | Resolved foreground color hex when set |
+
+Fields whose value is null are omitted; the map only carries what the widget actually resolved.
+
+### Release-build safety
+
+`Wind.installDebugResolver()` is a no-op in release builds. The `kDebugMode` guard in user code further ensures dart2js / dart2native tree-shakes the entire branch on every platform. There is no production cost from leaving the call in place.

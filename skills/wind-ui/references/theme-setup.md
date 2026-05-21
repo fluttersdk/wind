@@ -51,6 +51,24 @@ WindTheme(
 )
 ```
 
+### Debug-Tooling Bridge (`Wind.installDebugResolver`)
+
+When the app is consumed by `fluttersdk_dusk` for E2E testing or any runtime inspector that depends on `fluttersdk_wind_diagnostics_contracts`, install the resolver once at startup inside a `kDebugMode` guard. The call is idempotent and a no-op in release builds, so leaving it in production code costs nothing (`dart2js` and `dart2native` tree-shake the entire branch).
+
+```dart
+import 'package:flutter/foundation.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+
+void main() {
+  if (kDebugMode) {
+    Wind.installDebugResolver();
+  }
+  runApp(const MyApp());
+}
+```
+
+Skip this when no debug consumer is in play. Wind widgets render the same whether or not the resolver is installed; the call only affects what external tooling can read about Wind state per widget.
+
 ## 2. WindThemeData Options
 
 `WindThemeData` is the "Tailwind Config" of Wind. It holds all design tokens.
