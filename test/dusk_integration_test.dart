@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_dusk/dusk.dart';
+import 'package:fluttersdk_wind/dusk_integration.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 /// Tests for the Wind ↔ Dusk snapshot enricher.
