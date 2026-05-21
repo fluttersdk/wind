@@ -1,13 +1,12 @@
 # Transitions
 
-Utilities for controlling the duration, easing, and delay of state transitions in Wind.
+Utilities for controlling the duration and easing of state transitions in Wind.
 
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
 - [Variants](#variants)
   - [Duration](#duration)
   - [Easing](#easing)
-  - [Delay](#delay)
 - [Responsive Design](#responsive-design)
 - [Dark Mode](#dark-mode)
 - [Arbitrary Values](#arbitrary-values)
@@ -54,18 +53,6 @@ By adding `duration-200`, the background color shift happens over 200 millisecon
 | `ease-out` | `Curves.easeOut` | Starts fast, ends slow |
 | `ease-in-out` | `Curves.easeInOut` | Slow start and end |
 
-### Delay
-| Class | Value | Description |
-|:------|:------|:------------|
-| `delay-75` | 75ms | |
-| `delay-100` | 100ms | |
-| `delay-150` | 150ms | |
-| `delay-200` | 200ms | |
-| `delay-300` | 300ms | |
-| `delay-500` | 500ms | |
-| `delay-700` | 700ms | |
-| `delay-1000` | 1000ms | |
-
 <a name="variants"></a>
 ## Variants
 
@@ -85,15 +72,6 @@ Control the rate of change with `ease-{curve}` utilities. This defines the "feel
 
 ```dart
 WDiv(className: 'ease-out duration-300 ...')
-```
-
-<a name="delay"></a>
-### Delay
-
-If you need to wait before starting a transition, use the `delay-{ms}` utility.
-
-```dart
-WDiv(className: 'delay-150 duration-300 ...')
 ```
 
 <a name="responsive-design"></a>
