@@ -1,298 +1,241 @@
-# Wind UI Token Reference
+# Wind UI className Token Reference (v1.0.0)
 
-This document maps `className` string tokens to their native Flutter semantics.
+Every recognized className token, organized by the parser that owns it. Spell-check against this catalog: unknown tokens fail silently.
 
-[Layout & Flexbox](#1-layout--flexbox) | [Spacing](#2-spacing) | [Sizing](#3-sizing) | [Typography](#4-typography) | [Color & Background](#5-color--background) | [Borders & Radius](#6-borders--radius) | [Effects](#7-effects) | [Transitions](#8-transitions--animations) | [Position & Z-Index](#9-position--z-index) | [Overflow](#10-overflow--clipping) | [Modifiers](#modifiers-prefixes)
+## Prefix system (applies to every category below)
 
-## 1. Layout & Flexbox
+Order of prefixes within a single class is arbitrary; ALL prefixes must match for the class to apply.
 
-**CRITICAL RULE:** Flutter constraints differ from CSS. Pay close attention to the Flutter Mapping column.
+| Prefix kind | Tokens | Activation |
+|-------------|--------|------------|
+| Responsive | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` | Active when screen width ≥ breakpoint (defaults: 640, 768, 1024, 1280, 1536). Mobile-first cascade. |
+| State | `hover:`, `focus:`, `active:`, `disabled:`, `loading:`, `selected:`, `checked:`, `error:` | Hover/focus/active auto-detected by WAnchor. Others injected via `states: Set<String>?` constructor param. |
+| Theme | `dark:` | Active when `WindThemeController.brightness == Brightness.dark`. |
+| Platform | `ios:`, `android:`, `web:`, `mobile:` | Active per `WindPlatformService` detection. `mobile:` = iOS OR Android. |
+| Arbitrary | `[N]` brackets | Pixel-exact override (e.g., `p-[10px]`, `w-[300px]`, `bg-[#ff5733]`). |
+| Opacity modifier | `/N` suffix (after color) | Applies to color tokens: `bg-red-500/50`, `text-white/80`, `shadow-blue-500/20`. |
 
-| Token | Flutter Mapping | Notes |
-|-------|-----------------|-------|
-| `flex` | `Row` or `Column` | Defaults to Row unless `flex-col` is present. |
-| `grid` | `Wrap` | Uses Wrap, not GridView. Used with `grid-cols-{n}`. |
-| `wrap` | `Wrap` | **CRITICAL:** DO NOT USE `flex-wrap` (it is a no-op). Use `wrap` instead. |
-| `block` | `SizedBox` | Generic container. |
-| `hidden` | `SizedBox.shrink()` | Hides the widget completely. |
-| `flex-row` | `Axis.horizontal` | Standard row layout. |
-| `flex-col` | `Axis.vertical` | Standard column layout. |
-| `flex-row-reverse` | `Axis.horizontal` | Row layout with reversed children order (via textDirection). |
-| `flex-col-reverse` | `Axis.vertical` | Column layout with reversed children order (via verticalDirection). |
-| `flex-1` | `Expanded(flex: 1)` | **CRITICAL:** Use this to fill remaining space in a Row/Column. |
-| `flex-auto` | `Flexible(fit: FlexFit.loose)` | Child can shrink but won't force expansion. |
-| `flex-none` | `Flexible(fit: FlexFit.loose)` | Same as `flex-auto` in this implementation. |
-| `shrink-0` | `Flexible(fit: FlexFit.tight)` | Child cannot shrink. |
-| `justify-start` | `MainAxisAlignment.start` | Align to main-axis start. |
-| `justify-end` | `MainAxisAlignment.end` | Align to main-axis end. |
-| `justify-center` | `MainAxisAlignment.center` | Align to main-axis center. |
-| `justify-between`| `MainAxisAlignment.spaceBetween`| Distribute space between items. |
-| `justify-around` | `MainAxisAlignment.spaceAround` | Distribute space around items. |
-| `justify-evenly` | `MainAxisAlignment.spaceEvenly` | Distribute space evenly. |
-| `items-start` | `CrossAxisAlignment.start` | Align to cross-axis start. |
-| `items-end` | `CrossAxisAlignment.end` | Align to cross-axis end. |
-| `items-center` | `CrossAxisAlignment.center` | Align to cross-axis center. |
-| `items-stretch` | `CrossAxisAlignment.stretch` | Stretch to fill cross-axis. |
-| `items-baseline` | `CrossAxisAlignment.baseline` | Align text baseline. |
-| `gap-{n}` | `SizedBox` spacing | Applies to both axes. Formula: `n × 4px`. |
-| `gap-x-{n}` | Horizontal spacing | Formula: `n × 4px`. |
-| `gap-y-{n}` | Vertical spacing | Formula: `n × 4px`. |
-| `self-start` | `Alignment.topCenter` | Used for single child alignment. |
-| `self-center` | `Alignment.center` | Used for single child alignment. |
-| `grid-cols-{n}`| `Wrap` constraints | Calculates width to fit exactly `n` items per row. |
+Cache key includes: `className + activeBreakpoint + brightness + platform + sorted(activeStates)`.
 
-## 2. Spacing
+## Spacing
 
-Spacing tokens follow a mathematical formula. You do not need an exhaustive list.
+### Padding (`padding_parser.dart`)
 
-**Formula: `n × 4px`**
+`p-{N}`, `pt-{N}`, `pr-{N}`, `pb-{N}`, `pl-{N}`, `px-{N}`, `py-{N}` (top, right, bottom, left, horizontal, vertical).
 
-| Token Prefix | Axis | Description | Example (`-4` = 16px) |
-|--------------|------|-------------|-----------------------|
-| `p-` | All | Padding on all sides | `p-4` (16px all sides) |
-| `px-` | Horizontal | Padding left and right | `px-4` (16px L/R) |
-| `py-` | Vertical | Padding top and bottom | `py-4` (16px T/B) |
-| `pt-` | Top | Padding top | `pt-4` (16px top) |
-| `pr-` | Right | Padding right | `pr-4` (16px right) |
-| `pb-` | Bottom | Padding bottom | `pb-4` (16px bottom) |
-| `pl-` | Left | Padding left | `pl-4` (16px left) |
-| `m-` | All | Margin on all sides | `m-4` (16px all sides) |
-| `mx-` | Horizontal | Margin left and right | `mx-4` (16px L/R) |
-| `my-` | Vertical | Margin top and bottom | `my-4` (16px T/B) |
-| `mt-` | Top | Margin top | `mt-4` (16px top) |
-| `mr-` | Right | Margin right | `mr-4` (16px right) |
-| `mb-` | Bottom | Margin bottom | `mb-4` (16px bottom) |
-| `ml-` | Left | Margin left | `ml-4` (16px left) |
+Values: `0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96` (theme spacing scale) + `px` (1 px) + arbitrary `p-[10px]`. Each unit = 4 px (so `p-4` = 16 px).
 
-### Common Values Reference
-- `1` = 4px
-- `2` = 8px
-- `3` = 12px
-- `4` = 16px
-- `5` = 20px
-- `6` = 24px
-- `8` = 32px
-- `10` = 40px
-- `12` = 48px
+### Margin (`margin_parser.dart`)
 
-### Arbitrary & Special Spacing
-| Token | Flutter Mapping | Notes |
-|-------|-----------------|-------|
-| `mx-auto` | Center horizontally | Typically wraps in a Row with `MainAxisAlignment.center`. |
-| `p-[10px]` | Exact pixels | Arbitrary padding. px suffix is optional but recommended. |
-| `m-[5.5]` | Exact pixels | Arbitrary margin (evaluates to 5.5px, not `5.5 * 4`). |
+Same shape as padding: `m-{N}`, `mt-{N}`, `mr-{N}`, `mb-{N}`, `ml-{N}`, `mx-{N}`, `my-{N}` + `mx-auto` (horizontal centering).
 
-## 3. Sizing
+## Sizing
 
-Sizing applies fixed dimensions or constraints.
+### Width / Height (`sizing_parser.dart`)
 
-| Token | Flutter Mapping | Notes |
-|-------|-----------------|-------|
-| `w-{n}` | `width: n * 4.0` | Exact width calculation (e.g., `w-16` = 64px). |
-| `w-full` | `width: double.infinity` | **CRITICAL:** Works in Column. **OVERFLOWS** in Row. Use `flex-1` in Rows! |
-| `w-screen` | `MediaQuery.size.width`| Full viewport width. |
-| `w-1/2` | `widthFactor: 0.5` | 50% width via FractionallySizedBox logic. |
-| `w-1/3` | `widthFactor: 0.333` | 33% width. |
-| `w-2/3` | `widthFactor: 0.666` | 66% width. |
-| `w-1/4` | `widthFactor: 0.25` | 25% width. |
-| `h-{n}` | `height: n * 4.0` | Exact height calculation. |
-| `h-full` | Height bounded | **CRITICAL:** Parent MUST have bounded height. Errors in scrollable views. |
-| `h-screen` | `MediaQuery.size.height`| Full viewport height. |
-| `min-h-screen`| `BoxConstraints(minHeight)`| Ensures at least screen height (ideal for scroll views). |
-| `min-w-{n}` | `minWidth: n * 4.0` | Minimum width constraint. |
-| `max-w-{preset}`| `maxWidth: preset` | Maximum width constraint (see presets below). |
-| `min-h-{n}` | `minHeight: n * 4.0` | Minimum height constraint. |
-| `max-h-{n}` | `maxHeight: n * 4.0` | Maximum height constraint. |
-| `aspect-auto` | No aspect ratio | Default behavior. |
-| `aspect-square`| `AspectRatio(1.0)` | Forces 1:1 aspect ratio. Needs 1 bounded dimension. |
-| `aspect-video`| `AspectRatio(16/9)` | Forces 16:9 aspect ratio. Needs 1 bounded dimension. |
-| `aspect-[4/3]`| `AspectRatio(4/3)` | Arbitrary aspect ratio. |
+| Token family | Values |
+|--------------|--------|
+| `w-{N}` / `h-{N}` | spacing-scale values, `full` (100%), `screen` (viewport), `min`, `max`, `fit`, fractions (`w-1/2`, `w-1/3`, `w-2/3`, `w-1/4`, `w-3/4`, `w-1/5` ... `w-4/5`, `w-1/12` ... `w-11/12`) |
+| `min-w-{N}` / `min-h-{N}` | same value set; `min-h-screen` very common |
+| `max-w-{named}` | `xs` (320), `sm` (384), `md` (448), `lg` (512), `xl` (576), `2xl` (672), `3xl` (768), `4xl` (896), `5xl` (1024), `6xl` (1152), `7xl` (1280), `prose` (1040) |
+| `max-h-{N}` | spacing-scale or arbitrary |
+| Arbitrary | `w-[300px]`, `h-[50%]`, `min-w-[200px]` |
 
-### Max-Width Presets
-- `xs` (320px)
-- `sm` (384px)
-- `md` (448px)
-- `lg` (512px)
-- `xl` (576px)
-- `2xl` (672px)
-- `3xl` (768px)
-- `4xl` (896px)
-- `5xl` (1024px)
-- `prose` (65ch approx)
+Wind stops at `7xl` for max-width-named; `8xl`/`9xl` are silent no-ops.
 
-## 4. Typography
+### Flex / Grid sizing
 
-### Size & Weight Scales
+`flex-1`, `flex-auto`, `flex-initial`, `flex-none`, `flex-grow`, `flex-shrink`, `shrink`, `shrink-0` for flex children. `grid-cols-{N}` for grid columns. `axis-min` / `axis-max` (Wind-only) control flex container `MainAxisSize`.
 
-| Size Token | Pixel Size | Line Height | | Weight Token | Font Weight |
-|------------|------------|-------------|-|--------------|-------------|
-| `text-xs` | 12px | 16px | | `font-thin` | w100 |
-| `text-sm` | 14px | 20px | | `font-extralight`| w200 |
-| `text-base` | 16px | 24px | | `font-light` | w300 |
-| `text-lg` | 18px | 28px | | `font-normal`| w400 |
-| `text-xl` | 20px | 28px | | `font-medium`| w500 |
-| `text-2xl` | 24px | 32px | | `font-semibold`| w600 |
-| `text-3xl` | 30px | 36px | | `font-bold` | w700 |
-| `text-4xl` | 36px | 40px | | `font-extrabold`| w800 |
-| `text-5xl` | 48px | 48px | | `font-black` | w900 |
+## Color (the overloaded space)
 
-### Styling
+### Background (`background_parser.dart`)
 
-| Token | Flutter Mapping | Notes |
-|-------|-----------------|-------|
-| `text-left` | `TextAlign.left` | - |
-| `text-center` | `TextAlign.center` | - |
-| `text-right` | `TextAlign.right` | - |
-| `text-justify` | `TextAlign.justify` | - |
-| `text-{color}-{shade}`| `color: ThemeColor`| E.g., `text-primary`, `text-blue-500`. |
-| `text-[#hex]` | `color: HexColor` | E.g., `text-[#FF5733]`. |
-| `text-{color}/80` | `color: Color.withOpacity`| Opacity modifier. E.g., `text-white/80`. |
-| `uppercase` | `.toUpperCase()` | String transformation. |
-| `lowercase` | `.toLowerCase()` | String transformation. |
-| `capitalize` | Custom util | Capitalize first letter of each word. |
-| `normal-case` | Original string | Reverts transforms. |
-| `underline` | `TextDecoration.underline`| - |
-| `line-through` | `TextDecoration.lineThrough`| - |
-| `no-underline` | `TextDecoration.none`| - |
-| `truncate` | `TextOverflow.ellipsis`| **CRITICAL:** Requires `Expanded` parent in Row to prevent infinite width errors. |
-| `text-ellipsis`| `TextOverflow.ellipsis`| Similar to truncate but doesn't force `maxLines: 1`. |
-| `line-clamp-{n}`| `maxLines: n` | Limits text to exact number of lines. |
+- Solid color: `bg-{name}-{shade}` (e.g., `bg-red-500`, `bg-slate-900`), arbitrary `bg-[#ff5733]`, opacity modifier `bg-red-500/50`.
+- Color names: `slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose` (22 families).
+- Shades: `50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950` (11 stops per family).
+- Image: `bg-[url(asset://path)]` (asset), arbitrary `bg-[url(...)]`. Position: `bg-center`, `bg-top`, `bg-bottom`, `bg-left`, `bg-right`. Size: `bg-cover`, `bg-contain`. Repeat: `bg-no-repeat`, `bg-repeat`, `bg-repeat-x`, `bg-repeat-y`.
+- Gradient: `bg-gradient-to-{t|tr|r|br|b|bl|l|tl}` + `from-{color}-{shade}` + optional `via-{color}-{shade}` + `to-{color}-{shade}`.
 
-### Leading & Tracking
+### Text color, alignment, font-size (`text_parser.dart`) — OVERLOADED
 
-| Token | Leading (Line Height) | | Token | Tracking (Letter Spacing) |
-|-------|-----------------------|-|-------|---------------------------|
-| `leading-none` | 1.0 | | `tracking-tight` | -0.025em |
-| `leading-tight`| 1.25 | | `tracking-normal`| 0em |
-| `leading-normal`| 1.5 | | `tracking-wide` | 0.025em |
-| `leading-relaxed`| 1.625 | | `tracking-wider` | 0.05em |
-| `leading-loose`| 2.0 | | `tracking-widest`| 0.1em |
+The `text-*` prefix has three meanings resolved by ordered regex:
 
-## 5. Color & Background
+**1. Font size:** `text-xs` (12), `text-sm` (14), `text-base` (16), `text-lg` (18), `text-xl` (20), `text-2xl` (24), `text-3xl` (30), `text-4xl` (36), `text-5xl` (48), `text-6xl` (60). STOPS AT `6xl` — `text-7xl` / `text-8xl` / `text-9xl` silently no-op. Arbitrary: `text-[20px]`, `text-[1.5rem]`. With paired line-height: `text-xl/8` (size + leading-8).
 
-All standard Tailwind color names are supported: `slate`, `gray`, `zinc`, `neutral`, `stone`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`.
-Semantic colors: `primary`, `success`, `warning`, `error`, `info`.
-Shades: `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `950`.
+**2. Color:** `text-{name}-{shade}` (e.g., `text-gray-900`, `text-white`, `text-black`), arbitrary `text-[#hex]`, opacity `text-white/80`.
 
-| Token | Description | Examples |
-|-------|-------------|----------|
-| `bg-{color}-{shade}` | Standard background | `bg-red-500`, `bg-primary` |
-| `bg-[#hex]` | Arbitrary background | `bg-[#123456]` |
-| `bg-transparent` | Transparent background | `bg-transparent` |
-| `bg-white` | White background | `bg-white` |
-| `bg-black` | Black background | `bg-black` |
-| `bg-{color}/{opacity}` | **Opacity Modifier** | `bg-primary/50` (Works on all colors!) |
-| `bg-gradient-to-{dir}` | Gradient direction | `bg-gradient-to-r`, `bg-gradient-to-br` |
-| `from-{color}` | Gradient start color | `from-red-500` |
-| `via-{color}` | Gradient middle color | `via-yellow-500` |
-| `to-{color}` | Gradient end color | `to-blue-500` |
-| `bg-[url(...)]` | Background image URL | `bg-[url(https://...)]` |
-| `bg-cover` | Image fit cover | `BoxFit.cover` |
-| `bg-contain` | Image fit contain | `BoxFit.contain` |
-| `bg-center` | Image align center | `Alignment.center` |
-| `bg-top` | Image align top | `Alignment.topCenter` |
+**3. Alignment:** `text-left`, `text-center`, `text-right`, `text-justify`, `text-start`, `text-end`.
 
-## 6. Borders & Radius
+### Border color (`border_parser.dart`)
 
-| Token | Flutter Mapping | Notes |
-|-------|-----------------|-------|
-| `border` | `Border.all(width: 1)` | Default 1px border. |
-| `border-0` | `Border.all(width: 0)` | No border width. |
-| `border-2` | `Border.all(width: 2)` | 2px border width. |
-| `border-4` | `Border.all(width: 4)` | 4px border width. |
-| `border-8` | `Border.all(width: 8)` | 8px border width. |
-| `border-t` | `Border(top: ...)` | Top border only. |
-| `border-r` | `Border(right: ...)` | Right border only. |
-| `border-b` | `Border(bottom: ...)` | Bottom border only. |
-| `border-l` | `Border(left: ...)` | Left border only. |
-| `border-{color}`| `Border(color: ...)` | Color. E.g., `border-gray-200`. |
-| `border-{c}/50` | `Color.withOpacity(0.5)`| Opacity modifier. E.g., `border-gray-200/50`. |
-| `border-solid` | `BorderStyle.solid` | Default style. |
-| `border-dashed`| Pattern border | Dashed pattern. |
-| `border-dotted`| Pattern border | Dotted pattern. |
-| `border-none` | `BorderStyle.none` | No border style. |
+`border-{name}-{shade}`, arbitrary `border-[#hex]`, opacity `border-red-500/50`. Default border color when no color specified.
 
-### Radius Table
-| Token | Radius Value |
-|-------|--------------|
-| `rounded` | 4px |
-| `rounded-md` | 6px |
-| `rounded-lg` | 8px |
-| `rounded-xl` | 12px |
-| `rounded-2xl` | 16px |
-| `rounded-3xl` | 24px |
-| `rounded-full` | 9999px |
+### Other color-bearing tokens (with opacity modifier)
 
-### Per-Side Radius
-Target specific corners by appending direction:
-- `rounded-t-{size}`: Top-left and Top-right
-- `rounded-b-{size}`: Bottom-left and Bottom-right
-- `rounded-l-{size}`: Top-left and Bottom-left
-- `rounded-r-{size}`: Top-right and Bottom-right
-- `rounded-tl-{size}`: Top-left only
+| Token | Use |
+|-------|-----|
+| `ring-{color}/{opacity}` | focus ring color |
+| `shadow-{color}/{opacity}` | tinted shadow |
+| `fill-{color}/{opacity}` | SVG fill |
+| `stroke-{color}/{opacity}` | SVG stroke |
 
-## 7. Effects
+## Typography (other than size/color/align)
 
-| Token | Description | Examples |
-|-------|-------------|----------|
-| `shadow` | Default shadow | `shadow` |
-| `shadow-{preset}` | preset sizes | `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl` |
-| `shadow-none` | No shadow | `shadow-none` |
-| `shadow-{color}/{op}`| Colored shadow | `shadow-primary/20` |
-| `opacity-{n}` | Preset opacity % | `opacity-0`, `opacity-50`, `opacity-100` |
-| `opacity-[n]` | Arbitrary opacity factor | `opacity-[0.5]` |
-| `ring` | Default outline ring | `ring` (implemented via BoxShadow) |
-| `ring-{n}` | Ring width | `ring-2`, `ring-4` |
-| `ring-{color}` | Ring color | `ring-blue-500` |
-| `ring-offset-{n}`| Ring offset spacing | `ring-offset-2` |
-| `ring-inset` | Inset ring | `ring-inset` |
+### Font (`text_parser.dart` continued)
 
-## 8. Transitions & Animations
+| Family | Tokens |
+|--------|--------|
+| Weight | `font-thin` (100), `font-extralight` (200), `font-light` (300), `font-normal` (400), `font-medium` (500), `font-semibold` (600), `font-bold` (700), `font-extrabold` (800), `font-black` (900), arbitrary `font-[450]` |
+| Family | `font-sans`, `font-serif`, `font-mono`, custom `font-[Inter]` |
+| Style | `italic`, `not-italic` |
+| Decoration | `underline`, `overline`, `line-through`, `no-underline` |
+| Decoration style | `decoration-solid`, `decoration-double`, `decoration-dotted`, `decoration-dashed`, `decoration-wavy` |
+| Decoration color | `decoration-{color}-{shade}`, `decoration-[#hex]` |
+| Decoration thickness | `decoration-{0..8}`, `decoration-[3px]` |
+| Transform | `uppercase`, `lowercase`, `capitalize`, `normal-case` |
+| Letter spacing | `tracking-{tighter|tight|normal|wide|wider|widest}`, arbitrary `tracking-[0.1em]` |
+| Line height | `leading-{tight|snug|normal|relaxed|loose}` or numeric `leading-{N}` (× 4 px), arbitrary `leading-[24px]` |
+| Overflow | `truncate`, `text-ellipsis`, `text-clip` |
+| Line clamp | `line-clamp-{1..12|none}` |
+| Wrap | `whitespace-normal`, `whitespace-nowrap`, `text-wrap`, `text-nowrap`, `text-balance` |
 
-| Token | Flutter Mapping | Examples |
-|-------|-----------------|----------|
-| `duration-{n}` | `Duration(milliseconds: n)`| `duration-75`, `duration-150`, `duration-300`, `duration-500`, `duration-1000` |
-| `ease-linear` | `Curves.linear` | Constant speed. |
-| `ease-in` | `Curves.easeIn` | Starts slow, speeds up. |
-| `ease-out` | `Curves.easeOut` | Starts fast, slows down. |
-| `ease-in-out` | `Curves.easeInOut` | Slow start and end. |
-| `animate-spin` | `RotationTransition` | Infinite rotation. |
-| `animate-ping` | `ScaleTransition` | Radar ping effect. |
-| `animate-pulse` | `FadeTransition` | Fading in and out opacity. |
-| `animate-bounce`| `SlideTransition` | Vertical bounce effect. |
-| `animate-none` | No animation | Stops active animation. |
-| `scale-{n}` | `Transform.scale` | Usually paired with state. E.g., `active:scale-95`. |
+## Borders (`border_parser.dart`)
 
-## 9. Position & Z-Index
+### Width
 
-| Token | Flutter Mapping | Notes |
-|-------|-----------------|-------|
-| `absolute` | `Positioned` | Requires parent to be `relative` (Stack). |
-| `relative` | `Stack` | Becomes a positioning context for children. |
-| `sticky` | Native scroll behavior | Sticky header behavior within scroll view. |
-| `fixed` | Application overlay | Renders above everything, locked to screen. |
-| `inset-{n}` | `Positioned(top, right...)`| Spacing applied to all 4 edges. |
-| `top-{n}` | `Positioned(top: ...)` | Spacing applied to top edge. |
-| `right-{n}` | `Positioned(right: ...)` | Spacing applied to right edge. |
-| `bottom-{n}` | `Positioned(bottom: ...)` | Spacing applied to bottom edge. |
-| `left-{n}` | `Positioned(left: ...)` | Spacing applied to left edge. |
-| `z-{n}` | Render stack order | Presets: `z-0`, `z-10`, `z-20`, `z-30`, `z-40`, `z-50` |
-| `z-[n]` | Arbitrary stack order | `z-[100]` |
+`border` (default 1 px), `border-{0|1|2|4|8}` (numeric or theme), arbitrary `border-[3px]`. Directional: `border-t-{N}`, `border-r-{N}`, `border-b-{N}`, `border-l-{N}`.
 
-## 10. Overflow & Clipping
+### Style
 
-| Token | Flutter Mapping | Notes |
-|-------|-----------------|-------|
-| `overflow-hidden`| `ClipRect` / `ClipRRect`| Clips content to bounding box (respects radius). |
-| `overflow-y-auto`| `SingleChildScrollView` | **CRITICAL:** Creates vertical scroll. Parent MUST have bounded height (like `flex-1` inside a Column). |
-| `overflow-x-auto`| `SingleChildScrollView` | Creates horizontal scroll. |
-| `overflow-visible`| No clipping applied | Allows content to render outside box. |
+`border-solid`, `border-none` (no `border-dashed`/`-dotted`).
 
-## Modifiers (Prefixes)
+### Radius
 
-Prefixes can be chained to apply classes conditionally. E.g., `dark:hover:bg-gray-700`.
+`rounded` (default), `rounded-none`, `rounded-full`, `rounded-{sm|md|lg|xl|2xl|3xl}`. Directional: `rounded-t-{size}`, `rounded-r-{size}`, `rounded-b-{size}`, `rounded-l-{size}`, `rounded-tl-{size}`, `rounded-tr-{size}`, `rounded-bl-{size}`, `rounded-br-{size}`.
 
-- **Responsive:** `sm:`, `md:`, `lg:`, `xl:`, `2xl:` (min-width breakpoints)
-- **State:** `hover:`, `focus:`, `active:`, `disabled:`, `loading:`, `selected:`, `error:`
-- **Theme:** `dark:` (REQUIRED for dark mode support)
-- **Platform:** `ios:`, `android:`, `web:`, `mobile:`
+## Layout (`flexbox_grid_parser.dart`)
+
+### Display
+
+`flex`, `grid`, `wrap`, `block`, `hidden`. (`flex-wrap` is a NO-OP; use `wrap`.)
+
+### Flex direction
+
+`flex-row`, `flex-col`, `flex-row-reverse`, `flex-col-reverse`.
+
+### Justify (main axis)
+
+`justify-start`, `justify-end`, `justify-center`, `justify-between`, `justify-around`, `justify-evenly`.
+
+### Align items (cross axis)
+
+`items-start`, `items-end`, `items-center`, `items-baseline`, `items-stretch`.
+
+### Align content (when wrapped)
+
+`align-content-start`, `align-content-end`, `align-content-center`, `align-content-between`, `align-content-around`, `align-content-evenly`, `align-content-stretch`.
+
+### Gap (between flex/grid children)
+
+`gap-{N}`, `gap-x-{N}`, `gap-y-{N}`, `space-x-{N}`, `space-y-{N}` (legacy). Arbitrary `gap-[10px]`.
+
+### Self-alignment
+
+`align-self-start`, `align-self-end`, `align-self-center`, `align-self-stretch`, `align-self-auto`.
+
+### Grid
+
+`grid-cols-{1|2|3|4|5|6|7|8|9|10|11|12}`. Use `WBreakpoint` for column counts beyond static numbers.
+
+## Position (`position_parser.dart`)
+
+### Type
+
+`relative` (creates Stack ancestry for `absolute` children), `absolute` (positioned inside parent Stack), `fixed` / `sticky` (claimed by parser but currently NOT supported — silently treated as `relative`).
+
+### Offsets
+
+`top-{N}`, `right-{N}`, `bottom-{N}`, `left-{N}`. Negative prefix: `-top-4`. Arbitrary: `top-[24px]`.
+
+### Inset (multi-side shorthand)
+
+`inset-{N}` (all four sides), `inset-x-{N}` (left + right), `inset-y-{N}` (top + bottom). Negative + arbitrary supported.
+
+## Order (`order_parser.dart`) — NEW in alpha-9
+
+`order-{0..12}`, `order-first` (-9999), `order-last` (9999), `order-none` (0), arbitrary `order-[-42]`. Controls flex child rendering order without changing source order.
+
+## Effects
+
+### Shadow (`shadow_parser.dart`)
+
+Presets: `shadow` (default), `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`, `shadow-none`. Color tinting: `shadow-{color}-{shade}`, arbitrary `shadow-[#hex]`, opacity `shadow-red-500/30`.
+
+### Ring (`ring_parser.dart`)
+
+`ring` (default), `ring-{0|1|2|4|8}` (width). Color: `ring-{color}-{shade}`, arbitrary `ring-[#hex]`, opacity `ring-blue-500/50`. Offset: `ring-offset-{0|1|2|4|8}`. Inset: `ring-inset` (inset shadow vs outline).
+
+### Opacity (`opacity_parser.dart`)
+
+`opacity-{0|5|10|15|...|95|100}` (5% steps), arbitrary `opacity-[0.35]` (0.0-1.0 range, clamped).
+
+## Transitions and animations
+
+### Transitions (`transition_parser.dart`)
+
+Duration: `duration-{75|100|150|200|300|500|700|1000}` (ms), arbitrary `duration-[500ms]`. Easing: `ease-linear`, `ease-in`, `ease-out`, `ease-in-out`.
+
+Apply with the `animate-*` family on the same widget for smooth transitions.
+
+### Animations (`animation_parser.dart`)
+
+`animate-spin` (continuous rotation; loading indicators), `animate-pulse` (opacity fade), `animate-bounce` (vertical bounce), `animate-ping` (scale-up + fade), `animate-none` (disable).
+
+## Aspect ratio (`aspectratio_parser.dart`)
+
+`aspect-auto` (no constraint), `aspect-square` (1:1), `aspect-video` (16:9), arbitrary `aspect-[4/3]` (any ratio).
+
+## Z-index (`zindex_parser.dart`)
+
+`z-{0|10|20|30|40|50}`, arbitrary `z-[100]`, `z-auto`.
+
+## Overflow (`overflow_parser.dart`)
+
+`overflow-hidden`, `overflow-visible`, `overflow-scroll`, `overflow-auto`. Directional: `overflow-x-{...}`, `overflow-y-{...}`. **REMINDER**: scrolling overflow requires the constructor `scrollPrimary: true` on the WDiv for iOS tap-to-top.
+
+## SVG (`svg_parser.dart`)
+
+Fill: `fill-{color}-{shade}`, arbitrary `fill-[#hex]`, `fill-none`, `fill-current` (inherit from text color).
+Stroke: `stroke-{color}-{shade}`, arbitrary `stroke-[#hex]`, `stroke-none`, `stroke-current`.
+Special: `preserve-colors` (disable color filter for multi-color brand SVGs).
+
+## Debug (`debug_parser.dart`)
+
+`debug` — draws a colorful layout border showing the widget tree boundaries. Development only; never ship.
+
+## What Wind DOES NOT support (silent no-ops)
+
+Writing any of these in a Wind className produces no effect and no error. Use `references/migrate-from-tailwind.md` for the full migration list.
+
+- `flex-wrap` (use `wrap`)
+- `text-7xl`, `text-8xl`, `text-9xl`
+- `group-*`, `peer-*`
+- `divide-x`, `divide-y`, `divide-*-color`
+- `cursor-pointer`, `cursor-not-allowed`, etc.
+- `filter`, `blur-*`, `backdrop-blur-*`, `drop-shadow-*`
+- `@apply`, `@layer`, `@variant`, `@container`, `@sm:`
+- `!important` markers (`!bg-red-500` v3, `bg-red-500!` v4)
+- `bg-opacity-50` (deprecated v3 form; use `bg-red-500/50`)
+- `fixed`, `sticky` position types (parser sees them; no implementation)
+- Container queries (no DOM = no containment)
+- `space-x-reverse`, `divide-x-reverse`
+
+## Reading tips
+
+- **Combine prefixes freely**: `md:hover:bg-blue-500 dark:md:hover:bg-blue-400` activates on md+ screen AND hover AND dark theme.
+- **Last class wins per property**: `p-4 p-8` → `p-8`. Order within className matters.
+- **Multi-line className**: triple-quoted strings, one concern per line, group `dark:` peers beside light variants. Tabs/leading whitespace are ignored.
+- **States vs interpolation**: `states: isOn ? {'active'} : const {}` + `active:bg-blue-500` is correct; `'bg-${isOn ? "blue" : "gray"}-500'` is wrong (breaks cache, hard to read).
+- **Arbitrary > theme**: when both might match, arbitrary `[N]` wins because parsers check brackets first.
+- **Inline color props override className**: `WDiv(backgroundColor: someRuntimeColor, className: 'bg-blue-500')` uses `someRuntimeColor` AND bypasses cache.
