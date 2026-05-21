@@ -49,9 +49,8 @@ WText(
 | `text-4xl` | 2.25rem | 36px |
 | `text-5xl` | 3rem | 48px |
 | `text-6xl` | 3.75rem | 60px |
-| `text-7xl` | 4.5rem | 72px |
-| `text-8xl` | 6rem | 96px |
-| `text-9xl` | 8rem | 128px |
+
+> For sizes beyond `text-6xl`, use the arbitrary-value syntax (`text-[80px]`) or extend `WindThemeData.fontSizes` with additional entries.
 
 ## Variants
 
