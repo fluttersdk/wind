@@ -427,7 +427,9 @@ const WDynamic({
 })
 ```
 
-**Security**: `builders` > `denyWidgets` > default whitelist. Disallowed types render an error widget unless `onUnknownWidget` is provided. See the parent project's `.claude/rules/dynamic.md` for the full security model + two documented bugs (`WSelect<String>+null` crash, `WDatePicker.onChange` asymmetry).
+**Security resolution order**: custom `builders` > `denyWidgets` > default whitelist (13 Wind widgets + 16 Flutter core: `Column`, `Row`, `Center`, `SizedBox`, `Expanded`, `Container`, `Wrap`, `Stack`, `Positioned`, `Padding`, `Align`, `Opacity`, `AspectRatio`, `FittedBox`, `ClipRRect`, `Spacer`). Disallowed types render an error widget unless `onUnknownWidget` is provided. Always set `maxDepth` (default 50) when accepting untrusted JSON — recursion-bomb mitigation.
+
+**Two known quirks**: (1) `WSelect` with simple string options and `value: null` throws at state-init (`type 'Null' is not a subtype of type 'String'`); the renderer's catch path swallows it and emits the error widget. Workaround: pass map-typed options or an explicit initial value. (2) `WDatePicker.onChange` uses `parseAction` (no `_value` injection), so the action handler reads the date from `state.get(id)`, not `args['_value']`.
 
 ### `WBreakpoint`
 

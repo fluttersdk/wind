@@ -7,7 +7,7 @@ when_to_use: |
 version: 1.0.0
 ---
 
-<!-- Wind UI 1.0.0 stable | Skill rewritten 2026-05-22 | Codebase HEAD: v1 | upstream sync target: github.com/fluttersdk/ai -->
+<!-- Wind UI 1.0.0 stable | Skill last updated 2026-05-22 -->
 
 # Wind UI 1.0
 
@@ -15,13 +15,15 @@ You are writing Flutter code for an app that depends on `fluttersdk_wind` 1.0. W
 
 This skill stays loaded as long as a Wind file is open. Use it as the live consumer reference; never invent tokens, never guess at constructor signatures.
 
-## 1. Mental model in five lines
+## 1. Mental model in seven lines
 
 1. **Widgets**: 19 W-prefix widgets. `WDiv` (not Container), `WText` (not Text), `WButton` (not ElevatedButton).
 2. **Styling**: every visual change goes through `className: String?`. Inline Dart props (`backgroundColor`, `foregroundColor`) override className.
 3. **Prefixes**: `dark:` (theme), `hover:`/`focus:`/`active:`/`disabled:`/`loading:`/`selected:` (state), `sm:`/`md:`/`lg:`/`xl:`/`2xl:` (responsive), `ios:`/`android:`/`web:`/`mobile:` (platform). Combine freely: `md:hover:bg-blue-500 dark:md:hover:bg-blue-400`.
 4. **Last class wins**: `p-4 p-8` resolves to `p-8`. Order within className matters.
 5. **Unknown tokens fail silently**: a typo (`text-7xl`, `flex-cow`) is a no-op, not an error. Spell-check by hand.
+6. **W-widgets are regular Flutter widgets**: mix freely with `Scaffold`, `AppBar`, `Dialog`, `ListView`, `Navigator`, `FutureBuilder`, etc. `Scaffold(appBar: AppBar(title: WText('Home')))` and `ListView(children: [WDiv(...), ...])` work as expected.
+7. **State-management-agnostic**: pairs with Riverpod, Bloc, GetX, Provider, raw `ChangeNotifier`/`setState`. The form widgets work standalone (via `value` + `onChanged`) OR inside a `Form` + `GlobalKey<FormState>`; either is correct.
 
 ## 2. Getting started (5 lines of setup)
 
@@ -54,7 +56,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-Brightness syncs with the OS automatically. Toggle manually anywhere via `context.windTheme.toggleTheme()` (disables auto-sync), restore via `context.windTheme.resetToSystem()`. For debug-tooling integration: `if (kDebugMode) Wind.installDebugResolver();` once in `main.dart`. Full setup details in `references/getting-started.md`.
+Brightness syncs with the OS automatically. Toggle manually anywhere via `context.windTheme.toggleTheme()` (disables auto-sync), restore via `context.windTheme.resetToSystem()`. Full setup, theme customization, and optional debug-tooling integration: `references/getting-started.md`.
 
 ## 3. Wind ≠ Tailwind (the cheat sheet a Tailwind developer needs first)
 
@@ -122,18 +124,22 @@ Full constructor signatures + every parameter: `references/widgets.md`.
 
 ## 6. The state system
 
-**Automatic states** (require WAnchor or auto-wrapped widget; `WDiv`/`WButton` auto-wrap when className contains `hover:` / `focus:` / `active:`):
+Three layers — automatic, framework-managed, consumer-passed.
+
+**Automatic states** (resolved by pointer/keyboard events; `WDiv` / `WButton` auto-wrap in `WAnchor` when className contains any of these):
 - `hover:` — pointer hover (web/desktop)
 - `focus:` — keyboard focus
 - `active:` — mid-press
 
-**Manual states** via `states: Set<String>?` constructor parameter:
-- `selected:` — `states: {'selected'}`
-- `loading:` — `states: {'loading'}` (WButton sets this automatically when `isLoading: true`)
-- `disabled:` — `states: {'disabled'}` (WButton sets this when `disabled: true`)
-- `checked:` — WCheckbox sets this when `value: true`
-- `error:` — WForm* widgets inject this when `state.hasError`
-- Custom: `states: {'highlighted'}` + className `highlighted:bg-yellow-100`
+**Framework-managed states** (the widget itself injects these — do NOT pass them in `states:` manually):
+- `loading:` — set by `WButton(isLoading: true)`
+- `disabled:` — set by `WButton(disabled: true)` and other widgets with an `enabled` flag
+- `checked:` — set by `WCheckbox(value: true)`
+- `error:` — set by `WForm*` widgets when `state.hasError`
+
+**Consumer-passed states** via the `states: Set<String>?` constructor parameter:
+- `selected:` — `states: {'selected'}` for a card-like toggle
+- Any custom string — `states: {'highlighted', 'new'}` + className `highlighted:bg-yellow-100 new:ring-2`. No registration needed.
 
 **Combining prefixes**: order is arbitrary; all must match. `md:hover:bg-blue-500 dark:md:hover:bg-blue-400` activates on md+ breakpoint AND hover state AND dark theme.
 
@@ -160,7 +166,7 @@ Before reporting a UI change complete, verify all five:
 
 1. **Every color token has a `dark:` pair** in the same className. Grep your diff for `bg-`, `text-`, `border-`, `ring-`, `fill-`, `shadow-` and confirm a `dark:` peer.
 2. **Every multi-line className (3+ concerns) is triple-quoted**, one concern per line, with `dark:` peers grouped beside their light variant.
-3. **Every interactive surface has `hover:` and `focus:` states** if the widget renders on web/desktop. `disabled:` if it has an enabled flag.
+3. **Every interactive surface has `hover:` and `focus:` states** on web/desktop targets. Interactive surfaces are: `WButton`, `WAnchor`, `WInput`/`WFormInput`, `WSelect`/`WFormSelect`/`WFormMultiSelect`, `WCheckbox`/`WFormCheckbox`, `WDatePicker`/`WFormDatePicker`. Add `disabled:` styling on every widget that exposes an `enabled` / `disabled` parameter.
 4. **Every `child` XOR `children`** — assert fires at construction; mixing is a compile-time-shaped runtime crash.
 5. **Every scrollable root WDiv has `scrollPrimary: true`** — required for iOS tap-to-top.
 
@@ -177,7 +183,7 @@ Plus the structural rules: `WIcon` uses `Icons.*_outlined`; constructor params a
 | Full-page scroll | `w-full h-full overflow-y-auto p-4 scrollPrimary: true` |
 | Hide on mobile, show md+ | `hidden md:flex` |
 | Gradient header banner | `bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-2xl` |
-| Form with validation | `Form(key: _formKey, child: WDiv(flex flex-col gap-4, children: [WFormInput(...)]))` |
+| Form with validation | `Form(key: _formKey, child: WDiv(className: 'flex flex-col gap-4', children: [WFormInput(...)]))` |
 
 Full 12-pattern catalog with code: `references/layouts.md`. Form patterns + validation: `references/forms.md`.
 
