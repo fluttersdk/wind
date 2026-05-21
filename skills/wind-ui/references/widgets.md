@@ -37,6 +37,7 @@ Wind UI provides a comprehensive set of utility-first widgets. These widgets app
 | style | WindStyle? | null | Base explicit style |
 | states | Set<String>? | null | Custom state triggers e.g., {'loading', 'active'} |
 | scrollPrimary | bool | false | Link to PrimaryScrollController (iOS tap-to-top) |
+| backgroundColor | Color? | null | Inline background color for runtime-dynamic values (color picker, brand color). Wins over `bg-*` / `dark:bg-*` from className. Stays out of the parser cache key. |
 
 **Flutter Constraint Notes:**
 - **w-full vs flex-1:** In a horizontal flex layout (Row), `w-full` causes a RenderFlex overflow. Use `flex-1` instead to fill remaining space.
