@@ -19,7 +19,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.0
-  keyboard_actions: ^4.2.1
   fluttersdk_wind_diagnostics_contracts: ^1.0.0
 
 dev_dependencies:
