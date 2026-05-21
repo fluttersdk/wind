@@ -6,6 +6,14 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- `WInput`: `px-*` horizontal padding now matches the requested value on both single-line and multiline. Previously every `OutlineInputBorder` defaulted to `gapPadding: 4.0` (Material's reservation for a floating-label cutout), adding a phantom `+4px` on each horizontal edge. Wind routes labels through the parser and never uses `InputDecoration.labelText`, so the gap had no purpose. Setting `gapPadding: 0.0` on the built border yields exact `px-*` semantics, e.g. `px-3` now produces a 12 px inset instead of 16 px. Multiline `minLines`/`maxLines` geometry unchanged. Fixes #61.
+
+---
+
 ## [1.0.0-alpha.10]
 
 ### BREAKING

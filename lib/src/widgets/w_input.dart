@@ -646,6 +646,11 @@ class _WInputState extends State<WInput> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(borderRadius),
       borderSide: BorderSide(color: borderColor, width: borderWidth),
+      // Wind routes labels through the parser instead of
+      // `InputDecoration.labelText`, so Material's default 4.0 gap reservation
+      // for a floating-label cutout has no purpose here and would add a
+      // phantom +4px on each horizontal edge over `px-*` (issue #61).
+      gapPadding: 0.0,
     );
   }
 }
