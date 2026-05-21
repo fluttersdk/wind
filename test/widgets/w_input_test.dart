@@ -749,6 +749,86 @@ void main() {
     });
 
     // -------------------------------------------------------------------------
+    // Content Padding (gapPadding regression — issue #61)
+    //
+    // `OutlineInputBorder.gapPadding` defaults to 4.0 in Material to reserve
+    // space for a floating label cutout. Wind routes labels through the parser
+    // and never uses `InputDecoration.labelText`, so that reservation only
+    // adds a phantom +4px on each side. WInput must set `gapPadding: 0.0` on
+    // every OutlineInputBorder it builds so that `px-3` yields exactly 12px
+    // of horizontal inset, on both single-line and multiline.
+    // -------------------------------------------------------------------------
+    group('Content Padding', () {
+      Rect rectOf(WidgetTester tester, Finder finder) {
+        final RenderBox box = tester.renderObject<RenderBox>(finder);
+        return box.localToGlobal(Offset.zero) & box.size;
+      }
+
+      testWidgets('px-3 single-line places placeholder at 12px inset',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const Padding(
+              padding: EdgeInsets.all(40),
+              child: WInput(
+                placeholder: 'P',
+                className: 'rounded-xl px-3 py-2.5 text-sm '
+                    'bg-white border border-gray-200',
+              ),
+            ),
+          ),
+        );
+
+        final Rect field = rectOf(tester, find.byType(TextField));
+        final Rect hint = rectOf(tester, find.text('P'));
+        expect(hint.left - field.left, 12.0);
+        expect(field.right - hint.right, 12.0);
+      });
+
+      testWidgets('px-3 multiline places placeholder at 12px inset',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const Padding(
+              padding: EdgeInsets.all(40),
+              child: WInput(
+                placeholder: 'P',
+                type: InputType.multiline,
+                minLines: 5,
+                maxLines: 10,
+                className: 'rounded-xl px-3 py-2.5 text-sm '
+                    'bg-white border border-gray-200',
+              ),
+            ),
+          ),
+        );
+
+        final Rect field = rectOf(tester, find.byType(TextField));
+        final Rect hint = rectOf(tester, find.text('P'));
+        expect(hint.left - field.left, 12.0);
+        expect(field.right - hint.right, 12.0);
+      });
+
+      testWidgets('built OutlineInputBorder sets gapPadding to 0.0',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(className: 'p-3 border border-gray-300 rounded-lg'),
+          ),
+        );
+
+        final TextField textField =
+            tester.widget<TextField>(find.byType(TextField));
+        final OutlineInputBorder enabled =
+            textField.decoration!.enabledBorder! as OutlineInputBorder;
+        final OutlineInputBorder base =
+            textField.decoration!.border! as OutlineInputBorder;
+        expect(enabled.gapPadding, 0.0);
+        expect(base.gapPadding, 0.0);
+      });
+    });
+
+    // -------------------------------------------------------------------------
     // Accessibility / Semantics
     //
     // Step 1 of plan ai-test-v2 contract: WInput must wrap the inner TextField
