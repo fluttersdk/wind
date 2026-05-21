@@ -5,8 +5,8 @@
 <h1 align="center">Wind</h1>
 
 <p align="center">
-  <strong>Utility-first styling for Flutter, inspired by Tailwind CSS.</strong><br/>
-  Build beautiful, responsive UIs with familiar className syntax — no more nested style objects.
+  <strong>Tailwind CSS for Flutter.</strong><br/>
+  Utility classes like <code>flex</code>, <code>p-4</code>, <code>dark:bg-gray-800</code>, and <code>hover:shadow-lg</code> compose into widget trees — without ever leaving your <code>className</code> string.
 </p>
 
 <p align="center">
@@ -28,9 +28,11 @@
 
 ## Why Wind?
 
-Flutter's styling is powerful but verbose. A simple card with padding, rounded corners, and a shadow requires deeply nested `Container`, `BoxDecoration`, `EdgeInsets`, and `BorderRadius` objects.
+**Stop nesting six widgets to round a corner.**
 
-**Wind fixes this.** Write the same UI in one line:
+Flutter's styling is powerful but verbose. A simple card with padding, rounded corners, and a shadow requires deeply nested `Container`, `BoxDecoration`, `EdgeInsets`, and `BorderRadius` objects — the kind of widget-tree pyramid that the Flutter team itself ran a user study to confirm is painful.
+
+Wind replaces that pyramid with the syntax web developers already know:
 
 ```dart
 // Before — Flutter way
@@ -51,20 +53,29 @@ WDiv(
 )
 ```
 
-If you know Tailwind CSS, you already know Wind.
+**If you know Tailwind CSS, you already know Wind.**
+
+### What you get
+
+- ⚡ **Designs come together faster** — no class names to invent, no separate stylesheets, no switching between theme files and widget code
+- 🛡️ **Making changes feels safer** — every utility class is scoped to its widget. Edit one, never accidentally break another.
+- 🧹 **Maintaining old code is easier** — `className` reads top-down. No more "what was this `Container` for?" archaeology six months later.
+- 📋 **Code is portable** — copy a `className` string between projects, between files, even between Wind and Tailwind on the web
+- 📉 **Your widget tree stops growing** — utility classes compose; the nesting stays flat as features pile up
 
 ## Features
 
 | | Feature | Description |
 |:--|:--------|:------------|
-| 🧩 | **20 Widgets** | `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDynamic` and more |
-| 🎨 | **Tailwind Syntax** | Same utility classes: `flex`, `p-4`, `bg-blue-500`, `rounded-lg`, `shadow-md` |
-| 📱 | **Responsive** | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoint prefixes |
-| 🌙 | **Dark Mode** | `dark:` prefix with runtime toggle via `context.windTheme.toggleTheme()` |
-| 🎯 | **State Styling** | `hover:`, `focus:`, `disabled:`, `loading:`, and custom state prefixes |
-| 🔌 | **Platform Prefixes** | `ios:`, `android:`, `web:`, `mobile:` conditional styling |
-| 🎭 | **Theme System** | Customizable token scales — colors, spacing, typography, shadows, and more |
-| 📡 | **Server-Driven UI** | `WDynamic` renders widget trees from JSON — build UIs without app updates |
+| 🎨 | **Tailwind syntax, natively** | The same utility classes you write on the web: `flex`, `p-4`, `bg-blue-500`, `rounded-lg`, `shadow-md` |
+| 🧩 | **W-prefix widget set** | `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDynamic`, and the rest of the surface |
+| 📱 | **Responsive prefixes** | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoints — plus custom breakpoints via your theme |
+| 🌙 | **Dark mode** | `dark:` prefix with a runtime toggle and automatic system-brightness sync |
+| 🎯 | **State styling** | `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, and any custom state you define |
+| 🔌 | **Platform prefixes** | `ios:`, `android:`, `web:`, `mobile:` — conditional styling without a single `if` |
+| 🎭 | **Customizable theme** | Override every token scale: colors, spacing, typography, shadows, breakpoints, animations |
+| 📡 | **Server-driven UI** | `WDynamic` renders widget trees from JSON — ship UI updates without ship-blocking releases |
+| 🤖 | **AI-ready** | Hosted MCP server + Claude Code skill + Cursor rules — your agent never hallucinates a className token |
 
 ## Quick Start
 
@@ -398,11 +409,60 @@ Widget.build()
 
 **Cache:** Parsed results are cached by `className + breakpoint + brightness + platform + states` for zero-cost re-renders.
 
-## AI Agent Integration
+## AI Coding Assistants
 
-Use Wind with AI coding assistants like Claude Code, Cursor, or GitHub Copilot. The **wind-ui** skill teaches your AI the correct className patterns, layout rules, widget API, and common anti-patterns — so it generates correct Wind code on the first try.
+Wind is the first Flutter UI framework that treats AI coding agents as first-class consumers. Three integration layers ship in-box, so Claude Code, Cursor, GitHub Copilot, and any other LLM-backed assistant generate correct Wind code on the first try — no hallucinated className tokens, no invented prefixes, no APIs the library does not actually expose.
 
-Setup instructions and skill files: **[fluttersdk/ai](https://github.com/fluttersdk/ai)**
+### MCP server — `mcp.fluttersdk.com/wind`
+
+Live, hosted Model Context Protocol server. Your agent queries valid utility classes, supported prefixes, and widget APIs on demand. Add the endpoint once and the integration works across every MCP-compatible client.
+
+```jsonc
+// ~/.cursor/mcp.json (or Claude Code mcp config)
+{
+  "mcpServers": {
+    "wind-ui": { "url": "https://mcp.fluttersdk.com/wind" }
+  }
+}
+```
+
+### Claude Code skill — `wind-ui`
+
+A bundled, version-controlled skill that teaches Wind's className grammar, widget hierarchy, dark-mode conventions, and common anti-patterns. Loaded on demand, scoped to relevant files.
+
+### Cursor rules — `.cursor/rules/*.mdc`
+
+Path-scoped rules that auto-activate when editing `.dart` files. Inject Wind's state prefixes, token names, and gotchas into every suggestion.
+
+> The skill and rules teach your agent how to *write* Wind. The MCP server lets it *verify* what it wrote.
+
+**Setup**: a single repo, one command per assistant. **[fluttersdk/ai](https://github.com/fluttersdk/ai)**
+
+## FAQ
+
+### Isn't this just inline styles?
+
+No. With Wind, you're not picking magic numbers — you're choosing from a predefined design system. `p-4` always resolves to the same spacing token, `bg-blue-500` always resolves to the same color shade. Inline styles can't target `hover:`, `focus:`, `dark:`, or media queries — Wind's prefix system can.
+
+### My widget tree will be ugly with all those classes.
+
+The first reaction is always "too many classes." Then ask yourself: what would you name this widget if you had to give it a "real" component name? `card-with-hover-and-dark-mode-and-responsive-padding`? Naming things is hard, and most naming is premature abstraction. Utility-first lets you defer the abstraction until the pattern actually repeats.
+
+### Why not just use VelocityX?
+
+VelocityX uses Dart property chains: `'text'.text.xl4.bold.make()`. It's *inspired by* Tailwind, but it's not Tailwind. Wind uses **actual Tailwind className strings** — `'text-4xl font-bold text-white'`. If you have copy-pasted Tailwind classes from a web project, they work in Wind unmodified.
+
+### What about performance? Strings get parsed every build.
+
+Wind caches every parsed style by `className + breakpoint + brightness + platform + states`. The same widget rendering the same className a thousand times parses exactly once. Cache hit rate is near-100% in production.
+
+### Doesn't this lock me into your design system?
+
+The token scales are 100% extensible. Define your own colors, font sizes, shadows, breakpoints via `WindThemeData`. The defaults match Tailwind v3/v4 exactly, but every scale is overridable. Plus arbitrary values for one-offs: `bg-[#FF5733]`, `p-[18px]`, `w-[42%]`.
+
+### Another AI gimmick?
+
+The MCP server and skill are just documentation in a format agents can read. The library works identically without them. The AI layers are additive — never use a coding assistant and Wind is still Wind. Use one and your agent stops guessing className tokens.
 
 ## Documentation
 
@@ -425,6 +485,10 @@ MIT — see [LICENSE](LICENSE) for details.
 ---
 
 <p align="center">
-  <sub>Built with care by <a href="https://github.com/fluttersdk">FlutterSDK</a></sub><br/>
-  <sub>If Wind saves you time, <a href="https://github.com/fluttersdk/wind">give it a star</a> — it helps others discover it.</sub>
+  <strong>Try Wind in your project</strong><br/>
+  <code>flutter pub add fluttersdk_wind</code>
+</p>
+
+<p align="center">
+  <sub>Built with care by <a href="https://github.com/fluttersdk">FlutterSDK</a> · <a href="https://github.com/fluttersdk/wind">Star on GitHub</a> if Wind saved you a Container or two.</sub>
 </p>
