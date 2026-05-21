@@ -68,6 +68,7 @@ const WInput({
   bool enableSuggestions = true,
   Widget? prefix,
   Widget? suffix,
+  String? semanticLabel,
 })
 ```
 
@@ -93,6 +94,14 @@ const WInput({
 | `suffix` | `Widget?` | `null` | Widget displayed after text |
 | `controller` | `TextEditingController?` | `null` | Optional external controller |
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling |
+| `onEditingComplete` | `VoidCallback?` | `null` | Callback fired when the user finishes editing (loses focus, presses done, etc.) |
+| `onTap` | `VoidCallback?` | `null` | Callback fired when the field is tapped |
+| `focusNode` | `FocusNode?` | `null` | External focus controller for programmatic focus management |
+| `inputFormatters` | `List<TextInputFormatter>?` | `null` | Formatters applied as the user types (digit-only, masks, etc.) |
+| `textCapitalization` | `TextCapitalization` | `TextCapitalization.none` | Auto-capitalize behavior (`none` / `sentences` / `words` / `characters`) |
+| `autocorrect` | `bool` | `true` | Enable OS autocorrect suggestions |
+| `enableSuggestions` | `bool` | `true` | Enable OS suggestion bar (Android) |
+| `semanticLabel` | `String?` | `null` | Accessibility label exposed via `Semantics(textField: true, label: ...)`. Falls back to `placeholder` when null. |
 
 ## Layout Modes
 

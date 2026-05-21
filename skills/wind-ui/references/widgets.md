@@ -187,8 +187,19 @@ WButton(
 | onSubmitted | ValueChanged<String>?| null | Action button tap handler |
 | maxLines | int? | null | Maximum lines (`null` = unlimited) |
 | minLines | int | 1 | Minimum lines |
-| controller | TextEditingController?| null | Explicit controller (overrides value) |
-| prefix / suffix | Widget? | null | Prefix/Suffix icons |
+| controller | TextEditingController? | null | Explicit controller (overrides value) |
+| prefix | Widget? | null | Widget rendered before the text |
+| suffix | Widget? | null | Widget rendered after the text |
+| states | Set<String>? | null | Custom state triggers |
+| onEditingComplete | VoidCallback? | null | Fired when editing finishes (blur, done) |
+| onTap | VoidCallback? | null | Fired when the field is tapped |
+| onTapOutside | TapRegionCallback? | null | Fired on tap outside; common pattern: dismiss keyboard |
+| focusNode | FocusNode? | null | External focus controller |
+| inputFormatters | List<TextInputFormatter>? | null | Digit-only, masks, etc. |
+| textCapitalization | TextCapitalization | `.none` | `.none` / `.sentences` / `.words` / `.characters` |
+| autocorrect | bool | true | OS autocorrect suggestions |
+| enableSuggestions | bool | true | OS suggestion bar (Android) |
+| semanticLabel | String? | null | Accessibility label (falls back to placeholder when null) |
 
 **When to use WInput vs WFormInput:**
 - Use **WInput** for standalone inputs, simple state binding, or search bars outside of a `Form`.
