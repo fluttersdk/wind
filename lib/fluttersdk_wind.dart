@@ -115,6 +115,7 @@ export 'src/widgets/wind_animation_wrapper.dart';
 export 'src/widgets/w_date_picker.dart';
 export 'src/widgets/w_form_date_picker.dart';
 export 'src/widgets/w_keyboard_actions.dart';
+export 'src/widgets/w_keyboard_platform.dart';
 export 'src/widgets/w_spacer.dart';
 export 'src/widgets/w_breakpoint.dart';
 export 'src/dynamic/w_dynamic.dart';
@@ -124,7 +125,5 @@ export 'src/dynamic/w_action_handler.dart';
 export 'src/dynamic/w_dynamic_config.dart';
 export 'src/dynamic/w_dynamic_renderer.dart';
 
-// Re-export keyboard_actions for convenience
-export 'package:keyboard_actions/keyboard_actions.dart';
 export 'src/debug_resolver.dart';
 export 'src/wind_facade.dart';
