@@ -18,8 +18,8 @@
 </p>
 
 <p align="center">
-  <a href="https://wind.fluttersdk.com">Documentation</a> ·
-  <a href="https://wind.fluttersdk.com/play">Playground</a> ·
+  <a href="https://fluttersdk.com/wind">Documentation</a> ·
+  <a href="https://fluttersdk.com/wind/play">Playground</a> ·
   <a href="https://pub.dev/packages/fluttersdk_wind">pub.dev</a> ·
   <a href="https://github.com/fluttersdk/wind/issues">Issues</a>
 </p>
@@ -394,7 +394,7 @@ Setup instructions and skill files: **[fluttersdk/ai](https://github.com/flutter
 
 ## Documentation
 
-Full docs with live examples at **[wind.fluttersdk.com](https://wind.fluttersdk.com)**.
+Full docs with live examples at **[fluttersdk.com/wind](https://fluttersdk.com/wind)**.
 
 ## Contributing
 

@@ -30,7 +30,7 @@ How do I add hover states to a Wind button? use wind
 
 ## Installation
 
-**Server URL:** `https://wind-mcp.fluttersdk.com/mcp/wind`
+**Server URL:** `https://mcp.fluttersdk.com/wind`
 
 Wind MCP supports both **remote HTTP connections** (recommended) and **local SSE bridge** connections for older clients.
 
@@ -46,7 +46,7 @@ Paste the following into your `~/.cursor/mcp.json` file:
 {
   "mcpServers": {
     "wind-ui": {
-      "url": "https://wind-mcp.fluttersdk.com/mcp/wind"
+      "url": "https://mcp.fluttersdk.com/wind"
     }
   }
 }
@@ -61,13 +61,13 @@ Paste the following into your `~/.cursor/mcp.json` file:
 Run this command to add Wind MCP globally:
 
 ```bash
-claude mcp add --transport http wind-ui https://wind-mcp.fluttersdk.com/mcp/wind
+claude mcp add --transport http wind-ui https://mcp.fluttersdk.com/wind
 ```
 
 For per-project configuration:
 
 ```bash
-claude mcp add --scope project wind-ui https://wind-mcp.fluttersdk.com/mcp/wind
+claude mcp add --scope project wind-ui https://mcp.fluttersdk.com/wind
 ```
 
 ---
@@ -88,7 +88,7 @@ Add the Wind MCP server configuration:
   "mcpServers": {
     "wind-ui": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sse", "https://wind-mcp.fluttersdk.com/mcp/wind"]
+      "args": ["-y", "@modelcontextprotocol/server-sse", "https://mcp.fluttersdk.com/wind"]
     }
   }
 }
@@ -107,7 +107,7 @@ Create or edit `.vscode/mcp.json` in your project:
   "servers": {
     "wind-ui": {
       "type": "http",
-      "url": "https://wind-mcp.fluttersdk.com/mcp/wind"
+      "url": "https://mcp.fluttersdk.com/wind"
     }
   }
 }
@@ -125,7 +125,7 @@ Add to your Windsurf MCP configuration:
 {
   "mcpServers": {
     "wind-ui": {
-      "url": "https://wind-mcp.fluttersdk.com/mcp/wind"
+      "url": "https://mcp.fluttersdk.com/wind"
     }
   }
 }
@@ -142,7 +142,7 @@ Add to your Windsurf MCP configuration:
   "mcpServers": {
     "wind-ui": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sse", "https://wind-mcp.fluttersdk.com/mcp/wind"]
+      "args": ["-y", "@modelcontextprotocol/server-sse", "https://mcp.fluttersdk.com/wind"]
     }
   }
 }
@@ -161,7 +161,7 @@ Add to your MCP server configuration (typically `~/.config/cline/mcp.json` or si
   "mcpServers": {
     "wind-ui": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sse", "https://wind-mcp.fluttersdk.com/mcp/wind"]
+      "args": ["-y", "@modelcontextprotocol/server-sse", "https://mcp.fluttersdk.com/wind"]
     }
   }
 }
@@ -178,7 +178,7 @@ Add to your OpenCode configuration file:
   "mcp": {
     "wind-ui": {
       "type": "remote",
-      "url": "https://wind-mcp.fluttersdk.com/mcp/wind",
+      "url": "https://mcp.fluttersdk.com/wind",
       "enabled": true
     }
   }
@@ -196,7 +196,7 @@ Add to your `~/.gemini/settings.json`:
   "mcpServers": {
     "wind-ui": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sse", "https://wind-mcp.fluttersdk.com/mcp/wind"]
+      "args": ["-y", "@modelcontextprotocol/server-sse", "https://mcp.fluttersdk.com/wind"]
     }
   }
 }
@@ -219,7 +219,7 @@ Add to your `~/.gemini/settings.json`:
 {
   "mcpServers": {
     "wind-ui": {
-      "serverUrl": "https://wind-mcp.fluttersdk.com/mcp/wind"
+      "serverUrl": "https://mcp.fluttersdk.com/wind"
     }
   }
 }
@@ -240,7 +240,7 @@ Add to your `~/.gemini/settings.json`:
 {
   "mcpServers": {
     "wind-ui": {
-      "url": "https://wind-mcp.fluttersdk.com/mcp/wind"
+      "url": "https://mcp.fluttersdk.com/wind"
     }
   }
 }
@@ -257,13 +257,13 @@ Add to your `~/.gemini/settings.json`:
 For other MCP-compatible clients, use the server URL directly if HTTP transport is supported:
 
 ```
-https://wind-mcp.fluttersdk.com/mcp/wind
+https://mcp.fluttersdk.com/wind
 ```
 
 If your client only supports stdio transport, use the SSE bridge:
 
 ```bash
-npx -y @modelcontextprotocol/server-sse https://wind-mcp.fluttersdk.com/mcp/wind
+npx -y @modelcontextprotocol/server-sse https://mcp.fluttersdk.com/wind
 ```
 
 ---

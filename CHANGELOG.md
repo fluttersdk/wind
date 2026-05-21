@@ -198,11 +198,11 @@ Complete rewrite from v0. Migration requires updating all widget names and class
 
 ### 📚 Documentation
 
-- Full docs: [wind.fluttersdk.com](https://wind.fluttersdk.com)
+- Full docs: [fluttersdk.com/wind](https://fluttersdk.com/wind)
 - Example app: `/example`
 
 ---
 
 ## Previous Versions
 
-See [full changelog](https://github.com/fluttersdk/wind/blob/main/CHANGELOG.md) for alpha.9 through 0.0.1 release notes.
+See [full changelog](https://github.com/fluttersdk/wind/blob/v1/CHANGELOG.md) for alpha.9 through 0.0.1 release notes.

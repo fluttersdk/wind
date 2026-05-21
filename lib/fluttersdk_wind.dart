@@ -56,7 +56,7 @@
 /// }
 /// ```
 ///
-/// For complete documentation, visit the [Wind documentation](https://wind.fluttersdk.com).
+/// For complete documentation, visit the [Wind documentation](https://fluttersdk.com/wind).
 library;
 
 export 'src/core/platform_service.dart';

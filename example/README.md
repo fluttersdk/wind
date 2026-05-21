@@ -91,7 +91,7 @@ WButton(
 
 ## 📚 Learn More
 
-- **Documentation**: [wind.fluttersdk.com](https://wind.fluttersdk.com)
+- **Documentation**: [fluttersdk.com/wind](https://fluttersdk.com/wind)
 - **GitHub**: [github.com/fluttersdk/wind](https://github.com/fluttersdk/wind)
 - **Pub.dev**: [pub.dev/packages/fluttersdk_wind](https://pub.dev/packages/fluttersdk_wind)
 
