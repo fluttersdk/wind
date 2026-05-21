@@ -1,7 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+/// Helper to wrap widget in MaterialApp with WindTheme
 Widget wrapWithTheme(Widget child) {
   return MaterialApp(
     home: WindTheme(
@@ -11,113 +14,263 @@ Widget wrapWithTheme(Widget child) {
   );
 }
 
+/// Silent error builder — returns an empty box so image load failures do not
+/// propagate as unhandled exceptions inside testWidgets.
+Widget _silentErrorBuilder(
+  BuildContext context,
+  Object error,
+  StackTrace? stackTrace,
+) =>
+    const SizedBox.shrink();
+
 void main() {
   group('WImage Widget Tests', () {
-    group('Widget Construction', () {
-      test('creates widget with required src', () {
-        const widget = WImage(src: 'https://example.com/image.jpg');
-        expect(widget.src, 'https://example.com/image.jpg');
-      });
-
-      test('identifies asset prefix correctly', () {
-        const widget = WImage(src: 'asset://assets/test.png');
-        expect(widget.src!.startsWith('asset://'), isTrue);
-      });
-
-      test('stores alt text', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          alt: 'Description',
+    group('Source', () {
+      testWidgets('renders network image when src is HTTPS URL',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
         );
-        expect(widget.alt, 'Description');
+
+        expect(find.byType(Image), findsOneWidget);
       });
 
-      test('stores className', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          className: 'w-24 h-24 rounded-lg',
+      testWidgets('renders asset image when src uses asset:// prefix',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'asset://logo.png',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
         );
-        expect(widget.className, 'w-24 h-24 rounded-lg');
+
+        expect(find.byType(Image), findsOneWidget);
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.image, isA<AssetImage>());
+      });
+
+      testWidgets('renders from ImageProvider when image param is supplied',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              image: MemoryImage(Uint8List(0)),
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
+        );
+
+        expect(find.byType(Image), findsOneWidget);
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.image, isA<MemoryImage>());
       });
     });
 
-    group('Object Fit Parsing (unit tests)', () {
-      // Test the internal parsing logic via widget construction + properties
-      test('className with object-cover is stored', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          className: 'w-24 h-24 object-cover',
+    group('Object Fit', () {
+      testWidgets('defaults to BoxFit.cover when no object-* token',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'w-32 h-32',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
         );
-        expect(widget.className!.contains('object-cover'), isTrue);
+
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.fit, equals(BoxFit.cover));
       });
 
-      test('className with object-contain is stored', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          className: 'object-contain w-24 h-24',
+      testWidgets('applies BoxFit.cover for object-cover token',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'object-cover',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
         );
-        expect(widget.className!.contains('object-contain'), isTrue);
+
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.fit, equals(BoxFit.cover));
       });
 
-      test('className with object-fill is stored', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          className: 'object-fill w-24',
+      testWidgets('applies BoxFit.contain for object-contain token',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'object-contain',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
         );
-        expect(widget.className!.contains('object-fill'), isTrue);
+
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.fit, equals(BoxFit.contain));
       });
 
-      test('className with object-none is stored', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          className: 'object-none',
+      testWidgets('applies BoxFit.fill for object-fill token', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'object-fill',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
         );
-        expect(widget.className!.contains('object-none'), isTrue);
+
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.fit, equals(BoxFit.fill));
+      });
+
+      testWidgets('applies BoxFit.none for object-none token', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'object-none',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
+        );
+
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.fit, equals(BoxFit.none));
+      });
+
+      testWidgets('applies BoxFit.scaleDown for object-scale-down token',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'object-scale-down',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
+        );
+
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.fit, equals(BoxFit.scaleDown));
       });
     });
 
-    group('Aspect Ratio Classes', () {
-      test('accepts aspect-square class', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          className: 'w-24 aspect-square',
+    group('Decoration', () {
+      testWidgets('wraps with SizedBox when w-32 h-32 tokens are present',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'w-32 h-32',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
         );
-        expect(widget.className!.contains('aspect-square'), isTrue);
+
+        final sizedBoxes = tester.widgetList<SizedBox>(
+          find.ancestor(
+              of: find.byType(Image), matching: find.byType(SizedBox)),
+        );
+        expect(sizedBoxes, isNotEmpty);
+
+        final sizedBox = sizedBoxes.first;
+        expect(sizedBox.width, equals(128.0));
+        expect(sizedBox.height, equals(128.0));
       });
 
-      test('accepts aspect-video class', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          className: 'w-24 aspect-video',
+      testWidgets('wraps with AspectRatio when aspect-square token is present',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'aspect-square',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
         );
-        expect(widget.className!.contains('aspect-video'), isTrue);
+
+        expect(
+          find.ancestor(
+              of: find.byType(Image), matching: find.byType(AspectRatio)),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('wraps with Opacity at 0.75 when opacity-75 token is present',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'opacity-75',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
+        );
+
+        final opacityWidgets = tester.widgetList<Opacity>(
+          find.ancestor(of: find.byType(Image), matching: find.byType(Opacity)),
+        );
+        expect(opacityWidgets, isNotEmpty);
+        expect(opacityWidgets.first.opacity, closeTo(0.75, 0.01));
+      });
+
+      testWidgets('wraps with ClipRRect when rounded-lg token is present',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: 'rounded-lg',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
+        );
+
+        expect(
+          find.ancestor(
+              of: find.byType(Image), matching: find.byType(ClipRRect)),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('sets semanticLabel from alt parameter', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              alt: 'avatar',
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
+        );
+
+        final image = tester.widget<Image>(find.byType(Image));
+        expect(image.semanticLabel, equals('avatar'));
       });
     });
 
-    group('Props', () {
-      test('accepts placeholder widget', () {
-        final widget = WImage(
-          src: 'https://example.com/image.jpg',
-          placeholder: Container(color: Colors.grey),
-        );
-        expect(widget.placeholder, isNotNull);
-      });
-
-      test('accepts errorBuilder', () {
-        final widget = WImage(
-          src: 'https://example.com/image.jpg',
-          errorBuilder: (ctx, err, stack) => const Icon(Icons.error),
-        );
-        expect(widget.errorBuilder, isNotNull);
-      });
-
-      test('accepts states', () {
-        const widget = WImage(
-          src: 'https://example.com/image.jpg',
-          states: {'hover', 'focus'},
-        );
-        expect(widget.states, contains('hover'));
-        expect(widget.states, contains('focus'));
+    group('Validation', () {
+      testWidgets(
+          'throws AssertionError when neither src nor image is provided',
+          (tester) async {
+        expect(() => WImage(), throwsAssertionError);
       });
     });
   });
