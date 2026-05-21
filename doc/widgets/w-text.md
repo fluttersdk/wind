@@ -85,7 +85,7 @@ WText supports a wide range of typography utilities that map directly to Flutter
 
 ### Alignment and Transform
 
-<x-preview path="widgets/w-text-transform" size="sm" source="example/lib/pages/widgets/w_text_transform.dart"></x-preview>
+<x-preview path="widgets/w_text_transform" size="sm" source="example/lib/pages/widgets/w_text_transform.dart"></x-preview>
 
 ```dart
 WText('CENTERED UPPERCASE', className: 'text-center uppercase')

@@ -95,7 +95,7 @@ While `WPopover` itself isn't a layout container, it supports various **Alignmen
 
 `WPopover` intelligently "flips" the alignment if the requested position would cause the overlay to overflow the screen edges.
 
-<x-preview path="widgets/w-popover-alignment" size="md" source="example/lib/pages/widgets/w_popover_alignment.dart"></x-preview>
+<x-preview path="widgets/w_popover_alignment" size="md" source="example/lib/pages/widgets/w_popover_alignment.dart"></x-preview>
 
 | Alignment | Description |
 |:----------|:------------|

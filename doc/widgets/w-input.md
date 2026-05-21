@@ -100,7 +100,7 @@ const WInput({
 
 For text areas, set the `type` to `InputType.multiline`. You can control the height using `minLines` or standard sizing classes.
 
-<x-preview path="widgets/w-input-multiline" size="md" source="example/lib/pages/widgets/w_input_multiline.dart"></x-preview>
+<x-preview path="widgets/w_input_multiline" size="md" source="example/lib/pages/widgets/w_input_multiline.dart"></x-preview>
 
 ```dart
 WInput(
@@ -147,7 +147,7 @@ WInput(
 
 You can use the `prefix` prop to add icons while maintaining the utility-first styling of the input.
 
-<x-preview path="widgets/w-input-search" size="md" source="example/lib/pages/widgets/w_input_search.dart"></x-preview>
+<x-preview path="widgets/w_input_search" size="md" source="example/lib/pages/widgets/w_input_search.dart"></x-preview>
 
 ```dart
 WInput(

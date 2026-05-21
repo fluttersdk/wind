@@ -96,7 +96,7 @@ const WSelect({
 ### Single Select
 The default mode for selecting a single item. It displays the label of the selected option in the trigger.
 
-<x-preview path="widgets/w-select_single" size="md" source="example/lib/pages/widgets/w_select_single.dart"></x-preview>
+<x-preview path="widgets/w_select_single" size="md" source="example/lib/pages/widgets/w_select_single.dart"></x-preview>
 
 ```dart
 WSelect<String>(
@@ -112,7 +112,7 @@ WSelect<String>(
 ### Multi Select
 Enable `isMulti: true` to allow multiple selections. By default, it displays selected items as chips.
 
-<x-preview path="widgets/w-select_multi" size="md" source="example/lib/pages/widgets/w_select_multi.dart"></x-preview>
+<x-preview path="widgets/w_select_multi" size="md" source="example/lib/pages/widgets/w_select_multi.dart"></x-preview>
 
 ```dart
 WSelect<String>(
