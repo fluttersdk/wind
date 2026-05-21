@@ -546,13 +546,28 @@ Wraps `WSelect` (multi-select mode with `isMulti: true`).
 | validator | FormFieldValidator<List<T>>?| null | Validation logic |
 
 ### WFormCheckbox
-Wraps `WCheckbox`.
+Wraps `WCheckbox` in a `FormField<bool>`.
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| value | bool | false | Initial value |
-| labelText | String? | null | Label text displayed next to checkbox |
-| validator | FormFieldValidator<bool>?| null | Validation logic |
+| value | bool | false | Current checkbox value (synced to FormFieldState on rebuild) |
+| onChanged | ValueChanged<bool>? | null | Value change callback |
+| className | String? | null | Utility classes for the checkbox container |
+| iconClassName | String? | null | Utility classes for the check icon |
+| disabled | bool | false | Disables interaction |
+| checkIcon | IconData? | null | Custom check icon (renders `Icons.check` when null) |
+| states | Set<String>? | null | Custom state triggers merged with `checked`/`disabled` |
+| label | Widget? | null | Custom label widget (takes precedence over labelText) |
+| labelText | String? | null | Simple text label next to checkbox |
+| labelClassName | String | `'text-sm text-gray-700'` | Label styling |
+| hint | String? | null | Optional hint text below |
+| hintClassName | String | `'text-gray-500 text-xs mt-1'` | Hint styling |
+| showError | bool | true | Display validation error below |
+| errorClassName | String | `'text-red-500 text-xs mt-1'` | Error message styling |
+| validator | FormFieldValidator<bool>? | null | Validation logic (FormField super) |
+| onSaved | FormFieldSetter<bool>? | null | Save callback (FormField super) |
+| autovalidateMode | AutovalidateMode? | null | Validation mode (FormField super) |
+| enabled | bool | true | Enables the form field (FormField super) |
 
 ```dart
 WFormCheckbox(

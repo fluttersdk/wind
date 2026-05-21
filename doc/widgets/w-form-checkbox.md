@@ -85,6 +85,7 @@ WFormCheckbox({
 | `iconClassName` | `String?` | `null` | Utility classes for the check icon. |
 | `checkIcon` | `IconData?` | `null` | Custom icon to use when checked. |
 | `disabled` | `bool` | `false` | Disables the checkbox and its label interaction. |
+| `states` | `Set<String>?` | `null` | Custom state identifiers merged with built-in `checked` and `disabled` triggers. |
 
 ## Layout Modes
 
