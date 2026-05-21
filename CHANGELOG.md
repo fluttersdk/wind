@@ -6,15 +6,71 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
-## [Unreleased]
+## [1.0.0] - 2026-05-21
 
-### Fixed
+The first stable release. Wind ships a complete utility-first styling layer for Flutter with className syntax, theming, responsive breakpoints, dark mode, dynamic JSON rendering, an MCP server for AI assistants, and a contracts-based debug bridge for external tooling. All public APIs in this release are considered stable; the surface follows Semantic Versioning from this point on.
 
-- `WInput`: `px-*` horizontal padding now matches the requested value on both single-line and multiline. Previously every `OutlineInputBorder` defaulted to `gapPadding: 4.0` (Material's reservation for a floating-label cutout), adding a phantom `+4px` on each horizontal edge. Wind routes labels through the parser and never uses `InputDecoration.labelText`, so the gap had no purpose. Setting `gapPadding: 0.0` on the built border yields exact `px-*` semantics, e.g. `px-3` now produces a 12 px inset instead of 16 px. Multiline `minLines`/`maxLines` geometry unchanged. Fixes #61.
+### What's in the v1 surface
+
+**Widgets (19 user-facing):** `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WCheckbox`, `WIcon`, `WImage`, `WSvg`, `WPopover`, `WAnchor`, `WBreakpoint`, `WSpacer`, `WDatePicker`, `WDynamic`, plus the FormField wrappers `WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`.
+
+**Parsers (17):** background (color, gradient, image), border, ring, shadow, opacity, padding, margin, sizing, flexbox + grid, position (relative + absolute + insets), order, overflow, aspect-ratio, z-index, text (font-size / weight / family / tracking / leading / decoration / transform / align / overflow), animation, transition (duration + easing), svg fill/stroke + preserve-colors, debug.
+
+**Theme (`WindThemeData` exposes 23 configurable fields):** brightness, colors, screens, containers, fontSizes, fontWeights, tracking, leading, borderWidths, borderRadius, fontFamilies, ringWidths, ringOffsets, applyDefaultFontFamily, syncWithSystem, baseSpacingUnit, ringColor, opacities, zIndices, shadows, transitionDurations, transitionCurves, animations.
+
+**External integrations:** `Wind.installDebugResolver()` for the new `fluttersdk_wind_diagnostics_contracts` bridge (used by `fluttersdk_dusk` for E2E and any runtime inspector). Wind MCP server at `mcp.fluttersdk.com/wind` for AI coding assistants.
+
+### Fixed (since the last published alpha, 1.0.0-alpha.6)
+
+- `WInput`: `px-*` horizontal padding now matches the requested value on both single-line and multiline. Previously every `OutlineInputBorder` defaulted to `gapPadding: 4.0` (Material's reservation for a floating-label cutout), adding a phantom `+4px` on each horizontal edge. Wind routes labels through the parser and never uses `InputDecoration.labelText`, so the gap had no purpose. Setting `gapPadding: 0.0` on the built border yields exact `px-*` semantics: `px-3` now produces a 12 px inset instead of 16 px. Multiline `minLines`/`maxLines` geometry unchanged. (#61)
+
+### Added (since 1.0.0-alpha.6)
+
+The intermediate alphas 1.0.0-alpha.7 through 1.0.0-alpha.10 were not published to pub.dev. Their work is summarized here and laid out in detail in the per-alpha sections below.
+
+- **`WBreakpoint` widget**: declarative per-breakpoint widget tree builder. Use it as an escape hatch when className prefixes (`sm:`, `md:`, `lg:`) are not enough because the widget structure itself changes between breakpoints. (alpha-9, #58)
+- **CSS positioning utilities**: `relative`, `absolute`, `top-*`, `right-*`, `bottom-*`, `left-*`, `inset-*` plus negative variants and arbitrary-px values (`top-[24px]`). Layers a `Stack` / `Positioned` over the existing rendering. (alpha-6, #49)
+- **Child order utilities**: `order-0` through `order-12`, `order-first`, `order-last`, `order-none`, and arbitrary `order-[n]` for reordering flex children without changing source order. (alpha-9, #57)
+- **Reverse flex direction**: `flex-row-reverse` and `flex-col-reverse` map to `Row.textDirection` / `Column.verticalDirection`, so `justify-start` mirrors per CSS semantics. (alpha-9, #57)
+- **Inline color props**: `WDiv.backgroundColor` and `WText.foregroundColor` for runtime-dynamic colors (per-tenant brand, color picker, etc.). Overrides any `bg-*` / `text-*` from className and stays out of the parser cache key, so a dragging color picker no longer bloats the cache the way `bg-[#$hex]` interpolation would. (alpha-9, #60)
+- **Accessibility / Semantics on 6 interactive widgets**: `WAnchor`, `WButton`, `WInput`, `WFormInput`, `WCheckbox`, `WSelect`, `WDatePicker` now emit `Semantics` nodes (`button: true`, `textField: true`, `obscured` for passwords, etc.) so the Flutter web accessibility tree surfaces a role + label per widget. Enables Playwright `getByRole` / `getByLabel` / `getByText` resolution against Flutter web. New optional `WInput.semanticLabel` parameter for form wrappers. (alpha-9)
+- **Contracts-based debug bridge**: new production dep `fluttersdk_wind_diagnostics_contracts: ^1.0.0`. Call `Wind.installDebugResolver()` inside `kDebugMode` to expose Wind state per widget (className, breakpoint, brightness, platform, states, bgColor, textColor) to any consumer of `WindDebugRegistry.current`. Used by `fluttersdk_dusk` for E2E snapshot capture; works for any inspector / IDE tool that wants the same data. (alpha-10, #62)
+
+### Removed (BREAKING since 1.0.0-alpha.6)
+
+- `WindDuskIntegration` class and `lib/dusk_integration.dart` sub-barrel are gone. Replaced by `Wind.installDebugResolver()` from the main barrel. (alpha-9 + alpha-10)
+- `fluttersdk_dusk` is no longer a Wind dependency at any level (was a prod dep in alpha-8 and earlier, briefly a dev_dep in alpha-9, fully dropped in alpha-10). Consumers that need Dusk for their own E2E tests add it to their own pubspec. (alpha-10)
+- The 50+ optional `WindStyle` fields the old dusk integration emitted in snapshot YAML are reduced to the 6 core fields the contracts package codifies: `className`, `breakpoint`, `brightness`, `platform`, `states`, `bgColor`, `textColor`. The provenance flag (`WindParser.parse(... trackProvenance: true)`) is dropped; revisit in v1.x if consumer demand surfaces.
+
+### Migration from 1.0.0-alpha.6
+
+If your app already runs against `1.0.0-alpha.6`, the only mandatory change is the debug-bridge wiring. The W-widget surface, theming, and parser-token set are source-compatible additions on top of alpha-6.
+
+If you were using `WindDuskIntegration` (only consumers running Dusk against their own apps):
+
+```dart
+// Before (alpha-8 and earlier):
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+if (kDebugMode) {
+  WindDuskIntegration.install();
+}
+
+// After (1.0.0):
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+if (kDebugMode) {
+  Wind.installDebugResolver();
+}
+```
+
+If you do not use Dusk: no migration needed. Drop in `1.0.0`, update your pubspec, run `flutter pub get`.
+
+### Documentation
+
+Full documentation moved to **[fluttersdk.com/wind](https://fluttersdk.com/wind)**. Every widget, parser, and theme field has a dedicated page with live examples and an LLM-friendly cheat-sheet under `skills/wind-ui/`.
 
 ---
 
-## [1.0.0-alpha.10]
+## [1.0.0-alpha.10] - 2026-05-21
 
 ### BREAKING
 
@@ -49,7 +105,9 @@ if (kDebugMode) {
 
 ---
 
-## [Unreleased]
+## [1.0.0-alpha.9] - 2026-04-17
+
+> Internal alpha — not published to pub.dev. Content rolled into 1.0.0.
 
 ### BREAKING
 
