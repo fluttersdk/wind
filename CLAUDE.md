@@ -18,6 +18,11 @@ Utility-first Flutter UI plugin. Translates `className` strings (Tailwind syntax
 
 ## Architecture
 
+Wind ships an opt-in sub-barrel alongside the main `lib/fluttersdk_wind.dart`:
+- `lib/dusk_integration.dart`: Wind adapter for fluttersdk_dusk (WindDuskIntegration + windClassNameEnricher); consumer must add `fluttersdk_dusk` to its own pubspec as a dev-dependency.
+
+The sub-barrel is NOT exported from `lib/fluttersdk_wind.dart`. `fluttersdk_dusk` is a wind dev-dependency only; it is not a transitive prod dep for consumers.
+
 ```
 lib/src/
 ├── widgets/          # 20 W-prefix widgets (WDiv, WText, WButton, WSvg, WDynamic...)

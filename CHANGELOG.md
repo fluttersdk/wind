@@ -8,6 +8,28 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### BREAKING
+
+- Dependency migration: `fluttersdk_dusk` moved from `dependencies:` to `dev_dependencies:`. Vanilla wind consumers no longer pull dusk transitively. Consumers wanting the WindDuskIntegration enricher must add `fluttersdk_dusk` to their own pubspec and switch their import path (see migration below).
+- Barrel removal: `WindDuskIntegration` and `windClassNameEnricher` are no longer exported from the main `package:fluttersdk_wind/fluttersdk_wind.dart` barrel. The class and function names are unchanged; only the import path moves.
+- New opt-in sub-barrel at `lib/dusk_integration.dart`. Consumer migration:
+
+  Replace:
+  ```dart
+  import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+  // ... WindDuskIntegration.install();
+  ```
+  With:
+  ```dart
+  import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+  import 'package:fluttersdk_wind/dusk_integration.dart';
+  // ... WindDuskIntegration.install();
+  ```
+
+  The `package:fluttersdk_wind/fluttersdk_wind.dart` import stays for the W-widget surface (WDiv, WButton, WindParser, etc.).
+
+- Version bumped to `1.0.0-alpha.9` (BREAKING removal allowed in alpha cycle).
+
 ### Added
 - **Accessibility / Semantics**: 6 interactive widgets now wrap their build tree with a `Semantics(...)` node so the Flutter web accessibility tree surfaces a role + label for each. `WAnchor` (and therefore the entire `WButton` family that wraps it) emits `button: true` with a merged label from its child Text/WText subtree via `MergeSemantics`. `WInput` and `WFormInput` emit `textField: true` with the placeholder (or the form-field `label`) as the Semantics label, the current text as Semantics value, and `obscured: true` for password inputs. `WCheckbox` emits a `checked` state. `WSelect` emits `button: true` with the placeholder or selected option label. `WDatePicker` emits `textField: true` with the placeholder as label and the ISO-formatted date as value. The wraps are additive: no existing styling, className, state, or callback behavior changes. New optional `WInput.semanticLabel` parameter lets form wrappers override the placeholder-derived Semantics label without changing the visual placeholder. Enables Playwright `getByRole` / `getByLabel` / `getByText` to resolve against the Flutter web build without per-widget caller-side annotation.
 - **Child Order**: `order-0` through `order-12`, `order-first`, `order-last`, `order-none`, and arbitrary `order-[n]` (including negatives) for reordering flex children without changing source order. Stable-sort preserves insertion order among equal-order children. (#53)
