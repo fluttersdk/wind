@@ -2,7 +2,7 @@
 
 Utility-first Flutter UI plugin. Translates `className` strings (Tailwind syntax) → Flutter widget trees via modular parsing architecture. A web developer who knows Tailwind should be able to build Flutter UIs with familiar syntax.
 
-**Version:** 1.0.0-alpha.8 (v1 branch) · **Branch:** `v1` (master = v0, do NOT touch) · **Dart:** >=3.4.0 · **Flutter:** >=3.27.0
+**Version:** 1.0.0-alpha.10 (v1 branch) · **Branch:** `v1` (master = v0, do NOT touch) · **Dart:** >=3.4.0 · **Flutter:** >=3.27.0
 
 ## Commands
 
@@ -18,10 +18,7 @@ Utility-first Flutter UI plugin. Translates `className` strings (Tailwind syntax
 
 ## Architecture
 
-Wind ships an opt-in sub-barrel alongside the main `lib/fluttersdk_wind.dart`:
-- `lib/dusk_integration.dart`: Wind adapter for fluttersdk_dusk (WindDuskIntegration + windClassNameEnricher); consumer must add `fluttersdk_dusk` to its own pubspec as a dev-dependency.
-
-The sub-barrel is NOT exported from `lib/fluttersdk_wind.dart`. `fluttersdk_dusk` is a wind dev-dependency only; it is not a transitive prod dep for consumers.
+**Diagnostics (alpha-10):** Wind no longer compile-time depends on `fluttersdk_dusk`. The old `lib/dusk_integration.dart` sub-barrel and `WindDuskIntegration` class are removed. Wind ships a production dep on `wind_diagnostics_contracts: ^1.0.0-alpha.1` (abstract `WindDebugResolver` contract + static `WindDebugRegistry`) and exposes `Wind.installDebugResolver()` via `lib/src/wind_facade.dart`. Consumers call `Wind.installDebugResolver()` inside `kDebugMode`; dusk reads wind state through `WindDebugRegistry.current?.resolve(element)` at snap time with no install-time wiring from dusk. `fluttersdk_dusk` is NOT a wind dependency at any level.
 
 ```
 lib/src/
