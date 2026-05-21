@@ -18,6 +18,10 @@
 </p>
 
 <p align="center">
+  <sub>Over 2K+ monthly downloads on <a href="https://pub.dev/packages/fluttersdk_wind">pub.dev</a>.</sub>
+</p>
+
+<p align="center">
   <a href="https://fluttersdk.com/wind">Documentation</a> ·
   <a href="https://fluttersdk.com/wind/play">Playground</a> ·
   <a href="https://pub.dev/packages/fluttersdk_wind">pub.dev</a> ·
