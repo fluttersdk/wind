@@ -59,7 +59,7 @@ const WCheckbox({
 | `className` | `String?` | `null` | Wind utility classes for the checkbox container (dimensions, border, background). |
 | `iconClassName` | `String?` | `null` | Utility classes applied to the check icon (e.g., `'text-white text-xs'`). |
 | `disabled` | `bool` | `false` | When true, prevents interaction and applies the `disabled:` prefix styles. |
-| `checkIcon` | `IconData?` | `Icons.check` | Custom icon shown when `value` is true. Defaults to Material check icon. |
+| `checkIcon` | `IconData?` | `null` | Custom icon shown when `value` is true. When `null`, the widget renders `Icons.check`. |
 | `states` | `Set<String>?` | `null` | Custom state identifiers merged with built-in `checked` and `disabled` states. |
 
 ## Layout Modes

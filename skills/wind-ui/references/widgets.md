@@ -268,7 +268,8 @@ WSelect<String>(
 | className | String? | null | Checkbox styling (`w-* h-*` required) |
 | iconClassName | String? | null | Styling for the check icon |
 | disabled | bool | false | Disables interaction |
-| checkIcon | IconData? | null | Custom check icon |
+| checkIcon | IconData? | null | Custom check icon (renders `Icons.check` when null) |
+| states | Set<String>? | null | Custom state triggers (merged with built-in `checked` and `disabled`) |
 
 **Examples:**
 ```dart
