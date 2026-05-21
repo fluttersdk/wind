@@ -1,6 +1,6 @@
 # WAnchor
 
-The foundational state wrapper that detects user gestures (Hover, Focus, Press) and propagates that state down to all descendant widgets via `WindStateProvider`.
+The foundational state wrapper that detects user gestures (Hover, Focus, Press) and propagates that state down to all descendant widgets via `WindAnchorStateProvider`.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)

@@ -6,7 +6,7 @@ import '../state/wind_anchor_state_provider.dart';
 ///
 /// `WAnchor` acts as the "Brain" for interaction state management in Wind.
 /// It detects user gestures (Hover, Focus, Press) and propagates that state
-/// down to all descendant widgets via `WindStateProvider`.
+/// down to all descendant widgets via `WindAnchorStateProvider`.
 ///
 /// Use `WAnchor` when you want to enable `hover:`, `focus:`, or `disabled:`
 /// styling on a `WDiv` or any custom widget.

@@ -452,6 +452,7 @@ WPopover(
 | onDoubleTap | VoidCallback? | null | Double tap handler |
 | isDisabled | bool | false | Disables interaction and hover states |
 | states | Set<String>? | null | Custom state triggers |
+| mouseCursor | MouseCursor? | null | Mouse cursor override; defaults to `SystemMouseCursors.click` when interactive |
 
 **When to use:** Use `WAnchor` when you want to make a custom layout interactive and react to `hover:` or `focus:` classes, but you don't need `WButton`'s loading states or button semantics. WDiv will automatically wrap itself in a WAnchor if you use interactive states in its className.
 
