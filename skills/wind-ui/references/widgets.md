@@ -297,6 +297,8 @@ WCheckbox(
 | icon | IconData | required | The icon to display |
 | className | String? | null | Sizing and coloring (`text-xl`, `text-red-500`) |
 | states | Set<String>? | null | Custom state triggers |
+| semanticLabel | String? | null | Accessibility label (announced by screen readers) |
+| textDirection | TextDirection? | null | Force LTR/RTL rendering (rare; defaults to ambient `Directionality`) |
 
 **Examples:**
 ```dart
