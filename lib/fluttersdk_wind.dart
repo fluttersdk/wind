@@ -60,7 +60,9 @@
 library;
 
 export 'src/core/platform_service.dart';
-export 'src/dusk_integration.dart';
+// WindDuskIntegration NOT re-exported here; consumers import the opt-in
+// sub-barrel at `lib/dusk_integration.dart` and add fluttersdk_dusk to
+// their own pubspec to use it.
 export 'src/parser/parsers/background_parser.dart';
 export 'src/parser/parsers/border_parser.dart';
 
