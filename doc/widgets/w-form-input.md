@@ -13,7 +13,7 @@ A Wind-styled input that integrates seamlessly with Flutter's native Form valida
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<x-preview path="widgets/w-form-input" size="md" source="example/lib/pages/widgets/w_form_input.dart"></x-preview>
+<x-preview path="widgets/w_form_input" size="md" source="example/lib/pages/widgets/w_form_input.dart"></x-preview>
 
 ```dart
 WFormInput(
@@ -122,7 +122,7 @@ WFormInput({
 ### Vertical Stack (Default)
 `WFormInput` organizes its components in a vertical column: label at the top, followed by the input field, and then the hint or error message at the bottom.
 
-<x-preview path="widgets/w-form-input_layout" size="md" source="example/lib/pages/widgets/w_form_input_layout.dart"></x-preview>
+<x-preview path="widgets/w_form_input_layout" size="md" source="example/lib/pages/widgets/w_form_input_layout.dart"></x-preview>
 
 ```dart
 WFormInput(

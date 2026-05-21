@@ -507,15 +507,33 @@ WBreakpoint(
 These widgets extend Flutter's `FormField` and are designed to be used inside a `Form` widget. They automatically handle validation, error states (`error:` prefixed classes), and labels. The key difference from their base counterparts is they sync state with the `FormFieldState` and display validation errors.
 
 ### WFormInput
-Wraps `WInput`.
+Wraps `WInput` in a `FormField<String>`. See `doc/widgets/w-form-input.md` for the full list (29 own props + 5 FormField super); the table below covers the most-used.
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| controller | TextEditingController?| null | External controller |
-| validator | FormFieldValidator<String>?| null | Validation logic |
-| label | String? | null | Text label above input |
-| hint | String? | null | Hint text below input |
-| showError | bool | true | Show error text below input |
+| controller | TextEditingController? | null | External text controller |
+| type | InputType | .text | `.text` / `.password` / `.email` / `.number` / `.multiline` |
+| placeholder | String? | null | Hint text inside the field |
+| className | String? | null | Field utility classes |
+| placeholderClassName | String? | null | Placeholder styling |
+| onChanged | ValueChanged<String>? | null | Text change callback |
+| onSubmitted | ValueChanged<String>? | null | Submit callback |
+| prefix | Widget? | null | Leading widget (icon, etc.) |
+| suffix | Widget? | null | Trailing widget |
+| label | String? | null | Label above field |
+| labelClassName | String | `'text-sm text-gray-700 mb-1'` | Label styling |
+| hint | String? | null | Helper text below field |
+| hintClassName | String | `'text-gray-500 text-xs mt-1'` | Hint styling |
+| showError | bool | true | Display validation error |
+| errorClassName | String | `'text-red-500 text-xs mt-1'` | Error styling |
+| disabled | bool | false | Disables interaction |
+| readOnly | bool | false | Read-only mode |
+| autofocus | bool | false | Focus on mount |
+| maxLines | int? | 1 | Max lines (use `.multiline` type for multiline) |
+| minLines | int | 1 | Min lines |
+| states | Set<String>? | null | Custom state triggers |
+| validator | FormFieldValidator<String>? | null | Validation logic (FormField super) |
+| onSaved | FormFieldSetter<String>? | null | Save callback (FormField super) |
 
 ```dart
 WFormInput(
