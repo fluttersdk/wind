@@ -15,6 +15,7 @@ Wind UI provides a comprehensive set of utility-first widgets. These widgets app
 - [WSvg](#wsvg) - SVG Images
 - [WPopover](#wpopover) - Popovers & Tooltips
 - [WAnchor](#wanchor) - Interaction State Wrapper
+- [WBreakpoint](#wbreakpoint) - Per-Breakpoint Widget Tree
 - [Form Field Wrappers](#form-field-wrappers)
   - [WFormInput](#wforminput)
   - [WFormSelect](#wformselect)
@@ -464,6 +465,36 @@ WAnchor(
     className: 'p-4 bg-white rounded-xl shadow hover:shadow-md hover:bg-gray-50 transition-all cursor-pointer',
     child: WText('Interactive Card'),
   ),
+)
+```
+
+---
+
+## WBreakpoint
+
+**Purpose:** Declarative builder that picks a different widget tree per responsive breakpoint. An **escape hatch** for cases where the structure genuinely differs between breakpoints — reach for className prefixes (`sm:hidden`, `md:flex-row`, etc.) first.
+
+**Constructor:**
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| base | WidgetBuilder | required | Fallback builder when no higher breakpoint matches |
+| sm | WidgetBuilder? | null | Builder for `sm` breakpoint (default min width 640) |
+| md | WidgetBuilder? | null | Builder for `md` breakpoint (default min width 768) |
+| lg | WidgetBuilder? | null | Builder for `lg` breakpoint (default min width 1024) |
+| xl | WidgetBuilder? | null | Builder for `xl` breakpoint (default min width 1280) |
+| xxl | WidgetBuilder? | null | Builder for `2xl` breakpoint (default min width 1536); named `xxl` because Dart identifiers cannot start with a digit |
+| custom | Map<String, WidgetBuilder> | `{}` | Builders for custom breakpoint keys defined in `WindThemeData.screens` |
+
+**Resolution:** Walks the screen chain descending from the widest matching builder and returns the first one supplied. Falls back to `base` when no higher builder applies.
+
+**When to use:** Reach for `WBreakpoint` when the widget tree, the children list, or the widget types themselves change between breakpoints. For everything else (size, color, spacing, ordering, visibility) use className prefixes — they cache better and read closer to Tailwind. See `references/responsive-decision-tree.md` for the full decision flow.
+
+**Example:**
+```dart
+WBreakpoint(
+  base: (ctx) => const MobileLayout(),
+  md: (ctx) => const TabletLayout(),
+  lg: (ctx) => const DesktopLayout(),
 )
 ```
 
