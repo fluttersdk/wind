@@ -546,22 +546,71 @@ WFormInput(
 ```
 
 ### WFormSelect
-Wraps `WSelect` (single-select mode).
+Wraps `WSelect` (single-select mode) in a `FormField<T>`. See `doc/widgets/w-form-select.md` for the full surface; the table below covers the most-used props.
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| value | T? | null | Initial value |
-| options | List<SelectOption<T>>| required | Available options |
-| validator | FormFieldValidator<T>?| null | Validation logic |
+| options | List<SelectOption<T>> | required | Available options |
+| initialValue | T? | null | Initial selected value (FormField super) |
+| onChange | ValueChanged<T?>? | null | Selection callback |
+| placeholder | String | `'Select...'` | Trigger placeholder |
+| className | String? | null | Trigger styling |
+| menuClassName | String? | null | Dropdown menu styling |
+| searchable | bool | false | Enable search input in dropdown |
+| searchPlaceholder | String | `'Search...'` | Search input placeholder |
+| onSearch | Future<List<SelectOption<T>>> Function(String)? | null | Async search handler |
+| onCreateOption | Future<SelectOption<T>> Function(String)? | null | "Create new" handler |
+| onLoadMore | Future<List<SelectOption<T>>> Function()? | null | Pagination handler |
+| hasMore | bool | false | More pages available |
+| disabled | bool | false | Disables interaction |
+| menuWidth | double? | null | Fixed dropdown width |
+| maxMenuHeight | double | 300 | Max dropdown height |
+| states | Set<String>? | null | Custom state triggers |
+| triggerBuilder | SelectTriggerBuilder<T>? | null | Custom trigger renderer |
+| itemBuilder | SelectItemBuilder<T>? | null | Custom option renderer |
+| emptyBuilder | EmptyStateBuilder? | null | Custom empty-state renderer |
+| loadingBuilder | LoadingBuilder? | null | Custom loading renderer |
+| label | String? | null | Label above trigger |
+| labelClassName | String | `'text-sm text-gray-700 mb-1'` | Label styling |
+| hint | String? | null | Hint text below |
+| hintClassName | String | `'text-gray-500 text-xs mt-1'` | Hint styling |
+| showError | bool | true | Display validation error |
+| errorClassName | String | `'text-red-500 text-xs mt-1'` | Error styling |
+| validator | FormFieldValidator<T>? | null | Validation logic (FormField super) |
 
 ### WFormMultiSelect
-Wraps `WSelect` (multi-select mode with `isMulti: true`).
+Wraps `WSelect` (multi-select mode) in a `FormField<List<T>>`. Mirrors `WFormSelect` with multi-specific callbacks and chip rendering. See `doc/widgets/w-form-select.md` (Multi section) for the full surface.
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| values | List<T>? | null | Initial values |
-| options | List<SelectOption<T>>| required | Available options |
-| validator | FormFieldValidator<List<T>>?| null | Validation logic |
+| options | List<SelectOption<T>> | required | Available options |
+| initialValue | List<T>? | null | Initial selected values (FormField super) |
+| onMultiChange | ValueChanged<List<T>>? | null | Selection callback (list of T) |
+| placeholder | String | `'Select...'` | Trigger placeholder |
+| className | String? | null | Trigger styling |
+| menuClassName | String? | null | Dropdown menu styling |
+| searchable | bool | false | Enable search input |
+| searchPlaceholder | String | `'Search...'` | Search input placeholder |
+| onSearch | Future<List<SelectOption<T>>> Function(String)? | null | Async search handler |
+| onCreateOption | Future<SelectOption<T>> Function(String)? | null | "Create new" handler |
+| onLoadMore | Future<List<SelectOption<T>>> Function()? | null | Pagination handler |
+| hasMore | bool | false | More pages available |
+| disabled | bool | false | Disables interaction |
+| menuWidth | double? | null | Fixed dropdown width |
+| maxMenuHeight | double | 300 | Max dropdown height |
+| states | Set<String>? | null | Custom state triggers |
+| multiTriggerBuilder | MultiSelectTriggerBuilder<T>? | null | Custom trigger renderer (gets selected list) |
+| selectedChipBuilder | SelectedChipBuilder<T>? | null | Custom chip renderer for selected items |
+| itemBuilder | SelectItemBuilder<T>? | null | Custom option renderer |
+| emptyBuilder | EmptyStateBuilder? | null | Custom empty-state renderer |
+| loadingBuilder | LoadingBuilder? | null | Custom loading renderer |
+| label | String? | null | Label above trigger |
+| labelClassName | String | `'text-sm text-gray-700 mb-1'` | Label styling |
+| hint | String? | null | Hint text below |
+| hintClassName | String | `'text-gray-500 text-xs mt-1'` | Hint styling |
+| showError | bool | true | Display validation error |
+| errorClassName | String | `'text-red-500 text-xs mt-1'` | Error styling |
+| validator | FormFieldValidator<List<T>>? | null | Validation logic (FormField super) |
 
 ### WFormCheckbox
 Wraps `WCheckbox` in a `FormField<bool>`.
