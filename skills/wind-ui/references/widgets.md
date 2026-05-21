@@ -368,8 +368,10 @@ WImage(
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
 | src | String? | null | Asset path |
-| svgString | String? | null | Raw SVG string (use `WSvg.string(...)`) |
-| className | String? | null | Styling (`fill-red-500`, `stroke-blue-500`) |
+| svgString | String? | null | Raw SVG string (use `WSvg.string(...)` named constructor) |
+| className | String? | null | Styling (`fill-red-500`, `stroke-blue-500`, sizing tokens) |
+| states | Set<String>? | null | Custom state triggers |
+| semanticsLabel | String? | null | Accessibility label |
 
 **Preserve Original Colors:**
 Use `preserve-colors` in className to skip all ColorFilter processing. The SVG renders with its original embedded colors. Ideal for QR codes, multi-color logos, and branded illustrations.
