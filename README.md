@@ -26,8 +26,6 @@
 
 ---
 
-> **Alpha Release** — v1 is under active development. APIs may change before stable. [Star the repo](https://github.com/fluttersdk/wind) to follow progress.
-
 ## Why Wind?
 
 Flutter's styling is powerful but verbose. A simple card with padding, rounded corners, and a shadow requires deeply nested `Container`, `BoxDecoration`, `EdgeInsets`, and `BorderRadius` objects.
@@ -168,29 +166,32 @@ WText('LABEL', className: 'text-xs font-semibold uppercase tracking-wider text-g
 
 ### Forms
 
+Wind ships two flavors per input. `W*` (e.g. `WInput`, `WSelect`, `WDatePicker`) are raw controlled widgets. `WForm*` variants extend `FormField` for use inside a `Form` with validators and `FormState`.
+
 ```dart
-// Text input with focus ring
+// Text input with validation (FormField variant)
 WFormInput(
   label: 'Email',
-  value: _email,
-  onChanged: (v) => setState(() => _email = v),
+  placeholder: 'you@example.com',
+  type: InputType.email,
   className: 'p-3 border rounded-lg focus:ring-2 focus:ring-blue-500',
+  validator: (v) => v == null || !v.contains('@') ? 'Invalid email' : null,
 )
 
 // Searchable dropdown
 WFormSelect<String>(
   label: 'Country',
-  value: _country,
+  initialValue: _country,
   options: countries,
-  onChange: (v) => setState(() => _country = v),
   searchable: true,
+  validator: (v) => v == null ? 'Required' : null,
 )
 
 // Date picker
 WFormDatePicker(
   label: 'Start Date',
-  value: _date,
-  onChanged: (v) => setState(() => _date = v),
+  initialValue: DateTime.now(),
+  onChanged: (date) => print('Selected: $date'),
 )
 ```
 
@@ -234,11 +235,16 @@ WSvg(src: 'assets/logo.svg', className: 'fill-blue-600 w-12 h-12')
 ### Server-Driven UI
 
 ```dart
-// Render UI from JSON — no app update needed
+// Render UI from JSON - no app update needed
 WDynamic(
-  config: WDynamicConfig.fromJson(serverResponse),
+  json: serverResponse,
+  actions: {
+    'submit': (ctx, payload) => api.submit(payload),
+  },
   customIcons: {'app-logo': Icons.flutter_dash},
-  customBuilders: {'chart': (node) => MyChartWidget(node.props)},
+  builders: {
+    'chart': (props, children) => MyChartWidget(props),
+  },
 )
 ```
 
@@ -336,6 +342,13 @@ WDiv(
 
 // Hide on mobile, show on desktop
 WDiv(className: 'hidden md:flex', child: desktopNav)
+
+// Different widget tree per breakpoint (escape hatch when className isn't enough)
+WBreakpoint(
+  base: (ctx) => const MobileLayout(),
+  md: (ctx) => const TabletLayout(),
+  lg: (ctx) => const DesktopLayout(),
+)
 ```
 
 ## Custom Theme
@@ -351,7 +364,6 @@ WindTheme(
       }),
     },
     baseSpacingUnit: 4.0,
-    baseFontSize: 16.0,
   ),
   builder: (context, controller) => MaterialApp(
     theme: controller.toThemeData(),
