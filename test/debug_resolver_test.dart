@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
-import 'package:wind_diagnostics_contracts/wind_diagnostics_contracts.dart';
+import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
 
 /// Tests for the Wind alpha-10 debug resolver.
 ///

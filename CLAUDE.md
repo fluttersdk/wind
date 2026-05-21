@@ -18,7 +18,7 @@ Utility-first Flutter UI plugin. Translates `className` strings (Tailwind syntax
 
 ## Architecture
 
-**Diagnostics (alpha-10):** Wind no longer compile-time depends on `fluttersdk_dusk`. The old `lib/dusk_integration.dart` sub-barrel and `WindDuskIntegration` class are removed. Wind ships a production dep on `wind_diagnostics_contracts: ^1.0.0-alpha.1` (abstract `WindDebugResolver` contract + static `WindDebugRegistry`) and exposes `Wind.installDebugResolver()` via `lib/src/wind_facade.dart`. Consumers call `Wind.installDebugResolver()` inside `kDebugMode`; dusk reads wind state through `WindDebugRegistry.current?.resolve(element)` at snap time with no install-time wiring from dusk. `fluttersdk_dusk` is NOT a wind dependency at any level.
+**Diagnostics (alpha-10):** Wind no longer compile-time depends on `fluttersdk_dusk`. The old `lib/dusk_integration.dart` sub-barrel and `WindDuskIntegration` class are removed. Wind ships a production dep on `fluttersdk_wind_diagnostics_contracts: ^1.0.0-alpha.1` (abstract `WindDebugResolver` contract + static `WindDebugRegistry`) and exposes `Wind.installDebugResolver()` via `lib/src/wind_facade.dart`. Consumers call `Wind.installDebugResolver()` inside `kDebugMode`; dusk reads wind state through `WindDebugRegistry.current?.resolve(element)` at snap time with no install-time wiring from dusk. `fluttersdk_dusk` is NOT a wind dependency at any level.
 
 ```
 lib/src/

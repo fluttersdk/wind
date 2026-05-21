@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:wind_diagnostics_contracts/wind_diagnostics_contracts.dart';
+import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
 
 import 'parser/wind_context.dart';
 import 'parser/wind_parser.dart';
@@ -10,7 +10,7 @@ import 'parser/wind_style.dart';
 
 /// Concrete WindDebugResolver wired into the registry at app boot
 /// via `Wind.installDebugResolver()`. Resolves the 6 core fields
-/// per the wind_diagnostics_contracts v1 contract.
+/// per the fluttersdk_wind_diagnostics_contracts v1 contract.
 class WindDebugResolverImpl implements WindDebugResolver {
   const WindDebugResolverImpl();
 

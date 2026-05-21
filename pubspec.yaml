@@ -20,7 +20,7 @@ dependencies:
     sdk: flutter
   flutter_svg: ^2.0.0
   keyboard_actions: ^4.2.1
-  wind_diagnostics_contracts: ^1.0.0-alpha.1
+  fluttersdk_wind_diagnostics_contracts: ^1.0.0-alpha.1
 
 dev_dependencies:
   flutter_test:
@@ -28,5 +28,5 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 dependency_overrides:
-  wind_diagnostics_contracts:
-    path: ../wind_diagnostics_contracts
+  fluttersdk_wind_diagnostics_contracts:
+    path: ../fluttersdk_wind_diagnostics_contracts

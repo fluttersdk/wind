@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:wind_diagnostics_contracts/wind_diagnostics_contracts.dart';
+import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
 
 import 'debug_resolver.dart';
 
@@ -17,7 +17,7 @@ class Wind {
   static bool _installed = false;
 
   /// Installs the Wind diagnostics resolver into the global
-  /// wind_diagnostics_contracts registry. Idempotent. No-op in
+  /// fluttersdk_wind_diagnostics_contracts registry. Idempotent. No-op in
   /// release builds (kDebugMode gate).
   static void installDebugResolver() {
     if (!kDebugMode || _installed) return;

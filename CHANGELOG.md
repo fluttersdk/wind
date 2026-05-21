@@ -10,14 +10,14 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### BREAKING
 
-- Removed `fluttersdk_dusk` dev_dependency entirely (was a dev_dep in alpha-9). Wind no longer compile-time depends on dusk for diagnostics; the new neutral bridge package `wind_diagnostics_contracts` replaces that coupling.
+- Removed `fluttersdk_dusk` dev_dependency entirely (was a dev_dep in alpha-9). Wind no longer compile-time depends on dusk for diagnostics; the new neutral bridge package `fluttersdk_wind_diagnostics_contracts` replaces that coupling.
 - DELETED `lib/src/dusk_integration.dart` (503 LoC, the old enricher), `lib/dusk_integration.dart` (sub-barrel), `test/dusk_integration_test.dart` (750 LoC, 43 tests; 40 reborn as `test/debug_resolver_test.dart`, 3 dropped).
 - `WindDuskIntegration.install()` REMOVED. Consumers migrate to `Wind.installDebugResolver()`.
 - Lost vs alpha-9: 50+ optional WindStyle fields in the snapshot YAML (alpha-10 emits only 6 core: className, breakpoint, brightness, platform, states, bgColor, textColor). Provenance feature dropped (revisit V1.x with consumer signal).
 
 ### Added
 
-- New production dep `wind_diagnostics_contracts: ^1.0.0-alpha.1`: abstract `WindDebugResolver` contract + static `WindDebugRegistry`. Bridge between Wind and any debug-tooling package without compile-time coupling.
+- New production dep `fluttersdk_wind_diagnostics_contracts: ^1.0.0-alpha.1`: abstract `WindDebugResolver` contract + static `WindDebugRegistry`. Bridge between Wind and any debug-tooling package without compile-time coupling.
 - `lib/src/debug_resolver.dart`: concrete `WindDebugResolverImpl` implementing the contract.
 - `lib/src/wind_facade.dart`: `Wind` static facade exposing `Wind.installDebugResolver()` (kDebugMode-gated, idempotent).
 
