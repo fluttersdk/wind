@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -115,6 +116,63 @@ void main() {
       await tester.pump();
 
       expect(find.byType(WSvg), findsOneWidget);
+    });
+
+    testWidgets('renders from asset src and produces SvgPicture',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WSvg(src: 'assets/icons/test.svg', className: 'w-8 h-8'),
+        ),
+      );
+      await tester.pump();
+
+      // The asset branch (SvgPicture.asset) must produce exactly one SvgPicture.
+      expect(find.byType(SvgPicture), findsOneWidget);
+    });
+
+    testWidgets('wraps with Opacity widget when opacity class is applied',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WSvg.string(testSvg, className: 'opacity-50 w-8 h-8'),
+        ),
+      );
+      await tester.pump();
+
+      // The opacity branch produces an Opacity wrapper around SvgPicture.
+      expect(find.byType(Opacity), findsWidgets);
+      expect(find.byType(SvgPicture), findsOneWidget);
+    });
+
+    testWidgets(
+        'wraps with AnimatedOpacity when opacity + duration classes are applied',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WSvg.string(testSvg,
+              className: 'opacity-75 duration-300 w-8 h-8'),
+        ),
+      );
+      await tester.pump();
+
+      // The animated opacity branch produces AnimatedOpacity, not plain Opacity.
+      expect(find.byType(AnimatedOpacity), findsOneWidget);
+      expect(find.byType(SvgPicture), findsOneWidget);
+    });
+
+    testWidgets('applies colorFilter to SvgPicture when fill className is set',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WSvg.string(testSvg, className: 'fill-blue-500 w-8 h-8'),
+        ),
+      );
+      await tester.pump();
+
+      // The SvgPicture must carry a non-null colorFilter derived from fill-blue-500.
+      final svgPicture = tester.widget<SvgPicture>(find.byType(SvgPicture));
+      expect(svgPicture.colorFilter, isNotNull);
     });
   });
 }

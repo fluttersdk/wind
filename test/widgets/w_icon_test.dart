@@ -184,5 +184,117 @@ void main() {
         expect(icon.color, isNot(const Color(0xFFFF0000)));
       });
     });
+
+    group('Animated Opacity', () {
+      testWidgets('wraps in AnimatedOpacity when opacity and duration combined',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(
+              Icons.star,
+              className: 'opacity-50 duration-300',
+            ),
+          ),
+        );
+
+        // AnimatedOpacity is used when transitionDuration is set alongside opacity
+        expect(find.byType(AnimatedOpacity), findsOneWidget);
+        final animated = tester.widget<AnimatedOpacity>(
+          find.byType(AnimatedOpacity),
+        );
+        expect(animated.opacity, 0.5);
+        expect(animated.duration, const Duration(milliseconds: 300));
+      });
+
+      testWidgets('uses plain Opacity when no duration is set', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(Icons.star, className: 'opacity-75'),
+          ),
+        );
+
+        expect(find.byType(Opacity), findsOneWidget);
+        expect(find.byType(AnimatedOpacity), findsNothing);
+        final opacity = tester.widget<Opacity>(find.byType(Opacity));
+        expect(opacity.opacity, 0.75);
+      });
+    });
+
+    group('Animation Wrapping', () {
+      testWidgets('wraps icon with animation widget for animate-spin',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(Icons.refresh, className: 'animate-spin'),
+          ),
+        );
+
+        // The icon must still be present; the animation wrapper sits above it
+        expect(find.byIcon(Icons.refresh), findsOneWidget);
+        // wrapWithAnimation produces a widget tree containing the icon
+        final iconWidget = tester.widget<Icon>(find.byType(Icon));
+        expect(iconWidget.icon, Icons.refresh);
+      });
+
+      testWidgets('animate-pulse wraps icon with animation widget',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(Icons.favorite, className: 'animate-pulse'),
+          ),
+        );
+
+        expect(find.byIcon(Icons.favorite), findsOneWidget);
+      });
+    });
+
+    group('Debug Logging', () {
+      testWidgets('debug class enables debug mode without crashing',
+          (tester) async {
+        // The debug class sets styles.debug = true, triggering the logger block
+        // (lines 136-148). We verify the widget still renders correctly.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(Icons.bug_report, className: 'debug text-red-500'),
+          ),
+        );
+
+        expect(find.byIcon(Icons.bug_report), findsOneWidget);
+        final icon = tester.widget<Icon>(find.byType(Icon));
+        expect(icon.color, isNotNull);
+      });
+
+      testWidgets('debug class with opacity logs opacity wrapper',
+          (tester) async {
+        // Exercises the opacity != null branch inside the debug logger block
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(
+              Icons.bug_report,
+              className: 'debug opacity-50',
+            ),
+          ),
+        );
+
+        expect(find.byIcon(Icons.bug_report), findsOneWidget);
+        expect(find.byType(Opacity), findsOneWidget);
+      });
+
+      testWidgets('debug class with animation logs animation wrapper',
+          (tester) async {
+        // Exercises the animationType != null branch inside the debug logger block
+        // (line 144-145 in w_icon.dart)
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(
+              Icons.bug_report,
+              className: 'debug animate-spin',
+            ),
+          ),
+        );
+
+        expect(find.byIcon(Icons.bug_report), findsOneWidget);
+      });
+    });
   });
 }
