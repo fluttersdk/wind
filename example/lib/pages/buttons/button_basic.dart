@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// WButton example showing button variants and state handling.
+import '../../widgets/example_scaffold.dart';
+
 class ButtonBasicExamplePage extends StatefulWidget {
   const ButtonBasicExamplePage({super.key});
 
@@ -13,202 +14,162 @@ class _ButtonBasicExamplePageState extends State<ButtonBasicExamplePage> {
   int _counter = 0;
   bool _isLoading = false;
 
-  void _simulateLoading() async {
+  Future<void> _simulateLoading() async {
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(seconds: 2));
-    setState(() => _isLoading = false);
+    if (mounted) setState(() => _isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header with gradient
-          WDiv(
+    return ExampleScaffold(
+      title: 'WButton',
+      description:
+          'Interactive button on top of WAnchor. Built-in isLoading + disabled props activate the matching state prefixes. className styles the rest.',
+      gradient: 'from-blue-600 to-indigo-700',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'onTap + className. Hover and active states fire automatically.',
+          child: WButton(
+            onTap: () => setState(() => _counter++),
             className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-indigo-500 to-blue-500
+              bg-blue-600 hover:bg-blue-700 active:bg-blue-800
+              text-white px-4 py-2 rounded-lg duration-200
+              self-start
             ''',
-            children: const [
-              WText('WButton', className: 'text-lg font-bold text-white'),
-              WText(
-                'Utility-first button with loading and state support',
-                className: 'text-sm text-indigo-100',
-              ),
-            ],
+            child: WText(
+              'Click Me (tapped $_counter times)',
+              className: 'text-white font-medium',
+            ),
           ),
-
-          // Button variants
-          _buildSection(
-            title: 'Button Variants',
-            description: 'Style buttons with className',
-            children: [
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: [
-                  WButton(
-                    onTap: () => setState(() => _counter++),
-                    className: '''
-                      bg-blue-600 hover:bg-blue-700
-                      text-white px-4 py-2 rounded-lg
-                      duration-200
-                    ''',
-                    child: const Text('Primary'),
-                  ),
-                  WButton(
-                    onTap: () {},
-                    className: '''
-                      bg-gray-200 hover:bg-gray-300
-                      text-gray-800 px-4 py-2 rounded-lg
-                      duration-200
-                    ''',
-                    child: const Text('Secondary'),
-                  ),
-                  WButton(
-                    onTap: () {},
-                    className: '''
-                      border-2 border-blue-600 hover:bg-blue-50
-                      text-blue-600 px-4 py-2 rounded-lg
-                      duration-200
-                    ''',
-                    child: const Text('Outline'),
-                  ),
-                  WButton(
-                    onTap: () {},
-                    className: '''
-                      bg-red-500 hover:bg-red-600
-                      text-white px-4 py-2 rounded-lg
-                      duration-200
-                    ''',
-                    child: const Text('Danger'),
-                  ),
-                ],
-              ),
-              WText(
-                'Counter: $_counter',
-                className: 'text-sm text-gray-500 mt-2',
-              ),
-            ],
-          ),
-
-          // Loading state
-          _buildSection(
-            title: 'Loading State',
-            description: 'Use isLoading prop for spinner',
-            children: [
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: [
-                  WButton(
-                    onTap: _simulateLoading,
-                    isLoading: _isLoading,
-                    loadingText: 'Loading...',
-                    className: '''
-                      bg-blue-600 loading:opacity-70
-                      text-white px-6 py-2 rounded-lg
-                    ''',
-                    child: const Text('Click to Load'),
-                  ),
-                  WButton(
-                    onTap: () {},
-                    isLoading: true,
-                    className: '''
-                      bg-green-600 text-white px-6 py-2 rounded-lg
-                    ''',
-                    child: const Text('Always Loading'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Disabled state
-          _buildSection(
-            title: 'Disabled State',
-            description: 'Use disabled prop for disabled styling',
-            children: [
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: [
-                  WButton(
-                    onTap: () {},
-                    className: '''
-                      bg-blue-600 hover:bg-blue-700
-                      text-white px-4 py-2 rounded-lg
-                    ''',
-                    child: const Text('Enabled'),
-                  ),
-                  WButton(
-                    onTap: () {},
-                    disabled: true,
-                    className: '''
-                      bg-blue-600 disabled:bg-gray-400 disabled:opacity-50
-                      text-white px-4 py-2 rounded-lg
-                    ''',
-                    child: const Text('Disabled'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'State Prefixes',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _referenceRow('hover:', 'Mouse over'),
-                  _referenceRow('focus:', 'Keyboard focus'),
-                  _referenceRow('disabled:', 'disabled = true'),
-                  _referenceRow('loading:', 'isLoading = true'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Button Variants',
+          description:
+              'Same WButton, different className. Primary, secondary, outline, danger — all utility-driven.',
+          child: WDiv(
+            className: 'wrap gap-3',
+            children: [
+              WButton(
+                onTap: () {},
+                className:
+                    'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg duration-200',
+                child:
+                    const WText('Primary', className: 'text-white font-medium'),
+              ),
+              WButton(
+                onTap: () {},
+                className:
+                    'bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 px-4 py-2 rounded-lg duration-200',
+                child: const WText('Secondary',
+                    className:
+                        'text-slate-700 dark:text-slate-200 font-medium'),
+              ),
+              WButton(
+                onTap: () {},
+                className:
+                    'border-2 border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-4 py-2 rounded-lg duration-200',
+                child: const WText('Outline',
+                    className: 'text-blue-600 dark:text-blue-400 font-medium'),
+              ),
+              WButton(
+                onTap: () {},
+                className:
+                    'bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg duration-200',
+                child:
+                    const WText('Danger', className: 'text-white font-medium'),
+              ),
+            ],
+          ),
         ),
-        ...children,
-      ],
-    );
-  }
-
-  Widget _referenceRow(String className, String value) {
-    return WDiv(
-      className: 'flex justify-between',
-      children: [
-        WText(
-          className,
-          className: 'text-sm font-mono text-gray-600 dark:text-gray-300',
+        ExampleSection(
+          title: 'Loading State',
+          description:
+              'isLoading swaps the child for a spinner and activates loading: prefixed classes. loadingText prints a label next to the spinner.',
+          child: WDiv(
+            className: 'wrap gap-3 items-center',
+            children: [
+              WButton(
+                onTap: _simulateLoading,
+                isLoading: _isLoading,
+                loadingText: 'Submitting…',
+                className: '''
+                  bg-blue-600 loading:opacity-70
+                  text-white px-6 py-2 rounded-lg
+                ''',
+                child: const WText('Click to Load',
+                    className: 'text-white font-medium'),
+              ),
+              WButton(
+                onTap: () {},
+                isLoading: true,
+                className: 'bg-emerald-600 text-white px-6 py-2 rounded-lg',
+                child: const WText('Always Loading',
+                    className: 'text-white font-medium'),
+              ),
+            ],
+          ),
         ),
-        WText(value, className: 'text-sm text-gray-500 dark:text-gray-400'),
+        ExampleSection(
+          title: 'Disabled State',
+          description:
+              'disabled blocks gestures AND activates the disabled: prefix.',
+          child: WDiv(
+            className: 'wrap gap-3',
+            children: [
+              WButton(
+                onTap: () {},
+                className:
+                    'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg',
+                child:
+                    const WText('Enabled', className: 'text-white font-medium'),
+              ),
+              WButton(
+                onTap: () {},
+                disabled: true,
+                className: '''
+                  bg-blue-600 disabled:bg-slate-300
+                  dark:disabled:bg-slate-700
+                  disabled:opacity-60
+                  text-white px-4 py-2 rounded-lg
+                ''',
+                child: const WText('Disabled',
+                    className: 'text-white font-medium'),
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Icon Button',
+          description:
+              'Pair WButton with WIcon for circular/square icon buttons.',
+          child: WDiv(
+            className: 'wrap gap-3',
+            children: [
+              WButton(
+                onTap: () {},
+                className:
+                    'bg-red-500 hover:bg-red-600 p-3 rounded-full duration-200',
+                child: WIcon(Icons.delete_outline,
+                    className: 'text-white w-5 h-5'),
+              ),
+              WButton(
+                onTap: () {},
+                className:
+                    'bg-blue-500 hover:bg-blue-600 p-3 rounded-full duration-200',
+                child: WIcon(Icons.add, className: 'text-white w-5 h-5'),
+              ),
+              WButton(
+                onTap: () {},
+                className:
+                    'bg-emerald-500 hover:bg-emerald-600 p-3 rounded-full duration-200',
+                child: WIcon(Icons.check, className: 'text-white w-5 h-5'),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// WCheckbox examples with toggle/switch style.
+import '../../widgets/example_scaffold.dart';
+
 class CheckboxBasicExamplePage extends StatefulWidget {
   const CheckboxBasicExamplePage({super.key});
 
@@ -11,265 +12,130 @@ class CheckboxBasicExamplePage extends StatefulWidget {
 }
 
 class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
-  bool _isChecked1 = false;
-  bool _isChecked2 = true;
-  bool _isChecked3 = false;
-  bool _isChecked4 = true;
-  bool _toggle1 = false;
-  bool _toggle2 = true;
+  bool _terms = false;
+  bool _newsletter = true;
+  bool _danger = false;
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header with gradient
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-teal-500 to-cyan-500
-            ''',
-            children: const [
-              WText('WCheckbox', className: 'text-lg font-bold text-white'),
+    return ExampleScaffold(
+      title: 'WCheckbox',
+      description:
+          'Utility-styled checkbox. value + onChanged for controlled state. checked: prefix activates when value is true.',
+      gradient: 'from-emerald-500 to-green-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'A standard square checkbox with checked: prefix flipping the background.',
+          child: WDiv(
+            className: 'flex flex-row items-center gap-3',
+            children: [
+              WCheckbox(
+                value: _terms,
+                onChanged: (v) => setState(() => _terms = v),
+                className: '''
+                  w-6 h-6 rounded-md
+                  border-2 border-slate-300 dark:border-slate-600
+                  checked:bg-emerald-600 checked:border-transparent
+                  hover:border-emerald-500 duration-150
+                ''',
+              ),
               WText(
-                'Utility-first checkbox with custom styling',
-                className: 'text-sm text-teal-100',
+                'I agree to the terms',
+                className: 'text-slate-900 dark:text-white',
               ),
             ],
           ),
-
-          // Basic checkbox
-          _buildSection(
-            title: 'Basic Checkbox',
-            description: 'Click to toggle checked state',
-            children: [
-              WDiv(
-                className: 'flex gap-4',
-                children: [
-                  WCheckbox(
-                    value: _isChecked1,
-                    onChanged: (val) => setState(() => _isChecked1 = val),
-                  ),
-                  WCheckbox(
-                    value: _isChecked2,
-                    onChanged: (val) => setState(() => _isChecked2 = val),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Custom colors
-          _buildSection(
-            title: 'Custom Colors',
-            description: 'Use checked:bg-* for different colors',
-            children: [
-              WDiv(
-                className: 'flex gap-4',
-                children: [
-                  WCheckbox(
-                    value: _isChecked3,
-                    onChanged: (val) => setState(() => _isChecked3 = val),
-                    className: '''
-                      w-5 h-5 rounded border border-gray-300
-                      items-center justify-center
-                      checked:bg-green-500 checked:border-transparent
-                    ''',
-                  ),
-                  WCheckbox(
-                    value: _isChecked4,
-                    onChanged: (val) => setState(() => _isChecked4 = val),
-                    className: '''
-                      w-5 h-5 rounded border border-gray-300
-                      items-center justify-center
-                      checked:bg-red-500 checked:border-transparent
-                    ''',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Toggle switch
-          _buildSection(
-            title: 'Toggle Switch Style',
-            description: 'Custom toggle using WAnchor + WDiv',
-            children: [
-              WDiv(
-                className: 'flex gap-6',
-                children: [
-                  _buildToggle(
-                    _toggle1,
-                    (val) => setState(() => _toggle1 = val),
-                  ),
-                  _buildToggle(
-                    _toggle2,
-                    (val) => setState(() => _toggle2 = val),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Different sizes
-          _buildSection(
-            title: 'Sizes',
-            description: 'Use w-{n} h-{n} for size',
-            children: [
-              WDiv(
-                className: 'flex items-center gap-4',
-                children: [
-                  WCheckbox(
-                    value: true,
-                    onChanged: (_) {},
-                    className: '''
-                      w-4 h-4 rounded border border-gray-300
-                      items-center justify-center
-                      checked:bg-blue-500 checked:border-transparent
-                    ''',
-                    iconClassName: 'text-white text-xs',
-                  ),
-                  WCheckbox(
-                    value: true,
-                    onChanged: (_) {},
-                    className: '''
-                      w-5 h-5 rounded border border-gray-300
-                      items-center justify-center
-                      checked:bg-blue-500 checked:border-transparent
-                    ''',
-                    iconClassName: 'text-white text-sm',
-                  ),
-                  WCheckbox(
-                    value: true,
-                    onChanged: (_) {},
-                    className: '''
-                      w-6 h-6 rounded border border-gray-300
-                      items-center justify-center
-                      checked:bg-blue-500 checked:border-transparent
-                    ''',
-                    iconClassName: 'text-white text-base',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Disabled
-          _buildSection(
-            title: 'Disabled State',
-            description: 'Use disabled prop',
-            children: [
-              WDiv(
-                className: 'flex gap-4',
-                children: const [
-                  WCheckbox(
-                    value: false,
-                    disabled: true,
-                    className: '''
-                      w-5 h-5 rounded border border-gray-200
-                      items-center justify-center bg-gray-100
-                      disabled:opacity-50
-                    ''',
-                  ),
-                  WCheckbox(
-                    value: true,
-                    disabled: true,
-                    className: '''
-                      w-5 h-5 rounded border border-gray-200
-                      items-center justify-center
-                      checked:bg-blue-300 checked:border-transparent
-                      disabled:opacity-50
-                    ''',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'State Prefixes',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _referenceRow('checked:', 'value = true'),
-                  _referenceRow('hover:', 'Mouse over'),
-                  _referenceRow('focus:', 'Keyboard focus'),
-                  _referenceRow('disabled:', 'disabled = true'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Sizes & Shapes',
+          description:
+              'Size via w/h. rounded-* for square vs circular variants.',
+          child: WDiv(
+            className: 'flex flex-row items-center gap-6',
+            children: [
+              WCheckbox(
+                value: _newsletter,
+                onChanged: (v) => setState(() => _newsletter = v),
+                className: '''
+                  w-4 h-4 rounded-sm
+                  border-2 border-slate-300 dark:border-slate-600
+                  checked:bg-emerald-500 checked:border-transparent
+                ''',
+              ),
+              WCheckbox(
+                value: _newsletter,
+                onChanged: (v) => setState(() => _newsletter = v),
+                className: '''
+                  w-6 h-6 rounded-md
+                  border-2 border-slate-300 dark:border-slate-600
+                  checked:bg-emerald-500 checked:border-transparent
+                ''',
+              ),
+              WCheckbox(
+                value: _newsletter,
+                onChanged: (v) => setState(() => _newsletter = v),
+                className: '''
+                  w-8 h-8 rounded-full
+                  border-2 border-slate-300 dark:border-slate-600
+                  checked:bg-emerald-500 checked:border-transparent
+                ''',
+              ),
+            ],
+          ),
         ),
-        ...children,
+        ExampleSection(
+          title: 'Custom Check Icon',
+          description:
+              'checkIcon swaps the default Icons.check. Pair with iconClassName to style.',
+          child: WDiv(
+            className: 'flex flex-row items-center gap-3',
+            children: [
+              WCheckbox(
+                value: _danger,
+                onChanged: (v) => setState(() => _danger = v),
+                checkIcon: Icons.warning_amber,
+                className: '''
+                  w-8 h-8 rounded-md
+                  border-2 border-red-300 dark:border-red-700
+                  checked:bg-red-500 checked:border-transparent
+                ''',
+                iconClassName: 'text-white text-base',
+              ),
+              WText(
+                'Confirm dangerous action',
+                className: 'text-slate-900 dark:text-white',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Disabled State',
+          description:
+              'disabled: true blocks interaction and activates the disabled: prefix.',
+          child: WDiv(
+            className: 'flex flex-row items-center gap-3',
+            children: [
+              WCheckbox(
+                value: true,
+                onChanged: (_) {},
+                disabled: true,
+                className: '''
+                  w-6 h-6 rounded-md
+                  border-2 border-slate-300 dark:border-slate-600
+                  checked:bg-emerald-500 checked:border-transparent
+                  disabled:opacity-60
+                ''',
+              ),
+              WText(
+                'Disabled (checked)',
+                className: 'text-slate-500 dark:text-slate-400',
+              ),
+            ],
+          ),
+        ),
       ],
-    );
-  }
-
-  Widget _referenceRow(String className, String value) {
-    return WDiv(
-      className: 'flex justify-between',
-      children: [
-        WText(
-          className,
-          className: 'text-sm font-mono text-gray-600 dark:text-gray-300',
-        ),
-        WText(value, className: 'text-sm text-gray-500 dark:text-gray-400'),
-      ],
-    );
-  }
-
-  Widget _buildToggle(bool value, ValueChanged<bool> onChanged) {
-    final Set<String> states = {if (value) 'checked'};
-
-    return WAnchor(
-      onTap: () => onChanged(!value),
-      states: states,
-      child: WDiv(
-        className: 'w-12 h-6 rounded-full p-1 bg-gray-300 checked:bg-blue-500',
-        states: states,
-        children: [
-          AnimatedAlign(
-            duration: const Duration(milliseconds: 200),
-            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(
-              width: 16,
-              height: 16,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

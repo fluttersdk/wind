@@ -1,204 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// WAnchor example showing state management for hover, focus, and disabled.
+import '../../widgets/example_scaffold.dart';
+
 class AnchorBasicExamplePage extends StatelessWidget {
   const AnchorBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header with gradient
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-violet-500 to-purple-500
-            ''',
-            children: const [
-              WText('WAnchor', className: 'text-lg font-bold text-white'),
-              WText(
-                'State wrapper for hover, focus, and disabled',
-                className: 'text-sm text-violet-100',
-              ),
-            ],
-          ),
-
-          // Hover state
-          _buildSection(
-            title: 'Hover State',
-            description: 'WAnchor enables hover: prefix on children',
-            children: [
-              WDiv(
-                className: 'flex gap-4 overflow-x-auto',
-                children: [
-                  WAnchor(
-                    onTap: () {},
-                    child: WDiv(
-                      className: '''
-                        px-4 py-2 rounded-lg
-                        bg-blue-500 hover:bg-blue-600
-                        duration-200
-                      ''',
-                      child: const WText(
-                        'Hover Me',
-                        className: 'text-white font-medium',
-                      ),
-                    ),
-                  ),
-                  WAnchor(
-                    onTap: () {},
-                    child: WDiv(
-                      className: '''
-                        px-4 py-2 rounded-lg border border-gray-300
-                        bg-white hover:bg-blue-100 hover:border-blue-400
-                        duration-200
-                      ''',
-                      child: const WText(
-                        'Light Button',
-                        className: 'text-gray-700',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Hover color changes
-          _buildSection(
-            title: 'Hover Color Effects',
-            description: 'Color transitions work with duration-* classes',
-            children: [
-              WDiv(
-                className: 'flex gap-4 overflow-x-auto',
-                children: [
-                  WAnchor(
-                    onTap: () {},
-                    child: WDiv(
-                      className: '''
-                        w-16 h-16 rounded-lg
-                        bg-pink-500 hover:bg-rose-600
-                        duration-200
-                      ''',
-                    ),
-                  ),
-                  WAnchor(
-                    onTap: () {},
-                    child: WDiv(
-                      className: '''
-                        w-16 h-16 rounded-lg
-                        bg-cyan-500 hover:bg-blue-600
-                        duration-200
-                      ''',
-                    ),
-                  ),
-                  WAnchor(
-                    onTap: () {},
-                    child: WDiv(
-                      className: '''
-                        w-16 h-16 rounded-lg
-                        bg-green-500 hover:bg-emerald-600
-                        duration-200
-                      ''',
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Disabled state
-          _buildSection(
-            title: 'Disabled State',
-            description: 'Use isDisabled prop for disabled: prefix',
-            children: [
-              WDiv(
-                className: 'flex gap-4 overflow-x-auto',
-                children: [
-                  WAnchor(
-                    onTap: () {},
-                    child: WDiv(
-                      className: '''
-                        px-4 py-2 rounded-lg
-                        bg-blue-500 hover:bg-blue-600
-                      ''',
-                      child: const WText('Enabled', className: 'text-white'),
-                    ),
-                  ),
-                  WAnchor(
-                    onTap: () {},
-                    isDisabled: true,
-                    child: WDiv(
-                      className: '''
-                        px-4 py-2 rounded-lg
-                        bg-blue-500 disabled:bg-gray-400
-                        disabled:opacity-50
-                      ''',
-                      child: const WText('Disabled', className: 'text-white'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'State Prefixes',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _referenceRow('hover:', 'Mouse over'),
-                  _referenceRow('focus:', 'Keyboard focus'),
-                  _referenceRow('disabled:', 'isDisabled = true'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
+    return ExampleScaffold(
+      title: 'WAnchor',
+      description:
+          'Foundation interaction wrapper. Detects hover/focus/press and propagates state to descendants via WindAnchorStateProvider. No styling of its own.',
+      gradient: 'from-violet-500 to-purple-600',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Wrap any layout in WAnchor to make its descendants react to hover and focus.',
+          child: WAnchor(
+            onTap: () {},
+            child: WDiv(
+              className: '''
+                p-4 rounded-lg duration-200
+                bg-white dark:bg-slate-800
+                hover:bg-gray-100 dark:hover:bg-slate-700
+                border border-slate-200 dark:border-slate-700
+              ''',
+              child: const WText(
+                'Hover me',
+                className: 'text-slate-900 dark:text-white font-medium',
+              ),
+            ),
+          ),
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Gestures',
+          description:
+              'onTap, onLongPress, and onDoubleTap each map to a separate callback. Click the card to fire onTap.',
+          child: WAnchor(
+            onTap: () {},
+            onLongPress: () {},
+            onDoubleTap: () {},
+            child: WDiv(
+              className: '''
+                p-6 rounded-xl duration-200
+                bg-violet-500 hover:bg-violet-600
+                active:bg-violet-700
+              ''',
+              child: const WText(
+                'Tap / double tap / long press',
+                className: 'text-white font-medium',
+              ),
+            ),
+          ),
         ),
-        ...children,
-      ],
-    );
-  }
-
-  Widget _referenceRow(String className, String value) {
-    return WDiv(
-      className: 'flex justify-between',
-      children: [
-        WText(
-          className,
-          className: 'text-sm font-mono text-gray-600 dark:text-gray-300',
+        ExampleSection(
+          title: 'Disabled State',
+          description:
+              'isDisabled blocks gestures AND activates the disabled: prefix on descendants.',
+          child: WAnchor(
+            isDisabled: true,
+            onTap: () {},
+            child: WDiv(
+              className: '''
+                p-4 rounded-lg
+                bg-violet-500 disabled:bg-slate-300 disabled:opacity-60
+                dark:disabled:bg-slate-700
+              ''',
+              child: const WText(
+                'I am disabled',
+                className: 'text-white font-medium',
+              ),
+            ),
+          ),
         ),
-        WText(value, className: 'text-sm text-gray-500 dark:text-gray-400'),
+        ExampleSection(
+          title: 'State Propagation',
+          description:
+              'Hover on the outer card; the inner WText also picks up the hover state via WindAnchorStateProvider.',
+          child: WAnchor(
+            onTap: () {},
+            child: WDiv(
+              className: '''
+                p-4 rounded-lg duration-200
+                bg-white dark:bg-slate-800
+                hover:bg-violet-50 dark:hover:bg-violet-900/20
+                border border-slate-200 dark:border-slate-700
+              ''',
+              children: const [
+                WText(
+                  'Card Title',
+                  className: '''
+                    font-bold duration-200
+                    text-slate-900 dark:text-white
+                    hover:text-violet-600 dark:hover:text-violet-400
+                  ''',
+                ),
+                WText(
+                  'Hovering anywhere on this card recolors the title above.',
+                  className: 'text-sm text-slate-500 dark:text-slate-400 mt-1',
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

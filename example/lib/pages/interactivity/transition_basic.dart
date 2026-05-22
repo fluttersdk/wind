@@ -1,225 +1,162 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class TransitionBasicExamplePage extends StatelessWidget {
   const TransitionBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
+    return ExampleScaffold(
+      title: 'Transitions',
+      description:
+          'duration-{ms} + ease-{curve} make state changes smooth. Pair with hover:, focus:, active: for tactile reactions.',
+      gradient: 'from-indigo-500 to-violet-600',
       children: [
-        // Header
-        _buildHeader(
-          title: 'Transitions',
+        ExampleSection(
+          title: 'Basic Usage',
           description:
-              'Utilities for controlling transition duration and easing curves.',
+              'duration-300 ease-in-out smooths a hover: bg color change over 300ms with a soft start and finish.',
+          child: WDiv(
+            className: '''
+              bg-blue-500 hover:bg-orange-500
+              duration-300 ease-in-out
+              px-6 py-4 rounded-lg self-start
+            ''',
+            child: const WText(
+              'Hover me — 300ms ease-in-out',
+              className: 'text-white font-medium',
+            ),
+          ),
         ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Transition Colors
-        _buildSection(
-          title: 'Transition Colors',
+        ExampleSection(
+          title: 'Duration',
           description:
-              'Use duration utilities to animate color changes on hover.',
+              'Compare 75ms, 200ms, 500ms, 1000ms on the same hover. Watch how the snap softens as the duration grows.',
           child: WDiv(
-            className: 'flex wrap gap-4',
-            children: [
-              _buildDemoBox(
-                className:
-                    'bg-blue-500 hover:bg-red-500 duration-300 text-white',
-                label: 'Hover me (Color)',
-                subLabel: 'duration-300',
+            className: 'wrap gap-3',
+            children: const [
+              _HoverPill(label: 'duration-75', cls: 'duration-75'),
+              _HoverPill(label: 'duration-200', cls: 'duration-200'),
+              _HoverPill(label: 'duration-500', cls: 'duration-500'),
+              _HoverPill(label: 'duration-1000', cls: 'duration-1000'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Easing',
+          description: 'Same duration, different curve. The feel changes.',
+          child: WDiv(
+            className: 'wrap gap-3',
+            children: const [
+              _HoverPill(label: 'ease-linear', cls: 'ease-linear duration-500'),
+              _HoverPill(label: 'ease-in', cls: 'ease-in duration-500'),
+              _HoverPill(label: 'ease-out', cls: 'ease-out duration-500'),
+              _HoverPill(label: 'ease-in-out', cls: 'ease-in-out duration-500'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Combined With Other Properties',
+          description:
+              'Transitions apply to every animatable property change at once: color, shadow, transform, border, opacity.',
+          child: WDiv(
+            className: '''
+              p-6 rounded-xl duration-300 ease-out
+              bg-white dark:bg-slate-800
+              border border-slate-200 dark:border-slate-700
+              shadow-sm hover:shadow-2xl
+              hover:border-indigo-500
+            ''',
+            children: const [
+              WText(
+                'Interactive Card',
+                className: 'font-semibold text-slate-900 dark:text-white',
               ),
-              _buildDemoBox(
-                className:
-                    'bg-purple-500 hover:bg-purple-700 duration-700 text-white',
-                label: 'Hover me (Color)',
-                subLabel: 'duration-700',
+              WText(
+                'Hover for shadow + border transition over 300ms.',
+                className: 'text-sm text-slate-600 dark:text-slate-400 mt-1',
               ),
             ],
           ),
         ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Transition Opacity
-        _buildSection(
-          title: 'Transition Opacity',
-          description: 'Animate opacity changes smoothly.',
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Eight built-in durations and four easing curves. Compose freely.',
           child: WDiv(
-            className: 'flex wrap gap-4',
-            children: [
-              _buildDemoBox(
-                className:
-                    'bg-green-500 opacity-100 hover:opacity-50 duration-300 text-white',
-                label: 'Hover me (Opacity)',
-                subLabel: 'duration-300',
-              ),
-              _buildDemoBox(
-                className:
-                    'bg-green-500 opacity-25 hover:opacity-100 duration-1000 text-white',
-                label: 'Hover me (Opacity)',
-                subLabel: 'duration-1000',
-              ),
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'duration-75', val: '75ms'),
+              _RefRow(cls: 'duration-200', val: '200ms (typical UI)'),
+              _RefRow(cls: 'duration-500', val: '500ms'),
+              _RefRow(cls: 'duration-1000', val: '1000ms'),
+              _RefRow(cls: 'ease-linear', val: 'Curves.linear'),
+              _RefRow(cls: 'ease-in', val: 'Curves.easeIn'),
+              _RefRow(cls: 'ease-out', val: 'Curves.easeOut'),
+              _RefRow(cls: 'ease-in-out', val: 'Curves.easeInOut'),
             ],
           ),
         ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Transition Shadow & Border (Simulating Transform/Scale visually)
-        // Note: Scale transforms might depend on specific parser availability,
-        // so we demonstrate standard layout/decoration transitions which are core.
-        _buildSection(
-          title: 'Transition Effects',
-          description: 'Animate shadows, borders, and sizing.',
+        ExampleSection(
+          title: 'Arbitrary Values',
+          description: 'Brackets accept exact ms durations and Flutter Curves.',
           child: WDiv(
-            className: 'flex wrap gap-4',
-            children: [
-              _buildDemoBox(
-                className:
-                    'bg-white dark:bg-gray-800 border-2 border-transparent hover:border-blue-500 duration-300 text-gray-800 dark:text-white shadow-sm hover:shadow-xl',
-                label: 'Hover me (Border/Shadow)',
-                subLabel: 'duration-300',
-              ),
-            ],
-          ),
-        ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Duration Scale
-        _buildSection(
-          title: 'Duration Scale',
-          description: 'Control the speed of transitions.',
-          child: WDiv(
-            className: 'grid grid-cols-2 md:grid-cols-4 gap-4',
-            children: [
-              _buildDurationDemo('duration-75', 75),
-              _buildDurationDemo('duration-150', 150),
-              _buildDurationDemo('duration-300', 300),
-              _buildDurationDemo('duration-500', 500),
-            ],
-          ),
-        ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Easing Curves
-        _buildSection(
-          title: 'Easing Curves',
-          description: 'Control the velocity curve of transitions.',
-          child: WDiv(
-            className: 'grid grid-cols-1 md:grid-cols-2 gap-4',
-            children: [
-              _buildEaseDemo('ease-linear', 'Linear'),
-              _buildEaseDemo('ease-in', 'Ease In'),
-              _buildEaseDemo('ease-out', 'Ease Out'),
-              _buildEaseDemo('ease-in-out', 'Ease In Out'),
-            ],
+            className: '''
+              bg-indigo-500 hover:bg-orange-500
+              duration-[420ms] ease-[Curves.bounceOut]
+              px-6 py-4 rounded-lg self-start
+            ''',
+            child: const WText(
+              'duration-[420ms] ease-[Curves.bounceOut]',
+              className: 'text-white font-mono text-sm',
+            ),
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildHeader({required String title, required String description}) {
+class _HoverPill extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _HoverPill({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(title,
-            className: 'text-2xl font-bold text-gray-900 dark:text-white'),
-        WText(description,
-            className: 'text-base text-gray-600 dark:text-gray-400'),
-      ],
+      className: 'bg-indigo-500 hover:bg-orange-500 $cls px-4 py-2 rounded',
+      child: WText(
+        label,
+        className: 'text-white font-mono text-sm',
+      ),
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-4',
-      children: [
-        WDiv(
-          className: 'flex flex-col gap-1',
-          children: [
-            WText(title,
-                className:
-                    'text-lg font-semibold text-gray-800 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-gray-500 dark:text-gray-400'),
-          ],
-        ),
-        WDiv(
-          className:
-              'p-6 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900',
-          child: child,
-        ),
-      ],
-    );
-  }
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String val;
 
-  Widget _buildDemoBox({
-    required String className,
-    required String label,
-    required String subLabel,
-  }) {
-    return WDiv(
-      className:
-          'w-40 h-32 rounded-lg flex flex-col justify-center items-center cursor-pointer $className',
-      children: [
-        WText(label, className: 'text-sm font-medium text-center px-2'),
-        WText(subLabel, className: 'text-xs opacity-75 mt-1'),
-      ],
-    );
-  }
+  const _RefRow({required this.cls, required this.val});
 
-  Widget _buildDurationDemo(String durationClass, int ms) {
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex flex-col gap-2 items-center',
+      className: '''
+        flex flex-row items-center justify-between gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WDiv(
-          className:
-              'w-full h-12 bg-blue-500 hover:bg-green-500 $durationClass rounded-lg flex items-center justify-center cursor-pointer',
-          children: [
-            WText('Hover', className: 'text-white text-sm font-medium'),
-          ],
-        ),
-        WText(durationClass,
-            className: 'text-xs font-mono text-gray-600 dark:text-gray-400'),
-      ],
-    );
-  }
-
-  Widget _buildEaseDemo(String easeClass, String label) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WDiv(
-          className:
-              'w-full h-16 bg-purple-500 hover:bg-purple-700 opacity-50 hover:opacity-100 duration-1000 $easeClass rounded-lg flex items-center justify-center cursor-pointer',
-          children: [
-            WText('Hover to see $label',
-                className: 'text-white text-sm font-medium'),
-          ],
-        ),
-        WDiv(
-          className: 'flex justify-between',
-          children: [
-            WText(label,
-                className:
-                    'text-sm font-medium text-gray-700 dark:text-gray-300'),
-            WText(easeClass,
-                className:
-                    'text-xs font-mono text-gray-500 dark:text-gray-500'),
-          ],
-        ),
+        WText(cls,
+            className:
+                'font-mono text-sm text-indigo-700 dark:text-indigo-400'),
+        WText(val,
+            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }

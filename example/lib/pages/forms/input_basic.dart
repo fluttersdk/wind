@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// WInput example with different input types.
+import '../../widgets/example_scaffold.dart';
+
 class InputBasicExamplePage extends StatefulWidget {
   const InputBasicExamplePage({super.key});
 
@@ -10,187 +11,126 @@ class InputBasicExamplePage extends StatefulWidget {
 }
 
 class _InputBasicExamplePageState extends State<InputBasicExamplePage> {
-  String _text = '';
   String _email = '';
-  String _password = '';
-  String _number = '';
-  String _multiline = '';
+  bool _hasError = false;
+
+  static const _inputCls = '''
+    w-full px-3 py-2 rounded-lg
+    bg-white dark:bg-slate-800
+    border border-slate-300 dark:border-slate-600
+    focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30
+    error:border-red-500 error:ring-2 error:ring-red-500/30
+  ''';
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header with gradient
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-violet-500 to-purple-500
-            ''',
-            children: const [
-              WText('WInput', className: 'text-lg font-bold text-white'),
-              WText(
-                'Utility-first input with controlled state',
-                className: 'text-sm text-violet-100',
-              ),
-            ],
-          ),
-
-          // Text Input
-          _buildSection(
-            title: 'Text Input',
-            description: 'Basic text input',
+    return ExampleScaffold(
+      title: 'WInput',
+      description:
+          'Utility-styled text input. value + onChanged for controlled state, type for keyboard mode, prefix/suffix for adornments. focus: / error: prefixes activate automatically.',
+      gradient: 'from-blue-500 to-cyan-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Controlled email field. focus:border-blue-500 fires when the field gains focus.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
             children: [
               WInput(
-                value: _text,
-                onChanged: (value) => setState(() => _text = value),
-                placeholder: 'Enter text',
-                className: '''
-                  w-full p-3 border border-gray-300 dark:border-gray-600
-                  rounded-lg text-gray-900 dark:text-white
-                  bg-white dark:bg-slate-800
-                ''',
+                value: _email,
+                onChanged: (v) => setState(() => _email = v),
+                type: InputType.email,
+                placeholder: 'you@example.com',
+                className: _inputCls,
               ),
-              if (_text.isNotEmpty)
-                WText('Value: $_text', className: 'text-xs text-gray-400'),
+              WText(
+                'Typed: ${_email.isEmpty ? "—" : _email}',
+                className:
+                    'text-sm text-slate-500 dark:text-slate-400 font-mono',
+              ),
             ],
           ),
-
-          // Email Input
-          _buildSection(
-            title: 'Email Input',
-            description: 'Email keyboard type',
+        ),
+        ExampleSection(
+          title: 'Input Types',
+          description:
+              'type changes the keyboard and obfuscation. text, email, password, number.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
             children: [
+              WInput(
+                type: InputType.text,
+                placeholder: 'text — default',
+                className: _inputCls,
+              ),
               WInput(
                 type: InputType.email,
-                value: _email,
-                onChanged: (value) => setState(() => _email = value),
-                placeholder: 'name@example.com',
-                className: '''
-                  w-full p-3 border border-gray-300 dark:border-gray-600
-                  rounded-lg text-gray-900 dark:text-white
-                  bg-white dark:bg-slate-800
-                ''',
+                placeholder: 'email — email keyboard',
+                className: _inputCls,
               ),
-            ],
-          ),
-
-          // Password Input
-          _buildSection(
-            title: 'Password Input',
-            description: 'Obscured text entry',
-            children: [
               WInput(
                 type: InputType.password,
-                value: _password,
-                onChanged: (value) => setState(() => _password = value),
-                placeholder: 'Enter password',
-                className: '''
-                  w-full p-3 border border-gray-300 dark:border-gray-600
-                  rounded-lg text-gray-900 dark:text-white
-                  bg-white dark:bg-slate-800
-                ''',
+                placeholder: 'password — obscured',
+                className: _inputCls,
               ),
-            ],
-          ),
-
-          // Number Input
-          _buildSection(
-            title: 'Number Input',
-            description: 'Numeric keyboard',
-            children: [
               WInput(
                 type: InputType.number,
-                value: _number,
-                onChanged: (value) => setState(() => _number = value),
-                placeholder: '0',
-                className: '''
-                  w-full p-3 border border-gray-300 dark:border-gray-600
-                  rounded-lg text-gray-900 dark:text-white
-                  bg-white dark:bg-slate-800
-                ''',
+                placeholder: 'number — numeric keyboard',
+                className: _inputCls,
               ),
             ],
           ),
-
-          // Multiline Input
-          _buildSection(
-            title: 'Multiline (Textarea)',
-            description: 'Multiple lines with minLines/maxLines',
+        ),
+        ExampleSection(
+          title: 'Error State',
+          description:
+              'states: {"error"} activates error: prefix. Toggle the button to see.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
             children: [
               WInput(
-                type: InputType.multiline,
-                value: _multiline,
-                onChanged: (value) => setState(() => _multiline = value),
-                placeholder: 'Enter your message...',
-                minLines: 3,
-                maxLines: 6,
-                className: '''
-                  w-full p-3 border border-gray-300 dark:border-gray-600
-                  rounded-lg text-gray-900 dark:text-white
-                  bg-white dark:bg-slate-800
-                ''',
+                states: _hasError ? const {'error'} : const {},
+                placeholder: 'Enter your name',
+                className: _inputCls,
+              ),
+              if (_hasError)
+                WText(
+                  'This field is required',
+                  className: 'text-sm text-red-600 dark:text-red-400',
+                ),
+              WButton(
+                onTap: () => setState(() => _hasError = !_hasError),
+                className:
+                    'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg self-start',
+                child: WText(
+                  _hasError ? 'Clear error' : 'Trigger error state',
+                  className: 'text-white font-medium',
+                ),
               ),
             ],
           ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+        ),
+        ExampleSection(
+          title: 'Disabled vs Read-only',
+          description:
+              'disabled = uninteractive + dimmed. readOnly = focusable but value locked.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
             children: [
-              const WText(
-                'Input Types',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
+              WInput(
+                enabled: false,
+                value: 'disabled value',
+                className: _inputCls,
               ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _referenceRow('text', 'Standard text'),
-                  _referenceRow('password', 'Obscured'),
-                  _referenceRow('email', 'Email keyboard'),
-                  _referenceRow('number', 'Numeric keyboard'),
-                  _referenceRow('multiline', 'Multiple lines'),
-                ],
+              WInput(
+                readOnly: true,
+                value: 'read-only value',
+                className: _inputCls,
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
-        ),
-        ...children,
-      ],
-    );
-  }
-
-  Widget _referenceRow(String className, String value) {
-    return WDiv(
-      className: 'flex justify-between',
-      children: [
-        WText(
-          className,
-          className: 'text-sm font-mono text-gray-600 dark:text-gray-300',
-        ),
-        WText(value, className: 'text-sm text-gray-500 dark:text-gray-400'),
       ],
     );
   }

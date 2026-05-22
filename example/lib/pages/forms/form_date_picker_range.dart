@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart' hide DatePickerMode;
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Form date picker in range mode with validation.
+import '../../widgets/example_scaffold.dart';
+
 class FormDatePickerRangeExamplePage extends StatefulWidget {
   const FormDatePickerRangeExamplePage({super.key});
 
@@ -14,154 +15,135 @@ class _FormDatePickerRangeExamplePageState
     extends State<FormDatePickerRangeExamplePage> {
   final _formKey = GlobalKey<FormState>();
   DateRange? _tripRange;
-  DateRange? _stayRange;
+  String _summary = '';
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final buffer = StringBuffer('Form valid!');
-      if (_tripRange?.isComplete == true) {
-        final days = _tripRange!.end!.difference(_tripRange!.start).inDays;
-        buffer.write(' Trip: $days days.');
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(buffer.toString())),
-      );
-    }
-  }
+  static const _triggerCls = '''
+    w-full p-3 rounded-lg
+    bg-white dark:bg-slate-800
+    border border-slate-300 dark:border-slate-600
+    hover:border-rose-500
+    error:border-red-500 error:ring-2 error:ring-red-500/30
+  ''';
 
-  void _reset() {
-    _formKey.currentState!.reset();
-    setState(() {
-      _tripRange = null;
-      _stayRange = null;
-    });
+  String _formatRange(DateRange? range) {
+    if (range == null || !range.isComplete) return '—';
+    String fmt(DateTime d) => d.toIso8601String().split('T').first;
+    return '${fmt(range.start)} → ${fmt(range.end!)}';
   }
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          // Header
-          WDiv(
-            className:
-                'bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl p-6',
-            children: const [
-              WText('Form Date Range',
-                  className: 'text-2xl font-bold text-white'),
-              WText(
-                'WFormDatePicker in range mode with validation and error states.',
-                className: 'text-amber-100 mt-1',
-              ),
-            ],
-          ),
-
-          Form(
+    return ExampleScaffold(
+      title: 'Form Date Range',
+      description:
+          'mode: DatePickerMode.range. Validator sees the range start; for length-based rules drive validation from onRangeChanged.',
+      gradient: 'from-rose-500 to-pink-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Trip date range as a required field. The validator simply checks for a non-null start.',
+          child: Form(
             key: _formKey,
             child: WDiv(
-              className: 'flex flex-col gap-6',
+              className: 'flex flex-col gap-4',
               children: [
-                // Required Range
-                _buildSection(
-                  title: 'Required Trip Dates',
-                  description:
-                      'Validates that a range start has been selected.',
-                  child: WFormDatePicker(
-                    mode: DatePickerMode.range,
-                    label: 'Trip Dates',
-                    hint: 'Select your check-in and check-out dates',
-                    initialRange: _tripRange,
-                    onRangeChanged: (range) =>
-                        setState(() => _tripRange = range),
-                    validator: (value) =>
-                        value == null ? 'Please select your trip dates' : null,
-                    className:
-                        'w-full p-3 border border-gray-300 dark:border-gray-600 '
-                        'rounded-lg bg-white dark:bg-slate-800 '
-                        'error:border-red-500 error:ring-2 error:ring-red-200 '
-                        'dark:error:ring-red-900/30',
-                  ),
+                WFormDatePicker(
+                  label: 'Trip Dates',
+                  mode: DatePickerMode.range,
+                  placeholder: 'Check-in / check-out',
+                  className: _triggerCls,
+                  onRangeChanged: (range) {
+                    setState(() => _tripRange = range);
+                  },
+                  validator: (date) =>
+                      date == null ? 'Please select your trip dates' : null,
                 ),
-
-                // Constrained Range
-                _buildSection(
-                  title: 'Constrained Stay',
-                  description:
-                      'Only future dates within the next 60 days are selectable.',
-                  child: WFormDatePicker(
-                    mode: DatePickerMode.range,
-                    label: 'Stay Duration',
-                    placeholder: 'Select stay window',
-                    initialRange: _stayRange,
-                    minDate: DateTime.now(),
-                    maxDate: DateTime.now().add(const Duration(days: 60)),
-                    onRangeChanged: (range) =>
-                        setState(() => _stayRange = range),
-                    validator: (value) =>
-                        value == null ? 'Stay dates are required' : null,
-                    className:
-                        'w-full p-3 border border-gray-300 dark:border-gray-600 '
-                        'rounded-lg bg-white dark:bg-slate-800 '
-                        'error:border-red-500',
-                  ),
+                WButton(
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {
+                      final r = _tripRange;
+                      setState(() {
+                        _summary = (r != null && r.isComplete)
+                            ? 'Stay: ${r.end!.difference(r.start).inDays} nights'
+                            : 'Pick a complete range';
+                      });
+                    }
+                  },
+                  className: '''
+                    bg-rose-600 hover:bg-rose-700
+                    text-white px-4 py-2 rounded-lg self-start
+                  ''',
+                  child: const WText('Submit',
+                      className: 'text-white font-medium'),
                 ),
-
-                // Range Info
-                if (_tripRange?.isComplete == true)
-                  WDiv(
-                    className:
-                        'p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800',
-                    child: WText(
-                      'Trip: ${_tripRange!.end!.difference(_tripRange!.start).inDays} days selected',
-                      className:
-                          'text-sm font-mono text-amber-700 dark:text-amber-300',
-                    ),
-                  ),
-
-                // Action Buttons
-                WDiv(
-                  className: 'flex gap-4 pt-4',
-                  children: [
-                    WButton(
-                      onTap: _submit,
-                      className:
-                          'bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-lg font-bold shadow-md transition-all',
-                      child: const Text('Validate'),
-                    ),
-                    WButton(
-                      onTap: _reset,
-                      className:
-                          'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-8 py-3 rounded-lg font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition-all',
-                      child: const Text('Reset'),
-                    ),
-                  ],
+                WText(
+                  'Range: ${_formatRange(_tripRange)}',
+                  className:
+                      'font-mono text-sm text-slate-500 dark:text-slate-400',
                 ),
+                if (_summary.isNotEmpty)
+                  WText(
+                    _summary,
+                    className: 'font-medium text-rose-600 dark:text-rose-400',
+                  ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+        ExampleSection(
+          title: 'Minimum Stay (3 nights)',
+          description:
+              'Custom rule that auto-validates on interaction. Length is derived from onRangeChanged state, not from the validator argument.',
+          child: _MinStayDemo(triggerCls: _triggerCls),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700',
-      children: [
-        WText(title,
-            className: 'text-lg font-semibold text-slate-900 dark:text-white'),
-        WText(description,
-            className: 'text-sm text-slate-600 dark:text-slate-400'),
-        child,
-      ],
+class _MinStayDemo extends StatefulWidget {
+  const _MinStayDemo({required this.triggerCls});
+
+  final String triggerCls;
+
+  @override
+  State<_MinStayDemo> createState() => _MinStayDemoState();
+}
+
+class _MinStayDemoState extends State<_MinStayDemo> {
+  DateRange? _range;
+  String? _externalError;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      child: WFormDatePicker(
+        label: 'Stay (minimum 3 nights)',
+        mode: DatePickerMode.range,
+        placeholder: 'Check-in / check-out',
+        className: widget.triggerCls,
+        states: _externalError == null ? null : const {'error'},
+        onRangeChanged: (range) {
+          setState(() {
+            _range = range;
+            if (!range.isComplete) {
+              _externalError = null;
+            } else {
+              final nights = range.end!.difference(range.start).inDays;
+              _externalError = nights < 3 ? 'At least 3 nights required' : null;
+            }
+          });
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (date) {
+          if (date == null) return 'Pick a date range';
+          return _externalError;
+        },
+        hint: _range == null
+            ? null
+            : 'Selected ${_range!.isComplete ? _range!.end!.difference(_range!.start).inDays : 0} nights',
+      ),
     );
   }
 }

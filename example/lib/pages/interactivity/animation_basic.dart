@@ -1,289 +1,206 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class InteractivityAnimationExamplePage extends StatelessWidget {
   const InteractivityAnimationExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
+    return ExampleScaffold(
+      title: 'Animation',
+      description:
+          'animate-{spin|ping|pulse|bounce} adds a continuous motion to any widget. Drop-in for loaders, skeletons, badges, and attention nudges.',
+      gradient: 'from-pink-500 to-rose-600',
       children: [
-        // Header
-        _buildHeader(
-          title: 'Animation',
+        ExampleSection(
+          title: 'Basic Usage',
           description:
-              'Utilities for animating elements with CSS-like animation classes.',
-        ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Spin Animation
-        _buildSection(
-          title: 'Spin',
-          description:
-              'Use animate-spin for loading indicators. It provides a smooth, linear rotation.',
+              'animate-spin on an icon = loader. animate-pulse on a placeholder = skeleton.',
           child: WDiv(
-            className: 'flex wrap gap-6 items-center',
-            children: [
-              // Native Flutter spinner wrapped in WDiv
-              WDiv(
-                className: 'flex flex-col items-center gap-2',
-                children: [
-                  WDiv(
-                    className: 'w-8 h-8',
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 3,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Color(0xFF3B82F6)),
-                    ),
-                  ),
-                  WText('Spinner',
-                      className: 'text-xs text-slate-500 dark:text-slate-400'),
-                ],
-              ),
-              _buildAnimationDemo(
-                className: 'animate-spin w-6 h-6 bg-purple-500 rounded',
-                label: 'Rotating Box',
-              ),
-              WDiv(
-                className: 'flex flex-col items-center gap-2',
-                children: [
-                  WIcon(
-                    Icons.refresh,
-                    className: 'animate-spin text-green-500 text-2xl',
-                  ),
-                  WText('Icon',
-                      className: 'text-xs text-slate-500 dark:text-slate-400'),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Ping Animation
-        _buildSection(
-          title: 'Ping',
-          description:
-              'The animate-ping utility makes an element scale and fade out, like a radar ping.',
-          child: WDiv(
-            className: 'flex wrap gap-8 items-center',
-            children: [
-              // Simple ping dot
-              WDiv(
-                className: 'flex flex-col items-center gap-2',
-                children: [
-                  WDiv(
-                    className: 'animate-ping w-4 h-4 rounded-full bg-red-500',
-                  ),
-                  WText('Ping',
-                      className: 'text-xs text-slate-500 dark:text-slate-400'),
-                ],
-              ),
-              // Green ping
-              WDiv(
-                className: 'flex flex-col items-center gap-2',
-                children: [
-                  WDiv(
-                    className: 'animate-ping w-4 h-4 rounded-full bg-green-500',
-                  ),
-                  WText('Status',
-                      className: 'text-xs text-slate-500 dark:text-slate-400'),
-                ],
-              ),
-              // Blue ping
-              WDiv(
-                className: 'flex flex-col items-center gap-2',
-                children: [
-                  WDiv(
-                    className: 'animate-ping w-6 h-6 rounded-full bg-blue-500',
-                  ),
-                  WText('Alert',
-                      className: 'text-xs text-slate-500 dark:text-slate-400'),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Pulse Animation
-        _buildSection(
-          title: 'Pulse',
-          description:
-              'Use animate-pulse to create skeleton loading effects. It gently fades the opacity.',
-          child: WDiv(
-            className: 'flex flex-col gap-4',
-            children: [
-              // Skeleton card
-              WDiv(
-                className:
-                    'animate-pulse flex gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg',
-                children: [
-                  WDiv(
-                      className:
-                          'rounded-full bg-slate-200 dark:bg-slate-700 h-12 w-12'),
-                  WDiv(
-                    className: 'flex-1 flex flex-col gap-2 py-1',
-                    children: [
-                      WDiv(
-                          className:
-                              'h-2 bg-slate-200 dark:bg-slate-700 rounded w-3/4'),
-                      WDiv(
-                          className:
-                              'h-2 bg-slate-200 dark:bg-slate-700 rounded w-1/2'),
-                    ],
-                  ),
-                ],
-              ),
-              // Skeleton text lines
-              WDiv(
-                className: 'animate-pulse flex flex-col gap-2',
-                children: [
-                  WDiv(
-                      className:
-                          'h-2 bg-slate-200 dark:bg-slate-700 rounded w-full'),
-                  WDiv(
-                      className:
-                          'h-2 bg-slate-200 dark:bg-slate-700 rounded w-5/6'),
-                  WDiv(
-                      className:
-                          'h-2 bg-slate-200 dark:bg-slate-700 rounded w-4/6'),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Bounce Animation
-        _buildSection(
-          title: 'Bounce',
-          description:
-              'The animate-bounce utility is perfect for scroll indicators or attention-grabbing elements.',
-          child: WDiv(
-            className: 'flex wrap gap-8 items-end',
+            className: 'wrap gap-6 py-4 items-center',
             children: [
               WDiv(
-                className: 'flex flex-col items-center gap-2',
-                children: [
-                  WText('Scroll down',
-                      className: 'text-sm text-slate-500 dark:text-slate-400'),
-                  WIcon(
-                    Icons.keyboard_arrow_down,
-                    className: 'animate-bounce text-blue-500 text-3xl',
-                  ),
-                ],
+                className: '''
+                  animate-spin w-8 h-8 rounded-full
+                  border-4 border-blue-500 border-t-transparent
+                ''',
               ),
               WDiv(
-                className: 'flex flex-col items-center gap-2',
+                className: 'flex flex-col gap-2 w-48',
                 children: [
-                  WText('New!',
-                      className: 'text-sm text-slate-500 dark:text-slate-400'),
                   WDiv(
                     className:
-                        'animate-bounce bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold',
-                    child: WText('Click me'),
+                        'animate-pulse h-3 w-full rounded bg-slate-200 dark:bg-slate-700',
+                  ),
+                  WDiv(
+                    className:
+                        'animate-pulse h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700',
                   ),
                 ],
               ),
             ],
           ),
         ),
-
-        const WSpacer(className: 'h-6'),
-
-        // Animation None - Comparison
-        _buildSection(
-          title: 'Removing Animation',
-          description:
-              'Use animate-none to remove animations. Compare: left has animate-spin, right has animate-none.',
+        ExampleSection(
+          title: 'Spin',
+          description: 'Continuous 360° rotation. Perfect for loaders.',
           child: WDiv(
-            className: 'flex wrap gap-8 items-center',
+            className: 'wrap gap-6 items-center py-4',
             children: [
-              // With animation
               WDiv(
-                className: 'flex flex-col items-center gap-2',
-                children: [
-                  WIcon(
-                    Icons.refresh,
-                    className: 'animate-spin text-blue-500 text-3xl',
-                  ),
-                  WText('animate-spin',
-                      className: 'text-xs text-slate-500 font-mono'),
-                ],
+                className: '''
+                  animate-spin w-10 h-10 rounded-full
+                  border-4 border-pink-500 border-t-transparent
+                ''',
               ),
-              // Arrow
               WIcon(
-                Icons.arrow_forward,
-                className: 'text-slate-400 text-xl',
+                Icons.refresh,
+                className: 'animate-spin text-pink-600 dark:text-pink-400',
               ),
-              // Without animation
+              WIcon(
+                Icons.settings_outlined,
+                className: 'animate-spin text-slate-600 dark:text-slate-300',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Ping',
+          description:
+              'Element scales outward and fades — radar pulse / notification dot.',
+          child: WDiv(
+            className: 'wrap gap-8 items-center py-6',
+            children: const [
+              _PingDot(color: 'sky'),
+              _PingDot(color: 'rose'),
+              _PingDot(color: 'emerald'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Pulse',
+          description:
+              'Smooth opacity in/out. Use for skeleton loaders and placeholders.',
+          child: WDiv(
+            className: '''
+              animate-pulse flex gap-4 items-center p-3 rounded-lg
+              bg-slate-50 dark:bg-slate-700/40
+            ''',
+            children: [
               WDiv(
-                className: 'flex flex-col items-center gap-2',
+                className: '''
+                  w-10 h-10 rounded-full
+                  bg-slate-200 dark:bg-slate-600
+                ''',
+              ),
+              WDiv(
+                className: 'flex flex-col gap-2 flex-1',
                 children: [
-                  WIcon(
-                    Icons.refresh,
-                    className: 'animate-none text-gray-400 text-3xl',
+                  WDiv(
+                    className:
+                        'h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-600',
                   ),
-                  WText('animate-none',
-                      className: 'text-xs text-slate-500 font-mono'),
+                  WDiv(
+                    className:
+                        'h-3 w-1/2 rounded bg-slate-200 dark:bg-slate-600',
+                  ),
                 ],
               ),
             ],
           ),
         ),
-
-        const WSpacer(className: 'h-8'),
+        ExampleSection(
+          title: 'Bounce',
+          description:
+              'Vertical hop. Scroll prompts, CTA arrows, attention markers.',
+          child: WDiv(
+            className: 'wrap gap-6 items-center py-6',
+            children: [
+              WIcon(
+                Icons.keyboard_arrow_down,
+                className: 'animate-bounce text-slate-500 dark:text-slate-400',
+              ),
+              WIcon(
+                Icons.arrow_upward,
+                className: 'animate-bounce text-pink-600 dark:text-pink-400',
+              ),
+              WDiv(
+                className: 'animate-bounce px-3 py-1 rounded-full bg-pink-500',
+                child: const WText(
+                  'New',
+                  className: 'text-white font-bold text-xs',
+                ),
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Five values cover every built-in animation.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'animate-none', desc: 'No animation (reset)'),
+              _RefRow(cls: 'animate-spin', desc: 'Continuous 360° rotation'),
+              _RefRow(cls: 'animate-ping', desc: 'Outward scale + fade'),
+              _RefRow(cls: 'animate-pulse', desc: 'Opacity in/out'),
+              _RefRow(cls: 'animate-bounce', desc: 'Vertical hop'),
+            ],
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildHeader({required String title, required String description}) {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6',
-      children: [
-        WText(title, className: 'text-2xl font-bold text-white'),
-        const WSpacer(className: 'h-2'),
-        WText(description, className: 'text-white/80'),
-      ],
+class _PingDot extends StatelessWidget {
+  final String color;
+
+  const _PingDot({required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 32,
+      height: 32,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          WDiv(
+            className: '''
+              animate-ping w-8 h-8
+              rounded-full bg-$color-400 opacity-75
+            ''',
+          ),
+          WDiv(
+            className: 'w-4 h-4 rounded-full bg-$color-500',
+          ),
+        ],
+      ),
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm',
-      children: [
-        WText(title,
-            className: 'text-lg font-semibold text-slate-900 dark:text-white'),
-        WText(description,
-            className: 'text-sm text-slate-600 dark:text-slate-400'),
-        const WSpacer(className: 'h-2'),
-        child,
-      ],
-    );
-  }
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String desc;
 
-  Widget _buildAnimationDemo({
-    required String className,
-    required String label,
-  }) {
+  const _RefRow({required this.cls, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex flex-col items-center gap-2',
+      className: '''
+        flex flex-row items-center justify-between gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WDiv(className: className),
-        WText(label, className: 'text-xs text-slate-500 dark:text-slate-400'),
+        WText(cls,
+            className: 'font-mono text-sm text-pink-700 dark:text-pink-400'),
+        WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }

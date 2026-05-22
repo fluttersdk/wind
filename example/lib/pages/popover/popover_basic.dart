@@ -1,222 +1,164 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Basic WPopover example showing dropdown menu.
+import '../../widgets/example_scaffold.dart';
+
 class PopoverBasicExamplePage extends StatelessWidget {
   const PopoverBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header with gradient
-          WDiv(
+    return ExampleScaffold(
+      title: 'WPopover',
+      description:
+          'Overlay widget for dropdowns, menus, tooltips. triggerBuilder anchors the popover; contentBuilder renders the floating panel.',
+      gradient: 'from-purple-500 to-violet-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Trigger button + dropdown menu. Tapping a menu item calls close.',
+          child: WPopover(
+            alignment: PopoverAlignment.bottomLeft,
             className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-violet-500 to-purple-500
+              w-56 rounded-lg p-2
+              bg-white dark:bg-slate-800
+              shadow-xl border border-slate-200 dark:border-slate-700
             ''',
-            children: const [
-              WText('WPopover', className: 'text-lg font-bold text-white'),
-              WText(
-                'Flexible popover for dropdowns and menus',
-                className: 'text-sm text-violet-100',
-              ),
-            ],
+            triggerBuilder: (context, isOpen, isHovering) => WButton(
+              onTap: () {},
+              className: '''
+                bg-purple-600 hover:bg-purple-700
+                text-white px-4 py-2 rounded-lg duration-200
+              ''',
+              child:
+                  const WText('Open Menu', className: 'text-white font-medium'),
+            ),
+            contentBuilder: (context, close) => WDiv(
+              className: 'flex flex-col',
+              children: [
+                _MenuItem(
+                    icon: Icons.person_outline, label: 'Profile', onTap: close),
+                _MenuItem(
+                    icon: Icons.settings_outlined,
+                    label: 'Settings',
+                    onTap: close),
+                _MenuItem(icon: Icons.logout, label: 'Sign out', onTap: close),
+              ],
+            ),
           ),
-
-          // Basic popover
-          _buildSection(
-            title: 'Basic Dropdown',
-            description: 'Simple menu with actions',
-            children: [
-              WPopover(
-                alignment: PopoverAlignment.bottomLeft,
-                className: '''
-                  w-48 py-1
-                  bg-white dark:bg-slate-800
-                  border border-gray-200 dark:border-gray-700
-                  rounded-lg shadow-xl
-                ''',
-                triggerBuilder: (context, isOpen, isHovering) => WDiv(
-                  className: '''
-                    px-4 py-2 rounded-lg flex items-center gap-2
-                    bg-blue-500 ${isHovering ? 'bg-blue-600' : ''}
-                  ''',
-                  children: [
-                    const WText(
-                      'Open Menu',
-                      className: 'text-white font-medium',
-                    ),
-                    Icon(
-                      isOpen ? Icons.expand_less : Icons.expand_more,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ],
-                ),
-                contentBuilder: (context, close) => WDiv(
-                  className: 'flex flex-col',
-                  children: [
-                    _menuItem(context, Icons.person, 'Profile', close),
-                    _menuItem(context, Icons.settings, 'Settings', close),
-                    const Divider(height: 1),
-                    _menuItem(
-                      context,
-                      Icons.logout,
-                      'Sign Out',
-                      close,
-                      color: Colors.red,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          // Styled popover
-          _buildSection(
-            title: 'Custom Styling',
-            description: 'Gradient background with custom content',
-            children: [
-              WPopover(
-                alignment: PopoverAlignment.bottomLeft,
-                className: '''
-                  w-64 p-4 rounded-xl shadow-2xl
-                  bg-gradient-to-br from-purple-500 to-indigo-600
-                ''',
-                triggerBuilder: (context, isOpen, isHovering) => WDiv(
-                  className: '''
-                    px-4 py-2 rounded-lg flex items-center gap-2
-                    border-2 border-purple-500
-                    ${isHovering ? 'bg-purple-50 dark:bg-purple-900/20' : 'bg-white dark:bg-slate-800'}
-                  ''',
-                  children: const [
-                    Icon(Icons.palette, color: Colors.purple),
-                    WText(
-                      'Styled Popover',
-                      className: 'text-purple-700 dark:text-purple-300',
-                    ),
-                  ],
-                ),
-                contentBuilder: (context, close) => WDiv(
-                  className: 'flex flex-col gap-2',
-                  children: [
-                    const WText(
-                      'Custom Design',
-                      className: 'text-white font-bold text-lg',
-                    ),
-                    const WText(
-                      'Use className for gradients, shadows, and more.',
-                      className: 'text-purple-100 text-sm',
-                    ),
-                    const WDiv(className: 'h-2'),
-                    WButton(
-                      onTap: close,
-                      className: '''
-                        px-4 py-2 rounded-lg
-                        bg-white hover:bg-purple-50
-                        duration-150
-                      ''',
-                      child: const WText(
-                        'Got it!',
-                        className: 'text-purple-600 font-medium text-center',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'Key Props',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _referenceRow('alignment:', 'Popover position'),
-                  _referenceRow('className:', 'Popover styling'),
-                  _referenceRow('closeOnContentTap:', 'Auto-close'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Trigger State',
+          description:
+              'triggerBuilder receives isOpen + isHovering — style the trigger reactively.',
+          child: WPopover(
+            className: '''
+              w-64 rounded-lg p-3
+              bg-white dark:bg-slate-800
+              shadow-xl border border-slate-200 dark:border-slate-700
+            ''',
+            triggerBuilder: (context, isOpen, isHovering) => WDiv(
+              className: '''
+                px-4 py-2 rounded-lg duration-200 cursor-pointer
+                ${isOpen ? "bg-purple-600 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200"}
+              ''',
+              child: WText(
+                isOpen ? 'Open' : 'Idle',
+                className: 'font-medium',
+              ),
+            ),
+            contentBuilder: (context, close) => const WText(
+              'Trigger background changes based on isOpen.',
+              className: 'text-sm text-slate-600 dark:text-slate-300',
+            ),
+          ),
         ),
-        ...children,
+        ExampleSection(
+          title: 'Notification Panel',
+          description:
+              'Bigger contentBuilder with a list of dismissible items.',
+          child: WPopover(
+            className: '''
+              w-80 rounded-xl p-3
+              bg-white dark:bg-slate-800
+              shadow-2xl border border-slate-200 dark:border-slate-700
+            ''',
+            triggerBuilder: (context, isOpen, isHovering) => WButton(
+              onTap: () {},
+              className: '''
+                p-2 rounded-full duration-200
+                bg-slate-100 hover:bg-slate-200
+                dark:bg-slate-700 dark:hover:bg-slate-600
+              ''',
+              child: WIcon(Icons.notifications_outlined,
+                  className: 'text-slate-700 dark:text-slate-200 w-5 h-5'),
+            ),
+            contentBuilder: (context, close) => WDiv(
+              className: 'flex flex-col gap-2',
+              children: [
+                WText('Notifications',
+                    className: 'font-bold text-slate-900 dark:text-white'),
+                _NotifRow(label: 'New comment on your post'),
+                _NotifRow(label: 'Build #423 passed'),
+                _NotifRow(label: 'New follower: @jane'),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _referenceRow(String className, String value) {
-    return WDiv(
-      className: 'flex justify-between',
-      children: [
-        WText(
-          className,
-          className: 'text-sm font-mono text-gray-600 dark:text-gray-300',
-        ),
-        WText(value, className: 'text-sm text-gray-500 dark:text-gray-400'),
-      ],
-    );
-  }
+class _MenuItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
 
-  Widget _menuItem(
-    BuildContext context,
-    IconData icon,
-    String label,
-    VoidCallback close, {
-    Color? color,
-  }) {
+  const _MenuItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return WAnchor(
-      onTap: () {
-        close();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$label tapped')));
-      },
+      onTap: onTap,
       child: WDiv(
         className: '''
-          w-full px-4 py-2 flex items-center gap-3
-          hover:bg-gray-100 dark:hover:bg-slate-700
+          flex items-center gap-3 px-3 py-2 rounded
+          hover:bg-slate-100 dark:hover:bg-slate-700
+          duration-150
         ''',
         children: [
-          Icon(icon, size: 20, color: color ?? Colors.grey.shade600),
-          WText(
-            label,
-            className: color != null
-                ? 'text-red-600'
-                : 'text-gray-800 dark:text-gray-200',
-          ),
+          WIcon(icon, className: 'text-slate-600 dark:text-slate-300 w-5 h-5'),
+          WText(label,
+              className: 'text-sm text-slate-900 dark:text-white font-medium'),
         ],
       ),
+    );
+  }
+}
+
+class _NotifRow extends StatelessWidget {
+  final String label;
+
+  const _NotifRow({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex items-center gap-2 p-2 rounded
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WDiv(className: 'w-2 h-2 rounded-full bg-purple-500 shrink-0'),
+        WText(label,
+            className: 'text-sm text-slate-700 dark:text-slate-200 flex-1'),
+      ],
     );
   }
 }
