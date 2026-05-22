@@ -12,6 +12,8 @@
 
 Wind provides a set of ergonomic extensions on `BuildContext` to make accessing theme data, responsive breakpoints, and styling helpers as concise as possible. Instead of verbose provider lookups, you can access the entire Wind ecosystem directly from the `context`.
 
+<x-preview path="utilities/context_extensions_basic" size="md" source="example/lib/pages/utilities/context_extensions_basic.dart"></x-preview>
+
 <a name="theme-extensions"></a>
 ## Theme Extensions
 

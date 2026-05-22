@@ -62,7 +62,7 @@ WDynamic(
 <a name="how-it-works"></a>
 ## How It Works
 
-<x-preview path="widgets/w_dynamic_basic" size="lg" source="example/lib/pages/widgets/w_dynamic_basic.dart"></x-preview>
+<x-preview path="core-concepts/dynamic_rendering_basic" size="lg" source="example/lib/pages/core-concepts/dynamic_rendering_basic.dart"></x-preview>
 
 WDynamic follows a simple pipeline:
 

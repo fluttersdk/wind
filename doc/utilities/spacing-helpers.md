@@ -5,6 +5,8 @@ Wind provides programmatic access to your theme's spacing scale through helper f
 > [!NOTE]
 > This page covers the **Dart API** for spacing. For CSS-like utility classes such as `p-4`, `m-2`, or `gap-6`, see the [Spacing Layout](../layout/spacing.md) documentation.
 
+<x-preview path="utilities/spacing_helpers_basic" size="md" source="example/lib/pages/utilities/spacing_helpers_basic.dart"></x-preview>
+
 - [The wSpacing Function](#wspacing-function)
 - [Context Extensions](#context-extensions)
 - [Programmatic Access](#programmatic-access)

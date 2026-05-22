@@ -2,6 +2,8 @@
 
 Responsive helpers provide programmatic access to Wind's breakpoint system, platform detection, and screen metrics directly from your Dart code.
 
+<x-preview path="utilities/responsive_helpers_basic" size="md" source="example/lib/pages/utilities/responsive_helpers_basic.dart"></x-preview>
+
 - [Context Extensions](#context-extensions)
 - [Helper Functions](#helper-functions)
 - [Breakpoint Reference](#breakpoint-reference)

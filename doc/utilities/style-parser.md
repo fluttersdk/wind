@@ -11,6 +11,8 @@
 
 While Wind widgets like `WDiv` and `WText` are the primary way to use utility classes, you may sometimes need to parse utility strings programmatically. The Style Parser API allows you to convert any `className` string into a structured `WindStyle` object that can be applied to standard Flutter widgets.
 
+<x-preview path="utilities/style_parser_basic" size="md" source="example/lib/pages/utilities/style_parser_basic.dart"></x-preview>
+
 <a name="wstyle-helper"></a>
 ## The wStyle Helper
 

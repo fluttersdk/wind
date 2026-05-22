@@ -8,6 +8,8 @@
 
 Wind provides a set of utility functions and extensions to help you resolve and manipulate colors programmatically, staying consistent with your theme.
 
+<x-preview path="utilities/color_helpers_basic" size="md" source="example/lib/pages/utilities/color_helpers_basic.dart"></x-preview>
+
 <a name="resolving-colors"></a>
 ## Resolving Colors
 

@@ -13,6 +13,8 @@
 
 Wind provides a set of helper functions and extensions to access typography values directly from your Dart code. While utility classes are the primary way to style widgets, these helpers are essential when you need to calculate dimensions, pass styles to standard Material widgets, or build custom components that respect the design system.
 
+<x-preview path="utilities/typography_helpers_basic" size="md" source="example/lib/pages/utilities/typography_helpers_basic.dart"></x-preview>
+
 <a name="global-functions"></a>
 ## Global Functions
 
