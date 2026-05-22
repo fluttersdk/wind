@@ -27,6 +27,7 @@ import 'pages/checkbox/checkbox_basic.dart';
 // Core Concepts
 import 'pages/core-concepts/dark_mode_basic.dart';
 import 'pages/core-concepts/debugging_basic.dart';
+import 'pages/core-concepts/dynamic_rendering_basic.dart';
 import 'pages/core-concepts/responsive_basic.dart';
 import 'pages/core-concepts/state_management_overview.dart';
 import 'pages/core-concepts/theme_binding.dart';
@@ -138,6 +139,14 @@ import 'pages/styling/background_gradient_stops.dart';
 // SVG
 import 'pages/svg/svg_basic.dart';
 
+// Utilities
+import 'pages/utilities/color_helpers_basic.dart';
+import 'pages/utilities/context_extensions_basic.dart';
+import 'pages/utilities/responsive_helpers_basic.dart';
+import 'pages/utilities/spacing_helpers_basic.dart';
+import 'pages/utilities/style_parser_basic.dart';
+import 'pages/utilities/typography_helpers_basic.dart';
+
 // Test
 import 'pages/test/chrome_mcp_test.dart';
 import 'pages/test/overflow_flex_grid_test.dart';
@@ -172,6 +181,7 @@ import 'pages/typography/font_style_basic.dart';
 import 'pages/typography/whitespace_preview.dart';
 
 // Widgets
+import 'pages/widgets/w_breakpoint.dart';
 import 'pages/widgets/w_date_picker.dart';
 import 'pages/widgets/date_picker_basic.dart';
 import 'pages/widgets/date_picker_range.dart';
@@ -227,6 +237,8 @@ final Map<String, Widget> appRoutes = {
   // Core Concepts
   '/core-concepts/dark_mode_basic': const DarkModeBasicExamplePage(),
   '/core-concepts/debugging_basic': const DebuggingBasicExamplePage(),
+  '/core-concepts/dynamic_rendering_basic':
+      const DynamicRenderingBasicExamplePage(),
   '/core-concepts/responsive_basic': const ResponsiveBasicExamplePage(),
   '/core-concepts/state_management_overview':
       const StateManagementOverviewExamplePage(),
@@ -345,6 +357,17 @@ final Map<String, Widget> appRoutes = {
   // SVG
   '/svg/svg_basic': const SvgBasicExamplePage(),
 
+  // Utilities
+  '/utilities/color_helpers_basic': const ColorHelpersBasicExamplePage(),
+  '/utilities/context_extensions_basic':
+      const ContextExtensionsBasicExamplePage(),
+  '/utilities/responsive_helpers_basic':
+      const ResponsiveHelpersBasicExamplePage(),
+  '/utilities/spacing_helpers_basic': const SpacingHelpersBasicExamplePage(),
+  '/utilities/style_parser_basic': const StyleParserBasicExamplePage(),
+  '/utilities/typography_helpers_basic':
+      const TypographyHelpersBasicExamplePage(),
+
   // Test
   '/test/chrome-mcp': const ChromeMcpTestPage(),
   '/test/overflow-flex-grid': const OverflowFlexGridTestPage(),
@@ -382,6 +405,7 @@ final Map<String, Widget> appRoutes = {
   // Widgets
   '/widgets/w-input-multiline': const WInputMultilineExamplePage(),
   '/widgets/w-input-search': const WInputSearchExamplePage(),
+  '/widgets/w_breakpoint': const WBreakpointExamplePage(),
   '/widgets/w_date_picker': const WDatePickerExamplePage(),
   '/widgets/date_picker_basic': const DatePickerBasicExamplePage(),
   '/widgets/date_picker_range': const DatePickerRangeExamplePage(),
@@ -398,10 +422,10 @@ final Map<String, Widget> appRoutes = {
   '/widgets/w_button_centered': const WButtonCenteredExamplePage(),
   '/widgets/w_icon_sizing': const WIconSizingExamplePage(),
   '/widgets/w_anchor_flex': const WAnchorFlexExamplePage(),
-  '/widgets/w-form-input': const WFormInputExamplePage(),
-  '/widgets/w-form-input_layout': const WFormInputLayoutExamplePage(),
-  '/widgets/w-form-select': const WFormSelectExamplePage(),
-  '/widgets/w-form-multiselect': const WFormMultiSelectExamplePage(),
+  '/widgets/w_form_input': const WFormInputExamplePage(),
+  '/widgets/w_form_input_layout': const WFormInputLayoutExamplePage(),
+  '/widgets/w_form_select': const WFormSelectExamplePage(),
+  '/widgets/w_form_multiselect': const WFormMultiSelectExamplePage(),
   '/widgets/w_form_checkbox': const WFormCheckboxExamplePage(),
   '/widgets/w_form_checkbox_layout': const WFormCheckboxLayoutExamplePage(),
 
