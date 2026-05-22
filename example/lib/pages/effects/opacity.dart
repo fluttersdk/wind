@@ -1,199 +1,146 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Example page demonstrating opacity utility classes.
+import '../../widgets/example_scaffold.dart';
+
 class OpacityExamplePage extends StatelessWidget {
   const OpacityExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-slate-500 to-gray-600
-            ''',
+    return ExampleScaffold(
+      title: 'Opacity',
+      description:
+          'opacity-{N} fades the entire element (content + background + borders). For background-only alpha use the color slash modifier instead.',
+      gradient: 'from-violet-500 to-purple-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'A 20-step scale from opacity-0 (invisible) to opacity-100 (fully opaque). Pickable in increments of 5.',
+          child: WDiv(
+            className: 'wrap gap-3',
             children: const [
-              WText('Opacity', className: 'text-lg font-bold text-white'),
-              WText(
-                'Control element transparency with opacity utilities',
-                className: 'text-sm text-slate-200',
-              ),
+              _Tile(label: 'opacity-100', cls: 'opacity-100'),
+              _Tile(label: 'opacity-75', cls: 'opacity-75'),
+              _Tile(label: 'opacity-50', cls: 'opacity-50'),
+              _Tile(label: 'opacity-25', cls: 'opacity-25'),
+              _Tile(label: 'opacity-10', cls: 'opacity-10'),
             ],
           ),
-
-          // Standard opacity values
-          _buildSection(
-            title: 'opacity-{value}',
-            description: 'Standard opacity values from 0 to 100',
+        ),
+        ExampleSection(
+          title: 'Interactive States',
+          description:
+              'Combine with hover: / disabled: / focus: to fade on interaction.',
+          child: WDiv(
+            className: 'wrap gap-3',
             children: [
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: const [
-                  _OpacityBox(value: '100', opacity: 1.0),
-                  _OpacityBox(value: '75', opacity: 0.75),
-                  _OpacityBox(value: '50', opacity: 0.50),
-                  _OpacityBox(value: '25', opacity: 0.25),
-                  _OpacityBox(value: '0', opacity: 0.0),
-                ],
+              WButton(
+                onTap: () {},
+                className: '''
+                  bg-violet-500 hover:opacity-80
+                  text-white px-4 py-2 rounded
+                ''',
+                child: const WText('hover:opacity-80', className: 'text-white'),
+              ),
+              WButton(
+                onTap: () {},
+                disabled: true,
+                className: '''
+                  bg-violet-500 disabled:opacity-40
+                  text-white px-4 py-2 rounded
+                ''',
+                child:
+                    const WText('disabled:opacity-40', className: 'text-white'),
               ),
             ],
           ),
-
-          // Fine-grained control
-          _buildSection(
-            title: 'Fine-Grained Control',
-            description: 'Additional values for precise opacity control',
-            children: [
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: const [
-                  _OpacityBox(value: '95', opacity: 0.95),
-                  _OpacityBox(value: '90', opacity: 0.90),
-                  _OpacityBox(value: '80', opacity: 0.80),
-                  _OpacityBox(value: '70', opacity: 0.70),
-                  _OpacityBox(value: '60', opacity: 0.60),
-                ],
+        ),
+        ExampleSection(
+          title: 'Element vs Background Opacity',
+          description:
+              'opacity-50 fades EVERYTHING (text and bg). bg-{color}/50 fades only the background, keeping text crisp.',
+          child: WDiv(
+            className: 'grid grid-cols-1 sm:grid-cols-2 gap-3',
+            children: const [
+              _CompareCard(
+                label: 'opacity-50',
+                cls: 'opacity-50 bg-violet-500 text-white p-4',
+                note: 'Both text + bg fade',
               ),
-              const SizedBox(height: 8),
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: const [
-                  _OpacityBox(value: '40', opacity: 0.40),
-                  _OpacityBox(value: '30', opacity: 0.30),
-                  _OpacityBox(value: '20', opacity: 0.20),
-                  _OpacityBox(value: '10', opacity: 0.10),
-                  _OpacityBox(value: '5', opacity: 0.05),
-                ],
+              _CompareCard(
+                label: 'bg-violet-500/50',
+                cls: 'bg-violet-500/50 text-white p-4',
+                note: 'Only bg fades',
               ),
             ],
           ),
-
-          // Arbitrary values
-          _buildSection(
-            title: 'opacity-[value]',
-            description: 'Use bracket notation for custom values',
-            children: [
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: const [
-                  _ArbitraryOpacityBox(value: '0.67'),
-                  _ArbitraryOpacityBox(value: '0.35'),
-                  _ArbitraryOpacityBox(value: '0.15'),
-                ],
-              ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Values',
+          description: 'opacity-[0.X] accepts any decimal between 0.0 and 1.0.',
+          child: WDiv(
+            className: 'wrap gap-3',
+            children: const [
+              _Tile(label: 'opacity-[0.67]', cls: 'opacity-[0.67]'),
+              _Tile(label: 'opacity-[0.33]', cls: 'opacity-[0.33]'),
+              _Tile(label: 'opacity-[0.125]', cls: 'opacity-[0.125]'),
             ],
           ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: const [
-                  WText(
-                    'opacity-0 → 0%  |  opacity-50 → 50%  |  opacity-100 → 100%',
-                    className:
-                        'text-xs font-mono text-gray-600 dark:text-gray-400',
-                  ),
-                  WText(
-                    'opacity-[0.35] → Custom 35%',
-                    className:
-                        'text-xs font-mono text-gray-600 dark:text-gray-400',
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
+class _Tile extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _Tile({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-col gap-2 items-start',
+      children: [
+        WDiv(className: 'w-20 h-20 rounded-lg bg-violet-600 $cls'),
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-700 dark:text-slate-300',
+        ),
+      ],
+    );
+  }
+}
+
+class _CompareCard extends StatelessWidget {
+  final String label;
+  final String cls;
+  final String note;
+
+  const _CompareCard({
+    required this.label,
+    required this.cls,
+    required this.note,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
       className: 'flex flex-col gap-2',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
-        ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
-        ),
-        ...children,
-      ],
-    );
-  }
-}
-
-class _OpacityBox extends StatelessWidget {
-  final String value;
-  final double opacity;
-
-  const _OpacityBox({required this.value, required this.opacity});
-
-  @override
-  Widget build(BuildContext context) {
-    return WDiv(
-      className: 'flex flex-col items-center gap-2',
-      children: [
         WDiv(
-          className: '''
-            opacity-$value w-16 h-16 bg-blue-500 rounded-lg
-            flex items-center justify-center
-          ''',
-          children: [
-            WText(
-              '${(opacity * 100).toInt()}%',
-              className: 'text-white font-bold text-xs',
-            ),
-          ],
+          className: '$cls rounded-lg',
+          child: WText(
+            'Sample Text — $note',
+            className: 'font-medium',
+          ),
         ),
         WText(
-          'opacity-$value',
-          className: 'text-xs text-gray-500 dark:text-gray-400 font-mono',
-        ),
-      ],
-    );
-  }
-}
-
-class _ArbitraryOpacityBox extends StatelessWidget {
-  final String value;
-
-  const _ArbitraryOpacityBox({required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return WDiv(
-      className: 'flex flex-col items-center gap-2',
-      children: [
-        WDiv(
-          className: '''
-            opacity-[$value] w-16 h-16 bg-purple-500 rounded-lg
-            flex items-center justify-center
-          ''',
-          children: [WText(value, className: 'text-white font-bold text-xs')],
-        ),
-        WText(
-          'opacity-[$value]',
-          className: 'text-xs text-gray-500 dark:text-gray-400 font-mono',
+          label,
+          className: 'font-mono text-xs text-slate-700 dark:text-slate-300',
         ),
       ],
     );

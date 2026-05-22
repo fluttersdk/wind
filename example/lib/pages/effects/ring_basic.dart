@@ -1,219 +1,106 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Ring Basic Example Page - demonstrates ring width, offset, and inset.
+import '../../widgets/example_scaffold.dart';
+
 class RingBasicExamplePage extends StatelessWidget {
   const RingBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-blue-500 to-cyan-500
-            ''',
+    return ExampleScaffold(
+      title: 'Ring',
+      description:
+          'ring-{width} adds an outline that does NOT consume layout space. Perfect for focus indicators and highlights.',
+      gradient: 'from-amber-500 to-yellow-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each tile applies a different ring-{width}. Default ring is 3px and blue-500.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
             children: const [
-              WText('Ring', className: 'text-lg font-bold text-white'),
-              WText('Focus ring utilities', className: 'text-sm text-blue-100'),
+              _RingTile(label: 'ring-0', cls: 'ring-0'),
+              _RingTile(label: 'ring-1', cls: 'ring-1'),
+              _RingTile(label: 'ring-2', cls: 'ring-2'),
+              _RingTile(label: 'ring (3px)', cls: 'ring'),
+              _RingTile(label: 'ring-4', cls: 'ring-4'),
+              _RingTile(label: 'ring-8', cls: 'ring-8'),
             ],
           ),
-
-          // Ring widths
-          _buildSection(
-            title: 'ring-{width}',
-            description: 'Control the width of the ring',
-            children: [
-              WDiv(
-                className: 'flex gap-4 overflow-x-auto',
-                children: const [
-                  _RingBox(width: '0', label: '0px'),
-                  _RingBox(width: '1', label: '1px'),
-                  _RingBox(width: '2', label: '2px'),
-                  _RingBox(width: '', label: '3px'),
-                  _RingBox(width: '4', label: '4px'),
-                  _RingBox(width: '8', label: '8px'),
-                ],
-              ),
-            ],
-          ),
-
-          // Ring offset
-          _buildSection(
-            title: 'ring-offset-{width}',
-            description: 'Add space between element and ring',
-            children: [
-              WDiv(
-                className: 'flex gap-4 overflow-x-auto',
-                children: const [
-                  _OffsetBox(offset: '0'),
-                  _OffsetBox(offset: '1'),
-                  _OffsetBox(offset: '2'),
-                  _OffsetBox(offset: '4'),
-                ],
-              ),
-            ],
-          ),
-
-          // Ring inset
-          _buildSection(
-            title: 'ring-inset',
-            description: 'Render the ring inside the element',
-            children: [
-              WDiv(
-                className: 'flex gap-4 overflow-x-auto',
-                children: const [
-                  _InsetBox(inset: false),
-                  _InsetBox(inset: true),
-                ],
-              ),
-            ],
-          ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: const [
-                  WText(
-                    'ring | ring-2 | ring-4 | ring-8',
-                    className:
-                        'text-xs font-mono text-gray-600 dark:text-gray-400',
-                  ),
-                  WText(
-                    'ring-offset-{0|1|2|4|8} | ring-inset',
-                    className:
-                        'text-xs font-mono text-gray-600 dark:text-gray-400',
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Ring Offset',
+          description:
+              'ring-offset-{N} adds a transparent gap between the element and the ring.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
+            children: const [
+              _RingTile(
+                label: 'ring-2 ring-offset-0',
+                cls: 'ring-2 ring-offset-0',
+              ),
+              _RingTile(
+                label: 'ring-2 ring-offset-2',
+                cls:
+                    'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900',
+              ),
+              _RingTile(
+                label: 'ring-2 ring-offset-4',
+                cls:
+                    'ring-2 ring-offset-4 ring-offset-white dark:ring-offset-slate-900',
+              ),
+            ],
+          ),
         ),
-        ...children,
+        ExampleSection(
+          title: 'Ring Inset',
+          description:
+              'ring-inset renders the ring INSIDE the element instead of outside.',
+          child: WDiv(
+            className: 'flex justify-center py-4',
+            child: WDiv(
+              className: '''
+                w-32 h-32 rounded-xl
+                bg-amber-100 dark:bg-amber-900/40
+                ring-4 ring-inset ring-amber-500
+                flex items-center justify-center
+              ''',
+              child: const WText(
+                'ring-4 ring-inset',
+                className:
+                    'font-mono text-sm text-amber-700 dark:text-amber-300',
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
 }
 
-class _RingBox extends StatelessWidget {
-  final String width;
+class _RingTile extends StatelessWidget {
   final String label;
+  final String cls;
 
-  const _RingBox({required this.width, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final ringClass = width.isEmpty ? 'ring' : 'ring-$width';
-    return WDiv(
-      className: 'flex flex-col items-center gap-2',
-      children: [
-        WDiv(
-          className: '''
-            $ringClass ring-blue-500 w-16 h-16 bg-white rounded-lg
-            flex items-center justify-center
-          ''',
-          children: [
-            WText(label, className: 'text-xs text-gray-600 font-medium'),
-          ],
-        ),
-        WText(
-          ringClass,
-          className: 'text-xs text-gray-500 dark:text-gray-400 font-mono',
-        ),
-      ],
-    );
-  }
-}
-
-class _OffsetBox extends StatelessWidget {
-  final String offset;
-
-  const _OffsetBox({required this.offset});
+  const _RingTile({required this.label, required this.cls});
 
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex flex-col items-center gap-2',
+      className: 'flex flex-col gap-2 items-center',
       children: [
         WDiv(
           className: '''
-            ring-4 ring-offset-$offset ring-blue-500 w-16 h-16 bg-white rounded-lg
-            flex items-center justify-center
+            w-20 h-20 rounded-lg
+            bg-amber-200 dark:bg-amber-900/40
+            $cls
           ''',
-          children: [
-            WText(
-              '${offset}px',
-              className: 'text-xs text-gray-600 font-medium',
-            ),
-          ],
         ),
         WText(
-          'offset-$offset',
-          className: 'text-xs text-gray-500 dark:text-gray-400 font-mono',
-        ),
-      ],
-    );
-  }
-}
-
-class _InsetBox extends StatelessWidget {
-  final bool inset;
-
-  const _InsetBox({required this.inset});
-
-  @override
-  Widget build(BuildContext context) {
-    final insetClass = inset ? 'ring-inset' : '';
-    return WDiv(
-      className: 'flex flex-col items-center gap-2',
-      children: [
-        WDiv(
-          className: '''
-            ring-4 $insetClass ring-blue-500 w-16 h-16 bg-blue-100 rounded-lg
-            flex items-center justify-center
-          ''',
-          children: [
-            WText(
-              inset ? 'Inset' : 'Normal',
-              className: 'text-xs text-gray-600 font-medium',
-            ),
-          ],
-        ),
-        WText(
-          inset ? 'ring-inset' : 'default',
-          className: 'text-xs text-gray-500 dark:text-gray-400 font-mono',
+          label,
+          className: 'font-mono text-xs text-slate-700 dark:text-slate-300',
         ),
       ],
     );

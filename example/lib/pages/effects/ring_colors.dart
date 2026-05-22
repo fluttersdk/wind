@@ -1,163 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Ring Colors Example Page - demonstrates ring color utilities.
+import '../../widgets/example_scaffold.dart';
+
 class RingColorsExamplePage extends StatelessWidget {
   const RingColorsExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-emerald-500 to-teal-500
-            ''',
+    return ExampleScaffold(
+      title: 'Ring Color',
+      description:
+          'ring-{color} tints the ring with any theme color. Supports the /N opacity modifier.',
+      gradient: 'from-amber-500 to-yellow-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each tile applies a 4px ring tinted with a different color.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
             children: const [
-              WText('Ring Colors', className: 'text-lg font-bold text-white'),
-              WText(
-                'Theme and arbitrary ring colors',
-                className: 'text-sm text-emerald-100',
-              ),
+              _ColorRingTile(label: 'ring-blue-500', cls: 'ring-blue-500'),
+              _ColorRingTile(label: 'ring-red-500', cls: 'ring-red-500'),
+              _ColorRingTile(
+                  label: 'ring-emerald-500', cls: 'ring-emerald-500'),
+              _ColorRingTile(label: 'ring-purple-500', cls: 'ring-purple-500'),
+              _ColorRingTile(label: 'ring-pink-500', cls: 'ring-pink-500'),
             ],
           ),
-
-          // Theme colors
-          _buildSection(
-            title: 'ring-{color}-{shade}',
-            description: 'Use any theme color for rings',
-            children: [
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: const [
-                  _ColorBox(color: 'red-500'),
-                  _ColorBox(color: 'orange-500'),
-                  _ColorBox(color: 'green-500'),
-                  _ColorBox(color: 'blue-500'),
-                  _ColorBox(color: 'purple-500'),
-                ],
-              ),
-            ],
-          ),
-
-          // Arbitrary colors
-          _buildSection(
-            title: 'ring-[#hex]',
-            description: 'Use custom hex colors',
-            children: [
-              WDiv(
-                className: 'flex gap-3 overflow-x-auto',
-                children: const [
-                  _HexBox(hex: '#1da1f2', label: 'Twitter'),
-                  _HexBox(hex: '#E1306C', label: 'Instagram'),
-                  _HexBox(hex: '#25D366', label: 'WhatsApp'),
-                ],
-              ),
-            ],
-          ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: const [
-                  WText(
-                    'ring-{color}-{shade} → ring-blue-500',
-                    className:
-                        'text-xs font-mono text-gray-600 dark:text-gray-400',
-                  ),
-                  WText(
-                    'ring-[#hex] → ring-[#1da1f2]',
-                    className:
-                        'text-xs font-mono text-gray-600 dark:text-gray-400',
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Color Opacity',
+          description:
+              'Append /N to fade the ring color. Useful for subtle focus rings on intense backgrounds.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
+            children: const [
+              _ColorRingTile(label: 'ring-red-500', cls: 'ring-red-500'),
+              _ColorRingTile(label: 'ring-red-500/75', cls: 'ring-red-500/75'),
+              _ColorRingTile(label: 'ring-red-500/50', cls: 'ring-red-500/50'),
+              _ColorRingTile(label: 'ring-red-500/25', cls: 'ring-red-500/25'),
+            ],
+          ),
         ),
-        ...children,
-      ],
-    );
-  }
-}
-
-class _ColorBox extends StatelessWidget {
-  final String color;
-
-  const _ColorBox({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return WDiv(
-      className: 'flex flex-col items-center gap-2',
-      children: [
-        WDiv(
-          className: '''
-            ring-4 ring-$color w-14 h-14 bg-white rounded-lg
-            flex items-center justify-center
-          ''',
-        ),
-        WText(
-          color,
-          className: 'text-xs text-gray-500 dark:text-gray-400 font-mono',
+        ExampleSection(
+          title: 'Focus Ring Pattern',
+          description:
+              'Classic focus styling: ring + offset + color triggered by the focus: prefix.',
+          child: WInput(
+            placeholder: 'Click here to see the focus ring',
+            className: '''
+              w-full px-3 py-2 rounded-lg
+              bg-white dark:bg-slate-800
+              border border-gray-300 dark:border-gray-600
+              focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
+              focus:ring-offset-white dark:focus:ring-offset-slate-900
+            ''',
+          ),
         ),
       ],
     );
   }
 }
 
-class _HexBox extends StatelessWidget {
-  final String hex;
+class _ColorRingTile extends StatelessWidget {
   final String label;
+  final String cls;
 
-  const _HexBox({required this.hex, required this.label});
+  const _ColorRingTile({required this.label, required this.cls});
 
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex flex-col items-center gap-2',
+      className: 'flex flex-col gap-2 items-center',
       children: [
         WDiv(
           className: '''
-            ring-4 ring-[$hex] w-14 h-14 bg-white rounded-lg
-            flex items-center justify-center
+            w-20 h-20 rounded-lg
+            bg-white dark:bg-slate-800
+            ring-4 $cls
           ''',
         ),
         WText(
           label,
-          className: 'text-xs text-gray-500 dark:text-gray-400 font-mono',
+          className: 'font-mono text-xs text-slate-700 dark:text-slate-300',
         ),
       ],
     );

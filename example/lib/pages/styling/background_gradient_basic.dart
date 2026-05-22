@@ -1,138 +1,102 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class BackgroundGradientBasicExamplePage extends StatelessWidget {
   const BackgroundGradientBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4 bg-white dark:bg-slate-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-8 max-w-5xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildDirectionSection(),
-          _buildColorCombos(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'flex flex-col gap-2 pb-4 border-b border-slate-200 dark:border-slate-800',
+    return ExampleScaffold(
+      title: 'Background Gradient',
+      description:
+          'bg-gradient-to-{dir} + from-{color} (+ optional via, to) composes a linear gradient. Eight directions, three color stops.',
+      gradient: 'from-cyan-400 to-blue-500',
       children: [
-        WText(
-          'Background Image (Gradients)',
-          className: 'text-3xl font-bold text-slate-900 dark:text-white',
-        ),
-        WText(
-          'Utilities for controlling the background gradient of an element.',
-          className: 'text-lg text-slate-600 dark:text-slate-400',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDirectionSection() {
-    return WDiv(
-      className: 'flex flex-col gap-4',
-      children: [
-        WText(
-          'Linear Gradient Directions',
-          className: 'text-lg font-semibold text-slate-900 dark:text-white',
-        ),
-        WDiv(
-          className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4',
-          children: [
-            _buildGradientBox('bg-gradient-to-t', 'to top'),
-            _buildGradientBox('bg-gradient-to-tr', 'to top right'),
-            _buildGradientBox('bg-gradient-to-r', 'to right'),
-            _buildGradientBox('bg-gradient-to-br', 'to bottom right'),
-            _buildGradientBox('bg-gradient-to-b', 'to bottom'),
-            _buildGradientBox('bg-gradient-to-bl', 'to bottom left'),
-            _buildGradientBox('bg-gradient-to-l', 'to left'),
-            _buildGradientBox('bg-gradient-to-tl', 'to top left'),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGradientBox(String directionClass, String label) {
-    return WDiv(
-      className:
-          '$directionClass from-cyan-500 to-blue-500 h-32 rounded-lg flex items-center justify-center p-4 shadow-sm',
-      child: WDiv(
-        className: 'bg-black/20 px-3 py-1 rounded backdrop-blur-sm',
-        child: WText(
-          label,
-          className: 'text-white text-sm font-medium',
-        ),
-      ),
-    );
-  }
-
-  Widget _buildColorCombos() {
-    return WDiv(
-      className: 'flex flex-col gap-4',
-      children: [
-        WText(
-          'Common Gradient Combinations',
-          className: 'text-lg font-semibold text-slate-900 dark:text-white',
-        ),
-        WDiv(
-          className: 'grid grid-cols-1 md:grid-cols-2 gap-6',
-          children: [
-            _buildComboCard(
-              'bg-gradient-to-r from-indigo-500 to-purple-500',
-              'from-indigo-500 to-purple-500',
-            ),
-            _buildComboCard(
+        ExampleSection(
+          title: 'Basic Usage',
+          description: 'Two-color gradient pointing right. The simplest form.',
+          child: WDiv(
+            className:
+                'h-24 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center',
+            child: const WText(
               'bg-gradient-to-r from-cyan-500 to-blue-500',
-              'from-cyan-500 to-blue-500',
+              className: 'text-white font-mono text-sm',
             ),
-            _buildComboCard(
-              'bg-gradient-to-r from-emerald-500 to-lime-600',
-              'from-emerald-500 to-lime-600',
+          ),
+        ),
+        ExampleSection(
+          title: 'Three-Color Gradient',
+          description:
+              'Insert via-{color} for a three-stop gradient. Useful for rainbow strips and hero backgrounds.',
+          child: WDiv(
+            className:
+                'h-24 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center',
+            child: const WText(
+              'from-indigo-500 via-purple-500 to-pink-500',
+              className: 'text-white font-mono text-sm',
             ),
-            _buildComboCard(
-              'bg-gradient-to-r from-pink-500 to-rose-500',
-              'from-pink-500 to-rose-500',
+          ),
+        ),
+        ExampleSection(
+          title: 'Eight Directions',
+          description:
+              'bg-gradient-to-{t|tr|r|br|b|bl|l|tl}. Each cardinal + diagonal direction available.',
+          child: WDiv(
+            className: 'grid grid-cols-2 sm:grid-cols-4 gap-3',
+            children: const [
+              _DirTile(label: 'to-t', cls: 'bg-gradient-to-t'),
+              _DirTile(label: 'to-tr', cls: 'bg-gradient-to-tr'),
+              _DirTile(label: 'to-r', cls: 'bg-gradient-to-r'),
+              _DirTile(label: 'to-br', cls: 'bg-gradient-to-br'),
+              _DirTile(label: 'to-b', cls: 'bg-gradient-to-b'),
+              _DirTile(label: 'to-bl', cls: 'bg-gradient-to-bl'),
+              _DirTile(label: 'to-l', cls: 'bg-gradient-to-l'),
+              _DirTile(label: 'to-tl', cls: 'bg-gradient-to-tl'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Dark Mode Pair',
+          description:
+              'Define separate gradient stops for light and dark with dark: prefixes.',
+          child: WDiv(
+            className: '''
+              h-24 rounded-lg flex items-center justify-center
+              bg-gradient-to-r from-slate-100 to-slate-200
+              dark:from-slate-800 dark:to-slate-900
+            ''',
+            child: const WText(
+              'from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900',
+              className: 'text-slate-900 dark:text-white font-mono text-xs',
             ),
-            _buildComboCard(
-              'bg-gradient-to-r from-amber-200 to-yellow-500',
-              'from-amber-200 to-yellow-500',
-            ),
-            _buildComboCard(
-              'bg-gradient-to-r from-slate-900 to-slate-700',
-              'from-slate-900 to-slate-700',
-            ),
-          ],
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildComboCard(String className, String label) {
+class _DirTile extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _DirTile({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: '$className p-6 rounded-xl shadow-md',
-      child: WDiv(
-        className: 'flex flex-col gap-1',
-        children: [
-          WText(
-            label,
-            className: 'text-white font-mono text-sm font-semibold',
-          ),
-          WText(
-            'bg-gradient-to-r',
-            className: 'text-white/80 font-mono text-xs',
-          ),
-        ],
-      ),
+      className: 'flex flex-col gap-1 items-start',
+      children: [
+        WDiv(
+          className: 'w-full h-16 rounded $cls from-cyan-400 to-blue-600',
+        ),
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-700 dark:text-slate-300',
+        ),
+      ],
     );
   }
 }

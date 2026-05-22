@@ -1,133 +1,168 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Borders Preview Example Page - comprehensive border utilities demo.
+import '../../widgets/example_scaffold.dart';
+
 class BordersPreviewExamplePage extends StatelessWidget {
   const BordersPreviewExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildWidthSection(),
-          _buildColorSection(),
-          _buildRadiusSection(),
-          _buildStyleSection(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6',
-      children: const [
-        WText('Borders Preview', className: 'text-2xl font-bold text-white'),
-        WText(
-          'Width, color, radius, and style utilities',
-          className: 'text-indigo-100 mt-2',
+    return ExampleScaffold(
+      title: 'Borders',
+      description:
+          'border (1px default), border-{n} for width, border-{color} for color, rounded-{size} for radius. Stack any combination.',
+      gradient: 'from-rose-500 to-pink-600',
+      children: [
+        ExampleSection(
+          title: 'Width',
+          description: 'border-{0|1|2|4|8} sets the width. border alone = 1px.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
+            children: const [
+              _BorderTile(label: 'border', cls: 'border'),
+              _BorderTile(label: 'border-2', cls: 'border-2'),
+              _BorderTile(label: 'border-4', cls: 'border-4'),
+              _BorderTile(label: 'border-8', cls: 'border-8'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Color',
+          description:
+              'border-{color}-{shade} tints the border. Pair with dark: for theme-aware borders.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
+            children: const [
+              _BorderTile(
+                  label: 'border-rose-500', cls: 'border-2 border-rose-500'),
+              _BorderTile(
+                  label: 'border-blue-500', cls: 'border-2 border-blue-500'),
+              _BorderTile(
+                  label: 'border-emerald-500',
+                  cls: 'border-2 border-emerald-500'),
+              _BorderTile(
+                  label: 'border-amber-500', cls: 'border-2 border-amber-500'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Individual Sides',
+          description:
+              'border-{t|r|b|l}-{n} targets a single side. Useful for dividers and asymmetric accents.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
+            children: const [
+              _BorderTile(
+                  label: 'border-t-4', cls: 'border-t-4 border-rose-500'),
+              _BorderTile(
+                  label: 'border-b-4', cls: 'border-b-4 border-rose-500'),
+              _BorderTile(
+                  label: 'border-l-4', cls: 'border-l-4 border-rose-500'),
+              _BorderTile(
+                  label: 'border-r-4', cls: 'border-r-4 border-rose-500'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Radius',
+          description:
+              'rounded-{size} controls corner radius. Pair with rounded-{corner}-{size} for asymmetric shapes.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
+            children: const [
+              _RadiusTile(label: 'rounded-none', cls: 'rounded-none'),
+              _RadiusTile(label: 'rounded', cls: 'rounded'),
+              _RadiusTile(label: 'rounded-md', cls: 'rounded-md'),
+              _RadiusTile(label: 'rounded-lg', cls: 'rounded-lg'),
+              _RadiusTile(label: 'rounded-xl', cls: 'rounded-xl'),
+              _RadiusTile(label: 'rounded-2xl', cls: 'rounded-2xl'),
+              _RadiusTile(label: 'rounded-full', cls: 'rounded-full'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Corner-Specific Radius',
+          description:
+              'rounded-t-lg rounds top corners only. rounded-tl-lg rounds the top-left corner only.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
+            children: const [
+              _RadiusTile(label: 'rounded-t-xl', cls: 'rounded-t-xl'),
+              _RadiusTile(label: 'rounded-r-xl', cls: 'rounded-r-xl'),
+              _RadiusTile(label: 'rounded-tl-2xl', cls: 'rounded-tl-2xl'),
+              _RadiusTile(label: 'rounded-br-2xl', cls: 'rounded-br-2xl'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Values',
+          description:
+              'Brackets accept exact pixel widths, hex colors, and radii.',
+          child: WDiv(
+            className: 'wrap gap-6 py-4',
+            children: const [
+              _BorderTile(
+                  label: 'border-[3px] border-[#50d71e]',
+                  cls: 'border-[3px] border-[#50d71e]'),
+              _RadiusTile(label: 'rounded-[10px]', cls: 'rounded-[10px]'),
+            ],
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildWidthSection() {
-    return _buildSection(
-      title: 'Border Width',
-      description: 'Control border thickness with border-{width}',
-      child: WDiv(
-        className: 'flex gap-4 wrap',
-        children: [
-          _buildBox('border', 'border'),
-          _buildBox('border-2', 'border-2'),
-          _buildBox('border-4', 'border-4'),
-          _buildBox('border-8', 'border-8'),
-        ],
-      ),
-    );
-  }
+class _BorderTile extends StatelessWidget {
+  final String label;
+  final String cls;
 
-  Widget _buildColorSection() {
-    return _buildSection(
-      title: 'Border Color',
-      description: 'Set border colors with border-{color}-{shade}',
-      child: WDiv(
-        className: 'flex gap-4 wrap',
-        children: [
-          _buildBox('border-2 border-red-500', 'red-500'),
-          _buildBox('border-2 border-blue-500', 'blue-500'),
-          _buildBox('border-2 border-green-500', 'green-500'),
-          _buildBox('border-2 border-purple-500', 'purple-500'),
-        ],
-      ),
-    );
-  }
+  const _BorderTile({required this.label, required this.cls});
 
-  Widget _buildRadiusSection() {
-    return _buildSection(
-      title: 'Border Radius',
-      description: 'Round corners with rounded-{size}',
-      child: WDiv(
-        className: 'flex gap-4 wrap',
-        children: [
-          _buildBox('border-2 border-slate-400 rounded-none', 'none'),
-          _buildBox('border-2 border-slate-400 rounded', 'rounded'),
-          _buildBox('border-2 border-slate-400 rounded-lg', 'lg'),
-          _buildBox('border-2 border-slate-400 rounded-xl', 'xl'),
-          _buildBox('border-2 border-slate-400 rounded-full', 'full'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStyleSection() {
-    return _buildSection(
-      title: 'Border Style',
-      description: 'Change border style with border-{style}',
-      child: WDiv(
-        className: 'flex gap-4 wrap',
-        children: [
-          _buildBox('border-2 border-slate-400 border-solid', 'solid'),
-          _buildBox('border-2 border-slate-400 border-dashed', 'dashed'),
-          _buildBox('border-2 border-slate-400 border-dotted', 'dotted'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className:
-          'flex flex-col gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg',
-      children: [
-        WText(title,
-            className: 'text-lg font-semibold text-slate-900 dark:text-white'),
-        WText(description,
-            className: 'text-sm text-slate-600 dark:text-slate-400'),
-        child,
-      ],
-    );
-  }
-
-  Widget _buildBox(String className, String label) {
-    return WDiv(
-      className: 'flex flex-col items-center gap-2',
+      className: 'flex flex-col gap-2 items-center',
       children: [
         WDiv(
-          className: 'w-16 h-16 bg-slate-100 dark:bg-slate-700 $className',
+          className: '''
+            w-20 h-20 rounded-lg
+            bg-white dark:bg-slate-800
+            $cls
+          ''',
         ),
-        WText(label,
-            className: 'text-xs text-slate-500 dark:text-slate-400 font-mono'),
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-700 dark:text-slate-300',
+        ),
+      ],
+    );
+  }
+}
+
+class _RadiusTile extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _RadiusTile({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-col gap-2 items-center',
+      children: [
+        WDiv(
+          className: '''
+            w-20 h-20
+            bg-rose-500
+            $cls
+          ''',
+        ),
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-700 dark:text-slate-300',
+        ),
       ],
     );
   }

@@ -1,203 +1,146 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Overflow Directional Example
-/// Demonstrates axis-specific overflow: overflow-x-*, overflow-y-*
+import '../../widgets/example_scaffold.dart';
+
 class OverflowDirectionalExamplePage extends StatelessWidget {
   const OverflowDirectionalExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-cyan-500 to-blue-500
-            ''',
-            children: [
-              WText(
-                'Directional Overflow',
-                className: 'text-lg font-bold text-white',
-              ),
-              WText(
-                'Control overflow per axis',
-                className: 'text-sm text-cyan-100',
-              ),
-            ],
-          ),
-
-          // overflow-x-scroll
-          _buildSection(
-            title: 'overflow-x-scroll',
-            description: 'Horizontal scroll only',
-            children: [
-              WDiv(
-                className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                child: WDiv(
-                  className:
-                      'overflow-x-scroll w-48 h-20 bg-purple-500 rounded-lg',
-                  child: WDiv(
-                    className:
-                        'w-96 h-20 bg-purple-300 flex items-center justify-center',
-                    child: WText(
-                      'Wide content (384px)',
-                      className: 'text-purple-900 font-mono text-sm',
-                    ),
-                  ),
-                ),
-              ),
-              WText(
-                'Container is 192px wide, content is 384px → horizontal scroll',
-                className: 'text-xs text-gray-500 mt-1',
-              ),
-            ],
-          ),
-
-          // overflow-y-scroll
-          _buildSection(
-            title: 'overflow-y-scroll',
-            description: 'Vertical scroll only',
-            children: [
-              WDiv(
-                className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                child: WDiv(
-                  className:
-                      'overflow-y-scroll w-48 h-24 bg-teal-500 rounded-lg',
-                  child: WDiv(
-                    className:
-                        'w-48 h-64 bg-teal-300 flex items-center justify-center',
-                    child: WText(
-                      'Tall content (256px)',
-                      className: 'text-teal-900 font-mono text-sm',
-                    ),
-                  ),
-                ),
-              ),
-              WText(
-                'Container is 96px tall, content is 256px → vertical scroll',
-                className: 'text-xs text-gray-500 mt-1',
-              ),
-            ],
-          ),
-
-          // overflow-x-hidden
-          _buildSection(
-            title: 'overflow-x-hidden',
-            description: 'Clip horizontal overflow',
-            children: [
-              WDiv(
-                className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                child: WDiv(
-                  className:
-                      'overflow-x-hidden w-48 h-20 bg-orange-500 rounded-lg',
-                  child: WDiv(
-                    className:
-                        'w-96 h-20 bg-orange-300 flex items-center justify-center',
-                    child: WText(
-                      'Wide content (384px)',
-                      className: 'text-orange-900 font-mono text-sm',
-                    ),
-                  ),
-                ),
-              ),
-              WText(
-                'Container is 192px wide, content is 384px → clipped horizontally',
-                className: 'text-xs text-gray-500 mt-1',
-              ),
-            ],
-          ),
-
-          // overflow-y-hidden
-          _buildSection(
-            title: 'overflow-y-hidden',
-            description: 'Clip vertical overflow',
-            children: [
-              WDiv(
-                className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                child: WDiv(
-                  className:
-                      'overflow-y-hidden w-48 h-24 bg-pink-500 rounded-lg',
-                  child: WDiv(
-                    className:
-                        'w-48 h-64 bg-pink-300 flex items-center justify-center',
-                    child: WText(
-                      'Tall content (256px)',
-                      className: 'text-pink-900 font-mono text-sm',
-                    ),
-                  ),
-                ),
-              ),
-              WText(
-                'Container is 96px tall, content is 256px → clipped vertically',
-                className: 'text-xs text-gray-500 mt-1',
-              ),
-            ],
-          ),
-
-          // Reference Table
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              WText(
-                'Directional Classes',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _buildRefRow('overflow-x-scroll', 'Horizontal scroll'),
-                  _buildRefRow('overflow-y-scroll', 'Vertical scroll'),
-                  _buildRefRow('overflow-x-hidden', 'Clip horizontal'),
-                  _buildRefRow('overflow-y-hidden', 'Clip vertical'),
-                  _buildRefRow('overflow-x-auto', 'Horizontal auto'),
-                  _buildRefRow('overflow-y-auto', 'Vertical auto'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
+    return ExampleScaffold(
+      title: 'Directional Overflow',
+      description:
+          'overflow-x-{mode} and overflow-y-{mode} target a single axis. Useful for horizontal tab bars or tall list panels.',
+      gradient: 'from-purple-500 to-pink-600',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ExampleSection(
+          title: 'Horizontal Scroll',
+          description:
+              'overflow-x-auto creates a horizontal scroll lane. Children stay at their intrinsic width.',
+          child: WDiv(
+            className: '''
+              overflow-x-auto p-2 rounded-lg
+              bg-white dark:bg-slate-800
+            ''',
+            child: WDiv(
+              className: 'flex gap-2',
+              children: List.generate(
+                12,
+                (i) => WDiv(
+                  className: '''
+                    shrink-0 w-32 h-20 rounded-lg
+                    flex items-center justify-center
+                    bg-gradient-to-br from-purple-400 to-pink-500
+                  ''',
+                  child: WText(
+                    'Card ${i + 1}',
+                    className: 'text-white font-medium',
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Vertical Scroll',
+          description:
+              'overflow-y-scroll always shows a vertical scroll lane, even when content fits.',
+          child: WDiv(
+            className: '''
+              overflow-y-scroll h-40 p-3 rounded-lg
+              bg-white dark:bg-slate-800
+            ''',
+            children: List.generate(
+              16,
+              (i) => WDiv(
+                className: '''
+                  py-2 border-b
+                  border-slate-200 dark:border-slate-700
+                ''',
+                child: WText(
+                  'List row ${i + 1}',
+                  className: 'text-sm text-slate-700 dark:text-slate-300',
+                ),
+              ),
+            ),
+          ),
         ),
-        ...children,
+        ExampleSection(
+          title: 'Cross-Axis Hidden',
+          description:
+              'overflow-x-scroll + overflow-y-hidden gives a strict horizontal lane with no vertical bleed.',
+          child: WDiv(
+            className: '''
+              overflow-x-scroll overflow-y-hidden h-24
+              p-2 rounded-lg
+              bg-white dark:bg-slate-800
+            ''',
+            child: WDiv(
+              className: 'flex items-center gap-2',
+              children: List.generate(
+                10,
+                (i) => WDiv(
+                  className: '''
+                    shrink-0 w-20 h-16 rounded
+                    bg-purple-500
+                    flex items-center justify-center
+                  ''',
+                  child: WText(
+                    '${i + 1}',
+                    className: 'text-white font-bold',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Axis prefix + mode. Combine freely.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(
+                  cls: 'overflow-x-auto',
+                  desc: 'Scroll horizontally when needed'),
+              _RefRow(
+                  cls: 'overflow-y-scroll', desc: 'Always scroll vertically'),
+              _RefRow(
+                  cls: 'overflow-x-hidden', desc: 'Clip horizontal overflow'),
+              _RefRow(
+                  cls: 'overflow-y-visible', desc: 'Allow vertical overflow'),
+            ],
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildRefRow(String className, String description) {
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String desc;
+
+  const _RefRow({required this.cls, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex gap-4',
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
         WText(
-          className,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-40',
+          cls,
+          className: 'font-mono text-sm text-purple-700 dark:text-purple-400',
         ),
         WText(
-          description,
-          className: 'text-sm text-gray-600 dark:text-gray-300',
+          desc,
+          className:
+              'flex-1 text-sm text-slate-600 dark:text-slate-300 text-right',
         ),
       ],
     );
