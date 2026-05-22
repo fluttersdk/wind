@@ -1,161 +1,213 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Flex Intro Example
-/// Hero example showing the power of flexbox in Wind
+import '../../widgets/example_scaffold.dart';
+
 class FlexIntroExamplePage extends StatelessWidget {
   const FlexIntroExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          // Header
-          WDiv(
-            className:
-                'bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6',
-            children: [
-              WText(
-                'Flexbox & Layout',
-                className: 'text-2xl font-bold text-white',
+    return ExampleScaffold(
+      title: 'Flexbox & Layout',
+      description:
+          'flex turns WDiv into a Row/Column. Pair with flex-row, flex-col, gap-*, items-*, justify-* to compose layouts.',
+      gradient: 'from-orange-500 to-red-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'flex defaults to a horizontal row. gap-4 inserts spacing between children. items-center centers along the cross axis.',
+          child: WDiv(
+            className: '''
+              flex items-center gap-4 p-4 rounded-lg
+              bg-white dark:bg-slate-800
+            ''',
+            children: const [
+              _Pill(label: 'Logo', color: 'bg-orange-500'),
+              _Pill(label: 'Home', color: 'bg-amber-500'),
+              _Pill(label: 'About', color: 'bg-red-500'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Flex Direction',
+          description:
+              'flex-row puts children horizontally. flex-col stacks them vertically.',
+          child: WDiv(
+            className: 'grid grid-cols-1 md:grid-cols-2 gap-3',
+            children: const [
+              _DirectionBox(
+                label: 'flex flex-row',
+                directionClass: 'flex flex-row',
+                color: 'bg-orange-400',
               ),
-              WText(
-                'Powerful layout utilities for building any design',
-                className: 'text-indigo-100 mt-2',
+              _DirectionBox(
+                label: 'flex flex-col',
+                directionClass: 'flex flex-col',
+                color: 'bg-red-400',
               ),
             ],
           ),
-
-          // Hero Demo: Navigation Bar
-          _buildSection(
-            title: 'Navigation Bar',
-            description: 'flex justify-between items-center',
-            child: WDiv(
-              className:
-                  'flex justify-between items-center p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm',
-              children: [
-                WText('Logo',
-                    className:
-                        'text-lg font-bold text-indigo-600 dark:text-indigo-400'),
-                WDiv(
-                  className: 'flex gap-4',
-                  children: [
-                    WText('Home',
-                        className: 'text-slate-600 dark:text-slate-300'),
-                    WText('About',
-                        className: 'text-slate-600 dark:text-slate-300'),
-                    WText('Contact',
-                        className: 'text-slate-600 dark:text-slate-300'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Hero Demo: Card Layout
-          _buildSection(
-            title: 'Card with Actions',
-            description: 'flex flex-col gap-4',
-            child: WDiv(
-              className:
-                  'flex flex-col gap-4 p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm',
-              children: [
-                WText('Card Title',
-                    className:
-                        'text-xl font-bold text-slate-900 dark:text-white'),
-                WText(
-                  'This is a simple card built with flexbox. The content flows vertically with consistent spacing.',
-                  className: 'text-slate-600 dark:text-slate-400',
-                ),
-                WDiv(
-                  className: 'flex gap-2 justify-end',
-                  children: [
-                    WDiv(
-                      className:
-                          'px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg',
-                      child: WText('Cancel',
-                          className: 'text-slate-700 dark:text-slate-300'),
-                    ),
-                    WDiv(
-                      className: 'px-4 py-2 bg-indigo-500 rounded-lg',
-                      child: WText('Save', className: 'text-white'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Hero Demo: Responsive Grid-like Layout
-          _buildSection(
-            title: 'Responsive Layout',
-            description: 'flex flex-col md:flex-row gap-4',
-            child: WDiv(
-              className: 'flex flex-col md:flex-row gap-4',
-              children: [
-                _buildFeatureCard(
-                  'Row & Column',
-                  'Use flex-row and flex-col',
-                  'bg-blue-500',
-                ),
-                _buildFeatureCard(
-                  'Alignment',
-                  'justify-* and items-*',
-                  'bg-green-500',
-                ),
-                _buildFeatureCard(
-                  'Spacing',
-                  'gap-* for consistent spacing',
-                  'bg-purple-500',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-3',
-      children: [
-        WDiv(
-          className: 'flex flex-col gap-1',
-          children: [
-            WText(title,
-                className:
-                    'text-lg font-semibold text-slate-900 dark:text-white'),
-            WDiv(
-              className:
-                  'px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded w-fit',
-              child: WText(
-                description,
-                className:
-                    'text-xs font-mono text-slate-600 dark:text-slate-400',
-              ),
-            ),
-          ],
         ),
-        child,
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Every flex utility maps cleanly to a Flutter property. The parser preserves the CSS mental model.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'flex', maps: 'Row by default'),
+              _RefRow(cls: 'flex-col', maps: 'Column'),
+              _RefRow(cls: 'flex-row-reverse', maps: 'Row mirrored'),
+              _RefRow(cls: 'justify-{align}', maps: 'MainAxisAlignment'),
+              _RefRow(cls: 'items-{align}', maps: 'CrossAxisAlignment'),
+              _RefRow(cls: 'gap-{n}', maps: 'SizedBox spacer'),
+              _RefRow(cls: 'flex-1', maps: 'Expanded()'),
+              _RefRow(cls: 'shrink-0', maps: 'Keep intrinsic size'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Responsive Direction',
+          description:
+              'Stack on mobile, distribute horizontally on md+. One class string, two layouts.',
+          child: WDiv(
+            className: '''
+              flex flex-col md:flex-row gap-4 p-4 rounded-lg
+              bg-orange-50 dark:bg-orange-900/20
+            ''',
+            children: const [
+              _ResponsiveCard(label: 'Card A', color: 'bg-orange-500'),
+              _ResponsiveCard(label: 'Card B', color: 'bg-red-500'),
+              _ResponsiveCard(label: 'Card C', color: 'bg-amber-500'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Wrap (not flex-wrap)',
+          description:
+              'Flutter Row/Column do not wrap. Use the wrap utility to render a Wrap widget instead.',
+          child: WDiv(
+            className: '''
+              wrap gap-2 p-4 rounded-lg
+              bg-white dark:bg-slate-800
+            ''',
+            children: List.generate(8, (i) {
+              return WDiv(
+                className: '''
+                  px-3 py-1 rounded-full
+                  bg-orange-100 dark:bg-orange-900/40
+                ''',
+                child: WText(
+                  'Item ${i + 1}',
+                  className: 'text-sm text-orange-700 dark:text-orange-300',
+                ),
+              );
+            }),
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildFeatureCard(String title, String description, String bgColor) {
+class _Pill extends StatelessWidget {
+  final String label;
+  final String color;
+
+  const _Pill({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex-1 $bgColor rounded-lg p-4',
+      className: '$color px-3 py-1 rounded-full',
+      child: WText(label, className: 'text-white text-sm font-medium'),
+    );
+  }
+}
+
+class _DirectionBox extends StatelessWidget {
+  final String label;
+  final String directionClass;
+  final String color;
+
+  const _DirectionBox({
+    required this.label,
+    required this.directionClass,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-col gap-2 p-3 rounded-lg
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WText(title, className: 'text-white font-bold'),
-        WText(description, className: 'text-white/80 text-sm mt-1'),
+        WText(
+          label,
+          className: 'font-mono text-sm text-slate-700 dark:text-slate-300',
+        ),
+        WDiv(
+          className: '$directionClass gap-2',
+          children: List.generate(3, (i) {
+            return WDiv(
+              className: '$color w-10 h-10 rounded',
+              child: WText(
+                '${i + 1}',
+                className: 'text-white text-sm font-bold text-center',
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+}
+
+class _ResponsiveCard extends StatelessWidget {
+  final String label;
+  final String color;
+
+  const _ResponsiveCard({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '$color flex-1 p-4 rounded-lg',
+      child: WText(label, className: 'text-white font-medium text-center'),
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String maps;
+
+  const _RefRow({required this.cls, required this.maps});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WDiv(
+          className: 'w-36 shrink-0',
+          child: WText(
+            cls,
+            className: 'font-mono text-sm text-orange-600 dark:text-orange-400',
+          ),
+        ),
+        WText(
+          maps,
+          className: 'flex-1 text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }

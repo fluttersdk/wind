@@ -1,211 +1,211 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Display Example
-/// Demonstrates display utilities: block, flex, grid, hidden, invisible
+import '../../widgets/example_scaffold.dart';
+
 class DisplayExamplePage extends StatelessWidget {
   const DisplayExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
+    return ExampleScaffold(
+      title: 'Display',
+      description:
+          'Pick the layout mode for a WDiv: block, flex, grid, wrap, or hidden. Each maps to a Flutter widget.',
+      gradient: 'from-blue-500 to-indigo-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'The display utility decides whether WDiv renders a Container, Row/Column, GridView, Wrap, or SizedBox.shrink.',
+          child: _CodeBlock(
+            code: 'WDiv(className: "flex gap-4", children: [...])\n'
+                'WDiv(className: "grid grid-cols-3", children: [...])\n'
+                'WDiv(className: "hidden", child: ...)',
+          ),
+        ),
+        ExampleSection(
+          title: 'Block',
+          description:
+              'Default mode. WDiv lays children out vertically when no display utility is set.',
+          child: WDiv(
             className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-indigo-500 to-purple-500
+              block p-4 rounded-lg
+              bg-white dark:bg-slate-800
+              border border-slate-200 dark:border-slate-700
+            ''',
+            child: const WText(
+              'I am a block element',
+              className: 'text-slate-900 dark:text-white',
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Flex',
+          description:
+              'flex turns WDiv into a Row by default. Add flex-col for vertical.',
+          child: WDiv(
+            className: '''
+              flex items-center gap-4 p-4 rounded-lg
+              bg-white dark:bg-slate-800
             ''',
             children: [
-              WText(
-                'Display Utilities',
-                className: 'text-lg font-bold text-white',
-              ),
-              WText(
-                'Control how elements are displayed',
-                className: 'text-sm text-indigo-100',
+              WDiv(className: 'w-10 h-10 bg-blue-500 rounded'),
+              const WText(
+                'Flex item',
+                className: 'text-slate-900 dark:text-white',
               ),
             ],
           ),
-
-          // Block
-          _buildSection(
-            title: 'block',
-            description: 'Standard box model (default)',
-            children: [
-              WDiv(
-                className: 'block p-4 bg-blue-500 rounded-lg',
+        ),
+        ExampleSection(
+          title: 'Grid',
+          description:
+              'grid resolves to a GridView with crossAxisCount = grid-cols-{n}.',
+          child: WDiv(
+            className: 'grid grid-cols-3 gap-3',
+            children: const [
+              _GridCell(color: 'bg-blue-200 dark:bg-blue-900/40'),
+              _GridCell(color: 'bg-blue-300 dark:bg-blue-800/40'),
+              _GridCell(color: 'bg-blue-400 dark:bg-blue-700/40'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Wrap',
+          description:
+              'wrap renders a Flutter Wrap. Children flow to the next line when they run out of room.',
+          child: WDiv(
+            className: 'wrap gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg',
+            children: List.generate(8, (i) {
+              return WDiv(
+                className: '''
+                  px-3 py-1 rounded-full
+                  bg-indigo-100 dark:bg-indigo-900/40
+                ''',
                 child: WText(
-                  'block',
-                  className: 'text-white font-mono text-sm',
+                  'Tag ${i + 1}',
+                  className: 'text-sm text-indigo-700 dark:text-indigo-300',
+                ),
+              );
+            }),
+          ),
+        ),
+        ExampleSection(
+          title: 'Hidden',
+          description:
+              'hidden replaces the subtree with SizedBox.shrink(). Conditional rendering with no layout shift.',
+          child: WDiv(
+            className: 'flex gap-4',
+            children: const [
+              WDiv(
+                className: '''
+                  px-4 py-2 rounded
+                  bg-emerald-100 dark:bg-emerald-900/40
+                ''',
+                child: WText(
+                  'Visible',
+                  className: 'text-emerald-700 dark:text-emerald-300',
+                ),
+              ),
+              WDiv(
+                className: 'hidden',
+                child: WText('You will not see me'),
+              ),
+              WDiv(
+                className: '''
+                  px-4 py-2 rounded
+                  bg-rose-100 dark:bg-rose-900/40
+                ''',
+                child: WText(
+                  'Also visible',
+                  className: 'text-rose-700 dark:text-rose-300',
                 ),
               ),
             ],
           ),
-
-          // Flex
-          _buildSection(
-            title: 'flex',
-            description: 'Flexbox layout - items in a row',
-            children: [
-              WDiv(
-                className: 'flex gap-2 p-4 bg-emerald-500 rounded-lg',
-                children: [_buildItem('1'), _buildItem('2'), _buildItem('3')],
-              ),
-            ],
-          ),
-
-          // Grid
-          _buildSection(
-            title: 'grid',
-            description: 'Grid layout - items in columns/rows',
-            children: [
-              WDiv(
-                className:
-                    'grid grid-cols-3 gap-2 p-4 bg-violet-500 rounded-lg',
-                children: [
-                  _buildItem('1'),
-                  _buildItem('2'),
-                  _buildItem('3'),
-                  _buildItem('4'),
-                  _buildItem('5'),
-                  _buildItem('6'),
-                ],
-              ),
-            ],
-          ),
-
-          // Hidden
-          _buildSection(
-            title: 'hidden',
-            description: 'Remove from layout completely',
-            children: [
-              WDiv(
-                className:
-                    'flex gap-2 p-4 bg-gray-200 dark:bg-slate-700 rounded-lg',
-                children: [
-                  WDiv(
-                    className:
-                        'w-12 h-12 bg-rose-500 rounded-lg flex items-center justify-center',
-                    child: WText('1', className: 'text-white font-bold'),
-                  ),
-                  // Hidden element - use separate WDiv to demonstrate
-                  WDiv(
-                    className: 'hidden',
-                    child: WDiv(
-                      className:
-                          'w-12 h-12 bg-rose-500 rounded-lg flex items-center justify-center',
-                      child: WText('2', className: 'text-white font-bold'),
-                    ),
-                  ),
-                  WDiv(
-                    className:
-                        'w-12 h-12 bg-rose-500 rounded-lg flex items-center justify-center',
-                    child: WText('3', className: 'text-white font-bold'),
-                  ),
-                ],
-              ),
-              WText(
-                'Item 2 is hidden (not rendered)',
-                className: 'text-xs text-gray-500 mt-1',
-              ),
-            ],
-          ),
-
-          // Opacity-0 (alternative to invisible)
-          _buildSection(
-            title: 'opacity-0',
-            description: 'Hide visually but maintain layout space',
-            children: [
-              WDiv(
-                className:
-                    'flex gap-2 p-4 bg-gray-200 dark:bg-slate-700 rounded-lg',
-                children: [
-                  WDiv(
-                    className:
-                        'w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center',
-                    child: WText('1', className: 'text-white font-bold'),
-                  ),
-                  // Opacity-0: invisible but takes space
-                  WDiv(
-                    className:
-                        'opacity-0 w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center',
-                    child: WText('2', className: 'text-white font-bold'),
-                  ),
-                  WDiv(
-                    className:
-                        'w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center',
-                    child: WText('3', className: 'text-white font-bold'),
-                  ),
-                ],
-              ),
-              WText(
-                'Item 2 has opacity-0 (space preserved)',
-                className: 'text-xs text-gray-500 mt-1',
-              ),
-            ],
-          ),
-
-          // Responsive Display
-          _buildSection(
-            title: 'Responsive Display',
-            description: 'Show/hide at breakpoints',
-            children: [
-              WDiv(
-                className: 'flex flex-col gap-2',
-                children: [
-                  WDiv(
-                    className: 'md:hidden p-3 bg-red-500 rounded-lg',
-                    child: WText(
-                      'Visible on mobile only',
-                      className: 'text-white text-sm',
-                    ),
-                  ),
-                  WDiv(
-                    className: 'hidden md:block p-3 bg-green-500 rounded-lg',
-                    child: WText(
-                      'Visible on md+ only',
-                      className: 'text-white text-sm',
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Five keywords cover every layout mode Wind supports today.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'block', body: 'Default. Container or Column.'),
+              _RefRow(cls: 'flex', body: 'Row/Column with flex semantics.'),
+              _RefRow(cls: 'grid', body: 'GridView with grid-cols-{n}.'),
+              _RefRow(cls: 'wrap', body: 'Wrap widget — multi-line flow.'),
+              _RefRow(
+                  cls: 'hidden', body: 'SizedBox.shrink — removes from tree.'),
+            ],
+          ),
         ),
-        ...children,
       ],
     );
   }
+}
 
-  Widget _buildItem(String label) {
+class _GridCell extends StatelessWidget {
+  final String color;
+
+  const _GridCell({required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(className: 'h-20 $color rounded');
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String body;
+
+  const _RefRow({required this.cls, required this.body});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className:
-          'w-10 h-10 bg-white/30 rounded-lg flex items-center justify-center',
-      child: WText(label, className: 'text-white font-bold'),
+      className: '''
+        flex flex-row items-center gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WDiv(
+          className: 'w-24 shrink-0',
+          child: WText(
+            cls,
+            className: 'font-mono text-sm text-blue-600 dark:text-blue-400',
+          ),
+        ),
+        WText(
+          body,
+          className: 'flex-1 text-sm text-slate-600 dark:text-slate-300',
+        ),
+      ],
+    );
+  }
+}
+
+class _CodeBlock extends StatelessWidget {
+  final String code;
+
+  const _CodeBlock({required this.code});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        p-4 rounded-lg font-mono text-xs
+        bg-slate-900 dark:bg-slate-950
+        text-emerald-400
+        overflow-x-auto
+      ''',
+      child: WText(
+        code,
+        className: 'whitespace-pre text-emerald-400',
+      ),
     );
   }
 }

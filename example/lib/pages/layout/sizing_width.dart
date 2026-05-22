@@ -1,109 +1,94 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class SizingWidthExamplePage extends StatelessWidget {
   const SizingWidthExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-slate-50 dark:bg-slate-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Fixed Widths',
-            child: WDiv(
-              className: 'flex flex-col gap-2',
-              children: [
-                _buildBar('w-4', 'w-4'),
-                _buildBar('w-8', 'w-8'),
-                _buildBar('w-16', 'w-16'),
-                _buildBar('w-24', 'w-24'),
-                _buildBar('w-32', 'w-32'),
-                _buildBar('w-48', 'w-48'),
-                _buildBar('w-64', 'w-64'),
-                _buildBar('w-96', 'w-96'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Fluid Widths',
-            child: WDiv(
-              className: 'flex flex-col gap-2 w-full',
-              children: [
-                _buildBar('w-1/2', 'w-1/2 bg-indigo-500'),
-                _buildBar('w-1/3', 'w-1/3 bg-indigo-500'),
-                _buildBar('w-2/3', 'w-2/3 bg-indigo-500'),
-                _buildBar('w-1/4', 'w-1/4 bg-indigo-500'),
-                _buildBar('w-full', 'w-full bg-indigo-600'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Arbitrary Widths',
-            child: WDiv(
-              className: 'flex flex-col gap-2',
-              children: [
-                _buildBar('w-[50px]', 'w-[50px] bg-pink-500'),
-                _buildBar('w-[10%]', 'w-[10%] bg-pink-500'),
-                _buildBar('w-[200px]', 'w-[200px] bg-pink-500'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Auto Width',
-            child: WDiv(
-              className: 'flex gap-4 items-start',
-              children: [
-                WDiv(
-                  className: 'w-auto p-4 bg-teal-500 rounded text-white',
-                  child: WText('w-auto (hugs content)'),
-                ),
-                WDiv(
-                  className:
-                      'w-32 p-4 bg-teal-800 rounded text-white overflow-hidden whitespace-nowrap',
-                  child: WText('w-32 (truncated)'),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBar(String label, String widthClass) {
-    // Default color if not specified
-    String colorClass = widthClass.contains('bg-') ? '' : 'bg-blue-500';
-
-    return WDiv(
-      className:
-          '$widthClass $colorClass h-8 rounded flex items-center px-2 shadow-sm whitespace-nowrap overflow-hidden',
-      child: WText(label, className: 'text-white text-xs font-mono'),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-white dark:bg-slate-800 rounded-xl p-6 border-l-4 border-blue-500 shadow-sm',
-      child: WText('Width Utilities',
-          className: 'text-2xl font-bold text-slate-900 dark:text-white'),
-    );
-  }
-
-  Widget _buildSection({required String title, required Widget child}) {
-    return WDiv(
-      className: 'flex flex-col gap-3',
+    return ExampleScaffold(
+      title: 'Width',
+      description:
+          'w-{n} uses the spacing scale (base 4px). Fractions (w-1/2) map to percentages. w-full fills the parent.',
+      gradient: 'from-yellow-500 to-orange-500',
       children: [
-        WText(title,
-            className:
-                'text-lg font-semibold text-slate-800 dark:text-slate-200'),
-        child,
+        ExampleSection(
+          title: 'Fixed Width',
+          description:
+              'Spacing-scale widths. w-32 = 128px, w-64 = 256px, and so on.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _Bar(label: 'w-16', widthClass: 'w-16'),
+              _Bar(label: 'w-32', widthClass: 'w-32'),
+              _Bar(label: 'w-64', widthClass: 'w-64'),
+              _Bar(label: 'w-96', widthClass: 'w-96'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Fractional Width',
+          description:
+              'Percentages expressed as fractions: w-1/2, w-1/3, w-3/4.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _Bar(label: 'w-1/4', widthClass: 'w-1/4'),
+              _Bar(label: 'w-1/3', widthClass: 'w-1/3'),
+              _Bar(label: 'w-1/2', widthClass: 'w-1/2'),
+              _Bar(label: 'w-3/4', widthClass: 'w-3/4'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Full and Screen',
+          description:
+              'w-full fills the parent. w-screen ignores the parent and stretches to the viewport.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _Bar(label: 'w-full', widthClass: 'w-full'),
+              _Bar(label: 'w-screen', widthClass: 'w-screen'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Width',
+          description:
+              'Bracket notation accepts exact pixel or percentage values.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _Bar(label: 'w-[200px]', widthClass: 'w-[200px]'),
+              _Bar(label: 'w-[60%]', widthClass: 'w-[60%]'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Bar extends StatelessWidget {
+  final String label;
+  final String widthClass;
+
+  const _Bar({required this.label, required this.widthClass});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-col gap-1',
+      children: [
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className: '$widthClass h-8 rounded bg-yellow-500',
+        ),
       ],
     );
   }

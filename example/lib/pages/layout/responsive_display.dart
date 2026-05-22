@@ -1,232 +1,135 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Responsive Display Example
-/// Demonstrates how to show/hide elements at different breakpoints
+import '../../widgets/example_scaffold.dart';
+
 class ResponsiveDisplayExamplePage extends StatelessWidget {
   const ResponsiveDisplayExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
+    return ExampleScaffold(
+      title: 'Responsive Display',
+      description:
+          'Mix display utilities with breakpoint prefixes to switch between hidden, block, flex, and grid per screen size.',
+      gradient: 'from-blue-500 to-indigo-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Hidden on mobile, flex on md+. Resize the window to see the row appear once you cross 768px.',
+          child: WDiv(
             className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-teal-500 to-emerald-500
+              hidden md:flex items-center gap-4
+              p-4 rounded-lg
+              bg-white dark:bg-slate-800
+              border border-slate-200 dark:border-slate-700
             ''',
-            children: [
-              WText(
-                'Responsive Display',
-                className: 'text-lg font-bold text-white',
-              ),
-              WText(
-                'Show/hide elements at different breakpoints',
-                className: 'text-sm text-teal-100',
-              ),
+            children: const [
+              _Pill(color: 'bg-blue-500', label: 'A'),
+              _Pill(color: 'bg-indigo-500', label: 'B'),
+              _Pill(color: 'bg-purple-500', label: 'C'),
             ],
           ),
-
-          // Mobile Only
-          _buildSection(
-            title: 'md:hidden',
-            description: 'Visible on mobile only (hidden on md+)',
-            children: [
+        ),
+        ExampleSection(
+          title: 'Hide On Large Screens',
+          description:
+              'block on mobile, hidden on lg+. The card disappears once the viewport reaches 1024px.',
+          child: WDiv(
+            className: '''
+              block lg:hidden p-4 rounded-lg text-white
+              bg-gradient-to-r from-blue-500 to-indigo-600
+            ''',
+            child: const WText(
+              'Visible only below 1024px',
+              className: 'font-medium text-white',
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Per-Breakpoint Stages',
+          description:
+              'Each badge below toggles in at a specific breakpoint. Resize to walk through the cascade.',
+          child: WDiv(
+            className: 'wrap gap-2',
+            children: const [
+              _BreakpointBadge(label: 'base', cls: 'block'),
+              _BreakpointBadge(label: 'sm+', cls: 'hidden sm:block'),
+              _BreakpointBadge(label: 'md+', cls: 'hidden md:block'),
+              _BreakpointBadge(label: 'lg+', cls: 'hidden lg:block'),
+              _BreakpointBadge(label: 'xl+', cls: 'hidden xl:block'),
+              _BreakpointBadge(label: '2xl+', cls: 'hidden 2xl:block'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Dark Mode Switch',
+          description:
+              'hidden dark:block reverses the visibility based on theme. Toggle the moon button to swap.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
               WDiv(
-                className: 'md:hidden p-4 bg-red-500 rounded-lg',
+                className: '''
+                  block dark:hidden p-4 rounded-lg text-white
+                  bg-blue-500
+                ''',
                 child: WText(
-                  '📱 Mobile Only - Hidden on md+',
+                  'Visible in light mode only',
                   className: 'text-white font-medium',
                 ),
               ),
               WDiv(
-                className:
-                    'hidden md:block p-3 bg-gray-200 dark:bg-slate-700 rounded-lg',
+                className: '''
+                  hidden dark:block p-4 rounded-lg text-white
+                  bg-indigo-500
+                ''',
                 child: WText(
-                  '(Resize to mobile to see red box)',
-                  className: 'text-sm text-gray-500 dark:text-gray-400',
-                ),
-              ),
-            ],
-          ),
-
-          // Desktop Only
-          _buildSection(
-            title: 'hidden md:block',
-            description: 'Hidden on mobile, visible on md+',
-            children: [
-              WDiv(
-                className: 'hidden md:block p-4 bg-green-500 rounded-lg',
-                child: WText(
-                  '🖥️ Desktop Only - Visible on md+',
+                  'Visible in dark mode only',
                   className: 'text-white font-medium',
                 ),
               ),
-              WDiv(
-                className:
-                    'md:hidden p-3 bg-gray-200 dark:bg-slate-700 rounded-lg',
-                child: WText(
-                  '(Resize to md+ to see green box)',
-                  className: 'text-sm text-gray-500 dark:text-gray-400',
-                ),
-              ),
             ],
           ),
+        ),
+      ],
+    );
+  }
+}
 
-          // Tablet Only
-          _buildSection(
-            title: 'hidden md:block lg:hidden',
-            description: 'Visible only on tablet (md to lg)',
-            children: [
-              WDiv(
-                className:
-                    'hidden md:block lg:hidden p-4 bg-blue-500 rounded-lg',
-                child: WText(
-                  '📱 Tablet Only - md to lg',
-                  className: 'text-white font-medium',
-                ),
-              ),
-              WDiv(
-                className:
-                    'md:hidden p-3 bg-gray-200 dark:bg-slate-700 rounded-lg',
-                child: WText(
-                  '(Visible only between md and lg)',
-                  className: 'text-sm text-gray-500 dark:text-gray-400',
-                ),
-              ),
-              WDiv(
-                className:
-                    'hidden lg:block p-3 bg-gray-200 dark:bg-slate-700 rounded-lg',
-                child: WText(
-                  '(Resize to tablet size to see blue box)',
-                  className: 'text-sm text-gray-500 dark:text-gray-400',
-                ),
-              ),
-            ],
-          ),
+class _Pill extends StatelessWidget {
+  final String color;
+  final String label;
 
-          // Large Only
-          _buildSection(
-            title: 'hidden lg:block',
-            description: 'Hidden until lg breakpoint',
-            children: [
-              WDiv(
-                className: 'hidden lg:block p-4 bg-purple-500 rounded-lg',
-                child: WText(
-                  '🖥️ Large Desktop - Visible on lg+',
-                  className: 'text-white font-medium',
-                ),
-              ),
-              WDiv(
-                className:
-                    'lg:hidden p-3 bg-gray-200 dark:bg-slate-700 rounded-lg',
-                child: WText(
-                  '(Resize to lg+ to see purple box)',
-                  className: 'text-sm text-gray-500 dark:text-gray-400',
-                ),
-              ),
-            ],
-          ),
+  const _Pill({required this.color, required this.label});
 
-          // Combined Example
-          _buildSection(
-            title: 'Combined Patterns',
-            description: 'Different content for each breakpoint',
-            children: [
-              WDiv(
-                className: 'flex flex-col gap-2',
-                children: [
-                  // Mobile
-                  WDiv(
-                    className: 'md:hidden p-4 bg-orange-500 rounded-lg',
-                    child: WText(
-                      '📱 Mobile View',
-                      className: 'text-white font-medium',
-                    ),
-                  ),
-                  // Tablet
-                  WDiv(
-                    className:
-                        'hidden md:block lg:hidden p-4 bg-cyan-500 rounded-lg',
-                    child: WText(
-                      '📲 Tablet View',
-                      className: 'text-white font-medium',
-                    ),
-                  ),
-                  // Desktop
-                  WDiv(
-                    className: 'hidden lg:block p-4 bg-pink-500 rounded-lg',
-                    child: WText(
-                      '🖥️ Desktop View',
-                      className: 'text-white font-medium',
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '$color w-12 h-12 rounded-lg flex items-center justify-center',
+      child: WText(label, className: 'text-white font-bold'),
+    );
+  }
+}
 
-          // Reference Table
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              WText(
-                'Breakpoints Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _buildRefRow('sm:', '≥640px'),
-                  _buildRefRow('md:', '≥768px'),
-                  _buildRefRow('lg:', '≥1024px'),
-                  _buildRefRow('xl:', '≥1280px'),
-                  _buildRefRow('2xl:', '≥1536px'),
-                ],
-              ),
-            ],
-          ),
-        ],
+class _BreakpointBadge extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _BreakpointBadge({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        $cls px-3 py-1 rounded-full
+        bg-blue-100 dark:bg-blue-900/40
+      ''',
+      child: WText(
+        label,
+        className: 'font-mono text-sm text-blue-700 dark:text-blue-300',
       ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
-        ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
-        ),
-        ...children,
-      ],
-    );
-  }
-
-  Widget _buildRefRow(String prefix, String value) {
-    return WDiv(
-      className: 'flex gap-4',
-      children: [
-        WText(
-          prefix,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-10',
-        ),
-        WText(value, className: 'text-sm text-gray-600 dark:text-gray-300'),
-      ],
     );
   }
 }

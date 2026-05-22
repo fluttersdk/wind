@@ -1,161 +1,195 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class AspectRatioBasicExamplePage extends StatelessWidget {
   const AspectRatioBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-slate-50 dark:bg-slate-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-8 max-w-4xl mx-auto pb-12',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Standard Ratios',
-            description: 'Common aspect ratios: square (1:1) and video (16:9).',
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildNativeRatioBox(
-                      'aspect-square', 1.0, Colors.purple, 120),
-                  const SizedBox(width: 24),
-                  _buildNativeRatioBox(
-                      'aspect-video', 16 / 9, Colors.blue, 200),
-                ],
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'Arbitrary Ratios',
-            description: 'Custom aspect ratios using bracket syntax.',
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildNativeRatioBox(
-                      'aspect-[4/3]', 4 / 3, Colors.green, 160),
-                  const SizedBox(width: 24),
-                  _buildNativeRatioBox(
-                      'aspect-[21/9]', 21 / 9, Colors.orange, 200),
-                  const SizedBox(width: 24),
-                  _buildNativeRatioBox('aspect-[3/4]', 3 / 4, Colors.pink, 100),
-                ],
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'Same Width Comparison',
-            description:
-                'All boxes have the same width (120px), showing how aspect ratio affects height.',
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildNativeRatioBox('1:1', 1.0, Colors.purple, 120),
-                  const SizedBox(width: 24),
-                  _buildNativeRatioBox('16:9', 16 / 9, Colors.blue, 120),
-                  const SizedBox(width: 24),
-                  _buildNativeRatioBox('4:3', 4 / 3, Colors.green, 120),
-                  const SizedBox(width: 24),
-                  _buildNativeRatioBox('3:4', 3 / 4, Colors.pink, 120),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNativeRatioBox(
-      String label, double ratio, Color color, double width) {
-    return Column(
+    return ExampleScaffold(
+      title: 'Aspect Ratio',
+      description:
+          'Lock an element to a specific width-to-height ratio. Drop-in for video frames, square thumbnails, and custom ratios.',
+      gradient: 'from-amber-400 to-orange-500',
       children: [
-        SizedBox(
-          width: width,
-          child: AspectRatio(
-            aspectRatio: ratio,
-            child: Container(
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'aspect-square forces 1:1, aspect-video forces 16:9. The width drives the height.',
+          child: WDiv(
+            className: 'flex flex-col items-stretch gap-4',
+            children: const [
+              _AspectTile(
+                label: 'aspect-square',
+                ratioClass: 'aspect-square',
+                color: 'bg-amber-500',
               ),
-              child: Center(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
+              _AspectTile(
+                label: 'aspect-video',
+                ratioClass: 'aspect-video',
+                color: 'bg-orange-500',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Video (16:9)',
+          description:
+              'Standard ratio for embedded video frames or hero images.',
+          child: WDiv(
+            className: 'flex flex-col items-stretch',
+            child: WDiv(
+              className:
+                  'aspect-video bg-black rounded-lg flex items-center justify-center',
+              child: const WText(
+                'Video Placeholder',
+                className: 'text-white font-medium',
               ),
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        WText(
-          ratio.toStringAsFixed(2),
-          className: 'text-xs font-mono text-slate-500',
+        ExampleSection(
+          title: 'Square (1:1)',
+          description:
+              'Perfect square at any width. Combine with w-{n} or w-1/2 to control the dimensions.',
+          child: WDiv(
+            className: 'flex flex-row gap-4',
+            children: const [
+              _SquareBox(label: 'w-16', sizeClass: 'w-16'),
+              _SquareBox(label: 'w-24', sizeClass: 'w-24'),
+              _SquareBox(label: 'w-32', sizeClass: 'w-32'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Three built-in ratios. Use bracket syntax for anything else.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'aspect-auto', ratio: 'null', use: 'No constraint'),
+              _RefRow(
+                  cls: 'aspect-square', ratio: '1 / 1', use: 'Avatars, thumbs'),
+              _RefRow(
+                  cls: 'aspect-video', ratio: '16 / 9', use: 'Video frames'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Responsive Design',
+          description:
+              'Combine aspect-* with breakpoint prefixes to switch ratios per screen size.',
+          child: WDiv(
+            className: 'flex flex-col items-stretch',
+            child: WDiv(
+              className: '''
+                aspect-square md:aspect-video
+                bg-gradient-to-br from-amber-400 to-orange-600 rounded-lg
+                flex items-center justify-center
+              ''',
+              child: const WText(
+                'aspect-square md:aspect-video',
+                className: 'text-white font-mono text-sm',
+              ),
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Values',
+          description:
+              'Use aspect-[w/h] for any custom ratio. Both numbers must be numeric.',
+          child: WDiv(
+            className: 'flex flex-col items-stretch gap-4',
+            children: const [
+              _AspectTile(
+                label: 'aspect-[4/3]',
+                ratioClass: 'aspect-[4/3]',
+                color: 'bg-amber-600',
+              ),
+              _AspectTile(
+                label: 'aspect-[21/9]',
+                ratioClass: 'aspect-[21/9]',
+                color: 'bg-orange-600',
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildHeader() {
+class _AspectTile extends StatelessWidget {
+  final String label;
+  final String ratioClass;
+  final String color;
+
+  const _AspectTile({
+    required this.label,
+    required this.ratioClass,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
       className:
-          'bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 shadow-xl',
-      children: [
-        WText(
-          'Aspect Ratio',
-          className: 'text-3xl font-extrabold text-white tracking-tight',
-        ),
-        WText(
-          'Control the width-to-height ratio of elements.',
-          className: 'text-indigo-100 mt-2 text-lg max-w-2xl',
-        ),
-      ],
+          '$ratioClass $color rounded-lg flex items-center justify-center',
+      child: WText(label, className: 'text-white font-mono text-sm'),
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
+class _SquareBox extends StatelessWidget {
+  final String label;
+  final String sizeClass;
+
+  const _SquareBox({required this.label, required this.sizeClass});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = sizeClass.replaceFirst('w-', '');
     return WDiv(
-      className: 'flex flex-col gap-4',
+      className:
+          '$sizeClass h-$size bg-amber-500 rounded-lg flex items-center justify-center',
+      child: WText(label, className: 'text-white font-mono text-xs'),
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String ratio;
+  final String use;
+
+  const _RefRow({required this.cls, required this.ratio, required this.use});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WDiv(
+        WText(
+          cls,
           className:
-              'flex flex-col gap-1 border-b border-slate-200 dark:border-slate-800 pb-2',
-          children: [
-            WText(title,
-                className: 'text-xl font-bold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-500 dark:text-slate-400'),
-          ],
+              'flex-1 font-mono text-sm text-amber-700 dark:text-amber-400',
         ),
-        WDiv(
+        WText(
+          ratio,
           className:
-              'p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm',
-          child: child,
+              'w-20 font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
+        WText(
+          use,
+          className:
+              'flex-1 text-sm text-slate-600 dark:text-slate-400 text-right',
         ),
       ],
     );

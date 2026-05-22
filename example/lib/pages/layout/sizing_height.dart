@@ -1,90 +1,101 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class SizingHeightExamplePage extends StatelessWidget {
   const SizingHeightExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-slate-50 dark:bg-slate-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto pb-20',
-        children: [
-          _buildHeader(),
-          WDiv(
-            className:
-                'grid grid-cols-2 md:grid-cols-4 gap-4 items-end h-[400px] overflow-hidden bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700',
-            children: [
-              _buildCol('h-16', 'h-16'),
-              _buildCol('h-24', 'h-24'),
-              _buildCol('h-32', 'h-32'),
-              _buildCol('h-full', 'h-full bg-orange-500'),
+    return ExampleScaffold(
+      title: 'Height',
+      description:
+          'h-{n} mirrors w-{n} on the vertical axis. h-screen reaches the full viewport. h-full needs a constrained parent.',
+      gradient: 'from-yellow-500 to-orange-500',
+      children: [
+        ExampleSection(
+          title: 'Fixed Height',
+          description: 'Spacing-scale heights. h-16 = 64px, h-32 = 128px.',
+          child: WDiv(
+            className: 'flex items-end gap-3',
+            children: const [
+              _HBar(label: 'h-8', heightClass: 'h-8'),
+              _HBar(label: 'h-16', heightClass: 'h-16'),
+              _HBar(label: 'h-32', heightClass: 'h-32'),
+              _HBar(label: 'h-48', heightClass: 'h-48'),
             ],
           ),
-          _buildSection(
-            title: 'Fractional Heights',
-            child: WDiv(
-              className:
-                  'h-64 flex gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700',
-              children: [
-                _buildCol('h-1/4', 'h-1/4 bg-green-500 w-16'),
-                _buildCol('h-1/2', 'h-1/2 bg-green-500 w-16'),
-                _buildCol('h-3/4', 'h-3/4 bg-green-500 w-16'),
-                _buildCol('h-full', 'h-full bg-green-600 w-16'),
-              ],
-            ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Height',
+          description: 'Bracket notation accepts exact pixel values.',
+          child: WDiv(
+            className: 'flex items-end gap-3',
+            children: const [
+              _HBar(label: 'h-[60px]', heightClass: 'h-[60px]'),
+              _HBar(label: 'h-[120px]', heightClass: 'h-[120px]'),
+              _HBar(label: 'h-[180px]', heightClass: 'h-[180px]'),
+            ],
           ),
-          _buildSection(
-            title: 'Viewport Height',
-            child: WDiv(
-              className:
-                  'w-full h-32 bg-purple-100 dark:bg-purple-900/30 rounded flex items-center justify-center border border-dashed border-purple-300',
-              child: WText('h-screen (See below)',
-                  className: 'text-purple-700 dark:text-purple-300'),
-            ),
+        ),
+        ExampleSection(
+          title: 'Min and Max Height',
+          description:
+              'min-h-{n} forces a floor; max-h-{n} caps the height. Combine with overflow-y-auto when content can grow.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: [
+              WDiv(
+                className: '''
+                  min-h-32 p-3 rounded
+                  bg-yellow-100 dark:bg-yellow-900/30
+                ''',
+                child: const WText(
+                  'min-h-32 — at least 128px tall',
+                  className: 'text-sm text-slate-700 dark:text-slate-200',
+                ),
+              ),
+              WDiv(
+                className: '''
+                  max-h-32 overflow-y-auto p-3 rounded
+                  bg-orange-100 dark:bg-orange-900/30
+                ''',
+                children: List.generate(
+                  10,
+                  (i) => WText(
+                    'Row ${i + 1}',
+                    className:
+                        'text-sm text-slate-700 dark:text-slate-200 py-1',
+                  ),
+                ),
+              ),
+            ],
           ),
-          WDiv(
-            className:
-                'h-screen w-full bg-purple-600 flex items-center justify-center rounded-xl shadow-2xl',
-            child: WText('h-screen (100vh)',
-                className: 'text-white font-bold text-2xl'),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildCol(String label, String heightClass) {
-    String colorClass = heightClass.contains('bg-') ? '' : 'bg-red-500';
-    String widthClass = heightClass.contains('w-') ? '' : 'w-full';
+class _HBar extends StatelessWidget {
+  final String label;
+  final String heightClass;
 
+  const _HBar({required this.label, required this.heightClass});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className:
-          '$heightClass $colorClass $widthClass rounded flex items-end justify-center pb-2 shadow-sm',
-      child: WText(label, className: 'text-white text-xs font-mono font-bold'),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-white dark:bg-slate-800 rounded-xl p-6 border-l-4 border-red-500 shadow-sm',
-      child: WText('Height Utilities',
-          className: 'text-2xl font-bold text-slate-900 dark:text-white'),
-    );
-  }
-
-  Widget _buildSection({required String title, required Widget child}) {
-    return WDiv(
-      className: 'flex flex-col gap-3',
+      className: 'flex flex-col items-center gap-1',
       children: [
-        WText(title,
-            className:
-                'text-lg font-semibold text-slate-800 dark:text-slate-200'),
-        child,
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className: '$heightClass w-12 rounded bg-orange-500',
+        ),
       ],
     );
   }

@@ -1,155 +1,165 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Flex Grow Example
-/// Demonstrates flex-1, flex-none, and how items grow to fill space
+import '../../widgets/example_scaffold.dart';
+
 class FlexGrowExamplePage extends StatelessWidget {
   const FlexGrowExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-2xl',
-        children: [
-          // Header
-          WDiv(
+    return ExampleScaffold(
+      title: 'Flex Grow & Shrink',
+      description:
+          'flex-1 wraps a child in Expanded. shrink-0 preserves intrinsic size. Mix them to build sidebars, search bars, and toolbars.',
+      gradient: 'from-orange-500 to-red-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Fixed-width sidebar, flexible content. shrink-0 stops the sidebar from collapsing.',
+          child: WDiv(
             className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-purple-500 to-pink-500
+              flex p-2 rounded-lg
+              bg-white dark:bg-slate-800
+              border border-slate-200 dark:border-slate-700
             ''',
-            children: [
-              WText(
-                'Flex Grow & Shrink',
-                className: 'text-lg font-bold text-white',
+            children: const [
+              _Box(
+                color: 'bg-slate-300 dark:bg-slate-700',
+                label: 'shrink-0',
+                widthClass: 'w-16',
+                extras: 'shrink-0',
               ),
-              WText(
-                'Control how items grow to fill available space',
-                className: 'text-sm text-purple-100',
+              _Box(
+                color: 'bg-orange-500',
+                label: 'flex-1',
+                widthClass: '',
+                extras: 'flex-1 ml-2',
               ),
             ],
           ),
-
-          // flex-1 example
-          _buildSection(
-            title: 'flex-1 (grows to fill)',
-            description: 'Middle item expands to fill available space',
-            child: WDiv(
-              className:
-                  'flex gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
-              children: [
-                WDiv(
-                  className: '''
-                    flex-none w-16 h-12 bg-blue-500 rounded-lg
-                    flex items-center justify-center
-                  ''',
-                  child: WText(
-                    'Fixed',
-                    className: 'text-white text-xs font-medium',
-                  ),
-                ),
-                WDiv(
-                  className: '''
-                    flex-1 h-12 bg-purple-500 rounded-lg
-                    flex items-center justify-center
-                  ''',
-                  child: WText('flex-1', className: 'text-white font-bold'),
-                ),
-                WDiv(
-                  className: '''
-                    flex-none w-16 h-12 bg-blue-500 rounded-lg
-                    flex items-center justify-center
-                  ''',
-                  child: WText(
-                    'Fixed',
-                    className: 'text-white text-xs font-medium',
-                  ),
-                ),
-              ],
-            ),
+        ),
+        ExampleSection(
+          title: 'Multiple Flex Factors',
+          description:
+              'flex-1, flex-2, flex-3 share remaining space in their numeric ratio.',
+          child: WDiv(
+            className: '''
+              flex gap-2 p-2 rounded-lg
+              bg-white dark:bg-slate-800
+            ''',
+            children: const [
+              _FactorBox(
+                  label: 'flex-1',
+                  factorClass: 'flex-1',
+                  color: 'bg-amber-400'),
+              _FactorBox(
+                  label: 'flex-2',
+                  factorClass: 'flex-2',
+                  color: 'bg-orange-500'),
+              _FactorBox(
+                  label: 'flex-3', factorClass: 'flex-3', color: 'bg-red-500'),
+            ],
           ),
-
-          // Multiple flex-1 example
-          _buildSection(
-            title: 'Multiple flex-1',
-            description: 'Items share available space equally',
-            child: WDiv(
-              className:
-                  'flex gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
-              children: [
-                WDiv(
-                  className: '''
-                    flex-1 h-12 bg-emerald-500 rounded-lg
-                    flex items-center justify-center
-                  ''',
-                  child: WText('flex-1', className: 'text-white font-bold'),
-                ),
-                WDiv(
-                  className: '''
-                    flex-1 h-12 bg-emerald-500 rounded-lg
-                    flex items-center justify-center
-                  ''',
-                  child: WText('flex-1', className: 'text-white font-bold'),
-                ),
-                WDiv(
-                  className: '''
-                    flex-1 h-12 bg-emerald-500 rounded-lg
-                    flex items-center justify-center
-                  ''',
-                  child: WText('flex-1', className: 'text-white font-bold'),
-                ),
-              ],
-            ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Five tokens cover the bulk of flex sizing scenarios.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'flex-1', desc: 'Expanded() — grow to fill'),
+              _RefRow(
+                  cls: 'flex-{n}',
+                  desc: 'Specific flex factor (n is any integer)'),
+              _RefRow(cls: 'flex-grow', desc: 'Alias of flex-1'),
+              _RefRow(cls: 'shrink', desc: 'Allow shrinking (FlexFit.loose)'),
+              _RefRow(
+                  cls: 'shrink-0', desc: 'Preserve intrinsic size (no wrap)'),
+              _RefRow(cls: 'flex-none', desc: 'Do not grow or shrink'),
+            ],
           ),
+        ),
+      ],
+    );
+  }
+}
 
-          // flex-none example
-          _buildSection(
-            title: 'flex-none (fixed size)',
-            description: 'Item maintains its size, doesn\'t grow or shrink',
-            child: WDiv(
-              className:
-                  'flex gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
-              children: [
-                WDiv(
-                  className: '''
-                    flex-none w-24 h-12 bg-orange-500 rounded-lg
-                    flex items-center justify-center
-                  ''',
-                  child: WText(
-                    'flex-none',
-                    className: 'text-white font-bold text-sm',
-                  ),
-                ),
-                WDiv(
-                  className: '''
-                    flex-1 h-12 bg-gray-400 rounded-lg
-                    flex items-center justify-center
-                  ''',
-                  child: WText('flex-1', className: 'text-white font-bold'),
-                ),
-              ],
-            ),
-          ),
-        ],
+class _Box extends StatelessWidget {
+  final String color;
+  final String label;
+  final String widthClass;
+  final String extras;
+
+  const _Box({
+    required this.color,
+    required this.label,
+    required this.widthClass,
+    required this.extras,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className:
+          '$widthClass $extras $color h-16 rounded flex items-center justify-center',
+      child: WText(
+        label,
+        className: 'text-white font-mono text-sm font-bold',
       ),
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
+class _FactorBox extends StatelessWidget {
+  final String label;
+  final String factorClass;
+  final String color;
+
+  const _FactorBox({
+    required this.label,
+    required this.factorClass,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex flex-col gap-2',
+      className:
+          '$factorClass $color h-16 rounded flex items-center justify-center',
+      child: WText(
+        label,
+        className: 'text-white font-mono font-bold',
+      ),
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String desc;
+
+  const _RefRow({required this.cls, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WText(title, className: 'font-semibold text-gray-800 dark:text-white'),
         WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+          cls,
+          className: 'font-mono text-sm text-orange-700 dark:text-orange-400',
         ),
-        child,
+        WText(
+          desc,
+          className:
+              'flex-1 text-sm text-slate-600 dark:text-slate-300 text-right',
+        ),
       ],
     );
   }

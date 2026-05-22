@@ -1,106 +1,178 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class SizingBasicExamplePage extends StatelessWidget {
   const SizingBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-slate-50 dark:bg-slate-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Fixed Sizing',
-            description: 'Use fixed values like w-16, h-16 (multiples of 4px).',
-            child: WDiv(
-              className: 'flex flex-wrap gap-4 items-end',
-              children: [
-                _buildBox('w-16 h-16', 'w-16 h-16 bg-blue-500'),
-                _buildBox('w-24 h-24', 'w-24 h-24 bg-blue-600'),
-                _buildBox('w-32 h-32', 'w-32 h-32 bg-blue-700'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Percentage Sizing',
-            description:
-                'Use fractions like 1/2, 1/3, full for relative sizing.',
-            child: WDiv(
-              className:
-                  'flex flex-col gap-4 w-full bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700',
-              children: [
-                _buildBox('w-1/4', 'w-1/4 h-12 bg-green-500'),
-                _buildBox('w-1/2', 'w-1/2 h-12 bg-green-600'),
-                _buildBox('w-3/4', 'w-3/4 h-12 bg-green-700'),
-                _buildBox('w-full', 'w-full h-12 bg-green-800'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Viewport Sizing',
-            description: 'Relative to the screen dimensions.',
-            child: WDiv(
-              className: 'flex flex-col gap-4',
-              children: [
-                WText('This box is w-screen (scroll horizontally to see)',
-                    className: 'text-sm text-slate-500 mb-2'),
-                WDiv(
-                  className:
-                      'w-screen h-16 bg-purple-500 flex items-center justify-center text-white font-mono mb-4',
-                  child: WText('w-screen'),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBox(String label, String classes) {
-    return WDiv(
-      className: '$classes rounded flex items-center justify-center shadow-sm',
-      child: WText(label, className: 'text-white text-xs font-mono font-bold'),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-indigo-500 to-blue-600 rounded-xl p-6 shadow-lg',
-      child: WDiv(
-        className: 'flex flex-col gap-2',
-        children: [
-          WText('Sizing Basics', className: 'text-2xl font-bold text-white'),
-          WText('Core concepts for width and height utilities in Wind.',
-              className: 'text-blue-100'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection(
-      {required String title,
-      required String description,
-      required Widget child}) {
-    return WDiv(
-      className: 'flex flex-col gap-4',
+    return ExampleScaffold(
+      title: 'Sizing',
+      description:
+          'w-{n} and h-{n} set explicit dimensions. Fractions (w-1/2), full (w-full), screen (w-screen), and arbitrary pixels are all supported.',
+      gradient: 'from-yellow-500 to-orange-500',
       children: [
-        WDiv(
-          className: 'flex flex-col gap-1',
-          children: [
-            WText(title,
-                className: 'text-lg font-bold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-600 dark:text-slate-400'),
-          ],
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Fixed pixel widths follow the spacing scale (base 4px). Percentages and viewport units are aliases.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: const [
+              _SizingRow(label: 'w-32 (128px)', sizeClass: 'w-32'),
+              _SizingRow(label: 'w-1/2 (50%)', sizeClass: 'w-1/2'),
+              _SizingRow(label: 'w-full (100%)', sizeClass: 'w-full'),
+            ],
+          ),
         ),
-        child,
+        ExampleSection(
+          title: 'Max-Width Scale',
+          description:
+              'max-w-{key} caps the width. Combine with mx-auto for a centered, readable column.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _MaxWidthRow(label: 'max-w-xs (320px)', maxClass: 'max-w-xs'),
+              _MaxWidthRow(label: 'max-w-md (448px)', maxClass: 'max-w-md'),
+              _MaxWidthRow(label: 'max-w-2xl (672px)', maxClass: 'max-w-2xl'),
+              _MaxWidthRow(label: 'max-w-4xl (896px)', maxClass: 'max-w-4xl'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Fixed sizes follow the spacing scale; fractions take CSS-like keys.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'w-0 / h-0', value: '0px'),
+              _RefRow(cls: 'w-4 / h-4', value: '16px'),
+              _RefRow(cls: 'w-16 / h-16', value: '64px'),
+              _RefRow(cls: 'w-full / h-full', value: '100% of parent'),
+              _RefRow(cls: 'w-screen / h-screen', value: '100vw / 100vh'),
+              _RefRow(cls: 'w-1/2', value: '50%'),
+              _RefRow(cls: 'w-1/3', value: '33.33%'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Responsive Sizing',
+          description:
+              'Full width on mobile, half on md, third on lg. The same element shrinks as the viewport grows.',
+          child: WDiv(
+            className: 'flex justify-center',
+            child: WDiv(
+              className: '''
+                w-full md:w-1/2 lg:w-1/3 h-16 rounded-lg
+                bg-gradient-to-r from-yellow-400 to-orange-500
+                flex items-center justify-center
+              ''',
+              child: const WText(
+                'w-full md:w-1/2 lg:w-1/3',
+                className: 'text-white font-mono text-sm',
+              ),
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Values',
+          description: 'Bracket notation accepts exact pixels or percentages.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: [
+              WDiv(
+                className: 'w-[350px] h-12 bg-yellow-500 rounded-lg',
+                child: const WText('w-[350px]',
+                    className: 'text-white text-sm font-mono pl-3 self-center'),
+              ),
+              WDiv(
+                className: 'w-[33%] h-12 bg-orange-500 rounded-lg',
+                child: const WText('w-[33%]',
+                    className: 'text-white text-sm font-mono pl-3 self-center'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SizingRow extends StatelessWidget {
+  final String label;
+  final String sizeClass;
+
+  const _SizingRow({required this.label, required this.sizeClass});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-col gap-1',
+      children: [
+        WText(
+          label,
+          className: 'text-xs font-mono text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className: '$sizeClass h-12 bg-yellow-500 rounded-lg',
+        ),
+      ],
+    );
+  }
+}
+
+class _MaxWidthRow extends StatelessWidget {
+  final String label;
+  final String maxClass;
+
+  const _MaxWidthRow({required this.label, required this.maxClass});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-col gap-1',
+      children: [
+        WText(
+          label,
+          className: 'text-xs font-mono text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className: '''
+            $maxClass h-8 rounded
+            bg-gradient-to-r from-yellow-400 to-orange-500
+          ''',
+        ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String value;
+
+  const _RefRow({required this.cls, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(
+          cls,
+          className: 'font-mono text-sm text-orange-700 dark:text-orange-400',
+        ),
+        WText(
+          value,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }

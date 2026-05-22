@@ -1,345 +1,222 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Positioning Example
-/// Demonstrates CSS-inspired positioning utilities: relative, absolute, inset, offsets
-class PositioningExamplePage extends StatefulWidget {
+import '../../widgets/example_scaffold.dart';
+
+class PositioningExamplePage extends StatelessWidget {
   const PositioningExamplePage({super.key});
 
   @override
-  State<PositioningExamplePage> createState() => _PositioningExamplePageState();
+  Widget build(BuildContext context) {
+    return ExampleScaffold(
+      title: 'Positioning',
+      description:
+          'relative + absolute compose Flutter Stack and Positioned. Offsets (top/right/bottom/left), inset shortcuts, and negative pulls.',
+      gradient: 'from-slate-600 to-slate-800',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'A relative parent becomes a Stack. Each absolute child becomes a Positioned widget.',
+          child: WDiv(
+            className: 'flex items-center justify-center p-4',
+            child: WDiv(
+              className: 'relative',
+              children: [
+                WDiv(
+                  className:
+                      'w-16 h-16 rounded-full bg-slate-300 dark:bg-slate-600',
+                ),
+                WDiv(
+                  className: '''
+                    absolute top-0 right-0
+                    w-4 h-4 rounded-full
+                    bg-red-500 border-2 border-white dark:border-slate-800
+                  ''',
+                ),
+              ],
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Offset Utilities',
+          description:
+              'top-{n}, right-{n}, bottom-{n}, left-{n} take values from the spacing scale (base 4px).',
+          child: WDiv(
+            className: '''
+              relative h-48 rounded-lg
+              bg-white dark:bg-slate-800
+              border border-slate-200 dark:border-slate-700
+            ''',
+            children: [
+              WDiv(
+                className: '''
+                  absolute top-2 left-2 px-3 py-1 rounded
+                  bg-blue-500
+                ''',
+                child: const WText('top-2 left-2',
+                    className: 'text-white text-sm font-mono'),
+              ),
+              WDiv(
+                className: '''
+                  absolute top-2 right-2 px-3 py-1 rounded
+                  bg-emerald-500
+                ''',
+                child: const WText('top-2 right-2',
+                    className: 'text-white text-sm font-mono'),
+              ),
+              WDiv(
+                className: '''
+                  absolute bottom-2 left-2 px-3 py-1 rounded
+                  bg-amber-500
+                ''',
+                child: const WText('bottom-2 left-2',
+                    className: 'text-white text-sm font-mono'),
+              ),
+              WDiv(
+                className: '''
+                  absolute bottom-2 right-2 px-3 py-1 rounded
+                  bg-rose-500
+                ''',
+                child: const WText('bottom-2 right-2',
+                    className: 'text-white text-sm font-mono'),
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Inset Shortcuts',
+          description:
+              'inset-0 fills all four sides. inset-x-{n} and inset-y-{n} target a single axis.',
+          child: WDiv(
+            className: '''
+              relative w-full h-48 rounded-xl overflow-hidden
+            ''',
+            children: [
+              WDiv(
+                className: '''
+                  w-full h-full
+                  bg-gradient-to-br from-indigo-500 to-purple-600
+                ''',
+              ),
+              WDiv(
+                className: '''
+                  absolute inset-0 flex items-end p-4
+                  bg-gradient-to-t from-black/60 to-transparent
+                ''',
+                child: const WText(
+                  'absolute inset-0',
+                  className: 'text-white text-lg font-semibold',
+                ),
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Negative Offsets',
+          description:
+              'Prefix with - to pull a child outside its parent. Classic for notification badges that overlap an icon corner.',
+          child: WDiv(
+            className: 'flex items-center justify-center p-6',
+            child: WDiv(
+              className: 'relative',
+              children: [
+                WDiv(
+                  className: '''
+                    w-12 h-12 rounded-lg
+                    bg-slate-200 dark:bg-slate-700
+                    flex items-center justify-center
+                  ''',
+                  child: WIcon(
+                    Icons.notifications_outlined,
+                    className: 'text-slate-700 dark:text-slate-200',
+                  ),
+                ),
+                WDiv(
+                  className: '''
+                    absolute -top-1 -right-1
+                    w-5 h-5 rounded-full bg-red-500
+                    border-2 border-white dark:border-slate-800
+                    flex items-center justify-center
+                  ''',
+                  child: const WText(
+                    '3',
+                    className: 'text-[10px] text-white font-bold',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Position types and the most common offset shortcuts.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'relative', maps: 'Stack parent'),
+              _RefRow(cls: 'absolute', maps: 'Positioned child'),
+              _RefRow(cls: 'top-{n}', maps: 'Distance from top'),
+              _RefRow(cls: 'inset-0', maps: 'All four sides'),
+              _RefRow(cls: '-top-{n}', maps: 'Pull above parent'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Pixels',
+          description:
+              'Bracket notation accepts exact pixel values. Percentages are not supported (Positioned uses logical pixels).',
+          child: WDiv(
+            className: '''
+              relative h-24 rounded-lg
+              bg-white dark:bg-slate-800
+              border border-slate-200 dark:border-slate-700
+            ''',
+            children: [
+              WDiv(
+                className: '''
+                  absolute top-[12px] left-[24px]
+                  px-3 py-1 rounded bg-indigo-500
+                ''',
+                child: const WText(
+                  'top-[12px] left-[24px]',
+                  className: 'text-white text-sm font-mono',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class _PositioningExamplePageState extends State<PositioningExamplePage> {
-  bool _showOverlay = false;
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String maps;
+
+  const _RefRow({required this.cls, required this.maps});
 
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          _buildHeader(),
-          _buildBadgeOverlay(),
-          _buildFabPositioning(),
-          _buildFullOverlay(),
-          _buildCardWithLabel(),
-          _buildFlexWithPositioned(),
-          _buildInteractiveDemo(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
       className: '''
-        w-full p-4 rounded-xl
-        bg-gradient-to-r from-violet-600 to-purple-700
+        flex flex-row items-center gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(
-          'CSS Positioning',
-          className: 'text-lg font-bold text-white',
-        ),
-        WText(
-          'Use relative and absolute to layer and overlap elements',
-          className: 'text-sm text-violet-200',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBadgeOverlay() {
-    return _buildSection(
-      title: 'Badge Overlay',
-      description:
-          'relative parent + absolute top-0 right-0 child pins a badge to the corner',
-      children: [
         WDiv(
-          className: 'flex gap-6 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-          children: [
-            // Notification bell with badge
-            WDiv(
-              className: 'relative w-12 h-12',
-              children: [
-                WDiv(
-                  className:
-                      'w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-xl flex items-center justify-center',
-                  child: WIcon(Icons.notifications_outlined),
-                ),
-                WDiv(
-                  className:
-                      'absolute top-0 right-0 w-5 h-5 bg-red-500 dark:bg-red-600 rounded-full flex items-center justify-center',
-                  child: WText('3', className: 'text-white text-xs font-bold'),
-                ),
-              ],
-            ),
-            // Shopping cart with badge
-            WDiv(
-              className: 'relative w-12 h-12',
-              children: [
-                WDiv(
-                  className:
-                      'w-12 h-12 bg-green-500 dark:bg-green-600 rounded-xl flex items-center justify-center',
-                  child: WIcon(Icons.shopping_cart_outlined),
-                ),
-                WDiv(
-                  className:
-                      'absolute top-0 right-0 w-5 h-5 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center',
-                  child: WText('12', className: 'text-white text-xs font-bold'),
-                ),
-              ],
-            ),
-            // Message icon with dot
-            WDiv(
-              className: 'relative w-12 h-12',
-              children: [
-                WDiv(
-                  className:
-                      'w-12 h-12 bg-indigo-500 dark:bg-indigo-600 rounded-xl flex items-center justify-center',
-                  child: WIcon(Icons.chat_bubble_outlined),
-                ),
-                WDiv(
-                  className:
-                      'absolute top-1 right-1 w-3 h-3 bg-green-400 dark:bg-green-500 rounded-full',
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFabPositioning() {
-    return _buildSection(
-      title: 'FAB Positioning',
-      description:
-          'absolute bottom-4 right-4 pins a floating action button to the container corner',
-      children: [
-        WDiv(
-          className:
-              'relative h-40 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-hidden',
-          children: [
-            WDiv(
-              className: 'p-4',
-              child: WText(
-                'Container content — the FAB floats above it',
-                className: 'text-sm text-gray-600 dark:text-gray-400',
-              ),
-            ),
-            WDiv(
-              className: 'absolute bottom-4 right-4',
-              child: WDiv(
-                className:
-                    'w-12 h-12 bg-violet-600 dark:bg-violet-700 rounded-full shadow-lg flex items-center justify-center',
-                child: WIcon(Icons.add, className: 'text-white'),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFullOverlay() {
-    return _buildSection(
-      title: 'Full Overlay',
-      description:
-          'absolute inset-0 stretches a child to cover the entire parent',
-      children: [
-        WDiv(
-          className:
-              'relative h-36 bg-blue-500 dark:bg-blue-600 rounded-lg overflow-hidden',
-          children: [
-            WDiv(
-              className: 'p-4 flex flex-col gap-1',
-              children: [
-                WText(
-                  'Sarah Johnson',
-                  className: 'text-white font-bold text-base',
-                ),
-                WText(
-                  'Senior Product Designer',
-                  className: 'text-blue-200 text-sm',
-                ),
-                WText(
-                  'San Francisco, CA',
-                  className: 'text-blue-200 text-sm',
-                ),
-              ],
-            ),
-            // Semi-transparent overlay
-            WDiv(
-              className:
-                  'absolute inset-0 bg-black opacity-40 flex items-center justify-center',
-              child: WText(
-                'absolute inset-0',
-                className: 'text-white font-mono text-sm font-bold',
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCardWithLabel() {
-    return _buildSection(
-      title: 'Card with Positioned Label',
-      description:
-          'Use negative offsets like -top-3 to overlap an element across a card border',
-      children: [
-        WDiv(
-          className:
-              'relative p-4 pt-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm',
-          children: [
-            WDiv(
-              className:
-                  'absolute -top-3 left-4 px-3 py-1 bg-violet-600 dark:bg-violet-700 rounded-full',
-              child: WText(
-                'Featured',
-                className: 'text-white text-xs font-semibold',
-              ),
-            ),
-            WText(
-              'Wind UI Framework',
-              className:
-                  'text-base font-bold text-gray-900 dark:text-white mb-1',
-            ),
-            WText(
-              'Utility-first styling for Flutter. Build fast, expressive UIs with familiar Tailwind syntax.',
-              className: 'text-sm text-gray-600 dark:text-gray-400',
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFlexWithPositioned() {
-    return _buildSection(
-      title: 'Flex + Positioning',
-      description:
-          'relative flex flex-row — normal children participate in flex layout while absolute children float above',
-      children: [
-        WDiv(
-          className:
-              'relative flex flex-row gap-3 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-          children: [
-            WDiv(
-              className:
-                  'flex-1 h-16 bg-blue-400 dark:bg-blue-500 rounded-lg flex items-center justify-center',
-              child: WText('flex item 1', className: 'text-white text-sm'),
-            ),
-            WDiv(
-              className:
-                  'flex-1 h-16 bg-blue-400 dark:bg-blue-500 rounded-lg flex items-center justify-center',
-              child: WText('flex item 2', className: 'text-white text-sm'),
-            ),
-            WDiv(
-              className:
-                  'flex-1 h-16 bg-blue-400 dark:bg-blue-500 rounded-lg flex items-center justify-center',
-              child: WText('flex item 3', className: 'text-white text-sm'),
-            ),
-            // Floating badge over the flex container
-            WDiv(
-              className:
-                  'absolute top-2 right-2 px-2 py-1 bg-amber-400 dark:bg-amber-500 rounded-full',
-              child: WText(
-                'NEW',
-                className:
-                    'text-amber-900 dark:text-amber-950 text-xs font-bold',
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInteractiveDemo() {
-    return _buildSection(
-      title: 'Interactive Demo',
-      description: 'Toggle an absolute overlay on and off with setState',
-      children: [
-        WDiv(
-          className:
-              'relative h-40 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl overflow-hidden',
-          children: [
-            WDiv(
-              className: 'p-4 flex flex-col gap-2',
-              children: [
-                WText(
-                  'Dashboard Overview',
-                  className: 'text-white font-bold',
-                ),
-                WText(
-                  'Monthly revenue: \$48,320',
-                  className: 'text-slate-400 text-sm',
-                ),
-                WText(
-                  'Active users: 1,284',
-                  className: 'text-slate-400 text-sm',
-                ),
-              ],
-            ),
-            if (_showOverlay)
-              WDiv(
-                className:
-                    'absolute inset-0 bg-black opacity-70 flex items-center justify-center',
-                child: WText(
-                  'Overlay active — absolute inset-0',
-                  className: 'text-white font-semibold text-sm',
-                ),
-              ),
-          ],
-        ),
-        WDiv(
-          className: 'flex gap-3 mt-2',
-          children: [
-            WButton(
-              onTap: () => setState(() => _showOverlay = !_showOverlay),
-              className:
-                  'px-4 py-2 bg-violet-600 dark:bg-violet-700 rounded-lg flex items-center gap-2',
-              child: WText(
-                _showOverlay ? 'Hide Overlay' : 'Show Overlay',
-                className: 'text-white text-sm font-medium',
-              ),
-            ),
-            WDiv(
-              className:
-                  'px-3 py-2 bg-gray-100 dark:bg-slate-700 rounded-lg flex items-center',
-              child: WText(
-                _showOverlay ? 'overlay: visible' : 'overlay: hidden',
-                className: 'text-xs font-mono text-gray-600 dark:text-gray-300',
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'text-lg font-semibold text-gray-900 dark:text-white',
+          className: 'w-32 shrink-0',
+          child: WText(
+            cls,
+            className: 'font-mono text-sm text-slate-700 dark:text-slate-300',
+          ),
         ),
         WText(
-          description,
-          className: 'text-sm text-gray-600 dark:text-gray-400 mb-4',
+          maps,
+          className: 'flex-1 text-sm text-slate-600 dark:text-slate-400',
         ),
-        ...children,
       ],
     );
   }
