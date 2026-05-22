@@ -8,7 +8,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [1.0.0] - 2026-05-21
 
-The first stable release. Wind ships a complete utility-first styling layer for Flutter with className syntax, theming, responsive breakpoints, dark mode, dynamic JSON rendering, an MCP server for AI assistants, and a contracts-based debug bridge for external tooling. All public APIs in this release are considered stable; the surface follows Semantic Versioning from this point on.
+The first stable release. Wind ships a complete utility-first styling layer for Flutter with className syntax, theming, responsive breakpoints, dark mode, dynamic JSON rendering, and a contracts-based debug bridge for external tooling. All public APIs in this release are considered stable; the surface follows Semantic Versioning from this point on.
 
 ### What's in the v1 surface
 
@@ -18,7 +18,7 @@ The first stable release. Wind ships a complete utility-first styling layer for 
 
 **Theme (`WindThemeData` exposes 23 configurable fields):** brightness, colors, screens, containers, fontSizes, fontWeights, tracking, leading, borderWidths, borderRadius, fontFamilies, ringWidths, ringOffsets, applyDefaultFontFamily, syncWithSystem, baseSpacingUnit, ringColor, opacities, zIndices, shadows, transitionDurations, transitionCurves, animations.
 
-**External integrations:** `Wind.installDebugResolver()` for the new `fluttersdk_wind_diagnostics_contracts` bridge (used by `fluttersdk_dusk` for E2E and any runtime inspector). Wind MCP server at `mcp.fluttersdk.com/wind` for AI coding assistants.
+**External integrations:** `Wind.installDebugResolver()` for the new `fluttersdk_wind_diagnostics_contracts` bridge (used by `fluttersdk_dusk` for E2E and any runtime inspector). Agent integrations (MCP server, Claude Code skill, Cursor rules) documented at [fluttersdk.com/wind/ai](https://fluttersdk.com/wind/ai).
 
 ### Fixed (since the last published alpha, 1.0.0-alpha.6)
 

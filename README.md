@@ -76,7 +76,7 @@ WDiv(
 | 🔌 | **Platform prefixes** | `ios:`, `android:`, `web:`, `mobile:` — conditional styling without a single `if` |
 | 🎭 | **Customizable theme** | Override every token scale: colors, spacing, typography, shadows, breakpoints, animations |
 | 📡 | **Server-driven UI** | `WDynamic` renders widget trees from JSON — ship UI updates without ship-blocking releases |
-| 🤖 | **AI-ready** | Hosted MCP server + Claude Code skill + Cursor rules — your agent never hallucinates a className token |
+| 🤖 | **AI-ready** | First-class agent support — see [fluttersdk.com/wind/ai](https://fluttersdk.com/wind/ai) for the full integration set |
 
 ## Quick Start
 
@@ -412,32 +412,9 @@ Widget.build()
 
 ## AI Coding Assistants
 
-Wind is the first Flutter UI framework that treats AI coding agents as first-class consumers. Three integration layers ship in-box, so Claude Code, Cursor, GitHub Copilot, and any other LLM-backed assistant generate correct Wind code on the first try — no hallucinated className tokens, no invented prefixes, no APIs the library does not actually expose.
+Wind treats AI coding agents as first-class consumers, with a hosted MCP server, a Claude Code skill, and Cursor rules — so Claude Code, Cursor, GitHub Copilot, and any other LLM-backed assistant generate correct Wind code on the first try.
 
-### MCP server — `mcp.fluttersdk.com/wind`
-
-Live, hosted Model Context Protocol server. Your agent queries valid utility classes, supported prefixes, and widget APIs on demand. Add the endpoint once and the integration works across every MCP-compatible client.
-
-```jsonc
-// ~/.cursor/mcp.json (or Claude Code mcp config)
-{
-  "mcpServers": {
-    "wind-ui": { "url": "https://mcp.fluttersdk.com/wind" }
-  }
-}
-```
-
-### Claude Code skill — `wind-ui`
-
-A bundled, version-controlled skill that teaches Wind's className grammar, widget hierarchy, dark-mode conventions, and common anti-patterns. Loaded on demand, scoped to relevant files.
-
-### Cursor rules — `.cursor/rules/*.mdc`
-
-Path-scoped rules that auto-activate when editing `.dart` files. Inject Wind's state prefixes, token names, and gotchas into every suggestion.
-
-> The skill and rules teach your agent how to *write* Wind. The MCP server lets it *verify* what it wrote.
-
-**Setup**: a single repo, one command per assistant. **[fluttersdk/ai](https://github.com/fluttersdk/ai)**
+Setup, endpoint, and per-assistant install steps live at **[fluttersdk.com/wind/ai](https://fluttersdk.com/wind/ai)**.
 
 ## FAQ
 
@@ -463,7 +440,7 @@ The token scales are 100% extensible. Define your own colors, font sizes, shadow
 
 ### Another AI gimmick?
 
-The MCP server and skill are just documentation in a format agents can read. The library works identically without them. The AI layers are additive — never use a coding assistant and Wind is still Wind. Use one and your agent stops guessing className tokens.
+The agent integrations are just documentation in a format agents can read. The library works identically without them. The AI layers are additive — never use a coding assistant and Wind is still Wind. Use one and your agent stops guessing className tokens.
 
 ## Documentation
 
