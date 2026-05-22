@@ -1,114 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class WSpacerResponsiveExamplePage extends StatelessWidget {
   const WSpacerResponsiveExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Responsive Vertical Spacing',
-            description:
-                'Resize window to see gap change: h-2 (mobile) → h-8 (md) → h-16 (lg)',
-            child: WDiv(
-              className:
-                  'flex flex-col border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-slate-800',
-              children: [
-                WDiv(
-                    className:
-                        'p-4 bg-purple-100 dark:bg-purple-900/30 rounded text-center',
-                    child: WText('Top Element')),
-
-                // The responsive spacer
-                const WSpacer(
-                    className:
-                        'h-2 md:h-8 lg:h-16 bg-red-500/10'), // Added bg to visualize the gap
-
-                WDiv(
-                    className:
-                        'p-4 bg-purple-100 dark:bg-purple-900/30 rounded text-center',
-                    child: WText('Bottom Element')),
-                WText('Gap visualizer (red tint) shows the spacer height.',
-                    className: 'text-xs text-gray-400 mt-2 text-center'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Responsive Horizontal Spacing',
-            description:
-                'Resize window to see gap change: w-2 (mobile) → w-12 (md)',
-            child: WDiv(
-              className:
-                  'flex flex-row items-center border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-slate-800',
-              children: [
-                WDiv(
-                    className:
-                        'p-4 bg-orange-100 dark:bg-orange-900/30 rounded',
-                    child: WText('Left')),
-
-                // The responsive spacer
-                const WSpacer(className: 'w-2 md:w-12 bg-blue-500/10 h-10'),
-
-                WDiv(
-                    className:
-                        'p-4 bg-orange-100 dark:bg-orange-900/30 rounded',
-                    child: WText('Right')),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl p-6 shadow-lg',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          WText(
-            'Responsive Spacer',
-            className: 'text-2xl font-bold text-white mb-2',
-          ),
-          WText(
-            'Adapting gaps based on screen size (sm, md, lg, xl).',
-            className: 'text-purple-100',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-4',
+    return ExampleScaffold(
+      title: 'Responsive Spacer',
+      description:
+          'WSpacer accepts the same responsive prefixes as className. Tighten gaps on mobile, loosen on desktop.',
+      gradient: 'from-slate-500 to-slate-700',
       children: [
-        WDiv(
-          className: 'flex flex-col',
-          children: [
-            WText(title,
-                className:
-                    'text-lg font-semibold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-600 dark:text-slate-400'),
-          ],
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'h-4 md:h-8 — 16px gap on mobile, 32px on md+. Resize the window to see the spacing change.',
+          child: WDiv(
+            className: 'flex flex-col items-stretch',
+            children: const [
+              _Card(label: 'Above'),
+              WSpacer(className: 'h-4 md:h-8'),
+              _Card(label: 'Below'),
+            ],
+          ),
         ),
-        child,
+        ExampleSection(
+          title: 'Cascading Breakpoints',
+          description:
+              'Stack prefixes for a multi-stage cascade: h-2 base, h-4 sm+, h-8 lg+, h-12 xl+.',
+          child: WDiv(
+            className: 'flex flex-col items-stretch',
+            children: const [
+              _Card(label: 'First'),
+              WSpacer(className: 'h-2 sm:h-4 lg:h-8 xl:h-12'),
+              _Card(label: 'Second — cascading gap'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Horizontal Cascade',
+          description:
+              'Same idea applied horizontally with w-{n} prefixes inside a flex row.',
+          child: WDiv(
+            className:
+                'flex flex-row items-center p-4 rounded-lg bg-slate-50 dark:bg-slate-700/40',
+            children: const [
+              _Pill(label: 'A'),
+              WSpacer(className: 'w-2 sm:w-4 lg:w-12'),
+              _Pill(label: 'B'),
+            ],
+          ),
+        ),
       ],
+    );
+  }
+}
+
+class _Card extends StatelessWidget {
+  final String label;
+
+  const _Card({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        p-4 rounded-lg
+        bg-white dark:bg-slate-800
+        border border-slate-200 dark:border-slate-700
+      ''',
+      child: WText(
+        label,
+        className: 'text-slate-700 dark:text-slate-200',
+      ),
+    );
+  }
+}
+
+class _Pill extends StatelessWidget {
+  final String label;
+
+  const _Pill({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'px-3 py-1 rounded-full bg-slate-600',
+      child: WText(label, className: 'text-white text-sm font-medium'),
     );
   }
 }

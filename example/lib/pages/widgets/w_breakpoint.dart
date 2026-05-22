@@ -1,143 +1,157 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// WBreakpoint Example
-/// Demonstrates declarative per-breakpoint widget trees.
+import '../../widgets/example_scaffold.dart';
+
 class WBreakpointExamplePage extends StatelessWidget {
   const WBreakpointExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-3xl',
-        children: [
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-indigo-500 to-violet-500
-            ''',
-            children: [
-              WText(
-                'WBreakpoint',
-                className: 'text-lg font-bold text-white',
+    return ExampleScaffold(
+      title: 'WBreakpoint',
+      description:
+          'Builder-per-breakpoint widget for structural switches. Use only when widget TYPE or child COUNT differs per breakpoint; className prefixes cover styling differences.',
+      gradient: 'from-cyan-500 to-blue-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'A different WidgetBuilder runs per breakpoint. base is required; sm/md/lg/xl are optional fallbacks.',
+          child: WBreakpoint(
+            base: (_) => WDiv(
+              className: 'p-4 rounded-lg bg-red-500',
+              child: const WText('base (mobile)',
+                  className: 'text-white font-bold'),
+            ),
+            md: (_) => WDiv(
+              className: 'p-4 rounded-lg bg-amber-500',
+              child: const WText('md', className: 'text-white font-bold'),
+            ),
+            lg: (_) => WDiv(
+              className: 'p-4 rounded-lg bg-emerald-500',
+              child: const WText('lg', className: 'text-white font-bold'),
+            ),
+            xl: (_) => WDiv(
+              className: 'p-4 rounded-lg bg-blue-500',
+              child: const WText('xl', className: 'text-white font-bold'),
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Structural Switch',
+          description:
+              'Mobile uses a stacked Column; md+ uses a 3-column grid. Widget TYPES differ, so WBreakpoint is the right call.',
+          child: WBreakpoint(
+            base: (_) => WDiv(
+              className: 'flex flex-col gap-3',
+              children: const [
+                _Card(label: 'Card 1', color: 'bg-cyan-500'),
+                _Card(label: 'Card 2', color: 'bg-cyan-500'),
+                _Card(label: 'Card 3', color: 'bg-cyan-500'),
+              ],
+            ),
+            md: (_) => WDiv(
+              className: 'grid grid-cols-3 gap-3',
+              children: const [
+                _Card(label: 'Card 1', color: 'bg-blue-500'),
+                _Card(label: 'Card 2', color: 'bg-blue-500'),
+                _Card(label: 'Card 3', color: 'bg-blue-500'),
+              ],
+            ),
+          ),
+        ),
+        ExampleSection(
+          title: 'When NOT to Use',
+          description:
+              'If only styles differ between breakpoints, className prefixes are simpler.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _Compare(
+                bad: 'WBreakpoint for style swap',
+                good: 'flex-col md:flex-row gap-2 md:gap-8',
               ),
-              WText(
-                'Render different widget trees per breakpoint. Resize to see it switch.',
-                className: 'text-sm text-indigo-100',
+              _Compare(
+                bad: 'WBreakpoint for hide/show',
+                good: 'hidden md:block',
+              ),
+              _Compare(
+                bad: 'WBreakpoint for reorder',
+                good: 'order-2 md:order-1',
               ),
             ],
           ),
-          _buildSection(
-            title: 'Different tree per breakpoint',
-            description:
-                'Stacked column on small screens, horizontal row on md+.',
-            child: WBreakpoint(
-              base: (_) => WDiv(
-                className:
-                    'flex flex-col gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
-                children: [
-                  _tag('A', 'bg-rose-500'),
-                  _tag('B', 'bg-rose-500'),
-                  _tag('C', 'bg-rose-500'),
-                ],
-              ),
-              md: (_) => WDiv(
-                className:
-                    'flex gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
-                children: [
-                  _tag('A', 'bg-emerald-500'),
-                  _tag('B', 'bg-emerald-500'),
-                  _tag('C', 'bg-emerald-500'),
-                ],
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'Different child counts',
-            description:
-                'Mobile shows a compact summary; wider breakpoints add detail columns.',
-            child: WBreakpoint(
-              base: (_) => WDiv(
-                className:
-                    'p-4 bg-gray-100 dark:bg-slate-700 rounded-lg flex flex-col gap-1',
-                children: [
-                  WText('Total revenue',
-                      className:
-                          'text-xs text-gray-500 dark:text-gray-300 uppercase'),
-                  WText('\$12,430',
-                      className:
-                          'text-2xl font-bold text-gray-900 dark:text-white'),
-                ],
-              ),
-              md: (_) => WDiv(
-                className:
-                    'grid grid-cols-3 gap-4 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
-                children: [
-                  _statCard('Revenue', '\$12,430', 'bg-emerald-500'),
-                  _statCard('Users', '8,210', 'bg-sky-500'),
-                  _statCard('Orders', '1,284', 'bg-violet-500'),
-                ],
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'Fallback chain (lg width, only md defined)',
-            description:
-                'Walks from active down to any defined lower builder. Here md wins because lg is not provided.',
-            child: WBreakpoint(
-              base: (_) => _infoBox('BASE builder', 'bg-gray-500'),
-              md: (_) => _infoBox('MD builder', 'bg-indigo-500'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'text-lg font-semibold text-gray-900 dark:text-white',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-600 dark:text-gray-400 mb-2',
+        ExampleSection(
+          title: 'Resolution Order',
+          description:
+              'Picks the highest defined builder at or below the active breakpoint. Falls back to base when nothing matches.',
+          child: WDiv(
+            className: '''
+              p-4 rounded-lg font-mono text-xs
+              bg-slate-900 dark:bg-slate-950
+              text-emerald-400
+              overflow-x-auto
+            ''',
+            child: const WText(
+              'active = lg, defined = { base, sm, md }\n'
+              '  walks lg → md → sm\n'
+              '  md has a builder → uses md\n\n'
+              'active = sm, defined = { base, md }\n'
+              '  walks sm → base\n'
+              '  base wins (md is above sm)',
+              className: 'whitespace-pre text-emerald-400',
+            ),
+          ),
         ),
-        child,
       ],
     );
   }
+}
 
-  Widget _tag(String label, String bg) {
+class _Card extends StatelessWidget {
+  final String label;
+  final String color;
+
+  const _Card({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: '$bg px-4 h-10 rounded-lg flex items-center justify-center',
-      child: WText(label, className: 'text-white font-bold'),
+      className: '$color p-4 rounded-lg',
+      child: WText(label, className: 'text-white font-bold text-center'),
     );
   }
+}
 
-  Widget _infoBox(String label, String bg) {
-    return WDiv(
-      className: '$bg p-4 rounded-lg',
-      child: WText(label, className: 'text-white font-semibold'),
-    );
-  }
+class _Compare extends StatelessWidget {
+  final String bad;
+  final String good;
 
-  Widget _statCard(String label, String value, String bg) {
+  const _Compare({required this.bad, required this.good});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: '$bg p-3 rounded-lg flex flex-col gap-1',
+      className: '''
+        flex flex-row items-center gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WText(label, className: 'text-xs text-white/80 uppercase'),
-        WText(value, className: 'text-xl font-bold text-white'),
+        WDiv(
+          className: 'w-56 shrink-0',
+          child: WText(
+            bad,
+            className: 'text-sm text-rose-600 dark:text-rose-400',
+          ),
+        ),
+        WText(
+          'use $good',
+          className:
+              'flex-1 font-mono text-sm text-emerald-600 dark:text-emerald-400',
+        ),
       ],
     );
   }

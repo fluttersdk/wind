@@ -1,123 +1,135 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class WIconSizingExamplePage extends StatelessWidget {
   const WIconSizingExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Typography Based Sizing',
-            description:
-                'Icons scale with text-{size} utilities, matching surrounding text.',
-            child: WDiv(
-              className: 'flex flex-wrap items-end gap-4',
-              children: const [
-                WIcon(Icons.star, className: 'text-xs text-amber-500'),
-                WIcon(Icons.star, className: 'text-sm text-amber-500'),
-                WIcon(Icons.star, className: 'text-base text-amber-500'),
-                WIcon(Icons.star, className: 'text-lg text-amber-500'),
-                WIcon(Icons.star, className: 'text-xl text-amber-500'),
-                WIcon(Icons.star, className: 'text-2xl text-amber-500'),
-                WIcon(Icons.star, className: 'text-3xl text-amber-500'),
-                WIcon(Icons.star, className: 'text-4xl text-amber-500'),
-              ],
-            ),
+    return ExampleScaffold(
+      title: 'Icon Sizing',
+      description:
+          'WIcon supports two sizing modes. Explicit w-{n} h-{n} wins; otherwise text-{size} sets both size and the surrounding text rhythm.',
+      gradient: 'from-amber-500 to-orange-500',
+      children: [
+        ExampleSection(
+          title: 'Typography Sizing',
+          description:
+              'text-{size} pulls from fontSizes scale. Icons inherit the same line-height as adjacent text.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: [
+              _SizeRow(
+                  size: 'text-sm',
+                  child: WIcon(Icons.info,
+                      className: 'text-sm text-amber-600 dark:text-amber-400')),
+              _SizeRow(
+                  size: 'text-base',
+                  child: WIcon(Icons.info,
+                      className:
+                          'text-base text-amber-600 dark:text-amber-400')),
+              _SizeRow(
+                  size: 'text-xl',
+                  child: WIcon(Icons.info,
+                      className: 'text-xl text-amber-600 dark:text-amber-400')),
+              _SizeRow(
+                  size: 'text-3xl',
+                  child: WIcon(Icons.info,
+                      className:
+                          'text-3xl text-amber-600 dark:text-amber-400')),
+              _SizeRow(
+                  size: 'text-5xl',
+                  child: WIcon(Icons.info,
+                      className:
+                          'text-5xl text-amber-600 dark:text-amber-400')),
+            ],
           ),
-          _buildSection(
-            title: 'Explicit Dimensions',
-            description: 'Using w-{size} and h-{size} for precise control.',
-            child: WDiv(
-              className: 'flex items-end gap-4',
-              children: const [
-                WIcon(Icons.favorite, className: 'w-4 h-4 text-red-500'),
-                WIcon(Icons.favorite, className: 'w-8 h-8 text-red-500'),
-                WIcon(Icons.favorite, className: 'w-12 h-12 text-red-500'),
-                WIcon(Icons.favorite, className: 'w-16 h-16 text-red-500'),
-                WIcon(Icons.favorite, className: 'w-20 h-20 text-red-500'),
-              ],
-            ),
+        ),
+        ExampleSection(
+          title: 'Explicit Sizing',
+          description:
+              'w-{n} h-{n} are absolute pixel values; bypass the text scale.',
+          child: WDiv(
+            className: 'wrap gap-8 items-center py-2',
+            children: [
+              WIcon(Icons.star, className: 'w-6 h-6 text-amber-500'),
+              WIcon(Icons.star, className: 'w-10 h-10 text-amber-500'),
+              WIcon(Icons.star, className: 'w-16 h-16 text-amber-500'),
+              WIcon(Icons.star, className: 'w-24 h-24 text-amber-500'),
+            ],
           ),
-          _buildSection(
-            title: 'Inherited Sizing',
-            description:
-                'Icons inherit size and color from parent typography context.',
-            child: WDiv(
-              className: 'flex flex-col gap-4',
-              children: [
-                WDiv(
-                  className: 'text-xl text-blue-500 flex items-center gap-2',
-                  children: const [
-                    WIcon(Icons.check_circle),
-                    WText('Inherits text-xl and blue color'),
-                  ],
-                ),
-                WDiv(
-                  className: 'text-sm text-gray-500 flex items-center gap-2',
-                  children: const [
-                    WIcon(Icons.info),
-                    WText('Inherits text-sm and gray color'),
-                  ],
-                ),
-              ],
-            ),
+        ),
+        ExampleSection(
+          title: 'Priority',
+          description:
+              'Explicit w-{n} h-{n} wins over text-{size} when both are set.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(
+                cls: 'text-3xl',
+                desc: 'Typography sizing (30px default)',
+              ),
+              _RefRow(
+                cls: 'w-12 h-12',
+                desc: 'Explicit (48px); overrides any text-{size}',
+              ),
+              _RefRow(
+                cls: 'text-3xl w-6 h-6',
+                desc: 'w/h wins → 24px',
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl p-6 shadow-lg',
-      child: WDiv(
-        className: 'flex flex-col gap-2',
-        children: const [
-          WText(
-            'Icon Sizing',
-            className: 'text-2xl font-bold text-white',
-          ),
-          WText(
-            'Control icon sizes using typography scales or explicit dimensions.',
-            className: 'text-white/80',
-          ),
-        ],
-      ),
-    );
-  }
+class _SizeRow extends StatelessWidget {
+  final String size;
+  final Widget child;
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
+  const _SizeRow({required this.size, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className:
-          'flex flex-col gap-4 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700',
+      className: 'flex flex-row items-baseline gap-4',
       children: [
         WDiv(
-          className: 'flex flex-col gap-1',
-          children: [
-            WText(title,
-                className:
-                    'text-lg font-semibold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-500 dark:text-slate-400'),
-          ],
+          className: 'w-24 shrink-0',
+          child: WText(
+            size,
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+          ),
         ),
-        WDiv(
-          className:
-              'p-4 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-100 dark:border-gray-700/50',
-          child: child,
-        ),
+        child,
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String desc;
+
+  const _RefRow({required this.cls, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(cls,
+            className: 'font-mono text-sm text-amber-700 dark:text-amber-400'),
+        WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }

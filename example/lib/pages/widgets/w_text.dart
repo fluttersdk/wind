@@ -1,239 +1,120 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class WTextExamplePage extends StatelessWidget {
   const WTextExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto pb-12',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Typography Scale',
-            description: 'Responsive font sizes from text-xs to text-6xl',
-            child: WDiv(
-              className: 'flex flex-col gap-4',
-              children: [
-                _buildDemoRow(
-                    'text-xs', 'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow(
-                    'text-sm', 'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow(
-                    'text-base', 'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow(
-                    'text-lg', 'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow(
-                    'text-xl', 'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow(
-                    'text-2xl', 'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow('text-3xl', 'The quick brown fox'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Font Weights',
-            description: 'Control font weight from thin (100) to black (900)',
-            child: WDiv(
-              className: 'flex flex-col gap-4',
-              children: [
-                _buildDemoRow(
-                    'font-thin', 'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow('font-light',
-                    'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow('font-normal',
-                    'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow('font-medium',
-                    'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow('font-semibold',
-                    'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow(
-                    'font-bold', 'The quick brown fox jumps over the lazy dog'),
-                _buildDemoRow('font-black',
-                    'The quick brown fox jumps over the lazy dog'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Colors & Opacity',
-            description: 'Apply theme colors and opacity modifiers',
-            child: WDiv(
-              className: 'grid grid-cols-1 md:grid-cols-2 gap-4',
-              children: [
-                WText('text-blue-500',
-                    className: 'text-lg font-bold text-blue-500'),
-                WText('text-purple-600',
-                    className: 'text-lg font-bold text-purple-600'),
-                WText('text-green-500/50',
-                    className: 'text-lg font-bold text-green-500/50'),
-                WText('text-red-500/25',
-                    className: 'text-lg font-bold text-red-500/25'),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Decorations',
-            description: 'Visual styling for text content',
-            child: WDiv(
-              className: 'flex flex-col gap-4',
-              children: [
-                WText('Underlined text', className: 'underline text-lg'),
-                WText('Line-through text',
-                    className: 'line-through text-lg text-gray-500'),
-                WText('No underline', className: 'no-underline text-lg'),
-                WDiv(
-                  className: 'flex gap-2 items-center',
-                  children: [
-                    WText('Decoration Style:', className: 'text-gray-500'),
-                    WText('Wavy',
-                        className:
-                            'underline decoration-wavy decoration-red-500 text-lg'),
-                    WText('Dotted',
-                        className:
-                            'underline decoration-dotted decoration-blue-500 text-lg'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Spacing & Line Height',
-            description:
-                'Control tracking (letter spacing) and leading (line height)',
-            child: WDiv(
-              className: 'flex flex-col gap-6',
-              children: [
-                WDiv(
-                  className: 'space-y-2',
-                  children: [
-                    WText('Tracking (Letter Spacing)',
-                        className: 'text-sm font-bold text-gray-500 uppercase'),
-                    WText('tracking-tighter',
-                        className:
-                            'tracking-tighter text-lg bg-gray-100 dark:bg-gray-800 p-2 rounded'),
-                    WText('tracking-widest',
-                        className:
-                            'tracking-widest text-lg bg-gray-100 dark:bg-gray-800 p-2 rounded'),
-                  ],
-                ),
-                WDiv(
-                  className: 'space-y-2',
-                  children: [
-                    WText('Leading (Line Height)',
-                        className: 'text-sm font-bold text-gray-500 uppercase'),
-                    WDiv(
-                      className: 'grid grid-cols-1 md:grid-cols-2 gap-4',
-                      children: [
-                        WDiv(
-                          className: 'p-3 bg-gray-100 dark:bg-gray-800 rounded',
-                          children: [
-                            WText('leading-none',
-                                className: 'text-xs text-gray-500 mb-1'),
-                            WText(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                              className: 'leading-none text-sm',
-                            ),
-                          ],
-                        ),
-                        WDiv(
-                          className: 'p-3 bg-gray-100 dark:bg-gray-800 rounded',
-                          children: [
-                            WText('leading-loose',
-                                className: 'text-xs text-gray-500 mb-1'),
-                            WText(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                              className: 'leading-loose text-sm',
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Runtime-Dynamic Color',
-            description:
-                'Use foregroundColor for values you cannot know at compile '
-                'time (user-picked brand color, per-tenant accent). Inline '
-                'prop overrides any text-* / dark:text-* from className.',
-            child: WDiv(
-              className: 'flex flex-col gap-3',
-              children: const [
-                WText(
-                  'Tenant Acme',
-                  foregroundColor: Color(0xFFEF4444),
-                  className: 'text-xl font-bold',
-                ),
-                WText(
-                  'Tenant Globex',
-                  foregroundColor: Color(0xFF10B981),
-                  className: 'text-xl font-bold',
-                ),
-                WText(
-                  'Tenant Initech',
-                  foregroundColor: Color(0xFF3B82F6),
-                  className: 'text-xl font-bold',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-8 shadow-lg',
+    return ExampleScaffold(
+      title: 'WText',
+      description:
+          'Utility-styled text. text-{size}, font-{weight}, text-{color}, text-{align} compose freely; supports state prefixes and dark mode pairs.',
+      gradient: 'from-indigo-500 to-blue-600',
       children: [
-        WText(
-          'WText',
-          className: 'text-3xl font-bold text-white mb-2',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'One className string sets size, weight, color, alignment, and line height in one go.',
+          child: WText(
+            'Design is not just what it looks like and feels like.',
+            className: '''
+              text-2xl font-bold text-center leading-tight
+              text-slate-900 dark:text-white
+            ''',
+          ),
         ),
-        WText(
-          'Utility-first typography component that translates class strings into optimized Flutter text widgets.',
-          className: 'text-blue-100 text-lg max-w-2xl leading-relaxed',
+        ExampleSection(
+          title: 'Sizes',
+          description: 'Pulls from theme.fontSizes (xs → 6xl).',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              WText('text-xs',
+                  className: 'text-xs text-slate-900 dark:text-white'),
+              WText('text-base',
+                  className: 'text-base text-slate-900 dark:text-white'),
+              WText('text-xl',
+                  className: 'text-xl text-slate-900 dark:text-white'),
+              WText('text-3xl',
+                  className: 'text-3xl text-slate-900 dark:text-white'),
+              WText('text-5xl',
+                  className: 'text-5xl text-slate-900 dark:text-white'),
+            ],
+          ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700',
-      children: [
-        WText(title,
-            className: 'text-xl font-bold text-gray-900 dark:text-white mb-1'),
-        WText(description,
-            className: 'text-sm text-gray-500 dark:text-gray-400 mb-6'),
-        child,
-      ],
-    );
-  }
-
-  Widget _buildDemoRow(String className, String text) {
-    return WDiv(
-      className:
-          'flex flex-col md:flex-row md:items-center gap-2 md:gap-4 border-b border-gray-100 dark:border-gray-700 last:border-0 pb-3 last:pb-0',
-      children: [
-        WText(className,
-            className:
-                'text-xs font-mono text-purple-600 dark:text-purple-400 w-32 shrink-0'),
-        WText(text, className: '$className text-gray-900 dark:text-gray-100'),
+        ExampleSection(
+          title: 'Weights & Style',
+          description: 'font-{name} for weight, italic for slant.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              WText('font-thin',
+                  className:
+                      'font-thin text-lg text-slate-900 dark:text-white'),
+              WText('font-normal',
+                  className:
+                      'font-normal text-lg text-slate-900 dark:text-white'),
+              WText('font-bold',
+                  className:
+                      'font-bold text-lg text-slate-900 dark:text-white'),
+              WText('font-bold italic',
+                  className:
+                      'font-bold italic text-lg text-slate-900 dark:text-white'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Color + Opacity',
+          description: 'text-{color} for tint. /N modifier for alpha.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              WText('text-blue-500', className: 'text-blue-500 text-lg'),
+              WText('text-blue-500/75', className: 'text-blue-500/75 text-lg'),
+              WText('text-blue-500/50', className: 'text-blue-500/50 text-lg'),
+              WText('text-emerald-600', className: 'text-emerald-600 text-lg'),
+              WText('text-rose-600', className: 'text-rose-600 text-lg'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Layout Compose',
+          description:
+              'WText accepts padding, background, and borders — Wind auto-wraps in Container.',
+          child: WText(
+            'Alert: build failed at 14:32. Please retry.',
+            className: '''
+              bg-red-100 dark:bg-red-900/30
+              text-red-700 dark:text-red-300
+              p-4 rounded-lg
+              border border-red-200 dark:border-red-800
+            ''',
+          ),
+        ),
+        ExampleSection(
+          title: 'Overflow',
+          description:
+              'truncate (1-line ellipsis) or line-clamp-{n} (multi-line cap).',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: [
+              WDiv(
+                className: 'w-64',
+                child: const WText(
+                  'A very long single line that will be truncated with an ellipsis.',
+                  className: 'truncate text-slate-900 dark:text-white',
+                ),
+              ),
+              const WText(
+                'A multi-line block that is intentionally long. line-clamp-2 caps it at two lines and ends in ellipsis. The third line you are reading right now will not appear in the rendered output.',
+                className: 'line-clamp-2 text-slate-900 dark:text-white',
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

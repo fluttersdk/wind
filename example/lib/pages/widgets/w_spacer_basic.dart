@@ -1,114 +1,123 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class WSpacerBasicExamplePage extends StatelessWidget {
   const WSpacerBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Vertical Spacing',
-            description:
-                'Using h-4 (16px) and h-8 (32px) to separate elements vertically.',
-            child: WDiv(
-              className:
-                  'flex flex-col border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-slate-800',
-              children: [
-                WDiv(
-                    className:
-                        'h-12 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center',
-                    child: WText('Item 1')),
-                const WSpacer(className: 'h-4'),
-                WDiv(
-                    className:
-                        'h-12 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center',
-                    child: WText('Item 2 (h-4 gap above)')),
-                const WSpacer(className: 'h-8'),
-                WDiv(
-                    className:
-                        'h-12 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center',
-                    child: WText('Item 3 (h-8 gap above)')),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Horizontal Spacing',
-            description:
-                'Using w-4 (16px) and w-8 (32px) to separate elements horizontally in a flex row.',
-            child: WDiv(
-              className:
-                  'flex flex-row border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-slate-800 overflow-x-auto',
-              children: [
-                WDiv(
-                    className:
-                        'w-24 h-12 bg-green-100 dark:bg-green-900/30 rounded flex items-center justify-center',
-                    child: WText('Item A')),
-                const WSpacer(className: 'w-4'),
-                WDiv(
-                    className:
-                        'w-24 h-12 bg-green-100 dark:bg-green-900/30 rounded flex items-center justify-center',
-                    child: WText('Item B')),
-                const WSpacer(className: 'w-8'),
-                WDiv(
-                    className:
-                        'w-24 h-12 bg-green-100 dark:bg-green-900/30 rounded flex items-center justify-center',
-                    child: WText('Item C')),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-6 shadow-lg',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          WText(
-            'WSpacer Basic',
-            className: 'text-2xl font-bold text-white mb-2',
-          ),
-          WText(
-            'Simple lightweight widget for adding consistent gaps between elements.',
-            className: 'text-blue-100',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-4',
+    return ExampleScaffold(
+      title: 'WSpacer',
+      description:
+          'Single-purpose SizedBox-backed widget for explicit gaps. h-{n} for vertical, w-{n} for horizontal. Lighter than a styled WDiv.',
+      gradient: 'from-slate-500 to-slate-700',
       children: [
-        WDiv(
-          className: 'flex flex-col',
-          children: [
-            WText(title,
-                className:
-                    'text-lg font-semibold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-600 dark:text-slate-400'),
-          ],
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'WSpacer between two stacked widgets. h-2 yields an 8px vertical gap.',
+          child: WDiv(
+            className: '''
+              flex flex-col p-4 rounded-lg
+              bg-slate-50 dark:bg-slate-700/40
+            ''',
+            children: [
+              const WText('Label',
+                  className: 'font-bold text-slate-900 dark:text-white'),
+              const WSpacer(className: 'h-2'),
+              WInput(
+                placeholder: 'Enter text…',
+                className: '''
+                  w-full px-3 py-2 rounded
+                  border border-slate-300 dark:border-slate-600
+                  bg-white dark:bg-slate-800
+                ''',
+              ),
+            ],
+          ),
         ),
-        child,
+        ExampleSection(
+          title: 'Vertical Gaps',
+          description:
+              'Each spacer height controls how far apart the boxes sit.',
+          child: WDiv(
+            className: 'flex flex-col items-stretch',
+            children: const [
+              _Box(label: 'A'),
+              WSpacer(className: 'h-1'),
+              _Box(label: 'h-1 → 4px gap'),
+              WSpacer(className: 'h-4'),
+              _Box(label: 'h-4 → 16px gap'),
+              WSpacer(className: 'h-8'),
+              _Box(label: 'h-8 → 32px gap'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Horizontal Gaps',
+          description: 'Switch to w-{n} when arranging items in a row.',
+          child: WDiv(
+            className:
+                'flex flex-row items-center p-4 rounded-lg bg-slate-50 dark:bg-slate-700/40',
+            children: const [
+              _Pill(label: 'Save'),
+              WSpacer(className: 'w-2'),
+              _Pill(label: 'Cancel'),
+              WSpacer(className: 'w-8'),
+              _Pill(label: 'Delete'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Pixels',
+          description: 'Brackets accept exact pixel values for one-off gaps.',
+          child: WDiv(
+            className: 'flex flex-col items-stretch',
+            children: const [
+              _Box(label: 'Above'),
+              WSpacer(className: 'h-[13px]'),
+              _Box(label: 'Below — 13px gap above'),
+            ],
+          ),
+        ),
       ],
+    );
+  }
+}
+
+class _Box extends StatelessWidget {
+  final String label;
+
+  const _Box({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        px-4 py-2 rounded
+        bg-white dark:bg-slate-800
+        border border-slate-200 dark:border-slate-700
+      ''',
+      child: WText(
+        label,
+        className: 'text-slate-700 dark:text-slate-200',
+      ),
+    );
+  }
+}
+
+class _Pill extends StatelessWidget {
+  final String label;
+
+  const _Pill({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'px-3 py-1 rounded-full bg-slate-600',
+      child: WText(label, className: 'text-white text-sm font-medium'),
     );
   }
 }

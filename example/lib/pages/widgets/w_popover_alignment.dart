@@ -1,152 +1,121 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class WPopoverAlignmentExamplePage extends StatelessWidget {
   const WPopoverAlignmentExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-gray-50 dark:bg-slate-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto pb-32',
-        children: [
-          _buildHeader(),
-          _buildAlignmentGrid(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl p-6 shadow-lg',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          WText(
-            'WPopover Alignment',
-            className: 'text-2xl font-bold text-white mb-2',
-          ),
-          WText(
-            'Demonstration of different popover placement strategies.',
-            className: 'text-purple-100',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAlignmentGrid(BuildContext context) {
-    return WDiv(
-      className:
-          'flex flex-col gap-6 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700',
+    return ExampleScaffold(
+      title: 'Popover Alignment',
+      description:
+          'alignment selects where the floating panel sits relative to the trigger. Six anchor points cover the common layouts. autoFlip mirrors when an edge would clip.',
+      gradient: 'from-purple-500 to-violet-600',
       children: [
-        WText(
-          'Click buttons to see popover positioning',
-          className: 'text-lg font-bold text-slate-900 dark:text-white mb-4',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each chip below opens its popover anchored to a different alignment.',
+          child: WDiv(
+            className: 'wrap gap-3',
+            children: const [
+              _AlignChip(
+                  label: 'bottomLeft', alignment: PopoverAlignment.bottomLeft),
+              _AlignChip(
+                  label: 'bottomRight',
+                  alignment: PopoverAlignment.bottomRight),
+              _AlignChip(
+                  label: 'bottomCenter',
+                  alignment: PopoverAlignment.bottomCenter),
+              _AlignChip(label: 'topLeft', alignment: PopoverAlignment.topLeft),
+              _AlignChip(
+                  label: 'topRight', alignment: PopoverAlignment.topRight),
+              _AlignChip(
+                  label: 'topCenter', alignment: PopoverAlignment.topCenter),
+            ],
+          ),
         ),
-
-        // Top Row
-        WDiv(
-          className: 'flex flex-wrap gap-4 justify-between',
-          children: [
-            _buildPopoverDemo(
-              context,
-              'Top Left',
-              PopoverAlignment.topLeft,
-              'bg-blue-500 hover:bg-blue-600',
-            ),
-            _buildPopoverDemo(
-              context,
-              'Top Center',
-              PopoverAlignment.topCenter,
-              'bg-blue-500 hover:bg-blue-600',
-            ),
-            _buildPopoverDemo(
-              context,
-              'Top Right',
-              PopoverAlignment.topRight,
-              'bg-blue-500 hover:bg-blue-600',
-            ),
-          ],
-        ),
-
-        // Spacing
-        const WSpacer(className: 'h-16'),
-
-        // Bottom Row
-        WDiv(
-          className: 'flex flex-wrap gap-4 justify-between',
-          children: [
-            _buildPopoverDemo(
-              context,
-              'Bottom Left',
-              PopoverAlignment.bottomLeft,
-              'bg-emerald-500 hover:bg-emerald-600',
-            ),
-            _buildPopoverDemo(
-              context,
-              'Bottom Center',
-              PopoverAlignment.bottomCenter,
-              'bg-emerald-500 hover:bg-emerald-600',
-            ),
-            _buildPopoverDemo(
-              context,
-              'Bottom Right',
-              PopoverAlignment.bottomRight,
-              'bg-emerald-500 hover:bg-emerald-600',
-            ),
-          ],
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Six alignment constants; default is bottomLeft.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(
+                  cls: 'PopoverAlignment.bottomLeft', pos: 'Below + left edge'),
+              _RefRow(
+                  cls: 'PopoverAlignment.bottomRight',
+                  pos: 'Below + right edge'),
+              _RefRow(
+                  cls: 'PopoverAlignment.bottomCenter',
+                  pos: 'Below + centered'),
+              _RefRow(
+                  cls: 'PopoverAlignment.topLeft', pos: 'Above + left edge'),
+              _RefRow(
+                  cls: 'PopoverAlignment.topRight', pos: 'Above + right edge'),
+              _RefRow(
+                  cls: 'PopoverAlignment.topCenter', pos: 'Above + centered'),
+            ],
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildPopoverDemo(
-    BuildContext context,
-    String label,
-    PopoverAlignment alignment,
-    String btnClass,
-  ) {
+class _AlignChip extends StatelessWidget {
+  final String label;
+  final PopoverAlignment alignment;
+
+  const _AlignChip({required this.label, required this.alignment});
+
+  @override
+  Widget build(BuildContext context) {
     return WPopover(
       alignment: alignment,
-      className:
-          'w-48 bg-white dark:bg-slate-700 shadow-xl rounded-lg p-3 border border-gray-100 dark:border-slate-600',
+      className: '''
+        w-48 rounded-lg p-3
+        bg-white dark:bg-slate-800
+        shadow-xl border border-slate-200 dark:border-slate-700
+      ''',
       triggerBuilder: (context, isOpen, isHovering) => WButton(
-        className:
-            '$btnClass text-white px-4 py-2 rounded-lg transition-colors shadow-sm',
-        child: WText(label, className: 'font-medium'),
+        onTap: () {},
+        className: '''
+          bg-purple-600 hover:bg-purple-700
+          text-white px-3 py-2 rounded-lg text-sm font-mono duration-200
+        ''',
+        child: WText(label, className: 'text-white text-sm font-mono'),
       ),
-      contentBuilder: (context, close) => WDiv(
-        className: 'flex flex-col gap-2',
-        children: [
-          WText(
-            'Aligned: $label',
-            className: 'font-bold text-sm text-slate-800 dark:text-slate-200',
-          ),
-          WText(
-            'This content is positioned relative to the trigger.',
-            className: 'text-xs text-slate-500 dark:text-slate-400',
-          ),
-          const WSpacer(className: 'h-2'),
-          WButton(
-            onTap: close,
+      contentBuilder: (context, close) => WText(
+        'Anchored at $label',
+        className: 'text-sm text-slate-700 dark:text-slate-200',
+      ),
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String pos;
+
+  const _RefRow({required this.cls, required this.pos});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(cls,
             className:
-                'w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm font-medium transition-colors shadow-sm',
-            child: WDiv(
-              className: 'flex items-center justify-center gap-2',
-              children: [
-                WIcon(Icons.close, className: 'text-sm text-white'),
-                WText('Close', className: 'text-white'),
-              ],
-            ),
-          ),
-        ],
-      ),
+                'font-mono text-sm text-purple-700 dark:text-purple-400'),
+        WText(pos, className: 'text-sm text-slate-600 dark:text-slate-300'),
+      ],
     );
   }
 }

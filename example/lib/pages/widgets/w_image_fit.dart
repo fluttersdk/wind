@@ -1,89 +1,101 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
+const _photoUrl = 'https://picsum.photos/seed/fit/600/400';
+
 class WImageFitExamplePage extends StatelessWidget {
   const WImageFitExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Object Cover (Default)',
-            description:
-                'Image covers the container, cropping if necessary. Good for backgrounds and cards.',
-            child: const WImage(
-              src: 'https://picsum.photos/400/300',
-              className:
-                  'w-full h-48 object-cover rounded-lg bg-gray-200 dark:bg-gray-700',
-            ),
-          ),
-          _buildSection(
-            title: 'Object Contain',
-            description:
-                'Image scales to fit within the container without cropping. Good for logos and products.',
-            child: const WImage(
-              src: 'https://picsum.photos/400/300',
-              className:
-                  'w-full h-48 object-contain bg-gray-900 rounded-lg border border-gray-700',
-            ),
-          ),
-          _buildSection(
-            title: 'Object Fill',
-            description:
-                'Image stretches to fill the container. May distort aspect ratio.',
-            child: const WImage(
-              src: 'https://picsum.photos/400/300',
-              className:
-                  'w-full h-48 object-fill rounded-lg bg-gray-200 dark:bg-gray-700',
-            ),
-          ),
-          _buildSection(
-            title: 'Object None',
-            description: 'Image is not resized, centered in container.',
-            child: const WImage(
-              src:
-                  'https://picsum.photos/100/100', // Small image to show 'none' effect
-              className:
-                  'w-full h-48 object-none rounded-lg bg-gray-200 dark:bg-gray-700',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl p-6 shadow-lg',
-      child: WText(
-        'Image Fit Modes',
-        className: 'text-2xl font-bold text-white',
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col gap-4 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700',
+    return ExampleScaffold(
+      title: 'Object Fit',
+      description:
+          'object-{cover|contain|fill|none|scale-down} controls how the image scales inside its container. Same source, different fit modes.',
+      gradient: 'from-teal-500 to-emerald-600',
       children: [
-        WText(title,
-            className: 'text-lg font-bold text-gray-900 dark:text-white'),
-        WText(description,
-            className: 'text-sm text-gray-500 dark:text-gray-400'),
-        child,
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each tile applies a different object-{fit} to the same 256×160 container.',
+          child: WDiv(
+            className: 'grid grid-cols-1 sm:grid-cols-2 gap-3',
+            children: const [
+              _FitTile(label: 'object-cover', fit: 'object-cover'),
+              _FitTile(label: 'object-contain', fit: 'object-contain'),
+              _FitTile(label: 'object-fill', fit: 'object-fill'),
+              _FitTile(label: 'object-scale-down', fit: 'object-scale-down'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Each fit maps to a Flutter BoxFit value.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'object-cover', maps: 'BoxFit.cover'),
+              _RefRow(cls: 'object-contain', maps: 'BoxFit.contain'),
+              _RefRow(cls: 'object-fill', maps: 'BoxFit.fill'),
+              _RefRow(cls: 'object-none', maps: 'BoxFit.none'),
+              _RefRow(cls: 'object-scale-down', maps: 'BoxFit.scaleDown'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FitTile extends StatelessWidget {
+  final String label;
+  final String fit;
+
+  const _FitTile({required this.label, required this.fit});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-col gap-2',
+      children: [
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className:
+              'h-40 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700',
+          child: WImage(
+            src: _photoUrl,
+            className: 'w-full h-full $fit',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String maps;
+
+  const _RefRow({required this.cls, required this.maps});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(cls,
+            className: 'font-mono text-sm text-teal-700 dark:text-teal-400'),
+        WText(maps,
+            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }

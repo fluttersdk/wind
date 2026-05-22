@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart' hide DatePickerMode;
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Date range picker with hover preview.
+import '../../widgets/example_scaffold.dart';
+
 class DatePickerRangeExamplePage extends StatefulWidget {
   const DatePickerRangeExamplePage({super.key});
 
@@ -12,104 +13,115 @@ class DatePickerRangeExamplePage extends StatefulWidget {
 
 class _DatePickerRangeExamplePageState
     extends State<DatePickerRangeExamplePage> {
-  DateRange? _tripRange;
-  DateRange? _bookingRange;
+  DateRange? _range;
+
+  static const _triggerCls = '''
+    w-full p-3 rounded-lg
+    bg-white dark:bg-slate-800
+    border border-slate-300 dark:border-slate-600
+    hover:border-rose-500
+  ''';
+
+  String _formatRange(DateRange? r) {
+    if (r == null) return '—';
+    final start = r.start.toString().split(' ').first;
+    final end = r.end?.toString().split(' ').first ?? '…';
+    return '$start → $end';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ExampleScaffold(
+      title: 'Date Range Picker',
+      description:
+          'mode: DatePickerMode.range enables two-click range selection with hover preview. range + onRangeChanged for controlled state.',
+      gradient: 'from-rose-500 to-pink-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'First click sets start. Hover paints the candidate range. Second click commits the end.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: [
+              WDatePicker(
+                mode: DatePickerMode.range,
+                range: _range,
+                onRangeChanged: (r) => setState(() => _range = r),
+                placeholder: 'Check-in / Check-out',
+                className: _triggerCls,
+              ),
+              WDiv(
+                className: '''
+                  p-3 rounded font-mono text-sm
+                  bg-slate-50 dark:bg-slate-700/40
+                ''',
+                children: [
+                  WText(
+                    'Range: ${_formatRange(_range)}',
+                    className: 'text-slate-700 dark:text-slate-200',
+                  ),
+                  if (_range != null && _range!.isComplete)
+                    WText(
+                      'Days: ${_range!.end!.difference(_range!.start).inDays}',
+                      className: 'text-slate-500 dark:text-slate-400 mt-1',
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'How It Works',
+          description:
+              'onRangeChanged fires twice: once with start only (end == null), once with the complete range.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _Step(n: 1, text: 'First click → DateRange(start, end: null)'),
+              _Step(n: 2, text: 'Hover → preview highlights candidate range'),
+              _Step(
+                  n: 3,
+                  text: 'Second click → DateRange(start, end: …) commits'),
+              _Step(n: 4, text: 'If end < start, swap automatically'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Step extends StatelessWidget {
+  final int n;
+  final String text;
+
+  const _Step({required this.n, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          // Header
-          WDiv(
-            className:
-                'bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl p-6',
-            children: const [
-              WText('Date Range Selection',
-                  className: 'text-2xl font-bold text-white'),
-              WText(
-                'Two-click range selection with hover preview between dates.',
-                className: 'text-violet-100 mt-1',
-              ),
-            ],
-          ),
-
-          // Basic Range
-          _buildSection(
-            title: 'Trip Duration',
-            description:
-                'Click once to set start, hover to preview, click again to complete.',
-            child: WDatePicker(
-              mode: DatePickerMode.range,
-              range: _tripRange,
-              onRangeChanged: (range) => setState(() => _tripRange = range),
-              placeholder: 'Check-in / Check-out',
-              className:
-                  'w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800',
-            ),
-          ),
-
-          // Range with Constraints
-          _buildSection(
-            title: 'Constrained Range',
-            description: 'Only dates within the next 90 days are selectable.',
-            child: WDatePicker(
-              mode: DatePickerMode.range,
-              range: _bookingRange,
-              minDate: DateTime.now(),
-              maxDate: DateTime.now().add(const Duration(days: 90)),
-              onRangeChanged: (range) => setState(() => _bookingRange = range),
-              placeholder: 'Select booking window',
-              className:
-                  'w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800',
-            ),
-          ),
-
-          // Range Display
-          if (_tripRange != null)
-            WDiv(
-              className:
-                  'p-4 bg-violet-50 dark:bg-violet-900/20 rounded-lg border border-violet-200 dark:border-violet-800',
-              children: [
-                WText(
-                  'Start: ${_formatDate(_tripRange!.start)}',
-                  className:
-                      'text-sm font-mono text-violet-700 dark:text-violet-300',
-                ),
-                if (_tripRange!.isComplete)
-                  WText(
-                    'End: ${_formatDate(_tripRange!.end!)} — ${_tripRange!.end!.difference(_tripRange!.start).inDays} days',
-                    className:
-                        'text-sm font-mono text-violet-700 dark:text-violet-300',
-                  ),
-              ],
-            ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700',
+      className: '''
+        flex flex-row items-center gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WText(title,
-            className: 'text-lg font-semibold text-slate-900 dark:text-white'),
-        WText(description,
-            className: 'text-sm text-slate-600 dark:text-slate-400'),
-        child,
+        WDiv(
+          className: '''
+            w-6 h-6 rounded-full
+            bg-rose-500
+            flex items-center justify-center
+          ''',
+          child: WText(
+            '$n',
+            className: 'text-white text-xs font-bold',
+          ),
+        ),
+        WText(
+          text,
+          className: 'flex-1 text-sm text-slate-700 dark:text-slate-200',
+        ),
       ],
     );
   }

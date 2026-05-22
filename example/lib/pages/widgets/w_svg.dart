@@ -1,171 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
+const _starSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+
+const _strokeStarSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+
+const _multiColorSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+    '<circle cx="30" cy="50" r="20" fill="#FF5733"/>'
+    '<circle cx="60" cy="40" r="20" fill="#33C3FF"/>'
+    '<circle cx="50" cy="70" r="20" fill="#FFD700"/>'
+    '</svg>';
+
 class WSvgExamplePage extends StatelessWidget {
   const WSvgExamplePage({super.key});
 
-  // Simple star SVG string for demo
-  static const String starSvg = '''
-<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-''';
-
-  // Circle SVG string
-  static const String circleSvg = '''
-<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-<circle cx="12" cy="12" r="10" />
-</svg>
-''';
-
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Basic Usage (String Source)',
-            description:
-                'Rendering SVGs from string with basic sizing and coloring.',
-            child: WDiv(
-              className:
-                  'flex flex-wrap gap-6 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm',
-              children: [
-                WDiv(
-                  className: 'flex flex-col items-center gap-2',
-                  children: [
-                    WSvg.string(starSvg, className: 'w-10 h-10 text-blue-500'),
-                    WText('text-blue-500', className: 'text-xs font-mono'),
-                  ],
-                ),
-                WDiv(
-                  className: 'flex flex-col items-center gap-2',
-                  children: [
-                    WSvg.string(starSvg,
-                        className: 'w-10 h-10 text-orange-500'),
-                    WText('text-orange-500', className: 'text-xs font-mono'),
-                  ],
-                ),
-                WDiv(
-                  className: 'flex flex-col items-center gap-2',
-                  children: [
-                    WSvg.string(circleSvg,
-                        className: 'w-10 h-10 fill-green-500'),
-                    WText('fill-green-500', className: 'text-xs font-mono'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Interactive States',
-            description: 'SVGs responding to hover and focus states.',
-            child: WDiv(
-              className:
-                  'flex flex-wrap gap-6 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm',
-              children: [
-                WDiv(
-                  className:
-                      'group flex flex-col items-center gap-2 cursor-pointer',
-                  children: [
-                    WSvg.string(
-                      starSvg,
-                      className:
-                          'w-12 h-12 text-gray-400 hover:text-yellow-400 transition-all duration-300',
-                    ),
-                    WText('Hover Me', className: 'text-xs text-gray-500'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          _buildSection(
-            title: 'Sizing & Animation',
-            description: 'Using Tailwind sizing classes and animate-spin.',
-            child: WDiv(
-              className:
-                  'flex flex-wrap items-center gap-8 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm',
-              children: [
-                WDiv(
-                  className: 'flex flex-col items-center gap-2',
-                  children: [
-                    WSvg.string(starSvg, className: 'w-8 h-8 text-purple-500'),
-                    WText('w-8 h-8', className: 'text-xs font-mono'),
-                  ],
-                ),
-                WDiv(
-                  className: 'flex flex-col items-center gap-2',
-                  children: [
-                    WSvg.string(starSvg,
-                        className: 'w-16 h-16 text-purple-500'),
-                    WText('w-16 h-16', className: 'text-xs font-mono'),
-                  ],
-                ),
-                WDiv(
-                  className: 'flex flex-col items-center gap-2',
-                  children: [
-                    WDiv(
-                      className: 'animate-spin',
-                      child: WSvg.string(
-                        '''<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>''',
-                        className: 'w-12 h-12 text-amber-500',
-                      ),
-                    ),
-                    WText('animate-spin', className: 'text-xs font-mono'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-orange-500 to-red-600 rounded-xl p-6 shadow-lg',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          WText(
-            'WSvg Widgets',
-            className: 'text-2xl font-bold text-white mb-2',
-          ),
-          WText(
-            'Render Scalable Vector Graphics with Tailwind utility styling.',
-            className: 'text-orange-100',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-4',
+    return ExampleScaffold(
+      title: 'WSvg',
+      description:
+          'Utility-styled SVG. fill-{color} for solid shapes, stroke-{color} for outlines. preserve-colors bypasses the tint for multi-color art.',
+      gradient: 'from-emerald-500 to-teal-600',
       children: [
-        WDiv(
-          className: 'flex flex-col',
-          children: [
-            WText(title,
-                className:
-                    'text-lg font-semibold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-600 dark:text-slate-400'),
-          ],
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Solid SVG tinted via fill-{color}. Sizing via w/h or text-{size}.',
+          child: WDiv(
+            className: 'wrap gap-8 items-center',
+            children: [
+              WSvg.string(_starSvg, className: 'w-12 h-12 fill-amber-500'),
+              WSvg.string(_starSvg, className: 'w-12 h-12 fill-rose-500'),
+              WSvg.string(_starSvg, className: 'w-12 h-12 fill-emerald-500'),
+              WSvg.string(_starSvg, className: 'w-12 h-12 fill-blue-500'),
+            ],
+          ),
         ),
-        child,
+        ExampleSection(
+          title: 'Stroke vs Fill',
+          description:
+              'stroke-{color} for line-style SVGs. fill-{color} for solid shapes. stroke takes priority when both are present.',
+          child: WDiv(
+            className: 'wrap gap-8 items-center',
+            children: [
+              WSvg.string(_starSvg, className: 'w-16 h-16 fill-emerald-500'),
+              WSvg.string(_strokeStarSvg,
+                  className: 'w-16 h-16 stroke-emerald-500'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'preserve-colors',
+          description:
+              'For multi-color art (logos, QR codes, illustrations) add preserve-colors to skip the ColorFilter.',
+          child: WDiv(
+            className: 'wrap gap-8 items-center',
+            children: [
+              WSvg.string(_multiColorSvg, className: 'w-16 h-16'),
+              WSvg.string(_multiColorSvg,
+                  className: 'w-16 h-16 preserve-colors'),
+              const WText(
+                  'left: tinted by default theme color\nright: preserve-colors keeps original',
+                  className:
+                      'text-xs text-slate-500 dark:text-slate-400 whitespace-pre'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Opacity + Transitions',
+          description:
+              'opacity-{n} and duration-{ms} compose with the color modifiers.',
+          child: WAnchor(
+            onTap: () {},
+            child: WSvg.string(
+              _starSvg,
+              className: '''
+                w-20 h-20 fill-emerald-500
+                opacity-50 hover:opacity-100
+                duration-300
+              ''',
+            ),
+          ),
+        ),
       ],
     );
   }
