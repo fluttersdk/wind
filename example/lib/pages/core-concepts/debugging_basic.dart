@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Demonstrates the 'debug' class for Wind styling diagnostics.
+import '../../widgets/example_scaffold.dart';
+
 class DebuggingBasicExamplePage extends StatefulWidget {
   const DebuggingBasicExamplePage({super.key});
 
@@ -15,193 +16,176 @@ class _DebuggingBasicExamplePageState extends State<DebuggingBasicExamplePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildDebugToggle(),
-          _buildDemoWidget(),
-          _buildOutputExplanation(),
-          _buildUsageGuide(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className: 'bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl p-6',
-      child: WDiv(
-        className: 'flex flex-col gap-2',
-        children: [
-          WText(
-            'Debugging Wind Styles',
-            className: 'text-2xl font-bold text-white',
-          ),
-          WText(
-            'Add the "debug" class to any widget to see detailed parsing output in the console.',
-            className: 'text-amber-100',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDebugToggle() {
-    return _buildSection(
-      title: 'Toggle Debug Mode',
+    return ExampleScaffold(
+      title: 'Debugging',
       description:
-          'Enable debug to see console output when the widget below renders',
-      child: WDiv(
-        className: 'flex items-center gap-4',
-        children: [
-          WButton(
-            className: _debugEnabled
-                ? 'bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg'
-                : 'bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg',
-            onTap: () => setState(() => _debugEnabled = !_debugEnabled),
-            child: WText(
-              _debugEnabled ? 'Debug ON' : 'Debug OFF',
-              className: _debugEnabled
-                  ? 'text-white font-medium'
-                  : 'text-slate-700 dark:text-slate-300 font-medium',
+          'Add the debug class to any className to see the resolved widget composition, final styles, and build time in the dev console.',
+      gradient: 'from-amber-500 to-orange-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Drop debug anywhere in the className. The Wind parser prints a full report to the dev console on next build.',
+          child: WDiv(
+            className: '''
+              debug flex p-4 rounded-lg
+              bg-blue-500
+            ''',
+            child: const WText(
+              'Debugging active',
+              className: 'text-white font-medium',
             ),
           ),
-          WText(
-            _debugEnabled
-                ? 'Check your console for debug output!'
-                : 'Click to enable debug logging',
-            className: 'text-sm text-slate-500 dark:text-slate-400',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDemoWidget() {
-    // The key forces rebuild when debug mode changes
-    final baseClasses =
-        'p-6 bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg';
-    final className = _debugEnabled ? '$baseClasses debug' : baseClasses;
-
-    return _buildSection(
-      title: 'Demo Widget',
-      description:
-          'This widget has debug ${_debugEnabled ? "enabled" : "disabled"}',
-      child: WDiv(
-        key: ValueKey('debug-$_debugEnabled'),
-        className: className,
-        children: [
-          WText('Hover over me!', className: 'text-lg font-bold text-white'),
-          WText(
-            'className: "$className"',
-            className: 'text-sm text-blue-100 mt-2 font-mono',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOutputExplanation() {
-    return _buildSection(
-      title: 'What Debug Shows',
-      description: 'The debug output includes several sections:',
-      child: WDiv(
-        className: 'flex flex-col gap-4',
-        children: [
-          _buildOutputItem(
-            icon: '🌳',
-            title: 'Composition Tree',
-            description:
-                'Shows how Wind interprets and composes your className utilities',
-            example:
-                'WDiv → Container → Padding(16) → DecoratedBox(bg: blue-500)',
-          ),
-          _buildOutputItem(
-            icon: '🎨',
-            title: 'Final Styles',
-            description:
-                'The resolved Flutter styling values after all utilities are applied',
-            example:
-                'padding: EdgeInsets.all(24), backgroundColor: Color(0xFF3B82F6)',
-          ),
-          _buildOutputItem(
-            icon: '⏱️',
-            title: 'Build Time',
-            description:
-                'How long the parsing took (useful for performance tuning)',
-            example: 'Parse time: 0.42ms',
-          ),
-          _buildOutputItem(
-            icon: '🔍',
-            title: 'State Resolution',
-            description:
-                'Which state-prefixed classes were active (hover:, focus:, etc.)',
-            example: 'Active states: [hover] → applied: hover:bg-blue-600',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOutputItem({
-    required String icon,
-    required String title,
-    required String description,
-    required String example,
-  }) {
-    return WDiv(
-      className: 'p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg',
-      children: [
-        WDiv(
-          className: 'flex items-center gap-2',
-          children: [
-            WText(icon, className: 'text-lg'),
-            WText(title,
-                className: 'font-semibold text-slate-900 dark:text-white'),
-          ],
         ),
-        WText(description,
-            className: 'text-sm text-slate-600 dark:text-slate-400 mt-1'),
-        WDiv(
-          className: 'mt-2 p-2 bg-slate-900 rounded font-mono text-xs',
-          child: WText(example, className: 'text-green-400'),
+        _ToggleSection(
+          enabled: _debugEnabled,
+          onToggle: () => setState(() => _debugEnabled = !_debugEnabled),
+        ),
+        ExampleSection(
+          title: 'What Debug Prints',
+          description:
+              'Each toggle produces three sections in the console output. Each one peels back one layer of the resolution pipeline.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: const [
+              _OutputCard(
+                title: 'Composition Tree',
+                body:
+                    'Final Flutter widget hierarchy after Wind expands className into Padding / DecoratedBox / Row / ...',
+                sample:
+                    'Padding(\n  padding: EdgeInsets.all(16.0),\n  child: DecoratedBox(\n    decoration: BoxDecoration(\n      color: Color(0xFF3B82F6),\n      borderRadius: BorderRadius.circular(8.0),\n    ),\n  ),\n)',
+              ),
+              _OutputCard(
+                title: 'Final Styles',
+                body:
+                    'Resolved WindStyle. Already merged across base, responsive, dark, and state prefixes.',
+                sample:
+                    'WindStyle(\n  padding: EdgeInsets.all(16.0),\n  backgroundColor: Color(0xFF3B82F6),\n  borderRadius: BorderRadius.circular(8.0),\n  isFlex: true,\n)',
+              ),
+              _OutputCard(
+                title: 'Build Time',
+                body:
+                    'Microseconds spent parsing className and building the tree. Spikes over 1ms hint at heavy class complexity.',
+                sample: 'Build Time: 142µs',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Three pieces of output, one knob. The debug class is widget-scoped: parents and children stay quiet.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(field: 'debug', purpose: 'Utility class on any widget'),
+              _RefRow(
+                  field: 'Composition Tree', purpose: 'Pseudo-Dart hierarchy'),
+              _RefRow(field: 'Final Styles', purpose: 'WindStyle field dump'),
+              _RefRow(
+                  field: 'Build Time',
+                  purpose: 'Microsecond performance audit'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Common Scenarios',
+          description:
+              'Add debug to confirm responsive resolution, state propagation, or unexpected wrapper widgets.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _ScenarioRow(
+                title: 'Inspecting responsive styles',
+                body:
+                    'Resize the viewport with debug active. The logger re-fires with the new active breakpoint.',
+              ),
+              _ScenarioRow(
+                title: 'Verifying state variants',
+                body:
+                    'Hover or focus a widget. The log updates to show the merged hover: / focus: styles.',
+              ),
+              _ScenarioRow(
+                title: 'Analyzing layout layers',
+                body:
+                    'Use the composition tree to find which utility produced an unexpected Padding or DecoratedBox.',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'External Tooling',
+          description:
+              'For E2E drivers and inspectors, call Wind.installDebugResolver() inside kDebugMode at startup. Tree-shaken in release.',
+          child: _CodeBlock(
+            code: 'import "package:flutter/foundation.dart";\n'
+                'import "package:fluttersdk_wind/fluttersdk_wind.dart";\n\n'
+                'void main() {\n'
+                '  if (kDebugMode) {\n'
+                '    Wind.installDebugResolver();\n'
+                '  }\n'
+                '  runApp(const MyApp());\n'
+                '}',
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildUsageGuide() {
-    return _buildSection(
-      title: 'How to Use',
-      description: 'Just add "debug" to any className',
+class _ToggleSection extends StatelessWidget {
+  final bool enabled;
+  final VoidCallback onToggle;
+
+  const _ToggleSection({required this.enabled, required this.onToggle});
+
+  @override
+  Widget build(BuildContext context) {
+    final baseClasses =
+        'p-6 bg-blue-500 hover:bg-blue-600 rounded-xl shadow-lg';
+    final className = enabled ? '$baseClasses debug' : baseClasses;
+
+    return ExampleSection(
+      title: 'Try It Live',
+      description:
+          'Toggle debug on the demo widget. With the dev console open, hover or rebuild to watch the report appear.',
       child: WDiv(
-        className: 'flex flex-col gap-3',
+        className: 'flex flex-col gap-4',
         children: [
           WDiv(
-            className: 'p-3 bg-slate-900 rounded-lg font-mono text-sm',
-            child: WText(
-              "// Add 'debug' anywhere in the className\n"
-              "WDiv(\n"
-              "  className: 'p-4 bg-blue-500 rounded-lg debug',\n"
-              "  child: ...\n"
-              ")",
-              className: 'text-green-400',
-            ),
+            className: 'wrap items-center gap-3',
+            children: [
+              WButton(
+                onTap: onToggle,
+                className: enabled
+                    ? 'bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg'
+                    : 'bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 px-4 py-2 rounded-lg',
+                child: WText(
+                  enabled ? 'Debug ON' : 'Debug OFF',
+                  className: enabled
+                      ? 'text-white font-medium'
+                      : 'text-slate-700 dark:text-slate-200 font-medium',
+                ),
+              ),
+              WText(
+                enabled
+                    ? 'Watch the console for the report.'
+                    : 'Click to inject debug into the demo widget below.',
+                className: 'text-sm text-slate-600 dark:text-slate-400',
+              ),
+            ],
           ),
           WDiv(
-            className:
-                'p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800',
+            key: ValueKey('debug-$enabled'),
+            className: className,
             children: [
-              WText('💡 Tip',
-                  className:
-                      'font-semibold text-amber-700 dark:text-amber-400'),
+              const WText(
+                'Hover me!',
+                className: 'text-lg font-bold text-white',
+              ),
               WText(
-                'Remove "debug" before production! It adds console overhead.',
-                className: 'text-sm text-amber-600 dark:text-amber-300 mt-1',
+                'className: "$className"',
+                className: 'text-sm font-mono text-blue-100 mt-1',
               ),
             ],
           ),
@@ -209,28 +193,125 @@ class _DebuggingBasicExamplePageState extends State<DebuggingBasicExamplePage> {
       ),
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
+class _OutputCard extends StatelessWidget {
+  final String title;
+  final String body;
+  final String sample;
+
+  const _OutputCard({
+    required this.title,
+    required this.body,
+    required this.sample,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className:
-          'flex flex-col gap-4 p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700',
+      className: '''
+        flex flex-col gap-2 p-3 rounded-lg
+        bg-slate-50 dark:bg-slate-700/40
+        border border-slate-200 dark:border-slate-700
+      ''',
       children: [
-        WDiv(
-          className: 'flex flex-col gap-1',
-          children: [
-            WText(title,
-                className:
-                    'text-lg font-semibold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-600 dark:text-slate-400'),
-          ],
+        WText(
+          title,
+          className: 'font-semibold text-slate-900 dark:text-white',
         ),
-        child,
+        WText(
+          body,
+          className: 'text-sm text-slate-600 dark:text-slate-400',
+        ),
+        WDiv(
+          className: '''
+            mt-1 p-3 rounded font-mono text-xs
+            bg-slate-900 dark:bg-slate-950
+            overflow-x-auto
+          ''',
+          child: WText(
+            sample,
+            className: 'whitespace-pre text-emerald-400',
+          ),
+        ),
       ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String field;
+  final String purpose;
+
+  const _RefRow({required this.field, required this.purpose});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(
+          field,
+          className: 'font-mono text-sm text-amber-600 dark:text-amber-400',
+        ),
+        WText(
+          purpose,
+          className: 'text-sm text-slate-600 dark:text-slate-400',
+        ),
+      ],
+    );
+  }
+}
+
+class _ScenarioRow extends StatelessWidget {
+  final String title;
+  final String body;
+
+  const _ScenarioRow({required this.title, required this.body});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-col gap-1 p-3 rounded-lg
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(
+          title,
+          className: 'font-medium text-slate-900 dark:text-white',
+        ),
+        WText(
+          body,
+          className: 'text-sm text-slate-600 dark:text-slate-400',
+        ),
+      ],
+    );
+  }
+}
+
+class _CodeBlock extends StatelessWidget {
+  final String code;
+
+  const _CodeBlock({required this.code});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        p-4 rounded-lg font-mono text-xs
+        bg-slate-900 dark:bg-slate-950
+        text-emerald-400
+        overflow-x-auto
+      ''',
+      child: WText(
+        code,
+        className: 'whitespace-pre text-emerald-400',
+      ),
     );
   }
 }

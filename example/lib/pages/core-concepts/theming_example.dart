@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Demonstrates WindThemeData customization with unique colors, spacing, and typography.
+import '../../widgets/example_scaffold.dart';
+
 class ThemingExamplePage extends StatelessWidget {
   const ThemingExamplePage({super.key});
 
@@ -9,75 +10,116 @@ class ThemingExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = WindTheme.dataOf(context);
 
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildColorPalette(themeData),
-          _buildSpacingScale(themeData),
-          _buildTypographyScale(themeData),
-          _buildBorderRadiusScale(themeData),
-          _buildShadowScale(),
-        ],
-      ),
+    return ExampleScaffold(
+      title: 'Theme Configuration',
+      description:
+          'WindThemeData drives every utility. Override any of 23 fields; unset ones inherit the Tailwind-equivalent defaults.',
+      gradient: 'from-emerald-500 to-teal-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Wrap the app once. Override only the fields you need; merge with defaults is automatic.',
+          child: _CodeBlock(
+            code: 'WindTheme(\n'
+                '  data: WindThemeData(\n'
+                '    colors: {\n'
+                '      "brand": Colors.indigo,\n'
+                '    },\n'
+                '    fontFamilies: {"sans": "Inter"},\n'
+                '    baseSpacingUnit: 4.0,\n'
+                '  ),\n'
+                '  child: MaterialApp(\n'
+                '    home: MyHome(),\n'
+                '  ),\n'
+                ')',
+          ),
+        ),
+        const _ColorPaletteSection(),
+        _SpacingScaleSection(themeData: themeData),
+        const _TypographyScaleSection(),
+        const _BorderRadiusSection(),
+        const _ShadowScaleSection(),
+        ExampleSection(
+          title: 'Theme Change Callbacks',
+          description:
+              'onThemeChanged fires only on user-initiated toggleTheme() calls. Use it to persist preference.',
+          child: _CodeBlock(
+            code: 'WindTheme(\n'
+                '  data: WindThemeData(),\n'
+                '  onThemeChanged: (brightness) {\n'
+                '    Vault.set(\n'
+                '      "theme_mode",\n'
+                '      brightness == Brightness.dark ? "dark" : "light",\n'
+                '    );\n'
+                '  },\n'
+                '  child: MaterialApp(home: MyHome()),\n'
+                ')',
+          ),
+        ),
+        ExampleSection(
+          title: 'Reset to System',
+          description:
+              'After a manual toggle, automatic system brightness sync is disabled. Call resetToSystem() to re-enable it.',
+          child: _CodeBlock(
+            code: 'context.windTheme.resetToSystem();',
+          ),
+        ),
+        ExampleSection(
+          title: 'copyWith for Variants',
+          description:
+              'Build dark or branded variants from a base theme without retyping every field.',
+          child: _CodeBlock(
+            code: 'final dark = baseTheme.copyWith(\n'
+                '  brightness: Brightness.dark,\n'
+                '  ringColor: Colors.amber,\n'
+                ');',
+          ),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildHeader() {
-    return WDiv(
-      className: 'bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl p-6',
+class _ColorPaletteSection extends StatelessWidget {
+  const _ColorPaletteSection();
+
+  final _colors = const ['primary', 'slate', 'red', 'green', 'blue', 'purple'];
+  final _shades = const [
+    '50',
+    '100',
+    '200',
+    '300',
+    '400',
+    '500',
+    '600',
+    '700',
+    '800',
+    '900'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ExampleSection(
+      title: 'Color Palettes',
+      description:
+          'Define a MaterialColor under colors["brand"] and every shade utility (bg-brand-50 … bg-brand-900) is available.',
       child: WDiv(
-        className: 'flex flex-col gap-2',
-        children: [
-          WText(
-            'Theme Customization',
-            className: 'text-2xl font-bold text-white',
-          ),
-          WText(
-            'Explore your WindThemeData scales: colors, spacing, typography, and more.',
-            className: 'text-emerald-100',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildColorPalette(WindThemeData themeData) {
-    final colorNames = ['primary', 'slate', 'red', 'green', 'blue', 'purple'];
-    final shades = [
-      '50',
-      '100',
-      '200',
-      '300',
-      '400',
-      '500',
-      '600',
-      '700',
-      '800',
-      '900'
-    ];
-
-    return _buildSection(
-      title: 'Color Palette',
-      description: 'Theme colors with MaterialColor-style shades (50-900)',
-      child: WDiv(
-        className: 'flex flex-col gap-4',
-        children: colorNames.map((colorName) {
+        className: 'flex flex-col gap-3',
+        children: _colors.map((color) {
           return WDiv(
             className: 'flex flex-col gap-1',
             children: [
-              WText(colorName,
-                  className:
-                      'text-sm font-medium text-slate-700 dark:text-slate-300 capitalize'),
+              WText(
+                color,
+                className:
+                    'text-sm font-medium capitalize text-slate-700 dark:text-slate-300',
+              ),
               WDiv(
-                className: 'flex gap-1',
-                children: shades.map((shade) {
+                className: 'flex gap-1 overflow-x-auto',
+                children: _shades.map((shade) {
                   return WDiv(
-                    className: 'w-8 h-8 rounded bg-$colorName-$shade',
-                    child: const SizedBox.shrink(),
+                    className: 'w-8 h-8 rounded shrink-0 bg-$color-$shade',
                   );
                 }).toList(),
               ),
@@ -87,36 +129,56 @@ class ThemingExamplePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildSpacingScale(WindThemeData themeData) {
-    final spacingValues = ['1', '2', '3', '4', '6', '8', '10', '12', '16'];
+class _SpacingScaleSection extends StatelessWidget {
+  final WindThemeData themeData;
 
-    return _buildSection(
+  const _SpacingScaleSection({required this.themeData});
+
+  @override
+  Widget build(BuildContext context) {
+    final values = const ['1', '2', '3', '4', '6', '8', '10', '12', '16'];
+    final base = themeData.baseSpacingUnit;
+
+    return ExampleSection(
       title: 'Spacing Scale',
       description:
-          'Base unit: ${themeData.baseSpacingUnit}px. Values multiply the base (p-4 = ${4 * themeData.baseSpacingUnit}px)',
+          'Each numeric step multiplies baseSpacingUnit (currently ${base}px). p-4 → ${(4 * base).toInt()}px of padding.',
       child: WDiv(
-        className: 'flex items-end gap-2',
-        children: spacingValues.map((value) {
-          final pixels = int.parse(value) * themeData.baseSpacingUnit;
+        className: 'flex items-end gap-2 overflow-x-auto',
+        children: values.map((value) {
+          final pixels = int.parse(value) * base;
           return WDiv(
-            className: 'flex flex-col items-center gap-1',
+            className: 'flex flex-col items-center gap-1 shrink-0',
             children: [
               WDiv(
-                className: 'w-8 bg-blue-500 rounded',
+                className: 'w-8 bg-emerald-500 rounded',
                 child: SizedBox(height: pixels.toDouble()),
               ),
-              WText(value, className: 'text-xs text-slate-500'),
-              WText('${pixels.toInt()}px', className: 'text-xs text-slate-400'),
+              WText(
+                value,
+                className:
+                    'text-xs font-mono text-slate-700 dark:text-slate-300',
+              ),
+              WText(
+                '${pixels.toInt()}px',
+                className: 'text-xs text-slate-500 dark:text-slate-400',
+              ),
             ],
           );
         }).toList(),
       ),
     );
   }
+}
 
-  Widget _buildTypographyScale(WindThemeData themeData) {
-    final sizes = [
+class _TypographyScaleSection extends StatelessWidget {
+  const _TypographyScaleSection();
+
+  @override
+  Widget build(BuildContext context) {
+    const rows = [
       ('xs', 'text-xs'),
       ('sm', 'text-sm'),
       ('base', 'text-base'),
@@ -126,20 +188,24 @@ class ThemingExamplePage extends StatelessWidget {
       ('3xl', 'text-3xl'),
     ];
 
-    return _buildSection(
+    return ExampleSection(
       title: 'Typography Scale',
-      description: 'Font sizes from theme with corresponding line heights',
+      description:
+          'fontSizes drives the text-{name} parser. Override per-key to retune the entire app.',
       child: WDiv(
         className: 'flex flex-col gap-3',
-        children: sizes.map((entry) {
+        children: rows.map((entry) {
           final (name, className) = entry;
           return WDiv(
-            className: 'flex items-baseline gap-4 overflow-hidden',
+            className: 'flex items-baseline gap-4',
             children: [
               WDiv(
-                className: 'w-12 shrink-0',
-                child:
-                    WText(name, className: 'text-sm text-slate-500 font-mono'),
+                className: 'w-14 shrink-0',
+                child: WText(
+                  name,
+                  className:
+                      'text-sm font-mono text-slate-500 dark:text-slate-400',
+                ),
               ),
               WDiv(
                 className: 'flex-1 min-w-0',
@@ -155,9 +221,14 @@ class ThemingExamplePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildBorderRadiusScale(WindThemeData themeData) {
-    final radii = [
+class _BorderRadiusSection extends StatelessWidget {
+  const _BorderRadiusSection();
+
+  @override
+  Widget build(BuildContext context) {
+    const radii = [
       ('none', 'rounded-none'),
       ('sm', 'rounded-sm'),
       ('default', 'rounded'),
@@ -168,30 +239,37 @@ class ThemingExamplePage extends StatelessWidget {
       ('full', 'rounded-full'),
     ];
 
-    return _buildSection(
-      title: 'Border Radius Scale',
-      description: 'Rounded corners from sharp to fully circular',
+    return ExampleSection(
+      title: 'Border Radius',
+      description:
+          'rounded-{key} maps directly to borderRadius entries in the theme.',
       child: WDiv(
-        className: 'flex gap-4 items-center',
+        className: 'wrap gap-4',
         children: radii.map((entry) {
           final (name, className) = entry;
           return WDiv(
             className: 'flex flex-col items-center gap-2',
             children: [
-              WDiv(
-                className: 'w-12 h-12 bg-purple-500 $className',
-                child: const SizedBox.shrink(),
+              WDiv(className: 'w-12 h-12 bg-emerald-500 $className'),
+              WText(
+                name,
+                className:
+                    'text-xs font-mono text-slate-500 dark:text-slate-400',
               ),
-              WText(name, className: 'text-xs text-slate-500'),
             ],
           );
         }).toList(),
       ),
     );
   }
+}
 
-  Widget _buildShadowScale() {
-    final shadows = [
+class _ShadowScaleSection extends StatelessWidget {
+  const _ShadowScaleSection();
+
+  @override
+  Widget build(BuildContext context) {
+    const shadows = [
       ('sm', 'shadow-sm'),
       ('default', 'shadow'),
       ('md', 'shadow-md'),
@@ -200,11 +278,12 @@ class ThemingExamplePage extends StatelessWidget {
       ('2xl', 'shadow-2xl'),
     ];
 
-    return _buildSection(
+    return ExampleSection(
       title: 'Shadow Scale',
-      description: 'Box shadows from subtle to dramatic',
+      description:
+          'Each key resolves to a List<BoxShadow>. Useful for layered glassy cards.',
       child: WDiv(
-        className: 'flex gap-6 items-center py-4',
+        className: 'wrap gap-6 py-4',
         children: shadows.map((entry) {
           final (name, className) = entry;
           return WDiv(
@@ -213,37 +292,38 @@ class ThemingExamplePage extends StatelessWidget {
               WDiv(
                 className:
                     'w-16 h-16 bg-white dark:bg-slate-700 rounded-lg $className',
-                child: const SizedBox.shrink(),
               ),
-              WText(name, className: 'text-xs text-slate-500'),
+              WText(
+                name,
+                className:
+                    'text-xs font-mono text-slate-500 dark:text-slate-400',
+              ),
             ],
           );
         }).toList(),
       ),
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
+class _CodeBlock extends StatelessWidget {
+  final String code;
+
+  const _CodeBlock({required this.code});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className:
-          'flex flex-col gap-4 p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700',
-      children: [
-        WDiv(
-          className: 'flex flex-col gap-1',
-          children: [
-            WText(title,
-                className:
-                    'text-lg font-semibold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-600 dark:text-slate-400'),
-          ],
-        ),
-        child,
-      ],
+      className: '''
+        p-4 rounded-lg font-mono text-xs
+        bg-slate-900 dark:bg-slate-950
+        text-emerald-400
+        overflow-x-auto
+      ''',
+      child: WText(
+        code,
+        className: 'whitespace-pre text-emerald-400',
+      ),
     );
   }
 }
