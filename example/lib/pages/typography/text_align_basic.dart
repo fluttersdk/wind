@@ -1,95 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class TextAlignBasicExamplePage extends StatelessWidget {
   const TextAlignBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Left Alignment',
-            description: 'Default text alignment (text-left)',
-            child: WDiv(
-              className:
-                  'w-full p-4 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700',
-              child: WText(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                className: 'text-left text-slate-900 dark:text-white',
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'Center Alignment',
-            description: 'Centered text (text-center)',
-            child: WDiv(
-              className:
-                  'w-full p-4 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700',
-              child: WText(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                className: 'text-center text-slate-900 dark:text-white',
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'Right Alignment',
-            description: 'Right-aligned text (text-right)',
-            child: WDiv(
-              className:
-                  'w-full p-4 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700',
-              child: WText(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                className: 'text-right text-slate-900 dark:text-white',
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'Justified Alignment',
-            description: 'Justified text (text-justify)',
-            child: WDiv(
-              className:
-                  'w-full p-4 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700',
-              child: WText(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                className: 'text-justify text-slate-900 dark:text-white',
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className: 'bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6',
-      child: WText(
-        'Text Alignment Basic',
-        className: 'text-2xl font-bold text-white',
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm',
+    return ExampleScaffold(
+      title: 'Text Align',
+      description:
+          'Six alignment keywords map directly to Flutter TextAlign. text-start and text-end are direction-aware (RTL-safe).',
+      gradient: 'from-rose-500 to-red-600',
       children: [
-        WText(title,
-            className: 'text-lg font-semibold text-slate-900 dark:text-white'),
-        WText(description,
-            className: 'text-sm text-slate-600 dark:text-slate-400'),
-        child,
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each row applies a different text-{align}. The paragraph realigns inside its parent.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _AlignRow(label: 'text-left', cls: 'text-left'),
+              _AlignRow(label: 'text-center', cls: 'text-center'),
+              _AlignRow(label: 'text-right', cls: 'text-right'),
+              _AlignRow(label: 'text-justify', cls: 'text-justify'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Direction-Aware',
+          description:
+              'text-start and text-end respect the active text direction. In RTL locales they flip automatically.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _AlignRow(label: 'text-start', cls: 'text-start'),
+              _AlignRow(label: 'text-end', cls: 'text-end'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Each class maps directly to a Flutter TextAlign value.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'text-left', val: 'TextAlign.left'),
+              _RefRow(cls: 'text-center', val: 'TextAlign.center'),
+              _RefRow(cls: 'text-right', val: 'TextAlign.right'),
+              _RefRow(cls: 'text-justify', val: 'TextAlign.justify'),
+              _RefRow(cls: 'text-start', val: 'TextAlign.start'),
+              _RefRow(cls: 'text-end', val: 'TextAlign.end'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AlignRow extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _AlignRow({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-col gap-1',
+      children: [
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className: '''
+            w-full p-3 rounded
+            bg-slate-50 dark:bg-slate-700/40
+          ''',
+          child: WText(
+            'The quick brown fox jumps over the lazy dog.',
+            className: '$cls text-slate-900 dark:text-white',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String val;
+
+  const _RefRow({required this.cls, required this.val});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(cls,
+            className: 'font-mono text-sm text-rose-700 dark:text-rose-400'),
+        WText(val,
+            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }

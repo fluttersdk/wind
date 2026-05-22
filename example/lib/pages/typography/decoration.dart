@@ -1,225 +1,109 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Text Decoration Example
-/// Demonstrates text decoration utilities: underline, line-through, overline
+import '../../widgets/example_scaffold.dart';
+
 class TypographyDecorationPage extends StatelessWidget {
   const TypographyDecorationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-teal-500 to-cyan-500
-            ''',
-            children: [
-              WText(
-                'Text Decoration',
-                className: 'text-lg font-bold text-white',
-              ),
-              WText(
-                'Underline, strike-through, and more',
-                className: 'text-sm text-teal-100',
-              ),
-            ],
-          ),
-
-          // Decoration Types
-          _buildSection(
-            title: 'Decoration Types',
-            description: 'Basic text decorations',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
-                children: [
-                  WText(
-                    'underline',
-                    className:
-                        'underline text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'overline',
-                    className: 'overline text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'line-through',
-                    className:
-                        'line-through text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'no-underline',
-                    className:
-                        'no-underline text-lg text-gray-800 dark:text-white',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Decoration Color
-          _buildSection(
-            title: 'Decoration Color',
-            description: 'Color the decoration line',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
-                children: [
-                  WText(
-                    'decoration-red-500',
-                    className:
-                        'underline decoration-red-500 text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'decoration-blue-500',
-                    className:
-                        'underline decoration-blue-500 text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'decoration-green-500',
-                    className:
-                        'underline decoration-green-500 text-lg text-gray-800 dark:text-white',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Decoration Style
-          _buildSection(
-            title: 'Decoration Style',
-            description: 'Line style variations',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
-                children: [
-                  WText(
-                    'solid',
-                    className:
-                        'underline decoration-solid text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'double',
-                    className:
-                        'underline decoration-double text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'dotted',
-                    className:
-                        'underline decoration-dotted text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'dashed',
-                    className:
-                        'underline decoration-dashed text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'wavy',
-                    className:
-                        'underline decoration-wavy text-lg text-gray-800 dark:text-white',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Decoration Thickness
-          _buildSection(
-            title: 'Decoration Thickness',
-            description: 'Line thickness',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
-                children: [
-                  WText(
-                    'decoration-1',
-                    className:
-                        'underline decoration-1 text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'decoration-2',
-                    className:
-                        'underline decoration-2 text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'decoration-4',
-                    className:
-                        'underline decoration-4 text-lg text-gray-800 dark:text-white',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Reference Table
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _buildRefRow('underline', 'Underline text'),
-                  _buildRefRow('line-through', 'Strike-through'),
-                  _buildRefRow('decoration-{color}', 'Decoration color'),
-                  _buildRefRow('decoration-{style}', 'solid, wavy, etc.'),
-                  _buildRefRow('decoration-{n}', 'Thickness (1, 2, 4)'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
+    return ExampleScaffold(
+      title: 'Text Decoration',
+      description:
+          'underline, overline, line-through. Combine with decoration-{color}, decoration-{style}, decoration-{thickness} for fine control.',
+      gradient: 'from-orange-500 to-amber-600',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Four primitives cover the bulk of text decoration needs.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _DecoRow(label: 'underline', cls: 'underline'),
+              _DecoRow(label: 'overline', cls: 'overline'),
+              _DecoRow(label: 'line-through', cls: 'line-through'),
+              _DecoRow(label: 'no-underline', cls: 'no-underline'),
+            ],
+          ),
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Composed Styling',
+          description:
+              'underline + decoration-blue-500 + decoration-wavy + decoration-2 is one className that combines color, style, and thickness.',
+          child: const WText(
+            'Styled Decoration',
+            className:
+                'underline decoration-blue-500 decoration-wavy decoration-2 text-lg text-slate-900 dark:text-white',
+          ),
         ),
-        ...children,
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Decoration classes map cleanly to Flutter TextDecoration.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'underline', val: 'TextDecoration.underline'),
+              _RefRow(cls: 'overline', val: 'TextDecoration.overline'),
+              _RefRow(cls: 'line-through', val: 'TextDecoration.lineThrough'),
+              _RefRow(cls: 'no-underline', val: 'TextDecoration.none'),
+            ],
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildRefRow(String className, String description) {
+class _DecoRow extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _DecoRow({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex gap-4',
+      className: 'flex flex-row items-baseline gap-4',
       children: [
-        WText(
-          className,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-40',
+        WDiv(
+          className: 'w-32 shrink-0',
+          child: WText(
+            label,
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+          ),
         ),
         WText(
-          description,
-          className: 'text-sm text-gray-600 dark:text-gray-300',
+          'The quick brown fox',
+          className: '$cls text-lg text-slate-900 dark:text-white',
         ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String val;
+
+  const _RefRow({required this.cls, required this.val});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(cls,
+            className:
+                'font-mono text-sm text-orange-700 dark:text-orange-400'),
+        WText(val,
+            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }

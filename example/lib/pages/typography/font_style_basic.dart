@@ -1,114 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class FontStyleBasicExamplePage extends StatelessWidget {
   const FontStyleBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-slate-50 dark:bg-slate-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Font Style',
-            description:
-                'Utilities for controlling the font style of an element.',
-            child: WDiv(
-              className: 'flex flex-col gap-8',
-              children: [
-                _buildStyleExample(
-                  'italic',
-                  'italic',
-                  'The quick brown fox jumps over the lazy dog.',
-                  'Use the italic utility to make text italic.',
-                ),
-                _buildStyleExample(
-                  'not-italic',
-                  'not-italic',
-                  'The quick brown fox jumps over the lazy dog.',
-                  'Use the not-italic utility to display text normally. This is typically used to reset italic text at different breakpoints.',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-pink-500 to-rose-600 rounded-xl p-6 shadow-lg',
-      child: WDiv(
-        className: 'flex flex-col gap-2',
-        children: [
-          WText(
-            'Font Style',
-            className: 'text-3xl font-bold text-white',
-          ),
-          WText(
-            'Utilities for controlling the font style of text.',
-            className: 'text-pink-100 text-lg',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col gap-4 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700',
+    return ExampleScaffold(
+      title: 'Font Style',
+      description:
+          'italic and not-italic toggle FontStyle.italic on or off. Use the reset class to override an italic ancestor.',
+      gradient: 'from-indigo-500 to-violet-600',
       children: [
-        WDiv(
-          className:
-              'flex flex-col gap-1 border-b border-slate-100 dark:border-slate-700 pb-4',
-          children: [
-            WText(title,
-                className: 'text-xl font-bold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-500 dark:text-slate-400'),
-          ],
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Apply italic to slant the text. not-italic restores upright.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _StyleRow(label: 'italic', cls: 'italic'),
+              _StyleRow(label: 'not-italic', cls: 'not-italic'),
+            ],
+          ),
         ),
-        child,
+        ExampleSection(
+          title: 'Reset Pattern',
+          description:
+              'A parent applies italic; a child resets it with not-italic. Useful inside markdown-derived content.',
+          child: WDiv(
+            className: 'italic text-slate-900 dark:text-white',
+            children: const [
+              WText('This paragraph is italic by default.',
+                  className: 'italic'),
+              WText('This sentence resets to upright.',
+                  className: 'not-italic'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Two values, one toggle.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'italic', maps: 'FontStyle.italic'),
+              _RefRow(cls: 'not-italic', maps: 'FontStyle.normal'),
+            ],
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildStyleExample(
-      String className, String label, String text, String description) {
+class _StyleRow extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _StyleRow({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex flex-col gap-3',
+      className: 'flex flex-row items-baseline gap-4',
       children: [
         WDiv(
-          className: 'flex items-baseline justify-between',
-          children: [
-            WText(label,
-                className:
-                    'text-sm font-medium text-pink-600 dark:text-pink-400 font-mono'),
-          ],
-        ),
-        WDiv(
-          className:
-              'p-6 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-700',
+          className: 'w-24 shrink-0',
           child: WText(
-            text,
-            className: 'text-xl text-slate-900 dark:text-white $className',
+            label,
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
           ),
         ),
         WText(
-          description,
-          className: 'text-sm text-slate-500 dark:text-slate-400',
+          'The quick brown fox',
+          className: '$cls text-lg text-slate-900 dark:text-white',
+        ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String maps;
+
+  const _RefRow({required this.cls, required this.maps});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(
+          cls,
+          className: 'font-mono text-sm text-indigo-700 dark:text-indigo-400',
+        ),
+        WText(
+          maps,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
         ),
       ],
     );

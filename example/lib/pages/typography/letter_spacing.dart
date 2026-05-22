@@ -1,153 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Letter Spacing Example
-/// Demonstrates letter spacing utilities: tracking-tighter through tracking-widest
+import '../../widgets/example_scaffold.dart';
+
 class LetterSpacingExamplePage extends StatelessWidget {
   const LetterSpacingExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-purple-500 to-pink-500
-            ''',
-            children: [
-              WText(
-                'Letter Spacing',
-                className: 'text-lg font-bold text-white',
-              ),
-              WText(
-                'Control tracking with tracking-{value}',
-                className: 'text-sm text-purple-100',
-              ),
-            ],
-          ),
-
-          // Tracking Examples
-          _buildSection(
-            title: 'Tracking Scale',
-            description: 'From tight to wide letter spacing',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-col gap-3 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                children: [
-                  _buildTrackingRow('tracking-tighter', '-0.05em'),
-                  _buildTrackingRow('tracking-tight', '-0.025em'),
-                  _buildTrackingRow('tracking-normal', '0em'),
-                  _buildTrackingRow('tracking-wide', '0.025em'),
-                  _buildTrackingRow('tracking-wider', '0.05em'),
-                  _buildTrackingRow('tracking-widest', '0.1em'),
-                ],
-              ),
-            ],
-          ),
-
-          // Arbitrary Values
-          _buildSection(
-            title: 'Arbitrary Values',
-            description: 'Custom spacing with bracket notation',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-col gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                children: [
-                  WText(
-                    'tracking-[0.15em]',
-                    className:
-                        'tracking-[0.15em] text-lg text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'tracking-[2px]',
-                    className:
-                        'tracking-[2px] text-lg text-gray-800 dark:text-white',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Reference Table
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _buildRefRow('tracking-tighter', '-0.05em'),
-                  _buildRefRow('tracking-tight', '-0.025em'),
-                  _buildRefRow('tracking-normal', '0em'),
-                  _buildRefRow('tracking-wide', '0.025em'),
-                  _buildRefRow('tracking-widest', '0.1em'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
+    return ExampleScaffold(
+      title: 'Letter Spacing',
+      description:
+          'tracking-{key} controls letterSpacing. Six built-in steps go from negative (tighter) to wide (widest).',
+      gradient: 'from-purple-500 to-fuchsia-600',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each row demonstrates a different tracking value. Watch the gaps between characters change.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _TrackRow(label: 'tracking-tighter', cls: 'tracking-tighter'),
+              _TrackRow(label: 'tracking-tight', cls: 'tracking-tight'),
+              _TrackRow(label: 'tracking-normal', cls: 'tracking-normal'),
+              _TrackRow(label: 'tracking-wide', cls: 'tracking-wide'),
+              _TrackRow(label: 'tracking-wider', cls: 'tracking-wider'),
+              _TrackRow(label: 'tracking-widest', cls: 'tracking-widest'),
+            ],
+          ),
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Headline Styling',
+          description:
+              'Wide tracking with uppercase makes for striking section labels.',
+          child: const WText(
+            'TYPOGRAPHIC SCALE',
+            className:
+                'tracking-widest text-sm font-bold uppercase text-purple-700 dark:text-purple-400',
+          ),
         ),
-        ...children,
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Six built-in tokens cover most use cases.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'tracking-tighter', val: '-2.0'),
+              _RefRow(cls: 'tracking-tight', val: '-1.0'),
+              _RefRow(cls: 'tracking-normal', val: '0.0 (default)'),
+              _RefRow(cls: 'tracking-wide', val: '1.0'),
+              _RefRow(cls: 'tracking-wider', val: '2.0'),
+              _RefRow(cls: 'tracking-widest', val: '4.0'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Tracking',
+          description:
+              'tracking-[3px] applies an exact letter spacing. Useful for one-off branded headings.',
+          child: const WText(
+            'B R A N D',
+            className:
+                'tracking-[6px] text-xl font-bold text-slate-900 dark:text-white',
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildTrackingRow(String className, String value) {
+class _TrackRow extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _TrackRow({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex items-center gap-4 overflow-x-auto',
+      className: 'flex flex-row items-baseline gap-4',
       children: [
-        WText(
-          className,
-          className:
-              'font-mono text-xs text-indigo-600 dark:text-indigo-400 w-36',
+        WDiv(
+          className: 'w-36 shrink-0',
+          child: WText(
+            label,
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+          ),
         ),
         WText(
           'The quick brown fox',
-          className: '$className text-lg text-gray-800 dark:text-white',
+          className: '$cls text-lg text-slate-900 dark:text-white',
         ),
       ],
     );
   }
+}
 
-  Widget _buildRefRow(String className, String value) {
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String val;
+
+  const _RefRow({required this.cls, required this.val});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex gap-4',
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
         WText(
-          className,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-36',
+          cls,
+          className: 'font-mono text-sm text-purple-700 dark:text-purple-400',
         ),
-        WText(value, className: 'text-sm text-gray-600 dark:text-gray-300'),
+        WText(
+          val,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }

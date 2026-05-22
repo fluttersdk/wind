@@ -1,80 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class DecorationThicknessExamplePage extends StatelessWidget {
   const DecorationThicknessExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Decoration Thickness',
-            description:
-                'Utilities for controlling the thickness of text decorations.',
-            child: WDiv(
-              className: 'flex flex-col gap-4',
-              children: [
-                _buildDemo('decoration-0', '0px Thickness'),
-                _buildDemo('decoration-1', '1px Thickness'),
-                _buildDemo('decoration-2', '2px Thickness'),
-                _buildDemo('decoration-4', '4px Thickness'),
-                _buildDemo('decoration-8', '8px Thickness'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDemo(String className, String label) {
-    return WDiv(
-      className:
-          'flex flex-col gap-2 p-4 border border-slate-200 dark:border-slate-700 rounded-lg',
+    return ExampleScaffold(
+      title: 'Decoration Thickness',
+      description:
+          'decoration-{N} sets the underline thickness in pixels. Standard scale runs 0, 1, 2, 4, 8; brackets accept arbitrary values.',
+      gradient: 'from-orange-500 to-amber-600',
       children: [
-        WText(
-          'The quick brown fox jumps over the lazy dog.',
-          className:
-              'text-xl underline decoration-blue-500 $className text-slate-900 dark:text-white',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each row uses a different decoration-{N}. Watch the underline get heavier as the number grows.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _ThickRow(label: 'decoration-1', cls: 'underline decoration-1'),
+              _ThickRow(label: 'decoration-2', cls: 'underline decoration-2'),
+              _ThickRow(label: 'decoration-4', cls: 'underline decoration-4'),
+              _ThickRow(label: 'decoration-8', cls: 'underline decoration-8'),
+            ],
+          ),
         ),
-        WText(
-          className,
-          className: 'text-sm font-mono text-slate-500 dark:text-slate-400',
+        ExampleSection(
+          title: 'Arbitrary Thickness',
+          description: 'Brackets accept exact px values.',
+          child: const WText(
+            'decoration-[3px]',
+            className:
+                'underline decoration-[3px] text-lg text-slate-900 dark:text-white',
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildHeader() {
-    return WDiv(
-      className: 'bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6',
-      child: WText(
-        'Decoration Thickness',
-        className: 'text-2xl font-bold text-white',
-      ),
-    );
-  }
+class _ThickRow extends StatelessWidget {
+  final String label;
+  final String cls;
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
+  const _ThickRow({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className:
-          'flex flex-col gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm',
+      className: 'flex flex-row items-baseline gap-4',
       children: [
-        WText(title,
-            className: 'text-lg font-semibold text-slate-900 dark:text-white'),
-        WText(description,
-            className: 'text-sm text-slate-600 dark:text-slate-400'),
-        child,
+        WDiv(
+          className: 'w-40 shrink-0',
+          child: WText(
+            label,
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+          ),
+        ),
+        WText(
+          'The quick brown fox',
+          className: '$cls text-lg text-slate-900 dark:text-white',
+        ),
       ],
     );
   }

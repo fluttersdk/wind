@@ -1,115 +1,128 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class FontWeightBasicExamplePage extends StatelessWidget {
   const FontWeightBasicExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className:
-          'w-full h-full overflow-y-auto p-4 bg-slate-50 dark:bg-slate-900',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'Font Weights',
-            description:
-                'Utilities for controlling the font weight of an element.',
-            child: WDiv(
-              className: 'flex flex-col gap-4',
-              children: [
-                _buildWeightItem('font-thin', '100',
-                    'The quick brown fox jumps over the lazy dog.'),
-                _buildWeightItem('font-extralight', '200',
-                    'The quick brown fox jumps over the lazy dog.'),
-                _buildWeightItem('font-light', '300',
-                    'The quick brown fox jumps over the lazy dog.'),
-                _buildWeightItem('font-normal', '400',
-                    'The quick brown fox jumps over the lazy dog.'),
-                _buildWeightItem('font-medium', '500',
-                    'The quick brown fox jumps over the lazy dog.'),
-                _buildWeightItem('font-semibold', '600',
-                    'The quick brown fox jumps over the lazy dog.'),
-                _buildWeightItem('font-bold', '700',
-                    'The quick brown fox jumps over the lazy dog.'),
-                _buildWeightItem('font-extrabold', '800',
-                    'The quick brown fox jumps over the lazy dog.'),
-                _buildWeightItem('font-black', '900',
-                    'The quick brown fox jumps over the lazy dog.'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className:
-          'bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 shadow-lg',
-      child: WDiv(
-        className: 'flex flex-col gap-2',
-        children: [
-          WText(
-            'Font Weight',
-            className: 'text-3xl font-bold text-white',
-          ),
-          WText(
-            'Control the font weight of text elements.',
-            className: 'text-indigo-100 text-lg',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col gap-4 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700',
+    return ExampleScaffold(
+      title: 'Font Weight',
+      description:
+          'Nine named weights from font-thin (100) through font-black (900). Every step maps directly to a Flutter FontWeight constant.',
+      gradient: 'from-indigo-500 to-violet-600',
       children: [
-        WDiv(
-          className:
-              'flex flex-col gap-1 border-b border-slate-100 dark:border-slate-700 pb-4',
-          children: [
-            WText(title,
-                className: 'text-xl font-bold text-slate-900 dark:text-white'),
-            WText(description,
-                className: 'text-sm text-slate-500 dark:text-slate-400'),
-          ],
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each row applies a different font-{name}. Watch the strokes thicken from top to bottom.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _WeightRow(label: 'font-thin', cls: 'font-thin'),
+              _WeightRow(label: 'font-extralight', cls: 'font-extralight'),
+              _WeightRow(label: 'font-light', cls: 'font-light'),
+              _WeightRow(label: 'font-normal', cls: 'font-normal'),
+              _WeightRow(label: 'font-medium', cls: 'font-medium'),
+              _WeightRow(label: 'font-semibold', cls: 'font-semibold'),
+              _WeightRow(label: 'font-bold', cls: 'font-bold'),
+              _WeightRow(label: 'font-extrabold', cls: 'font-extrabold'),
+              _WeightRow(label: 'font-black', cls: 'font-black'),
+            ],
+          ),
         ),
-        child,
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Each name maps to a numeric weight that Flutter exposes as FontWeight.wN.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'font-thin', val: '100'),
+              _RefRow(cls: 'font-light', val: '300'),
+              _RefRow(cls: 'font-normal', val: '400 (default)'),
+              _RefRow(cls: 'font-medium', val: '500'),
+              _RefRow(cls: 'font-semibold', val: '600'),
+              _RefRow(cls: 'font-bold', val: '700'),
+              _RefRow(cls: 'font-black', val: '900'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Responsive Weight',
+          description:
+              'Normal on mobile, bold on md+. Useful for headings that scale up on desktop.',
+          child: const WText(
+            'Responsive Weight',
+            className:
+                'font-normal md:font-bold text-xl text-slate-900 dark:text-white',
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Weight',
+          description:
+              'font-[N] accepts an integer. Wind maps it to the nearest standard weight.',
+          child: const WText(
+            'font-[550]',
+            className: 'font-[550] text-lg text-slate-900 dark:text-white',
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildWeightItem(String className, String weight, String text) {
+class _WeightRow extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _WeightRow({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className:
-          'flex flex-col md:flex-row md:items-center gap-2 md:gap-8 p-4 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors',
+      className: 'flex flex-row items-baseline gap-4',
       children: [
         WDiv(
-          className: 'w-32 flex-shrink-0',
-          children: [
-            WText(className,
-                className:
-                    'text-sm font-medium text-purple-600 dark:text-purple-400 font-mono'),
-            WText('Weight $weight',
-                className: 'text-xs text-slate-400 dark:text-slate-500'),
-          ],
+          className: 'w-32 shrink-0',
+          child: WText(
+            label,
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+          ),
         ),
         WText(
-          text,
-          className:
-              '$className text-lg text-slate-900 dark:text-white truncate',
+          'The quick brown fox',
+          className: '$cls text-lg text-slate-900 dark:text-white',
+        ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String val;
+
+  const _RefRow({required this.cls, required this.val});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(
+          cls,
+          className: 'font-mono text-sm text-indigo-700 dark:text-indigo-400',
+        ),
+        WText(
+          val,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
         ),
       ],
     );

@@ -1,196 +1,102 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Text Overflow Example
-/// Demonstrates text overflow utilities: truncate, line-clamp, whitespace
+import '../../widgets/example_scaffold.dart';
+
 class TextOverflowExamplePage extends StatelessWidget {
   const TextOverflowExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-orange-500 to-red-500
-            ''',
-            children: const [
-              WText('Text Overflow', className: 'text-lg font-bold text-white'),
-              WText(
-                'Control how text overflows its container',
-                className: 'text-sm text-orange-100',
-              ),
-            ],
-          ),
-
-          // Truncate
-          _buildSection(
-            title: 'truncate',
-            description: 'Single line with ellipsis',
+    return ExampleScaffold(
+      title: 'Text Overflow',
+      description:
+          'Control what happens when text outgrows its container. truncate ends in ellipsis. line-clamp-{n} caps a paragraph at n lines.',
+      gradient: 'from-amber-500 to-yellow-600',
+      children: [
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'truncate is the most common: single-line, no wrap, ellipsis. line-clamp limits to n lines.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
             children: [
               WDiv(
-                className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                child: WDiv(
-                  className: 'w-64',
-                  child: const WText(
-                    'This is a very long text that will be truncated with ellipsis',
-                    className: 'truncate text-gray-800 dark:text-white',
-                  ),
+                className: 'w-64',
+                child: const WText(
+                  'The quick brown fox jumps over the lazy dog.',
+                  className: 'truncate text-slate-900 dark:text-white',
+                ),
+              ),
+              WDiv(
+                className: 'w-72',
+                child: const WText(
+                  'A multi-line block of text that is intentionally long. The line-clamp utility caps the visible lines and ends in an ellipsis. Everything past the third line is hidden.',
+                  className: 'line-clamp-3 text-slate-900 dark:text-white',
                 ),
               ),
             ],
           ),
-
-          // Line Clamp
-          _buildSection(
-            title: 'line-clamp-{n}',
-            description: 'Clamp to specific number of lines',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-col gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                children: [
-                  WDiv(
-                    className: 'flex flex-col gap-1',
-                    children: const [
-                      WText(
-                        'line-clamp-2',
-                        className:
-                            'text-xs font-mono text-indigo-600 dark:text-indigo-400',
-                      ),
-                      WText(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
-                        className: 'line-clamp-2 text-gray-800 dark:text-white',
-                      ),
-                    ],
-                  ),
-                  WDiv(
-                    className: 'flex flex-col gap-1',
-                    children: const [
-                      WText(
-                        'line-clamp-3',
-                        className:
-                            'text-xs font-mono text-indigo-600 dark:text-indigo-400',
-                      ),
-                      WText(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.',
-                        className: 'line-clamp-3 text-gray-800 dark:text-white',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Whitespace
-          _buildSection(
-            title: 'Whitespace',
-            description: 'Control text wrapping behavior',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-col gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
-                children: [
-                  WDiv(
-                    className: 'flex flex-col gap-1',
-                    children: const [
-                      WText(
-                        'whitespace-nowrap',
-                        className:
-                            'text-xs font-mono text-indigo-600 dark:text-indigo-400',
-                      ),
-                      WText(
-                        'This text will not wrap, scroll horizontally to see more →',
-                        className:
-                            'whitespace-nowrap text-gray-800 dark:text-white',
-                      ),
-                    ],
-                  ),
-                  WDiv(
-                    className: 'flex flex-col gap-1 w-48',
-                    children: const [
-                      WText(
-                        'whitespace-normal',
-                        className:
-                            'text-xs font-mono text-indigo-600 dark:text-indigo-400',
-                      ),
-                      WText(
-                        'This text will wrap normally when reaching the edge',
-                        className:
-                            'whitespace-normal text-gray-800 dark:text-white',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Quick Reference
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              const WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _buildRefRow('truncate', 'Single line ellipsis'),
-                  _buildRefRow('line-clamp-{n}', 'Max lines (1-6)'),
-                  _buildRefRow('text-ellipsis', 'Ellipsis overflow'),
-                  _buildRefRow('whitespace-nowrap', 'Prevent wrapping'),
-                  _buildRefRow('whitespace-normal', 'Normal wrapping'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
-      children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Five utilities cover the bulk of overflow needs.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(
+                cls: 'truncate',
+                desc: 'maxLines 1 + softWrap false + ellipsis',
+              ),
+              _RefRow(
+                cls: 'text-ellipsis',
+                desc: 'TextOverflow.ellipsis',
+              ),
+              _RefRow(cls: 'text-clip', desc: 'TextOverflow.clip'),
+              _RefRow(
+                cls: 'line-clamp-{n}',
+                desc: 'maxLines n + ellipsis',
+              ),
+              _RefRow(
+                cls: 'line-clamp-none',
+                desc: 'maxLines: null (unlimited)',
+              ),
+            ],
+          ),
         ),
-        ...children,
+        ExampleSection(
+          title: 'Responsive Line Clamp',
+          description:
+              '2 lines on mobile, 4 lines on tablet, unlimited on desktop. The reader sees a teaser on small screens and the full body on large ones.',
+          child: const WText(
+            'Responsive line clamping changes the maxLines value across breakpoints. The same paragraph displays a short teaser on a phone, a medium summary on a tablet, and the full text on a desktop. Try resizing the window to walk through every stage.',
+            className:
+                'line-clamp-2 md:line-clamp-4 lg:line-clamp-none text-slate-900 dark:text-white',
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildRefRow(String className, String description) {
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String desc;
+
+  const _RefRow({required this.cls, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex gap-4',
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WText(
-          className,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-36',
-        ),
-        WText(
-          description,
-          className: 'text-sm text-gray-600 dark:text-gray-300',
-        ),
+        WText(cls,
+            className: 'font-mono text-sm text-amber-700 dark:text-amber-400'),
+        WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }

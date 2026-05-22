@@ -1,132 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Text Transform Example
-/// Demonstrates text transform utilities: uppercase, lowercase, capitalize
+import '../../widgets/example_scaffold.dart';
+
 class TextTransformExamplePage extends StatelessWidget {
   const TextTransformExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-amber-500 to-yellow-500
-            ''',
-            children: [
-              WText(
-                'Text Transform',
-                className: 'text-lg font-bold text-white',
-              ),
-              WText('Transform text case', className: 'text-sm text-amber-100'),
-            ],
-          ),
-
-          // Transform Examples
-          _buildSection(
-            title: 'Transform Classes',
-            description: 'Change text case transformations',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-col gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                children: [
-                  _buildTransformRow('uppercase', 'hello world', 'HELLO WORLD'),
-                  _buildTransformRow('lowercase', 'HELLO WORLD', 'hello world'),
-                  _buildTransformRow(
-                    'capitalize',
-                    'hello world',
-                    'Hello World',
-                  ),
-                  _buildTransformRow(
-                    'normal-case',
-                    'Hello World',
-                    'Hello World',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Reference Table
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _buildRefRow('uppercase', 'HELLO'),
-                  _buildRefRow('lowercase', 'hello'),
-                  _buildRefRow('capitalize', 'Hello World'),
-                  _buildRefRow('normal-case', 'Original Case'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
+    return ExampleScaffold(
+      title: 'Text Transform',
+      description:
+          'uppercase, lowercase, capitalize. Pair with normal-case to reset an ancestor transform on a child.',
+      gradient: 'from-teal-500 to-emerald-600',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Each row uses a different transform. The source text stays the same; only the rendered case changes.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _TransformRow(label: 'uppercase', cls: 'uppercase'),
+              _TransformRow(label: 'lowercase', cls: 'lowercase'),
+              _TransformRow(label: 'capitalize', cls: 'capitalize'),
+              _TransformRow(label: 'normal-case', cls: 'normal-case'),
+            ],
+          ),
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Headline Styling',
+          description:
+              'uppercase + tracking-widest + small text size is a classic section label pattern.',
+          child: const WText(
+            'featured projects',
+            className:
+                'uppercase tracking-widest text-sm font-bold text-teal-700 dark:text-teal-400',
+          ),
         ),
-        ...children,
-      ],
-    );
-  }
-
-  Widget _buildTransformRow(String className, String input, String output) {
-    return WDiv(
-      className:
-          'flex items-center gap-4 p-3 bg-white dark:bg-slate-700 rounded-lg',
-      children: [
-        WText(
-          className,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-28',
-        ),
-        WText(
-          input,
-          className: '$className text-lg text-gray-800 dark:text-white',
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Four named transforms. capitalize uppercases the first letter of each word.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'uppercase', val: 'UPPERCASE'),
+              _RefRow(cls: 'lowercase', val: 'lowercase'),
+              _RefRow(cls: 'capitalize', val: 'Title Case'),
+              _RefRow(cls: 'normal-case', val: 'Mixed source (reset)'),
+            ],
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildRefRow(String className, String result) {
+class _TransformRow extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _TransformRow({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex gap-4',
+      className: 'flex flex-row items-baseline gap-4',
       children: [
-        WText(
-          className,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-28',
+        WDiv(
+          className: 'w-32 shrink-0',
+          child: WText(
+            label,
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+          ),
         ),
-        WText(result, className: 'text-sm text-gray-600 dark:text-gray-300'),
+        WText(
+          'The quick brown Fox',
+          className: '$cls text-lg text-slate-900 dark:text-white',
+        ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String val;
+
+  const _RefRow({required this.cls, required this.val});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(cls,
+            className: 'font-mono text-sm text-teal-700 dark:text-teal-400'),
+        WText(val, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }

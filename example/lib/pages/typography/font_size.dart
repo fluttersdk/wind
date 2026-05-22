@@ -1,151 +1,120 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Font Size Example
-/// Demonstrates font size utilities: text-xs through text-6xl
+import '../../widgets/example_scaffold.dart';
+
 class FontSizeExamplePage extends StatelessWidget {
   const FontSizeExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-blue-500 to-cyan-500
-            ''',
-            children: [
-              WText('Font Size', className: 'text-lg font-bold text-white'),
-              WText(
-                'Control text size with text-{size}',
-                className: 'text-sm text-blue-100',
-              ),
-            ],
-          ),
-
-          // Size Examples
-          _buildSection(
-            title: 'Size Scale',
-            description: 'From text-xs to text-4xl',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-col gap-3 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                children: [
-                  _buildSizeRow('text-xs', '12px'),
-                  _buildSizeRow('text-sm', '14px'),
-                  _buildSizeRow('text-base', '16px'),
-                  _buildSizeRow('text-lg', '18px'),
-                  _buildSizeRow('text-xl', '20px'),
-                  _buildSizeRow('text-2xl', '24px'),
-                  _buildSizeRow('text-3xl', '30px'),
-                  _buildSizeRow('text-4xl', '36px'),
-                ],
-              ),
-            ],
-          ),
-
-          // Arbitrary Values
-          _buildSection(
-            title: 'Arbitrary Values',
-            description: 'Custom sizes with bracket notation',
-            children: [
-              WDiv(
-                className:
-                    'flex flex-col gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                children: [
-                  WText(
-                    'text-[20px]',
-                    className: 'text-[20px] text-gray-800 dark:text-white',
-                  ),
-                  WText(
-                    'text-[1.5rem]',
-                    className: 'text-[1.5rem] text-gray-800 dark:text-white',
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // Reference Table
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _buildRefRow('text-xs', '12px'),
-                  _buildRefRow('text-sm', '14px'),
-                  _buildRefRow('text-base', '16px'),
-                  _buildRefRow('text-lg', '18px'),
-                  _buildRefRow('text-xl', '20px'),
-                  _buildRefRow('text-2xl', '24px'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
+    return ExampleScaffold(
+      title: 'Font Size',
+      description:
+          'text-{size} sets the font size from a 10-step scale (xs → 6xl). The forward-slash modifier (text-lg/loose) also sets line height in one shot.',
+      gradient: 'from-blue-500 to-cyan-600',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Twelve named sizes cover most needs. Beyond text-6xl, use bracket syntax or extend the theme.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _SizeRow(label: 'text-xs', cls: 'text-xs'),
+              _SizeRow(label: 'text-sm', cls: 'text-sm'),
+              _SizeRow(label: 'text-base', cls: 'text-base'),
+              _SizeRow(label: 'text-lg', cls: 'text-lg'),
+              _SizeRow(label: 'text-xl', cls: 'text-xl'),
+              _SizeRow(label: 'text-2xl', cls: 'text-2xl'),
+              _SizeRow(label: 'text-3xl', cls: 'text-3xl'),
+              _SizeRow(label: 'text-4xl', cls: 'text-4xl'),
+              _SizeRow(label: 'text-5xl', cls: 'text-5xl'),
+              _SizeRow(label: 'text-6xl', cls: 'text-6xl'),
+            ],
+          ),
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Size + Line Height',
+          description:
+              'Append /value to set both font size and line height at once. Accepts named leading or numeric spacing units.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: const [
+              WText(
+                'text-lg/loose — generous breathing room',
+                className: 'text-lg/loose text-slate-900 dark:text-white',
+              ),
+              WText(
+                'text-base/7 — fixed 28px line height',
+                className: 'text-base/7 text-slate-900 dark:text-white',
+              ),
+              WText(
+                'text-xl/[32px] — arbitrary',
+                className: 'text-xl/[32px] text-slate-900 dark:text-white',
+              ),
+            ],
+          ),
         ),
-        ...children,
+        ExampleSection(
+          title: 'Responsive Size',
+          description:
+              'Shrink heading on mobile, grow on lg+. The text reflows naturally.',
+          child: const WText(
+            'Responsive Heading',
+            className:
+                'text-sm md:text-base lg:text-2xl font-semibold text-slate-900 dark:text-white',
+          ),
+        ),
+        ExampleSection(
+          title: 'Arbitrary Sizes',
+          description:
+              'Brackets accept exact px or rem. Use sparingly — prefer the scale for consistency.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              WText(
+                'text-[15px]',
+                className: 'text-[15px] text-slate-900 dark:text-white',
+              ),
+              WText(
+                'text-[1.5rem]',
+                className: 'text-[1.5rem] text-slate-900 dark:text-white',
+              ),
+              WText(
+                'text-[80px]',
+                className: 'text-[80px] text-slate-900 dark:text-white',
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildSizeRow(String className, String size) {
+class _SizeRow extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _SizeRow({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex items-end gap-4 overflow-x-auto',
+      className: 'flex flex-row items-baseline gap-4',
       children: [
-        WText(
-          className,
-          className:
-              'font-mono text-xs text-indigo-600 dark:text-indigo-400 w-24',
+        WDiv(
+          className: 'w-20 shrink-0',
+          child: WText(
+            label,
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+          ),
         ),
         WText(
           'The quick brown fox',
-          className: '$className text-gray-800 dark:text-white',
+          className: '$cls text-slate-900 dark:text-white',
         ),
-      ],
-    );
-  }
-
-  Widget _buildRefRow(String className, String size) {
-    return WDiv(
-      className: 'flex gap-4',
-      children: [
-        WText(
-          className,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-24',
-        ),
-        WText(size, className: 'text-sm text-gray-600 dark:text-gray-300'),
       ],
     );
   }

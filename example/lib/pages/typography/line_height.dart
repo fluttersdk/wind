@@ -1,126 +1,128 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-/// Line Height Example
-/// Demonstrates line height utilities: leading-tight through leading-loose
+import '../../widgets/example_scaffold.dart';
+
 class LineHeightExamplePage extends StatelessWidget {
   const LineHeightExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      child: WDiv(
-        className: 'flex flex-col gap-6',
-        children: [
-          // Header
-          WDiv(
-            className: '''
-              w-full p-4 rounded-xl
-              bg-gradient-to-r from-rose-500 to-pink-500
-            ''',
-            children: [
-              WText('Line Height', className: 'text-lg font-bold text-white'),
-              WText(
-                'Control leading with leading-{value}',
-                className: 'text-sm text-rose-100',
-              ),
-            ],
-          ),
-
-          // Leading Examples
-          _buildSection(
-            title: 'Leading Scale',
-            description: 'From tight to loose line height',
-            children: [
-              WDiv(
-                className:
-                    'grid grid-cols-2 gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-                children: [
-                  _buildLeadingBox('leading-none', '1'),
-                  _buildLeadingBox('leading-tight', '1.25'),
-                  _buildLeadingBox('leading-snug', '1.375'),
-                  _buildLeadingBox('leading-normal', '1.5'),
-                  _buildLeadingBox('leading-relaxed', '1.625'),
-                  _buildLeadingBox('leading-loose', '2'),
-                ],
-              ),
-            ],
-          ),
-
-          // Reference Table
-          WDiv(
-            className: 'p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
-            children: [
-              WText(
-                'Quick Reference',
-                className: 'font-semibold text-gray-800 dark:text-white mb-2',
-              ),
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: [
-                  _buildRefRow('leading-none', '1'),
-                  _buildRefRow('leading-tight', '1.25'),
-                  _buildRefRow('leading-normal', '1.5'),
-                  _buildRefRow('leading-relaxed', '1.625'),
-                  _buildRefRow('leading-loose', '2'),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> children,
-  }) {
-    return WDiv(
-      className: 'flex flex-col gap-2',
+    return ExampleScaffold(
+      title: 'Line Height',
+      description:
+          'leading-{key} controls vertical breathing room. Relative keys (none/tight/normal/loose) follow the font size; numeric keys (leading-6) set a fixed pixel height.',
+      gradient: 'from-fuchsia-500 to-pink-600',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-gray-800 dark:text-white font-mono',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Six relative keys ship by default. Each is a multiplier against the current font size.',
+          child: WDiv(
+            className: 'grid grid-cols-1 md:grid-cols-2 gap-3',
+            children: const [
+              _LeadingTile(label: 'leading-none', cls: 'leading-none'),
+              _LeadingTile(label: 'leading-tight', cls: 'leading-tight'),
+              _LeadingTile(label: 'leading-snug', cls: 'leading-snug'),
+              _LeadingTile(label: 'leading-normal', cls: 'leading-normal'),
+              _LeadingTile(label: 'leading-relaxed', cls: 'leading-relaxed'),
+              _LeadingTile(label: 'leading-loose', cls: 'leading-loose'),
+            ],
+          ),
         ),
-        WText(
-          description,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
+        ExampleSection(
+          title: 'Fixed Line Heights',
+          description:
+              'leading-{n} fixes the line box height to n × baseSpacingUnit. Independent of font size.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: const [
+              _LeadingTile(label: 'leading-6 (24px)', cls: 'leading-6'),
+              _LeadingTile(label: 'leading-8 (32px)', cls: 'leading-8'),
+              _LeadingTile(label: 'leading-10 (40px)', cls: 'leading-10'),
+            ],
+          ),
         ),
-        ...children,
-      ],
-    );
-  }
-
-  Widget _buildLeadingBox(String className, String value) {
-    return WDiv(
-      className:
-          'flex flex-col gap-1 p-3 bg-white dark:bg-slate-700 rounded-lg',
-      children: [
-        WText(
-          className,
-          className: 'text-xs font-mono text-indigo-600 dark:text-indigo-400',
+        ExampleSection(
+          title: 'Quick Reference',
+          description:
+              'Relative scale below; fixed pixel scale runs leading-3 (12px) through leading-10 (40px).',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(cls: 'leading-none', val: '1'),
+              _RefRow(cls: 'leading-tight', val: '1.25'),
+              _RefRow(cls: 'leading-snug', val: '1.375'),
+              _RefRow(cls: 'leading-normal', val: '1.5'),
+              _RefRow(cls: 'leading-relaxed', val: '1.625'),
+              _RefRow(cls: 'leading-loose', val: '2'),
+            ],
+          ),
         ),
-        WText(
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod.',
-          className: '$className text-sm text-gray-800 dark:text-white',
+        ExampleSection(
+          title: 'Arbitrary Leading',
+          description:
+              'Brackets accept fixed px, rem, or unitless multipliers.',
+          child: const WText(
+            'Custom 1.8 multiplier — the lines have a precise 1.8× breathing distance from one another for editorial layouts.',
+            className: 'leading-[1.8] text-base text-slate-900 dark:text-white',
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildRefRow(String className, String value) {
+class _LeadingTile extends StatelessWidget {
+  final String label;
+  final String cls;
+
+  const _LeadingTile({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex gap-4',
+      className: '''
+        flex flex-col gap-1 p-3 rounded-lg
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
         WText(
-          className,
-          className:
-              'font-mono text-sm text-indigo-600 dark:text-indigo-400 w-36',
+          label,
+          className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
         ),
-        WText(value, className: 'text-sm text-gray-600 dark:text-gray-300'),
+        WText(
+          'The quick brown fox jumps over the lazy dog. The same sentence rendered with adjusted leading lets you see the vertical rhythm change.',
+          className: '$cls text-sm text-slate-900 dark:text-white',
+        ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String val;
+
+  const _RefRow({required this.cls, required this.val});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(
+          cls,
+          className: 'font-mono text-sm text-fuchsia-700 dark:text-fuchsia-400',
+        ),
+        WText(
+          val,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }

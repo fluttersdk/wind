@@ -1,117 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
+import '../../widgets/example_scaffold.dart';
+
 class WhitespacePreviewExamplePage extends StatelessWidget {
   const WhitespacePreviewExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return WDiv(
-      className: 'w-full h-full overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-        children: [
-          _buildHeader(),
-          _buildSection(
-            title: 'whitespace-normal (Default)',
-            description: 'Text wraps normally to the next line.',
-            child: WDiv(
-              className:
-                  'w-64 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700',
-              child: WText(
-                'This is a long sentence that will wrap to the next line when it reaches the container edge.',
-                className: 'text-slate-900 dark:text-white whitespace-normal',
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'whitespace-nowrap',
-            description: 'Text stays on a single line without wrapping.',
-            child: WDiv(
-              className:
-                  'w-64 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-x-auto',
-              child: WText(
-                'This is a long sentence that will not wrap to the next line.',
-                className: 'text-slate-900 dark:text-white whitespace-nowrap',
-              ),
-            ),
-          ),
-          _buildSection(
-            title: 'Comparison',
-            description: 'Same text with different whitespace settings.',
-            child: WDiv(
-              className: 'flex flex-col gap-4',
-              children: [
-                _buildComparisonBox(
-                  label: 'whitespace-normal',
-                  className: 'whitespace-normal',
-                  bgColor: 'bg-blue-100 dark:bg-blue-900/30',
-                ),
-                _buildComparisonBox(
-                  label: 'whitespace-nowrap',
-                  className: 'whitespace-nowrap',
-                  bgColor: 'bg-green-100 dark:bg-green-900/30',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return WDiv(
-      className: 'bg-gradient-to-r from-teal-500 to-cyan-600 rounded-xl p-6',
+    return ExampleScaffold(
+      title: 'Whitespace & Wrapping',
+      description:
+          'whitespace-nowrap forces single-line. whitespace-normal restores wrapping. text-balance balances lines for headings.',
+      gradient: 'from-teal-500 to-emerald-600',
       children: [
-        WText(
-          'Whitespace Utilities',
-          className: 'text-2xl font-bold text-white',
+        ExampleSection(
+          title: 'Basic Usage',
+          description:
+              'Same text inside the same width container. The whitespace utility decides whether it wraps.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: const [
+              _WhitespaceTile(
+                label: 'whitespace-normal',
+                cls: 'whitespace-normal',
+              ),
+              _WhitespaceTile(
+                label: 'whitespace-nowrap',
+                cls: 'whitespace-nowrap overflow-hidden',
+              ),
+            ],
+          ),
         ),
-        WText(
-          'Control text wrapping behavior',
-          className: 'text-white/80 mt-2',
+        ExampleSection(
+          title: 'Quick Reference',
+          description: 'Five aliases cover the same conceptual space.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: const [
+              _RefRow(
+                  cls: 'whitespace-normal', desc: 'softWrap: true (default)'),
+              _RefRow(cls: 'whitespace-nowrap', desc: 'softWrap: false'),
+              _RefRow(cls: 'text-wrap', desc: 'Alias of whitespace-normal'),
+              _RefRow(cls: 'text-nowrap', desc: 'Alias of whitespace-nowrap'),
+              _RefRow(cls: 'text-balance', desc: 'Balance lines for headings'),
+            ],
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required Widget child,
-  }) {
-    return WDiv(
-      className:
-          'flex flex-col gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm',
-      children: [
-        WText(title,
-            className: 'text-lg font-semibold text-slate-900 dark:text-white'),
-        WText(description,
-            className: 'text-sm text-slate-600 dark:text-slate-400'),
-        child,
-      ],
-    );
-  }
+class _WhitespaceTile extends StatelessWidget {
+  final String label;
+  final String cls;
 
-  Widget _buildComparisonBox({
-    required String label,
-    required String className,
-    required String bgColor,
-  }) {
+  const _WhitespaceTile({required this.label, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
     return WDiv(
-      className: 'flex flex-col gap-2',
+      className: '''
+        flex flex-col gap-1 p-3 rounded-lg
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
       children: [
-        WText(label,
-            className: 'text-xs font-mono text-slate-500 dark:text-slate-400'),
+        WText(
+          label,
+          className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+        ),
         WDiv(
-          className: 'w-64 p-3 $bgColor rounded-lg overflow-x-auto',
+          className: 'w-64',
           child: WText(
-            'The quick brown fox jumps over the lazy dog near the riverbank.',
-            className: 'text-slate-900 dark:text-white $className',
+            'This is a single sentence that may or may not wrap depending on the utility you apply.',
+            className: '$cls text-sm text-slate-900 dark:text-white',
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _RefRow extends StatelessWidget {
+  final String cls;
+  final String desc;
+
+  const _RefRow({required this.cls, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(cls,
+            className: 'font-mono text-sm text-teal-700 dark:text-teal-400'),
+        WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );
   }
