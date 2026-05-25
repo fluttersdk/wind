@@ -147,10 +147,6 @@ import 'pages/utilities/spacing_helpers_basic.dart';
 import 'pages/utilities/style_parser_basic.dart';
 import 'pages/utilities/typography_helpers_basic.dart';
 
-// Test
-import 'pages/test/chrome_mcp_test.dart';
-import 'pages/test/overflow_flex_grid_test.dart';
-
 // Typography
 import 'pages/typography/alignment.dart';
 import 'pages/typography/basics.dart';
@@ -367,10 +363,6 @@ final Map<String, Widget> appRoutes = {
   '/utilities/style_parser_basic': const StyleParserBasicExamplePage(),
   '/utilities/typography_helpers_basic':
       const TypographyHelpersBasicExamplePage(),
-
-  // Test
-  '/test/chrome-mcp': const ChromeMcpTestPage(),
-  '/test/overflow-flex-grid': const OverflowFlexGridTestPage(),
 
   // Typography
   '/typography/alignment': const TypographyAlignmentPage(),

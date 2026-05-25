@@ -22,3 +22,17 @@ build/
 .DS_Store
 Thumbs.db
 *.swp
+
+# Example app platform shells — pub.dev Example tab only renders example/lib/.
+# Native runners are kept in the repo for local `flutter run -d <device>` but
+# do not need to ship in the package archive.
+example/android/
+example/ios/
+example/macos/
+example/linux/
+example/windows/
+example/web/icons/
+
+# Internal dev tooling — never consumer-facing.
+scripts/
+tool/
