@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
 
-/// Tests for the Wind alpha-10 debug resolver.
+/// Tests for the Wind v1.0 debug resolver.
 ///
 /// The resolver's contract (per `WindDebugResolver` abstract class):
 ///   `Map<String, Object?> resolve(Element)`
@@ -13,8 +13,9 @@ import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostic
 /// - Never retains the Element across calls.
 /// - Emits only the 6 core fields: className, breakpoint, brightness,
 ///   platform, states, bgColor (conditional), textColor (conditional).
-/// - All 50+ optional alpha-9 fields (displayType, flexDirection, padding,
-///   margin, fontSize, ...) are intentionally absent in alpha-10.
+/// - The 50+ optional snapshot fields (displayType, flexDirection, padding,
+///   margin, fontSize, ...) that earlier alpha builds exposed are intentionally
+///   absent from v1.0.
 
 /// Helper to wrap widget in MaterialApp with WindTheme (canonical wind test
 /// harness pattern per `wind/.claude/rules/tests.md`).
@@ -191,12 +192,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Layout fields (alpha-10: only 6 core fields emitted; layout fields absent)
+  // Layout fields (v1.0: only 6 core fields emitted; layout fields absent)
   // ---------------------------------------------------------------------------
 
   group('Layout fields emission', () {
     testWidgets(
-      'does not emit displayType (alpha-10 drops extra layout fields)',
+      'does not emit displayType (v1.0 emits only 6 core fields, drops layout fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WDiv(className: 'flex', child: SizedBox())),
@@ -210,7 +211,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit flexDirection (alpha-10 drops extra layout fields)',
+      'does not emit flexDirection (v1.0 emits only 6 core fields, drops layout fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -226,7 +227,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit mainAxisAlignment (alpha-10 drops extra layout fields)',
+      'does not emit mainAxisAlignment (v1.0 emits only 6 core fields, drops layout fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -242,7 +243,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit gapX / gapY (alpha-10 drops extra layout fields)',
+      'does not emit gapX / gapY (v1.0 emits only 6 core fields, drops layout fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -259,7 +260,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit flex int (alpha-10 drops extra layout fields)',
+      'does not emit flex int (v1.0 emits only 6 core fields, drops layout fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -280,12 +281,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Sizing fields (alpha-10: sizing fields absent from 6-core output)
+  // Sizing fields (v1.0: sizing fields absent from 6-core output)
   // ---------------------------------------------------------------------------
 
   group('Sizing fields emission', () {
     testWidgets(
-      'does not emit width (alpha-10 drops extra sizing fields)',
+      'does not emit width (v1.0 emits only 6 core fields, drops sizing fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -301,7 +302,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit height (alpha-10 drops extra sizing fields)',
+      'does not emit height (v1.0 emits only 6 core fields, drops sizing fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -318,12 +319,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Spacing fields (alpha-10: spacing fields absent from 6-core output)
+  // Spacing fields (v1.0: spacing fields absent from 6-core output)
   // ---------------------------------------------------------------------------
 
   group('Spacing fields emission', () {
     testWidgets(
-      'does not emit padding (alpha-10 drops extra spacing fields)',
+      'does not emit padding (v1.0 emits only 6 core fields, drops spacing fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WDiv(className: 'p-4', child: SizedBox())),
@@ -337,7 +338,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit margin (alpha-10 drops extra spacing fields)',
+      'does not emit margin (v1.0 emits only 6 core fields, drops spacing fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WDiv(className: 'm-2', child: SizedBox())),
@@ -352,12 +353,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Typography fields (alpha-10: typography fields absent from 6-core output)
+  // Typography fields (v1.0: typography fields absent from 6-core output)
   // ---------------------------------------------------------------------------
 
   group('Typography fields emission', () {
     testWidgets(
-      'does not emit fontSize (alpha-10 drops extra typography fields)',
+      'does not emit fontSize (v1.0 emits only 6 core fields, drops typography fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WText('hi', className: 'text-lg')),
@@ -371,7 +372,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit fontWeight (alpha-10 drops extra typography fields)',
+      'does not emit fontWeight (v1.0 emits only 6 core fields, drops typography fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WText('hi', className: 'font-bold')),
@@ -385,7 +386,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit textAlign (alpha-10 drops extra typography fields)',
+      'does not emit textAlign (v1.0 emits only 6 core fields, drops typography fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WText('hi', className: 'text-center')),
@@ -399,7 +400,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit textOverflow (alpha-10 drops extra typography fields)',
+      'does not emit textOverflow (v1.0 emits only 6 core fields, drops typography fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WText('hi', className: 'truncate')),
@@ -413,7 +414,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit textDecoration (alpha-10 drops extra typography fields)',
+      'does not emit textDecoration (v1.0 emits only 6 core fields, drops typography fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WText('hi', className: 'underline')),
@@ -428,12 +429,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Border + Ring fields (alpha-10: ring fields absent from 6-core output)
+  // Border + Ring fields (v1.0: ring fields absent from 6-core output)
   // ---------------------------------------------------------------------------
 
   group('Border + Ring fields emission', () {
     testWidgets(
-      'does not emit ringColor (alpha-10 drops extra ring fields)',
+      'does not emit ringColor (v1.0 emits only 6 core fields, drops ring fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -449,7 +450,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit ringWidth (alpha-10 drops extra ring fields)',
+      'does not emit ringWidth (v1.0 emits only 6 core fields, drops ring fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -466,12 +467,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Effects fields (alpha-10: effects fields absent from 6-core output)
+  // Effects fields (v1.0: effects fields absent from 6-core output)
   // ---------------------------------------------------------------------------
 
   group('Effects fields emission', () {
     testWidgets(
-      'does not emit opacity (alpha-10 drops extra effects fields)',
+      'does not emit opacity (v1.0 emits only 6 core fields, drops effects fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -487,7 +488,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit transitionDuration (alpha-10 drops extra effects fields)',
+      'does not emit transitionDuration (v1.0 emits only 6 core fields, drops effects fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -503,7 +504,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit boxShadow (alpha-10 drops extra effects fields)',
+      'does not emit boxShadow (v1.0 emits only 6 core fields, drops effects fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -520,12 +521,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Position fields (alpha-10: position fields absent from 6-core output)
+  // Position fields (v1.0: position fields absent from 6-core output)
   // ---------------------------------------------------------------------------
 
   group('Position fields emission', () {
     testWidgets(
-      'does not emit positionType (alpha-10 drops extra position fields)',
+      'does not emit positionType (v1.0 emits only 6 core fields, drops position fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -541,7 +542,7 @@ void main() {
     );
 
     testWidgets(
-      'does not emit positionTop/positionLeft (alpha-10 drops extra position fields)',
+      'does not emit positionTop/positionLeft (v1.0 emits only 6 core fields, drops position fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -562,12 +563,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Animation field (alpha-10: animation fields absent from 6-core output)
+  // Animation field (v1.0: animation fields absent from 6-core output)
   // ---------------------------------------------------------------------------
 
   group('Animation field emission', () {
     testWidgets(
-      'does not emit animationType (alpha-10 drops extra animation fields)',
+      'does not emit animationType (v1.0 emits only 6 core fields, drops animation fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -584,12 +585,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Overflow fields (alpha-10: overflow fields absent from 6-core output)
+  // Overflow fields (v1.0: overflow fields absent from 6-core output)
   // ---------------------------------------------------------------------------
 
   group('Overflow fields emission', () {
     testWidgets(
-      'does not emit overflow key (alpha-10 drops extra overflow fields)',
+      'does not emit overflow key (v1.0 emits only 6 core fields, drops overflow fields)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -606,7 +607,7 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Null and default skip rules (alpha-10: 6-core always present; extras absent)
+  // Null and default skip rules (v1.0: 6-core always present; extras absent)
   // ---------------------------------------------------------------------------
 
   group('Null and default values skip emission', () {
@@ -657,12 +658,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Value content: Map values are raw (no truncation like alpha-9 YAML output)
+  // Value content: Map values are raw (no truncation: pre-1.0 YAML format dropped)
   // ---------------------------------------------------------------------------
 
   group('Value content', () {
     testWidgets(
-      'resolver returns valid map for shadow-2xl (no boxShadow key in alpha-10)',
+      'resolver returns valid map for shadow-2xl (no boxShadow key in v1.0)',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -686,12 +687,12 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Provenance toggle (alpha-10: provenance feature removed entirely)
+  // Provenance toggle (v1.0: provenance feature removed entirely)
   // ---------------------------------------------------------------------------
 
   group('Provenance toggle', () {
     testWidgets(
-      'provenance absent (alpha-10): no resolvedVia key emitted',
+      'provenance absent (v1.0): no resolvedVia key emitted',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -711,7 +712,7 @@ void main() {
     );
 
     testWidgets(
-      'provenance absent (alpha-10): resolvedVia never emitted regardless of className',
+      'provenance absent (v1.0): resolvedVia never emitted regardless of className',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -730,7 +731,7 @@ void main() {
     );
 
     testWidgets(
-      'provenance absent (alpha-10): resolver map never contains bg-blue-500= token',
+      'provenance absent (v1.0): resolver map never contains bg-blue-500= token',
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(

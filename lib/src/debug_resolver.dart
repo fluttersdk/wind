@@ -53,10 +53,10 @@ class WindDebugResolverImpl implements WindDebugResolver {
   }
 }
 
-/// Formats a Color as 6-char RGB hex (alpha dropped, uppercase).
+/// Formats a Color as 6-char RGB hex (alpha channel dropped, uppercase).
 ///
-/// Mirrors the historical alpha-9 enricher's _hexRgb to preserve
-/// snapshot YAML compatibility for downstream agent consumers.
+/// Preserves the snapshot YAML hex format that downstream agent consumers
+/// (e.g. `fluttersdk_dusk`) parse.
 String _hexRgb(Color color) {
   final String hex = color.toARGB32().toRadixString(16).padLeft(8, '0');
   return hex.substring(2).toUpperCase();

@@ -65,7 +65,6 @@ Standard Flutter package commands (`flutter test`, `dart analyze`, `dart format 
 |---------|---------|
 | `./tool/coverage.sh 90` | Run tests with coverage + enforce 90% line threshold (the CI gate). Plain `./tool/coverage.sh` just reports. |
 | `cd example && flutter run -d chrome` | Demo app (`example/lib/main.dart`) |
-| `cd example && flutter run --target lib/play.dart` | Playground app (separate entry point) |
 
 `.claude/settings.json` PostToolUse hooks auto-run `dart format` and `dart analyze` after every `.dart` edit. CI runs `flutter analyze` + `dart format --set-exit-if-changed` + `./tool/coverage.sh 90` on push to `main`, `develop`, `v1`.
 
@@ -107,7 +106,7 @@ WindTheme(
 ```
 `WindTheme` lives BELOW `MaterialApp` in the actual widget tree (the builder pattern inverts the apparent order). `Overlay` contexts cannot reach `WindTheme` via ancestor walk — use the State's `context` when calling `WindParser.parse` from inside `OverlayEntry.builder`.
 
-**Diagnostics bridge (alpha-10+):** call `Wind.installDebugResolver()` inside `kDebugMode` to expose 6 fields (className, breakpoint, brightness, platform, states, bgColor, textColor) to any consumer of `WindDebugRegistry.current` (e.g., `fluttersdk_dusk` for E2E). Idempotent; gated by `kDebugMode`. There is no `WindDuskIntegration` class anymore (BREAKING from alpha-9).
+**Diagnostics bridge:** call `Wind.installDebugResolver()` inside `kDebugMode` to expose 6 fields (className, breakpoint, brightness, platform, states, bgColor, textColor) to any consumer of `WindDebugRegistry.current` (e.g., `fluttersdk_dusk` for E2E). Idempotent; gated by `kDebugMode`. There is no `WindDuskIntegration` class in v1.0.
 
 ## Wind ≠ Tailwind cheat sheet
 

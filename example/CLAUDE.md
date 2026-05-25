@@ -6,13 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working inside 
 
 ## What this directory is
 
-`example/` is a standalone Flutter app (own `pubspec.yaml`, `analysis_options.yaml`, web/android/ios/desktop targets). It plays three roles:
-
-1. **Demo gallery** — `lib/main.dart` boots a 157-page navigable showcase used as the canonical reference at `fluttersdk.com/wind`.
-2. **Iframe payload** — `lib/play.dart` boots a postMessage-driven JSON renderer used by the docs website to embed live previews inline via `<x-preview>` tags. **Every change to `lib/play.dart` is a public API change for the docs site**; do not break the postMessage protocol.
-3. **JSON sandbox** — `lib/playground.dart` is a near-identical alternate entry point for `WDynamic` schema experiments. If you only touch one playground, prefer `lib/play.dart` (the public one) and keep `lib/playground.dart` in sync.
+`example/` is a standalone Flutter app (own `pubspec.yaml`, `analysis_options.yaml`, web/android/ios/desktop targets) that boots `lib/main.dart` into a navigable showcase gallery. It serves as the canonical visual reference embedded at `fluttersdk.com/wind` via per-page iframes.
 
 Wind itself is consumed via `pubspec.yaml: fluttersdk_wind: { path: ../ }`. A code change in `../lib/` is visible here on the next hot-reload; the example app is the manual smoke test for the parent package.
+
+The standalone JSON playground formerly hosted here (`lib/play.dart`, `lib/playground.dart`) has been migrated to the `wind_playground_web` package in the `fluttersdk.com` repository. The wind package only ships the demo gallery now.
 
 ## Adding a new example page (three edits, manual)
 
@@ -46,54 +44,36 @@ The `size="sm|md|lg"` attribute is interpreted by the docs website's iframe wrap
 
 ## Iframe rendering invariants
 
-The docs website iframes a deployed web build of either `lib/main.dart` (full gallery; navigates to `/<route>`) or `lib/play.dart` (JSON payload via postMessage). Pages must work inside an iframe with unpredictable height:
+The docs website iframes a deployed web build of `lib/main.dart` and navigates to `/<route>` per `<x-preview>`. Pages must work inside an iframe with unpredictable height:
 
 - Root widget of every page is `WDiv(className: 'w-full h-full overflow-y-auto p-4', scrollPrimary: true, child: ...)`. Skipping `scrollPrimary: true` breaks iOS Safari tap-to-top inside the iframe.
 - No hard-coded width or height that exceeds typical iframe dimensions (1024 wide is safe; > 1280 risks horizontal scroll in narrow embed contexts).
 - No `Navigator.of(context).pop()`, `SystemNavigator.pop()`, `dart:js` window manipulation, or anything that escapes the iframe sandbox.
 - No real network calls (HTTP 400 in the test binding, hang in the production iframe). Use static fixtures.
 
-## `play.dart` postMessage protocol (public API — do not break)
-
-`lib/play.dart:309-327` listens for two `window.postMessage` event types from the parent docs frame:
-
-- `RENDER_JSON` — payload `{ type: 'RENDER_JSON', json: <WDynamic schema> }` → renders the JSON via `WDynamic`.
-- `UPDATE_OPTIONS` — payload `{ type: 'UPDATE_OPTIONS', options: { autoCenter, autoOverflow, theme } }` → updates viewport flags.
-
-Adding new event types is backward-compatible; renaming or removing existing types is a breaking change to the docs website. Coordinate with the docs site repo before changing either event shape.
-
-Icon names accepted in the JSON payload are mapped at `lib/play.dart:42-283` (256 entries). Adding an icon is additive. Removing one breaks any doc page that still ships JSON referencing it; grep `../doc/` for icon names before removing.
-
 ## Theme setup
 
-- `lib/main.dart` wraps the gallery in `WindTheme(data: windTheme, builder: (ctx, controller) => MaterialApp(theme: controller.toThemeData(), routes: appRoutes.map(...), ...))`. The floating theme-toggle FAB in `AppLayout` calls `context.windTheme.toggleTheme()`.
-- `lib/play.dart` uses a minimal `WindTheme(data: WindThemeData(...), builder: ...)` with just `primary` and `secondary` colors — no FAB, no toggle, no `AppLayout` shell. The docs frame controls light/dark via the `UPDATE_OPTIONS.theme` postMessage.
-
-If you add a new theme field that example pages need to demonstrate, update BOTH entry points or accept that play.dart will render the default.
+`lib/main.dart` wraps the gallery in `WindTheme(data: windTheme, builder: (ctx, controller) => MaterialApp(theme: controller.toThemeData(), routes: appRoutes.map(...), ...))`. The floating theme-toggle FAB in `AppLayout` calls `context.windTheme.toggleTheme()`.
 
 ## Dependencies
 
 - `fluttersdk_wind: { path: ../ }` — local path to the parent. Do not bump to a pub.dev version; the example tests pre-release parent code.
 - `google_fonts: ^6.1.0` — pulled by some pages for non-system font demos.
-- `web: ^1.1.1` — required for `lib/play.dart`'s `window.addEventListener` / postMessage binding.
 
 `pubspec.lock` is committed (this is an application, not a library). Do not delete it.
 
 ## Off-limits
 
 - `lib/routes.dart` route keys — renaming a route silently breaks every doc page that links to it. Run a grep across `../doc/` BEFORE renaming.
-- `lib/play.dart` postMessage event names (`RENDER_JSON`, `UPDATE_OPTIONS`) — public API for the docs site.
-- `example/test/widget_test.dart` — placeholder, unused. The actual test suite lives at `../test/`. Do not add tests here; add them at `../test/widgets/<name>_test.dart` instead.
-- `pages/test/` directory — these are MCP / edge-case demo pages, not unit tests. Treat as regular routed pages.
 - `web/index.html`, `web/manifest.json` — standard Flutter web scaffolding. Editing them changes the iframe-host page chrome; coordinate with the docs site before touching.
 
 ## Coverage
 
-The 90% coverage gate enforced by `../tool/coverage.sh 90` measures the PARENT package only (`../lib/src/`). The example app's `flutter test` runs no real tests and contributes nothing to coverage. Tests for new parent features go to `../test/`, not `example/test/`.
+The 90% coverage gate enforced by `../tool/coverage.sh 90` measures the PARENT package only (`../lib/src/`). The example app contributes nothing to coverage. Tests for new parent features go to `../test/`.
 
 ## Related rules (loaded automatically by the parent project)
 
 - `../CLAUDE.md` — Wind-wide stack, commands, post-change sync discipline (which lists example/lib/pages/ as one of the 5 surfaces every code change updates), coverage policy.
 - `../.claude/rules/example-pages.md` (paths: example/lib/pages/**) — per-page file shape, helpers (`_buildHeader`, `_buildSection`), dark-mode pair rule, naming convention.
 - `../.claude/rules/docs.md` (paths: doc/**) — the doc-side half of the `<x-preview>` contract.
-- `../.claude/rules/dynamic.md` (paths: {lib/src/dynamic,test/dynamic}/**) — `WDynamic` schema and security model, relevant when extending `play.dart`'s JSON payloads.
+- `../.claude/rules/dynamic.md` (paths: {lib/src/dynamic,test/dynamic}/**) — `WDynamic` schema and security model.
