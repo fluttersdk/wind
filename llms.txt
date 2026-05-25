@@ -1,104 +1,126 @@
 # fluttersdk_wind
 
-> Tailwind CSS for Flutter. Utility-first styling framework with `className` syntax, 23-field theming via `WindThemeData`, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), dark mode (`dark:`), state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 20 W-prefix widgets, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, Cursor rules). Stable since 1.0.
+> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 23-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 20 W-prefix widgets, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, Cursor rules). Open Source. Tailwind syntax. Flutter native. Version 1.0.0 stable.
 
-**Widgets (20 user-facing)**, see [doc/widgets/](https://fluttersdk.com/wind/widgets/index.md) for full reference.
-
-*Layout & container*
-- `WDiv` (`Widget`): Flutter `Container` replacement; consumes `className` for spacing, color, border, shadow, layout.
-- `WText` (`Widget`): Text widget with `className`-driven font, color, alignment, decoration.
-- `WSpacer` (`Widget`): Flex-aware spacer that obeys responsive prefixes.
-- `WBreakpoint` (`Widget`): Declarative per-breakpoint widget tree switcher; escape hatch when prefixes are not enough.
-
-*Interactive*
-- `WButton` (`Widget`): Button with `hover:` / `focus:` / `active:` / `loading:` / `disabled:` state prefixes.
-- `WAnchor` (`Widget`): Inline interactive wrapper; auto-wraps `WDiv` / `WButton` when hover/focus prefixes are detected.
-- `WPopover` (`Widget`): Overlay container with alignment + trigger / content builders.
-
-*Form*
-- `WInput` (`Widget`): TextField with `className` styling + `InputType` (text, email, number, password, multiline, search).
-- `WSelect` (`Widget`): Dropdown with optional search, multi-select, pagination.
-- `WCheckbox` (`Widget`): Checkbox or switch with `className`.
-- `WDatePicker` (`Widget`): Single-date and date-range picker.
-- `WFormInput` (`FormField`): Form-bound `WInput` wrapper with validator.
-- `WFormSelect` (`FormField`): Form-bound `WSelect` wrapper with validator.
-- `WFormMultiSelect` (`FormField`): Multi-select variant of `WFormSelect`.
-- `WFormCheckbox` (`FormField`): Form-bound `WCheckbox` wrapper.
-- `WFormDatePicker` (`FormField`): Form-bound `WDatePicker` wrapper.
-
-*Media*
-- `WIcon` (`Widget`): `IconData` with `className` size and color.
-- `WImage` (`Widget`): Image with `className`-driven sizing, object-fit, border, opacity.
-- `WSvg` (`Widget`): SVG via `flutter_svg` with `className` fill / stroke + `preserve-colors` opt-in.
-
-*Dynamic*
-- `WDynamic` (`Widget`): JSON-to-widget renderer for server-driven UI; whitelisted 13 Wind widgets + 16 Flutter core widgets.
-
-**Parsers (17)**, first-match-wins; emit immutable `WindStyle` value object.
-
-*Visual*
-- background (color, gradient, image), border, ring, shadow, opacity
-
-*Layout*
-- padding, margin, sizing, flexbox + grid, position (relative + absolute + insets), order, overflow, aspect-ratio, z-index
-
-*Typography*
-- text (font-size, weight, family, tracking, leading, decoration, transform, align, overflow)
-
-*Motion*
-- animation, transition (duration + easing)
-
-*Other*
-- svg (fill, stroke, preserve-colors), debug
-
-**Theme tokens (`WindThemeData` exposes 23 configurable fields):** `brightness`, `colors`, `screens`, `containers`, `fontSizes`, `fontWeights`, `tracking`, `leading`, `borderWidths`, `borderRadius`, `fontFamilies`, `ringWidths`, `ringOffsets`, `applyDefaultFontFamily`, `syncWithSystem`, `baseSpacingUnit`, `ringColor`, `opacities`, `zIndices`, `shadows`, `transitionDurations`, `transitionCurves`, `animations`.
-
-**Prefix stack** in className: `<state>:<breakpoint>:<dark>:<platform>:<utility>`.
-- States: `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, plus any custom state passed via `states: Set<String>?`.
-- Breakpoints: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`, plus custom via theme `screens`.
-- Dark mode: `dark:`. Every color token (`bg-` / `text-` / `border-` / `fill-` / `ring-`) carries a `dark:` pair in the same className.
-- Platforms: `ios:`, `android:`, `web:`, `mobile:`.
-
-**Parser cache key**: `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. Stable across rebuilds; invalidate via `WindParser.clearCache()` (test setUp only — never in production).
+**Stack**: Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `fluttersdk_wind_diagnostics_contracts`. No `mockito`, no state management library, no router.
 
 **Setup**:
 
-1. `flutter pub add fluttersdk_wind`
-2. Wrap app: `WindTheme(data: WindThemeData(), builder: (ctx, controller) => MaterialApp(theme: controller.toThemeData(), home: HomePage()))`.
-3. Build with className: `WDiv(className: 'p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg', child: WText('Hello', className: 'text-xl font-bold dark:text-white'))`.
-4. (Debug only) `if (kDebugMode) Wind.installDebugResolver();` exposes 6-field debug data to inspectors via `fluttersdk_wind_diagnostics_contracts`.
+```bash
+flutter pub add fluttersdk_wind
+```
 
-## Docs
-- [Installation](https://fluttersdk.com/wind/getting-started/installation.md)
-- [Utility-first concept](https://fluttersdk.com/wind/core-concepts/utility-first.md)
-- [Theme tokens](https://fluttersdk.com/wind/core-concepts/theming.md)
-- [Theme binding](https://fluttersdk.com/wind/core-concepts/theme-binding.md)
-- [Dark mode](https://fluttersdk.com/wind/core-concepts/dark-mode.md)
-- [Responsive design](https://fluttersdk.com/wind/core-concepts/responsive-design.md)
-- [State management](https://fluttersdk.com/wind/core-concepts/state-management.md)
-- [Dynamic rendering (WDynamic)](https://fluttersdk.com/wind/core-concepts/dynamic-rendering.md)
-- [Debugging Wind](https://fluttersdk.com/wind/core-concepts/debugging.md)
-- [Widget reference index](https://fluttersdk.com/wind/widgets/index.md)
-- [Layout utilities](https://fluttersdk.com/wind/layout/index.md)
-- [Typography utilities](https://fluttersdk.com/wind/typography/index.md)
-- [Styling utilities](https://fluttersdk.com/wind/styling/index.md)
-- [Borders + ring](https://fluttersdk.com/wind/borders/index.md)
-- [Interactivity + transitions](https://fluttersdk.com/wind/interactivity/index.md)
-- [Utility helpers](https://fluttersdk.com/wind/utilities/index.md)
+```dart
+import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-## AI integrations
-- [Overview](https://fluttersdk.com/wind/ai)
-- [Hosted MCP server](https://mcp.fluttersdk.com/wind)
-- [Claude Code skill](https://github.com/fluttersdk/wind/tree/master/skills/wind-ui)
-- [Cursor rules](https://github.com/fluttersdk/wind/tree/master/skills/wind-ui)
+WindTheme(
+  data: WindThemeData(),
+  builder: (ctx, controller) => MaterialApp(
+    theme: controller.toThemeData(),
+    home: HomePage(),
+  ),
+)
+
+// Build with className
+WDiv(
+  className: 'p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg',
+  child: WText('Hello', className: 'text-xl font-bold dark:text-white'),
+)
+
+// Debug only: expose 6-field debug data to inspectors via fluttersdk_wind_diagnostics_contracts
+if (kDebugMode) Wind.installDebugResolver();
+```
+
+**Prefix stack** in className: `<state>:<breakpoint>:<dark>:<platform>:<utility>`. Last class wins; unknown tokens fail silently. Every color token (`bg-` / `text-` / `border-` / `fill-` / `ring-`) carries a `dark:` pair in the same className.
+
+**Parser cache key**: `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. Stable across rebuilds; invalidate via `WindParser.clearCache()` in test `setUp` only, never in production.
+
+## Widgets
+
+### Layout & container
+
+- [WDiv](https://fluttersdk.com/wind/widgets/w-div.md): Flutter `Container` replacement; consumes `className` for spacing, color, border, shadow, layout.
+- [WText](https://fluttersdk.com/wind/widgets/w-text.md): Text widget with `className`-driven font, color, alignment, decoration.
+- [WSpacer](https://fluttersdk.com/wind/widgets/w-spacer.md): Flex-aware spacer that obeys responsive prefixes.
+- [WBreakpoint](https://fluttersdk.com/wind/widgets/w-breakpoint.md): Declarative per-breakpoint widget tree switcher; escape hatch when prefixes are not enough.
+
+### Interactive
+
+- [WButton](https://fluttersdk.com/wind/widgets/w-button.md): Button with `hover:` / `focus:` / `active:` / `loading:` / `disabled:` state prefixes.
+- [WAnchor](https://fluttersdk.com/wind/widgets/w-anchor.md): Inline interactive wrapper; auto-wraps `WDiv` / `WButton` when hover/focus prefixes are detected.
+- [WPopover](https://fluttersdk.com/wind/widgets/w-popover.md): Overlay container with alignment + trigger / content builders.
+
+### Form
+
+- [WInput](https://fluttersdk.com/wind/widgets/w-input.md): TextField with `className` styling + `InputType` (text, email, number, password, multiline, search).
+- [WSelect](https://fluttersdk.com/wind/widgets/w-select.md): Dropdown with optional search, multi-select, pagination.
+- [WCheckbox](https://fluttersdk.com/wind/widgets/w-checkbox.md): Checkbox or switch with `className`.
+- [WDatePicker](https://fluttersdk.com/wind/widgets/w-date-picker.md): Single-date and date-range picker.
+- [WFormInput](https://fluttersdk.com/wind/widgets/w-form-input.md): Form-bound `WInput` wrapper with validator.
+- [WFormSelect](https://fluttersdk.com/wind/widgets/w-form-select.md): Form-bound `WSelect` wrapper with validator.
+- [WFormMultiSelect](https://fluttersdk.com/wind/widgets/w-form-multiselect.md): Multi-select variant of `WFormSelect`.
+- [WFormCheckbox](https://fluttersdk.com/wind/widgets/w-form-checkbox.md): Form-bound `WCheckbox` wrapper.
+- [WFormDatePicker](https://fluttersdk.com/wind/widgets/w-form-date-picker.md): Form-bound `WDatePicker` wrapper.
+
+### Media
+
+- [WIcon](https://fluttersdk.com/wind/widgets/w-icon.md): `IconData` with `className` size and color.
+- [WImage](https://fluttersdk.com/wind/widgets/w-image.md): Image with `className`-driven sizing, object-fit, border, opacity.
+- [WSvg](https://fluttersdk.com/wind/widgets/w-svg.md): SVG via `flutter_svg` with `className` fill / stroke + `preserve-colors` opt-in.
+
+### Dynamic
+
+- [WDynamic](https://fluttersdk.com/wind/widgets/w-dynamic.md): JSON-to-widget renderer for server-driven UI; whitelisted 13 Wind widgets + 16 Flutter core widgets.
+
+## Core concepts
+
+- [Installation](https://fluttersdk.com/wind/getting-started/installation.md): pubspec add + WindTheme wrap + first className.
+- [Utility-first](https://fluttersdk.com/wind/core-concepts/utility-first.md): why className beats nested widgets.
+- [Theming](https://fluttersdk.com/wind/core-concepts/theming.md): 23 `WindThemeData` fields, override patterns.
+- [Theme binding](https://fluttersdk.com/wind/core-concepts/theme-binding.md): `WindTheme` placement, `OverlayEntry` caveat.
+- [Dark mode](https://fluttersdk.com/wind/core-concepts/dark-mode.md): `dark:` prefix, runtime toggle, system sync.
+- [Responsive design](https://fluttersdk.com/wind/core-concepts/responsive-design.md): breakpoint prefixes + `WBreakpoint` escape hatch.
+- [State management](https://fluttersdk.com/wind/core-concepts/state-management.md): `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, custom states.
+- [Dynamic rendering](https://fluttersdk.com/wind/core-concepts/dynamic-rendering.md): `WDynamic` JSON schema + security model.
+- [Debugging](https://fluttersdk.com/wind/core-concepts/debugging.md): `WindLogger`, `Wind.installDebugResolver()`, cache inspection.
+
+## Utility families
+
+- [Layout](https://fluttersdk.com/wind/layout/index.md): flex, grid, position, overflow, aspect-ratio, z-index, order.
+- [Sizing](https://fluttersdk.com/wind/layout/sizing.md): `w-*`, `h-*`, `min-*`, `max-*`, arbitrary `w-[200px]`.
+- [Spacing](https://fluttersdk.com/wind/layout/spacing.md): padding (`p-*`, `px-*`, `pt-*`), margin (`m-*`, `-mt-*`), gap (`gap-*`, `space-x-*`).
+- [Typography](https://fluttersdk.com/wind/typography/index.md): `text-*` (size + color + alignment overload), `font-*`, `leading-*`, `tracking-*`, `truncate`.
+- [Backgrounds](https://fluttersdk.com/wind/styling/background-color.md): `bg-*`, gradients, images.
+- [Borders & ring](https://fluttersdk.com/wind/borders/index.md): `border-*`, `rounded-*`, `ring-*`, `divide-*` (not implemented).
+- [Shadows](https://fluttersdk.com/wind/styling/shadow.md): `shadow`, `shadow-md`, colored shadows (`shadow-blue-500/20`).
+- [Opacity](https://fluttersdk.com/wind/styling/opacity.md): `opacity-*` + opacity modifiers (`bg-red-500/50`).
+- [Transitions & animations](https://fluttersdk.com/wind/interactivity/index.md): `duration-*`, `ease-*`, `animate-spin` / `pulse` / `bounce` / `ping`.
+
+## Utility helpers (Dart APIs)
+
+- [Color helpers](https://fluttersdk.com/wind/utilities/color-helpers.md): `wColor(context, 'blue', shade: 500)`, theme-aware color lookups.
+- [Context extensions](https://fluttersdk.com/wind/utilities/context-extensions.md): `context.windTheme`, `context.windBreakpoint`, `context.windBrightness`.
+- [Responsive helpers](https://fluttersdk.com/wind/utilities/responsive-helpers.md): programmatic breakpoint queries.
+- [Spacing helpers](https://fluttersdk.com/wind/utilities/spacing-helpers.md): `wSpacing(context, 4)` resolves the same tokens as `p-4`.
+- [Style parser](https://fluttersdk.com/wind/utilities/style-parser.md): `WindParser.parse(className, context, states:)` direct access.
+- [Typography helpers](https://fluttersdk.com/wind/utilities/typography-helpers.md): `wFontSize(context, 'lg')` etc.
+
+## AI & Tooling
+
+- [AI integration overview](https://fluttersdk.com/wind/ai): three-tier (skill + rules + MCP server).
+- [Hosted MCP server](https://mcp.fluttersdk.com/wind): live token verification, theme-aware suggestions.
+- [Claude Code skill](https://github.com/fluttersdk/wind/tree/master/skills/wind-ui): teaches className API, widget hierarchy, dark-mode rules.
+- [Cursor rules](https://github.com/fluttersdk/wind/tree/master/skills/wind-ui): auto-fire on `.dart` files; inject Wind grammar into Cursor suggestions.
 
 ## Source
+
 - [GitHub](https://github.com/fluttersdk/wind)
 - [pub.dev](https://pub.dev/packages/fluttersdk_wind)
 - [CHANGELOG](https://github.com/fluttersdk/wind/blob/master/CHANGELOG.md)
 - [ARCHITECTURE](https://github.com/fluttersdk/wind/blob/master/ARCHITECTURE.md)
 
 ## Optional
-- [README](https://github.com/fluttersdk/wind/blob/master/README.md)
+
 - [LICENSE](https://github.com/fluttersdk/wind/blob/master/LICENSE)
 - [Issues](https://github.com/fluttersdk/wind/issues)
+- [Star on GitHub](https://github.com/fluttersdk/wind/stargazers)
