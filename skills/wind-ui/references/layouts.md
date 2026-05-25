@@ -1,364 +1,464 @@
-# Wind UI layout patterns
+# Wind 1.0 — Layouts
 
-12 canonical layout recipes you will reach for repeatedly, plus the Flutter constraint rules that make them work. Pattern names are descriptive; copy-paste, then style.
+12+ canonical layout recipes plus the Flutter constraint model that drives every overflow. Reach for this file when picking a layout pattern or recovering from RenderFlex / unbounded-height assertions.
 
-## Flutter constraint reality (six rules CSS does not have)
+## Contents
 
-Wind translates className into Flutter widget trees. Flutter's layout model is "constraints down, sizes up, parent sets position": every parent passes `BoxConstraints` to its children, every child reports its size up, and the parent alone decides where to place each child. This is fundamentally different from CSS box-flow.
-
-| Rule | Symptom when violated | Fix |
-|------|----------------------|-----|
-| **Row children must use `flex-1`, not `w-full`** | `RenderFlex overflowed by N pixels` | `flex-1` participates in the second flex pass with a known ceiling; `w-full` tries to be 100% of an unbounded `Row` width |
-| **Scrollable children must use `flex-1`, not `h-full`** | `Vertical viewport was given unbounded height` | The scrollable wants a ceiling; only `flex-1` (or explicit pixel height) gives one inside a Column |
-| **`absolute` requires `relative` parent** | "Positioned widget must be a descendant of a Stack" | The `relative` token creates the Stack ancestry; without it, Positioned has nothing to position against |
-| **`truncate` needs bounded width** | Text overflows past Row bounds | Wrap in `WDiv(className: 'flex-1', child: WText(..., className: 'truncate'))` |
-| **Nested flex needs `min-w-0`** | Inner Column expands past `flex-1` ceiling | Add `min-w-0` to the inner flex container so it can shrink below its intrinsic content width |
-| **Avoid `IntrinsicHeight` inside scrollables** | "BoxConstraints forces infinite height" OR O(N²) layout | Use `Expanded` + `SingleChildScrollView` in a Column instead; never put IntrinsicHeight in a list item builder |
-
-The rest of this document gives you concrete recipes. Each one resolves these rules implicitly.
+1. [The Flutter constraint model](#1-the-flutter-constraint-model)
+2. [Assertion-to-fix mapping](#2-assertion-to-fix-mapping)
+3. [Layout recipes](#3-layout-recipes)
+4. [Scrolling: scrollPrimary, nested scrolls, infinite-height pitfalls](#4-scrolling-scrollprimary-nested-scrolls-infinite-height-pitfalls)
+5. [Stack + absolute positioning](#5-stack--absolute-positioning)
+6. [Text truncation + min-w-0](#6-text-truncation--min-w-0)
+7. [items-stretch inside a scroll](#7-items-stretch-inside-a-scroll)
+8. [Touch targets](#8-touch-targets)
+9. [Responsive cascade examples](#9-responsive-cascade-examples)
 
 ---
 
-## Pattern 1: Full-page scrollable
+## 1. The Flutter constraint model
 
-The default for any page-level WDiv at the root of a route.
+> Constraints down. Sizes up. Parent sets position.
 
-```dart
-WDiv(
-  className: 'w-full h-full overflow-y-auto p-4',
-  scrollPrimary: true,                  // MANDATORY for iOS tap-to-top
-  child: WDiv(
-    className: 'flex flex-col gap-6 max-w-4xl mx-auto',
-    children: [
-      // ... page content
-    ],
-  ),
-)
-```
+Every `RenderBox` receives a `BoxConstraints` (`minWidth`, `maxWidth`, `minHeight`, `maxHeight`) from its parent, lays out each child with derived constraints, then picks a `Size` that satisfies its own incoming constraints. The parent alone decides where in space each child goes.
 
-`scrollPrimary: true` is a constructor prop, not a className token. It maps to Flutter's `ScrollView.primary: true`, which lets iOS status-bar tap scroll the view to top. Without it, taps go to the nearest other primary scroll view (often nothing useful).
+Two consequences drive almost every Wind layout footgun:
 
-## Pattern 2: Centered card with max width
+1. **`Row` and `Column` pass UNBOUNDED constraints to non-flex children in step 1.** A child that responds with `double.infinity` (Wind's `w-full` inside a Row, or `h-full` inside a Column inside a scroll) blows up the parent's bounded layout. `flex-1` is the canonical fix because it moves the child to step 2 (bounded share of remaining space).
 
-For login screens, modal content, single-column reading layouts.
+2. **Scrollables remove the max on their axis.** A `SingleChildScrollView` (Wind's `overflow-y-auto`) passes `maxHeight: double.infinity` to its child. A child that asserts on finite height (`Column` with `Expanded` children) throws "Vertical viewport was given unbounded height".
+
+Memorize these and the rest follows.
+
+---
+
+## 2. Assertion-to-fix mapping
+
+When Flutter throws, map the error to a Wind-shaped fix.
+
+| Assertion | Cause | Fix |
+|---|---|---|
+| `A RenderFlex overflowed by N pixels` | Sum of non-flex children exceeds the Row/Column's bounded constraint. Often `w-full` on a Row child. | Wrap the offending child in `WDiv(className: 'flex-1', child: ...)` instead of `'w-full'` |
+| `RenderFlex children have non-zero flex but incoming width/height constraints are unbounded` | `flex-1` or `Expanded` inside a parent that does not constrain the main axis (typically a `SingleChildScrollView`) | Either remove the `flex-1` from the child or give the parent a bounded size (`h-screen`, fixed `h-N`, or `min-h-screen`) |
+| `An InputDecorator cannot have an unbounded width` | `WFormInput` / `TextField` in a Row without `flex-1` or fixed width | Wrap in `WDiv(className: 'flex-1', child: WFormInput(...))` |
+| `Vertical viewport was given unbounded height` | `SingleChildScrollView` (or any vertical scrollable) inside an unbounded parent — typically a `Column` outside a `Scaffold` | Wrap the scroll's ancestor in a fixed-height container, or wrap the chain in `Scaffold(body: ...)` |
+| `BoxConstraints forces an infinite width/height` | A widget requiring tight constraints (`SizedBox.expand`) received `double.infinity` from its parent | Constrain the parent (`max-w-*`, fixed `w-N`) |
+| `RenderBox was not laid out` | Secondary error; look earlier in the trace for the primary constraint violation | Fix the earlier assertion; this one cascades |
+| `A Positioned widget must be a descendant of a Stack` | `absolute` token without a `relative` ancestor | Wrap the parent in `WDiv(className: 'relative ...', children: [..., WDiv(className: 'absolute ...')])` |
+
+---
+
+## 3. Layout recipes
+
+### Centered card
 
 ```dart
 WDiv(
   className: '''
-    mx-auto max-w-md w-full
-    p-6 rounded-xl
+    mx-auto max-w-md p-6
     bg-white dark:bg-gray-800
-    border border-gray-200 dark:border-gray-700
-    shadow-sm
+    rounded-lg shadow-sm
   ''',
-  children: [
-    WText('Sign in', className: 'text-2xl font-bold text-gray-900 dark:text-white'),
-    // ... form
-  ],
-)
+  child: ...,
+);
 ```
 
-`mx-auto` provides horizontal centering. `max-w-md` (448 px) caps the width on wide viewports.
-
-## Pattern 3: Vertical stack with consistent gap
-
-The 80% case for any list of widgets.
+### Vertical stack
 
 ```dart
 WDiv(
   className: 'flex flex-col gap-4',
-  children: [item1, item2, item3],
-)
+  children: [..., ..., ...],
+);
 ```
 
-`gap-4` = 16 px between every child. No manual spacing widgets needed.
-
-## Pattern 4: Horizontal row with even alignment
+### Horizontal stack with leading icon and trailing badge
 
 ```dart
 WDiv(
-  className: 'flex flex-row justify-between items-center gap-4',
+  className: 'flex flex-row items-center gap-3',
   children: [
-    WText('Title', className: 'text-lg font-bold text-gray-900 dark:text-white'),
-    WButton(onTap: () {}, className: 'px-4 py-2 rounded-lg bg-blue-600 dark:bg-blue-700 text-white', child: const WText('Action')),
+    WIcon(Icons.alarm_outlined, className: 'text-gray-500'),
+    WDiv(
+      className: 'flex-1 min-w-0',          // min-w-0 lets truncate work
+      child: WText('Long title that may need to truncate', className: 'truncate'),
+    ),
+    WDiv(
+      className: '''
+        rounded-full px-2 py-0.5
+        bg-blue-100 dark:bg-blue-900
+        text-blue-700 dark:text-blue-200
+        text-xs font-medium
+      ''',
+      child: const WText('NEW'),
+    ),
   ],
-)
+);
 ```
 
-`justify-between` pushes children to opposite ends. `items-center` aligns them on the cross axis.
-
-## Pattern 5: Responsive multi-column grid
+### Responsive grid 1 → 2 → 3 columns
 
 ```dart
 WDiv(
-  className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4',
-  children: [
-    for (final item in items) Card(item: item),
-  ],
-)
+  className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4',
+  children: cards,
+);
 ```
 
-1 column on mobile, 2 from `sm:` (≥ 640 px), 3 from `lg:` (≥ 1024 px), 4 from `xl:` (≥ 1280 px). Mobile-first cascade.
+Note: Wind's `grid` renders as `Wrap` with computed column widths; it is NOT virtualized. For large or dynamic item counts, use Flutter's `GridView.builder` with W-widgets inside.
 
-## Pattern 6: Sticky header + scrollable body
-
-The most-used multi-zone shape: header fixed, body scrolls.
+### Sticky header + scrollable body
 
 ```dart
 WDiv(
   className: 'flex flex-col h-full',
   children: [
-    // Header — fixed
     WDiv(
-      className: '''
-        flex flex-row justify-between items-center
-        px-4 py-3
-        bg-white dark:bg-gray-900
-        border-b border-gray-200 dark:border-gray-700
-      ''',
-      children: [
-        WText('App title', className: 'text-lg font-bold text-gray-900 dark:text-white'),
-        WIcon(Icons.menu_outlined),
-      ],
+      className: 'flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700',
+      child: const WText('Header', className: 'text-lg font-semibold'),
     ),
-    // Body — fills remaining space and scrolls
     WDiv(
       className: 'flex-1 overflow-y-auto p-4',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-4',
-        children: [...content],
-      ),
+      scrollPrimary: true,                  // iOS tap-to-top
+      child: ...long content...,
     ),
   ],
-)
+);
 ```
 
-`flex-1` on the body claims all remaining vertical space. `h-full` on the outer flex-col gives a bounded height. `scrollPrimary: true` on the scroll child wires iOS tap-to-top.
+The parent has `h-full` so the body's `flex-1` has bounded vertical space. Skipping the parent height triggers unbounded-height.
 
-**Never** add `IntrinsicHeight` here; the Expanded + scrollable pattern is the correct shape.
-
-## Pattern 7: Two-column responsive form
-
-Stack on mobile, side-by-side on tablet+.
+### Full-page scroll
 
 ```dart
 WDiv(
-  className: 'flex flex-col md:flex-row gap-6',
-  children: [
-    WDiv(
-      className: 'flex-1 flex flex-col gap-4',
-      children: [/* left column */],
-    ),
-    WDiv(
-      className: 'flex-1 flex flex-col gap-4',
-      children: [/* right column */],
-    ),
-  ],
-)
+  className: 'w-full h-full overflow-y-auto p-4',
+  scrollPrimary: true,
+  child: WDiv(
+    className: 'flex flex-col gap-6 max-w-2xl mx-auto',
+    children: [...],
+  ),
+);
 ```
 
-`flex flex-col md:flex-row` flips direction at the md breakpoint. Both columns get `flex-1` so they share width equally on desktop.
+### Hide on mobile, show on desktop
 
-## Pattern 8: List of items with dividers
+```dart
+WDiv(className: 'hidden md:flex flex-row gap-4', children: [...]);
+WDiv(className: 'md:hidden', child: ...);                    // shown only below md
+```
+
+### Gradient header banner
 
 ```dart
 WDiv(
   className: '''
-    flex flex-col
-    bg-white dark:bg-gray-800
-    rounded-lg overflow-hidden
-    border border-gray-200 dark:border-gray-700
-  ''',
-  children: [
-    for (final (index, item) in items.indexed)
-      WDiv(
-        className: '''
-          flex flex-row items-center gap-3 p-4
-          hover:bg-gray-50 dark:hover:bg-gray-700
-          ${index < items.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}
-        ''',
-        children: [/* item content */],
-      ),
-  ],
-)
-```
-
-The last-item ternary is acceptable for index-based logic (it does not branch on state). Wind has no Tailwind-equivalent `divide-y`; the explicit bottom-border per item except the last is the correct shape.
-
-## Pattern 9: Gradient header banner
-
-For landing pages, splash screens, marketing headers.
-
-```dart
-WDiv(
-  className: '''
+    bg-gradient-to-br from-indigo-600 to-purple-600
+    dark:from-indigo-500 dark:to-purple-500
     p-8 rounded-2xl
-    bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500
   ''',
-  children: [
-    WText(
-      'Welcome',
-      className: 'text-3xl md:text-4xl font-bold text-white',
-    ),
-    WText(
-      'A short tagline that fits within the banner.',
-      className: 'text-base text-white/80 mt-2',
-    ),
-  ],
-)
+  child: WText('Welcome', className: 'text-3xl font-bold text-white'),
+);
 ```
 
-Gradients always work in light mode without `dark:` pair (the gradient color tokens are absolute). Text uses opacity modifier (`/80`) for de-emphasis.
-
-## Pattern 10: Modal/sheet with fixed header + actions, scrollable middle
+### Toggle / chip with selected state
 
 ```dart
 WDiv(
   className: '''
-    flex flex-col
+    rounded-full px-4 py-2 border
+    border-gray-300 dark:border-gray-600
     bg-white dark:bg-gray-800
-    rounded-t-2xl
-    h-3/4
+    text-gray-700 dark:text-gray-200
+    hover:bg-gray-50 dark:hover:bg-gray-700
+    selected:border-blue-500 selected:bg-blue-50 selected:text-blue-700
+    dark:selected:border-blue-400 dark:selected:bg-blue-950 dark:selected:text-blue-200
   ''',
-  children: [
-    // Fixed header
-    WDiv(
-      className: 'px-6 py-4 border-b border-gray-200 dark:border-gray-700',
-      children: [WText('Edit profile', className: 'text-lg font-bold')],
-    ),
-    // Scrollable body
-    WDiv(
-      className: 'flex-1 overflow-y-auto p-6',
-      scrollPrimary: true,
-      child: WDiv(
-        className: 'flex flex-col gap-4',
-        children: [/* form fields */],
-      ),
-    ),
-    // Pinned actions
-    WDiv(
-      className: '''
-        flex flex-row justify-end gap-2
-        px-6 py-4 border-t border-gray-200 dark:border-gray-700
-      ''',
-      children: [
-        WButton(onTap: () => Navigator.pop(context), className: 'px-4 py-2 rounded-lg', child: const WText('Cancel')),
-        WButton(onTap: _save, className: 'px-4 py-2 rounded-lg bg-blue-600 dark:bg-blue-700 text-white', child: const WText('Save')),
-      ],
-    ),
-  ],
-)
+  states: isSelected ? const {'selected'} : const {},
+  child: WText(label),
+);
 ```
 
-Three-zone Column. Top + bottom are fixed; middle has `flex-1 overflow-y-auto`.
-
-## Pattern 11: Empty state with centered content
+### Disabled secondary action
 
 ```dart
-WDiv(
-  className: 'flex flex-col items-center justify-center gap-4 h-full p-8',
-  children: [
-    WIcon(Icons.inbox_outlined, className: 'text-6xl text-gray-400 dark:text-gray-600'),
-    WText(
-      'Your inbox is empty',
-      className: 'text-lg font-medium text-gray-700 dark:text-gray-300',
-    ),
-    WText(
-      'New messages will appear here.',
-      className: 'text-sm text-gray-500 dark:text-gray-400 text-center',
-    ),
-    WButton(
-      onTap: _compose,
-      className: 'mt-2 px-4 py-2 rounded-lg bg-blue-600 dark:bg-blue-700 text-white',
-      child: const WText('Compose'),
-    ),
-  ],
-)
+WButton(
+  disabled: !canProceed,
+  onTap: _proceed,
+  className: '''
+    px-4 py-2 rounded-lg
+    bg-gray-200 hover:bg-gray-300
+    dark:bg-gray-700 dark:hover:bg-gray-600
+    text-gray-700 dark:text-gray-200
+    disabled:opacity-50 disabled:cursor-not-allowed
+  ''',
+  child: const Text('Continue'),
+);
 ```
 
-Centering on both axes via `items-center justify-center` in a flex-col with bounded height.
-
-## Pattern 12: Loading state with overlay
+### Loading button
 
 ```dart
-WDiv(
-  className: 'relative',
-  children: [
-    // Content (dimmed when loading)
-    WDiv(
-      className: '${_isLoading ? "opacity-50" : ""} flex flex-col gap-4',
-      children: [/* content */],
-    ),
-    // Overlay spinner
-    if (_isLoading)
-      WDiv(
-        className: 'absolute inset-0 flex items-center justify-center',
-        child: const CircularProgressIndicator(),
-      ),
-  ],
-)
+WButton(
+  isLoading: _isSubmitting,
+  onTap: _submit,
+  loadingText: 'Saving...',
+  className: '''
+    px-6 py-3 rounded-lg
+    bg-blue-600 hover:bg-blue-700
+    dark:bg-blue-500 dark:hover:bg-blue-600
+    loading:bg-blue-400
+    text-white
+  ''',
+  child: const Text('Save'),
+);
 ```
 
-The Dart conditional in className interpolation here is acceptable: it adds a single class (`opacity-50`) when loading, no `dark:` pair needed. For richer state-driven styling, prefer `states: {'loading'}` + `loading:opacity-50` instead.
+### Avatar with fallback icon
+
+```dart
+WImage(
+  src: user.avatarUrl,
+  className: '''
+    w-12 h-12 rounded-full object-cover
+    bg-gray-100 dark:bg-gray-700
+  ''',
+  errorBuilder: (_, __, ___) => WDiv(
+    className: '''
+      w-12 h-12 rounded-full
+      bg-gray-100 dark:bg-gray-700
+      flex items-center justify-center
+    ''',
+    child: WIcon(Icons.person_outlined, className: 'text-gray-400 dark:text-gray-500'),
+  ),
+);
+```
+
+### Popover menu
+
+```dart
+WPopover(
+  alignment: PopoverAlignment.bottomRight,
+  className: '''
+    w-56 rounded-lg shadow-xl border
+    border-gray-200 dark:border-gray-700
+    bg-white dark:bg-gray-800
+  ''',
+  triggerBuilder: (context, isOpen, isHovering) => WButton(
+    className: '''
+      p-2 rounded-lg
+      hover:bg-gray-100 dark:hover:bg-gray-700
+    ''',
+    child: const WIcon(Icons.more_horiz_outlined),
+  ),
+  contentBuilder: (context, close) => WDiv(
+    className: 'flex flex-col py-1',
+    children: [
+      _menuItem('Edit', Icons.edit_outlined, () { close(); _edit(); }),
+      _menuItem('Delete', Icons.delete_outline_outlined, () { close(); _delete(); }),
+    ],
+  ),
+);
+```
+
+### Per-breakpoint widget swap
+
+```dart
+WBreakpoint(
+  base: (_) => const MobileLayout(),
+  md: (_) => const TabletLayout(),
+  lg: (_) => const DesktopLayout(),
+);
+```
+
+Use when className prefixes (`hidden md:flex`) cannot express the change (different widget hierarchies, not just different styles).
 
 ---
 
-## Special-case patterns
+## 4. Scrolling: scrollPrimary, nested scrolls, infinite-height pitfalls
 
-### Pinning content to the bottom of a scrollable
-
-`Spacer` and `Expanded` do not work inside `SingleChildScrollView` (they need bounded height). Wrap in `LayoutBuilder`:
+`overflow-y-auto` (or any scroll variant) on a `WDiv` renders a `SingleChildScrollView`. Pair it with the constructor prop `scrollPrimary: true` to enable iOS status-bar-tap-to-top:
 
 ```dart
-LayoutBuilder(
-  builder: (context, constraints) => SingleChildScrollView(
-    child: ConstrainedBox(
-      constraints: BoxConstraints(minHeight: constraints.maxHeight),
-      child: WDiv(
-        className: 'flex flex-col gap-4 p-4',
-        children: [
-          /* top content */,
-          const Spacer(),
-          WText('Pinned to bottom', className: 'text-center text-gray-500'),
-        ],
-      ),
+WDiv(
+  className: 'flex-1 overflow-y-auto p-4',
+  scrollPrimary: true,
+  child: ...,
+);
+```
+
+There is no className for `scrollPrimary`. Omit it and iOS users lose tap-to-top.
+
+If the page has multiple scroll views, only ONE should be `scrollPrimary: true` (the dominant outer scroll). `Scaffold` itself injects a `PrimaryScrollController`; the scroll view nearest the Scaffold body should be primary.
+
+**Nested scrolls.** A vertical `WDiv(className: 'overflow-y-auto')` directly inside another vertical scroll is rarely correct (only inner needed; outer is wasted). Both being primary causes controller conflicts.
+
+**`h-full` inside a scroll = bug.** The scrollable removes the max height; the inner widget cannot resolve `h-full` to a finite value. Use `flex-1` on the body inside a `flex flex-col h-full` parent instead (recipe: Sticky header + scrollable body, §3).
+
+**Reverse: `flex-1` inside an unbounded parent.** Putting `WDiv(className: 'flex-1')` inside a `SingleChildScrollView` directly throws "non-zero flex but incoming constraints unbounded". Either remove `flex-1` or constrain the parent.
+
+---
+
+## 5. Stack + absolute positioning
+
+`absolute` requires a `relative` ancestor on the same `WDiv` chain (translates to a Flutter `Stack` + `Positioned`).
+
+```dart
+WDiv(
+  className: 'relative w-48 h-48 rounded-xl overflow-hidden',
+  children: [
+    WImage(src: photoUrl, className: 'w-full h-full object-cover'),
+    WDiv(
+      className: '''
+        absolute bottom-2 right-2
+        rounded-full px-2 py-0.5
+        bg-black/60 text-white text-xs
+      ''',
+      child: const WText('NEW'),
+    ),
+  ],
+);
+```
+
+Negative offsets work (`-top-2`, `-inset-1`). Percentage offsets (`top-[50%]`) do NOT work.
+
+`fixed` and `sticky` position types are recognised by the parser but produce no visual effect; reach for Material `SliverAppBar` or `Scaffold(persistentFooterButtons:)` for scroll-relative positioning.
+
+---
+
+## 6. Text truncation + min-w-0
+
+`truncate` (which sets `TextOverflow.ellipsis` + `maxLines: 1` + `softWrap: false`) requires a finite `maxWidth` constraint on the `Text` widget. Inside a Row, the default constraint is unbounded; ellipsis never fires.
+
+Fix: wrap the text in a flex child.
+
+```dart
+// Wrong — overflows the Row
+WDiv(
+  className: 'flex flex-row gap-2',
+  children: [
+    WIcon(Icons.tag_outlined),
+    WText('A very long title that should truncate', className: 'truncate'),
+  ],
+);
+
+// Right — flex-1 gives the text bounded width
+WDiv(
+  className: 'flex flex-row gap-2 items-center',
+  children: [
+    WIcon(Icons.tag_outlined),
+    WDiv(
+      className: 'flex-1 min-w-0',
+      child: WText('A very long title that should truncate', className: 'truncate'),
+    ),
+  ],
+);
+```
+
+The `min-w-0` is critical when the Row also has flex parents above it. Default flex children have `minWidth` = intrinsic width, which prevents truncation in nested flex layouts. `min-w-0` lets the child shrink below intrinsic.
+
+---
+
+## 7. items-stretch inside a scroll
+
+`items-stretch` (Flutter's `CrossAxisAlignment.stretch`) makes row children match the tallest. Inside a `SingleChildScrollView`, the row's intrinsic height is what the scroll exposes, and `stretch` needs a known height. Wrap in `IntrinsicHeight` from native Flutter:
+
+```dart
+WDiv(
+  className: 'overflow-y-auto p-4',
+  scrollPrimary: true,
+  child: IntrinsicHeight(
+    child: WDiv(
+      className: 'flex flex-row items-stretch gap-2',
+      children: [
+        WDiv(className: 'flex-1 bg-blue-100 p-4'),
+        WDiv(className: 'flex-1 bg-red-100 p-4'),
+      ],
     ),
   ),
-)
+);
 ```
 
-### Equal-height children in a Row
+`IntrinsicHeight` is documented as relatively expensive (it runs a speculative layout pass). Reach for it only when this exact stretch-inside-scroll pattern is required.
 
-Use `items-stretch` to make all children match the tallest sibling on the cross axis. Inside a scrollable parent, this throws "BoxConstraints forces infinite height"; wrap in `IntrinsicHeight` if you must:
+---
+
+## 8. Touch targets
+
+Material design recommends ≥48 dp; Cupertino recommends ≥44 pt. Wind has no automatic enforcement. For icon buttons, expand the visual via padding:
 
 ```dart
-IntrinsicHeight(
-  child: WDiv(
-    className: 'flex flex-row items-stretch gap-4',
-    children: [/* cards */],
-  ),
-)
+// 24 dp icon, 48 dp tap target via p-3
+WButton(
+  onTap: _close,
+  className: 'p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700',
+  child: const WIcon(Icons.close_outlined),
+);
 ```
 
-`IntrinsicHeight` runs an extra layout pass; avoid in lists.
+For lists of compact rows, ensure the tap area on `WAnchor` / `WDiv` includes vertical padding (`py-3` minimum).
 
-### Nested scrollables on the same axis
+Flutter's `MaterialTapTargetSize.padded` (default on `IconButton`) does this implicitly for Material widgets; Wind widgets do not. Expanded visual = expanded tap target.
 
-Two `ListView`s on the same axis nest poorly. Use a single `CustomScrollView` with `SliverList` delegates instead. For tabs-inside-collapsing-header, use `NestedScrollView`.
+---
+
+## 9. Responsive cascade examples
+
+Mobile-first means base classes apply to all sizes; responsive prefixes override at and above their breakpoint.
+
+```dart
+// Stack on mobile, side-by-side on md+, with image taking 1/3 on lg+
+WDiv(
+  className: 'flex flex-col md:flex-row gap-4',
+  children: [
+    WDiv(
+      className: 'w-full md:w-1/3 lg:w-1/4',
+      child: WImage(src: photo, className: 'w-full aspect-video object-cover rounded-lg'),
+    ),
+    WDiv(
+      className: 'flex-1 flex flex-col gap-2',
+      children: [
+        WText(title, className: 'text-xl font-bold text-gray-900 dark:text-white'),
+        WText(body, className: 'text-base text-gray-600 dark:text-gray-300'),
+      ],
+    ),
+  ],
+);
+
+// Reading width: full on mobile, capped at prose width on md+
+WDiv(
+  className: 'w-full md:max-w-prose mx-auto p-4 md:p-6 lg:p-8',
+  child: ...,
+);
+
+// Reveal sidebar on lg+
+WDiv(
+  className: 'flex flex-col lg:flex-row gap-4',
+  children: [
+    WDiv(className: 'flex-1', child: mainContent),
+    WDiv(
+      className: 'hidden lg:flex lg:w-64 flex-col gap-2',
+      children: sidebarItems,
+    ),
+  ],
+);
+```
+
+For very different mobile vs desktop layouts (not just sizing), reach for `WBreakpoint` instead of prefix-chaining.
 
 ---
 
 ## Anti-patterns
 
-| Wrong | Right |
-|-------|-------|
-| `flex-row` with `w-full` children | use `flex-1` |
-| `overflow-y-auto h-full` inside Column | use `flex-1 overflow-y-auto` in a parent with `h-full` |
-| `absolute` without `relative` parent | add `relative` to the parent's className |
-| `truncate` inside Row without `flex-1` wrap | wrap text in `WDiv(className: 'flex-1', child: WText(..., className: 'truncate'))` |
-| `IntrinsicHeight` inside a ListView item builder | restructure: equal-height belongs at the outer level, not per-item |
-| `ListView` inside `SingleChildScrollView` with `shrinkWrap: true` | use a single `CustomScrollView` with slivers |
-| `Spacer` / `Expanded` inside `SingleChildScrollView` | use `LayoutBuilder` + `ConstrainedBox(minHeight: constraints.maxHeight)` |
-| Forgetting `scrollPrimary: true` on the page root | always set it on the outer scrollable WDiv |
-| Hard-coded `width: 400` that exceeds typical iframe width | use `max-w-*` instead |
+| Wrong | Why | Right |
+|---|---|---|
+| `WDiv(className: 'w-full')` inside a Row | RenderFlex overflow | `'flex-1'` |
+| `WDiv(className: 'h-full overflow-y-auto')` inside a Column | Unbounded height assertion | `'flex-1 overflow-y-auto'` + `scrollPrimary: true`, parent has `h-full` |
+| `WDiv(className: 'absolute top-0')` without `relative` ancestor | No Stack to anchor | wrap parent in `'relative'` |
+| `WText(..., className: 'truncate')` directly inside a Row | Unbounded width; ellipsis never fires | wrap in `WDiv(className: 'flex-1 min-w-0')` |
+| `overflow-y-auto` without `scrollPrimary: true` | iOS tap-to-top broken | add the constructor prop |
+| `Container(child: WDiv(...))` | Loses className surface on the outer | use `WDiv` directly |
+| `Wrap(children: ...)` instead of `WDiv(className: 'wrap gap-2')` | Cannot consume className from outside | use `WDiv` |
+| `Stack` + `Positioned` directly | Same; loses className | use `relative` + `absolute` tokens on `WDiv` |
+| `GridView.builder` for a 6-item static grid | Overhead for nothing | `WDiv(className: 'grid grid-cols-3 gap-4', children: [...])` |
+| `WDiv(className: 'grid grid-cols-3')` for 200 dynamic items | Not virtualized; renders all at once | `GridView.builder` |
