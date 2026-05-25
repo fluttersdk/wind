@@ -5,8 +5,8 @@
 <h1 align="center">Wind</h1>
 
 <p align="center">
-  <strong>Tailwind CSS for Flutter.</strong><br/>
-  Utility classes like <code>flex</code>, <code>p-4</code>, <code>dark:bg-gray-800</code>, and <code>hover:shadow-lg</code> compose into widget trees — without ever leaving your <code>className</code> string.
+  <strong>Rapidly build modern Flutter apps without ever leaving your widget tree.</strong><br/>
+  A utility-first styling framework for Flutter, packed with classes like <code>flex</code>, <code>p-4</code>, <code>dark:bg-gray-800</code>, <code>hover:scale-105</code>, and <code>md:flex-row</code> that compose into responsive, theme-aware widget trees. Stable since 1.0.
 </p>
 
 <p align="center">
@@ -21,6 +21,7 @@
   <a href="https://fluttersdk.com/wind">Documentation</a> ·
   <a href="https://fluttersdk.com/wind/play">Playground</a> ·
   <a href="https://pub.dev/packages/fluttersdk_wind">pub.dev</a> ·
+  <a href="https://fluttersdk.com/wind/ai">AI integrations</a> ·
   <a href="https://github.com/fluttersdk/wind/issues">Issues</a>
 </p>
 
@@ -28,55 +29,78 @@
 
 ## Why Wind?
 
-**Stop nesting six widgets to round a corner.**
+> *"What would be just two or three nested `<div>`s in HTML+CSS turns into several screens of widgets, making navigation and debugging much harder."*
+> — [Hacker News, 2025](https://news.ycombinator.com/item?id=43228794)
 
-Flutter's styling is powerful but verbose. A simple card with padding, rounded corners, and a shadow requires deeply nested `Container`, `BoxDecoration`, `EdgeInsets`, and `BorderRadius` objects — the kind of widget-tree pyramid that the Flutter team itself ran a user study to confirm is painful.
+Flutter's styling is structural. Padding goes one place, decoration goes another, layout goes a third — each wrapped in its own widget. A simple rounded card with a shadow and a hover state ends up six widgets deep before a single line of business logic. The pattern is so common it has a name: the **Pyramid of Doom**.
 
-Wind replaces that pyramid with the syntax web developers already know:
+The Flutter team itself acknowledged the verbosity pain in a public user study, ran a [Decorators experimental feature](https://github.com/flutter/flutter/issues/161345) to reduce nesting, found mixed results, and shelved it. The pain is structural and currently unsolved by the framework — except by Wind.
+
+Wind replaces that pyramid with a single string:
 
 ```dart
-// Before — Flutter way
+// Before — Flutter native (15 lines)
 Container(
   padding: EdgeInsets.all(24),
+  margin: EdgeInsets.symmetric(horizontal: 16),
   decoration: BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(12),
-    boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black12)],
+    boxShadow: [BoxShadow(
+      color: Colors.black.withOpacity(0.1),
+      blurRadius: 10,
+      offset: Offset(0, 4),
+    )],
   ),
-  child: Text('Hello', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  child: Text(
+    'Hello',
+    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  ),
 )
 
-// After — Wind way
+// After — Wind (4 lines)
 WDiv(
-  className: 'bg-white rounded-xl shadow-lg p-6',
+  className: 'p-6 mx-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg',
   child: WText('Hello', className: 'text-xl font-bold'),
 )
 ```
 
 **If you know Tailwind CSS, you already know Wind.**
 
-### What you get
+## What you get
 
-- ⚡ **Designs come together faster** — no class names to invent, no separate stylesheets, no switching between theme files and widget code
-- 🛡️ **Making changes feels safer** — every utility class is scoped to its widget. Edit one, never accidentally break another.
-- 🧹 **Maintaining old code is easier** — `className` reads top-down. No more "what was this `Container` for?" archaeology six months later.
-- 📋 **Code is portable** — copy a `className` string between projects, between files, even between Wind and Tailwind on the web
-- 📉 **Your widget tree stops growing** — utility classes compose; the nesting stays flat as features pile up
-- 📦 **Battle-tested in real apps** — over 2K monthly downloads on [pub.dev](https://pub.dev/packages/fluttersdk_wind) and shipping in production Flutter apps today
+### 1. Familiar syntax, zero re-learning
 
-## Features
+Wind's `className` IS Tailwind CSS syntax. If you've written `bg-blue-500 hover:bg-blue-600 dark:bg-blue-800 md:px-8` on the web, you've already written it for Flutter. Every other Flutter "Tailwind-inspired" library uses Dart property chaining (`.text.xl4.bold.make()` or `.bold().fontSize(TwFontSizes.lg)`). Wind is the only one that lets a Tailwind user paste their existing className strings into Flutter and have them work.
 
-| | Feature | Description |
-|:--|:--------|:------------|
-| 🎨 | **Tailwind syntax, natively** | The same utility classes you write on the web: `flex`, `p-4`, `bg-blue-500`, `rounded-lg`, `shadow-md` |
-| 🧩 | **W-prefix widget set** | `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDynamic`, and the rest of the surface |
-| 📱 | **Responsive prefixes** | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoints — plus custom breakpoints via your theme |
-| 🌙 | **Dark mode** | `dark:` prefix with a runtime toggle and automatic system-brightness sync |
-| 🎯 | **State styling** | `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, and any custom state you define |
-| 🔌 | **Platform prefixes** | `ios:`, `android:`, `web:`, `mobile:` — conditional styling without a single `if` |
-| 🎭 | **Customizable theme** | Override every token scale: colors, spacing, typography, shadows, breakpoints, animations |
-| 📡 | **Server-driven UI** | `WDynamic` renders widget trees from JSON — ship UI updates without ship-blocking releases |
-| 🤖 | **AI-ready** | First-class agent support — see [fluttersdk.com/wind/ai](https://fluttersdk.com/wind/ai) for the full integration set |
+### 2. Eliminates the Pyramid of Doom
+
+Replace 15-line `Container` / `BoxDecoration` / `EdgeInsets` / `BorderRadius` / `BoxShadow` nesting with a single className string. The widget tree stays flat as features pile up. `className` reads top-down. No more "what was this `Container` for?" archaeology six months later.
+
+### 3. Dark mode as a first-class string-syntax citizen
+
+Pair every color token inline. `bg-white dark:bg-gray-800`. No separate light/dark theme files. No `Theme.of(context).colorScheme` lookups. No hardcoded-color disease:
+
+> *"The moment you build a custom widget with hardcoded colors, dark mode breaks. Search your codebase for `Color(0x` and `Colors.` in widget files. Every instance is a potential dark mode bug."*
+> — [flutterstudio.dev, March 2026](https://flutterstudio.dev/blog/flutter-dark-mode-guide.html)
+
+Wind's `dark:` prefix is the only Flutter solution where dark mode lives inline in the className.
+
+### 4. State prefixes as CSS-native primitives
+
+`hover:bg-blue-600 focus:ring-2 active:scale-95 disabled:opacity-50 loading:cursor-wait`. Zero `MouseRegion`. Zero `setState`. Zero `_isHovered` booleans. Stack Overflow hover-state questions for Flutter recur every year from 2021 to 2025, all with the same 3-step boilerplate answer. Wind collapses it to one token.
+
+### 5. AI-ready by design
+
+Wind ships three AI integration layers: a hosted **MCP server** at `mcp.fluttersdk.com/wind`, a bundled **Claude Code skill**, and **Cursor rules**. No other Flutter styling library (`velocity_x`, `getwidget`, `styled_widget`, `tailwind_flutter`, `shadcn_flutter`) ships any of these. Your AI coding agent stops guessing className tokens.
+
+### And
+
+- 📦 **Battle-tested in real apps** — over 2K monthly downloads on [pub.dev](https://pub.dev/packages/fluttersdk_wind), shipping in production Flutter apps today, 1230 tests / 0 analyzer issues.
+- ⚡ **Designs come together faster** — no class names to invent, no separate stylesheets, no switching between theme files and widget code.
+- 🛡️ **Changes feel safer** — every utility class is scoped to its widget. Edit one, never accidentally break another.
+- 📋 **Code is portable** — copy a `className` string between projects, between files, even between Wind and Tailwind on the web.
+- 🌐 **Works on all 6 Flutter platforms** — Android, iOS, web, macOS, Windows, Linux. Use `ios:`, `android:`, `web:`, `mobile:` prefixes to target specific platforms in the same className.
 
 ## Quick Start
 
@@ -144,14 +168,23 @@ class HomePage extends StatelessWidget {
 }
 ```
 
-## Widgets
+## The Wind Surface
+
+| Category | Count | What ships |
+|:---|:---:|:---|
+| **Widgets** | 20 | `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WCheckbox`, `WDatePicker`, `WIcon`, `WImage`, `WSvg`, `WPopover`, `WAnchor`, `WBreakpoint`, `WSpacer`, `WDynamic`, plus 5 `FormField` wrappers (`WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`) |
+| **Parsers** | 17 | background (color / gradient / image), border, ring, shadow, opacity, padding, margin, sizing, flexbox + grid, position, order, overflow, aspect-ratio, z-index, text, animation, transition, SVG, debug |
+| **Theme tokens** | 23 | brightness, colors, screens, containers, fontSizes, fontWeights, tracking, leading, borderWidths, borderRadius, fontFamilies, ringWidths, ringOffsets, applyDefaultFontFamily, syncWithSystem, baseSpacingUnit, ringColor, opacities, zIndices, shadows, transitionDurations, transitionCurves, animations |
+| **Prefixes** | All | `hover:` `focus:` `disabled:` `loading:` `selected:` + custom states · `dark:` · `sm:` / `md:` / `lg:` / `xl:` / `2xl:` + custom breakpoints · `ios:` / `android:` / `web:` / `mobile:` |
+
+## Widgets in action
 
 ### Layout & Container
 
 ```dart
 // Flex row with gap
 WDiv(
-  className: 'flex flex-row gap-4 p-4 bg-white rounded-lg shadow',
+  className: 'flex flex-row gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow',
   children: [sidebar, content],
 )
 
@@ -172,7 +205,7 @@ WDiv(
 
 ```dart
 WText('Heading', className: 'text-2xl font-bold text-gray-900 dark:text-white')
-WText('Body text', className: 'text-base text-gray-600 leading-relaxed')
+WText('Body text', className: 'text-base text-gray-600 dark:text-gray-300 leading-relaxed')
 WText('LABEL', className: 'text-xs font-semibold uppercase tracking-wider text-gray-500')
 ```
 
@@ -210,11 +243,11 @@ WFormDatePicker(
 ### Interactive
 
 ```dart
-// Button with loading state
+// Button with hover, focus, and loading states
 WButton(
   onTap: _submit,
   isLoading: _isSubmitting,
-  className: 'bg-blue-600 hover:bg-blue-700 loading:bg-blue-400 text-white px-6 py-3 rounded-lg',
+  className: 'bg-blue-600 hover:bg-blue-700 focus:ring-2 loading:bg-blue-400 text-white px-6 py-3 rounded-lg',
   child: Text('Submit'),
 )
 
@@ -247,7 +280,7 @@ WSvg(src: 'assets/logo.svg', className: 'fill-blue-600 w-12 h-12')
 ### Server-Driven UI
 
 ```dart
-// Render UI from JSON - no app update needed
+// Render UI from JSON — ship UI updates without ship-blocking releases
 WDynamic(
   json: serverResponse,
   actions: {
@@ -265,7 +298,7 @@ WDynamic(
 <details>
 <summary><strong>Layout</strong> — flex, grid, positioning, overflow</summary>
 
-`flex` `flex-row` `flex-col` `flex-wrap` `flex-1` `grid` `grid-cols-{n}` `gap-{n}` `justify-center` `justify-between` `items-center` `items-start` `self-center` `wrap` `hidden` `overflow-hidden` `overflow-y-auto` `relative` `absolute` `top-{n}` `right-{n}` `bottom-{n}` `left-{n}` `inset-{n}` `inset-x-{n}` `inset-y-{n}` `top-[24px]` `left-[24px]` `-top-{n}` `-inset-{n}`
+`flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `flex-wrap` `flex-1` `grid` `grid-cols-{n}` `gap-{n}` `justify-center` `justify-between` `items-center` `items-start` `self-center` `wrap` `hidden` `overflow-hidden` `overflow-y-auto` `relative` `absolute` `top-{n}` `right-{n}` `bottom-{n}` `left-{n}` `inset-{n}` `inset-x-{n}` `inset-y-{n}` `top-[24px]` `left-[24px]` `-top-{n}` `-inset-{n}` `order-0` … `order-12` `order-first` `order-last`
 
 </details>
 
@@ -286,7 +319,7 @@ WDynamic(
 <details>
 <summary><strong>Typography</strong> — size, weight, style, alignment</summary>
 
-`text-xs` `text-sm` `text-base` `text-lg` `text-xl` `text-2xl` `text-3xl` `font-bold` `font-semibold` `font-medium` `font-light` `italic` `uppercase` `lowercase` `capitalize` `underline` `line-through` `truncate` `text-center` `text-right` `leading-tight` `leading-relaxed` `tracking-wider`
+`text-xs` `text-sm` `text-base` `text-lg` `text-xl` `text-2xl` `text-3xl` `text-4xl` `text-5xl` `text-6xl` `font-bold` `font-semibold` `font-medium` `font-light` `italic` `uppercase` `lowercase` `capitalize` `underline` `line-through` `truncate` `text-center` `text-right` `leading-tight` `leading-relaxed` `tracking-wider`
 
 </details>
 
@@ -390,6 +423,29 @@ Use your custom colors anywhere:
 WDiv(className: 'bg-primary-500 text-white p-4 rounded-lg')
 ```
 
+## AI Coding Assistants
+
+Wind treats AI coding agents as first-class consumers. The library works exactly the same if you never use an AI coding tool — but if you do, Wind ships three integration layers:
+
+- **Claude Code skill** — teaches Wind's `className` syntax, widget hierarchy, dark-mode rules, and anti-patterns on demand. Auto-loads when an agent edits Wind code.
+- **Cursor rules** — auto-activate when editing `.dart` files, injecting Wind's state prefixes, token names, and rendering rules into every Copilot/Cursor suggestion.
+- **MCP server** — live at `mcp.fluttersdk.com/wind`. Lets your agent query component APIs, check valid tokens, and scaffold layouts without guessing.
+
+> *Install all three. Skills and rules teach your agent how to write Wind. The MCP server lets it verify what it wrote.*
+
+Setup, endpoint, and per-assistant install steps live at **[fluttersdk.com/wind/ai](https://fluttersdk.com/wind/ai)**.
+
+## Why not [competitor]?
+
+| Library | Approach | Wind difference |
+|:---|:---|:---|
+| **velocity_x** | Dart property chains: `'text'.text.xl4.bold.make()` | Wind uses **actual Tailwind className strings**, paste-compatible with web Tailwind. Plus dark mode, state prefixes, MCP server. |
+| **getwidget** | Pre-built component library (1000+ widgets) | Wind is **styling system, not components** — applies anywhere, no opinionated visuals. |
+| **tailwind_flutter** | Chainable extensions (`.p(TwSpacing.s4)`) | Wind uses **string className**, supports `hover:` / `focus:` / `dark:` / `ios:` prefixes, platform-stable since 1.0. |
+| **styled_widget** | Method chaining on `Widget` | Abandoned since 2022. Wind is **actively maintained**, ships with MCP + skills. |
+| **shadcn_flutter** | Component catalog (shadcn/ui port) | Wind is **utility-class system**, composes with any component library including shadcn_flutter. |
+| **mix_tailwinds** | Mix-based stylers, alpha | "Highly experimental proof of concept" per author. Wind is **production-stable since 1.0**. |
+
 ## Architecture
 
 Wind uses a modular parsing architecture — each utility domain has its own parser:
@@ -406,41 +462,37 @@ WindStyle (immutable value object)
 Widget.build()
 ```
 
-**Parsers:** background, border, display, effect, flex, font, grid, margin, opacity, overflow, padding, position, shadow, sizing, spacing, text, transition
-
-**Cache:** Parsed results are cached by `className + breakpoint + brightness + platform + states` for zero-cost re-renders.
-
-## AI Coding Assistants
-
-Wind treats AI coding agents as first-class consumers, with a hosted MCP server, a Claude Code skill, and Cursor rules — so Claude Code, Cursor, GitHub Copilot, and any other LLM-backed assistant generate correct Wind code on the first try.
-
-Setup, endpoint, and per-assistant install steps live at **[fluttersdk.com/wind/ai](https://fluttersdk.com/wind/ai)**.
+**Cache:** Parsed results are cached by `className + breakpoint + brightness + platform + sorted(states)` for zero-cost re-renders. Cache hit rate is near-100% in production.
 
 ## FAQ
 
 ### Isn't this just inline styles?
 
-No. With Wind, you're not picking magic numbers — you're choosing from a predefined design system. `p-4` always resolves to the same spacing token, `bg-blue-500` always resolves to the same color shade. Inline styles can't target `hover:`, `focus:`, `dark:`, or media queries — Wind's prefix system can.
+No. With Wind, you're not picking magic numbers — you're choosing from a predefined design system. `p-4` always resolves to the same spacing token. `bg-blue-500` always resolves to the same color shade. Inline styles can't target `hover:`, `focus:`, `dark:`, or media queries — Wind's prefix system can.
 
 ### My widget tree will be ugly with all those classes.
 
 The first reaction is always "too many classes." Then ask yourself: what would you name this widget if you had to give it a "real" component name? `card-with-hover-and-dark-mode-and-responsive-padding`? Naming things is hard, and most naming is premature abstraction. Utility-first lets you defer the abstraction until the pattern actually repeats.
 
-### Why not just use VelocityX?
+### Another AI gimmick?
 
-VelocityX uses Dart property chains: `'text'.text.xl4.bold.make()`. It's *inspired by* Tailwind, but it's not Tailwind. Wind uses **actual Tailwind className strings** — `'text-4xl font-bold text-white'`. If you have copy-pasted Tailwind classes from a web project, they work in Wind unmodified.
+The agent integrations are just documentation in a format agents can read. The library works exactly the same if you never use an AI coding tool. The `className` API doesn't change. AI integration is additive, not central.
 
 ### What about performance? Strings get parsed every build.
 
 Wind caches every parsed style by `className + breakpoint + brightness + platform + states`. The same widget rendering the same className a thousand times parses exactly once. Cache hit rate is near-100% in production.
 
+### Why not just use VelocityX? It has 1.47k likes.
+
+VelocityX uses Dart property chains (`'text'.text.xl4.bold.make()`). It's *inspired by* Tailwind, but it's not Tailwind. Wind uses **actual Tailwind className strings** — `'text-4xl font-bold text-white'`. If you have copy-pasted Tailwind classes from a web project, they work in Wind unmodified. Plus VelocityX has been community-maintained since 2023; Wind 1.0 is the first production-stable utility-first option with dark-mode prefixes, state prefixes, and an MCP server.
+
 ### Doesn't this lock me into your design system?
 
-The token scales are 100% extensible. Define your own colors, font sizes, shadows, breakpoints via `WindThemeData`. The defaults match Tailwind v3/v4 exactly, but every scale is overridable. Plus arbitrary values for one-offs: `bg-[#FF5733]`, `p-[18px]`, `w-[42%]`.
+The token scales are 100% extensible via `WindThemeData`. Define your own `colors`, `fontSizes`, `shadows`, `screens`, and `bg-brand-500` just works. The defaults match Tailwind v3/v4 exactly, but every scale is overridable. You can also use arbitrary values: `bg-[#FF5733]`, `p-[18px]`, `w-[42%]`.
 
-### Another AI gimmick?
+### What if I only need Flutter web? Or only mobile?
 
-The agent integrations are just documentation in a format agents can read. The library works identically without them. The AI layers are additive — never use a coding assistant and Wind is still Wind. Use one and your agent stops guessing className tokens.
+Wind works on all 6 Flutter platforms — Android, iOS, web, macOS, Windows, Linux. Use the `ios:`, `android:`, `web:`, `mobile:` prefixes to target specific platforms in the same className. No conditional rendering, no `Platform.is*` helpers, no platform-detect plumbing.
 
 ## Documentation
 
@@ -450,7 +502,7 @@ Full docs with live examples at **[fluttersdk.com/wind](https://fluttersdk.com/w
 
 ```bash
 git clone https://github.com/fluttersdk/wind.git
-cd wind && git checkout v1 && flutter pub get
+cd wind && flutter pub get
 flutter test && dart analyze
 ```
 
