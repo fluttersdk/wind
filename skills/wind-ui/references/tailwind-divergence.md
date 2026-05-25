@@ -1,0 +1,317 @@
+# Wind 1.0 — Wind ≠ Tailwind divergence catalog
+
+Comprehensive map of where Wind diverges from Tailwind CSS v3 and v4. Reach for this file when migrating a className from web, recovering from a "this token does not seem to do anything" stall, or auditing a Tailwind-trained codebase.
+
+The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Most utility tokens behave as expected, but Flutter's layout model, Wind's narrower scope, and v4's CSS-only additions all produce gaps.
+
+## Contents
+
+1. [Mental-model differences (read first)](#1-mental-model-differences-read-first)
+2. [Tokens that exist in both but behave differently](#2-tokens-that-exist-in-both-but-behave-differently)
+3. [Tokens that Tailwind has, Wind does not](#3-tokens-that-tailwind-has-wind-does-not)
+4. [Tokens that Wind has, Tailwind does not](#4-tokens-that-wind-has-tailwind-does-not)
+5. [Tailwind v3 → v4 changes Wind has not adopted](#5-tailwind-v3--v4-changes-wind-has-not-adopted)
+6. [Migration playbook (Tailwind className → Wind className)](#6-migration-playbook-tailwind-classname--wind-classname)
+
+---
+
+## 1. Mental-model differences (read first)
+
+| Concept | Tailwind | Wind |
+|---|---|---|
+| Output target | CSS classes injected at build time, applied to DOM | `WindStyle` value object cached in memory, consumed by W-widgets at build time |
+| Spacing unit | `0.25rem` (depends on root font-size) | Logical pixels (4 px per step by default; `WindThemeData.baseSpacingUnit`) |
+| Wrapping | `flex-wrap` (CSS flex-wrap property) | `wrap` (Flutter `Wrap` widget is structurally separate from `flex`) |
+| Container layout | `flex` works on any element | `flex` requires `WDiv`; raw `Container` does not parse className |
+| `dark:` opt-in | Optional (use only when needed) | Required for every color token; missing peer is a bug |
+| Unknown tokens | Build-time warning OR ignored depending on config | Silent no-op at runtime; no warning, no exception |
+| Important modifier | `!flex` (v3) or `flex!` (v4) | Not implemented |
+| Container queries | `@container`, `@sm:`, `@max-md:` | Not implemented; viewport-only |
+| Group / peer state | `group-hover:`, `peer-focus:` | Not implemented; use `states: Set<String>` |
+| Configuration | `tailwind.config.js` (v3) or `@theme` CSS (v4) | `WindThemeData` constructor parameter |
+| Source of truth | `.css` build output | Runtime `WindStyle` object + `WindContext` resolution |
+
+---
+
+## 2. Tokens that exist in both but behave differently
+
+| Token | Tailwind | Wind |
+|---|---|---|
+| `flex-wrap` | Enables wrapping on a flex container | No-op (use `wrap` instead) |
+| `text-{xs..6xl}` | Sizes go to `9xl` (128 px) | Stops at `6xl` (60 px). `7xl` / `8xl` / `9xl` silently no-op |
+| `text-7xl`+ | Larger sizes available | No-op |
+| `text-{color}` | Pure font color | Overloaded across color / alignment / size / weight — resolves in order |
+| `w-full` inside a flex Row | Works (max-width: 100%) | Triggers RenderFlex overflow; use `flex-1` |
+| `h-full` inside a vertical scroll | Works (max-height: 100%) | Triggers "Vertical viewport unbounded"; restructure |
+| `overflow-y-auto` | Native browser scrollbar | Renders Flutter scroll view; needs constructor `scrollPrimary: true` for iOS tap-to-top |
+| `bg-red-500/50` | Color with 50% opacity (v3.x+) | Same syntax, same semantics |
+| `dark:bg-gray-900` | Active only when dark mode is enabled | Active only when `WindThemeData.brightness == Brightness.dark`; required to pair every color |
+| `divide-x-N` | Inserts borders between children | Not implemented; use explicit borders on children |
+| Spacing scale | 0, 0.5, 1, 1.5, ..., 96 with gaps; `0.25rem` per step | Same scale, but unit is 4 px (`baseSpacingUnit`); arbitrary values do NOT support percentages for padding / margin / positioning |
+| Color shade scale | 50, 100, 200, ..., 950 (11 steps) | Same (50 through 950) |
+| Default breakpoints | sm 640, md 768, lg 1024, xl 1280, 2xl 1536 (px) | Identical |
+| `transition` / `transition-all` | Implicit transitions on all properties | Bare `transition` not wired; pair `duration-N` + `ease-*` instead |
+| `animate-spin` / `pulse` / `bounce` / `ping` | CSS keyframes; finite or infinite | All infinite loops in Wind |
+| `rounded-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3; Wind has NOT adopted the v4 rename shift |
+| `shadow-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3 |
+| `ring` (bare) | v3 default 3 px; v4 default 1 px | Wind matches v3 (default 3 px) |
+
+---
+
+## 3. Tokens that Tailwind has, Wind does not
+
+When a className inherited from a web project includes any of these, expect silent no-ops. Strip them, or find a Wind-shaped substitute.
+
+### Layout / flex
+- `flex-wrap` (use `wrap` instead)
+- `flex-nowrap` (default; omit `wrap`)
+- `flex-wrap-reverse`
+
+### Spacing
+- `ps-N` / `pe-N` / `ms-N` / `me-N` (logical inline-start/end) — use `pl-` / `pr-` / `ml-` / `mr-` (physical) instead
+- `-m-N` / `-mt-N` etc. (negative margins) — restructure layout
+- `p-[10%]` or any `%` arbitrary for padding / margin
+
+### Sizing
+- `w-auto` / `h-auto` (omit; Flutter defaults to intrinsic)
+- `max-w-none` (use `max-w-full`)
+- `w-min` / `w-max` / `w-fit`
+
+### Position
+- `fixed` / `sticky` (recognised, no visual effect; use Material `SliverAppBar` for sticky behavior)
+- `%` for offsets (`left-[50%]`)
+
+### Border
+- `border-dashed` / `border-dotted` (recognised, not rendered)
+- `divide-x-N` / `divide-y-N` (use explicit borders)
+
+### Effects (entire families absent)
+- `blur-*` / `backdrop-blur-*`
+- `brightness-*` / `contrast-*` / `grayscale-*` / `hue-rotate-*` / `invert-*` / `saturate-*` / `sepia-*`
+- `drop-shadow-*`
+- `mix-blend-*` / `bg-blend-*`
+- `filter` / `backdrop-filter`
+
+### Interactivity
+- `cursor-pointer` / `cursor-not-allowed` / any `cursor-*` — use `mouseCursor:` constructor prop on `WAnchor` instead
+- `pointer-events-none` — wrap in `IgnorePointer`
+- `select-none` / `select-text`
+- `scroll-smooth`
+- `snap-*` (scroll snap)
+- `touch-*`
+- `appearance-none`
+- `will-change-*`
+- `caret-*`
+- `accent-*`
+
+### Typography
+- `text-7xl` / `-8xl` / `-9xl` (cap is 6xl)
+- `whitespace-pre` / `-pre-line` / `-pre-wrap` / `-break-spaces` (only `whitespace-normal` and `whitespace-nowrap` wired)
+- `hyphens-*`
+- `indent-*`
+- `list-disc` / `list-decimal` / `list-none`
+- `align-baseline` / `-top` / `-middle` / `-bottom` (use `crossAxisAlignment` instead)
+
+### Transitions / animations
+- Bare `transition` / `transition-all` / `transition-colors` / `transition-opacity` / `transition-transform` (only `duration-*` + `ease-*` wire)
+- `delay-N`
+- `motion-safe:` / `motion-reduce:`
+
+### Transforms (entire family absent)
+- `scale-N` / `scale-x-*` / `scale-y-*`
+- `rotate-N` / `rotate-x-*` / `rotate-y-*` / `rotate-z-*`
+- `translate-x-*` / `translate-y-*` / `translate-z-*`
+- `skew-x-*` / `skew-y-*`
+- `origin-*`
+- `transform-gpu` / `transform-none`
+- `perspective-*` (v4 3D transforms)
+
+### State variants
+- `group-*` / `peer-*` (no group / peer concept; use `states: Set<String>`)
+- `first:` / `last:` / `odd:` / `even:` / `first-of-type:` / `empty:` / `open:`
+- `before:` / `after:` (no pseudo-elements)
+- `selection:` / `placeholder:` / `marker:` / `file:`
+- `motion-safe:` / `motion-reduce:` / `print:`
+- `focus-within:` / `focus-visible:`
+- `active:` (reserved, NOT wired; WAnchor tracks hover and focus only)
+
+### Container queries
+- `@container`, `@sm:`, `@md:`, `@lg:`, `@max-md:`, named containers (`@sm/sidebar:`) — viewport-only in Wind
+
+### CSS-only constructs
+- `@apply` / `@layer` / `@variant` / `@theme` directives — Wind has no CSS layer
+- `!important` modifier (`!flex` v3, `flex!` v4)
+- `bg-opacity-N` / `text-opacity-N` / `border-opacity-N` (v3 legacy) — use slash modifier `/N`
+
+---
+
+## 4. Tokens that Wind has, Tailwind does not
+
+Wind adds a small set of tokens for Flutter-specific scenarios.
+
+### Platform prefixes (Flutter targets multiple platforms)
+- `ios:` / `android:` / `macos:` / `windows:` / `linux:` (specific platform)
+- `mobile:` (iOS OR Android)
+- `web:` (web build)
+
+### Main-axis size (Flutter `MainAxisSize`)
+- `axis-min` — sets `MainAxisSize.min` on the parent flex
+- `axis-max` — sets `MainAxisSize.max`
+
+### Inline color escape hatches (bypass cache key for runtime-dynamic colors)
+- `WDiv(backgroundColor: Color)` — Dart prop, overrides className `bg-*`
+- `WText(foregroundColor: Color)` — Dart prop, overrides className `text-*`
+
+### Per-breakpoint widget builders
+- `WBreakpoint(base: ..., sm: ..., md: ...)` — when className prefixes cannot express the change
+
+### Server-driven UI
+- `WDynamic(json: ...)` — renders a JSON node tree into Wind widgets
+
+### SVG fill preservation
+- `preserve-colors` — disables Wind's color filter; renders embedded SVG colors unchanged (QR codes, logos, multi-color illustrations)
+
+### Debug instrumentation
+- `debug` token — triggers `WindLogger` to log composition tree + final styles
+- `Wind.installDebugResolver()` (Dart API) — exposes 6 fields per widget to external tooling
+
+---
+
+## 5. Tailwind v3 → v4 changes Wind has not adopted
+
+Wind 1.0 is anchored to Tailwind v3 semantics for shadow / radius / blur / ring naming. If you're migrating from a Tailwind v4 project, watch these renames.
+
+| v4 name | v3 name (Wind keeps this) |
+|---|---|
+| `shadow-xs` | `shadow-sm` |
+| `shadow-sm` | `shadow` |
+| `blur-xs` | `blur-sm` (Wind has no `blur-*` anyway) |
+| `blur-sm` | `blur` (Wind has no `blur-*` anyway) |
+| `rounded-xs` | `rounded-sm` |
+| `rounded-sm` | `rounded` |
+| `bg-linear-*` | `bg-gradient-*` |
+| `bg-linear-to-r` | `bg-gradient-to-r` |
+| `bg-conic-*` | not implemented |
+| `bg-radial-*` | not implemented |
+| `shrink-*` | both `shrink-*` and `flex-shrink-*` work |
+| `grow-*` | both `grow-*` and `flex-grow-*` work |
+| `outline-hidden` | not implemented (use `outline-none` if you need it; not wired either) |
+| `ring-3` (explicit width to get the v3 default) | `ring` produces 3 px (matches v3) |
+| `bg-black/50` (opacity modifier) | Same; `bg-opacity-50` removed in v4, also not in Wind |
+| Spacing multiplier (any whole number works in v4) | Wind uses explicit theme scale; `p-13` is not in the default scale (use arbitrary `p-[13]` instead) |
+| Important suffix `bg-red-500!` | Not implemented |
+| 3D transforms | Not implemented |
+
+---
+
+## 6. Migration playbook (Tailwind className → Wind className)
+
+When porting a className from a web project:
+
+**Step 1 — strip the unwired.** Run the className through these substitutions (paste / search-replace, or do it mentally):
+
+```
+group-hover:*          → drop, or replace with states: + custom state string
+peer-focus:*           → drop
+@container, @sm:*      → drop
+first:* / last:* /     → drop
+  odd:* / even:* /
+  before:* / after:*
+focus-within:* /       → drop
+  focus-visible:*
+print:* /              → drop
+  motion-safe:* /
+  motion-reduce:*
+cursor-*               → drop (set mouseCursor on WAnchor if interactive)
+pointer-events-none    → wrap in IgnorePointer
+select-none            → drop (set selectable: false on WText)
+scroll-smooth /        → drop
+  snap-* /
+  touch-*
+appearance-none /      → drop
+  caret-* / accent-*
+will-change-*          → drop
+list-disc / list-none  → drop (use explicit bullet widgets if needed)
+align-baseline etc.    → drop (use crossAxisAlignment)
+hyphens-* / indent-*   → drop
+filter / backdrop-* /  → drop (Flutter Compositing or BackdropFilter for blur)
+  blur-* / brightness-*
+  / contrast-* / etc.
+scale-* / rotate-* /   → drop (use AnimatedContainer / Transform.scale / Transform.rotate)
+  translate-* / skew-*
+divide-x-* / divide-y-*→ drop (add explicit borders on children)
+text-7xl / -8xl / -9xl → cap at text-6xl
+flex-wrap              → wrap
+flex-nowrap            → drop (omit `wrap`)
+ps-*                   → pl-* (or skip if RTL-aware text-start / text-end suffices)
+pe-*                   → pr-*
+ms-* / me-*            → ml-* / mr-*
+-m-N (negative margin) → restructure (Wind does not support)
+w-auto / h-auto        → drop
+fixed / sticky         → drop (use Material SliverAppBar / FAB / Drawer)
+top-[50%] (% offset)   → use a fractional positioned wrapper or restructure
+shadow-2xl / -xl /     → same name, same semantics (v3 scale)
+  -lg / -md / -sm
+rounded-*              → same name, same semantics (v3 scale)
+bg-opacity-N           → bg-{color}-{shade}/N (slash modifier)
+```
+
+**Step 2 — pair every color with `dark:`.** Wind contract; not optional.
+
+**Step 3 — re-express conditional styling via `states:`.** Where the original Tailwind used `group-hover:` or `peer-focus:` or imperative DOM class flips, route through `states: Set<String>?` plus prefixed classes.
+
+**Step 4 — verify layout assumptions.** `w-full` inside a Row becomes `flex-1`. `h-full` inside a scrollable becomes `flex-1`. `absolute` needs a `relative` parent. `truncate` needs a bounded width (wrap in `flex-1 min-w-0`).
+
+**Step 5 — add `scrollPrimary: true`** to the outermost scrollable on every page.
+
+**Step 6 — re-test in both brightness modes.** Toggle via `context.windTheme.toggleTheme()`. A missing dark peer reveals itself instantly.
+
+**Step 7 — for any remaining gaps** (transform, blur, drop shadow, container queries, custom animations): reach for native Flutter (`Transform`, `BackdropFilter`, `AnimatedContainer`, `LayoutBuilder`, `TweenAnimationBuilder`). Wind composes freely with all of these; the W-widget remains the child.
+
+Example port:
+
+```html
+<!-- Tailwind v4 -->
+<div class="flex flex-row items-center gap-3 p-4 rounded-lg
+            bg-white dark:bg-gray-800 shadow-sm hover:shadow-md
+            group">
+  <img class="w-10 h-10 rounded-full" src="...">
+  <p class="flex-1 truncate text-gray-900 dark:text-white">
+    <span class="font-semibold group-hover:text-blue-600">Title</span>
+  </p>
+</div>
+```
+
+```dart
+// Wind
+WDiv(
+  className: '''
+    flex flex-row items-center gap-3 p-4 rounded-lg
+    bg-white dark:bg-gray-800
+    shadow-sm hover:shadow-md
+  ''',
+  child: WDiv(
+    className: 'flex flex-row items-center gap-3 flex-1 min-w-0',
+    children: [
+      WImage(src: avatarUrl, className: 'w-10 h-10 rounded-full'),
+      WDiv(
+        className: 'flex-1 min-w-0',
+        child: WText(
+          'Title',
+          className: '''
+            truncate font-semibold
+            text-gray-900 dark:text-white
+            hover:text-blue-600 dark:hover:text-blue-400
+          ''',
+        ),
+      ),
+    ],
+  ),
+);
+```
+
+Notes on the port:
+- `group-hover:text-blue-600` (parent-state-driven child styling) became `hover:text-blue-600` on the text directly. If genuine parent-driven hover is needed, build it via `WAnchor` on the outer `WDiv`, capture state in the consumer, and pass `states: {'hovered'}` to the inner WText with a custom prefix.
+- `truncate` on the `<p>` became `truncate` inside a `flex-1 min-w-0` wrapper.
+- Every color paired with `dark:`.
+- Outer `shadow-sm hover:shadow-md` kept; would auto-wrap in `WAnchor` because of the `hover:` prefix.
