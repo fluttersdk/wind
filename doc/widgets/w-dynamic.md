@@ -13,8 +13,6 @@
 - [Error Handling](#error-handling)
 - [Related Documentation](#related-documentation)
 
-<!-- TODO: [EXAMPLE_NEEDED] path="widgets/w_dynamic_basic" action="VERIFY" -->
-<!-- Description: Basic WDynamic usage with JSON rendering -->
 <x-preview path="widgets/w_dynamic_basic" size="md" source="example/lib/pages/widgets/w_dynamic_basic.dart"></x-preview>
 
 ```dart

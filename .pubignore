@@ -1,38 +1,96 @@
-# AI Development & Documentation
-skills/
-.claude/
-CLAUDE.md
-.mcp.json
+# .pubignore: controls what `dart pub publish` ships to pub.dev.
+# Same syntax as .gitignore. When this file is present, pub uses it
+# INSTEAD of .gitignore (not in addition), so this file repeats every
+# exclusion .gitignore enforces plus the publish-specific extras.
+#
+# Goal: keep the published archive lean (target < 500 KB compressed).
 
-# IDEs
-.idea/
-.vscode/
-*.iml
-
-# CI/CD
-.github/
-
-# Development
-coverage/
-.dart_tool/packages
-.packages
-build/
-
-# OS files
-.DS_Store
-Thumbs.db
-*.swp
-
-# Example app platform shells — pub.dev Example tab only renders example/lib/.
-# Native runners are kept in the repo for local `flutter run -d <device>` but
-# do not need to ship in the package archive.
+# ---------------------------------------------------------------------------
+# example/: keep lib/, web/index.html + manifest.json, pubspec.yaml, README.md
+# so pub.dev's Example tab renders something useful, but drop the platform
+# scaffold (android/ios/macos/linux/windows + web icons) that flutter create
+# produces. Users who want a full runnable example clone the repo.
+# ---------------------------------------------------------------------------
 example/android/
 example/ios/
 example/macos/
 example/linux/
 example/windows/
 example/web/icons/
+example/build/
+example/.dart_tool/
+example/.idea/
+example/.flutter-plugins
+example/.flutter-plugins-dependencies
+example/.metadata
+example/*.iml
+example/pubspec.lock
+example/analysis_options.yaml
+example/test/widget_test.dart
 
-# Internal dev tooling — never consumer-facing.
+# ---------------------------------------------------------------------------
+# Build artifacts, generated docs, test output
+# ---------------------------------------------------------------------------
+build/
+coverage/
+.dart_tool/
+.dart_tool/packages
+.packages
+**/doc/api/
+.flutter-plugins-dependencies
+
+# ---------------------------------------------------------------------------
+# Library hygiene: pubspec.lock does not ship per Dart guidelines.
+# https://dart.dev/guides/libraries/private-files#pubspeclock
+# ---------------------------------------------------------------------------
+pubspec.lock
+
+# ---------------------------------------------------------------------------
+# IDE, editor, OS scratch
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+.atom/
+.history
+.swiftpm/
+.svn/
+.build/
+.buildlog/
+migrate_working_dir/
+*.iml
+*.ipr
+*.iws
+*.log
+*.swp
+*.pyc
+*.class
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# ---------------------------------------------------------------------------
+# CI/CD infrastructure (not consumer-facing)
+# ---------------------------------------------------------------------------
+.github/
+
+# ---------------------------------------------------------------------------
+# Internal dev tooling (never consumer-facing)
+# ---------------------------------------------------------------------------
 scripts/
 tool/
+
+# ---------------------------------------------------------------------------
+# Local state (planning artifacts + AI coding tooling)
+# ---------------------------------------------------------------------------
+.ac/
+.claude/
+.mcp.json
+CLAUDE.md
+CLAUDE.local.md
+
+# ---------------------------------------------------------------------------
+# LLM-facing skill bundle (kept in repo for contributors but not shipped;
+# external agents fetch via the MCP server / fluttersdk/ai repo, not pub.dev)
+# ---------------------------------------------------------------------------
+skills/
