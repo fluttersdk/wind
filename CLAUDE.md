@@ -3,7 +3,11 @@
 Utility-first Flutter styling. Translates Tailwind-syntax `className` strings into Flutter widget trees through a modular parsing pipeline.
 
 **Stack:** Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `fluttersdk_wind_diagnostics_contracts`. No `mockito`, no state management library, no router.
-**Branch:** `v1` is the active 1.0.x stable line. `master` is the abandoned v0 series — do not commit there.
+**Branch:** `master` is the active 1.0.x stable line (formerly `v1`). The legacy 0.0.x line lives on the `0.0.x` branch.
+
+For architecture / internals, see [ARCHITECTURE.md](ARCHITECTURE.md).
+For the user-facing surface, see [README.md](README.md).
+For the LLM-agent inventory, see [llms.txt](llms.txt).
 
 ## Definition of done
 
@@ -53,7 +57,7 @@ When source under `lib/` changes, the agent updates each of these in the same ch
 
 - Update only when the change is overview-worthy: a new widget added to the public roster, a new top-level feature (theme field, parser token family, integration entry point), a public API addition or removal.
 - Internal refactors, test additions, doc fixes, dependency tweaks: NO README update needed — the noise harms more than the precision helps.
-- Acceptance: README's "What you get" list reflects the v1 roster (19 widgets, 17 parsers, 23 theme fields) accurately.
+- Acceptance: README's "What you get" / "The Wind Surface" sections reflect the v1 roster (20 widgets, 17 parsers, 23 theme fields) accurately.
 
 **One change set, all five surfaces.** Do not split "code now, docs later" — the next session loses context and the docs rot.
 
@@ -66,74 +70,7 @@ Standard Flutter package commands (`flutter test`, `dart analyze`, `dart format 
 | `./tool/coverage.sh 90` | Run tests with coverage + enforce 90% line threshold (the CI gate). Plain `./tool/coverage.sh` just reports. |
 | `cd example && flutter run -d chrome` | Demo app (`example/lib/main.dart`) |
 
-`.claude/settings.json` PostToolUse hooks auto-run `dart format` and `dart analyze` after every `.dart` edit. CI runs `flutter analyze` + `dart format --set-exit-if-changed` + `./tool/coverage.sh 90` on push to `main`, `develop`, `v1`.
-
-## Architecture
-
-```
-lib/src/
-├── widgets/          # 19 user-facing W-prefix widgets (see .claude/rules/widgets.md)
-├── parser/
-│   ├── wind_parser.dart      # Orchestrator: first-match-wins routing to 17 parsers
-│   ├── wind_style.dart       # Immutable value object (parse output)
-│   ├── wind_context.dart     # Theme + breakpoint + brightness + platform + states
-│   └── parsers/              # 17 domain parsers (see .claude/rules/parsers.md)
-├── theme/
-│   ├── wind_theme.dart       # WindTheme StatefulWidget + WindThemeController
-│   ├── wind_theme_data.dart  # 23 configurable fields; merges with defaults/
-│   └── defaults/             # 16 default token scales
-├── dynamic/          # WDynamic JSON renderer (see .claude/rules/dynamic.md)
-├── state/            # WindAnchorStateProvider (hover/focus/press via InheritedWidget)
-├── utils/            # color_utils, wind_logger, extensions, helpers
-├── core/             # platform_service singleton
-├── debug_resolver.dart   # implements contracts package's WindDebugResolver
-└── wind_facade.dart      # Wind.installDebugResolver() entry point
-```
-
-**Data flow:** `className` → `WindParser.parse(className, context, states:)` → 17 parsers (first-match-wins) → `WindStyle` (immutable) → widget composes its tree.
-
-**Parser cache key:** `className + activeBreakpoint + brightness + platform + sorted(states)`. Stable across rebuilds; invalidate via `WindParser.clearCache()` (test setUp only — never in production code).
-
-**WindTheme integration** — wrap the app once at the top:
-```dart
-WindTheme(
-  data: WindThemeData(/* 23 fields, all optional, merged with defaults */),
-  builder: (context, controller) => MaterialApp(
-    theme: controller.toThemeData(),
-    home: ...,
-  ),
-);
-```
-`WindTheme` lives BELOW `MaterialApp` in the actual widget tree (the builder pattern inverts the apparent order). `Overlay` contexts cannot reach `WindTheme` via ancestor walk — use the State's `context` when calling `WindParser.parse` from inside `OverlayEntry.builder`.
-
-**Diagnostics bridge:** call `Wind.installDebugResolver()` inside `kDebugMode` to expose 6 fields (className, breakpoint, brightness, platform, states, bgColor, textColor) to any consumer of `WindDebugRegistry.current` (e.g., `fluttersdk_dusk` for E2E). Idempotent; gated by `kDebugMode`. There is no `WindDuskIntegration` class in v1.0.
-
-## Wind ≠ Tailwind cheat sheet
-
-A contributor fluent in Tailwind will trip over these:
-
-| Tailwind expectation | Wind reality |
-|----------------------|--------------|
-| `flex-wrap` enables wrapping | Use `wrap` instead. `flex-wrap` is a no-op (Flutter `Wrap` is a separate widget). |
-| `text-*` means font-size | Overloaded: font-size (`text-xl`), color (`text-red-500`), alignment (`text-center`). Resolved by ordered regex; do not assume one meaning. |
-| Font sizes go to `9xl` | Stop at `6xl` (60px). `7xl`/`8xl`/`9xl` silently no-op. |
-| `text-7xl` typo fails loudly | Every unknown token fails silently — parser ignores it. Spell-check tokens by hand. |
-| Spacing in rem | Logical pixels (4 px per unit; `p-4` = 16 px). |
-| `w-full` inside a row works | Causes overflow. Use `flex-1` for row children. |
-| `h-full` inside a scrollable parent works | Infinite-height layout error. Use `min-h-screen`. |
-| `overflow-y-auto` enables iOS tap-to-top | Pass the constructor prop `scrollPrimary: true` as well — there is no className for it. |
-| `dark:` is optional | Every `bg-*`, `text-*`, `border-*`, `ring-*`, `fill-*` carries a `dark:` pair in the same className. Missing dark pair is a bug. |
-| `divide-*`, `cursor-*`, `filter`, `backdrop-blur`, container queries, `group-*`/`peer-*`, `@apply` | Not implemented. No silent no-op intent — these tokens simply do not exist. |
-
-Wind-only additions Tailwind lacks: `ios:` / `android:` / `web:` platform prefixes; `axis-min` / `axis-max` for `MainAxisSize` control; `WDynamic` JSON-driven widget trees.
-
-## Widget API surface (locked at 1.0.0)
-
-- `child` XOR `children` — never both. Asserts at construction.
-- `className: String?` is the styling API; explicit props (`backgroundColor`, `foregroundColor`) are escape hatches that override className.
-- `states: Set<String>?` activates prefixed classes (`hover:`, `selected:`, `loading:`, custom).
-- `WIcon(Icons.X)` — use the `*_outlined` variant; Wind icons are outlined by convention.
-- `WAnchor` auto-wraps `WDiv` / `WButton` when className contains `hover:` / `focus:` / `active:`.
+`.claude/settings.json` PostToolUse hooks auto-run `dart format` and `dart analyze` after every `.dart` edit. CI runs `flutter analyze` + `dart format --set-exit-if-changed` + `./tool/coverage.sh 90` on push.
 
 ## Coverage policy (binding)
 
