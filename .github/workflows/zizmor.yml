@@ -26,4 +26,4 @@ jobs:
 
       - uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: ${{ steps.zizmor.outputs.sarif-file }}
+          sarif_file: ${{ steps.zizmor.outputs.output-file }}
