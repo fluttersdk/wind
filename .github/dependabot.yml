@@ -1,25 +1,63 @@
 version: 2
 updates:
+  # Production package deps (pubspec.yaml at root).
   - package-ecosystem: "pub"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Istanbul"
     labels:
       - "dependencies"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      pub-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    # Major bumps stay as individual PRs so breaking changes get review.
 
+  # Example app deps (showcase only; lower priority, monthly cadence).
   - package-ecosystem: "pub"
     directory: "/example"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+      day: "monday"
     labels:
       - "dependencies"
-    open-pull-requests-limit: 5
+      - "example"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(example-deps)"
+      include: "scope"
+    groups:
+      example-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # google_fonts current major is pinned for Dart 3.6.0 compatibility
+      # (see comment in example/pubspec.yaml). Skip major bumps until the
+      # SDK floor is raised; minor/patch still flow through the group above.
+      - dependency-name: "google_fonts"
+        update-types: ["version-update:semver-major"]
 
+  # GitHub Actions (workflow files under .github/workflows/).
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
     labels:
       - "ci"
     open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+    groups:
+      actions:
+        patterns: ["*"]
