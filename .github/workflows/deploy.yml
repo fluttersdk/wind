@@ -2,9 +2,9 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [main, develop, v1]
+    branches: [master, v1]
   pull_request:
-    branches: [main, develop, v1]
+    branches: [master, v1]
 
 jobs:
   ci:
@@ -34,10 +34,10 @@ jobs:
       - name: Run tests with coverage
         run: ./tool/coverage.sh 90
 
-  build:
-    name: Build Web
+  build-demo:
+    name: Build Demo (preview gallery)
     needs: ci
-    if: false # TODO: re-enable when deploy infrastructure is ready
+    if: false # TODO: enable once preview deploy target is configured
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,38 +53,23 @@ jobs:
           flutter pub get
           cd example && flutter pub get
 
-      - name: Build Demo (main.dart)
+      - name: Build Demo (lib/main.dart)
         working-directory: example
-        run: |
-          flutter build web --release --target lib/main.dart --base-href /
-          mv build/web ../demo-build
-
-      - name: Build Play (play.dart)
-        working-directory: example
-        run: |
-          flutter build web --release --target lib/play.dart --base-href /
-          mv build/web ../play-build
+        run: flutter build web --release --target lib/main.dart --base-href /
 
       - name: Upload Demo artifact
         uses: actions/upload-artifact@v4
         with:
           name: demo-build
-          path: demo-build/
-          retention-days: 1
-
-      - name: Upload Play artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: play-build
-          path: play-build/
-          retention-days: 1
+          path: example/build/web/
+          retention-days: 7
 
   deploy-demo:
     name: Deploy Demo
-    needs: build
-    if: false # TODO: re-enable when deploy infrastructure is ready
+    needs: build-demo
+    if: false # TODO: enable once preview deploy target is configured
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'main' && 'Demo Production' || 'Demo Development' }}
+    environment: ${{ github.ref_name == 'master' && 'Demo Production' || 'Demo Development' }}
     steps:
       - name: Download Demo artifact
         uses: actions/download-artifact@v4
@@ -118,50 +103,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 60s
           source: demo-build/*
-          target: ${{ vars.DEPLOY_PATH }}
-          strip_components: 1
-          rm: true
-          overwrite: true
-
-  deploy-play:
-    name: Deploy Play
-    needs: build
-    if: false # TODO: re-enable when deploy infrastructure is ready
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'main' && 'Play Production' || 'Play Development' }}
-    steps:
-      - name: Download Play artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: play-build
-          path: play-build/
-
-      - name: Deploy (attempt 1)
-        id: deploy
-        continue-on-error: true
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ vars.SSH_HOST }}
-          username: ${{ vars.SSH_USER }}
-          port: ${{ vars.SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 60s
-          source: play-build/*
-          target: ${{ vars.DEPLOY_PATH }}
-          strip_components: 1
-          rm: true
-          overwrite: true
-
-      - name: Deploy (attempt 2)
-        if: steps.deploy.outcome == 'failure'
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ vars.SSH_HOST }}
-          username: ${{ vars.SSH_USER }}
-          port: ${{ vars.SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 60s
-          source: play-build/*
           target: ${{ vars.DEPLOY_PATH }}
           strip_components: 1
           rm: true

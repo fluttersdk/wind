@@ -40,8 +40,7 @@ flutter run -d macos  # or windows, linux
 example/
 ├── lib/
 │   ├── main.dart              # App entry point
-│   ├── play.dart              # Interactive playground
-│   ├── playground.dart        # Experimental features
+│   ├── routes.dart            # Page routing map (consumed by fluttersdk.com iframes)
 │   └── pages/
 │       ├── animation/         # Animation examples
 │       ├── backgrounds/       # Background utilities
@@ -52,9 +51,11 @@ example/
 │       ├── layout/            # Flex, grid, wrap
 │       ├── popover/           # Popover examples
 │       ├── responsive/        # Responsive design
-│       └── test/              # Test pages
+│       └── ...                # See lib/pages/ for the full list
 └── pubspec.yaml
 ```
+
+The interactive playground formerly hosted here has been migrated to the [`fluttersdk.com`](https://fluttersdk.com/wind) site, where it runs as a `WDynamic`-driven Flutter app embedded in the Laravel host. The example app in this repository only ships the navigable demo gallery.
 
 ## 🎯 Key Examples
 
@@ -94,14 +95,6 @@ WButton(
 - **Documentation**: [fluttersdk.com/wind](https://fluttersdk.com/wind)
 - **GitHub**: [github.com/fluttersdk/wind](https://github.com/fluttersdk/wind)
 - **Pub.dev**: [pub.dev/packages/fluttersdk_wind](https://pub.dev/packages/fluttersdk_wind)
-
-## 🎮 Interactive Playground
-
-Open `/play` route in the app to access the interactive playground where you can:
-- Experiment with utility classes in real-time
-- See live updates as you type
-- Build custom widget configurations
-- Test responsive breakpoints
 
 ## 💡 Tips
 

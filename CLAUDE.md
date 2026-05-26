@@ -32,7 +32,7 @@ When source under `lib/` changes, the agent updates each of these in the same ch
 - Removed surface: delete the doc file or mark deprecated; never leave a stale doc pointing at a removed API.
 - Acceptance: the doc file's `<x-preview source="...">` path matches a real `example/lib/pages/` file (sync surface #2 below).
 
-**2. `example/lib/pages/`** — the playground demos.
+**2. `example/lib/pages/`** — the demo gallery (consumed by `fluttersdk.com` via per-page iframes; see `example/CLAUDE.md`).
 
 - New widget / token / pattern: add `example/lib/pages/<category>/<feature>_basic.dart` (or extend an existing demo). Page shape rules live in `.claude/rules/example-pages.md`.
 - `<x-preview source="..." path="...">` in any `doc/` file points to a real example page. If you add a doc x-preview, you add or extend the example page. If you delete an example page, you remove the doc x-preview.
