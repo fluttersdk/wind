@@ -82,13 +82,13 @@ jobs:
         continue-on-error: true
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ vars.SSH_HOST }}
-          username: ${{ vars.SSH_USER }}
-          port: ${{ vars.SSH_PORT }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 60s
           source: demo-build/*
-          target: ${{ vars.DEPLOY_PATH }}
+          target: ${{ secrets.DEPLOY_PATH }}
           strip_components: 1
           rm: true
           overwrite: true
@@ -97,13 +97,13 @@ jobs:
         if: steps.deploy.outcome == 'failure'
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ vars.SSH_HOST }}
-          username: ${{ vars.SSH_USER }}
-          port: ${{ vars.SSH_PORT }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 60s
           source: demo-build/*
-          target: ${{ vars.DEPLOY_PATH }}
+          target: ${{ secrets.DEPLOY_PATH }}
           strip_components: 1
           rm: true
           overwrite: true
