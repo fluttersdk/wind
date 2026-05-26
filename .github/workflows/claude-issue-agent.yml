@@ -32,14 +32,27 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          sudo apt-get update && sudo apt-get install -y lcov
+
       - name: Claude Code Action
+        id: claude
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           base_branch: master
+          branch_prefix: claude/
           use_commit_signing: true
           claude_args: |
-            --allowedTools "Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr create:*),Bash(flutter test),Bash(./tool/coverage.sh:*),Read,Edit,Write"
+            --allowedTools "Read,Edit,Write,Grep,Glob,Bash(git:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr create:*),Bash(flutter test:*),Bash(flutter pub get),Bash(dart analyze:*),Bash(dart format:*),Bash(./tool/coverage.sh:*)"
           prompt: |
             Read CLAUDE.md and the relevant .claude/rules/*.md for any file path you intend to touch before acting; ARCHITECTURE.md for design context. Follow every rule there as-is.
 
@@ -49,22 +62,36 @@ jobs:
 
             Step 1: Classify into exactly one of: bug | feature | question | docs | invalid.
 
+            Before classifying as bug or docs, run `gh issue list --label claude-fix --state all --limit 30` to spot likely duplicates. If you find an open or recently closed issue covering the same defect, classify the new one as invalid with a duplicate-of comment pointing at the original number; do NOT open a second PR.
+
             Step 2 actions:
-            - bug: branch issue-<N>-<short-slug> from master; implement minimal fix; add regression test; open PR to master via gh pr create. Title: "fix: <one-line> (#<N>)". Body includes "Fixes #<N>".
-            - feature: comment with feasibility analysis citing existing wind patterns; apply label needs-discussion. No PR.
-            - question: find the relevant page at fluttersdk.com/wind (or matching doc/ file); comment with direct link + 2-3 sentence quote; apply label question; close.
-            - docs: docs-only PR to master with title prefix "docs:".
-            - invalid: comment requesting reproduction; apply label needs-reproduction. Do NOT close.
+            - bug: implement the minimal fix directly in the working tree (Edit/Write) + add a regression test under `test/`. Run `./tool/coverage.sh 90` and `dart analyze lib/ test/` before opening the PR. Open the PR to master with `gh pr create --base master --title "fix: <one-line> (#<N>)" --body "Fixes #<N>\n\n<2-3 line summary>"`. The action auto-creates a `claude/issue-<N>-<timestamp>` branch on the first Edit/Write; do NOT run `git checkout -b` yourself.
+            - feature: comment with feasibility analysis citing existing wind patterns + Reuse Map (1-3 file paths); apply label needs-discussion via `gh issue edit`. No PR.
+            - question: find the relevant doc under `doc/` and comment a direct link + 2-3 sentence quote; apply label `question`; close the issue.
+            - docs: edit the offending markdown only. Run `dart format .` is unnecessary for docs-only changes. Open a docs-only PR to master with `gh pr create --base master --title "docs: <one-line> (#<N>)" --body "Fixes #<N>"`. Same branch auto-creation rule as bug.
+            - invalid: comment requesting reproduction; apply label `needs-reproduction` via `gh issue edit`. Do NOT close.
 
             Always:
-            - use_commit_signing handles the commit (NOT raw git push).
-            - conventional commits only.
+            - use_commit_signing handles the commit + branch creation via GitHub API on first Edit/Write. You never call `git checkout -b`, `git commit`, or `git push`. You CAN call `git status`, `git diff`, `git log` for reasoning.
+            - conventional commit messages only (fix:, feat:, docs:, chore:, refactor:, test:).
             - if you cannot reproduce a bug, classify invalid instead of guessing.
+            - if a Bash command is denied, do not retry it; pick a different path. Report unresolvable blockers via a `gh issue comment` with the blocker description and stop.
+
+      - name: Surface execution log on failure
+        if: failure() && steps.claude.outputs.execution_file != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Show denials + result block for diagnostics
+          if [ -f "${{ steps.claude.outputs.execution_file }}" ]; then
+            jq '[.[] | select(.type == "result" or (.message.content // [] | tostring | contains("denied")))]' \
+              "${{ steps.claude.outputs.execution_file }}" || true
+          fi
 
       - name: Apply needs-triage on agent failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue edit ${{ github.event.issue.number }} --add-label needs-triage
-          gh issue comment ${{ github.event.issue.number }} --body "Claude issue agent could not complete; requesting human review."
+          gh issue edit ${{ github.event.issue.number }} --repo ${{ github.repository }} --add-label needs-triage
+          gh issue comment ${{ github.event.issue.number }} --repo ${{ github.repository }} --body "Claude issue agent could not complete; requesting human review. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
