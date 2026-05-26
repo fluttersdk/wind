@@ -72,7 +72,7 @@ jobs:
     environment: ${{ github.ref_name == 'develop' && 'Demo Development' || 'Demo Production' }}
     steps:
       - name: Download Demo artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: demo-build
           path: demo-build/
