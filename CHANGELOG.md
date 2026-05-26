@@ -6,6 +6,13 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [1.0.1](https://github.com/fluttersdk/wind/compare/fluttersdk_wind-v1.0.0...fluttersdk_wind-v1.0.1) (2026-05-26)
+
+
+### Bug Fixes
+
+* **release-please:** set bootstrap-sha to current master tip ([2a11325](https://github.com/fluttersdk/wind/commit/2a11325f78e3c72a898cfab5c954ef47be662415))
+
 ## [1.0.0] - 2026-05-21
 
 The first stable release. Wind ships a complete utility-first styling layer for Flutter with className syntax, theming, responsive breakpoints, dark mode, dynamic JSON rendering, and a contracts-based debug bridge for external tooling. All public APIs in this release are considered stable; the surface follows Semantic Versioning from this point on.

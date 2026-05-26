@@ -1,6 +1,6 @@
 name: fluttersdk_wind
 description: Tailwind CSS for Flutter. Write className='flex p-4 bg-white dark:bg-gray-800' and Wind renders optimized widget trees with dark mode and responsive breakpoints.
-version: 1.0.0
+version: 1.0.1
 homepage: https://fluttersdk.com/wind
 repository: https://github.com/fluttersdk/wind
 issue_tracker: https://github.com/fluttersdk/wind/issues
