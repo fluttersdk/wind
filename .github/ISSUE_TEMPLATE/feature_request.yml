@@ -1,6 +1,6 @@
 name: Feature Request
 description: Suggest a new feature or enhancement for Wind UI
-labels: ["enhancement"]
+labels: ["pending triage", "enhancement"]
 body:
   - type: markdown
     attributes:

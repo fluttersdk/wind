@@ -1,6 +1,6 @@
 name: Documentation Issue
 description: Report incorrect, missing, or unclear documentation
-labels: ["documentation"]
+labels: ["pending triage", "documentation"]
 body:
   - type: markdown
     attributes:
