@@ -1,8 +1,12 @@
 name: Release Please
 
+# Manual-only trigger: this workflow does NOT fire on every master push.
+# Run it from the Actions tab ("Run workflow") or via
+# `gh workflow run "Release Please" --repo fluttersdk/wind`
+# when you want release-please to scan commits since the last release
+# and open / update a Release PR.
 on:
-  push:
-    branches: [master]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,7 +21,6 @@ jobs:
   release-please:
     name: Open or update Release PR
     runs-on: ubuntu-latest
-    if: "github.event.head_commit.author.username != 'release-please[bot]' && !startsWith(github.event.head_commit.message, 'chore(master): release')"
     steps:
       - uses: actions/create-github-app-token@v2
         id: app-token
