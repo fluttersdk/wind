@@ -2,9 +2,9 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [master, develop, v1]
+    branches: [master, develop]
   pull_request:
-    branches: [master, develop, v1]
+    branches: [master, develop]
 
 jobs:
   ci:
@@ -22,17 +22,26 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze code
-        run: flutter analyze
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed lib/ test/ example/lib/
 
-      - name: Check formatting
-        run: dart format --set-exit-if-changed .
+      - name: Analyze code
+        run: dart analyze lib/ test/ example/lib/
 
       - name: Install lcov
         run: sudo apt-get update && sudo apt-get install -y lcov
 
-      - name: Run tests with coverage
+      - name: Run tests with coverage (90% floor)
         run: ./tool/coverage.sh 90
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v6
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: false
+
+      - name: Validate publish archive
+        run: dart pub publish --dry-run
 
   build-demo:
     name: Build Demo (preview gallery)
