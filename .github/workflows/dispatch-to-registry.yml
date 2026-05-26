@@ -1,0 +1,76 @@
+# Auto-sync FlutterSDK AI registry on wind-ui skill changes.
+#
+# Fires repository_dispatch at fluttersdk/ai when skills/wind-ui/** or
+# pubspec.yaml changes on master, on tag push, or on manual dispatch.
+# The registry's sync.yml receives the event, pulls this subtree, bumps
+# the version triplet, and pushes back to main.
+#
+# develop is intentionally not a trigger source — only stable master
+# pushes propagate to the public registry.
+#
+# Auth: uses the fluttersdk-registry GitHub App (1-hour mint-on-demand
+# tokens). Requires REGISTRY_BOT_APP_ID + REGISTRY_BOT_PRIVATE_KEY
+# secrets on this repo (same values as on fluttersdk/ai).
+
+name: Dispatch skill update to registry
+
+on:
+    push:
+        branches: [master]
+        paths:
+            - "skills/wind-ui/**"
+            - "pubspec.yaml"
+    release:
+        types: [published]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    dispatch:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  fetch-depth: 1
+
+            - name: Extract version
+              id: ver
+              run: |
+                  set -euo pipefail
+                  if [[ -n "${GITHUB_REF_NAME}" && "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+                      VER="${GITHUB_REF_NAME#v}"
+                  else
+                      VER=$(grep -E '^version:' pubspec.yaml | head -1 | awk '{print $2}')
+                  fi
+                  # Strip Dart/Flutter build metadata suffix (e.g. 1.2.3+4 -> 1.2.3)
+                  VER="${VER%%+*}"
+                  if [[ -z "$VER" ]]; then
+                      echo "::error::could not extract a non-empty version from ref or pubspec.yaml"
+                      exit 1
+                  fi
+                  echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+            - name: Mint App token scoped to fluttersdk/ai
+              id: app-token
+              uses: tibdex/github-app-token@v2.1.0
+              with:
+                  app_id: ${{ secrets.REGISTRY_BOT_APP_ID }}
+                  private_key: ${{ secrets.REGISTRY_BOT_PRIVATE_KEY }}
+                  installation_retrieval_mode: repository
+                  installation_retrieval_payload: fluttersdk/ai
+                  repositories: '["ai"]'
+
+            - name: Fire repository_dispatch to fluttersdk/ai
+              uses: peter-evans/repository-dispatch@v4
+              with:
+                  token: ${{ steps.app-token.outputs.token }}
+                  repository: fluttersdk/ai
+                  event-type: skill-updated
+                  client-payload: |
+                      {
+                          "source": "wind",
+                          "version": "${{ steps.ver.outputs.version }}",
+                          "sha": "${{ github.sha }}"
+                      }
