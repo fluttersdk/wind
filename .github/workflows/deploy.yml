@@ -2,9 +2,9 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [master, v1]
+    branches: [master, develop, v1]
   pull_request:
-    branches: [master, v1]
+    branches: [master, develop, v1]
 
 jobs:
   ci:
@@ -37,7 +37,7 @@ jobs:
   build-demo:
     name: Build Demo (preview gallery)
     needs: ci
-    if: false # TODO: enable once preview deploy target is configured
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,9 +67,9 @@ jobs:
   deploy-demo:
     name: Deploy Demo
     needs: build-demo
-    if: false # TODO: enable once preview deploy target is configured
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'master' && 'Demo Production' || 'Demo Development' }}
+    environment: ${{ github.ref_name == 'develop' && 'Demo Development' || 'Demo Production' }}
     steps:
       - name: Download Demo artifact
         uses: actions/download-artifact@v4
@@ -77,7 +77,7 @@ jobs:
           name: demo-build
           path: demo-build/
 
-      - name: Deploy (attempt 1)
+      - name: Deploy via SCP (attempt 1)
         id: deploy
         continue-on-error: true
         uses: appleboy/scp-action@v0.1.7
@@ -93,7 +93,7 @@ jobs:
           rm: true
           overwrite: true
 
-      - name: Deploy (attempt 2)
+      - name: Deploy via SCP (attempt 2 on transient failure)
         if: steps.deploy.outcome == 'failure'
         uses: appleboy/scp-action@v0.1.7
         with:
