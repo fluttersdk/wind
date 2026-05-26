@@ -113,7 +113,7 @@ jobs:
       - name: Deploy via SCP (attempt 1)
         id: deploy
         continue-on-error: true
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -128,7 +128,7 @@ jobs:
 
       - name: Deploy via SCP (attempt 2 on transient failure)
         if: steps.deploy.outcome == 'failure'
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
