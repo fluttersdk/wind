@@ -1,63 +1,129 @@
-version: 2
-updates:
-  # Production package deps (pubspec.yaml at root).
-  - package-ecosystem: "pub"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Europe/Istanbul"
-    labels:
-      - "dependencies"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    groups:
-      pub-minor-and-patch:
-        update-types:
-          - "minor"
-          - "patch"
-    # Major bumps stay as individual PRs so breaking changes get review.
+# Dependabot config for fluttersdk/wind
+#
+# Three ecosystems in scope:
+#   1. pub        — runtime + dev deps in pubspec.yaml at the repo root
+#   2. pub (example/) — the showcase Flutter app (lower priority, monthly)
+#   3. github-actions — every workflow under .github/workflows/
+#
+# Grouping policy: minor + patch updates roll up into a single weekly PR per
+# logical bucket so the queue stays small. Major bumps open their own PR so
+# breaking changes get human review.
+#
+# Commit-message prefixes follow the repo's conventional-commit style
+# (chore(deps), chore(example-deps), chore(ci)). 'include: scope' appends
+# "(deps)" automatically — keep prefix parens-free.
 
-  # Example app deps (showcase only; lower priority, monthly cadence).
-  - package-ecosystem: "pub"
-    directory: "/example"
+version: 2
+
+updates:
+  # ─────────────────────────────────────────────────────────────────────
+  # Production package deps (pubspec.yaml at /)
+  # ─────────────────────────────────────────────────────────────────────
+  - package-ecosystem: pub
+    directory: /
     schedule:
-      interval: "monthly"
-      day: "monday"
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Istanbul
+    open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "example"
-    open-pull-requests-limit: 3
+      - dependencies
+      - pub
+    assignees:
+      - anilcancakir
     commit-message:
-      prefix: "chore(example-deps)"
-      include: "scope"
+      prefix: chore
+      include: scope
+    groups:
+      # All in-house FlutterSDK packages move together — diagnostics
+      # contracts, future companion packages, etc. Keep alpha/prerelease
+      # bumps in a dedicated bucket so a noisy contract bump does not
+      # mix with third-party updates.
+      fluttersdk:
+        patterns:
+          - fluttersdk_*
+        update-types:
+          - minor
+          - patch
+      # Third-party runtime + dev — flutter_svg, flutter_lints, etc.
+      third-party:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - fluttersdk_*
+        update-types:
+          - minor
+          - patch
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Example app deps (example/pubspec.yaml) — showcase only, monthly
+  # ─────────────────────────────────────────────────────────────────────
+  - package-ecosystem: pub
+    directory: /example
+    schedule:
+      interval: monthly
+      day: monday
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - example
+    assignees:
+      - anilcancakir
+    commit-message:
+      prefix: chore(example-deps)
+      include: scope
     groups:
       example-minor-and-patch:
+        patterns:
+          - "*"
         update-types:
-          - "minor"
-          - "patch"
+          - minor
+          - patch
     ignore:
       # google_fonts current major is pinned for Dart 3.6.0 compatibility
       # (see comment in example/pubspec.yaml). Skip major bumps until the
       # SDK floor is raised; minor/patch still flow through the group above.
-      - dependency-name: "google_fonts"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: google_fonts
+        update-types:
+          - version-update:semver-major
 
-  # GitHub Actions (workflow files under .github/workflows/).
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  # ─────────────────────────────────────────────────────────────────────
+  # GitHub Actions under .github/workflows/
+  # ─────────────────────────────────────────────────────────────────────
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Istanbul
+    open-pull-requests-limit: 5
     labels:
-      - "ci"
-    open-pull-requests-limit: 3
+      - dependencies
+      - github-actions
+    assignees:
+      - anilcancakir
     commit-message:
-      prefix: "chore(ci)"
-      include: "scope"
+      prefix: ci
+      include: scope
     groups:
-      actions:
-        patterns: ["*"]
+      # First-party actions (checkout, setup-node, upload-artifact, etc).
+      actions-official:
+        patterns:
+          - actions/*
+      # Deploy + release stack — appleboy/scp, softprops/action-gh-release,
+      # codecov, dart-lang. Group them so the deploy pipeline updates land
+      # in a single review.
+      deploy-stack:
+        patterns:
+          - appleboy/*
+          - softprops/*
+          - codecov/*
+          - dart-lang/*
+          - subosito/*
+      # Dependabot helpers — keep separate so auto-merge logic stays
+      # predictable.
+      dependabot-helpers:
+        patterns:
+          - dependabot/*
