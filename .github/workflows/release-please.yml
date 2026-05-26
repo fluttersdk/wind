@@ -1,0 +1,25 @@
+name: Release Please
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: release-please-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Open or update Release PR
+    runs-on: ubuntu-latest
+    if: "github.event.head_commit.author.username != 'release-please[bot]' && !startsWith(github.event.head_commit.message, 'chore(main): release')"
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          target-branch: master
