@@ -67,10 +67,39 @@ jobs:
       - name: Validate publish archive
         run: dart pub publish --dry-run
 
+  changes:
+    name: Detect demo-affecting changes
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    outputs:
+      demo: ${{ steps.filter.outputs.demo }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Filter paths
+        id: filter
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ] \
+             || ! git rev-parse "${{ github.event.before }}^{commit}" >/dev/null 2>&1; then
+            BASE="HEAD~1"
+          else
+            BASE="${{ github.event.before }}"
+          fi
+          if git diff --name-only "$BASE" HEAD 2>/dev/null | grep -qE '^(lib|example|web)/|^pubspec\.(yaml|lock)$'; then
+            echo "demo=true" >> "$GITHUB_OUTPUT"
+            echo "demo-affecting changes detected"
+          else
+            echo "demo=false" >> "$GITHUB_OUTPUT"
+            echo "no demo-affecting changes; skipping build + deploy"
+          fi
+
   build-demo:
     name: Build Demo (preview gallery)
-    needs: ci
-    if: github.event_name == 'push'
+    needs: [ci, changes]
+    if: github.event_name == 'push' && needs.changes.outputs.demo == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -100,7 +129,7 @@ jobs:
   deploy-demo:
     name: Deploy Demo
     needs: build-demo
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && needs.build-demo.result == 'success'
     runs-on: ubuntu-latest
     environment: Demo Production
     steps:
