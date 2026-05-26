@@ -77,16 +77,38 @@ jobs:
             - if you cannot reproduce a bug, classify invalid instead of guessing.
             - if a Bash command is denied, do not retry it; pick a different path. Report unresolvable blockers via a `gh issue comment` with the blocker description and stop.
 
-      - name: Surface execution log on failure
-        if: failure() && steps.claude.outputs.execution_file != ''
+      - name: Surface tool-call diagnostics
+        if: always() && steps.claude.outputs.execution_file != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Show denials + result block for diagnostics
-          if [ -f "${{ steps.claude.outputs.execution_file }}" ]; then
-            jq '[.[] | select(.type == "result" or (.message.content // [] | tostring | contains("denied")))]' \
-              "${{ steps.claude.outputs.execution_file }}" || true
+          FILE="${{ steps.claude.outputs.execution_file }}"
+          if [ ! -f "$FILE" ]; then
+            echo "::warning::execution_file not present: $FILE"
+            exit 0
           fi
+          echo "=== Tool-use summary (one line per call) ==="
+          jq -r '
+            .[]
+            | select(.type == "assistant")
+            | .message.content // []
+            | map(select(.type == "tool_use"))
+            | .[]
+            | "tool=\(.name) input=\((.input // {}) | tostring | .[0:200])"
+          ' "$FILE" || true
+          echo ""
+          echo "=== Tool-result summary (one line per result, truncated) ==="
+          jq -r '
+            .[]
+            | select(.type == "user")
+            | .message.content // []
+            | map(select(.type == "tool_result"))
+            | .[]
+            | "is_error=\(.is_error // false) content=\((.content // "") | tostring | .[0:300])"
+          ' "$FILE" || true
+          echo ""
+          echo "=== Final result block ==="
+          jq -r '.[] | select(.type == "result")' "$FILE" || true
 
       - name: Apply needs-triage on agent failure
         if: failure()
