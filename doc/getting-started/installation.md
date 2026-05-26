@@ -33,7 +33,7 @@ Alternatively, add it manually to your dependencies:
 
 ```yaml
 dependencies:
-  fluttersdk_wind: ^1.0.0
+  fluttersdk_wind: any  # or pin to latest stable from pub.dev/packages/fluttersdk_wind
 ```
 
 <a name="basic-setup"></a>

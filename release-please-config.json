@@ -1,0 +1,8 @@
+{
+  "bootstrap-sha": "dc0fc582ba267d6da8c08233487bcdcae92c2dd3",
+  "packages": {
+    ".": {
+      "release-type": "dart"
+    }
+  }
+}

@@ -2,16 +2,40 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [master, develop, v1]
+    branches: [master]
   pull_request:
-    branches: [master, develop, v1]
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
+  workflows-lint:
+    name: Workflows lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: actionlint
+        uses: docker://rhysd/actionlint:1.7.7
+        with:
+          args: -color
+
+      - name: dependabot.yml shape
+        if: hashFiles('.github/dependabot.yml') != ''
+        run: |
+          python3 -c "import yaml; yaml.safe_load(open('.github/dependabot.yml'))"
+          echo "dependabot.yml parses as valid YAML"
+
   ci:
     name: Lint & Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -22,17 +46,26 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze code
-        run: flutter analyze
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed lib/ test/ example/lib/
 
-      - name: Check formatting
-        run: dart format --set-exit-if-changed .
+      - name: Analyze code
+        run: dart analyze lib/ test/ example/lib/
 
       - name: Install lcov
         run: sudo apt-get update && sudo apt-get install -y lcov
 
-      - name: Run tests with coverage
+      - name: Run tests with coverage (90% floor)
         run: ./tool/coverage.sh 90
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v6
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: false
+
+      - name: Validate publish archive
+        run: dart pub publish --dry-run
 
   build-demo:
     name: Build Demo (preview gallery)
@@ -40,7 +73,7 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -69,7 +102,7 @@ jobs:
     needs: build-demo
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'develop' && 'Demo Development' || 'Demo Production' }}
+    environment: Demo Production
     steps:
       - name: Download Demo artifact
         uses: actions/download-artifact@v4

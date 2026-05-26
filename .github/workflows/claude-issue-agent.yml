@@ -1,0 +1,70 @@
+name: Claude issue agent
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: claude-issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  triage:
+    name: Triage issue
+    runs-on: ubuntu-latest
+    # Dual gate: trusted association AND explicit opt-in label. BOTH required.
+    if: >-
+      (github.event.issue.author_association == 'OWNER' ||
+       github.event.issue.author_association == 'MEMBER' ||
+       github.event.issue.author_association == 'COLLABORATOR') &&
+      contains(github.event.issue.labels.*.name, 'claude-fix')
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Claude Code Action
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          base_branch: master
+          use_commit_signing: true
+          claude_args: |
+            --allowedTools "Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr create:*),Bash(flutter test),Bash(./tool/coverage.sh:*),Read,Edit,Write"
+          prompt: |
+            Read CLAUDE.md and the relevant .claude/rules/*.md for any file path you intend to touch before acting; ARCHITECTURE.md for design context. Follow every rule there as-is.
+
+            ISSUE NUMBER: ${{ github.event.issue.number }}
+            TITLE: ${{ github.event.issue.title }}
+            BODY: ${{ github.event.issue.body }}
+
+            Step 1: Classify into exactly one of: bug | feature | question | docs | invalid.
+
+            Step 2 actions:
+            - bug: branch issue-<N>-<short-slug> from master; implement minimal fix; add regression test; open PR to master via gh pr create. Title: "fix: <one-line> (#<N>)". Body includes "Fixes #<N>".
+            - feature: comment with feasibility analysis citing existing wind patterns; apply label needs-discussion. No PR.
+            - question: find the relevant page at fluttersdk.com/wind (or matching doc/ file); comment with direct link + 2-3 sentence quote; apply label question; close.
+            - docs: docs-only PR to master with title prefix "docs:".
+            - invalid: comment requesting reproduction; apply label needs-reproduction. Do NOT close.
+
+            Always:
+            - use_commit_signing handles the commit (NOT raw git push).
+            - conventional commits only.
+            - if you cannot reproduce a bug, classify invalid instead of guessing.
+
+      - name: Apply needs-triage on agent failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue edit ${{ github.event.issue.number }} --add-label needs-triage
+          gh issue comment ${{ github.event.issue.number }} --body "Claude issue agent could not complete; requesting human review."
