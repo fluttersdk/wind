@@ -2,9 +2,9 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master]
   pull_request:
-    branches: [master, develop]
+    branches: [master]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -102,7 +102,7 @@ jobs:
     needs: build-demo
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'develop' && 'Demo Development' || 'Demo Production' }}
+    environment: Demo Production
     steps:
       - name: Download Demo artifact
         uses: actions/download-artifact@v4
