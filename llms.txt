@@ -107,10 +107,10 @@ if (kDebugMode) Wind.installDebugResolver();
 
 ## AI & Tooling
 
-- [AI integration overview](https://fluttersdk.com/wind/ai): three-tier (skill + rules + MCP server).
-- [Hosted MCP server](https://mcp.fluttersdk.com/wind): live token verification, theme-aware suggestions.
-- [Claude Code skill](https://github.com/fluttersdk/wind/tree/master/skills/wind-ui): teaches className API, widget hierarchy, dark-mode rules.
-- [Cursor rules](https://github.com/fluttersdk/wind/tree/master/skills/wind-ui): auto-fire on `.dart` files; inject Wind grammar into Cursor suggestions.
+- [fluttersdk/ai](https://github.com/fluttersdk/ai): canonical distribution channel. One-command install via `npx skills add fluttersdk/ai --skill wind-ui` covers Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline, Roo Code.
+- [Wind skill source](https://github.com/fluttersdk/wind/tree/master/skills/wind-ui): canonical `SKILL.md` + references; `fluttersdk/ai` mirrors this directory.
+- [Hosted MCP server](https://mcp.fluttersdk.com): Streamable HTTP, single `search-docs` tool, no auth required.
+- [Stdio MCP bridge](https://www.npmjs.com/package/@fluttersdk/mcp): `npx @fluttersdk/mcp` for clients without HTTP MCP transport.
 
 ## Source
 

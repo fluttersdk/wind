@@ -38,11 +38,12 @@ When source under `lib/` changes, the agent updates each of these in the same ch
 - `<x-preview source="..." path="...">` in any `doc/` file points to a real example page. If you add a doc x-preview, you add or extend the example page. If you delete an example page, you remove the doc x-preview.
 - Acceptance: `cd example && flutter run -d chrome` boots without errors; new pages render with realistic content (no Lorem ipsum); every color token carries its `dark:` pair.
 
-**3. `skills/wind-ui/`** — the LLM-facing skill.
+**3. `skills/wind-ui/`** — the LLM-facing skill (source-of-truth lives here).
 
+- This directory is the canonical source for the `wind-ui` skill. The [`fluttersdk/ai`](https://github.com/fluttersdk/ai) distribution repository mirrors `skills/wind-ui/` from here and exposes it to 8+ AI clients (Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline, Roo Code) via `npx skills add fluttersdk/ai --skill wind-ui`. End users never install from this repo directly; they install from `fluttersdk/ai`.
 - New widget, parser token family, theme field, or breaking change to className semantics: update `skills/wind-ui/SKILL.md` (trigger keywords, Core Laws, Layout Reality) AND any matching `skills/wind-ui/references/<topic>.md`.
 - Acceptance: `SKILL.md` frontmatter version bumps when API surface changes; references stay self-consistent.
-- **Upstream mirror:** when any file under `skills/wind-ui/**` changes, the same change MUST also land in the `fluttersdk/ai` GitHub repository under `skills/wind-ui/`. Remind the user to sync to that repo after the local commit lands. The agent does not push to `fluttersdk/ai` itself; the human does it.
+- **Downstream sync:** after a commit touching `skills/wind-ui/**` lands here, remind the user to sync the same files to `fluttersdk/ai` under `skills/wind-ui/` so the distribution catches up. The agent does not push to `fluttersdk/ai` itself; the human does it. Wind release version (`pubspec.yaml`) and the skill's frontmatter `version:` may drift; only the skill version belongs in the `fluttersdk/ai` registry index.
 
 **4. `CHANGELOG.md`** — versioned change log.
 

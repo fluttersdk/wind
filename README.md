@@ -84,30 +84,20 @@ WDiv(
 | 🔌 | **Platform prefixes** | `ios:`, `android:`, `web:`, `mobile:` for conditional styling without a single `if`. Works on all 6 Flutter platforms. |
 | 🎭 | **Customizable theme** | 23 configurable `WindThemeData` fields. Override every token scale: colors, spacing, typography, shadows, breakpoints, animations. Defaults match Tailwind v3 / v4. |
 | 📡 | **Server-driven UI** | `WDynamic` renders widget trees from JSON. Ship UI updates without ship-blocking releases. Whitelisted 13 Wind widgets + 16 Flutter core widgets. |
-| 🤖 | **Three AI integration layers** | Hosted MCP server at `mcp.fluttersdk.com/wind`, bundled Claude Code skill, Cursor rules. No other Flutter styling library ships any of these. |
+| 🤖 | **AI-first** | Canonical `wind-ui` skill at `skills/wind-ui/` and a hosted MCP server at `mcp.fluttersdk.com`, distributed to 8+ agents (Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline, Roo Code) via [fluttersdk/ai](https://github.com/fluttersdk/ai). No other Flutter styling library ships this. |
 
 > [!IMPORTANT]
 > Every `bg-*`, `text-*`, `border-*`, `ring-*`, `fill-*` token carries a `dark:` pair in the SAME className block. Missing dark pair is a bug. Wind's parser logs a warning in `kDebugMode` when it detects an unpaired color token.
 
 ## AI Coding Assistants
 
-Wind treats AI coding agents as first-class consumers. The library works the same if you never use one, but if you do, three integration layers ship with the package so your agent generates correct Wind code on the first try, without hallucinating tokens.
+Wind ships AI-first. The skill at [`skills/wind-ui/SKILL.md`](skills/wind-ui/SKILL.md) teaches your agent the className grammar, widget surface, dark-mode pairing rules, and anti-patterns. The same skill is distributed through [**fluttersdk/ai**](https://github.com/fluttersdk/ai) for Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline, and Roo Code, one command:
 
-> [!TIP]
-> The **skill** teaches the agent Wind's className grammar, widget surface, dark-mode pairing rules, and anti-patterns. The **MCP server** lets it verify what it wrote against the live theme. The **Cursor rules** keep Cursor / Copilot suggestions on-pattern as you type.
+```bash
+npx skills add fluttersdk/ai --skill wind-ui
+```
 
-**Claude Code skill** ships at [`skills/wind-ui/SKILL.md`](skills/wind-ui/SKILL.md). Agents that read `SKILL.md` from the repo (Claude Code, Cursor in agent mode) pick it up automatically.
-
-**Hosted MCP server** at `https://mcp.fluttersdk.com/wind`. HTTP transport, theme-aware, returns valid className tokens against the live `WindThemeData`.
-
-| Client | Wire-up |
-|---|---|
-| **Claude Code** | `claude mcp add --transport http wind https://mcp.fluttersdk.com/wind` |
-| **Cursor** | Settings → MCP → Add Server → URL `https://mcp.fluttersdk.com/wind` |
-| **VS Code (GitHub Copilot)** | Settings → MCP Servers → URL `https://mcp.fluttersdk.com/wind` |
-| **`.mcp.json`** | `{"mcpServers":{"wind":{"url":"https://mcp.fluttersdk.com/wind"}}}` |
-
-**Cursor rules** at [`skills/wind-ui/`](skills/wind-ui/) (`.mdc`-compatible). Import via Cursor Settings → Rules → Remote Rule, or copy locally to `.cursor/rules/`. The LLM-readable inventory lives at [`llms.txt`](llms.txt). Full setup at **[fluttersdk.com/wind/ai](https://fluttersdk.com/wind/ai)**.
+The hosted MCP server at `mcp.fluttersdk.com` exposes a `search-docs` tool over Streamable HTTP (no auth). For stdio-only clients, the `npx @fluttersdk/mcp` bridge proxies stdio to the upstream HTTP server. The LLM-readable inventory lives at [`llms.txt`](llms.txt). Full multi-client wire-up and the OpenCode registry URL live in the [fluttersdk/ai README](https://github.com/fluttersdk/ai).
 
 ## Examples
 
