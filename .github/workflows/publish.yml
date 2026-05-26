@@ -4,9 +4,11 @@ on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
 
 jobs:
   validate:
+    name: Validate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,17 +22,49 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed lib/ test/ example/lib/
+
       - name: Analyze code
-        run: flutter analyze
+        run: dart analyze lib/ test/ example/lib/
 
-      - name: Check formatting
-        run: dart format --set-exit-if-changed .
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
 
-      - name: Run tests
-        run: flutter test
+      - name: Run tests with coverage (90% floor)
+        run: ./tool/coverage.sh 90
+
+      - name: Validate publish archive
+        run: dart pub publish --dry-run
 
   publish:
     needs: validate
     permissions:
       id-token: write # Required for authentication using OIDC
     uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+
+  github-release:
+    name: Create GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract release notes from CHANGELOG
+        id: extract
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          awk "/^## \[$VERSION\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md > /tmp/release-notes.md
+          if [ ! -s /tmp/release-notes.md ]; then
+            echo "No CHANGELOG section found for [$VERSION]; falling back to a stub." >&2
+            echo "Release $VERSION. See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md) for details." > /tmp/release-notes.md
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ steps.extract.outputs.version }}
+          body_path: /tmp/release-notes.md
