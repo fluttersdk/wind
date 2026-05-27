@@ -5,14 +5,6 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-  workflow_dispatch:
-    inputs:
-      force_deploy:
-        description: 'Force build + deploy demo regardless of path filter'
-        required: false
-        default: 'true'
-        type: choice
-        options: ['true', 'false']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -107,16 +99,7 @@ jobs:
   build-demo:
     name: Build Demo (preview gallery)
     needs: [ci, changes]
-    # `always()` so the job is evaluated even when `changes` was skipped
-    # (which happens on workflow_dispatch). Then gate explicitly on ci
-    # success + the per-event condition.
-    if: |
-      always()
-      && needs.ci.result == 'success'
-      && (
-        (github.event_name == 'push' && needs.changes.outputs.demo == 'true')
-        || (github.event_name == 'workflow_dispatch' && inputs.force_deploy == 'true')
-      )
+    if: github.event_name == 'push' && needs.changes.outputs.demo == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -146,10 +129,7 @@ jobs:
   deploy-demo:
     name: Deploy Demo
     needs: build-demo
-    if: |
-      always()
-      && needs.build-demo.result == 'success'
-      && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.event_name == 'push' && needs.build-demo.result == 'success'
     runs-on: ubuntu-latest
     environment: Demo Production
     steps:
