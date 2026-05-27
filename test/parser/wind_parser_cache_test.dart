@@ -6,18 +6,34 @@ import 'package:fluttersdk_wind/src/parser/wind_style.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
 
-WindContext _ctx() => WindContext(
-      theme: WindThemeData(),
-      activeBreakpoint: 'base',
-      platform: 'unknown',
-      isMobile: false,
+final testTheme = WindThemeData();
+
+WindContext createTestContext({
+  bool isHovering = false,
+  bool isFocused = false,
+  bool isDisabled = false,
+  String activeBreakpoint = 'base',
+  Brightness brightness = Brightness.light,
+  String platform = 'unknown',
+  bool isMobile = false,
+}) =>
+    WindContext(
+      theme: testTheme.copyWith(brightness: brightness),
+      activeBreakpoint: activeBreakpoint,
+      platform: platform,
+      isMobile: isMobile,
       screenWidth: 400,
       screenHeight: 800,
-      activeStates: const {},
+      activeStates: {
+        if (isHovering) 'hover',
+        if (isFocused) 'focus',
+        if (isDisabled) 'disabled',
+      },
     );
 
 void main() {
   setUp(WindParser.clearCache);
+  tearDown(WindParser.clearCache);
 
   group('WindParser regression', () {
     test(
@@ -25,8 +41,8 @@ void main() {
       () {
         // top-8 top-4 top-8: the trailing top-8 must override the intermediate
         // top-4. Set-based dedup loses the trailing occurrence and picks top-4.
-        final result =
-            WindParser.findAndGroupClasses('top-8 top-4 top-8', _ctx());
+        final result = WindParser.findAndGroupClasses(
+            'top-8 top-4 top-8', createTestContext());
 
         expect(result['position'], ['top-8', 'top-4', 'top-8']);
       },
@@ -37,7 +53,7 @@ void main() {
       () {
         final result = WindParser.findAndGroupClasses(
           'bg-red-500 text-lg md:bg-blue-500',
-          _ctx(),
+          createTestContext(),
         );
 
         expect(result, {
