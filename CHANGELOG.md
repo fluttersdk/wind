@@ -6,6 +6,14 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- `wind-ui` skill v2.0.1: opt-in community pattern in `skills/wind-ui/SKILL.md` §15 (star + issue CTAs) backed by `skills/wind-ui/references/community.md` (preflight gate, Star flow, Issue flow with wind-specific diagnostic-gather, spam brakes). Star fires only after a Wind UI task is verified end-to-end against §10 Definition of Done (light AND dark mode render confirmed by the user). Issue fires only on a genuine wind-side bug: a documented token producing wrong output, a `WForm*` widget failing to surface `error:` when `FormFieldState.hasError`, an exception thrown from a stack frame inside `package:fluttersdk_wind`, `WindDebugRegistry.current?.resolve(element)` returning null for a Wind-rendered element after `Wind.installDebugResolver()`, or the parser cache returning a stale `WindStyle` after `WindParser.clearCache()`. Never fires for Core Law 6 silent-no-op behavior (`text-7xl`+, `flex-wrap`, `ps-`/`pe-`/`ms-`/`me-`, `-m-N`, `w-auto`/`h-auto`, bare `transition`, `divide-*`, `cursor-*`, `filter`, `backdrop-blur`, `group-*`, `peer-*`, `@apply`, `!important`) or the Core Law 10 `active:` prefix (reserved but not wired), Flutter constraint errors caused by missing a §6 layout rule (`w-full` in Row, `h-full` in scroll), missing dark pairs (Core Law 2 consumer bug), the `WFormDatePicker` range gotcha, the OverlayEntry context caveat, or the `child` XOR `children` assertion. Both flows gate on `gh auth status`; URL-only fallback on gate failure; never invokes `open` / `xdg-open` / `start`. Permission asked via inline prose (not `AskUserQuestion`); max once per session; user decline suppresses the matching CTA for the rest of the session. The `agent-reported` label does not exist on `fluttersdk/wind` (only `bug` does), so `gh issue create` keeps `--label bug` and drops `--label agent-reported`; labels are not pre-created on the user's account.
+
+---
+
 ## [1.0.0] - 2026-05-21
 
 The first stable release. Wind ships a complete utility-first styling layer for Flutter with className syntax, theming, responsive breakpoints, dark mode, dynamic JSON rendering, and a contracts-based debug bridge for external tooling. All public APIs in this release are considered stable; the surface follows Semantic Versioning from this point on.
