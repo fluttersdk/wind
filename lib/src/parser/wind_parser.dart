@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'parsers/background_parser.dart';
@@ -141,70 +140,31 @@ class WindParser {
   ///   states: isLoading ? {'loading'} : null,
   /// );
   /// ```
-  ///
-  /// ### Provenance (debug-only)
-  ///
-  /// When [trackProvenance] is `true` AND [kDebugMode] is `true`, the parser
-  /// instruments the prefix-resolution loop to record, per resolved class
-  /// token, the comma-separated path of prefixes that activated it. The map
-  /// is attached to the returned [WindStyle] as [WindStyle.resolvedVia].
-  ///
-  /// **Cache semantics**: the cache key is computed from [WindContext] and the
-  /// className only — provenance is NOT part of it. When [trackProvenance] is
-  /// `true`, the cache is BYPASSED (recompute) so the provenance map is
-  /// populated on every call; the cache is not written back, so a default-flag
-  /// call afterwards still returns the original cached, provenance-free
-  /// [WindStyle]. When [trackProvenance] is `false` (default), behavior is
-  /// identical to the pre-provenance path and release builds dead-branch
-  /// eliminate the tracking logic via Dart const propagation.
   static WindStyle parse(
     String className,
     BuildContext context, {
     WindStyle? baseStyle,
     Set<String>? states,
-    bool trackProvenance = false,
   }) {
     final windContext = WindContext.build(context, states: states);
     final cacheKey = windContext.cacheKey(className);
 
-    // Cache bypass when provenance requested: the cached entry has no
-    // resolvedVia map, recomputing is the only way to populate it. The cache
-    // slot stays untouched so subsequent default-flag callers keep their O(1)
-    // fast path.
-    if (!trackProvenance && _styleCache.containsKey(cacheKey)) {
+    if (_styleCache.containsKey(cacheKey)) {
       return _styleCache[cacheKey]!;
     }
 
-    return _parseAndCache(
-      className,
-      windContext,
-      cacheKey,
-      baseStyle,
-      trackProvenance: trackProvenance,
-    );
+    return _parseAndCache(className, windContext, cacheKey, baseStyle);
   }
 
-  /// Internal method to parse and cache the style
-  /// This method assumes the style is not already cached.
-  ///
-  /// When [trackProvenance] is `true` AND running in debug mode, a provenance
-  /// collector is threaded through [findAndGroupClasses] / [resolveClasses]
-  /// and the resulting map is attached to the returned [WindStyle]. In that
-  /// branch the cache is NOT written: provenance is post-cache debug metadata,
-  /// not part of the cache contract.
+  /// Internal method to parse and cache the style.
+  /// Assumes the style is not already cached.
   static WindStyle _parseAndCache(
     String className,
     WindContext windContext,
     String cacheKey,
-    WindStyle? baseStyle, {
-    bool trackProvenance = false,
-  }) {
-    final bool collectProvenance = trackProvenance && kDebugMode;
-    final Map<String, String>? provenance =
-        collectProvenance ? <String, String>{} : null;
-
-    final classesByProperty =
-        findAndGroupClasses(className, windContext, provenance: provenance);
+    WindStyle? baseStyle,
+  ) {
+    final classesByProperty = findAndGroupClasses(className, windContext);
     WindStyle parsedStyle = baseStyle ?? const WindStyle();
 
     for (final entry in classesByProperty.entries) {
@@ -222,13 +182,6 @@ class WindParser {
           }
         }
       }
-    }
-
-    if (collectProvenance) {
-      // Attach provenance metadata WITHOUT polluting the cache: the cache slot
-      // stores the provenance-free WindStyle so future default-flag callers
-      // keep their O(1) fast path and identity-equality.
-      return parsedStyle.copyWith(resolvedVia: provenance);
     }
 
     _styleCache[cacheKey] = parsedStyle;
@@ -263,18 +216,13 @@ class WindParser {
   /// ```
   static Map<String, List<String>> findAndGroupClasses(
     String? className,
-    WindContext windContext, {
-    Map<String, String>? provenance,
-  }) {
+    WindContext windContext,
+  ) {
     final Map<String, List<String>> map = {};
     final classes =
         className?.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toSet() ??
             <String>{};
-    final resolvedClasses = resolveClasses(
-      classes.toList(),
-      windContext,
-      provenance: provenance,
-    );
+    final resolvedClasses = resolveClasses(classes.toList(), windContext);
 
     for (final cls in resolvedClasses) {
       for (final entry in _parserMap.entries) {
@@ -328,9 +276,8 @@ class WindParser {
   /// Returns a list of unprefixed class names that apply to the current context.
   static List<String> resolveClasses(
     List<String>? classes,
-    WindContext context, {
-    Map<String, String>? provenance,
-  }) {
+    WindContext context,
+  ) {
     if (classes == null || classes.isEmpty) {
       return [];
     }
@@ -381,17 +328,7 @@ class WindParser {
       }
 
       if (isActive) {
-        final resolvedToken = parts.last;
-        applicableClasses.add(resolvedToken);
-        // Record provenance: prefix-path joined by `,` (e.g. `md,hover,dark`),
-        // or `base` when the class applied without any prefix. Last-write-wins
-        // is fine — the parser's first-match-wins routing iterates resolved
-        // classes in input order, so the recorded path matches the actual
-        // winning resolution.
-        if (provenance != null) {
-          provenance[resolvedToken] =
-              prefixes.isEmpty ? 'base' : prefixes.join(',');
-        }
+        applicableClasses.add(parts.last);
       }
     }
 
