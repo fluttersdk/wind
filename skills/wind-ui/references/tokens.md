@@ -2,7 +2,7 @@
 
 Exhaustive per-parser token reference. Reach for this file when verifying a className token exists, picking the right family, looking up an arbitrary-value pattern, or auditing className for unsupported syntax.
 
-17 parsers run first-match-wins. Order within className matters: last class within the same property wins. Unknown tokens drop silently.
+19 parsers run first-match-wins. Order within className matters: last class within the same property wins (including duplicate tokens; `top-8 top-4 top-8` resolves to `top-8`). Unknown tokens drop silently.
 
 ## Contents
 
