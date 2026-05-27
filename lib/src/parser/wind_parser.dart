@@ -149,7 +149,13 @@ class WindParser {
     final windContext = WindContext.build(context, states: states);
     final cacheKey = windContext.cacheKey(className);
 
-    if (_styleCache.containsKey(cacheKey)) {
+    // Cache key is composed from windContext + className only; it does NOT
+    // include baseStyle. Reading from or writing into the cache when a caller
+    // supplies a non-null baseStyle would either return a stale entry computed
+    // against a different baseStyle (or no baseStyle at all), or poison the
+    // cache for subsequent default-flag callers. Bypass the cache entirely
+    // when baseStyle is provided.
+    if (baseStyle == null && _styleCache.containsKey(cacheKey)) {
       return _styleCache[cacheKey]!;
     }
 
@@ -158,6 +164,8 @@ class WindParser {
 
   /// Internal method to parse and cache the style.
   /// Assumes the style is not already cached.
+  /// Skips the cache write when [baseStyle] is provided (per-call style;
+  /// cache slot is reserved for the default-flag path).
   static WindStyle _parseAndCache(
     String className,
     WindContext windContext,
@@ -184,7 +192,12 @@ class WindParser {
       }
     }
 
-    _styleCache[cacheKey] = parsedStyle;
+    // Only cache the default-flag result. When baseStyle is non-null, the
+    // computed style is per-call and would pollute the cache for callers
+    // using the default flow.
+    if (baseStyle == null) {
+      _styleCache[cacheKey] = parsedStyle;
+    }
     return parsedStyle;
   }
 
@@ -219,10 +232,14 @@ class WindParser {
     WindContext windContext,
   ) {
     final Map<String, List<String>> map = {};
+    // Preserve duplicates (no .toSet()) so the parser's last-class-wins
+    // contract holds for inputs like `top-8 top-4 top-8`, where the final
+    // `top-8` must override the intermediate `top-4`. Deduping with a Set
+    // would drop the trailing occurrence and pick `top-4` instead.
     final classes =
-        className?.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toSet() ??
-            <String>{};
-    final resolvedClasses = resolveClasses(classes.toList(), windContext);
+        className?.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList() ??
+            <String>[];
+    final resolvedClasses = resolveClasses(classes, windContext);
 
     for (final cls in resolvedClasses) {
       for (final entry in _parserMap.entries) {
