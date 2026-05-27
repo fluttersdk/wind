@@ -61,7 +61,7 @@ This is parser-local; non-color parsers skip the opacity step.
 
 ## Cache key
 
-`WindContext.cacheKey()` composes `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. The cache lives in `WindParser._styleCache`. Provenance-tracking bypasses the cache (debug-only path).
+`WindContext.cacheKey()` composes `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. The cache lives in `WindParser._styleCache`.
 
 Tests MUST call `WindParser.clearCache()` in `setUp()`. The cache persists between tests; skipping `clearCache` produces false-positive passes when neighbor tests prime the cache. See `.claude/rules/tests.md`.
 

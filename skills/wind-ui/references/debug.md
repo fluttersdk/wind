@@ -111,7 +111,7 @@ void main() {
 
 Skipping this is the single largest source of false-positive Wind tests. The cache key includes brightness, so a dark-mode test polluting the cache will not directly fail a light-mode test, but theme customizations (custom colors) cross-pollute. Clear unconditionally.
 
-For provenance tracking (debug-only feature exposed via `WindParser.parse(..., trackProvenance: true)`), the cache is bypassed when `trackProvenance: true` AND `kDebugMode`; the provenance-free cache slot remains for future default-flag calls.
+When `WindParser.parse` is called with a non-null `baseStyle`, the cache is bypassed in both directions (no read, no write). The result is per-call and would otherwise either return a stale entry computed against a different `baseStyle` or poison the cache slot for default-flag callers.
 
 ---
 
