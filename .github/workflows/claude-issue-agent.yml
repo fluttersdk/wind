@@ -59,7 +59,7 @@ jobs:
           branch_prefix: claude/
           use_commit_signing: true
           claude_args: |
-            --allowedTools "Read,Edit,Write,Grep,Glob,Bash(git:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr create:*),Bash(gh api repos:*),Bash(flutter test:*),Bash(flutter pub get),Bash(dart analyze:*),Bash(dart format:*),Bash(./tool/coverage.sh:*),mcp__github_file_ops__commit_files,mcp__github_file_ops__delete_files"
+            --allowedTools "Read,Edit,Write,Grep,Glob,Bash(git:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr create:*),Bash(gh api:*),Bash(flutter test:*),Bash(flutter pub get),Bash(dart analyze:*),Bash(dart format:*),Bash(./tool/coverage.sh:*),mcp__github_file_ops__commit_files,mcp__github_file_ops__delete_files"
           prompt: |
             Read CLAUDE.md and the relevant .claude/rules/*.md for any file path you intend to touch before acting; ARCHITECTURE.md for design context. Follow every rule there as-is.
 
