@@ -19,9 +19,15 @@ class ZIndexParser implements WindParserInterface {
     r'^z-\[(?<value>-?[0-9]+)\]$',
   );
 
+  // Only accept fully valid z-index utility classes to avoid confusing
+  // behavior where canParse returns true but parsing produces no result.
+  static final RegExp _canParseRegExp = RegExp(
+    r'^z-(auto|\d+|\[-?[0-9]+\])$',
+  );
+
   @override
   bool canParse(String className) {
-    return className.startsWith('z-');
+    return _canParseRegExp.hasMatch(className);
   }
 
   @override

@@ -15,6 +15,10 @@ WindContext createTestContext() {
 
 void main() {
   group('ZIndexParser Tests', () {
+    setUp(() {
+      WindParser.clearCache();
+    });
+
     group('canParse', () {
       test('returns true for z-0', () {
         expect(const ZIndexParser().canParse('z-0'), isTrue);
@@ -37,6 +41,13 @@ void main() {
         expect(const ZIndexParser().canParse('text-lg'), isFalse);
         expect(const ZIndexParser().canParse('p-4'), isFalse);
         expect(const ZIndexParser().canParse('flex'), isFalse);
+      });
+
+      test('returns false for invalid z- suffixes', () {
+        expect(const ZIndexParser().canParse('z-invalid'), isFalse,
+            reason: 'invalid suffix should not pass canParse');
+        expect(const ZIndexParser().canParse('z-foo'), isFalse,
+            reason: 'arbitrary non-integer suffix should not pass canParse');
       });
     });
 
