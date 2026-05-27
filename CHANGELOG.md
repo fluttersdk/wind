@@ -6,6 +6,14 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- `doc/interactivity/animation.md`: removed the Arbitrary Values section that claimed `animate-[...]` bracket syntax works; `AnimationParser` only resolves theme-map keys, so the example silently no-ops. Use the Customizing Theme section to register custom animations. (#83)
+
+---
+
 ## [1.0.0] - 2026-05-21
 
 The first stable release. Wind ships a complete utility-first styling layer for Flutter with className syntax, theming, responsive breakpoints, dark mode, dynamic JSON rendering, and a contracts-based debug bridge for external tooling. All public APIs in this release are considered stable; the surface follows Semantic Versioning from this point on.

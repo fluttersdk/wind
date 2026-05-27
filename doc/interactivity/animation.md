@@ -11,7 +11,6 @@ Utilities for animating elements with CSS-like animation classes. Whether you're
   - [Bounce](#bounce)
 - [Responsive Design](#responsive-design)
 - [Dark Mode](#dark-mode)
-- [Arbitrary Values](#arbitrary-values)
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
@@ -112,15 +111,6 @@ Animations work seamlessly with dark mode. You'll typically just change the colo
 
 ```dart
 WDiv(className: 'animate-pulse bg-gray-200 dark:bg-gray-700')
-```
-
-<a name="arbitrary-values"></a>
-## Arbitrary Values
-
-If the built-in animations don't quite fit, you can use arbitrary values to specify custom animation strings.
-
-```dart
-WDiv(className: 'animate-[wiggle_1s_ease-in-out_infinite]')
 ```
 
 <a name="customizing-theme"></a>
