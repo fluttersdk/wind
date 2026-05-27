@@ -43,7 +43,7 @@ When source under `lib/` changes, the agent updates each of these in the same ch
 - This directory is the canonical source for the `wind-ui` skill. The [`fluttersdk/ai`](https://github.com/fluttersdk/ai) distribution repository mirrors `skills/wind-ui/` from here and exposes it to 8+ AI clients (Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline, Roo Code) via `npx skills add fluttersdk/ai --skill wind-ui`. End users never install from this repo directly; they install from `fluttersdk/ai`.
 - New widget, parser token family, theme field, or breaking change to className semantics: update `skills/wind-ui/SKILL.md` (trigger keywords, Core Laws, Layout Reality) AND any matching `skills/wind-ui/references/<topic>.md`.
 - Acceptance: `SKILL.md` frontmatter version bumps when API surface changes; references stay self-consistent.
-- **Downstream sync:** after a commit touching `skills/wind-ui/**` lands here, remind the user to sync the same files to `fluttersdk/ai` under `skills/wind-ui/` so the distribution catches up. The agent does not push to `fluttersdk/ai` itself; the human does it. Wind release version (`pubspec.yaml`) and the skill's frontmatter `version:` may drift; only the skill version belongs in the `fluttersdk/ai` registry index.
+- Downstream distribution to `fluttersdk/ai` runs through an automated sync; no manual mirror step is required after a commit touching `skills/wind-ui/**`.
 
 **4. `CHANGELOG.md`** — versioned change log.
 
@@ -85,3 +85,15 @@ The 90% line-coverage gate is the floor, not the target.
 ## Testing rule that catches everyone
 
 Parser tests MUST call `WindParser.clearCache()` in `setUp()` — the cache persists between tests and produces false positives if not cleared. Widget tests that pump className-styled widgets also need it. See `.claude/rules/tests.md` for the full test discipline.
+
+## Branching
+
+GitHub Flow. One long-lived release branch, every task on its own branch, every change lands via PR.
+
+- **`master`** is the single long-lived branch. Direct pushes are blocked; everything lands via PR. Matches the flutter, dart-lang/sdk, dart-lang/pub, and Anthropic-ecosystem convention. `master` is what pub.dev resolves.
+- **`v0`** is the legacy-frozen branch for the 0.x line. Read-only as far as new development is concerned; cut nothing from it and merge nothing into it.
+- **Task branches** are cut from `master` with short kebab-case names: `feat/<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>` (e.g., `feat/w-tabs`, `fix/parser-cache-stale-after-theme-toggle`, `docs/skill-section-15`). One topic per branch; multi-topic branches get split. PR back into `master`. Squash or merge per the PR's commit shape.
+- **Release** opens a `release: X.Y.Z` PR from a topic branch that (a) bumps `pubspec.yaml` `version:`, (b) promotes `## [Unreleased]` in `CHANGELOG.md` to `## [X.Y.Z] - YYYY-MM-DD` with the trailing link reference, (c) runs the full Definition of done gate. Merge the PR, then `git tag X.Y.Z && git push origin X.Y.Z`. The tag triggers `.github/workflows/publish.yml` to push to pub.dev. No accumulator branch; no `develop`.
+- **External contributors** fork the repo and PR against `master` using the same shape.
+
+CI gates apply per PR, not per push to a feature branch in isolation: the Definition of done (`dart analyze`, `dart format`, `flutter test`, `./tool/coverage.sh 90`) plus the post-change sync (five surfaces) must pass before a PR is mergeable.
