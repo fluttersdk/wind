@@ -107,9 +107,16 @@ jobs:
   build-demo:
     name: Build Demo (preview gallery)
     needs: [ci, changes]
+    # `always()` so the job is evaluated even when `changes` was skipped
+    # (which happens on workflow_dispatch). Then gate explicitly on ci
+    # success + the per-event condition.
     if: |
-      (github.event_name == 'push' && needs.changes.outputs.demo == 'true')
-      || (github.event_name == 'workflow_dispatch' && inputs.force_deploy == 'true')
+      always()
+      && needs.ci.result == 'success'
+      && (
+        (github.event_name == 'push' && needs.changes.outputs.demo == 'true')
+        || (github.event_name == 'workflow_dispatch' && inputs.force_deploy == 'true')
+      )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
