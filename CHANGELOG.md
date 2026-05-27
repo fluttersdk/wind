@@ -51,24 +51,19 @@ First stable release. wind is utility-first, Tailwind-syntax styling for Flutter
 
 ### Fixed
 
-- `WInput`: `px-*` horizontal padding now matches the requested value exactly on both single-line and multiline inputs. Previously every `OutlineInputBorder` defaulted to `gapPadding: 4.0` (Material's reservation for a floating-label cutout) which added a phantom `+4px` on each horizontal edge; wind routes labels through the parser and never uses `InputDecoration.labelText`, so the gap had no purpose. Setting `gapPadding: 0.0` on the built border yields exact `px-*` semantics: `px-3` now produces a 12 px inset instead of 16 px. Multiline `minLines` / `maxLines` geometry unchanged. (#61)
-- `example/lib/routes.dart`: six widget routes that used kebab-case keys (`/widgets/w-input-multiline`, `/widgets/w-input-search`, `/widgets/w-popover-alignment`, `/widgets/w-select_multi`, `/widgets/w-select_single`, `/widgets/w-text-transform`) are now snake_case to match their page-file basenames. Live doc iframes at `wind.fluttersdk.com/preview/widgets/<key>` resolve correctly. Two dead pages (`layout/grid_basic`, `layout/order`) with no documentation reference were removed.
-
-### Dependencies
-
-- **Runtime**: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnostics_contracts ^1.0.0`.
-- **Dev**: `flutter_test` (SDK), `flutter_lints ^5.0.0`.
+- `WInput`: `px-*` horizontal padding now matches the requested value exactly; `OutlineInputBorder.gapPadding` is set to `0.0` so `px-3` produces a 12 px inset instead of 16 px. Multiline geometry unchanged. (#61)
+- `WindParser.findAndGroupClasses`: duplicate tokens flow through to the parser pipeline so the documented last-class-wins contract holds on repeated overrides like `top-8 top-4 top-8`; previously `.toSet()` dropped the trailing occurrence.
+- `WindParser.parse`: cache is bypassed in both directions (no read, no write) when `baseStyle` is non-null so per-call styles do not return stale cached entries or poison the cache slot for default-flag callers.
+- `example/lib/routes.dart`: six widget routes (`/widgets/w-input-multiline`, `/widgets/w-input-search`, `/widgets/w-popover-alignment`, `/widgets/w-select_multi`, `/widgets/w-select_single`, `/widgets/w-text-transform`) renamed to snake_case to match their page-file basenames so live doc iframes at `wind.fluttersdk.com/preview/widgets/<key>` resolve. Two dead pages (`layout/grid_basic`, `layout/order`) without documentation references were removed.
 
 ### Quality
 
-- 1,211 tests across 81 test files; line coverage 90.2% (CI gate enforces `≥ 90%` via `./tool/coverage.sh 90`).
+- 1,214 tests across 82 test files; line coverage 90.2% (CI gate enforces `>= 90%` via `./tool/coverage.sh 90`).
+- New regression coverage in `test/parser/wind_parser_cache_test.dart` for the last-class-wins-on-duplicates and `baseStyle`-bypasses-cache contracts.
 - `tool/coverage.sh` portable threshold-aware lcov wrapper; GitHub Actions gate fails any PR dropping below 90%.
-- Surgical `// coverage:ignore-line` pragmas only on lines structurally unreachable from `flutter test` (kDebugMode branches, `dart:io` `Platform.is*` branches not matching the CI host). Each pragma carries a one-line WHY comment.
+- Surgical `// coverage:ignore-line` pragmas only on lines structurally unreachable from `flutter test` (`kDebugMode` branches, `dart:io` `Platform.is*` branches not matching the CI host). Each pragma carries a one-line WHY comment.
 
-### Documentation
-
-- Full v1 documentation at [fluttersdk.com/wind](https://fluttersdk.com/wind). Every widget, parser, and theme field has a dedicated page with `<x-preview>` live demos.
-- LLM-facing skill at `skills/wind-ui/` distributed via [fluttersdk/ai](https://github.com/fluttersdk/ai) for 8+ AI clients (Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline, Roo Code). Install: `npx skills add fluttersdk/ai --skill wind-ui`.
+Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnostics_contracts ^1.0.0`. Dev deps: `flutter_test` (SDK), `flutter_lints ^5.0.0`. Full v1 documentation at [fluttersdk.com/wind](https://fluttersdk.com/wind); LLM-facing skill at `skills/wind-ui/` distributed via [fluttersdk/ai](https://github.com/fluttersdk/ai) (`npx skills add fluttersdk/ai --skill wind-ui`).
 
 ---
 
