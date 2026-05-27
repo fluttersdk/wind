@@ -72,10 +72,10 @@ jobs:
             Before classifying as bug or docs, run `gh issue list --label claude-fix --state all --limit 30` to spot likely duplicates. If you find an open or recently closed issue covering the same defect, classify the new one as invalid with a duplicate-of comment pointing at the original number; do NOT open a second PR.
 
             Step 2 actions:
-            - bug: implement the minimal fix directly in the working tree (Edit/Write) + add a regression test under `test/`. Run `./tool/coverage.sh 90` and `dart analyze lib/ test/` before opening the PR. Open the PR to master with `gh pr create --base master --reviewer @copilot --title "fix: <one-line> (#<N>)" --body "Fixes #<N>\n\n<2-3 line summary>"`. The MCP file-ops server creates the branch on commit; do NOT run `git checkout -b` yourself.
+            - bug: implement the minimal fix directly in the working tree (Edit/Write) + add a regression test under `test/`. Run `./tool/coverage.sh 90` and `dart analyze lib/ test/` before opening the PR. Open the PR to master with `gh pr create --base master --reviewer Copilot --title "fix: <one-line> (#<N>)" --body "Fixes #<N>\n\n<2-3 line summary>"`. The MCP file-ops server creates the branch on commit; do NOT run `git checkout -b` yourself.
             - feature: comment with feasibility analysis citing existing wind patterns + Reuse Map (1-3 file paths); apply label needs-discussion via `gh issue edit`. No PR.
             - question: find the relevant doc under `doc/` and comment a direct link + 2-3 sentence quote; apply label `question`; close the issue.
-            - docs: edit the offending markdown only. `dart format` is unnecessary for docs-only changes. Open a docs-only PR to master with `gh pr create --base master --reviewer @copilot --title "docs: <one-line> (#<N>)" --body "Fixes #<N>"`. Same branch auto-creation rule as bug.
+            - docs: edit the offending markdown only. `dart format` is unnecessary for docs-only changes. Open a docs-only PR to master with `gh pr create --base master --reviewer Copilot --title "docs: <one-line> (#<N>)" --body "Fixes #<N>"`. Same branch auto-creation rule as bug.
             - invalid: comment requesting reproduction; apply label `needs-reproduction` via `gh issue edit`. Do NOT close.
 
             Always:
