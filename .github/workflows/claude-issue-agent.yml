@@ -45,6 +45,13 @@ jobs:
 
       - name: Claude Code Action
         id: claude
+        # CLAUDE_BRANCH targets the GitHub file-ops MCP server's BRANCH_NAME
+        # env. Without it, the server defaults to GITHUB_REF_NAME (= master on
+        # this `issues` event), and commit_files hits the branch-protection
+        # 422. We set it explicitly per-run; the MCP server's
+        # getOrCreateBranchRef auto-creates the branch off base_branch.
+        env:
+          CLAUDE_BRANCH: claude/issue-${{ github.event.issue.number }}-${{ github.run_id }}
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
