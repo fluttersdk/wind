@@ -52,7 +52,7 @@ jobs:
           branch_prefix: claude/
           use_commit_signing: true
           claude_args: |
-            --allowedTools "Read,Edit,Write,Grep,Glob,Bash(git:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr create:*),Bash(flutter test:*),Bash(flutter pub get),Bash(dart analyze:*),Bash(dart format:*),Bash(./tool/coverage.sh:*)"
+            --allowedTools "Read,Edit,Write,Grep,Glob,Bash(git:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr create:*),Bash(flutter test:*),Bash(flutter pub get),Bash(dart analyze:*),Bash(dart format:*),Bash(./tool/coverage.sh:*),mcp__github_file_ops__commit_files,mcp__github_file_ops__delete_files"
           prompt: |
             Read CLAUDE.md and the relevant .claude/rules/*.md for any file path you intend to touch before acting; ARCHITECTURE.md for design context. Follow every rule there as-is.
 
@@ -72,10 +72,12 @@ jobs:
             - invalid: comment requesting reproduction; apply label `needs-reproduction` via `gh issue edit`. Do NOT close.
 
             Always:
-            - use_commit_signing handles the commit + branch creation via GitHub API on first Edit/Write. You never call `git checkout -b`, `git commit`, or `git push`. You CAN call `git status`, `git diff`, `git log` for reasoning.
+            - Local Edit/Write modifies the working tree only — they do NOT commit. To create the branch + commit, call `mcp__github_file_ops__commit_files` with the list of changed file paths and a conventional-commit message. The MCP server creates `claude/issue-<N>-<timestamp>` via GitHub API and signs the commit. Do this BEFORE `gh pr create`.
+            - You never call `git checkout -b`, `git commit`, or `git push`. You CAN call `git status`, `git diff`, `git log` for reasoning.
+            - Standard sequence for bug/docs PR: (1) Edit/Write, (2) verify with dart analyze + flutter test + ./tool/coverage.sh 90, (3) `mcp__github_file_ops__commit_files` to commit + push the new branch, (4) `gh pr create --base master` to open the PR.
             - conventional commit messages only (fix:, feat:, docs:, chore:, refactor:, test:).
             - if you cannot reproduce a bug, classify invalid instead of guessing.
-            - if a Bash command is denied, do not retry it; pick a different path. Report unresolvable blockers via a `gh issue comment` with the blocker description and stop.
+            - if a Bash or MCP tool call is denied, do not retry it; pick a different path. Report unresolvable blockers via a `gh issue comment` with the blocker description and stop.
 
       - name: Surface tool-call diagnostics
         if: always() && steps.claude.outputs.execution_file != ''
