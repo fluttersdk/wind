@@ -59,7 +59,7 @@ jobs:
           branch_prefix: claude/
           use_commit_signing: true
           claude_args: |
-            --allowedTools "Read,Edit,Write,Grep,Glob,Bash(git:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr create:*),Bash(flutter test:*),Bash(flutter pub get),Bash(dart analyze:*),Bash(dart format:*),Bash(./tool/coverage.sh:*),mcp__github_file_ops__commit_files,mcp__github_file_ops__delete_files"
+            --allowedTools "Read,Edit,Write,Grep,Glob,Bash(git:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr create:*),Bash(gh api repos:*),Bash(flutter test:*),Bash(flutter pub get),Bash(dart analyze:*),Bash(dart format:*),Bash(./tool/coverage.sh:*),mcp__github_file_ops__commit_files,mcp__github_file_ops__delete_files"
           prompt: |
             Read CLAUDE.md and the relevant .claude/rules/*.md for any file path you intend to touch before acting; ARCHITECTURE.md for design context. Follow every rule there as-is.
 
@@ -72,16 +72,16 @@ jobs:
             Before classifying as bug or docs, run `gh issue list --label claude-fix --state all --limit 30` to spot likely duplicates. If you find an open or recently closed issue covering the same defect, classify the new one as invalid with a duplicate-of comment pointing at the original number; do NOT open a second PR.
 
             Step 2 actions:
-            - bug: implement the minimal fix directly in the working tree (Edit/Write) + add a regression test under `test/`. Run `./tool/coverage.sh 90` and `dart analyze lib/ test/` before opening the PR. Open the PR to master with `gh pr create --base master --reviewer Copilot --title "fix: <one-line> (#<N>)" --body "Fixes #<N>\n\n<2-3 line summary>"`. The MCP file-ops server creates the branch on commit; do NOT run `git checkout -b` yourself.
+            - bug: implement the minimal fix directly in the working tree (Edit/Write) + add a regression test under `test/`. Run `./tool/coverage.sh 90` and `dart analyze lib/ test/` before opening the PR. Open the PR to master with `gh pr create --base master --title "fix: <one-line> (#<N>)" --body "Fixes #<N>\n\n<2-3 line summary>"`. The MCP file-ops server creates the branch on commit; do NOT run `git checkout -b` yourself.
             - feature: comment with feasibility analysis citing existing wind patterns + Reuse Map (1-3 file paths); apply label needs-discussion via `gh issue edit`. No PR.
             - question: find the relevant doc under `doc/` and comment a direct link + 2-3 sentence quote; apply label `question`; close the issue.
-            - docs: edit the offending markdown only. `dart format` is unnecessary for docs-only changes. Open a docs-only PR to master with `gh pr create --base master --reviewer Copilot --title "docs: <one-line> (#<N>)" --body "Fixes #<N>"`. Same branch auto-creation rule as bug.
+            - docs: edit the offending markdown only. `dart format` is unnecessary for docs-only changes. Open a docs-only PR to master with `gh pr create --base master --title "docs: <one-line> (#<N>)" --body "Fixes #<N>"`. Same branch auto-creation rule as bug.
             - invalid: comment requesting reproduction; apply label `needs-reproduction` via `gh issue edit`. Do NOT close.
 
             Always:
             - Local Edit/Write modifies the working tree only — they do NOT commit. To create the branch + commit, call `mcp__github_file_ops__commit_files` with the list of changed file paths and a conventional-commit message. The MCP server creates `claude/issue-<N>-<timestamp>` via GitHub API and signs the commit. Do this BEFORE `gh pr create`.
             - You never call `git checkout -b`, `git commit`, or `git push`. You CAN call `git status`, `git diff`, `git log` for reasoning.
-            - Standard sequence for bug/docs PR: (1) Edit/Write, (2) verify with dart analyze + flutter test + ./tool/coverage.sh 90, (3) `mcp__github_file_ops__commit_files` to commit + push the new branch, (4) `gh pr create --base master` to open the PR.
+            - Standard sequence for bug/docs PR: (1) Edit/Write, (2) verify with dart analyze + flutter test + ./tool/coverage.sh 90, (3) `mcp__github_file_ops__commit_files` to commit + push the new branch, (4) `gh pr create --base master` to open the PR (capture the PR number from the URL it prints), (5) request Copilot as reviewer via `gh api repos/${{ github.repository }}/pulls/<PR_NUMBER>/requested_reviewers --method POST -f 'reviewers[]=copilot-pull-request-reviewer[bot]'`. The `--reviewer Copilot` flag on `gh pr create` does NOT work (prints a non-fatal warning and skips); the REST API call is the only reliable path.
             - conventional commit messages only (fix:, feat:, docs:, chore:, refactor:, test:).
             - if you cannot reproduce a bug, classify invalid instead of guessing.
             - if a Bash or MCP tool call is denied, do not retry it; pick a different path. Report unresolvable blockers via a `gh issue comment` with the blocker description and stop.
