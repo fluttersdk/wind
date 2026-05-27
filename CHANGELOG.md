@@ -6,6 +6,14 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- `WInput`: `focusedBorder` now always carries `focus:ring-*` / `focus:border-*` styles, eliminating a one-frame race on Chrome where Flutter rendered the focused border before the `FocusNode` listener's `setState` had propagated `_isFocused = true`. Tabbing between fields no longer intermittently loses the focus ring. (#82)
+
+---
+
 ## [1.0.0] - 2026-05-21
 
 The first stable release. Wind ships a complete utility-first styling layer for Flutter with className syntax, theming, responsive breakpoints, dark mode, dynamic JSON rendering, and a contracts-based debug bridge for external tooling. All public APIs in this release are considered stable; the surface follows Semantic Versioning from this point on.

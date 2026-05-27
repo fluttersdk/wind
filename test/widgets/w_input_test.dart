@@ -212,6 +212,85 @@ void main() {
         final textFieldAfter = tester.widget<TextField>(find.byType(TextField));
         expect(textFieldAfter, isNotNull);
       });
+
+      testWidgets(
+        'focusedBorder carries ring styles before _isFocused catches up (issue #82)',
+        (tester) async {
+          // focusedStyles is always parsed with 'focus' resolved so that
+          // Flutter's TextField can show the correct focusedBorder even on the
+          // frame before the FocusNode listener fires setState.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WInput(
+                className: 'border border-gray-300 rounded-lg '
+                    'focus:ring-2 focus:ring-blue-500',
+              ),
+            ),
+          );
+
+          final textField = tester.widget<TextField>(find.byType(TextField));
+          final decoration = textField.decoration!;
+
+          // enabledBorder uses the non-focused styles → 1px gray border.
+          expect(decoration.enabledBorder, isA<OutlineInputBorder>());
+          final enabledBorder = decoration.enabledBorder as OutlineInputBorder;
+          expect(enabledBorder.borderSide.width, 1.0);
+
+          // focusedBorder must already carry the ring width even before focus
+          // fires setState — this is the regression guard for issue #82.
+          expect(decoration.focusedBorder, isA<OutlineInputBorder>());
+          final focusedBorder = decoration.focusedBorder as OutlineInputBorder;
+          expect(focusedBorder.borderSide.width, 2.0);
+        },
+      );
+
+      testWidgets(
+        'focusedBorder ring persists when tabbing between fields (issue #82)',
+        (tester) async {
+          final focusA = FocusNode();
+          final focusB = FocusNode();
+          addTearDown(focusA.dispose);
+          addTearDown(focusB.dispose);
+
+          await tester.pumpWidget(
+            wrapWithTheme(
+              Column(
+                children: [
+                  WInput(
+                    focusNode: focusA,
+                    className:
+                        'border border-gray-300 focus:ring-2 focus:ring-blue-500',
+                  ),
+                  WInput(
+                    focusNode: focusB,
+                    className:
+                        'border border-gray-300 focus:ring-2 focus:ring-blue-500',
+                  ),
+                ],
+              ),
+            ),
+          );
+
+          // Tab to field A, then to field B — both focusedBorders must carry
+          // the ring regardless of focus-listener timing.
+          focusA.requestFocus();
+          await tester.pump();
+          focusB.requestFocus();
+          await tester.pump();
+
+          final textFields = tester
+              .widgetList<TextField>(
+                find.byType(TextField),
+              )
+              .toList();
+
+          for (final tf in textFields) {
+            expect(tf.decoration!.focusedBorder, isA<OutlineInputBorder>());
+            final fb = tf.decoration!.focusedBorder as OutlineInputBorder;
+            expect(fb.borderSide.width, 2.0);
+          }
+        },
+      );
     });
 
     group('External Controller', () {

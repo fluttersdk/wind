@@ -354,6 +354,17 @@ class _WInputState extends State<WInput> {
         ? WindParser.parse(widget.className!, context, states: activeStates)
         : const WindStyle();
 
+    // Always resolve focus styles so focusedBorder carries ring/border tokens
+    // even during the one-frame lag between FocusNode gaining focus and the
+    // setState-driven rebuild that sets _isFocused = true (visible on Chrome).
+    final WindStyle focusedStyles = widget.className != null
+        ? WindParser.parse(widget.className!, context, states: {
+            ...?widget.states,
+            'focus',
+            if (!widget.enabled) 'disabled',
+          })
+        : const WindStyle();
+
     final logger = WindLogger(
       debug: styles.debug,
       widgetName: runtimeType.toString(),
@@ -373,6 +384,7 @@ class _WInputState extends State<WInput> {
     final InputDecoration decoration = _buildInputDecoration(
       context: context,
       styles: styles,
+      focusedStyles: focusedStyles,
       placeholderStyles: placeholderStyles,
     );
 
@@ -495,6 +507,7 @@ class _WInputState extends State<WInput> {
   InputDecoration _buildInputDecoration({
     required BuildContext context,
     required WindStyle styles,
+    required WindStyle focusedStyles,
     required WindStyle placeholderStyles,
   }) {
     final theme = WindTheme.dataOf(context);
@@ -511,10 +524,12 @@ class _WInputState extends State<WInput> {
       filled = true;
     }
 
-    // Extract border configuration
+    // Extract border configuration.
+    // focusedBorder uses focusedStyles (always has 'focus' resolved) so that
+    // ring/border tokens are present even before _isFocused catches up.
     final InputBorder border = _buildBorder(styles, theme, isFocused: false);
     final InputBorder focusedBorder = _buildBorder(
-      styles,
+      focusedStyles,
       theme,
       isFocused: true,
     );
