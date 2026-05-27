@@ -35,6 +35,7 @@ First stable release. wind is utility-first, Tailwind-syntax styling for Flutter
 - **`WDynamic`**: JSON-driven widget tree renderer. 13 Wind types + 16 Flutter core types allowed by default, extensible via `builders:`, restrictable via `denyWidgets:`, with `customIcons:` for user-defined icon mappings (25 built-in glyphs). State binding by widget `id`, action dispatch via `WActionHandler`, max recursion depth 50.
 - **Accessibility / Semantics** on 7 interactive widgets (`WAnchor`, `WButton`, `WInput`, `WFormInput`, `WCheckbox`, `WSelect`, `WDatePicker`): emit `Semantics` nodes with role + label, password fields mark `obscured`. Enables Playwright `getByRole` / `getByLabel` / `getByText` resolution against the Flutter web build. New optional `WInput.semanticLabel` parameter.
 - **`Wind.installDebugResolver()`**: call inside `kDebugMode` to register a `WindDebugResolverImpl` against the new `fluttersdk_wind_diagnostics_contracts` bridge. Resolves 7 fields per Wind widget element: `className`, `breakpoint`, `brightness`, `platform`, `states`, conditional `bgColor`, conditional `textColor`. Consumed by `fluttersdk_dusk` for E2E snapshot capture and by any runtime inspector. Tree-shaken in release builds.
+- **`wind-ui` skill v2.0.1 community pattern**: `skills/wind-ui/SKILL.md` section 15 plus `skills/wind-ui/references/community.md` add opt-in star + issue-report CTAs surfaced once per session after a verified Wind task or a genuine wind-side bug. Prose-permission only, never auto-executed, `gh auth status`-gated. (#89)
 
 ### Changed
 
