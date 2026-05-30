@@ -29,7 +29,7 @@ Or add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  fluttersdk_wind: ^0.0.4
+  fluttersdk_wind: ^0.0.5
 ```
 
 Then run `flutter pub get`.
