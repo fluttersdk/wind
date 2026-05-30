@@ -1,6 +1,11 @@
 # Changelog
 This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Add in-repo `doc/` reference for the 0.0.x line, ported from the legacy site docs into the 1.0.x doc-system format.
+
 ## [0.0.4] - 2025-06-12
 
 - Updated `platform_info` dependency to `^5.0.0` for improved platform detection.
