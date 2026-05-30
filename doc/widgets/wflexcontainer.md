@@ -93,7 +93,7 @@ WFlexContainer({
 | `clipBehavior` | `Clip` | `Clip.none` | How content is clipped, applied to both container and flex. |
 | `direction` | `Axis?` | `null` | Main-axis direction; overrides any `flex-row` / `flex-col` utility. |
 | `mainAxisAlignment` | `MainAxisAlignment?` | `null` | Main-axis alignment; overrides any `justify-*` utility. |
-| `mainAxisSize` | `MainAxisSize?` | `null` | Main-axis size; overrides any `axis-*` utility. |
+| `mainAxisSize` | `MainAxisSize?` | `null` | Main-axis size; overrides any `axis-min` / `axis-max` utility. |
 | `crossAxisAlignment` | `CrossAxisAlignment?` | `null` | Cross-axis alignment; overrides any `items-*` utility. |
 | `textDirection` | `TextDirection?` | `null` | Text direction used to resolve `start` / `end` alignment. |
 | `verticalDirection` | `VerticalDirection` | `VerticalDirection.down` | Order in which children are laid out vertically. |

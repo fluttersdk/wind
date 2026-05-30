@@ -66,7 +66,7 @@ Size keys resolve through the REM factor. The default pixel factor is `4` and th
 Set any pixel radius with bracket notation. The value is used directly as pixels:
 
 ```text
-rounded-[[value]]
+rounded-[<value>]
 ```
 
 ```dart

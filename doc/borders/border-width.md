@@ -81,7 +81,7 @@ WContainer(
 Use bracket notation for non-standard widths. The value is used directly as pixels:
 
 ```text
-border-[[value]]
+border-[<value>]
 ```
 
 ```dart

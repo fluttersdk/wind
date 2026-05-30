@@ -67,7 +67,7 @@ Using `shadow` without a size applies the `default` key (2px blur radius).
 Set any shadow blur radius with bracket notation. The value is used directly as pixels:
 
 ```text
-shadow-[[value]]
+shadow-[<value>]
 ```
 
 ```dart

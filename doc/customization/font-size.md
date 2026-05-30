@@ -12,6 +12,8 @@ WindTheme.setFontSize('custom', 1.2);
 double size = WindTheme.getFontSize('xl'); // 1.25
 ```
 
+Font sizes are applied with the `text-*` utility (e.g. `text-xl`); the `font-*` prefix is reserved for [font weight](./font-weight.md).
+
 <a name="default-font-sizes"></a>
 ## Default Font Sizes
 
@@ -32,16 +34,16 @@ double size = WindTheme.getFontSize('xl'); // 1.25
 
 For example:
 
-- `font-xs` applies a font size of **12px**.
-- `font-3xl` applies a font size of **30px**.
+- `text-xs` applies a font size of **12px**.
+- `text-3xl` applies a font size of **30px**.
 
 <a name="arbitrary-font-sizes"></a>
 ## Arbitrary Font Sizes
 
-For sizes outside the scale, use the `font-[value]` syntax, where value is the desired size in px.
+For sizes outside the scale, use the `text-[value]` syntax, where value is the desired size in px.
 
-- `font-[8]` applies a font size of **8px**.
-- `font-[22]` applies a font size of **22px**.
+- `text-[8]` applies a font size of **8px**.
+- `text-[22]` applies a font size of **22px**.
 
 <a name="managing-font-sizes"></a>
 ## Managing Font Sizes
@@ -75,6 +77,6 @@ WindTheme.removeFontSize('custom');
 
 <a name="related-documentation"></a>
 ## Related Documentation
-- [Font Size Utilities](../typography/font-size.md) — apply the scale with `font-*`
+- [Font Size Utilities](../typography/font-size.md) — apply the scale with `text-*`
 - [Pixel Factor](./pixel-factor.md) — how the rem factor scales sizes
 - [Font Family](./font-family.md) — customize the body and display fonts

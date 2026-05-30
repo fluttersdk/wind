@@ -49,7 +49,7 @@ WFlexible({
 | Prop | Type | Default | Description |
 |:---|:---|:---|:---|
 | `className` | `dynamic` | `null` | Wind utility class string controlling flex factor and fit. |
-| `flex` | `int?` | `null` | Flex factor; overrides any `flex-x` utility. Falls back to `1` when neither is set. |
+| `flex` | `int?` | `null` | Flex factor; overrides any `flex-x` utility. Falls back to `1` when neither the `flex` parameter nor a `flex-x` utility is set. |
 | `fit` | `FlexFit?` | `null` | How the child fills available space; overrides any `flex-grow` / `flex-auto` / `flex-none` utility. Defaults to `FlexFit.loose` when unset. |
 | `child` | `Widget?` | `null` | The widget to make flexible. When omitted, a `Spacer` is rendered instead. |
 

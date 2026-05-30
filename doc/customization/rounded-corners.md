@@ -16,7 +16,7 @@ double size = WindTheme.getRoundedSize('xl'); // 0.75
 <a name="default-rounded-sizes"></a>
 ## Default Rounded Sizes
 
-`WindTheme` ships pre-defined rounded sizes. Each value is in rem units; the calculated px values below assume the default pixel factor (4.0) and rem factor (4.0).
+`WindTheme` ships pre-defined rounded sizes. Each value is in rem units; the calculated px values below assume the default rem factor (`WindTheme.getRemFactor()`, which is pixel factor × 4 = 16).
 
 | Key | Value (rem) | Calculated px | Description |
 |:---|:---|:---|:---|
@@ -33,10 +33,10 @@ double size = WindTheme.getRoundedSize('xl'); // 0.75
 The px values are calculated as:
 
 ```text
-{px} = {rem} * {pixel factor (4.0)} * {rem factor (4.0)}
+{px} = {rem} × {rem factor (16 by default)}
 ```
 
-For example, `rounded-lg` results in **0.5 × 4 × 4 = 8px**.
+For example, `rounded-lg` results in **0.5 × 16 = 8px**.
 
 <a name="arbitrary-rounded-values"></a>
 ## Arbitrary Rounded Values
@@ -88,7 +88,7 @@ WContainer(
 );
 ```
 
-This applies a corner radius of **12px** (0.75 × 4 × 4).
+This applies a corner radius of **12px** (0.75 × 16).
 
 ### Arbitrary Values
 

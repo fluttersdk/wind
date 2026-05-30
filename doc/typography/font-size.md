@@ -32,10 +32,10 @@ WText('Section heading', className: 'text-2xl font-bold');
 <a name="quick-reference"></a>
 ## Quick Reference
 
-Predefined sizes are resolved against the REM factor and Pixel Factor. The final size is calculated as:
+Predefined sizes are stored in rem units and resolved against the REM factor (`WindTheme.getRemFactor()`, which is pixel factor × 4 = 16 by default). The final size is calculated as:
 
 ```
-Size (REM) × REM Factor (default: 4) × Pixel Factor (default: 4) = Final size in px
+Size (rem) × REM factor (16 by default) = Final size in px
 ```
 
 | Class | REM | Default px | Description |
@@ -77,7 +77,7 @@ Add or override font size keys with `WindTheme.setFontSize(key, remValue)`:
 
 ```dart
 WindTheme.setFontSize('giant', 5);
-// Now text-giant = 5 * 4 * 4 = 80px (at default factors)
+// Now text-giant = 5 × 16 (rem factor) = 80px at the default factor
 WText('Giant text', className: 'text-giant');
 ```
 
