@@ -1,7 +1,7 @@
 # Changelog
 This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.0.5] - 2026-05-30
 
 ### Added
 - Add in-repo `doc/` reference for the 0.0.x line, ported from the legacy site docs into the 1.0.x doc-system format.
