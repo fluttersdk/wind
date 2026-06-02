@@ -2,7 +2,7 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [master]
+    branches: [master, v0]
   pull_request:
     branches: [master]
 
@@ -133,7 +133,7 @@ jobs:
   deploy-demo:
     name: Deploy Demo
     needs: build-demo
-    if: github.event_name == 'push' && needs.build-demo.result == 'success'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build-demo.result == 'success'
     runs-on: ubuntu-latest
     environment: Demo Production
     steps:
@@ -143,33 +143,85 @@ jobs:
           name: demo-build
           path: demo-build/
 
-      - name: Deploy via SCP (attempt 1)
-        id: deploy
-        continue-on-error: true
-        uses: appleboy/scp-action@v1.0.0
+      # The server's public SSH port is firewalled from GitHub runner IPs, so the
+      # runner joins the tailnet and copies over Tailscale with native scp. The
+      # Docker-based appleboy actions cannot see the runner-host tailnet.
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@306e68a486fd2350f2bfc3b19fcd143891a4a2d8  # v4.1.2
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 60s
-          source: demo-build/*
-          target: ${{ secrets.DEPLOY_PATH }}
-          strip_components: 1
-          rm: true
-          overwrite: true
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: ${{ secrets.SSH_HOST }}
 
-      - name: Deploy via SCP (attempt 2 on transient failure)
-        if: steps.deploy.outcome == 'failure'
-        uses: appleboy/scp-action@v1.0.0
+      - name: Deploy via SCP over Tailscale
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          install -m 600 /dev/null ~/.ssh/id_deploy
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "$SSH_USER@$SSH_HOST" \
+            "mkdir -p '$DEPLOY_PATH' && find '$DEPLOY_PATH' -mindepth 1 -delete"
+          scp -i ~/.ssh/id_deploy -P "$SSH_PORT" \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts -r \
+            demo-build/. \
+            "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+
+  deploy-demo-dev:
+    name: Deploy Demo (dev)
+    needs: build-demo
+    # Gate on v0 branch: that is where the 0.x series is actively developed.
+    # The build-demo artifact is reused; no second Flutter build is needed.
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/v0' &&
+      needs.build-demo.result == 'success'
+    runs-on: ubuntu-latest
+    environment: Demo Development
+    steps:
+      - name: Download Demo artifact
+        uses: actions/download-artifact@v8
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 60s
-          source: demo-build/*
-          target: ${{ secrets.DEPLOY_PATH }}
-          strip_components: 1
-          rm: true
-          overwrite: true
+          name: demo-build
+          path: demo-build/
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@306e68a486fd2350f2bfc3b19fcd143891a4a2d8  # v4.1.2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: ${{ secrets.SSH_HOST }}
+
+      - name: Deploy via SCP over Tailscale
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          install -m 600 /dev/null ~/.ssh/id_deploy
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_deploy -p "$SSH_PORT" \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "$SSH_USER@$SSH_HOST" \
+            "mkdir -p '$DEPLOY_PATH' && find '$DEPLOY_PATH' -mindepth 1 -delete"
+          scp -i ~/.ssh/id_deploy -P "$SSH_PORT" \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts -r \
+            demo-build/. \
+            "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
