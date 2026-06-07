@@ -70,11 +70,20 @@ class ShadowExamplePage extends StatelessWidget {
               WDiv(
                 className: 'flex gap-4 overflow-x-auto p-2',
                 children: [
-                  _buildColoredShadowBox('shadow-xl shadow-blue-500', 'Blue'),
-                  _buildColoredShadowBox('shadow-xl shadow-red-500', 'Red'),
-                  _buildColoredShadowBox('shadow-xl shadow-green-500', 'Green'),
                   _buildColoredShadowBox(
-                    'shadow-xl shadow-purple-500',
+                    'shadow-xl shadow-blue-500 dark:shadow-blue-400',
+                    'Blue',
+                  ),
+                  _buildColoredShadowBox(
+                    'shadow-xl shadow-red-500 dark:shadow-red-400',
+                    'Red',
+                  ),
+                  _buildColoredShadowBox(
+                    'shadow-xl shadow-green-500 dark:shadow-green-400',
+                    'Green',
+                  ),
+                  _buildColoredShadowBox(
+                    'shadow-xl shadow-purple-500 dark:shadow-purple-400',
                     'Purple',
                   ),
                 ],
