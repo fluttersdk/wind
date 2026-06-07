@@ -186,7 +186,7 @@ Wind hides most boilerplate but never changes Flutter's "constraints down, sizes
 | **Nested flex with truncate needs `min-w-0`** | `WDiv(className: 'flex-1 flex flex-col', children: [WText(..., className: 'truncate')])` | `WDiv(className: 'flex-1 flex flex-col min-w-0', children: [WText(..., className: 'truncate')])` |
 | **Icon buttons need ≥48 dp touch target** | `WButton(child: WIcon(Icons.close_outlined))` (visual size 24 dp) | `WButton(className: 'p-3 rounded-lg', child: WIcon(Icons.close_outlined))` (48 dp tap target) |
 | **Icon-only buttons need `semanticLabel`** | `WButton(child: WIcon(Icons.close_outlined))` (nameless to screen readers / `getByRole`) | `WButton(semanticLabel: 'Close', child: WIcon(Icons.close_outlined))` |
-| **`semanticLabel` ONLY for no-text controls** | `WButton(semanticLabel: 'Save', child: WText('Save'))` (announces "Save Save" twice; `MergeSemantics` concatenates the label with the visible text) | omit it when the child has readable text; the text IS the label |
+| **`semanticLabel` overrides child text** | `WButton(semanticLabel: 'Save', child: WText('Save'))` (label set alongside visible text; the child's text is excluded from semantics) | omit it when the child has readable text; prefer it only for icon-only controls where no text is present |
 | **`semanticLabel` excludes the word "button"** | `semanticLabel: 'Close button'` (announced as "Close button button") | `semanticLabel: 'Close'` (the role appends "button") |
 
 `items-stretch` inside a `SingleChildScrollView` needs an `IntrinsicHeight` wrapper from native Flutter; Wind has no token for it. Rare; reach for it when row children inside a scroll must match heights.
@@ -309,7 +309,7 @@ Per change (every UI edit), verify all seven:
 4. **Every `child` XOR `children`** — never both. Construction-time assertion.
 5. **Every scrollable root `WDiv` has `scrollPrimary: true`** on at least one ancestor in the scroll chain so iOS status-bar-tap scrolls to top.
 6. **No Dart string interpolation inside className**, no inline `BoxDecoration` / `TextStyle` / `EdgeInsets` when a token covers it, no `Icons.*` (non-outlined) without a deliberate reason, no `WIcon` without `Icons.*_outlined`.
-7. **Every icon-only `WButton` / `WAnchor` has a `semanticLabel`** — without it the control is nameless to screen readers and `getByRole('button', { name })`. Set it ONLY when the child has no readable text: `MergeSemantics` concatenates the label with any visible text, so `semanticLabel: 'Save'` alongside `WText('Save')` announces "Save" twice. Do not put the word "button" in the label; the role appends it.
+7. **Every icon-only `WButton` / `WAnchor` has a `semanticLabel`** — without it the control is nameless to screen readers and `getByRole('button', { name })`. When set, the child subtree is excluded from semantics, so `semanticLabel` overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already carries readable text. Do not put the word "button" in the label; the role appends it.
 
 Run `dart analyze` on the touched files and visually verify the change in light AND dark mode (toggle via `context.windTheme.toggleTheme()` if there is no UI for it yet) before reporting done. Missing dark pairs only surface when the app is actually in dark mode.
 

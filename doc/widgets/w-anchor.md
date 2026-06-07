@@ -69,7 +69,7 @@ const WAnchor({
 | `isDisabled` | `bool` | `false` | When true, gestures are ignored and the `disabled:` prefix is activated. |
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., `{'active'}`). |
 | `mouseCursor` | `MouseCursor?` | `null` | Custom cursor. Defaults to click when interactive. |
-| `semanticLabel` | `String?` | `null` | Accessible name for icon-only or no-text controls. Do not set it on a control that already has visible text, or the screen reader announces the label twice (it is additive under `MergeSemantics`, not a fallback). |
+| `semanticLabel` | `String?` | `null` | Accessible name for icon-only controls. When set, excludes the child subtree from semantics so the label overrides any child text; prefer it for icon-only controls rather than controls that already expose readable text. |
 
 ## Layout Modes
 
