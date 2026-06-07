@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:fluttersdk_wind/src/utils/wind_logger.dart';
 
 void main() {
   late List<String> printLog;

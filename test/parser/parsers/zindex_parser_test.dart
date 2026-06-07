@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:fluttersdk_wind/src/parser/parsers/zindex_parser.dart';
 
 /// Helper function to create a test WindContext
 WindContext createTestContext() {
