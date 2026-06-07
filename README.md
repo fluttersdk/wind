@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Rapidly build modern Flutter apps without ever leaving your widget tree.</strong><br/>
-  A utility-first styling framework for Flutter. Tailwind-syntax <code>className</code> strings, 20 W-prefix widgets, dark mode, responsive prefixes, and three AI integration layers shipped with the package.
+  A utility-first styling framework for Flutter. Tailwind-syntax <code>className</code> strings, 22 W-prefix widgets, dark mode, responsive prefixes, and three AI integration layers shipped with the package.
 </p>
 
 <p align="center">
@@ -33,13 +33,13 @@
 flutter pub add fluttersdk_wind
 ```
 
-Wrap your app in `WindTheme`, then write `className` strings. The full setup walkthrough, all 20 widgets, every parser token, the 23 theme fields, and the three AI integration layers live at the [Getting Started guide](https://fluttersdk.com/wind/getting-started/installation).
+Wrap your app in `WindTheme`, then write `className` strings. The full setup walkthrough, all 22 widgets, every parser token, the 23 theme fields, and the three AI integration layers live at the [Getting Started guide](https://fluttersdk.com/wind/getting-started/installation).
 
 ## Why Wind?
 
 Do you like using Tailwind CSS to style your UIs? **This helps you do that in Flutter.**
 
-Wind is **not** a widget library. It is a utility-first styling engine that maps Tailwind-syntax `className` strings to optimized Flutter widget trees, with a 23-field theme, 17 parsers, and 20 W-prefix widgets. Flutter's structural styling produces six-widget pyramids for a rounded card with a hover state. The Flutter team itself acknowledged the [verbosity pain](https://github.com/flutter/flutter/issues/161345), ran an experimental Decorators feature, found mixed results, and shelved it. Wind closes that gap.
+Wind is **not** a widget library. It is a utility-first styling engine that maps Tailwind-syntax `className` strings to optimized Flutter widget trees, with a 23-field theme, 19 parsers, and 22 W-prefix widgets. Flutter's structural styling produces six-widget pyramids for a rounded card with a hover state. The Flutter team itself acknowledged the [verbosity pain](https://github.com/flutter/flutter/issues/161345), ran an experimental Decorators feature, found mixed results, and shelved it. Wind closes that gap.
 
 ```dart
 // Before: Flutter native (15 lines)
@@ -77,7 +77,7 @@ WDiv(
 | | Feature | Description |
 |:--|:--------|:------------|
 | 🎨 | **Tailwind syntax, natively** | Same utility classes you write on the web: `flex`, `p-4`, `bg-blue-500`, `rounded-lg`, `shadow-md`. Paste classes between web and Flutter; they work unmodified. |
-| 🧩 | **20 W-prefix widgets** | `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDatePicker`, `WDynamic`, and 5 `FormField` wrappers (`WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`). |
+| 🧩 | **22 W-prefix widgets** | `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDatePicker`, `WDynamic`, and 5 `FormField` wrappers (`WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`). |
 | 📱 | **Responsive prefixes** | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoints, plus custom breakpoints via the theme. |
 | 🌙 | **First-class dark mode** | `dark:` prefix with runtime toggle and automatic system-brightness sync. Every color token carries its `dark:` pair in the same className. |
 | 🎯 | **State prefixes** | `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, and any custom state. Zero `MouseRegion`, zero `setState`, zero `_isHovered` booleans. |
