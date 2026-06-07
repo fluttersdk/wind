@@ -63,9 +63,11 @@ WFormInput({
   String? Function(String?)? validator,
   void Function(String?)? onSaved,
   AutovalidateMode? autovalidateMode,
+  String? restorationId,
   bool enabled = true,
   
   // WInput props
+  FocusNode? focusNode,
   InputType type = InputType.text,
   String? placeholder,
   String? className,

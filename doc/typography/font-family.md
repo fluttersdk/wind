@@ -140,7 +140,7 @@ WText('Body text', className: 'font-body')
 ```
 
 > [!NOTE]
-> When using custom fonts (like Google Fonts), ensure the font assets are properly included in your `pubspec.yaml` or loaded via a package like `google_fonts`.
+> When using custom fonts, declare the font assets under `flutter: fonts:` in your app's `pubspec.yaml`, then reference the declared family name through `WindThemeData.fontFamilies`.
 
 <a name="related-documentation"></a>
 ## Related Documentation

@@ -52,6 +52,7 @@ const WButton({
   double loadingSize = 16,
   Color? loadingColor,
   Set<String>? states,
+  String? semanticLabel,
 })
 ```
 
@@ -71,6 +72,7 @@ const WButton({
 | `loadingSize` | `double` | `16` | Size of the default loading spinner. |
 | `loadingColor` | `Color?` | `null` | Color of the spinner. Falls back to text color, then auto-computes contrast via W3C luminance when no color is resolvable. |
 | `states` | `Set<String>?` | `null` | Custom state prefixes (e.g., `{'error'}` for `error:` classes). |
+| `semanticLabel` | `String?` | `null` | Accessible name for icon-only or no-text buttons. Do not set it on a button that already has visible text, or the screen reader announces the label twice (it is additive under `MergeSemantics`, not a fallback). |
 
 ## Layout Modes
 

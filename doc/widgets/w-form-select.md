@@ -236,4 +236,3 @@ WindThemeData(
 - [WSelect - Core Dropdown Widget](./w-select.md)
 - [WFormInput - Validated Text Input](./w-form-input.md)
 - [WFormCheckbox - Validated Checkbox](./w-form-checkbox.md)
-- [Forms in Wind](../core-concepts/forms.md)

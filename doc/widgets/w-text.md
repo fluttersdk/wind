@@ -52,7 +52,7 @@ const WText(
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `data` | `String` | `required` | The text string to display. |
+| `data` | `String` | **Required** | The text string to display. |
 | `className` | `String?` | `null` | Tailwind-like utility classes. |
 | `style` | `WindStyle?` | `null` | Explicit WindStyle object as a base. |
 | `textStyle` | `TextStyle?` | `null` | Standard Flutter TextStyle to merge (className takes precedence). |

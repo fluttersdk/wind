@@ -182,4 +182,4 @@ WindThemeData(
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [Ring Utilities](/doc/borders/ring.md) - Focus rings and outlines
+- [Ring Utilities](ring.md) - Focus rings and outlines

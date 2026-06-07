@@ -237,8 +237,23 @@ final darkTheme = myDefaultTheme.copyWith(
 | Property | Type | Default | Description |
 |:---------|:-----|:--------|:------------|
 | `ringColor` | `Color` | Tailwind blue-500 | Default ring color when not overridden by `ring-{color}` |
-| `ringWidths` | `Map<String, double>` | `0,1,2,4,8` | Ring width scale (`ring-2`, etc.) |
+| `ringWidths` | `Map<String, double>` | `0,1,2,DEFAULT=3,4,8` | Ring width scale (`ring`, `ring-2`, etc.) |
 | `ringOffsets` | `Map<String, double>` | `0,1,2,4,8` | Ring offset scale (`ring-offset-2`, etc.) |
+
+### Controller methods
+
+`WindTheme.of(context)` returns a `WindThemeController` exposing these mutators:
+
+| Method | Signature | Description |
+|:-------|:----------|:------------|
+| `toggleTheme()` | `void toggleTheme()` | Flip between light and dark, pinning `syncWithSystem` to `false`. |
+| `setTheme()` | `void setTheme(WindThemeData newData)` | Replace the active theme data wholesale. |
+| `updateTheme()` | `void updateTheme({Brightness? brightness, Map<String, MaterialColor>? colors, Map<String, int>? screens, Map<String, double>? fontSizes, Map<String, FontWeight>? fontWeights, Map<String, String>? fontFamilies, Map<String, double>? borderWidths, Map<String, double>? borderRadius, double? baseSpacingUnit})` | Partial update via `copyWith`; only the passed fields change. |
+| `resetToSystem()` | `void resetToSystem()` | Re-enable automatic OS brightness sync. |
+
+### Equality
+
+`WindThemeData` implements value-based `==` and `hashCode` (the `hashCode` covers scalar fields only), so constructing a fresh default `WindThemeData()` during a parent rebuild does not clobber a `toggleTheme()` choice already held by the controller.
 
 ### Widget-level callback
 

@@ -362,4 +362,4 @@ At `base` the row scrolls horizontally and children keep their intrinsic width. 
 
 - [Grid Layout](./grid.md)
 - [Display Modes](./display.md)
-- [Sizing](../sizing/width.md)
+- [Sizing](../layout/sizing.md)

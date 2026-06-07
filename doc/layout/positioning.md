@@ -74,7 +74,7 @@ The same scale applies to `right-*`, `bottom-*`, and `left-*`.
 
 ```dart
 WDiv(
-  className: 'relative h-48 bg-white border border-gray-200 rounded-lg',
+  className: 'relative h-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg',
   children: [
     WDiv(
       className: 'absolute bottom-4 right-4 px-3 py-2 bg-blue-600 rounded',
@@ -228,13 +228,13 @@ WDiv(
 ```dart
 // Navigation bar with an absolute badge on the icon
 WDiv(
-  className: 'flex flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-200',
+  className: 'flex flex-row items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700',
   children: [
-    WText('Inbox', className: 'text-base font-semibold text-gray-900'),
+    WText('Inbox', className: 'text-base font-semibold text-gray-900 dark:text-gray-100'),
     WDiv(
       className: 'relative',
       children: [
-        WIcon(Icons.notifications_outlined, className: 'text-gray-700'),
+        WIcon(Icons.notifications_outlined, className: 'text-gray-700 dark:text-gray-300'),
         WDiv(
           className: 'absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500',
         ),
@@ -264,5 +264,5 @@ Until these land, use `Overlay` directly or Flutter's `Stack` at the `Scaffold` 
 
 - [Flexbox & Layout](./flexbox.md)
 - [Grid Layout](./grid.md)
-- [Sizing](../sizing/width.md)
-- [Spacing](../spacing/padding.md)
+- [Sizing](../layout/sizing.md)
+- [Spacing](../layout/spacing.md)

@@ -130,5 +130,5 @@ Now you can use `bg-brand-500` or `bg-gray-1000`.
 
 - [Background Gradient](./background-gradient.md)
 - [Background Image](./background-image.md)
-- [Text Color](./text-color.md)
-- [Border Color](./border-color.md)
+- [Text Color](../typography/text-color.md)
+- [Border Width, Color, & Radius](../borders/borders.md)

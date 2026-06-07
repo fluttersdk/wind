@@ -197,4 +197,3 @@ Then use it as: `className: 'fill-brand-500'`.
 
 - [WIcon](./w-icon.md)
 - [WImage](./w-image.md)
-- [SVG Parser](../parsers/svg_parser.md)

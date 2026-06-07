@@ -20,14 +20,14 @@ WDynamic(
   json: const {
     'type': 'WDiv',
     'props': {
-      'className': 'p-6 bg-white rounded-xl shadow-sm'
+      'className': 'p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm'
     },
     'children': [
       {
         'type': 'WText',
         'props': {
           'text': 'Hello from JSON!',
-          'className': 'text-xl font-bold text-gray-800'
+          'className': 'text-xl font-bold text-gray-800 dark:text-gray-100'
         }
       },
     ],

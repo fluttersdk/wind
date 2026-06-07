@@ -67,6 +67,7 @@ const WPopover({
   bool closeOnContentTap = false,
   VoidCallback? onOpen,
   VoidCallback? onClose,
+  bool autoFlip = true,
 })
 ```
 

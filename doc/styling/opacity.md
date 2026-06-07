@@ -134,6 +134,6 @@ WDiv(className: 'opacity-glass')    // 0.85
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [Background Color](/doc/styling/background-color.md) - Using `/alpha` modifiers for backgrounds
-- [Text Color](/doc/typography/text-color.md) - Using `/alpha` modifiers for text
-- [Shadow](/doc/styling/shadow.md) - Box shadow utilities
+- [Background Color](background-color.md) - Using `/alpha` modifiers for backgrounds
+- [Text Color](../typography/text-color.md) - Using `/alpha` modifiers for text
+- [Shadow](shadow.md) - Box shadow utilities
