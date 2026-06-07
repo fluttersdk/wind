@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/parser/parsers/background_parser.dart';
+import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
 import 'package:fluttersdk_wind/src/parser/wind_context.dart';
 import 'package:fluttersdk_wind/src/parser/wind_style.dart';
 import 'package:fluttersdk_wind/src/theme/defaults/colors.dart'
@@ -104,6 +105,37 @@ void main() {
   });
 
   group('BackgroundParser.parseImage', () {
+    setUp(() {
+      WindParser.clearCache();
+    });
+
+    // Locks the non-web image-provider branch the kIsWeb guard must preserve:
+    // the flutter_test host runs as non-web, so kIsWeb is false here and a
+    // `/`-leading path must stay a FileImage while asset-style paths resolve to
+    // AssetImage. The kIsWeb-true fall-through is verified by `flutter build web`.
+    group('non-web image-provider selection (kIsWeb == false)', () {
+      test('absolute /-leading path resolves to a FileImage', () {
+        final image = BackgroundParser.parseImage(['bg-[/abs/x.png]']);
+        expect(image, isA<DecorationImage>());
+        expect(image!.image, isA<FileImage>());
+        expect((image.image as FileImage).file.path, '/abs/x.png');
+      });
+
+      test('~/-prefixed path resolves to an AssetImage', () {
+        final image = BackgroundParser.parseImage(['bg-[~/x.png]']);
+        expect(image, isA<DecorationImage>());
+        expect(image!.image, isA<AssetImage>());
+        expect((image.image as AssetImage).assetName, 'assets/x.png');
+      });
+
+      test('bare path resolves to an AssetImage', () {
+        final image = BackgroundParser.parseImage(['bg-[x.png]']);
+        expect(image, isA<DecorationImage>());
+        expect(image!.image, isA<AssetImage>());
+        expect((image.image as AssetImage).assetName, 'assets/x.png');
+      });
+    });
+
     test('returns null for empty classes', () {
       final image = BackgroundParser.parseImage([]);
       expect(image, isNull);
@@ -112,6 +144,12 @@ void main() {
     test('returns null if no image url is provided', () {
       final image = BackgroundParser.parseImage(['bg-cover', 'bg-center']);
       expect(image, isNull);
+    });
+
+    test('ignores arbitrary hex color, which is not an image source', () {
+      // bg-[#FF0000] is a color token; it must not be misread as an asset path.
+      expect(BackgroundParser.parseImage(['bg-[#FF0000]']), isNull);
+      expect(BackgroundParser.parseImage(['bg-[#abc]']), isNull);
     });
 
     test('parses network image correctly', () {

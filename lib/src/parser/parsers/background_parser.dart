@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../theme/wind_theme_data.dart';
@@ -26,9 +27,14 @@ class BackgroundParser implements WindParserInterface {
     r'^bg-(?:(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])$',
   );
 
-  /// Regex for background image classes
+  /// Regex for background image classes.
+  ///
+  /// The bare-bracket form (`bg-[path]`) is for asset paths and URLs only. A
+  /// `#`-leading value is a color literal (`bg-[#FF0000]`), handled by
+  /// [_backgroundColorRegex]; the negative lookahead keeps it out of here so
+  /// an arbitrary-hex background does not also produce a bogus `AssetImage`.
   static final _backgroundImageRegex = RegExp(
-    r'^bg-\[url\((.*?)\)\]$|^bg-\[([^\]]+)\]$',
+    r'^bg-\[url\((.*?)\)\]$|^bg-\[(?!#)([^\]]+)\]$',
   );
 
   /// Map for background fit values
@@ -245,6 +251,12 @@ class BackgroundParser implements WindParserInterface {
           imageUrlOrPath.startsWith('https://')) {
         imageProvider = NetworkImage(imageUrlOrPath);
       } else if (imageUrlOrPath.startsWith('/')) {
+        // `File` is unsupported on Flutter web and throws at runtime; an
+        // absolute filesystem path has no web meaning, so degrade gracefully by
+        // skipping the image instead of constructing `File`.
+        if (kIsWeb) {
+          return null; // coverage:ignore-line
+        }
         imageProvider = FileImage(File(imageUrlOrPath));
       } else {
         String assetPath = imageUrlOrPath;

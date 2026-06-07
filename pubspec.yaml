@@ -15,6 +15,16 @@ environment:
   sdk: ">=3.4.0 <4.0.0"
   flutter: ">=3.27.0"
 
+# Declared explicitly so pub.dev's platform detection is not silently narrowed
+# by the `dart:io` import-graph trace; wind supports every Flutter platform.
+platforms:
+  android:
+  ios:
+  web:
+  macos:
+  windows:
+  linux:
+
 dependencies:
   flutter:
     sdk: flutter
