@@ -127,4 +127,5 @@ WIcon(
 
 - [WDiv](./w-div.md): Universal container; supports `animate-*` via `className`.
 - [WIcon](./w-icon.md): Icon widget; wraps automatically in `WindAnimationWrapper` when className contains `animate-*`.
-- [Transitions and Animations](../interactivity/index.md): Full reference for `animate-*`, `duration-*`, and `ease-*` tokens.
+- [Animation](../interactivity/animation.md): Full reference for the `animate-*` tokens.
+- [Transition](../interactivity/transition.md): Reference for `transition-*`, `duration-*`, and `ease-*` tokens.
