@@ -120,7 +120,7 @@ NOT supported (silently no-op):
 | `w-[300px]` / `h-[50%]` | Arbitrary (px OR % both supported for sizing; unique among parsers) |
 | `min-w-0` / `min-w-full` / `min-w-screen` | Min width |
 | `max-w-xs` / `max-w-sm` / `max-w-md` / `max-w-lg` / `max-w-xl` / `max-w-2xl` ... `max-w-7xl` | Named max-widths (320 / 384 / 448 / 512 / 576 / 672 / ... 1280 px) |
-| `max-w-prose` | 1040 px (≈ 65ch reading width) |
+| `max-w-prose` | 512 px |
 | `max-w-full` / `max-w-screen` | No max OR viewport-wide |
 | `min-h-0` / `min-h-full` / `min-h-screen` | Min height |
 | `max-h-full` / `max-h-screen` | Max height |
