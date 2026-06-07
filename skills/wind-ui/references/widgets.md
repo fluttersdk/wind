@@ -30,6 +30,7 @@ No sub-barrels (`lib/dusk_integration.dart` and similar were removed in 1.0 alph
 - **`states: Set<String>?`** — consumer-passed state strings (e.g. `{'selected'}`). Merges with the widget's automatic states (`hover`, `focus`, `loading`, `disabled`, `checked`, `error`).
 - **`child` XOR `children`** — for widgets that accept both, the assertion fires at construction. Pass exactly one.
 - **Outlined icon convention** — when using `Icons.*`, prefer the `_outlined` variant. `Icons.settings_outlined`, not `Icons.settings`.
+- **`semanticLabel` for icon-only controls ONLY** — `WButton` / `WAnchor` accept `semanticLabel: String?`. An icon-only button (no text child) is nameless to screen readers and Playwright `getByRole('button', { name })` without it; always set it when the child carries no readable text. Never set it alongside visible text: `MergeSemantics` concatenates the label with the child's text, so `semanticLabel: 'Save'` on a `WText('Save')` button announces "Save Save". The label also must NOT contain the word "button"; the role appends it (`'Close button'` becomes "Close button button").
 - **Inline color escape hatches**:
   - `WDiv(backgroundColor: Color)` overrides any `bg-*` / `dark:bg-*`.
   - `WText(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
@@ -236,6 +237,7 @@ const WAnchor({
   bool isDisabled = false,
   Set<String>? states,
   MouseCursor? mouseCursor,           // defaults to SystemMouseCursors.click when gestures exist
+  String? semanticLabel,              // accessible name for icon-only anchors (no child text for Semantics to absorb)
 })
 ```
 
@@ -266,6 +268,7 @@ const WButton({
   double loadingSize = 16,
   Color? loadingColor,               // explicit override; otherwise contrast-detected
   Set<String>? states,
+  String? semanticLabel,             // accessible name for icon-only buttons (no child text for Semantics to absorb)
 })
 ```
 

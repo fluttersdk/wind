@@ -55,6 +55,8 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | `rounded-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3; Wind has NOT adopted the v4 rename shift |
 | `shadow-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3 |
 | `ring` (bare) | v3 default 3 px; v4 default 1 px | Wind matches v3 (default 3 px) |
+| `tracking-{tighter..widest}` | em fractions (`tracking-wide` = 0.025em, scales with font size) | Fixed px (`tighter` -2, `tight` -1, `wide` 1, `wider` 2, `widest` 4) because `TextStyle.letterSpacing` is pixel-based; NOT proportional across font sizes |
+| `max-w-prose` | `65ch`, font-relative (≈ 520-624 px depending on font) | Fixed `1040 px` (65 × 16, treating 1ch as 16 px); a divergence, not an equivalent |
 
 ---
 
@@ -154,6 +156,9 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 - `mobile:` (iOS OR Android)
 - `web:` (web build)
 
+### Order scale starts at zero
+- `order-0` — Wind supports `order-0` through `order-12`; Tailwind's default scale starts at `order-1` (`order-0` is a Wind addition)
+
 ### Main-axis size (Flutter `MainAxisSize`)
 - `axis-min` — sets `MainAxisSize.min` on the parent flex
 - `axis-max` — sets `MainAxisSize.max`
@@ -173,7 +178,7 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 
 ### Debug instrumentation
 - `debug` token — triggers `WindLogger` to log composition tree + final styles
-- `Wind.installDebugResolver()` (Dart API) — exposes 6 fields per widget to external tooling
+- `Wind.installDebugResolver()` (Dart API) — exposes 7 fields per widget to external tooling
 
 ---
 

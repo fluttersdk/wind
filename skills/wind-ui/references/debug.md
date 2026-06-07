@@ -39,7 +39,7 @@ Replaces the alpha-9 era `WindDuskIntegration.install()` and the `lib/dusk_integ
 
 ## 2. What the resolver exposes
 
-For each W-prefix widget with a non-empty `className`, the resolver returns a `Map<String, Object?>` with 6 fields:
+For each W-prefix widget with a non-empty `className`, the resolver returns a `Map<String, Object?>` with up to 7 fields (5 always present, plus `bgColor` / `textColor` when non-null):
 
 | Field | Type | Source |
 |---|---|---|
@@ -219,4 +219,4 @@ Discipline:
 
 For testing dark mode, pass `WindThemeData(brightness: Brightness.dark, syncWithSystem: false)` to `wrapWithTheme`. For testing breakpoints, set the viewport size to bracket each breakpoint.
 
-For E2E testing inside a running app (Dusk / Telescope / Playwright), `Wind.installDebugResolver()` exposes the 6-field snapshot per W-widget; consumers read via `WindDebugRegistry.current?.resolve(element)` without needing Wind as a direct dep.
+For E2E testing inside a running app (Dusk / Telescope / Playwright), `Wind.installDebugResolver()` exposes the 7-field snapshot per W-widget; consumers read via `WindDebugRegistry.current?.resolve(element)` without needing Wind as a direct dep.

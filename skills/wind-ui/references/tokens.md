@@ -189,7 +189,6 @@ Custom families via `WindThemeData.colors`: `{'primary': MaterialColor(...)}` ma
 | `border-N` | Numeric width (`border-2`, `border-4`, `border-8`) |
 | `border-[3px]` | Arbitrary width |
 | `border-t` / `border-r` / `border-b` / `border-l` | Directional default-width |
-| `border-x` / `border-y` | Axis pair |
 | `border-t-N` / `border-r-N` / `border-b-N` / `border-l-N` | Directional with width |
 | `border-{family}-{shade}` / `border-[#hex]` / `border-{family}-{shade}/{N}` | Color (with `dark:` peer required) |
 | `border-solid` / `border-none` | Border style (only these two wired; `border-dashed` / `border-dotted` recognised but not rendered) |
@@ -460,6 +459,7 @@ If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it 
 - `top-[50%]` and any `%` for positioning
 
 **Border:**
+- `border-x` / `border-y` (axis shortcuts NOT wired; only `border-t` / `border-r` / `border-b` / `border-l` directional, plus bare `border` uniform). Set the two physical sides explicitly.
 - `border-dashed` / `border-dotted` (parser recognises, no visual)
 - `divide-x-N` / `divide-y-N` (use explicit spacing instead)
 

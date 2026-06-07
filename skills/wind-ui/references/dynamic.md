@@ -243,7 +243,7 @@ Custom builders BYPASS the whitelist entirely. If you register `MyChart`, it ren
 
 ### Custom icons
 
-Override or extend the 25 built-in icon names:
+Override or extend the 24 built-in icon names:
 
 ```dart
 WDynamic(
@@ -260,7 +260,7 @@ In JSON:
 {"type": "WIcon", "props": {"icon": "app-logo", "className": "w-8 h-8 text-blue-500"}}
 ```
 
-Built-in icon names (default fallback): `star`, `home`, `person`, `check`, `close`, `settings`, `search`, `add`, `edit`, `delete`, `favorite`, `favorite_outline`, `mail`, `menu`, `info`, `warning`, `error`, `help`, `code`, `chevron_left`, `chevron_right`, `arrow_back`, `arrow_forward`, plus 2 more. Unknown names fall back to `Icons.help_outline`.
+Built-in icon names (default fallback, 24 total): `star`, `star_outline`, `home`, `person`, `check`, `close`, `settings`, `search`, `add`, `edit`, `delete`, `favorite`, `favorite_outline`, `mail`, `menu`, `info`, `warning`, `error`, `help`, `code`, `chevron_left`, `chevron_right`, `arrow_back`, `arrow_forward`. Names are matched case-insensitively (lowercased). Unknown names fall back to `Icons.help_outline`.
 
 The `customIcons:` map merges with the built-in defaults; user keys override.
 
