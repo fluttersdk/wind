@@ -189,14 +189,20 @@ class WDynamicRenderer {
       return const SizedBox.shrink();
     }
 
-    // Extract type and props
-    final String type = safeJson['type'] ?? 'Unknown';
+    // Extract type and props. The values come from untrusted JSON, so coerce
+    // defensively: a non-string `type` falls back to 'Unknown' (which the
+    // whitelist then rejects) rather than throwing an implicit-downcast
+    // TypeError out of build().
+    final String type =
+        safeJson['type'] is String ? safeJson['type'] as String : 'Unknown';
     final dynamic propsRaw = safeJson['props'];
     final Map<String, dynamic> props =
         propsRaw is Map ? _deepConvertMap(propsRaw) : <String, dynamic>{};
 
-    // Extract children
-    final List<dynamic> childrenRaw = safeJson['children'] ?? [];
+    // Extract children. A non-list `children` is treated as no children
+    // instead of throwing on the implicit List cast.
+    final List<dynamic> childrenRaw =
+        safeJson['children'] is List ? safeJson['children'] as List : const [];
     final List<Widget> children = childrenRaw
         .map((child) => _buildRecursive(child, depth: depth + 1))
         .toList();
