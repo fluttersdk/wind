@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/parser/parsers/sizing_parser.dart';
 import 'package:fluttersdk_wind/src/parser/wind_context.dart';
+import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
 import 'package:fluttersdk_wind/src/parser/wind_style.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
 
@@ -36,6 +37,7 @@ void main() {
     late WindContext context;
 
     setUp(() {
+      WindParser.clearCache();
       parser = const SizingParser();
       context = createTestContext();
     });
@@ -88,6 +90,15 @@ void main() {
         // 2xl = 672px
         final styles2xl = parser.parse(WindStyle(), ['max-w-2xl'], context);
         expect(styles2xl.constraints?.maxWidth, 672);
+      });
+
+      test(
+          'max-w-prose resolves to 512px fixed, not Tailwind font-relative 65ch',
+          () {
+        // Deliberate fixed-px divergence from Tailwind: 512px matches max-w-lg
+        // and avoids font-size dependency; Tailwind's 65ch ≈ 1040px at 16px/ch.
+        final styles = parser.parse(WindStyle(), ['max-w-prose'], context);
+        expect(styles.constraints?.maxWidth, 512);
       });
 
       test('parses min-height classes correctly', () {
