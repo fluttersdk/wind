@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'defaults/border_radius.dart' as default_border_radius;
@@ -137,9 +138,6 @@ class WindThemeData {
   /// Defaults to 4.0.
   final double baseSpacingUnit;
 
-  /// The default color for ring utility.
-  ///
-  /// Defaults to Tailwind's blue-500 (#3B82F6).
   /// The default color for ring utility.
   ///
   /// Defaults to Tailwind's blue-500 (#3B82F6).
@@ -482,4 +480,49 @@ class WindThemeData {
       canvasColor: Colors.transparent,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is WindThemeData &&
+        other.brightness == brightness &&
+        other.applyDefaultFontFamily == applyDefaultFontFamily &&
+        other.syncWithSystem == syncWithSystem &&
+        other.baseSpacingUnit == baseSpacingUnit &&
+        other.ringColor == ringColor &&
+        mapEquals(other.colors, colors) &&
+        mapEquals(other.screens, screens) &&
+        mapEquals(other.containers, containers) &&
+        mapEquals(other.fontSizes, fontSizes) &&
+        mapEquals(other.fontWeights, fontWeights) &&
+        mapEquals(other.tracking, tracking) &&
+        mapEquals(other.leading, leading) &&
+        mapEquals(other.borderWidths, borderWidths) &&
+        mapEquals(other.borderRadius, borderRadius) &&
+        mapEquals(other.fontFamilies, fontFamilies) &&
+        mapEquals(other.ringWidths, ringWidths) &&
+        mapEquals(other.ringOffsets, ringOffsets) &&
+        mapEquals(other.opacities, opacities) &&
+        mapEquals(other.zIndices, zIndices) &&
+        mapEquals(other.shadows, shadows) &&
+        mapEquals(other.transitionDurations, transitionDurations) &&
+        mapEquals(other.transitionCurves, transitionCurves) &&
+        mapEquals(other.animations, animations);
+  }
+
+  // hashCode is composed from the scalar fields only. The map fields are
+  // rebuilt (merged with defaults) on every construction, so hashing them by
+  // identity would break the equal-objects-share-a-hashCode contract that the
+  // value-based `operator ==` establishes. A scalar-only hash stays consistent
+  // with `==` (equal objects always agree on every scalar) at the cost of more
+  // collisions between themes that differ only in their maps, which is fine.
+  @override
+  int get hashCode => Object.hash(
+        brightness,
+        applyDefaultFontFamily,
+        syncWithSystem,
+        baseSpacingUnit,
+        ringColor,
+      );
 }

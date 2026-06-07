@@ -155,4 +155,40 @@ void main() {
       expect(theme.getSpacing('full'), double.infinity);
     });
   });
+
+  group('WindThemeData value equality', () {
+    test('two default instances compare equal and share a hashCode', () {
+      // The equality guard in WindThemeController.setTheme and
+      // _WindThemeState.didUpdateWidget is load-bearing: identity-only
+      // equality would let a fresh default WindThemeData() on a parent
+      // rebuild clobber a prior toggleTheme() choice.
+      final a = WindThemeData();
+      final b = WindThemeData();
+
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('instances differing by a scalar field are not equal', () {
+      final light = WindThemeData();
+      final dark = WindThemeData(brightness: Brightness.dark);
+
+      expect(light, isNot(equals(dark)));
+    });
+
+    test('instances differing by baseSpacingUnit are not equal', () {
+      final a = WindThemeData();
+      final b = WindThemeData(baseSpacingUnit: 8);
+
+      expect(a, isNot(equals(b)));
+    });
+
+    test('copyWith that changes nothing stays equal', () {
+      final a = WindThemeData();
+      final b = a.copyWith();
+
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+  });
 }
