@@ -44,6 +44,12 @@ import 'w_text.dart';
 ///   ],
 /// )
 /// ```
+///
+/// See also:
+///
+///  * [WText], which renders typography inside a `WDiv` container.
+///  * [WAnchor], which `WDiv` auto-wraps into when `hover:` or `focus:` classes are present.
+///  * [WindParser], which resolves the [className] string into a [WindStyle] at runtime.
 class WDiv extends StatelessWidget {
   /// The utility class string defining the style and layout.
   ///

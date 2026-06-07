@@ -29,6 +29,11 @@ import '../utils/wind_logger.dart';
 ///   className: 'text-xl text-blue-500 font-bold text-center p-4 uppercase',
 /// )
 /// ```
+///
+/// See also:
+///
+///  * [WDiv], which is the primary container for composing layouts around `WText` nodes.
+///  * [WAnchor], which wraps `WText` when interactive states (hover, focus) are needed.
 class WText extends StatelessWidget {
   /// The text string to display.
   final String data;

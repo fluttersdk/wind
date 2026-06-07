@@ -65,6 +65,11 @@ enum InputType {
 ///   onSubmitted: (value) => _focusNext(),
 /// )
 /// ```
+///
+/// See also:
+///
+///  * [WFormInput], which wraps `WInput` with form validation and `FormField` integration.
+///  * [WButton], which is the typical submit trigger paired with `WInput` in a form.
 class WInput extends StatefulWidget {
   /// The controlled value of the input.
   ///

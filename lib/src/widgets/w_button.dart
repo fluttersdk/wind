@@ -39,6 +39,11 @@ import 'w_text.dart';
 ///   child: Text('Submit'),
 /// )
 /// ```
+///
+/// See also:
+///
+///  * [WAnchor], which `WButton` delegates all state management and interaction handling to.
+///  * [WInput], which pairs with `WButton` in form submission flows.
 class WButton extends StatelessWidget {
   /// The button content when not loading.
   final Widget child;
