@@ -515,6 +515,33 @@ void main() {
         expect(tapped, isTrue);
       });
 
+      testWidgets(
+          'disabled anchor with semanticLabel announces disabled and has no tap action',
+          (tester) async {
+        // Branch: semanticLabel != null AND isDisabled. The node keeps the
+        // explicit label but must announce as disabled and expose no tap
+        // SemanticsAction, since onTap is null-gated when disabled.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WAnchor(
+              isDisabled: true,
+              onTap: null,
+              semanticLabel: 'Save',
+              child: Text('Save'),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+        expect(node.flagsCollection.isButton, isTrue);
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
+        expect(node.label, 'Save');
+        expect(
+          node.getSemanticsData().hasAction(SemanticsAction.tap),
+          isFalse,
+        );
+      });
+
       testWidgets('label resolves from child text when semanticLabel is null',
           (tester) async {
         // Branch: semanticLabel == null keeps the MergeSemantics path so the

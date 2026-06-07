@@ -79,6 +79,12 @@ class WAnchor extends StatefulWidget {
   /// (an icon-only anchor, for example), set this so screen readers and
   /// Playwright `getByRole('button', { name: ... })` can resolve the control.
   /// When null, the label falls back to the merged descendant text.
+  ///
+  /// Setting this excludes the entire descendant subtree from semantics
+  /// (`excludeSemantics: true`), so the label overrides any child text rather
+  /// than concatenating with it. Do not set it on an anchor that wraps its own
+  /// interactive descendant (a nested field or sub-button): that descendant's
+  /// Semantics node would be suppressed.
   final String? semanticLabel;
 
   /// Creates a `WAnchor` widget.
