@@ -71,7 +71,7 @@ jobs:
         run: |
           dart pub global activate pana
           dart pub global run pana --json --no-warning . > pana.json
-          python3 -c "import json,sys; tags=json.load(open('pana.json')).get('tags',[]); sys.exit(0 if 'is:wasm-ready' in tags else 'is:wasm-ready missing from pana tags')"
+          python3 -c "import json, sys; tags = json.load(open('pana.json')).get('tags', []); ok = 'is:wasm-ready' in tags; print('OK: is:wasm-ready present' if ok else 'FAIL: is:wasm-ready missing; tags=' + repr(tags)); sys.exit(0 if ok else 1)"
 
   changes:
     name: Detect demo-affecting changes
