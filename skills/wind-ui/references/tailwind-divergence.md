@@ -334,8 +334,10 @@ These canonical Tailwind classes are silently ignored by wind (unknown tokens ar
 | `-space-x-*` / `-space-y-*` | unsupported (negative gap; no overlap primitive) | none |
 | `self-*` | supported (alias of `align-self-*`) | `self-center` etc. work directly |
 | `shrink-0` | supported (preserves intrinsic size, no Flexible wrap) | works directly |
+| `flex-none` | supported as CSS `flex: 0 0 auto` (no grow AND no shrink; keeps intrinsic size) | works directly |
+| `basis-*` | supported as a MAIN-axis initial size (`basis-1/2`, `basis-full`, `basis-[Npx]`); ignores grow/shrink interplay | works directly |
 | `text-7xl` / `8xl` / `9xl` | silently capped (max is `text-6xl`) | `text-6xl` or arbitrary `text-[96px]` |
 
-Reminder: a wind page needs a Material ancestor (a `Scaffold`) for `WText` to inherit a default text style; without one, Flutter renders the yellow-underline fallback. Real apps always have a `Scaffold`, so this only bites bare `WDiv > WText` route bodies.
+Note: `WText` is self-contained regarding its baseline rendering. When no Material/Scaffold ancestor supplies a `DefaultTextStyle` color, `WText` applies a brightness-aware fallback (`Colors.white` on dark platforms, `Colors.black` on light, read from `MediaQuery.platformBrightness`) instead of Flutter's debug yellow-underline; it also injects a `Directionality(ltr)` wrapper when no `Directionality` is inherited. Explicit `text-*` className, `foregroundColor`, and `textStyle` props override the fallback and are unaffected.
 
 State-shadowing edge: a disabled outer `WAnchor` does NOT suppress a `hover:` class that a nested `WDiv` carries on itself. `WDiv` auto-wraps in its own non-disabled `WAnchor` whose state provider shadows the ancestor's `isDisabled`, so the inner `hover:` still fires. This is an edge case (a disabled control wrapping a separately-hover-styled child); style the disabled state on the same element that owns the `hover:` class, or drive `disabled:` on the inner `WDiv` directly.

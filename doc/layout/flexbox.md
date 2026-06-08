@@ -208,6 +208,8 @@ Controls how children are distributed along the **cross axis** (Vertical for `ro
 WDiv(className: 'flex items-center h-20')
 ```
 
+> **Column default — smart cross-axis stretch.** A `flex flex-col` with no explicit `items-*` token stretches each `WDiv` child that does not control its own width to the column width, matching CSS `align-items: stretch`. Left untouched: children with an explicit width (`w-*` / `min-w-*` / `max-w-*` / `w-full`, in any state/breakpoint variant), children that self-wrap in `Expanded`/`Flexible` (`grow`, `flex-grow`, `flex-auto`, `flex-initial`, `shrink`, `flex-shrink`, `flex-N`), absolute children, and non-`WDiv` children. `shrink-0` / `flex-none` children still stretch on the cross axis (`flex-shrink` is main-axis only, matching CSS). Add any `items-*` token (e.g. `items-start`) to turn this off and let children size to content. Rows are never auto-stretched on the cross axis. When the column itself sits in an unbounded-width context (a bare `Row` slot, `UnconstrainedBox`, horizontal scroll), the stretch safely falls back to content-sized children instead of forcing an infinite width.
+
 <a name="align-content"></a>
 ## Align Content
 
@@ -257,11 +259,14 @@ Control how individual children resize to fill available space.
 | Class | Description |
 |:------|:------------|
 | `flex-1` | Allow child to grow and fill available space (`Expanded`). |
-| `flex-grow` | Alias for `flex-1`. |
+| `flex-grow` / `grow` | Alias for `flex-1` (Tailwind v3 and v4 names). |
+| `grow-0` | Do not grow — child keeps its intrinsic main-axis size. |
 | `flex-{n}` | Specific flex factor (e.g., `flex-2`). |
 | `shrink` | Allow child to shrink if needed (`FlexFit.loose`). |
 | `shrink-0` | Preserve intrinsic size — no Flexible wrapper, child keeps its natural dimensions. |
-| `flex-none` | Do not grow or shrink. |
+| `flex-none` | CSS `flex: 0 0 auto`: do not grow AND do not shrink. Keeps intrinsic size (same no-shrink path as `shrink-0`). |
+| `basis-1/2` / `basis-1/3` / `basis-1/4` / `basis-full` | Fractional flex-basis: initial main-axis size (width in a row, height in a column). Approximates CSS `flex-basis`; ignores grow/shrink interplay. |
+| `basis-[Npx]` | Fixed flex-basis: a fixed main-axis size in logical pixels (e.g., `basis-[120px]`). |
 
 <x-preview path="layout/flex_grow" size="md" source="example/lib/pages/layout/flex_grow.dart"></x-preview>
 

@@ -154,24 +154,42 @@ class WText extends StatelessWidget {
   ///
   /// Constructs the Text or SelectableText widget and applies
   /// all typography-related styles (color, font, align, transform).
+  ///
+  /// Guarantees two baseline requirements when no Material/Scaffold ancestor
+  /// is present so Flutter's debug yellow-underline fallback never appears:
+  ///   1. A non-null text color (brightness-aware fallback: [Colors.white] on
+  ///      dark platforms, [Colors.black] on light).
+  ///   2. A [Directionality] ancestor (defaults to [TextDirection.ltr]).
   Widget _buildCoreContent({
     required BuildContext context,
     required WindStyle styles,
     required WindLogger logger,
   }) {
-    // A. Build TextStyle
-    // Use the helper from WindStyle. This style will contain `null` for
-    // properties not set in the className.
+    // A. Build TextStyle from className tokens.
+    // This style contains `null` for properties not set in the className.
     final TextStyle windTextStyle = styles.toTextStyle();
 
-    // Merge with explicit `textStyle` prop.
-    // Note: We do NOT manually merge with DefaultTextStyle here.
-    // The `Text` widget does that automatically for null properties.
+    // Merge with the explicit `textStyle` prop so callers can supply
+    // additional Flutter-native properties (e.g. letterSpacing).
     TextStyle finalTextStyle = windTextStyle.merge(textStyle);
 
     // Inline foregroundColor wins over any parsed text-* / dark:text-*.
     if (foregroundColor != null) {
       finalTextStyle = finalTextStyle.copyWith(color: foregroundColor);
+    }
+
+    // Baseline color guarantee: when no color was resolved from className,
+    // foregroundColor, or textStyle, apply a neutral fallback so the widget
+    // does not inherit Flutter's debug yellow-underline appearance when there
+    // is no Material ancestor above us. The fallback follows the ambient
+    // platform brightness (white on dark, black on light) so bare text stays
+    // legible in both modes. Explicitly supplied colors always win.
+    if (finalTextStyle.color == null) {
+      final isDark =
+          MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
+      finalTextStyle = finalTextStyle.copyWith(
+        color: isDark ? Colors.white : Colors.black,
+      );
     }
 
     // B. Apply Text Transformation (uppercase, lowercase)
@@ -185,9 +203,10 @@ class WText extends StatelessWidget {
     final bool isSelectable =
         selectable || (className?.contains('selectable') ?? false);
 
+    Widget textWidget;
     if (isSelectable) {
       logger.setCoreWidget("SelectableText('$transformedData')");
-      return SelectableText(
+      textWidget = SelectableText(
         transformedData,
         style: finalTextStyle,
         textAlign: styles.textAlign,
@@ -196,7 +215,7 @@ class WText extends StatelessWidget {
       );
     } else {
       logger.setCoreWidget("Text('$transformedData')");
-      return Text(
+      textWidget = Text(
         transformedData,
         style: finalTextStyle,
         textAlign: styles.textAlign,
@@ -205,6 +224,18 @@ class WText extends StatelessWidget {
         softWrap: styles.softWrap,
       );
     }
+
+    // D. Directionality guarantee: provide a default TextDirection.ltr when
+    // no ancestor supplies one, so bare usages outside MaterialApp/WidgetsApp
+    // do not throw "No Directionality widget found".
+    if (Directionality.maybeOf(context) == null) {
+      return Directionality(
+        textDirection: TextDirection.ltr,
+        child: textWidget,
+      );
+    }
+
+    return textWidget;
   }
 
   /// (HELPER 2) Composition Pipeline

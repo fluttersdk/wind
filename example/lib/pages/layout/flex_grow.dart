@@ -64,8 +64,85 @@ class FlexGrowExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
+          title: 'grow vs grow-0',
+          description:
+              'grow is an alias for flex-1 (Expanded). grow-0 keeps the item at its natural size and refuses to expand.',
+          child: WDiv(
+            className: '''
+              flex gap-2 p-2 rounded-lg
+              bg-white dark:bg-slate-800
+            ''',
+            children: const [
+              _FactorBox(
+                label: 'grow-0\n(stays fixed)',
+                factorClass: 'grow-0 w-20',
+                color: 'bg-slate-400 dark:bg-slate-600',
+              ),
+              _FactorBox(
+                label: 'grow\n(fills rest)',
+                factorClass: 'grow',
+                color: 'bg-green-500 dark:bg-green-600',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'basis-* (flex-basis)',
+          description:
+              'basis-* sets the initial main-axis size before grow/shrink apply. basis-1/2 takes half, basis-1/3 takes a third, basis-full spans the whole axis.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _BasisRow(
+                left: 'basis-1/3',
+                leftClass: 'basis-1/3',
+                leftColor: 'bg-violet-400 dark:bg-violet-600',
+                right: 'basis-2/3 (remainder)',
+                rightClass: 'grow',
+                rightColor: 'bg-violet-200 dark:bg-violet-800',
+              ),
+              _BasisRow(
+                left: 'basis-1/2',
+                leftClass: 'basis-1/2',
+                leftColor: 'bg-indigo-400 dark:bg-indigo-600',
+                right: 'basis-1/2',
+                rightClass: 'basis-1/2',
+                rightColor: 'bg-indigo-200 dark:bg-indigo-800',
+              ),
+              _BasisRow(
+                left: 'basis-[80px]',
+                leftClass: 'basis-[80px]',
+                leftColor: 'bg-sky-400 dark:bg-sky-600',
+                right: 'grow (fills rest)',
+                rightClass: 'grow',
+                rightColor: 'bg-sky-200 dark:bg-sky-800',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Smart Column Stretch',
+          description:
+              'A flex flex-col stretches each WDiv child to the column width by default (no w-full needed). Add items-start to shrink children to content size.',
+          child: WDiv(
+            className: 'flex flex-col gap-4',
+            children: const [
+              _StretchDemo(
+                label: 'Default: children fill column width',
+                containerClass: 'flex flex-col gap-2',
+                showItemsStart: false,
+              ),
+              _StretchDemo(
+                label: 'items-start: children size to content',
+                containerClass: 'flex flex-col gap-2 items-start',
+                showItemsStart: true,
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
           title: 'Quick Reference',
-          description: 'Five tokens cover the bulk of flex sizing scenarios.',
+          description: 'Eight tokens cover the bulk of flex sizing scenarios.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -73,11 +150,16 @@ class FlexGrowExamplePage extends StatelessWidget {
               _RefRow(
                   cls: 'flex-{n}',
                   desc: 'Specific flex factor (n is any integer)'),
-              _RefRow(cls: 'flex-grow', desc: 'Alias of flex-1'),
+              _RefRow(cls: 'flex-grow / grow', desc: 'Alias of flex-1'),
+              _RefRow(cls: 'grow-0', desc: 'Keep intrinsic size, no growing'),
               _RefRow(cls: 'shrink', desc: 'Allow shrinking (FlexFit.loose)'),
               _RefRow(
                   cls: 'shrink-0', desc: 'Preserve intrinsic size (no wrap)'),
               _RefRow(cls: 'flex-none', desc: 'Do not grow or shrink'),
+              _RefRow(
+                  cls: 'basis-1/2 / basis-1/3 / basis-full',
+                  desc: 'Fractional flex-basis'),
+              _RefRow(cls: 'basis-[Npx]', desc: 'Fixed flex-basis in pixels'),
             ],
           ),
         ),
@@ -159,6 +241,102 @@ class _RefRow extends StatelessWidget {
           desc,
           className:
               'flex-1 text-sm text-slate-600 dark:text-slate-300 text-right',
+        ),
+      ],
+    );
+  }
+}
+
+class _BasisRow extends StatelessWidget {
+  final String left;
+  final String leftClass;
+  final String leftColor;
+  final String right;
+  final String rightClass;
+  final String rightColor;
+
+  const _BasisRow({
+    required this.left,
+    required this.leftClass,
+    required this.leftColor,
+    required this.right,
+    required this.rightClass,
+    required this.rightColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex gap-1',
+      children: [
+        WDiv(
+          className:
+              '$leftClass $leftColor h-14 rounded flex items-center justify-center',
+          child: WText(
+            left,
+            className: 'font-mono text-xs font-bold text-white text-center',
+          ),
+        ),
+        WDiv(
+          className:
+              '$rightClass $rightColor h-14 rounded flex items-center justify-center',
+          child: WText(
+            right,
+            className: 'font-mono text-xs font-bold text-white/80 text-center',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StretchDemo extends StatelessWidget {
+  final String label;
+  final String containerClass;
+  final bool showItemsStart;
+
+  const _StretchDemo({
+    required this.label,
+    required this.containerClass,
+    required this.showItemsStart,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-col gap-2',
+      children: [
+        WText(
+          label,
+          className: 'text-xs font-mono text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className: '''
+            $containerClass p-2 rounded-lg
+            bg-slate-100 dark:bg-slate-700
+          ''',
+          children: [
+            WDiv(
+              className: '''
+                px-3 py-2 rounded
+                bg-orange-400 dark:bg-orange-600
+              ''',
+              child: WText(
+                'Nav bar',
+                className: 'text-white font-semibold text-sm',
+              ),
+            ),
+            WDiv(
+              className: '''
+                px-3 py-2 rounded
+                bg-orange-300 dark:bg-orange-500
+              ''',
+              child: WText(
+                'Content card',
+                className: 'text-white text-sm',
+              ),
+            ),
+          ],
         ),
       ],
     );

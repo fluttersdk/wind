@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/parser/parsers/flexbox_grid_parser.dart';
+import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
 import 'package:fluttersdk_wind/src/parser/wind_context.dart';
 import 'package:fluttersdk_wind/src/parser/wind_style.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
@@ -169,12 +170,13 @@ void main() {
         expect(styles.textBaseline, TextBaseline.alphabetic);
       });
 
-      test('shrink contributes FlexFit.loose; shrink-0 contributes none', () {
-        // Only `shrink` maps to a flexFit; shrink-0 sets none, so the resolved
-        // flexFit is loose. shrink-0's no-shrink effect lives in the widget.
+      test('shrink-0 after shrink wins last-class-wins (flexFit null)', () {
+        // `shrink-0` is a no-shrink reset: when it appears after `shrink` it
+        // claims the flexFit slot with a null (intrinsic) value, so the later
+        // token wins. shrink-0's no-shrink effect lives in the widget guard.
         final styles =
             parser.parse(WindStyle(), ['shrink', 'shrink-0'], context);
-        expect(styles.flexFit, FlexFit.loose);
+        expect(styles.flexFit, isNull);
       });
 
       test('returns unchanged styles when classes is null', () {
@@ -203,14 +205,14 @@ void main() {
         expect(styles.textBaseline, TextBaseline.alphabetic);
       });
 
-      test('shrink contributes FlexFit.loose regardless of shrink-0 position',
-          () {
-        // shrink-0 sets no flexFit; `shrink` is the only token that does, so
-        // both orders resolve to FlexFit.loose at the parser level. The
-        // no-shrink effect of shrink-0 is applied by WDiv._hasShrinkZero.
+      test('shrink / shrink-0 resolve flexFit by last-class-wins position', () {
+        // `shrink` -> FlexFit.loose, `shrink-0` -> no flexFit (intrinsic). The
+        // rightmost token wins: the no-shrink effect of shrink-0 is also
+        // applied by WDiv._hasShrinkZero, but the parser slot must reflect the
+        // last class so an earlier `shrink` cannot leak through.
         expect(
           parser.parse(WindStyle(), ['shrink', 'shrink-0'], context).flexFit,
-          FlexFit.loose,
+          isNull,
         );
         expect(
           parser.parse(WindStyle(), ['shrink-0', 'shrink'], context).flexFit,
@@ -318,6 +320,82 @@ void main() {
         expect(parser.canParse('text-center'), isFalse);
         expect(parser.canParse('bg-red-500'), isFalse);
         expect(parser.canParse('p-4'), isFalse);
+      });
+
+      test('returns true for grow / grow-0 / basis classes', () {
+        expect(parser.canParse('grow'), isTrue);
+        expect(parser.canParse('grow-0'), isTrue);
+        expect(parser.canParse('basis-1/2'), isTrue);
+        expect(parser.canParse('basis-full'), isTrue);
+        expect(parser.canParse('basis-[120px]'), isTrue);
+      });
+    });
+
+    group('grow / grow-0 tokens', () {
+      setUp(WindParser.clearCache);
+
+      test('grow maps to flex: 1 (same as flex-grow)', () {
+        final styles = parser.parse(WindStyle(), ['grow'], context);
+        expect(styles.flex, 1);
+      });
+
+      test('grow-0 sets no flex (no grow)', () {
+        final styles = parser.parse(WindStyle(), ['grow-0'], context);
+        expect(styles.flex, isNull);
+      });
+
+      test('grow and flex-grow resolve identically', () {
+        final growStyles = parser.parse(WindStyle(), ['grow'], context);
+        final flexGrowStyles =
+            parser.parse(WindStyle(), ['flex-grow'], context);
+        expect(growStyles.flex, flexGrowStyles.flex);
+      });
+    });
+
+    group('flex-none means flex: 0 0 auto (no shrink)', () {
+      setUp(WindParser.clearCache);
+
+      test('flex-none sets no flexFit (must not shrink)', () {
+        // CSS flex-none == flex: 0 0 auto: no grow AND no shrink. A shrinking
+        // FlexFit.loose would let the child shrink, contradicting flex-none.
+        final styles = parser.parse(WindStyle(), ['flex-none'], context);
+        expect(styles.flexFit, isNull);
+      });
+
+      test('flex-none sets no flex (no grow)', () {
+        final styles = parser.parse(WindStyle(), ['flex-none'], context);
+        expect(styles.flex, isNull);
+      });
+    });
+
+    group('basis-* maps to main-axis basis', () {
+      setUp(WindParser.clearCache);
+
+      test('basis-1/2 sets basisFactor 0.5', () {
+        final styles = parser.parse(WindStyle(), ['basis-1/2'], context);
+        expect(styles.basisFactor, 0.5);
+        expect(styles.basisSize, isNull);
+      });
+
+      test('basis-1/3 sets basisFactor ~0.333', () {
+        final styles = parser.parse(WindStyle(), ['basis-1/3'], context);
+        expect(styles.basisFactor, closeTo(1 / 3, 1e-9));
+      });
+
+      test('basis-1/4 sets basisFactor 0.25', () {
+        final styles = parser.parse(WindStyle(), ['basis-1/4'], context);
+        expect(styles.basisFactor, 0.25);
+      });
+
+      test('basis-full sets basisFactor 1.0', () {
+        final styles = parser.parse(WindStyle(), ['basis-full'], context);
+        expect(styles.basisFactor, 1.0);
+      });
+
+      test('basis-[120px] sets basisSize 120', () {
+        final styles = parser.parse(WindStyle(), ['basis-[120px]'], context);
+        expect(styles.basisSize, 120.0);
+        expect(styles.basisFactor, isNull);
       });
     });
   });
