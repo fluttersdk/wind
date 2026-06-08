@@ -51,7 +51,7 @@ For each W-prefix widget with a non-empty `className`, the resolver returns a `M
 | `bgColor` | `String?` | Resolved background color as uppercase hex RGB (`#3B82F6`); present only when non-null |
 | `textColor` | `String?` | Resolved text color as uppercase hex RGB; present only when non-null |
 
-Non-Wind elements (a Material `Container`, a `ListTile`) return an empty map. The resolver walks `Element` (which IS-A `BuildContext`) and parses the className through `WindParser.parse(className, element)`.
+Non-Wind elements (a Material `Container`, a `ListTile`) return an empty map. So do W-widgets that have no `className` field (`WAnchor`, `WBreakpoint`, `WindAnimationWrapper`, `WKeyboardActions`): the resolver skips them safely instead of throwing, so a bare `WAnchor` in the tree never aborts a dusk / telescope snapshot. The resolver walks `Element` (which IS-A `BuildContext`) and parses the className through `WindParser.parse(className, element)`.
 
 ---
 

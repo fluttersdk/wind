@@ -242,6 +242,8 @@ Default behavior (`syncWithSystem: true`):
 - Listens to `WidgetsBindingObserver.didChangePlatformBrightness` and updates controller when OS changes.
 - `onThemeChanged` callback fires for user-initiated changes only (system changes are flagged internally).
 
+GOTCHA: because `syncWithSystem` is `true` by default, a declarative `WindThemeData(brightness: Brightness.dark)` is OVERRIDDEN on mount by the OS brightness, so `dark:` classes stay inert on a light OS. To force a fixed brightness, pass `WindThemeData(brightness: Brightness.dark, syncWithSystem: false)`, or drive it at runtime via `controller.toggleTheme()` / `setTheme(...)`.
+
 Manual toggle:
 
 ```dart

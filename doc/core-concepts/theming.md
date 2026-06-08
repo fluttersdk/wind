@@ -206,10 +206,12 @@ final darkTheme = myDefaultTheme.copyWith(
 
 | Property | Type | Default | Description |
 |:---------|:-----|:--------|:------------|
-| `brightness` | `Brightness` | `light` | Initial mode (`light` or `dark`) |
+| `brightness` | `Brightness` | `light` | Initial mode (`light` or `dark`). Overridden on mount by the OS brightness while `syncWithSystem` is `true` (see note below) |
 | `syncWithSystem` | `bool` | `true` | Auto-follow OS brightness until the user calls `toggleTheme()` |
 | `applyDefaultFontFamily` | `bool` | `true` | Inject Wind's default font family as a global `DefaultTextStyle` |
 | `baseSpacingUnit` | `double` | `4.0` | Multiplier for numeric spacing (`p-4` → `4 * 4 = 16px`) |
+
+> Setting `brightness: Brightness.dark` alone has no effect while `syncWithSystem` is `true` (the default): the controller reads the OS brightness on mount and overrides it, so `dark:` classes stay inactive on a light OS. To pin a fixed mode, pass `WindThemeData(brightness: Brightness.dark, syncWithSystem: false)`, or switch at runtime with `controller.toggleTheme()` / `setTheme(...)`.
 
 ### Tokens
 

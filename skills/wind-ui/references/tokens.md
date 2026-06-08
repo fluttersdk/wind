@@ -69,7 +69,7 @@ Inline color escape hatches that bypass the cache key:
 | `justify-start` / `-end` / `-center` / `-between` / `-around` / `-evenly` | `MainAxisAlignment` |
 | `items-start` / `-end` / `-center` / `-baseline` / `-stretch` | `CrossAxisAlignment` |
 | `align-content-start` / `-end` / `-center` / `-between` / `-around` / `-evenly` / `-stretch` | Wrap-only, `WrapAlignment` for runs |
-| `align-self-start` / `-end` / `-center` / `-stretch` / `-auto` | Per-child cross-axis override |
+| `align-self-start` / `-end` / `-center` / `-stretch` / `-auto` (or the `self-*` shorthand) | Per-child cross-axis override |
 | `axis-min` / `axis-max` | Wind-only: `MainAxisSize.min` / `.max` on the parent flex |
 | `grid-cols-N` | N columns (any integer); renders as `Wrap` with computed column widths |
 | `order-0` through `order-12` | Child order index |
