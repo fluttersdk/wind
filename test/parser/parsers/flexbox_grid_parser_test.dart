@@ -170,12 +170,13 @@ void main() {
         expect(styles.textBaseline, TextBaseline.alphabetic);
       });
 
-      test('shrink contributes FlexFit.loose; shrink-0 contributes none', () {
-        // Only `shrink` maps to a flexFit; shrink-0 sets none, so the resolved
-        // flexFit is loose. shrink-0's no-shrink effect lives in the widget.
+      test('shrink-0 after shrink wins last-class-wins (flexFit null)', () {
+        // `shrink-0` is a no-shrink reset: when it appears after `shrink` it
+        // claims the flexFit slot with a null (intrinsic) value, so the later
+        // token wins. shrink-0's no-shrink effect lives in the widget guard.
         final styles =
             parser.parse(WindStyle(), ['shrink', 'shrink-0'], context);
-        expect(styles.flexFit, FlexFit.loose);
+        expect(styles.flexFit, isNull);
       });
 
       test('returns unchanged styles when classes is null', () {
@@ -204,14 +205,14 @@ void main() {
         expect(styles.textBaseline, TextBaseline.alphabetic);
       });
 
-      test('shrink contributes FlexFit.loose regardless of shrink-0 position',
-          () {
-        // shrink-0 sets no flexFit; `shrink` is the only token that does, so
-        // both orders resolve to FlexFit.loose at the parser level. The
-        // no-shrink effect of shrink-0 is applied by WDiv._hasShrinkZero.
+      test('shrink / shrink-0 resolve flexFit by last-class-wins position', () {
+        // `shrink` -> FlexFit.loose, `shrink-0` -> no flexFit (intrinsic). The
+        // rightmost token wins: the no-shrink effect of shrink-0 is also
+        // applied by WDiv._hasShrinkZero, but the parser slot must reflect the
+        // last class so an earlier `shrink` cannot leak through.
         expect(
           parser.parse(WindStyle(), ['shrink', 'shrink-0'], context).flexFit,
-          FlexFit.loose,
+          isNull,
         );
         expect(
           parser.parse(WindStyle(), ['shrink-0', 'shrink'], context).flexFit,

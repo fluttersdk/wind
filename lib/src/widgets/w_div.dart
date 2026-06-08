@@ -592,7 +592,7 @@ class WDiv extends StatelessWidget {
             if (child is SizedBox || child is Flexible || child is Expanded) {
               return child;
             }
-            if (!_shouldStretchColumnChild(child, context)) return child;
+            if (!_shouldStretchColumnChild(child)) return child;
             return SizedBox(width: double.infinity, child: child);
           }).toList();
         } else {
@@ -628,7 +628,7 @@ class WDiv extends StatelessWidget {
               child is! SizedBox &&
               child is! Flexible &&
               child is! Expanded &&
-              _shouldStretchColumnChild(child, context));
+              _shouldStretchColumnChild(child));
       if (!hasStretchTarget) {
         return buildColumn(false);
       }
@@ -652,11 +652,13 @@ class WDiv extends StatelessWidget {
                   child is Expanded) {
                 return child;
               }
-              // Don't wrap WDiv/WText with flex-N classes (they become Expanded)
-              if (child is WDiv && _hasFlexClass(child.className)) {
+              // Don't wrap children that self-wrap in Expanded/Flexible
+              // (flex-N, grow, flex-grow, flex-auto, flex-initial, shrink,
+              // flex-shrink) — wrapping them again asserts ParentDataWidget.
+              if (child is WDiv && _selfWrapsInFlex(child.className)) {
                 return child;
               }
-              if (child is WText && _hasFlexClass(child.className)) {
+              if (child is WText && _selfWrapsInFlex(child.className)) {
                 return child;
               }
               // Skip shrink-0 children (should not shrink — keep intrinsic size)
@@ -800,35 +802,42 @@ class WDiv extends StatelessWidget {
     }).toList();
   }
 
-  /// Checks if a className declares an explicit cross-axis width for the
-  /// column smart-stretch gate. Treats any `w-*` (including `w-full`, where
-  /// `widthFactor == 1.0`), `min-w-*`, and `max-w-*` as explicit, so a child
-  /// that already controls its own width is never re-wrapped in a stretch
-  /// `SizedBox`. The parse is a cache-hit when the probe states match the
-  /// child's own build (per `parsers.md` cache key).
-  static bool _hasExplicitCrossWidth(String? className, BuildContext context) {
+  /// Whether a className declares an explicit cross-axis width (`w-*` including
+  /// `w-full`, `min-w-*`, or `max-w-*`) in ANY state or breakpoint variant, so
+  /// a child that controls its own width is never re-wrapped in a stretch
+  /// `SizedBox`. Prefix-agnostic token scan: `hover:w-32` and `md:max-w-sm`
+  /// count too, because a state-conditional width must still disable the
+  /// stretch wrap (a parse without those states active would miss them).
+  static bool _hasExplicitCrossWidth(String? className) {
     if (className == null || className.isEmpty) return false;
-    final styles = WindParser.parse(className, context);
-    return styles.width != null ||
-        styles.widthFactor != null ||
-        (styles.constraints?.minWidth != null &&
-            styles.constraints!.minWidth > 0) ||
-        (styles.constraints?.maxWidth != null &&
-            styles.constraints!.maxWidth != double.infinity);
+    for (final raw in className.split(' ')) {
+      if (raw.isEmpty) continue;
+      final token = raw.contains(':') ? raw.split(':').last : raw;
+      if (token.startsWith('w-') ||
+          token.startsWith('min-w-') ||
+          token.startsWith('max-w-')) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Whether a column child qualifies for smart cross-axis stretch: it must be
-  /// a `WDiv`, must NOT already control its cross-axis width, must NOT become
-  /// an `Expanded`/`Flexible` (flex-N), and must NOT be a no-shrink or absolute
-  /// child. Gaps and pre-wrapped flex widgets are filtered out by the caller
-  /// before this runs.
+  /// a `WDiv`, must NOT already control its cross-axis width, must NOT self-wrap
+  /// in `Expanded`/`Flexible`, and must NOT be absolute-positioned. Gaps and
+  /// pre-wrapped flex widgets are filtered out by the caller before this runs.
+  ///
+  /// No-shrink tokens (`shrink-0`, `flex-none`) are intentionally NOT excluded:
+  /// `flex-shrink` governs the MAIN axis, while stretch is a CROSS-axis concern,
+  /// and CSS `align-items: stretch` does fill a `flex: none` item's cross size
+  /// when it has no explicit width.
   ///
   /// `WText` is deliberately excluded: a text leaf carries no cross-axis box of
   /// its own, so a full-width wrap changes the widget tree without a visual
   /// effect, while breaking trees that locate sibling `SizedBox`es positionally
   /// (e.g. a `WSpacer` next to bare `WText`). Container children (`WDiv`) are
   /// the meaningful stretch targets.
-  static bool _shouldStretchColumnChild(Widget child, BuildContext context) {
+  static bool _shouldStretchColumnChild(Widget child) {
     final String? className;
     if (child is WDiv) {
       className = child.className;
@@ -837,8 +846,8 @@ class WDiv extends StatelessWidget {
       return false;
     }
 
-    if (_hasFlexClass(className)) return false;
-    if (_hasExplicitCrossWidth(className, context)) return false;
+    if (_selfWrapsInFlex(className)) return false;
+    if (_hasExplicitCrossWidth(className)) return false;
     if (className != null &&
         className.isNotEmpty &&
         className.contains('absolute')) {
@@ -847,14 +856,36 @@ class WDiv extends StatelessWidget {
     return true;
   }
 
-  /// Checks if a className contains flex-N classes that produce Expanded widgets
-  static bool _hasFlexClass(String? className) {
-    if (className == null) return false;
-    return className.contains('flex-1') ||
-        className.contains('flex-2') ||
-        className.contains('flex-3') ||
-        className.contains('flex-4') ||
-        className.contains('flex-5');
+  /// Matches a numeric flex token (`flex-1`, `flex-2`, ...) after any prefix
+  /// has been stripped.
+  static final RegExp _numericFlexRegex = RegExp(r'^flex-[0-9]+$');
+
+  /// Whether a child's className makes it self-wrap in `Expanded`/`Flexible`
+  /// (i.e. sets `styles.flex` or `styles.flexFit`, see the composition pipeline
+  /// at the bottom of `_buildCompositionPipeline`). Such a child must never be
+  /// wrapped again by a parent (`Flexible` in a Row, `SizedBox(width: infinity)`
+  /// stretch in a Column) or Flutter throws "Incorrect use of ParentDataWidget".
+  ///
+  /// Prefix-agnostic token scan so state/breakpoint variants like `md:grow` or
+  /// `hover:flex-1` are caught too. `grow-0`, `shrink-0`, and `flex-none` are
+  /// deliberately NOT self-wrapping (they keep intrinsic main size without a
+  /// `Flexible`), so they are absent here.
+  static bool _selfWrapsInFlex(String? className) {
+    if (className == null || className.isEmpty) return false;
+    for (final raw in className.split(' ')) {
+      if (raw.isEmpty) continue;
+      final token = raw.contains(':') ? raw.split(':').last : raw;
+      if (token == 'grow' ||
+          token == 'flex-grow' ||
+          token == 'shrink' ||
+          token == 'flex-shrink' ||
+          token == 'flex-auto' ||
+          token == 'flex-initial' ||
+          _numericFlexRegex.hasMatch(token)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Extracts `className` from any Wind widget via dynamic access.

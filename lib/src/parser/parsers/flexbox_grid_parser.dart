@@ -182,6 +182,12 @@ class FlexboxGridParser implements WindParserInterface {
     MainAxisSize? mainAxisSize;
     int? flex;
     FlexFit? flexFit;
+    // The flex/flexFit slots can win last-class-wins with a NULL (intrinsic)
+    // value via no-grow/no-shrink tokens (`grow-0`, `shrink-0`, `flex-none`),
+    // so a plain `flex == null` guard cannot tell "unset" from "explicitly
+    // reset". Track resolution separately.
+    bool flexResolved = false;
+    bool flexFitResolved = false;
     double? basisFactor;
     double? basisSize;
     Alignment? alignment;
@@ -229,10 +235,27 @@ class FlexboxGridParser implements WindParserInterface {
       } else if (mainAxisSize == null &&
           _mainAxisSizeMap.containsKey(className)) {
         mainAxisSize = _mainAxisSizeMap[className];
-      } else if (flex == null && _flexMap.containsKey(className)) {
+      } else if ((!flexResolved || !flexFitResolved) &&
+          (className == 'grow-0' ||
+              className == 'shrink-0' ||
+              className == 'flex-none')) {
+        // No-grow / no-shrink tokens take part in last-class-wins by CLAIMING
+        // the relevant flex slot with a null (intrinsic) value, so an earlier
+        // `grow`/`flex-grow`/`flex-N` or `shrink`/`flex-auto` cannot re-enable
+        // an Expanded/Flexible wrap. CSS mapping: `grow-0` = flex-grow:0,
+        // `shrink-0` = flex-shrink:0, `flex-none` = flex:0 0 auto (both).
+        if (className == 'grow-0' || className == 'flex-none') {
+          flexResolved = true;
+        }
+        if (className == 'shrink-0' || className == 'flex-none') {
+          flexFitResolved = true;
+        }
+      } else if (!flexResolved && _flexMap.containsKey(className)) {
         flex = _flexMap[className];
-      } else if (flexFit == null && _flexFitMap.containsKey(className)) {
+        flexResolved = true;
+      } else if (!flexFitResolved && _flexFitMap.containsKey(className)) {
         flexFit = _flexFitMap[className];
+        flexFitResolved = true;
       } else if (alignment == null && _alignSelfMap.containsKey(className)) {
         alignment = _alignSelfMap[className];
       } else if (alignment == null && className.startsWith('self-')) {
@@ -276,10 +299,11 @@ class FlexboxGridParser implements WindParserInterface {
         }
       }
       // `flex-2`, `flex-3` etc.
-      if (flex == null) {
+      if (!flexResolved) {
         final match = _flexValueRegex.firstMatch(className);
         if (match != null) {
           flex = int.tryParse(match.namedGroup('value')!);
+          flexResolved = true;
         }
       }
       // `grid-cols-3`, `grid-cols-6` etc.

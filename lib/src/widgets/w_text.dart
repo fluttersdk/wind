@@ -157,7 +157,8 @@ class WText extends StatelessWidget {
   ///
   /// Guarantees two baseline requirements when no Material/Scaffold ancestor
   /// is present so Flutter's debug yellow-underline fallback never appears:
-  ///   1. A non-null text color (falls back to [Colors.black]).
+  ///   1. A non-null text color (brightness-aware fallback: [Colors.white] on
+  ///      dark platforms, [Colors.black] on light).
   ///   2. A [Directionality] ancestor (defaults to [TextDirection.ltr]).
   Widget _buildCoreContent({
     required BuildContext context,
