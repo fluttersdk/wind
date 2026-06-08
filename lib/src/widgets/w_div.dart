@@ -521,7 +521,85 @@ class WDiv extends StatelessWidget {
       "${isColumn ? 'Column' : 'Row'}(children: [${children!.length} items])",
     );
 
+    // `basis-*` resolves a fraction/fixed size against the flex's own bounded
+    // main extent. Flex hands non-flex children an unbounded main-axis
+    // constraint, so a fractional box cannot self-size — we measure the extent
+    // with a LayoutBuilder around the whole flex and pass it down. Only taken
+    // when a child actually carries `basis-*`, so the common case is unwrapped.
+    final bool hasBasisChild = _anyChildHasBasis(gappedChildren);
+    if (hasBasisChild) {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final double mainExtent =
+              isColumn ? constraints.maxHeight : constraints.maxWidth;
+          final resolvedChildren = _applyMainAxisBasis(
+            gappedChildren,
+            context,
+            isColumn: isColumn,
+            mainExtent: mainExtent,
+          );
+          return _composeFlex(
+            styles: styles,
+            isColumn: isColumn,
+            basisChildren: resolvedChildren,
+            effectiveMainAxisSize: effectiveMainAxisSize,
+            isMainAxisScrollable: isMainAxisScrollable,
+            hasOverflowClip: hasOverflowClip,
+            needsSpaceDistribution: needsSpaceDistribution,
+            context: context,
+          );
+        },
+      );
+    }
+
+    return _composeFlex(
+      styles: styles,
+      isColumn: isColumn,
+      basisChildren: gappedChildren,
+      effectiveMainAxisSize: effectiveMainAxisSize,
+      isMainAxisScrollable: isMainAxisScrollable,
+      hasOverflowClip: hasOverflowClip,
+      needsSpaceDistribution: needsSpaceDistribution,
+      context: context,
+    );
+  }
+
+  /// Builds the final `Row`/`Column` from `basis-*`-resolved children, applying
+  /// the column smart cross-axis stretch or the row `Flexible` shrink wrap.
+  /// Split out of [_buildFlexStructure] so it can run either directly or inside
+  /// the `basis-*` `LayoutBuilder`.
+  Widget _composeFlex({
+    required WindStyle styles,
+    required bool isColumn,
+    required List<Widget> basisChildren,
+    required MainAxisSize effectiveMainAxisSize,
+    required bool isMainAxisScrollable,
+    required bool hasOverflowClip,
+    required bool needsSpaceDistribution,
+    required BuildContext context,
+  }) {
     if (isColumn) {
+      // Smart cross-axis stretch (column-only): with no explicit `items-*`
+      // token, each Wind child that does not control its own width is wrapped
+      // in `SizedBox(width: infinity)` so it fills the column width (CSS
+      // `align-items: stretch` default). `crossAxisAlignment` stays `start`,
+      // so an explicit `items-*` disables this path entirely. No LayoutBuilder:
+      // infinity resolves to the bounded column width, degrading to intrinsic
+      // size when the column is unbounded.
+      final List<Widget> columnChildren;
+      if (styles.crossAxisAlignment == null) {
+        columnChildren = basisChildren.map((child) {
+          // Gaps and pre-wrapped flex widgets are never stretched.
+          if (child is SizedBox || child is Flexible || child is Expanded) {
+            return child;
+          }
+          if (!_shouldStretchColumnChild(child, context)) return child;
+          return SizedBox(width: double.infinity, child: child);
+        }).toList();
+      } else {
+        columnChildren = basisChildren;
+      }
+
       return WindFlexOverflowScope(
         skipExpanded: isMainAxisScrollable,
         child: Column(
@@ -534,7 +612,7 @@ class WDiv extends StatelessWidget {
           verticalDirection: styles.flexReverse
               ? VerticalDirection.up
               : VerticalDirection.down,
-          children: gappedChildren,
+          children: columnChildren,
         ),
       );
     } else {
@@ -544,9 +622,13 @@ class WDiv extends StatelessWidget {
       final needsFlexible =
           (needsSpaceDistribution || hasOverflowClip) && !isMainAxisScrollable;
       final rowChildren = needsFlexible
-          ? gappedChildren.map((child) {
-              // Don't wrap SizedBox gaps or already-flex widgets with Flexible
-              if (child is SizedBox || child is Flexible || child is Expanded) {
+          ? basisChildren.map((child) {
+              // Don't wrap gaps, already-flex widgets, or basis-sized children
+              // (FractionallySizedBox/SizedBox carry an explicit main size).
+              if (child is SizedBox ||
+                  child is FractionallySizedBox ||
+                  child is Flexible ||
+                  child is Expanded) {
                 return child;
               }
               // Don't wrap WDiv/WText with flex-N classes (they become Expanded)
@@ -565,7 +647,7 @@ class WDiv extends StatelessWidget {
               }
               return Flexible(child: child);
             }).toList()
-          : gappedChildren;
+          : basisChildren;
 
       TextDirection? rowTextDirection;
       if (styles.flexReverse) {
@@ -611,18 +693,137 @@ class WDiv extends StatelessWidget {
         styles.overflowX == WindOverflow.scroll;
   }
 
-  /// Checks if a className contains shrink-0 token that should preserve
-  /// intrinsic size. Uses token-based matching to avoid false positives
-  /// from substring matches (e.g. a hypothetical `no-shrink-0`).
-  /// Matches both bare `shrink-0` and prefixed variants like `md:shrink-0`.
+  /// Checks if a className contains a no-shrink token that should preserve
+  /// intrinsic size: `shrink-0` or `flex-none` (CSS `flex: 0 0 auto`, no grow
+  /// AND no shrink). Uses token-based matching to avoid false positives from
+  /// substring matches (e.g. a hypothetical `no-shrink-0`). Matches both bare
+  /// tokens and prefixed variants like `md:shrink-0` / `md:flex-none`.
   static bool _hasShrinkZero(String? className) {
     if (className == null || className.isEmpty) return false;
     for (final token in className.split(' ')) {
-      if (token == 'shrink-0' || token.endsWith(':shrink-0')) {
+      if (token == 'shrink-0' ||
+          token.endsWith(':shrink-0') ||
+          token == 'flex-none' ||
+          token.endsWith(':flex-none')) {
         return true;
       }
     }
     return false;
+  }
+
+  /// Resolves a child's `basis-*` main-axis size by parsing its className
+  /// (cache-hit when the probe states match the child's own build). Returns
+  /// `null` for non-Wind children and Wind children without a `basis-*` token.
+  ///
+  /// `basisFactor` (e.g. `basis-1/2`, `basis-full`) is a fraction of the
+  /// parent's main-axis extent; `basisSize` (e.g. `basis-[120px]`) is a fixed
+  /// logical-pixel main-axis size. This approximates CSS `flex-basis`: it sets
+  /// the initial main-axis size and ignores grow/shrink interplay.
+  static ({double? factor, double? size})? _resolveChildBasis(
+    Widget child,
+    BuildContext context,
+  ) {
+    final className = _extractChildClassName(child);
+    if (className == null || className.isEmpty) return null;
+    if (!className.contains('basis-')) return null;
+    final states = _extractChildStates(child);
+    final styles = WindParser.parse(className, context, states: states);
+    if (styles.basisFactor == null && styles.basisSize == null) return null;
+    return (factor: styles.basisFactor, size: styles.basisSize);
+  }
+
+  /// Whether any direct flex child carries a `basis-*` token. Cheap pre-check
+  /// (substring) so the common no-basis case skips the LayoutBuilder wrap.
+  static bool _anyChildHasBasis(List<Widget> children) {
+    for (final child in children) {
+      final className = _extractChildClassName(child);
+      if (className != null && className.contains('basis-')) return true;
+    }
+    return false;
+  }
+
+  /// Applies `basis-*` main-axis sizing to direct flex children. Each
+  /// basis-bearing Wind child is wrapped in a fixed-size `SizedBox` along the
+  /// flex main axis: width for a row, height for a column.
+  ///
+  /// A `FractionallySizedBox` cannot be used here because flex hands non-flex
+  /// children an UNBOUNDED main-axis constraint, which makes a fractional box
+  /// throw. Instead the caller measures the flex's own bounded main extent via
+  /// a `LayoutBuilder` and passes it as [mainExtent]; the fraction resolves to
+  /// a concrete pixel size. When [mainExtent] is not finite (unbounded flex),
+  /// fractional basis degrades to the child's intrinsic size (passthrough);
+  /// fixed `basis-[Npx]` always applies.
+  static List<Widget> _applyMainAxisBasis(
+    List<Widget> children,
+    BuildContext context, {
+    required bool isColumn,
+    required double mainExtent,
+  }) {
+    return children.map((child) {
+      final basis = _resolveChildBasis(child, context);
+      if (basis == null) return child;
+
+      double? size;
+      if (basis.size != null) {
+        size = basis.size;
+      } else if (basis.factor != null && mainExtent.isFinite) {
+        size = mainExtent * basis.factor!;
+      }
+      if (size == null) return child;
+
+      return SizedBox(
+        width: isColumn ? null : size,
+        height: isColumn ? size : null,
+        child: child,
+      );
+    }).toList();
+  }
+
+  /// Checks if a className declares an explicit cross-axis width for the
+  /// column smart-stretch gate. Treats any `w-*` (including `w-full`, where
+  /// `widthFactor == 1.0`), `min-w-*`, and `max-w-*` as explicit, so a child
+  /// that already controls its own width is never re-wrapped in a stretch
+  /// `SizedBox`. The parse is a cache-hit when the probe states match the
+  /// child's own build (per `parsers.md` cache key).
+  static bool _hasExplicitCrossWidth(String? className, BuildContext context) {
+    if (className == null || className.isEmpty) return false;
+    final styles = WindParser.parse(className, context);
+    return styles.width != null ||
+        styles.widthFactor != null ||
+        (styles.constraints?.minWidth != null &&
+            styles.constraints!.minWidth > 0) ||
+        (styles.constraints?.maxWidth != null &&
+            styles.constraints!.maxWidth != double.infinity);
+  }
+
+  /// Whether a column child qualifies for smart cross-axis stretch: it must be
+  /// a `WDiv`, must NOT already control its cross-axis width, must NOT become
+  /// an `Expanded`/`Flexible` (flex-N), and must NOT be a no-shrink or absolute
+  /// child. Gaps and pre-wrapped flex widgets are filtered out by the caller
+  /// before this runs.
+  ///
+  /// `WText` is deliberately excluded: a text leaf carries no cross-axis box of
+  /// its own, so a full-width wrap changes the widget tree without a visual
+  /// effect, while breaking trees that locate sibling `SizedBox`es positionally
+  /// (e.g. a `WSpacer` next to bare `WText`). Container children (`WDiv`) are
+  /// the meaningful stretch targets.
+  static bool _shouldStretchColumnChild(Widget child, BuildContext context) {
+    final String? className;
+    if (child is WDiv) {
+      className = child.className;
+    } else {
+      // Non-WDiv children (raw Flutter widgets, WText leaves) are untouched.
+      return false;
+    }
+
+    if (_hasFlexClass(className)) return false;
+    if (_hasExplicitCrossWidth(className, context)) return false;
+    if (className != null &&
+        className.isNotEmpty &&
+        className.contains('absolute')) {
+      return false;
+    }
+    return true;
   }
 
   /// Checks if a className contains flex-N classes that produce Expanded widgets
