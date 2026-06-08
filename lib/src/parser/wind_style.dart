@@ -88,6 +88,18 @@ class WindStyle {
   /// Flex fit for flex display type e.g., flex-auto, flex-none
   final FlexFit? flexFit;
 
+  /// Fractional flex-basis along the parent's MAIN axis e.g., `basis-1/2`,
+  /// `basis-full`. Resolved by the parent flex (`WDiv`) into a width factor
+  /// (row) or height factor (column). This approximates CSS `flex-basis`: it
+  /// sets the initial main-axis size and ignores grow/shrink interplay.
+  final double? basisFactor;
+
+  /// Fixed flex-basis along the parent's MAIN axis e.g., `basis-[120px]`.
+  /// Resolved by the parent flex (`WDiv`) into a fixed width (row) or height
+  /// (column). Like [basisFactor], this approximates CSS `flex-basis` and
+  /// ignores grow/shrink interplay.
+  final double? basisSize;
+
   /// Alignment for flex or grid display type e.g., align-self-center, align-self-start
   final Alignment? alignment;
 
@@ -263,6 +275,8 @@ class WindStyle {
     this.mainAxisSize,
     this.flex,
     this.flexFit,
+    this.basisFactor,
+    this.basisSize,
     this.alignment,
     this.textBaseline,
     this.gridCols,
@@ -334,6 +348,8 @@ class WindStyle {
     MainAxisSize? mainAxisSize,
     int? flex,
     FlexFit? flexFit,
+    double? basisFactor,
+    double? basisSize,
     Alignment? alignment,
     TextBaseline? textBaseline,
     int? gridCols,
@@ -422,6 +438,8 @@ class WindStyle {
       mainAxisSize: mainAxisSize ?? this.mainAxisSize,
       flex: flex ?? this.flex,
       flexFit: flexFit ?? this.flexFit,
+      basisFactor: basisFactor ?? this.basisFactor,
+      basisSize: basisSize ?? this.basisSize,
       alignment: alignment ?? this.alignment,
       textBaseline: textBaseline ?? this.textBaseline,
       gridCols: gridCols ?? this.gridCols,
@@ -499,6 +517,8 @@ class WindStyle {
           mainAxisSize == other.mainAxisSize &&
           flex == other.flex &&
           flexFit == other.flexFit &&
+          basisFactor == other.basisFactor &&
+          basisSize == other.basisSize &&
           alignment == other.alignment &&
           textBaseline == other.textBaseline &&
           gridCols == other.gridCols &&
@@ -570,6 +590,8 @@ class WindStyle {
       mainAxisSize.hashCode ^
       flex.hashCode ^
       flexFit.hashCode ^
+      basisFactor.hashCode ^
+      basisSize.hashCode ^
       alignment.hashCode ^
       textBaseline.hashCode ^
       gridCols.hashCode ^
@@ -679,6 +701,8 @@ class WindStyle {
         'mainAxisSize: $mainAxisSize, '
         'flex: $flex, '
         'flexFit: $flexFit, '
+        'basisFactor: $basisFactor, '
+        'basisSize: $basisSize, '
         'alignment: $alignment, '
         'textBaseline: $textBaseline, '
         'gridCols: $gridCols, '
