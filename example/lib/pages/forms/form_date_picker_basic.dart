@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide DatePickerMode;
+import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 import '../../widgets/example_scaffold.dart';

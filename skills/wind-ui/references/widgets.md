@@ -22,7 +22,7 @@ No sub-barrels (`lib/dusk_integration.dart` and similar were removed in 1.0 alph
 8. [Animation: WindAnimationWrapper](#8-animation-windanimationwrapper)
 9. [Overlay: WPopover](#9-overlay-wpopover)
 10. [Structural: WDynamic](#10-structural-wdynamic)
-11. [Supporting types: SelectOption, DateRange, InputType, DatePickerMode, PopoverAlignment, WindAnimationType](#11-supporting-types)
+11. [Supporting types: SelectOption, DateRange, InputType, WDatePickerMode, PopoverAlignment, WindAnimationType](#11-supporting-types)
 
 ---
 
@@ -434,7 +434,7 @@ Calendar popover with single OR range mode.
 ```dart
 const WDatePicker({
   Key? key,
-  DatePickerMode mode = DatePickerMode.single,
+  WDatePickerMode mode = WDatePickerMode.single,
   // Single mode:
   DateTime? value,
   ValueChanged<DateTime>? onChanged,
@@ -604,7 +604,7 @@ const WFormDatePicker({
   Key? key,
   DateTime? initialValue,
   DateRange? initialRange,
-  DatePickerMode mode = DatePickerMode.single,
+  WDatePickerMode mode = WDatePickerMode.single,
   ValueChanged<DateTime>? onChanged,
   ValueChanged<DateRange>? onRangeChanged,
   // FormField:
@@ -852,10 +852,10 @@ class DateRange {
 enum InputType { text, password, email, number, multiline }
 ```
 
-### `DatePickerMode` enum
+### `WDatePickerMode` enum
 
 ```dart
-enum DatePickerMode { single, range }
+enum WDatePickerMode { single, range }
 ```
 
 ### `PopoverAlignment` enum

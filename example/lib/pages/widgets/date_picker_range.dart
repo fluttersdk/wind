@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide DatePickerMode;
+import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 import '../../widgets/example_scaffold.dart';
@@ -34,7 +34,7 @@ class _DatePickerRangeExamplePageState
     return ExampleScaffold(
       title: 'Date Range Picker',
       description:
-          'mode: DatePickerMode.range enables two-click range selection with hover preview. range + onRangeChanged for controlled state.',
+          'mode: WDatePickerMode.range enables two-click range selection with hover preview. range + onRangeChanged for controlled state.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
@@ -45,7 +45,7 @@ class _DatePickerRangeExamplePageState
             className: 'flex flex-col gap-3',
             children: [
               WDatePicker(
-                mode: DatePickerMode.range,
+                mode: WDatePickerMode.range,
                 range: _range,
                 onRangeChanged: (r) => setState(() => _range = r),
                 placeholder: 'Check-in / Check-out',

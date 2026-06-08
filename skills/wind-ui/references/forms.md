@@ -313,7 +313,7 @@ DateRange? _range;
 String? _rangeError;
 
 WFormDatePicker(
-  mode: DatePickerMode.range,
+  mode: WDatePickerMode.range,
   initialRange: _range,
   onRangeChanged: (range) {
     setState(() {

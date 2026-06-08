@@ -7,7 +7,7 @@ import 'w_popover.dart';
 import 'w_text.dart';
 
 /// Date picker selection mode.
-enum DatePickerMode {
+enum WDatePickerMode {
   /// Single date selection.
   single,
 
@@ -80,7 +80,7 @@ typedef DateDisplayFormat = String Function(DateTime date);
 ///
 /// ```dart
 /// WDatePicker(
-///   mode: DatePickerMode.range,
+///   mode: WDatePickerMode.range,
 ///   range: _dateRange,
 ///   onRangeChanged: (range) => setState(() => _dateRange = range),
 ///   className: 'w-full p-3 border rounded-lg',
@@ -89,7 +89,7 @@ typedef DateDisplayFormat = String Function(DateTime date);
 /// ```
 class WDatePicker extends StatefulWidget {
   /// Selection mode: single date or date range.
-  final DatePickerMode mode;
+  final WDatePickerMode mode;
 
   /// The currently selected date (single mode).
   final DateTime? value;
@@ -129,7 +129,7 @@ class WDatePicker extends StatefulWidget {
   /// Creates a new [WDatePicker] instance.
   const WDatePicker({
     super.key,
-    this.mode = DatePickerMode.single,
+    this.mode = WDatePickerMode.single,
     this.value,
     this.range,
     this.onChanged,
@@ -172,9 +172,9 @@ class _WDatePickerState extends State<WDatePicker> {
   }
 
   void _initFocusedMonth() {
-    if (widget.mode == DatePickerMode.single && widget.value != null) {
+    if (widget.mode == WDatePickerMode.single && widget.value != null) {
       _focusedMonth = _normalizeToMonth(widget.value!);
-    } else if (widget.mode == DatePickerMode.range && widget.range != null) {
+    } else if (widget.mode == WDatePickerMode.range && widget.range != null) {
       _focusedMonth = _normalizeToMonth(widget.range!.start);
     } else {
       _focusedMonth = _normalizeToMonth(DateTime.now());
@@ -232,7 +232,7 @@ class _WDatePickerState extends State<WDatePicker> {
 
   /// Formats the display text for the trigger.
   String _getDisplayText() {
-    if (widget.mode == DatePickerMode.single) {
+    if (widget.mode == WDatePickerMode.single) {
       return widget.value != null
           ? _formatDate(widget.value!)
           : widget.placeholder;
@@ -269,7 +269,7 @@ class _WDatePickerState extends State<WDatePicker> {
 
     final normalized = _normalizeToDay(date);
 
-    if (widget.mode == DatePickerMode.single) {
+    if (widget.mode == WDatePickerMode.single) {
       widget.onChanged?.call(normalized);
       _closePopover();
     } else {
@@ -355,7 +355,7 @@ class _WDatePickerState extends State<WDatePicker> {
       enabled: !widget.disabled,
       label: widget.placeholder,
       value: widget.value?.toIso8601String() ??
-          (widget.mode == DatePickerMode.range && widget.range != null
+          (widget.mode == WDatePickerMode.range && widget.range != null
               ? widget.range!.start.toIso8601String()
               : null),
       child: MergeSemantics(
@@ -384,7 +384,7 @@ class _WDatePickerState extends State<WDatePicker> {
         setState(() {
           _isOpen = true;
           // Reset range selection state when opening
-          if (widget.mode == DatePickerMode.range &&
+          if (widget.mode == WDatePickerMode.range &&
               widget.range?.isComplete == true) {
             _rangeStart = null;
           }
@@ -444,16 +444,16 @@ class _WDatePickerState extends State<WDatePicker> {
             _CalendarGrid(
               focusedMonth: _focusedMonth,
               selectedDate:
-                  widget.mode == DatePickerMode.single ? widget.value : null,
+                  widget.mode == WDatePickerMode.single ? widget.value : null,
               selectedRange:
-                  widget.mode == DatePickerMode.range ? widget.range : null,
+                  widget.mode == WDatePickerMode.range ? widget.range : null,
               rangeStart: _rangeStart,
               hoveredDate: _hoveredDate,
               minDate: widget.minDate,
               maxDate: widget.maxDate,
               onDateSelected: _onDateSelected,
               onDateHovered: (date) {
-                if (widget.mode == DatePickerMode.range &&
+                if (widget.mode == WDatePickerMode.range &&
                     _rangeStart != null) {
                   setState(() => _hoveredDate = date);
                 }
@@ -466,7 +466,7 @@ class _WDatePickerState extends State<WDatePicker> {
   }
 
   bool get _hasValue {
-    if (widget.mode == DatePickerMode.single) {
+    if (widget.mode == WDatePickerMode.single) {
       return widget.value != null;
     }
     return widget.range != null;
