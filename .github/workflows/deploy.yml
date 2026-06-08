@@ -67,6 +67,12 @@ jobs:
       - name: Validate publish archive
         run: dart pub publish --dry-run
 
+      - name: Assert WASM-ready (pana)
+        run: |
+          dart pub global activate pana
+          dart pub global run pana --json --no-warning . > pana.json
+          python3 -c "import json,sys; tags=json.load(open('pana.json')).get('tags',[]); sys.exit(0 if 'is:wasm-ready' in tags else 'is:wasm-ready missing from pana tags')"
+
   changes:
     name: Detect demo-affecting changes
     runs-on: ubuntu-latest
