@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb, visibleForTesting;
 
 /// Service to determine the current platform and whether it's mobile.
 /// Usage:
@@ -9,7 +9,9 @@ import 'dart:io' show Platform;
 class WindPlatformService {
   // Private constructor
   WindPlatformService._internal() {
-    _initialize();
+    final (resolvedPlatform, resolvedIsMobile) = resolvePlatform();
+    platform = resolvedPlatform;
+    isMobile = resolvedIsMobile;
   }
 
   // Singleton instance
@@ -25,36 +27,24 @@ class WindPlatformService {
   // Whether the platform is mobile (iOS or Android)
   late final bool isMobile;
 
-  // Initialize platform information
-  void _initialize() {
+  /// Resolves the current platform name and mobile flag from Flutter's
+  /// [defaultTargetPlatform]. Exposed for testing via
+  /// [debugDefaultTargetPlatformOverride].
+  @visibleForTesting
+  static (String, bool) resolvePlatform() {
     if (kIsWeb) {
-      platform = "web";
-      isMobile = false;
-      return;
+      // kIsWeb is always false under flutter test on a native host; this line
+      // is structurally unreachable from flutter test.
+      return ('web', false); // coverage:ignore-line
     }
 
-    if (Platform.isIOS) {
-      // CI runs on Linux + dev on macOS; iOS body unreachable from flutter_test on the host.
-      platform = "ios"; // coverage:ignore-line
-      isMobile = true; // coverage:ignore-line
-    } else if (Platform.isAndroid) {
-      // CI runs on Linux + dev on macOS; Android body unreachable from flutter_test on the host.
-      platform = "android"; // coverage:ignore-line
-      isMobile = true; // coverage:ignore-line
-    } else if (Platform.isLinux) {
-      platform = "linux"; // NO pragma; reachable on CI host.
-      isMobile = false; // NO pragma; reachable on CI host.
-    } else if (Platform.isMacOS) {
-      platform = "macos"; // NO pragma; reachable on dev host.
-      isMobile = false; // NO pragma; reachable on dev host.
-    } else if (Platform.isWindows) {
-      // Wind has no Windows CI runner or dev host; Windows body unreachable from flutter_test in this project.
-      platform = "windows"; // coverage:ignore-line
-      isMobile = false; // coverage:ignore-line
-    } else {
-      // Fallback for unknown platforms; not reachable from any test host this project supports.
-      platform = "unknown"; // coverage:ignore-line
-      isMobile = false; // coverage:ignore-line
-    }
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.iOS => ('ios', true),
+      TargetPlatform.android => ('android', true),
+      TargetPlatform.linux => ('linux', false),
+      TargetPlatform.macOS => ('macos', false),
+      TargetPlatform.windows => ('windows', false),
+      TargetPlatform.fuchsia => ('unknown', false),
+    };
   }
 }

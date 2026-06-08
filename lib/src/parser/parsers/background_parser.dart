@@ -1,12 +1,10 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../theme/wind_theme_data.dart';
 import '../../utils/color_utils.dart';
 import '../wind_context.dart';
 import '../wind_style.dart';
+import 'file_image_stub.dart' if (dart.library.io) 'file_image_io.dart';
 import 'wind_parser_interface.dart';
 
 /// **Background Style Parser**
@@ -251,13 +249,11 @@ class BackgroundParser implements WindParserInterface {
           imageUrlOrPath.startsWith('https://')) {
         imageProvider = NetworkImage(imageUrlOrPath);
       } else if (imageUrlOrPath.startsWith('/')) {
-        // An absolute filesystem path has no meaning on web, and `dart:io`
-        // `File` is unsupported there, so degrade gracefully by skipping it.
-        if (kIsWeb) {
-          // Web has no dart:io File; skip rather than throw at runtime.
-          return null; // coverage:ignore-line
-        }
-        imageProvider = FileImage(File(imageUrlOrPath));
+        final provider = fileImageProvider(imageUrlOrPath);
+        // Null only on web/WASM where the `File` API is unavailable; degrade
+        // gracefully rather than throw. Unreachable from native flutter test.
+        if (provider == null) return null; // coverage:ignore-line
+        imageProvider = provider;
       } else {
         String assetPath = imageUrlOrPath;
         if (imageUrlOrPath.startsWith('~/') ||
