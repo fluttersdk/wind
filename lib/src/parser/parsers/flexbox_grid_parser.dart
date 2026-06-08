@@ -119,7 +119,11 @@ class FlexboxGridParser implements WindParserInterface {
   /// Maps flex child properties to `FlexFit`
   static const _flexFitMap = <String, FlexFit>{
     'shrink': FlexFit.loose, // flex-shrink: 1 (can shrink)
-    'shrink-0': FlexFit.tight, // flex-shrink: 0 (keep size, do not shrink)
+    // `shrink-0` is intentionally absent: it must NOT set a flexFit. A non-null
+    // flexFit makes the widget self-wrap in `Flexible(fit: ...)`, which would
+    // force a fill (the opposite of shrink-0) and assert outside a Flex. The
+    // "do not shrink, keep intrinsic size" behavior is delivered by
+    // `WDiv._hasShrinkZero`, which reads the className and skips the wrap.
     'flex-auto': FlexFit.loose,
     'flex-initial': FlexFit.loose,
     'flex-shrink': FlexFit.loose,

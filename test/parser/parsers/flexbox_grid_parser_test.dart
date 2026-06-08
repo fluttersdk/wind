@@ -153,11 +153,14 @@ void main() {
         expect(styles.flexFit, FlexFit.loose);
       });
 
-      test('parses shrink-0 class', () {
-        // Tailwind `shrink-0` = flex-shrink: 0 = do not shrink. The Flutter
-        // equivalent is FlexFit.tight so the Flexible keeps the child's size.
+      test('shrink-0 sets no flexFit (no-shrink is a widget-level concern)',
+          () {
+        // shrink-0 must NOT set flexFit: a non-null flexFit self-wraps the
+        // widget in Flexible(fit: ...) and forces a fill (the opposite of
+        // shrink-0), and asserts outside a Flex. WDiv._hasShrinkZero reads the
+        // className and skips the wrap to keep the child at intrinsic size.
         final styles = parser.parse(WindStyle(), ['shrink-0'], context);
-        expect(styles.flexFit, FlexFit.tight);
+        expect(styles.flexFit, isNull);
       });
 
       test('parses items-baseline class', () {
@@ -166,11 +169,12 @@ void main() {
         expect(styles.textBaseline, TextBaseline.alphabetic);
       });
 
-      test('applies last-class-wins for shrink', () {
-        // `shrink-0` is the later class, so its FlexFit.tight wins.
+      test('shrink contributes FlexFit.loose; shrink-0 contributes none', () {
+        // Only `shrink` maps to a flexFit; shrink-0 sets none, so the resolved
+        // flexFit is loose. shrink-0's no-shrink effect lives in the widget.
         final styles =
             parser.parse(WindStyle(), ['shrink', 'shrink-0'], context);
-        expect(styles.flexFit, FlexFit.tight);
+        expect(styles.flexFit, FlexFit.loose);
       });
 
       test('returns unchanged styles when classes is null', () {
@@ -186,9 +190,9 @@ void main() {
         expect(styles.flexFit, FlexFit.loose);
       });
 
-      test('shrink-0 -> FlexFit.tight (does not shrink)', () {
+      test('shrink-0 -> no flexFit (does not shrink via widget guard)', () {
         final styles = parser.parse(WindStyle(), ['shrink-0'], context);
-        expect(styles.flexFit, FlexFit.tight);
+        expect(styles.flexFit, isNull);
       });
 
       test(
@@ -199,11 +203,14 @@ void main() {
         expect(styles.textBaseline, TextBaseline.alphabetic);
       });
 
-      test('last-class-wins override logic', () {
-        // Flex shrink overrides: whichever shrink token comes last wins.
+      test('shrink contributes FlexFit.loose regardless of shrink-0 position',
+          () {
+        // shrink-0 sets no flexFit; `shrink` is the only token that does, so
+        // both orders resolve to FlexFit.loose at the parser level. The
+        // no-shrink effect of shrink-0 is applied by WDiv._hasShrinkZero.
         expect(
           parser.parse(WindStyle(), ['shrink', 'shrink-0'], context).flexFit,
-          FlexFit.tight,
+          FlexFit.loose,
         );
         expect(
           parser.parse(WindStyle(), ['shrink-0', 'shrink'], context).flexFit,

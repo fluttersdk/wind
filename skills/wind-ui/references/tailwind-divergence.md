@@ -333,7 +333,7 @@ These canonical Tailwind classes are silently ignored by wind (unknown tokens ar
 | `start-*` / `end-*` | unsupported (logical inset) | `left-*` / `right-*` |
 | `-space-x-*` / `-space-y-*` | unsupported (negative gap; no overlap primitive) | none |
 | `self-*` | supported (alias of `align-self-*`) | `self-center` etc. work directly |
-| `shrink-0` | supported (sets `FlexFit.tight`) | works directly |
+| `shrink-0` | supported (preserves intrinsic size, no Flexible wrap) | works directly |
 | `text-7xl` / `8xl` / `9xl` | silently capped (max is `text-6xl`) | `text-6xl` or arbitrary `text-[96px]` |
 
 Reminder: a wind page needs a Material ancestor (a `Scaffold`) for `WText` to inherit a default text style; without one, Flutter renders the yellow-underline fallback. Real apps always have a `Scaffold`, so this only bites bare `WDiv > WText` route bodies.
