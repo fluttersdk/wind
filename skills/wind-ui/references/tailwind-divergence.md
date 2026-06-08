@@ -320,3 +320,20 @@ Notes on the port:
 - `truncate` on the `<p>` became `truncate` inside a `flex-1 min-w-0` wrapper.
 - Every color paired with `dark:`.
 - Outer `shadow-sm hover:shadow-md` kept; would auto-wrap in `WAnchor` because of the `hover:` prefix.
+
+## Unsupported Tailwind classes (use the wind equivalent)
+
+These canonical Tailwind classes are silently ignored by wind (unknown tokens are dropped). Use the listed equivalent:
+
+| Tailwind | Status | wind equivalent |
+|----------|--------|-----------------|
+| `inline-flex` | unsupported (Flutter has no inline layout) | `flex` + `self-start` |
+| `rounded-s-*` / `rounded-e-*` | unsupported (logical start/end radius) | `rounded-l-*` / `rounded-r-*` |
+| `ms-*` / `me-*` | unsupported (logical inline margin) | `ml-*` / `mr-*` |
+| `start-*` / `end-*` | unsupported (logical inset) | `left-*` / `right-*` |
+| `-space-x-*` / `-space-y-*` | unsupported (negative gap; no overlap primitive) | none |
+| `self-*` | supported (alias of `align-self-*`) | `self-center` etc. work directly |
+| `shrink-0` | supported (sets `FlexFit.tight`) | works directly |
+| `text-7xl` / `8xl` / `9xl` | silently capped (max is `text-6xl`) | `text-6xl` or arbitrary `text-[96px]` |
+
+Reminder: a wind page needs a Material ancestor (a `Scaffold`) for `WText` to inherit a default text style; without one, Flutter renders the yellow-underline fallback. Real apps always have a `Scaffold`, so this only bites bare `WDiv > WText` route bodies.

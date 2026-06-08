@@ -20,6 +20,7 @@ import 'wind_parser_interface.dart';
 /// - **Flex:** `flex-*` (numeric), `flex-1`, `flex-grow`, `flex-auto`, `flex-initial`, `flex-none`
 /// - **Flex Sizing:** `shrink`, `shrink-0`, `flex-shrink`
 /// - **Align Self:** `align-self-start`, `align-self-end`, `align-self-center`, `align-self-stretch`, `align-self-auto`
+///   plus the Tailwind shorthand `self-start`, `self-end`, `self-center`, `self-stretch`, `self-auto`
 /// - **Grid:** `grid-cols-*` (numeric values only)
 /// - **Axis Size:** `axis-min`, `axis-max` (Custom Wind utilities)
 ///
@@ -118,6 +119,7 @@ class FlexboxGridParser implements WindParserInterface {
   /// Maps flex child properties to `FlexFit`
   static const _flexFitMap = <String, FlexFit>{
     'shrink': FlexFit.loose, // flex-shrink: 1 (can shrink)
+    'shrink-0': FlexFit.tight, // flex-shrink: 0 (keep size, do not shrink)
     'flex-auto': FlexFit.loose,
     'flex-initial': FlexFit.loose,
     'flex-shrink': FlexFit.loose,
@@ -211,6 +213,12 @@ class FlexboxGridParser implements WindParserInterface {
         flexFit = _flexFitMap[className];
       } else if (alignment == null && _alignSelfMap.containsKey(className)) {
         alignment = _alignSelfMap[className];
+      } else if (alignment == null && className.startsWith('self-')) {
+        // Tailwind's canonical shorthand `self-*` aliases `align-self-*`.
+        // Normalize to the long form so both routes share one mapping
+        // (an unmapped token like `self-baseline` resolves to null, exactly
+        // as `align-self-baseline` would).
+        alignment = _alignSelfMap['align-$className'];
       } else {
         // No match or skipped.
       }
@@ -317,6 +325,7 @@ class FlexboxGridParser implements WindParserInterface {
         className.startsWith('justify-') ||
         className.startsWith('items-') ||
         className.startsWith('align-') ||
+        className.startsWith('self-') ||
         className.startsWith('gap-') ||
         className.startsWith('space-x-') ||
         className.startsWith('space-y-') ||

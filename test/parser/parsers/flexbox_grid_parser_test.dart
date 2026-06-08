@@ -154,8 +154,10 @@ void main() {
       });
 
       test('parses shrink-0 class', () {
+        // Tailwind `shrink-0` = flex-shrink: 0 = do not shrink. The Flutter
+        // equivalent is FlexFit.tight so the Flexible keeps the child's size.
         final styles = parser.parse(WindStyle(), ['shrink-0'], context);
-        expect(styles.flexFit, isNull);
+        expect(styles.flexFit, FlexFit.tight);
       });
 
       test('parses items-baseline class', () {
@@ -165,9 +167,10 @@ void main() {
       });
 
       test('applies last-class-wins for shrink', () {
+        // `shrink-0` is the later class, so its FlexFit.tight wins.
         final styles =
             parser.parse(WindStyle(), ['shrink', 'shrink-0'], context);
-        expect(styles.flexFit, FlexFit.loose);
+        expect(styles.flexFit, FlexFit.tight);
       });
 
       test('returns unchanged styles when classes is null', () {
@@ -183,9 +186,9 @@ void main() {
         expect(styles.flexFit, FlexFit.loose);
       });
 
-      test('shrink-0 does not set flexFit', () {
+      test('shrink-0 -> FlexFit.tight (does not shrink)', () {
         final styles = parser.parse(WindStyle(), ['shrink-0'], context);
-        expect(styles.flexFit, isNull);
+        expect(styles.flexFit, FlexFit.tight);
       });
 
       test(
@@ -197,10 +200,10 @@ void main() {
       });
 
       test('last-class-wins override logic', () {
-        // Flex shrink overrides — shrink-0 no longer sets flexFit
+        // Flex shrink overrides: whichever shrink token comes last wins.
         expect(
           parser.parse(WindStyle(), ['shrink', 'shrink-0'], context).flexFit,
-          FlexFit.loose,
+          FlexFit.tight,
         );
         expect(
           parser.parse(WindStyle(), ['shrink-0', 'shrink'], context).flexFit,
@@ -226,6 +229,63 @@ void main() {
       });
     });
 
+    group('self-* align-self alias', () {
+      test('self-start matches align-self-start', () {
+        final selfStyles = parser.parse(WindStyle(), ['self-start'], context);
+        final aliasStyles =
+            parser.parse(WindStyle(), ['align-self-start'], context);
+        expect(selfStyles.alignment, aliasStyles.alignment);
+        expect(selfStyles.alignment, Alignment.topCenter);
+      });
+
+      test('self-end matches align-self-end', () {
+        final selfStyles = parser.parse(WindStyle(), ['self-end'], context);
+        final aliasStyles =
+            parser.parse(WindStyle(), ['align-self-end'], context);
+        expect(selfStyles.alignment, aliasStyles.alignment);
+        expect(selfStyles.alignment, Alignment.bottomCenter);
+      });
+
+      test('self-center matches align-self-center', () {
+        final selfStyles = parser.parse(WindStyle(), ['self-center'], context);
+        final aliasStyles =
+            parser.parse(WindStyle(), ['align-self-center'], context);
+        expect(selfStyles.alignment, aliasStyles.alignment);
+        expect(selfStyles.alignment, Alignment.center);
+      });
+
+      test('self-stretch matches align-self-stretch', () {
+        final selfStyles = parser.parse(WindStyle(), ['self-stretch'], context);
+        final aliasStyles =
+            parser.parse(WindStyle(), ['align-self-stretch'], context);
+        expect(selfStyles.alignment, aliasStyles.alignment);
+        expect(selfStyles.alignment, Alignment.center);
+      });
+
+      test('self-auto matches align-self-auto', () {
+        final selfStyles = parser.parse(WindStyle(), ['self-auto'], context);
+        final aliasStyles =
+            parser.parse(WindStyle(), ['align-self-auto'], context);
+        expect(selfStyles.alignment, aliasStyles.alignment);
+        expect(selfStyles.alignment, Alignment.center);
+      });
+
+      test('self-baseline matches align-self-baseline (both unmapped)', () {
+        final selfStyles =
+            parser.parse(WindStyle(), ['self-baseline'], context);
+        final aliasStyles =
+            parser.parse(WindStyle(), ['align-self-baseline'], context);
+        expect(selfStyles.alignment, aliasStyles.alignment);
+        expect(selfStyles.alignment, isNull);
+      });
+
+      test('self-* alias does not break align-self-*', () {
+        final styles =
+            parser.parse(WindStyle(), ['align-self-center'], context);
+        expect(styles.alignment, Alignment.center);
+      });
+    });
+
     group('canParse', () {
       test('returns true for flex related classes', () {
         expect(parser.canParse('flex'), isTrue);
@@ -237,6 +297,9 @@ void main() {
         expect(parser.canParse('shrink-0'), isTrue);
         expect(parser.canParse('gap-4'), isTrue);
         expect(parser.canParse('axis-min'), isTrue);
+        expect(parser.canParse('self-center'), isTrue);
+        expect(parser.canParse('self-start'), isTrue);
+        expect(parser.canParse('align-self-center'), isTrue);
       });
 
       test('returns true for grid related classes', () {
