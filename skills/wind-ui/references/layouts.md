@@ -28,6 +28,8 @@ Two consequences drive almost every Wind layout footgun:
 
 2. **Scrollables remove the max on their axis.** A `SingleChildScrollView` (Wind's `overflow-y-auto`) passes `maxHeight: double.infinity` to its child. A child that asserts on finite height (`Column` with `Expanded` children) throws "Vertical viewport was given unbounded height".
 
+3. **`flex flex-col` stretches `WDiv` children to the column width by default.** With NO explicit `items-*` token, each direct `WDiv` child that does not control its own width (`w-*` / `min-w-*` / `max-w-*` / `w-full`, `flex-*`, `shrink-0` / `flex-none`, or absolute) is wrapped in `SizedBox(width: double.infinity)`, mirroring CSS `align-items: stretch`. Add any `items-*` token (e.g. `items-start`) to disable the stretch and let children size to content. This is column-only; rows are never auto-stretched on the cross axis. Non-`WDiv` children (raw Flutter widgets, `WText`) are left untouched.
+
 Memorize these and the rest follows.
 
 ---

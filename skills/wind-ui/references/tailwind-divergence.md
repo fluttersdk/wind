@@ -334,6 +334,8 @@ These canonical Tailwind classes are silently ignored by wind (unknown tokens ar
 | `-space-x-*` / `-space-y-*` | unsupported (negative gap; no overlap primitive) | none |
 | `self-*` | supported (alias of `align-self-*`) | `self-center` etc. work directly |
 | `shrink-0` | supported (preserves intrinsic size, no Flexible wrap) | works directly |
+| `flex-none` | supported as CSS `flex: 0 0 auto` (no grow AND no shrink; keeps intrinsic size) | works directly |
+| `basis-*` | supported as a MAIN-axis initial size (`basis-1/2`, `basis-full`, `basis-[Npx]`); ignores grow/shrink interplay | works directly |
 | `text-7xl` / `8xl` / `9xl` | silently capped (max is `text-6xl`) | `text-6xl` or arbitrary `text-[96px]` |
 
-Reminder: a wind page needs a Material ancestor (a `Scaffold`) for `WText` to inherit a default text style; without one, Flutter renders the yellow-underline fallback. Real apps always have a `Scaffold`, so this only bites bare `WDiv > WText` route bodies.
+Note: `WText` is self-contained regarding its baseline rendering. When no Material/Scaffold ancestor supplies a `DefaultTextStyle` color, `WText` falls back to `Colors.black` internally; it also injects a `Directionality(ltr)` wrapper when no `Directionality` is inherited. Explicit `text-*` className, `foregroundColor`, and `textStyle` props override the fallback and are unaffected.

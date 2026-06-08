@@ -62,10 +62,14 @@ Inline color escape hatches that bypass the cache key:
 | `flex-1` | `Expanded(flex: 1)` participation |
 | `flex-N` | Numeric flex (any integer) |
 | `flex-auto` | `Flexible(fit: loose, flex: 1)` |
-| `flex-none` / `flex-initial` | `Flexible(fit: loose, flex: 0)` |
-| `flex-grow` / `grow` | Both supported (Tailwind v3 + v4 names) |
+| `flex-initial` | `Flexible(fit: loose, flex: 0)` |
+| `flex-none` | CSS `flex: 0 0 auto`: no grow AND no shrink. Keeps intrinsic size (no `Flexible` wrap), like `shrink-0` |
+| `flex-grow` / `grow` | `flex: 1` (Expanded). Both Tailwind v3 + v4 names supported |
+| `grow-0` | No grow (intrinsic main size) |
 | `flex-shrink` / `shrink` | Both supported |
 | `shrink-0` | No shrink |
+| `basis-1/2` / `-1/3` / `-1/4` / `-full` | Fractional flex-basis: initial MAIN-axis size (width in a row, height in a column). Approximates CSS `flex-basis`, ignores grow/shrink interplay |
+| `basis-[Npx]` | Fixed flex-basis: a fixed MAIN-axis size in logical pixels |
 | `justify-start` / `-end` / `-center` / `-between` / `-around` / `-evenly` | `MainAxisAlignment` |
 | `items-start` / `-end` / `-center` / `-baseline` / `-stretch` | `CrossAxisAlignment` |
 | `align-content-start` / `-end` / `-center` / `-between` / `-around` / `-evenly` / `-stretch` | Wrap-only, `WrapAlignment` for runs |

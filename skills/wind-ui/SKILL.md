@@ -3,10 +3,10 @@ name: wind-ui
 description: "fluttersdk_wind 1.0: utility-first Flutter styling with Tailwind-syntax className strings. 22 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper + 5 WForm* wrappers) consume className through a 19-parser pipeline that emits a cached immutable WindStyle. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, or migrating a Tailwind className from web. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.0.3
+version: 2.0.4
 ---
 
-<!-- fluttersdk_wind 1.0.x | Skill v2.0.3 (2026-06-08) -->
+<!-- fluttersdk_wind 1.0.x | Skill v2.0.4 (2026-06-08) -->
 
 # Wind UI 1.0
 
