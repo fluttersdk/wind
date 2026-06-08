@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/parser/parsers/background_parser.dart';
+import 'package:fluttersdk_wind/src/parser/parsers/file_image_io.dart';
 import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
 import 'package:fluttersdk_wind/src/parser/wind_context.dart';
 import 'package:fluttersdk_wind/src/parser/wind_style.dart';
@@ -321,6 +322,14 @@ void main() {
         (updatedStyles.decoration as BoxDecoration).color,
         themeData.getColor('red', 500),
       );
+    });
+  });
+
+  group('fileImageProvider (io arm)', () {
+    test('returns a FileImage whose file.path matches the given path', () {
+      final provider = fileImageProvider('/abs/path/img.png');
+      expect(provider, isA<FileImage>());
+      expect((provider! as FileImage).file.path, '/abs/path/img.png');
     });
   });
 
