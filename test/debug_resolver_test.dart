@@ -102,6 +102,41 @@ void main() {
         expect(data.containsKey('className'), isTrue);
       },
     );
+
+    testWidgets(
+      'returns const {} for a className-less W-widget (WAnchor) without throwing',
+      (tester) async {
+        // WAnchor is W-prefixed but interaction-only: it has no `className`
+        // field. The resolver must treat it as a miss, not crash with a
+        // NoSuchMethodError (which would break every dusk/telescope snapshot
+        // that contains a bare WAnchor).
+        await tester.pumpWidget(
+          wrapWithTheme(WAnchor(onTap: () {}, child: const Text('x'))),
+        );
+        final element = _firstElementOf<WAnchor>(tester);
+
+        final data = const WindDebugResolverImpl().resolve(element);
+        expect(data, equals(const <String, Object?>{}));
+      },
+    );
+
+    testWidgets(
+      'returns const {} for a className-less W-widget (WindAnimationWrapper)',
+      (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WindAnimationWrapper(
+              animationType: WindAnimationType.pulse,
+              child: SizedBox(width: 10),
+            ),
+          ),
+        );
+        final element = _firstElementOf<WindAnimationWrapper>(tester);
+
+        final data = const WindDebugResolverImpl().resolve(element);
+        expect(data, equals(const <String, Object?>{}));
+      },
+    );
   });
 
   // ---------------------------------------------------------------------------

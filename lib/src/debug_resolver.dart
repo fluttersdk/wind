@@ -18,11 +18,11 @@ class WindDebugResolverImpl implements WindDebugResolver {
   @override
   Map<String, Object?> resolve(Element element) {
     final widget = element.widget;
-    // 1. Filter to W-prefixed widgets with a className API
+    // 1. Filter to W-prefixed widgets that actually expose a `className` API.
     if (!widget.runtimeType.toString().startsWith('W')) {
       return const {};
     }
-    final String? className = (widget as dynamic).className as String?;
+    final String? className = _readClassName(widget);
     if (className == null || className.isEmpty) {
       return const {};
     }
@@ -51,6 +51,23 @@ class WindDebugResolverImpl implements WindDebugResolver {
       data['textColor'] = '#${_hexRgb(textColor)}';
     }
     return data;
+  }
+
+  /// Reads the optional `className` field from a W-widget via dynamic dispatch.
+  ///
+  /// Several W-prefixed widgets are interaction- or structure-only and expose
+  /// no `className` (WAnchor, WBreakpoint, WindAnimationWrapper,
+  /// WKeyboardActions). Reading `.className` on them throws
+  /// `NoSuchMethodError`; treating that as the documented "not className-
+  /// stylable" signal keeps a bare WAnchor in the tree from crashing the whole
+  /// diagnostic snapshot. Only the missing-member error is handled here; any
+  /// other failure propagates.
+  String? _readClassName(Widget widget) {
+    try {
+      return (widget as dynamic).className as String?;
+    } on NoSuchMethodError {
+      return null;
+    }
   }
 }
 
