@@ -61,16 +61,22 @@ void main() {
     });
 
     testWidgets(
-      'text-7xl is a documented no-op (F11): size stays unset, not 72',
+      'text-7xl is a documented no-op (F11): falls back to the default size, not 72',
       (tester) async {
+        // Baseline: a WText with no text-size class resolves the default size.
+        await tester.pumpWidget(wrapWithTheme(const WText('base')));
+        final baselineSize = _renderedStyle(tester).fontSize;
+
+        // F11: Wind caps at text-6xl; text-7xl is above the cap and silently
+        // no-ops, so it renders at the SAME default as the baseline (positively
+        // characterizing the no-op), NOT Tailwind's 72 px.
         await tester.pumpWidget(
           wrapWithTheme(const WText('7xl', className: 'text-7xl')),
         );
+        final cappedSize = _renderedStyle(tester).fontSize;
 
-        // F11: Wind caps at text-6xl; text-7xl silently falls back. Assert the
-        // ACTUAL documented behavior (no explicit size), not Tailwind's 72 px.
-        final size = _renderedStyle(tester).fontSize;
-        expect(size, isNot(72.0));
+        expect(cappedSize, equals(baselineSize));
+        expect(cappedSize, isNot(72.0));
       },
     );
   });
