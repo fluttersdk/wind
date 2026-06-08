@@ -337,3 +337,5 @@ These canonical Tailwind classes are silently ignored by wind (unknown tokens ar
 | `text-7xl` / `8xl` / `9xl` | silently capped (max is `text-6xl`) | `text-6xl` or arbitrary `text-[96px]` |
 
 Reminder: a wind page needs a Material ancestor (a `Scaffold`) for `WText` to inherit a default text style; without one, Flutter renders the yellow-underline fallback. Real apps always have a `Scaffold`, so this only bites bare `WDiv > WText` route bodies.
+
+State-shadowing edge: a disabled outer `WAnchor` does NOT suppress a `hover:` class that a nested `WDiv` carries on itself. `WDiv` auto-wraps in its own non-disabled `WAnchor` whose state provider shadows the ancestor's `isDisabled`, so the inner `hover:` still fires. This is an edge case (a disabled control wrapping a separately-hover-styled child); style the disabled state on the same element that owns the `hover:` class, or drive `disabled:` on the inner `WDiv` directly.
