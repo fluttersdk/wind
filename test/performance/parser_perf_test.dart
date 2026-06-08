@@ -81,13 +81,16 @@ void main() {
         ),
       );
 
-      // 2. Cold bench: clear the cache before each iteration.
-      final coldWatch = Stopwatch()..start();
+      // 2. Cold bench: clear the cache before each iteration, but time only the
+      //    parse() call. clearCache() stays OUTSIDE the measured window so
+      //    coldTotal reflects pure cache-miss parse cost, not map-clear cost.
+      final coldWatch = Stopwatch();
       for (var i = 0; i < _kBenchIterations; i++) {
         WindParser.clearCache();
+        coldWatch.start();
         WindParser.parse(_kBenchClassName, capturedCtx);
+        coldWatch.stop();
       }
-      coldWatch.stop();
       final coldTotal = coldWatch.elapsedMicroseconds;
 
       // 3. Verify the cache received exactly one entry after the last miss.
@@ -100,11 +103,14 @@ void main() {
       WindParser.parse(_kBenchClassName, capturedCtx); // prime
       final cacheSizeAfterPrime = WindParser.cacheSize;
 
-      final warmWatch = Stopwatch()..start();
+      // Time only the parse() call per iteration, matching the cold bench's
+      // per-iteration start/stop so the speedup ratio compares like with like.
+      final warmWatch = Stopwatch();
       for (var i = 0; i < _kBenchIterations; i++) {
+        warmWatch.start();
         WindParser.parse(_kBenchClassName, capturedCtx);
+        warmWatch.stop();
       }
-      warmWatch.stop();
       final warmTotal = warmWatch.elapsedMicroseconds;
 
       // 5. Cache must NOT grow during warm iterations (pure hits, no new misses).

@@ -205,11 +205,15 @@ void main() {
         ),
       );
 
-      // w-1/2 wraps in FractionallySizedBox(widthFactor: 0.5).
-      expect(find.byType(FractionallySizedBox), findsOneWidget);
-      final fsb = tester.widget<FractionallySizedBox>(
-        find.byType(FractionallySizedBox),
+      // w-1/2 wraps in FractionallySizedBox(widthFactor: 0.5). Scope the finder
+      // to the WDiv under test (via its `half` key) so an unrelated
+      // FractionallySizedBox in the app shell cannot make this assertion fail.
+      final fractionalFinder = find.descendant(
+        of: find.byKey(const ValueKey('half')),
+        matching: find.byType(FractionallySizedBox),
       );
+      expect(fractionalFinder, findsOneWidget);
+      final fsb = tester.widget<FractionallySizedBox>(fractionalFinder);
       expect(fsb.widthFactor, 0.5);
 
       // The child is laid out at half of the 400 px bounded parent.

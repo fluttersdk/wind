@@ -39,9 +39,18 @@ Widget wrapWithDarkTheme(Widget child) {
 }
 
 /// Reads the `BoxDecoration` from the first `RenderDecoratedBox` the WDiv emits.
+///
+/// The finder is scoped to descendants of the [WDiv] under test so an unrelated
+/// `DecoratedBox` from the app shell (MaterialApp / Scaffold) can never shadow
+/// the decoration being asserted on.
 BoxDecoration _decorationOf(WidgetTester tester) {
   final render = tester.renderObject<RenderDecoratedBox>(
-    find.byType(DecoratedBox).first,
+    find
+        .descendant(
+          of: find.byType(WDiv),
+          matching: find.byType(DecoratedBox),
+        )
+        .first,
   );
   return render.decoration as BoxDecoration;
 }
