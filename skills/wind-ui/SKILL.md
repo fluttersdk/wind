@@ -3,10 +3,10 @@ name: wind-ui
 description: "fluttersdk_wind 1.0: utility-first Flutter styling with Tailwind-syntax className strings. 22 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper + 5 WForm* wrappers) consume className through a 19-parser pipeline that emits a cached immutable WindStyle. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, or migrating a Tailwind className from web. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.0.1
+version: 2.0.3
 ---
 
-<!-- fluttersdk_wind 1.0.x | Skill v2.0.1 (2026-05-27) -->
+<!-- fluttersdk_wind 1.0.x | Skill v2.0.3 (2026-06-08) -->
 
 # Wind UI 1.0
 
@@ -124,7 +124,7 @@ Inline this catalog as your default reach-for set. For the full per-parser regex
 
 **Layout** — `flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `wrap` `grid` `grid-cols-N` `block` `hidden`. `justify-start` `-center` `-end` `-between` `-around` `-evenly`. `items-start` `-center` `-end` `-baseline` `-stretch`. `axis-min` `axis-max` (Wind-only, sets `MainAxisSize`).
 
-**Flex child** — `flex-1` `flex-auto` `flex-none` `flex-N` (numeric). `shrink-0` `grow`. `order-0` through `order-12`, `order-first` / `order-last` / `order-none`, arbitrary `order-[-5]`.
+**Flex child** — `flex-1` `flex-auto` `flex-none` `flex-N` (numeric). `shrink-0` `grow`. `self-start` / `-end` / `-center` / `-stretch` / `-auto` (align-self shorthand; `align-self-*` long form also works). `order-0` through `order-12`, `order-first` / `order-last` / `order-none`, arbitrary `order-[-5]`.
 
 **Spacing** — `p-N` `px-N` `py-N` `pt-N` `pr-N` `pb-N` `pl-N` (no `ps-`/`pe-`). `m-N` and axes (no negative margin, no `ms-`/`me-`, `mx-auto` for horizontal centering). `gap-N` `gap-x-N` `gap-y-N` `space-x-N` `space-y-N`. Arbitrary `p-[18px]`, `gap-[3.5]` (no `%` for spacing). Default unit: 4 px per step. `p-4` = 16 px.
 
@@ -185,6 +185,9 @@ Wind hides most boilerplate but never changes Flutter's "constraints down, sizes
 | **`truncate` requires bounded width** | `WText('long...', className: 'truncate')` inside a Row | wrap in `WDiv(className: 'flex-1', child: WText(..., className: 'truncate'))` |
 | **Nested flex with truncate needs `min-w-0`** | `WDiv(className: 'flex-1 flex flex-col', children: [WText(..., className: 'truncate')])` | `WDiv(className: 'flex-1 flex flex-col min-w-0', children: [WText(..., className: 'truncate')])` |
 | **Icon buttons need ≥48 dp touch target** | `WButton(child: WIcon(Icons.close_outlined))` (visual size 24 dp) | `WButton(className: 'p-3 rounded-lg', child: WIcon(Icons.close_outlined))` (48 dp tap target) |
+| **Icon-only buttons need `semanticLabel`** | `WButton(child: WIcon(Icons.close_outlined))` (nameless to screen readers / `getByRole`) | `WButton(semanticLabel: 'Close', child: WIcon(Icons.close_outlined))` |
+| **`semanticLabel` overrides child text** | `WButton(semanticLabel: 'Save', child: WText('Save'))` (label set alongside visible text; the child's text is excluded from semantics) | omit it when the child has readable text; prefer it only for icon-only controls where no text is present |
+| **`semanticLabel` excludes the word "button"** | `semanticLabel: 'Close button'` (announced as "Close button button") | `semanticLabel: 'Close'` (the role appends "button") |
 
 `items-stretch` inside a `SingleChildScrollView` needs an `IntrinsicHeight` wrapper from native Flutter; Wind has no token for it. Rare; reach for it when row children inside a scroll must match heights.
 
@@ -298,7 +301,7 @@ Full Form patterns + validation recipes + async error flow: `${CLAUDE_SKILL_DIR}
 
 ## 10. Definition of done for a Wind change
 
-Per change (every UI edit), verify all six:
+Per change (every UI edit), verify all seven:
 
 1. **Every color token has a `dark:` peer** in the same className block. Grep your diff for `bg-`, `text-`, `border-`, `ring-`, `fill-`, `shadow-` and confirm a `dark:` peer on each.
 2. **Every multi-concern className (3+ token families) is triple-quoted**, one concern per line, dark pairs grouped beside their light variant.
@@ -306,6 +309,7 @@ Per change (every UI edit), verify all six:
 4. **Every `child` XOR `children`** — never both. Construction-time assertion.
 5. **Every scrollable root `WDiv` has `scrollPrimary: true`** on at least one ancestor in the scroll chain so iOS status-bar-tap scrolls to top.
 6. **No Dart string interpolation inside className**, no inline `BoxDecoration` / `TextStyle` / `EdgeInsets` when a token covers it, no `Icons.*` (non-outlined) without a deliberate reason, no `WIcon` without `Icons.*_outlined`.
+7. **Every icon-only `WButton` / `WAnchor` has a `semanticLabel`** — without it the control is nameless to screen readers and `getByRole('button', { name })`. When set, the child subtree is excluded from semantics, so `semanticLabel` overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already carries readable text. Do not put the word "button" in the label; the role appends it.
 
 Run `dart analyze` on the touched files and visually verify the change in light AND dark mode (toggle via `context.windTheme.toggleTheme()` if there is no UI for it yet) before reporting done. Missing dark pairs only surface when the app is actually in dark mode.
 
@@ -390,7 +394,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WindTheme(
-      data: WindThemeData(/* 20 optional fields; defaults applied otherwise */),
+      data: WindThemeData(/* 23 optional fields; defaults applied otherwise */),
       builder: (context, controller) => MaterialApp(
         theme: controller.toThemeData(),
         home: const Scaffold(body: HomePage()),

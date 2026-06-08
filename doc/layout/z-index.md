@@ -128,6 +128,6 @@ WDiv(className: 'z-popover') // Applies z-index: 5000
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [Position](/doc/layout/position.md)
-- [Display](/doc/layout/display.md)
-- [WindTheme](/doc/core-concepts/theming.md)
+- [Position](positioning.md)
+- [Display](display.md)
+- [WindTheme](../core-concepts/theming.md)

@@ -39,7 +39,7 @@ Replaces the alpha-9 era `WindDuskIntegration.install()` and the `lib/dusk_integ
 
 ## 2. What the resolver exposes
 
-For each W-prefix widget with a non-empty `className`, the resolver returns a `Map<String, Object?>` with 6 fields:
+For each W-prefix widget with a non-empty `className`, the resolver returns a `Map<String, Object?>` with up to 7 fields (5 always present, plus `bgColor` / `textColor` when non-null):
 
 | Field | Type | Source |
 |---|---|---|
@@ -51,7 +51,7 @@ For each W-prefix widget with a non-empty `className`, the resolver returns a `M
 | `bgColor` | `String?` | Resolved background color as uppercase hex RGB (`#3B82F6`); present only when non-null |
 | `textColor` | `String?` | Resolved text color as uppercase hex RGB; present only when non-null |
 
-Non-Wind elements (a Material `Container`, a `ListTile`) return an empty map. The resolver walks `Element` (which IS-A `BuildContext`) and parses the className through `WindParser.parse(className, element)`.
+Non-Wind elements (a Material `Container`, a `ListTile`) return an empty map. So do W-widgets that have no `className` field (`WAnchor`, `WBreakpoint`, `WindAnimationWrapper`, `WKeyboardActions`): the resolver skips them safely instead of throwing, so a bare `WAnchor` in the tree never aborts a dusk / telescope snapshot. The resolver walks `Element` (which IS-A `BuildContext`) and parses the className through `WindParser.parse(className, element)`.
 
 ---
 
@@ -219,4 +219,4 @@ Discipline:
 
 For testing dark mode, pass `WindThemeData(brightness: Brightness.dark, syncWithSystem: false)` to `wrapWithTheme`. For testing breakpoints, set the viewport size to bracket each breakpoint.
 
-For E2E testing inside a running app (Dusk / Telescope / Playwright), `Wind.installDebugResolver()` exposes the 6-field snapshot per W-widget; consumers read via `WindDebugRegistry.current?.resolve(element)` without needing Wind as a direct dep.
+For E2E testing inside a running app (Dusk / Telescope / Playwright), `Wind.installDebugResolver()` exposes the 7-field snapshot per W-widget; consumers read via `WindDebugRegistry.current?.resolve(element)` without needing Wind as a direct dep.

@@ -52,7 +52,9 @@ class SizingParser implements WindParserInterface {
     '5xl': 1024,
     '6xl': 1152,
     '7xl': 1280,
-    'prose': 65 * 16, // 65ch ≈ 65 * average char width (16px for body text)
+    // Deliberate fixed-px divergence from Tailwind's font-relative 65ch: 512px
+    // matches max-w-lg and avoids font-size dependency at render time.
+    'prose': 512,
   };
 
   /// Parses sizing related classes and returns updated WindStyle

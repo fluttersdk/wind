@@ -37,12 +37,17 @@ class AnimationBasicExamplePage extends StatelessWidget {
                 children: const [
                   WIcon(
                     Icons.refresh,
-                    className: 'text-blue-500 text-3xl animate-spin',
+                    className:
+                        'text-blue-500 dark:text-blue-400 text-3xl animate-spin',
                   ),
-                  WDiv(className: 'w-8 h-8 bg-purple-500 rounded animate-spin'),
+                  WDiv(
+                    className:
+                        'w-8 h-8 bg-purple-500 dark:bg-purple-400 rounded animate-spin',
+                  ),
                   WIcon(
                     Icons.settings,
-                    className: 'text-gray-600 text-3xl animate-spin',
+                    className:
+                        'text-gray-600 dark:text-gray-400 text-3xl animate-spin',
                   ),
                 ],
               ),
@@ -59,16 +64,18 @@ class AnimationBasicExamplePage extends StatelessWidget {
                 children: [
                   const WDiv(
                     className:
-                        'w-12 h-12 bg-gray-300 rounded-full animate-pulse',
+                        'w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse',
                   ),
                   WDiv(
                     className: 'flex flex-col gap-2',
                     children: const [
                       WDiv(
-                        className: 'h-3 w-32 bg-gray-300 rounded animate-pulse',
+                        className:
+                            'h-3 w-32 bg-gray-300 dark:bg-gray-600 rounded animate-pulse',
                       ),
                       WDiv(
-                        className: 'h-3 w-24 bg-gray-300 rounded animate-pulse',
+                        className:
+                            'h-3 w-24 bg-gray-300 dark:bg-gray-600 rounded animate-pulse',
                       ),
                     ],
                   ),
@@ -87,13 +94,18 @@ class AnimationBasicExamplePage extends StatelessWidget {
                 children: const [
                   WIcon(
                     Icons.arrow_downward,
-                    className: 'text-blue-500 text-2xl animate-bounce',
+                    className:
+                        'text-blue-500 dark:text-blue-400 text-2xl animate-bounce',
                   ),
                   WIcon(
                     Icons.keyboard_arrow_down,
-                    className: 'text-green-500 text-3xl animate-bounce',
+                    className:
+                        'text-green-500 dark:text-green-400 text-3xl animate-bounce',
                   ),
-                  WDiv(className: 'w-5 h-5 bg-red-500 rounded animate-bounce'),
+                  WDiv(
+                    className:
+                        'w-5 h-5 bg-red-500 dark:bg-red-400 rounded animate-bounce',
+                  ),
                 ],
               ),
             ],
@@ -109,14 +121,15 @@ class AnimationBasicExamplePage extends StatelessWidget {
                 children: [
                   _NotificationBadge(
                     icon: Icons.notifications,
-                    badgeColor: 'bg-red-500',
+                    badgeColor: 'bg-red-500 dark:bg-red-400',
                   ),
                   _NotificationBadge(
                     icon: Icons.mail,
-                    badgeColor: 'bg-blue-500',
+                    badgeColor: 'bg-blue-500 dark:bg-blue-400',
                   ),
                   const WDiv(
-                    className: 'w-4 h-4 bg-green-500 rounded-full animate-ping',
+                    className:
+                        'w-4 h-4 bg-green-500 dark:bg-green-400 rounded-full animate-ping',
                   ),
                 ],
               ),

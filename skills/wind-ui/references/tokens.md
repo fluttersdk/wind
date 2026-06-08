@@ -69,7 +69,7 @@ Inline color escape hatches that bypass the cache key:
 | `justify-start` / `-end` / `-center` / `-between` / `-around` / `-evenly` | `MainAxisAlignment` |
 | `items-start` / `-end` / `-center` / `-baseline` / `-stretch` | `CrossAxisAlignment` |
 | `align-content-start` / `-end` / `-center` / `-between` / `-around` / `-evenly` / `-stretch` | Wrap-only, `WrapAlignment` for runs |
-| `align-self-start` / `-end` / `-center` / `-stretch` / `-auto` | Per-child cross-axis override |
+| `align-self-start` / `-end` / `-center` / `-stretch` / `-auto` (or the `self-*` shorthand) | Per-child cross-axis override |
 | `axis-min` / `axis-max` | Wind-only: `MainAxisSize.min` / `.max` on the parent flex |
 | `grid-cols-N` | N columns (any integer); renders as `Wrap` with computed column widths |
 | `order-0` through `order-12` | Child order index |
@@ -120,7 +120,7 @@ NOT supported (silently no-op):
 | `w-[300px]` / `h-[50%]` | Arbitrary (px OR % both supported for sizing; unique among parsers) |
 | `min-w-0` / `min-w-full` / `min-w-screen` | Min width |
 | `max-w-xs` / `max-w-sm` / `max-w-md` / `max-w-lg` / `max-w-xl` / `max-w-2xl` ... `max-w-7xl` | Named max-widths (320 / 384 / 448 / 512 / 576 / 672 / ... 1280 px) |
-| `max-w-prose` | 1040 px (≈ 65ch reading width) |
+| `max-w-prose` | 512 px |
 | `max-w-full` / `max-w-screen` | No max OR viewport-wide |
 | `min-h-0` / `min-h-full` / `min-h-screen` | Min height |
 | `max-h-full` / `max-h-screen` | Max height |
@@ -189,7 +189,6 @@ Custom families via `WindThemeData.colors`: `{'primary': MaterialColor(...)}` ma
 | `border-N` | Numeric width (`border-2`, `border-4`, `border-8`) |
 | `border-[3px]` | Arbitrary width |
 | `border-t` / `border-r` / `border-b` / `border-l` | Directional default-width |
-| `border-x` / `border-y` | Axis pair |
 | `border-t-N` / `border-r-N` / `border-b-N` / `border-l-N` | Directional with width |
 | `border-{family}-{shade}` / `border-[#hex]` / `border-{family}-{shade}/{N}` | Color (with `dark:` peer required) |
 | `border-solid` / `border-none` | Border style (only these two wired; `border-dashed` / `border-dotted` recognised but not rendered) |
@@ -460,6 +459,7 @@ If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it 
 - `top-[50%]` and any `%` for positioning
 
 **Border:**
+- `border-x` / `border-y` (axis shortcuts NOT wired; only `border-t` / `border-r` / `border-b` / `border-l` directional, plus bare `border` uniform). Set the two physical sides explicitly.
 - `border-dashed` / `border-dotted` (parser recognises, no visual)
 - `divide-x-N` / `divide-y-N` (use explicit spacing instead)
 

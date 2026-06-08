@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:fluttersdk_wind/src/debug_resolver.dart';
 import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
 
 /// Tests for `Wind` facade — install flag management and registry integration.

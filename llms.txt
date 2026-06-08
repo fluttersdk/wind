@@ -1,6 +1,6 @@
 # fluttersdk_wind
 
-> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 23-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 20 W-prefix widgets, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, Cursor rules). Open Source. Tailwind syntax. Flutter native. Version 1.0.0 stable.
+> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 23-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 22 W-prefix widgets, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, and a skill distributed to 8+ AI clients via fluttersdk/ai). Open Source. Tailwind syntax. Flutter native. Version 1.0.0 stable.
 
 **Stack**: Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `fluttersdk_wind_diagnostics_contracts`. No `mockito`, no state management library, no router.
 
@@ -27,7 +27,7 @@ WDiv(
   child: WText('Hello', className: 'text-xl font-bold dark:text-white'),
 )
 
-// Debug only: expose 6-field debug data to inspectors via fluttersdk_wind_diagnostics_contracts
+// Debug only: expose 7-field debug data to inspectors via fluttersdk_wind_diagnostics_contracts
 if (kDebugMode) Wind.installDebugResolver();
 ```
 
@@ -49,6 +49,8 @@ if (kDebugMode) Wind.installDebugResolver();
 - [WButton](https://fluttersdk.com/wind/widgets/w-button.md): Button with `hover:` / `focus:` / `active:` / `loading:` / `disabled:` state prefixes.
 - [WAnchor](https://fluttersdk.com/wind/widgets/w-anchor.md): Inline interactive wrapper; auto-wraps `WDiv` / `WButton` when hover/focus prefixes are detected.
 - [WPopover](https://fluttersdk.com/wind/widgets/w-popover.md): Overlay container with alignment + trigger / content builders.
+- [WKeyboardActions](https://fluttersdk.com/wind/widgets/w-keyboard-actions.md): Above-keyboard toolbar with Done button and field navigation for iOS numeric keyboards; platform-targeted via `platform: 'ios'`.
+- [WindAnimationWrapper](https://fluttersdk.com/wind/widgets/wind-animation-wrapper.md): Low-level animation engine; wraps a child in spin, ping, pulse, or bounce with configurable `duration` and `curve`. Used internally by `animate-*` className tokens.
 
 ### Form
 

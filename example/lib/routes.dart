@@ -202,6 +202,8 @@ import 'pages/widgets/w_form_select.dart';
 import 'pages/widgets/w_form_multiselect.dart';
 import 'pages/widgets/w_form_checkbox.dart';
 import 'pages/widgets/w_form_checkbox_layout.dart';
+import 'pages/widgets/w_keyboard_actions_basic.dart';
+import 'pages/widgets/wind_animation_wrapper_basic.dart';
 
 import 'pages/widgets/w_svg.dart';
 
@@ -420,6 +422,9 @@ final Map<String, Widget> appRoutes = {
   '/widgets/w_form_multiselect': const WFormMultiSelectExamplePage(),
   '/widgets/w_form_checkbox': const WFormCheckboxExamplePage(),
   '/widgets/w_form_checkbox_layout': const WFormCheckboxLayoutExamplePage(),
+  '/widgets/w_keyboard_actions_basic': const WKeyboardActionsBasicExamplePage(),
+  '/widgets/wind_animation_wrapper_basic':
+      const WindAnimationWrapperBasicExamplePage(),
 
   '/widgets/w_svg': const WSvgExamplePage(),
 };

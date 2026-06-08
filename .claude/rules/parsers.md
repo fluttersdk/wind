@@ -26,6 +26,7 @@ class FooParser implements WindParserInterface {
 - `canParse(String className)` is O(1). Use `startsWith()` or a pre-compiled `static final RegExp`. No heavy logic.
 - `parse` returns `styles.copyWith(...)` for every mutation. Never returns null. Never mutates the input list.
 - The orchestrator's first-match-wins routing means `canParse` order matters: more specific prefixes register before more general ones. Registration is in `lib/src/parser/wind_parser.dart`'s `_parserMap` (a const map of const parser instances).
+- `copyWith` does not fabricate an empty `BoxDecoration`. Pass `decoration:` only when setting a real visual box property (color, border, radius, shadow, gradient, image), so the downstream `decoration != null` Container gate stays honest.
 
 ## Last-class-wins semantics
 

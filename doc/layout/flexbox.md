@@ -236,13 +236,15 @@ Control alignment of an individual flex item, overriding the container's `items-
 | `align-self-stretch` | `center` |
 | `align-self-auto` | `center` |
 
+Tailwind's shorthand `self-start` / `self-end` / `self-center` / `self-stretch` / `self-auto` is accepted as an alias for the matching `align-self-*` class, so either form works.
+
 ```dart
 WDiv(
   className: 'flex items-start h-20',
   children: [
     WDiv(className: '...'),
-    // This item centers itself
-    WDiv(className: 'align-self-center ...'),
+    // This item centers itself (self-center is shorthand for align-self-center)
+    WDiv(className: 'self-center ...'),
   ],
 )
 ```
@@ -362,4 +364,4 @@ At `base` the row scrolls horizontally and children keep their intrinsic width. 
 
 - [Grid Layout](./grid.md)
 - [Display Modes](./display.md)
-- [Sizing](../sizing/width.md)
+- [Sizing](../layout/sizing.md)

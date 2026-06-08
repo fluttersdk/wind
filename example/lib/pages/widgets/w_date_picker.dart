@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide DatePickerMode;
+import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 /// WDatePicker widget examples.
@@ -58,7 +58,7 @@ class _WDatePickerExamplePageState extends State<WDatePickerExamplePage> {
             className:
                 'w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800',
             child: WDatePicker(
-              mode: DatePickerMode.range,
+              mode: WDatePickerMode.range,
               range: _dateRange,
               onRangeChanged: (range) => setState(() => _dateRange = range),
               placeholder: 'Select duration',

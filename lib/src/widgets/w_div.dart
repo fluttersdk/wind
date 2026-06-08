@@ -44,6 +44,12 @@ import 'w_text.dart';
 ///   ],
 /// )
 /// ```
+///
+/// See also:
+///
+///  * [WText], which renders typography inside a `WDiv` container.
+///  * [WAnchor], which `WDiv` auto-wraps into when `hover:` or `focus:` classes are present.
+///  * [WindParser], which resolves the [className] string into a [WindStyle] at runtime.
 class WDiv extends StatelessWidget {
   /// The utility class string defining the style and layout.
   ///
@@ -890,10 +896,13 @@ class WDiv extends StatelessWidget {
     // because fractional sizing is handled by the SizedBox layer above.
     // Container's width/height is still set when it IS created, to ensure
     // decoration (bg-*) fills the full area.
+    // An empty shadow list (`shadow-none`) carries no visual and must not, on
+    // its own, force a Container; that mirrors the `combinedShadows.isNotEmpty`
+    // guard below where empty shadows never reach the decoration.
     final bool needsContainer = styles.decoration != null ||
         innerConstraints != null ||
-        styles.boxShadow != null ||
-        styles.ringShadow != null ||
+        (styles.boxShadow?.isNotEmpty ?? false) ||
+        (styles.ringShadow?.isNotEmpty ?? false) ||
         backgroundColor != null;
 
     // Track if padding is consumed by Container (so we don't apply it again)

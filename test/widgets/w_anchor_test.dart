@@ -479,6 +479,87 @@ void main() {
     // mapping table).
     // -------------------------------------------------------------------------
     group('Semantics', () {
+      setUp(() {
+        WindParser.clearCache();
+      });
+
+      testWidgets('semanticLabel does not double the label when child has text',
+          (tester) async {
+        // Branch: semanticLabel != null with a visible Text child. The label
+        // must be the explicit semanticLabel exactly once, never the doubled
+        // "Save\nSave" produced by merging the explicit label with the child
+        // text. Activation must still fire because onTap is lifted onto the
+        // Semantics node alongside excludeSemantics: true.
+        var tapped = false;
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onTap: () => tapped = true,
+              semanticLabel: 'Save',
+              child: const Text('Save'),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+        expect(node.flagsCollection.isButton, isTrue);
+        expect(node.flagsCollection.isEnabled, Tristate.isTrue);
+        expect(node.label, 'Save');
+        expect(
+          node.getSemanticsData().hasAction(SemanticsAction.tap),
+          isTrue,
+        );
+
+        await tester.tap(find.byType(WAnchor));
+        await tester.pump();
+        expect(tapped, isTrue);
+      });
+
+      testWidgets(
+          'disabled anchor with semanticLabel announces disabled and has no tap action',
+          (tester) async {
+        // Branch: semanticLabel != null AND isDisabled. The node keeps the
+        // explicit label but must announce as disabled and expose no tap
+        // SemanticsAction, since onTap is null-gated when disabled.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WAnchor(
+              isDisabled: true,
+              onTap: null,
+              semanticLabel: 'Save',
+              child: Text('Save'),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+        expect(node.flagsCollection.isButton, isTrue);
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
+        expect(node.label, 'Save');
+        expect(
+          node.getSemanticsData().hasAction(SemanticsAction.tap),
+          isFalse,
+        );
+      });
+
+      testWidgets('label resolves from child text when semanticLabel is null',
+          (tester) async {
+        // Branch: semanticLabel == null keeps the MergeSemantics path so the
+        // descendant Text merges in as the accessible name.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onTap: () {},
+              child: const Text('Continue'),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+        expect(node.flagsCollection.isButton, isTrue);
+        expect(node.label, 'Continue');
+      });
+
       testWidgets('emits button role with label resolved from child text',
           (tester) async {
         await tester.pumpWidget(

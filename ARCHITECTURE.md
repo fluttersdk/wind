@@ -6,12 +6,12 @@ How the package is organized internally. Companion to [README.md](README.md) (th
 
 ```
 lib/src/
-├── widgets/          # 20 user-facing W-prefix widgets (see .claude/rules/widgets.md)
+├── widgets/          # 22 user-facing W-prefix widgets (see .claude/rules/widgets.md)
 ├── parser/
-│   ├── wind_parser.dart      # Orchestrator: first-match-wins routing to 17 parsers
+│   ├── wind_parser.dart      # Orchestrator: first-match-wins routing to 19 parsers
 │   ├── wind_style.dart       # Immutable value object (parse output)
 │   ├── wind_context.dart     # Theme + breakpoint + brightness + platform + states
-│   └── parsers/              # 17 domain parsers (see .claude/rules/parsers.md)
+│   └── parsers/              # 19 domain parsers (see .claude/rules/parsers.md)
 ├── theme/
 │   ├── wind_theme.dart       # WindTheme StatefulWidget + WindThemeController
 │   ├── wind_theme_data.dart  # 23 configurable fields; merges with defaults/
@@ -31,7 +31,7 @@ className: String
     ↓
 WindParser.parse(className, context, states:)
     ↓
-17 domain parsers (first match wins)
+19 domain parsers (first match wins)
     ↓
 WindStyle (immutable value object)
     ↓
@@ -60,7 +60,7 @@ WindTheme(
 
 ## Diagnostics bridge
 
-Call `Wind.installDebugResolver()` inside `kDebugMode` to expose 6 fields (`className`, `breakpoint`, `brightness`, `platform`, `states`, `bgColor`, `textColor`) to any consumer of `WindDebugRegistry.current` (e.g., `fluttersdk_dusk` for E2E and any runtime inspector). Idempotent; gated by `kDebugMode` so release builds tree-shake it. There is no `WindDuskIntegration` class in v1.0 — replaced by this bridge via the `fluttersdk_wind_diagnostics_contracts` contract.
+Call `Wind.installDebugResolver()` inside `kDebugMode` to expose 7 fields (`className`, `breakpoint`, `brightness`, `platform`, `states`, `bgColor`, `textColor`) to any consumer of `WindDebugRegistry.current` (e.g., `fluttersdk_dusk` for E2E and any runtime inspector). Idempotent; gated by `kDebugMode` so release builds tree-shake it. There is no `WindDuskIntegration` class in v1.0 — replaced by this bridge via the `fluttersdk_wind_diagnostics_contracts` contract.
 
 ## Widget API surface (invariants locked at 1.0.0)
 

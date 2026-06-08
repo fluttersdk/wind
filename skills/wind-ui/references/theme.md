@@ -62,7 +62,7 @@ Defaults applied automatically: 22 color families, 5 responsive breakpoints (640
 
 ## 2. WindThemeData fields
 
-All 20 fields are nullable; pass only what you want to override.
+23 fields; pass only what you want to override. All are nullable except `brightness`, which defaults to `Brightness.light` rather than null, so they are not literally all nullable.
 
 ```dart
 WindThemeData({
@@ -187,6 +187,8 @@ class WindThemeController extends ChangeNotifier {
 
 `toggleTheme()` is the user-driven dark-mode switch. It deliberately disables `syncWithSystem` so a user choice does not get overridden the next time the OS theme changes. `resetToSystem()` re-enables sync.
 
+`WindThemeData` implements value `==` / `hashCode`, so passing a fresh default `WindThemeData()` on a rebuild no longer clobbers a `toggleTheme()` choice or forces a spurious rebuild: an equal value is a no-op.
+
 ---
 
 ## 5. Dark mode discipline
@@ -239,6 +241,8 @@ Default behavior (`syncWithSystem: true`):
 - On mount, reads `WidgetsBinding.instance.platformDispatcher.platformBrightness` and applies it.
 - Listens to `WidgetsBindingObserver.didChangePlatformBrightness` and updates controller when OS changes.
 - `onThemeChanged` callback fires for user-initiated changes only (system changes are flagged internally).
+
+GOTCHA: because `syncWithSystem` is `true` by default, a declarative `WindThemeData(brightness: Brightness.dark)` is OVERRIDDEN on mount by the OS brightness, so `dark:` classes stay inert on a light OS. To force a fixed brightness, pass `WindThemeData(brightness: Brightness.dark, syncWithSystem: false)`, or drive it at runtime via `controller.toggleTheme()` / `setTheme(...)`.
 
 Manual toggle:
 

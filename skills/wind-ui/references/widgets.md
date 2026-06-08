@@ -18,9 +18,11 @@ No sub-barrels (`lib/dusk_integration.dart` and similar were removed in 1.0 alph
 4. [Interactive: WAnchor, WButton](#4-interactive-wanchor-wbutton)
 5. [Form (raw): WInput, WCheckbox, WSelect, WDatePicker](#5-form-raw-winput-wcheckbox-wselect-wdatepicker)
 6. [Form (FormField): WFormInput, WFormSelect, WFormMultiSelect, WFormCheckbox, WFormDatePicker](#6-form-formfield-wforminput-wformselect-wformmultiselect-wformcheckbox-wformdatepicker)
-7. [Overlay: WPopover](#7-overlay-wpopover)
-8. [Structural: WDynamic](#8-structural-wdynamic)
-9. [Supporting types: SelectOption, DateRange, InputType, DatePickerMode, PopoverAlignment, WindAnimationType](#9-supporting-types)
+7. [Keyboard: WKeyboardActions](#7-keyboard-wkeyboardactions)
+8. [Animation: WindAnimationWrapper](#8-animation-windanimationwrapper)
+9. [Overlay: WPopover](#9-overlay-wpopover)
+10. [Structural: WDynamic](#10-structural-wdynamic)
+11. [Supporting types: SelectOption, DateRange, InputType, WDatePickerMode, PopoverAlignment, WindAnimationType](#11-supporting-types)
 
 ---
 
@@ -30,6 +32,7 @@ No sub-barrels (`lib/dusk_integration.dart` and similar were removed in 1.0 alph
 - **`states: Set<String>?`** — consumer-passed state strings (e.g. `{'selected'}`). Merges with the widget's automatic states (`hover`, `focus`, `loading`, `disabled`, `checked`, `error`).
 - **`child` XOR `children`** — for widgets that accept both, the assertion fires at construction. Pass exactly one.
 - **Outlined icon convention** — when using `Icons.*`, prefer the `_outlined` variant. `Icons.settings_outlined`, not `Icons.settings`.
+- **`semanticLabel` for icon-only controls** — `WButton` / `WAnchor` accept `semanticLabel: String?`. An icon-only button (no text child) is nameless to screen readers and Playwright `getByRole('button', { name })` without it; always set it when the child carries no readable text. When set, the child subtree is excluded from semantics, so the label overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already exposes readable text. The label must NOT contain the word "button"; the role appends it (`'Close button'` becomes "Close button button").
 - **Inline color escape hatches**:
   - `WDiv(backgroundColor: Color)` overrides any `bg-*` / `dark:bg-*`.
   - `WText(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
@@ -236,6 +239,7 @@ const WAnchor({
   bool isDisabled = false,
   Set<String>? states,
   MouseCursor? mouseCursor,           // defaults to SystemMouseCursors.click when gestures exist
+  String? semanticLabel,              // accessible name for icon-only anchors (no child text for Semantics to absorb)
 })
 ```
 
@@ -266,6 +270,7 @@ const WButton({
   double loadingSize = 16,
   Color? loadingColor,               // explicit override; otherwise contrast-detected
   Set<String>? states,
+  String? semanticLabel,             // accessible name for icon-only buttons (no child text for Semantics to absorb)
 })
 ```
 
@@ -429,7 +434,7 @@ Calendar popover with single OR range mode.
 ```dart
 const WDatePicker({
   Key? key,
-  DatePickerMode mode = DatePickerMode.single,
+  WDatePickerMode mode = WDatePickerMode.single,
   // Single mode:
   DateTime? value,
   ValueChanged<DateTime>? onChanged,
@@ -599,7 +604,7 @@ const WFormDatePicker({
   Key? key,
   DateTime? initialValue,
   DateRange? initialRange,
-  DatePickerMode mode = DatePickerMode.single,
+  WDatePickerMode mode = WDatePickerMode.single,
   ValueChanged<DateTime>? onChanged,
   ValueChanged<DateRange>? onRangeChanged,
   // FormField:
@@ -628,7 +633,105 @@ const WFormDatePicker({
 
 ---
 
-## 7. Overlay: WPopover
+## 7. Keyboard: WKeyboardActions
+
+Above-keyboard toolbar that adds a Done button and Previous/Next field-navigation controls. Most common use case is iOS numeric keyboards that have no built-in Done button.
+
+```dart
+const WKeyboardActions({
+  Key? key,
+  required Widget child,
+  required List<FocusNode> focusNodes,
+  String platform = 'all',       // 'all' | 'ios' | 'android'
+  bool nextFocus = true,         // show Previous/Next arrows
+  String? toolbarClassName,      // Wind bg-* classes for toolbar background
+  Widget Function(FocusNode)? closeWidgetBuilder, // replaces default "Done" button
+})
+```
+
+Usage:
+- Create one `FocusNode` per input field. Pass them in focus-navigation order via `focusNodes`.
+- Set `platform: 'ios'` to limit the toolbar to iOS (most common pattern for numeric keyboards).
+- Set `nextFocus: false` for single-field forms — shows only the Done button.
+- `toolbarClassName` accepts any `bg-*` Wind class; always pair with `dark:`. When null the toolbar uses `Theme.of(context).colorScheme.surfaceContainerHighest`.
+- `closeWidgetBuilder(node)` receives the focused `FocusNode`; call `node.unfocus()` to dismiss.
+
+```dart
+WKeyboardActions(
+  platform: 'ios',
+  focusNodes: [_nameFocus, _amountFocus],
+  toolbarClassName: 'bg-gray-100 dark:bg-gray-800',
+  child: Column(
+    children: [
+      WInput(focusNode: _nameFocus, placeholder: 'Jane Doe'),
+      WInput(
+        focusNode: _amountFocus,
+        placeholder: '0.00',
+        type: InputType.number,
+      ),
+    ],
+  ),
+)
+```
+
+Dispose every `FocusNode` you own in `State.dispose()`. `WKeyboardActions` attaches and removes listeners automatically when the widget updates or disposes.
+
+---
+
+## 8. Animation: WindAnimationWrapper
+
+Low-level stateful wrapper that runs a looping `AnimationController` and applies one of four visual effects to its `child`. It is the
+engine behind `animate-*` className tokens; use it directly when you need programmatic control over type, duration, or curve.
+
+```dart
+const WindAnimationWrapper({
+  Key? key,
+  required Widget child,
+  required WindAnimationType animationType,
+  Duration duration = const Duration(milliseconds: 1000),
+  Curve curve = Curves.linear,
+})
+```
+
+| Prop | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `child` | `Widget` | **Required** | The widget to animate. |
+| `animationType` | `WindAnimationType` | **Required** | `spin`, `ping`, `pulse`, `bounce`, or `none`. |
+| `duration` | `Duration` | `Duration(milliseconds: 1000)` | Full cycle length for all types. |
+| `curve` | `Curve` | `Curves.linear` | Easing curve passed to the controller. `ping` and `pulse` apply their own `CurvedAnimation` internally. |
+
+Animation mechanics per type:
+
+| Type | Effect | Flutter primitive |
+|:-----|:-------|:------------------|
+| `spin` | 360-degree continuous rotation. | `RotationTransition` |
+| `ping` | Scale 1.0 to 1.5 with matching opacity fade. | `AnimatedBuilder` + `Transform.scale` + `Opacity` |
+| `pulse` | Opacity oscillates 1.0 to 0.5, reversing. | `FadeTransition` + `repeat(reverse: true)` |
+| `bounce` | Vertical offset 0 to -5 px, reversing. | `AnimatedBuilder` + `Transform.translate` |
+| `none` | No-op; returns child unchanged. | Direct child pass-through |
+
+Lifecycle: `didUpdateWidget` stops and restarts the controller when `animationType` or `duration` changes. No manual controller
+management is needed by the caller.
+
+Typical usage via className (preferred):
+
+```dart
+WIcon(Icons.refresh_outlined, className: 'text-blue-500 dark:text-blue-400 animate-spin')
+```
+
+Programmatic usage (needed when child has no `className`):
+
+```dart
+WindAnimationWrapper(
+  animationType: WindAnimationType.pulse,
+  duration: const Duration(milliseconds: 2000),
+  child: WDiv(className: 'h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded'),
+)
+```
+
+---
+
+## 9. Overlay: WPopover
 
 OverlayPortal-based popover with controller + auto-flip + close-on-tap-outside.
 
@@ -669,7 +772,7 @@ class PopoverController extends ChangeNotifier {
 
 ---
 
-## 8. Structural: WDynamic
+## 10. Structural: WDynamic
 
 Server-driven UI. JSON tree → Wind widget tree.
 
@@ -715,7 +818,7 @@ Full JSON contract + state binding + security model: `${CLAUDE_SKILL_DIR}/refere
 
 ---
 
-## 9. Supporting types
+## 11. Supporting types
 
 ### `SelectOption<T>`
 
@@ -749,10 +852,10 @@ class DateRange {
 enum InputType { text, password, email, number, multiline }
 ```
 
-### `DatePickerMode` enum
+### `WDatePickerMode` enum
 
 ```dart
-enum DatePickerMode { single, range }
+enum WDatePickerMode { single, range }
 ```
 
 ### `PopoverAlignment` enum

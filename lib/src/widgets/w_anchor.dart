@@ -73,6 +73,20 @@ class WAnchor extends StatefulWidget {
   /// and the widget is not disabled, otherwise `SystemMouseCursors.basic`.
   final MouseCursor? mouseCursor;
 
+  /// An explicit accessible label for the button Semantics node.
+  ///
+  /// When the child carries no readable `Text` for `MergeSemantics` to absorb
+  /// (an icon-only anchor, for example), set this so screen readers and
+  /// Playwright `getByRole('button', { name: ... })` can resolve the control.
+  /// When null, the label falls back to the merged descendant text.
+  ///
+  /// Setting this excludes the entire descendant subtree from semantics
+  /// (`excludeSemantics: true`), so the label overrides any child text rather
+  /// than concatenating with it. Do not set it on an anchor that wraps its own
+  /// interactive descendant (a nested field or sub-button): that descendant's
+  /// Semantics node would be suppressed.
+  final String? semanticLabel;
+
   /// Creates a `WAnchor` widget.
   ///
   /// The [child] argument is required and represents the interactive area.
@@ -86,6 +100,7 @@ class WAnchor extends StatefulWidget {
     this.isDisabled = false,
     this.states,
     this.mouseCursor,
+    this.semanticLabel,
   });
 
   @override
@@ -213,6 +228,29 @@ class _WAnchorState extends State<WAnchor> {
       ),
     );
 
+    // Accessibility branch selection.
+    //
+    // 1. Explicit label: emit the label on the Semantics node and exclude the
+    //    descendant subtree so the child Text does not merge in and double the
+    //    name ("Save\nSave"). Because `excludeSemantics: true` drops the
+    //    descendant GestureDetector's tap SemanticsAction, the activation
+    //    actions are lifted onto this same node so assistive technology can
+    //    still trigger them. `onDoubleTap` has no SemanticsAction equivalent
+    //    and is intentionally not exposed here.
+    if (widget.semanticLabel != null) {
+      return Semantics(
+        button: true,
+        enabled: !widget.isDisabled,
+        label: widget.semanticLabel,
+        onTap: widget.isDisabled ? null : widget.onTap,
+        onLongPress: widget.isDisabled ? null : widget.onLongPress,
+        excludeSemantics: true,
+        child: result,
+      );
+    }
+
+    // 2. No explicit label: keep the MergeSemantics path so the descendant
+    //    Text/WText nodes collapse into this node and supply the name.
     return MergeSemantics(
       child: Semantics(
         button: true,

@@ -158,5 +158,4 @@ These utilities do not use theme variables. `line-clamp` accepts numeric values 
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [Word Break & Whitespace](./whitespace.md)
 - [Font Size](./font-size.md)

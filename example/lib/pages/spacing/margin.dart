@@ -35,8 +35,8 @@ class MarginExamplePage extends StatelessWidget {
           _buildSection(
             title: 'All Sides (m-{n})',
             children: [
-              _buildMarginDemo('m-2', 'm-2 bg-amber-500'),
-              _buildMarginDemo('m-4', 'm-4 bg-amber-500'),
+              _buildMarginDemo('m-2', 'm-2 bg-amber-500 dark:bg-amber-400'),
+              _buildMarginDemo('m-4', 'm-4 bg-amber-500 dark:bg-amber-400'),
             ],
           ),
 
@@ -44,8 +44,8 @@ class MarginExamplePage extends StatelessWidget {
           _buildSection(
             title: 'Axis (mx-{n}, my-{n})',
             children: [
-              _buildMarginDemo('mx-6', 'mx-6 bg-orange-500'),
-              _buildMarginDemo('my-4', 'my-4 bg-red-500'),
+              _buildMarginDemo('mx-6', 'mx-6 bg-orange-500 dark:bg-orange-400'),
+              _buildMarginDemo('my-4', 'my-4 bg-red-500 dark:bg-red-400'),
             ],
           ),
 
@@ -58,7 +58,7 @@ class MarginExamplePage extends StatelessWidget {
                 children: [
                   WDiv(
                     className:
-                        'mx-auto w-32 h-10 bg-emerald-500 rounded-lg flex items-center justify-center',
+                        'mx-auto w-32 h-10 bg-emerald-500 dark:bg-emerald-400 rounded-lg flex items-center justify-center',
                     child: WText(
                       'mx-auto',
                       className: 'text-white text-xs font-mono',
@@ -77,17 +77,20 @@ class MarginExamplePage extends StatelessWidget {
           _buildSection(
             title: 'Individual Sides',
             children: [
-              _buildMarginDemo('mt-4', 'mt-4 bg-blue-500'),
-              _buildMarginDemo('mb-4', 'mb-4 bg-indigo-500'),
-              _buildMarginDemo('ml-8', 'ml-8 bg-violet-500'),
-              _buildMarginDemo('mr-8', 'mr-8 bg-purple-500'),
+              _buildMarginDemo('mt-4', 'mt-4 bg-blue-500 dark:bg-blue-400'),
+              _buildMarginDemo('mb-4', 'mb-4 bg-indigo-500 dark:bg-indigo-400'),
+              _buildMarginDemo('ml-8', 'ml-8 bg-violet-500 dark:bg-violet-400'),
+              _buildMarginDemo('mr-8', 'mr-8 bg-purple-500 dark:bg-purple-400'),
             ],
           ),
 
           // Arbitrary Values
           _buildSection(
             title: 'Arbitrary Values',
-            children: [_buildMarginDemo('m-[10px]', 'm-[10px] bg-pink-500')],
+            children: [
+              _buildMarginDemo(
+                  'm-[10px]', 'm-[10px] bg-pink-500 dark:bg-pink-400'),
+            ],
           ),
         ],
       ),

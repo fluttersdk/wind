@@ -58,7 +58,7 @@ The calendar popover opens below the trigger and auto-flips if there isn't enoug
 ```dart
 const WDatePicker({
   Key? key,
-  DatePickerMode mode = DatePickerMode.single,
+  WDatePickerMode mode = WDatePickerMode.single,
   DateTime? value,
   DateRange? range,
   ValueChanged<DateTime>? onChanged,
@@ -77,7 +77,7 @@ const WDatePicker({
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `mode` | `DatePickerMode` | `single` | Selection mode: `single` or `range` |
+| `mode` | `WDatePickerMode` | `single` | Selection mode: `single` or `range` |
 | `value` | `DateTime?` | `null` | Currently selected date (single mode) |
 | `range` | `DateRange?` | `null` | Currently selected range (range mode) |
 | `onChanged` | `ValueChanged<DateTime>?` | `null` | Callback fired on date selection (single mode) |
@@ -92,12 +92,12 @@ const WDatePicker({
 
 ## Types
 
-### DatePickerMode
+### WDatePickerMode
 
 Determines if the picker operates in single date or date range selection mode.
 
 ```dart
-enum DatePickerMode {
+enum WDatePickerMode {
   single,  // Pick a single date
   range,   // Pick a start and end date
 }
@@ -130,7 +130,7 @@ When no `displayFormat` is provided, dates display as `"Jan 15, 2025"` format.
 
 ## Date Range Selection
 
-Setting `mode: DatePickerMode.range` enables two-click range selection with hover preview.
+Setting `mode: WDatePickerMode.range` enables two-click range selection with hover preview.
 
 <x-preview path="widgets/date_picker_range" size="md" source="example/lib/pages/widgets/date_picker_range.dart"></x-preview>
 
@@ -138,7 +138,7 @@ Setting `mode: DatePickerMode.range` enables two-click range selection with hove
 DateRange? _dateRange;
 
 WDatePicker(
-  mode: DatePickerMode.range,
+  mode: WDatePickerMode.range,
   range: _dateRange,
   onRangeChanged: (range) => setState(() => _dateRange = range),
   placeholder: 'Check-in / Check-out',
@@ -209,7 +209,7 @@ WDatePicker(
 
 ```dart
 WDatePicker(
-  mode: DatePickerMode.range,
+  mode: WDatePickerMode.range,
   range: _range,
   onRangeChanged: (range) {
     setState(() => _range = range);

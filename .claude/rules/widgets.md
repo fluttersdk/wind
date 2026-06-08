@@ -63,6 +63,8 @@ When `styles.debug == false` (the default), every logger method is a no-op — o
 
 When a new widget needs interaction state from a className prefix, follow `WDiv`'s pattern (`_buildImpl` inside a `Builder`); do not bypass `WAnchor`.
 
+`WButton` / `WAnchor` accept `semanticLabel: String?`, forwarded to the `Semantics` node wrapping the interactive surface. New WAnchor-based widgets expose and forward it the same way (matters for icon-only controls with no visible text).
+
 ## className multi-line
 
 For 3+ concerns in one className, use triple-quoted strings, one concern per line, grouping `dark:` pairs beside their light variants:
@@ -76,6 +78,10 @@ className: '''
   hover:shadow-lg
 ''',
 ```
+
+## Container elision
+
+A `Container` is emitted only when `styles.decoration != null` OR a non-empty `boxShadow` / `ringShadow` exists. Padding-only, text-only, and `shadow-none` paths must stay Container-free. `WindStyle.copyWith` must NOT fabricate an empty `BoxDecoration`, or the `decoration != null` gate breaks and every styled widget grows a needless Container.
 
 ## What never goes in `lib/src/widgets/`
 

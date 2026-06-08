@@ -125,7 +125,7 @@ Wind includes a comprehensive max-width scale, perfect for keeping text readable
 | `max-w-7xl` | 1280px |
 | `max-w-full` | 100% |
 | `max-w-screen` | 100vw |
-| `max-w-prose` | 65ch (~1040px) |
+| `max-w-prose` | 512px |
 
 ```dart
 // Constrain content width and center it
@@ -198,4 +198,4 @@ WindThemeData(
 
 - [Padding & Margin](./spacing.md)
 - [Flexbox & Grid](./flexbox.md)
-- [Aspect Ratio](./aspect_ratio.md)
+- [Aspect Ratio](./aspect-ratio.md)

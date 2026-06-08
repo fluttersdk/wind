@@ -37,10 +37,15 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
-      if (decoration.boxShadow != null) {
-        expect(decoration.boxShadow, isEmpty);
+      // shadow-none carries no visual, so it wraps no shadow-bearing
+      // Container. The child renders and no decoration applies a box shadow.
+      expect(find.text('Shadow'), findsOneWidget);
+      for (final container
+          in tester.widgetList<Container>(find.byType(Container))) {
+        final decoration = container.decoration;
+        if (decoration is BoxDecoration) {
+          expect(decoration.boxShadow ?? const <BoxShadow>[], isEmpty);
+        }
       }
     });
 

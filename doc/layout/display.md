@@ -182,4 +182,3 @@ Display utilities are structural and cannot be customized via `WindThemeData`. T
 
 - [Flexbox](./flexbox.md) - Layout direction, alignment, and sizing for flex containers.
 - [Grid](./grid.md) - Column definitions and gaps for grid containers.
-- [Visibility](./visibility.md) - Control visibility without changing layout (opacity).

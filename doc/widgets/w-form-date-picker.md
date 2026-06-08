@@ -72,7 +72,7 @@ WFormDatePicker({
   // WDatePicker params
   DateTime? initialValue,
   DateRange? initialRange,
-  DatePickerMode mode = DatePickerMode.single,
+  WDatePickerMode mode = WDatePickerMode.single,
   ValueChanged<DateTime>? onChanged,
   ValueChanged<DateRange>? onRangeChanged,
   DateTime? minDate,
@@ -107,7 +107,7 @@ WFormDatePicker({
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `mode` | `DatePickerMode` | `single` | Selection mode: `single` or `range` |
+| `mode` | `WDatePickerMode` | `single` | Selection mode: `single` or `range` |
 | `initialRange` | `DateRange?` | `null` | Initial date range (range mode) |
 | `onChanged` | `ValueChanged<DateTime>?` | `null` | Called on date selection (single mode) |
 | `onRangeChanged` | `ValueChanged<DateRange>?` | `null` | Called on range selection (range mode) |
@@ -183,7 +183,7 @@ In range mode, the `FormField<DateTime>` internally tracks the range's **start d
 ```dart
 WFormDatePicker(
   label: 'Trip Dates',
-  mode: DatePickerMode.range,
+  mode: WDatePickerMode.range,
   initialRange: null,
   className: 'p-3 border rounded-lg error:border-red-500',
   placeholder: 'Select check-in / check-out',

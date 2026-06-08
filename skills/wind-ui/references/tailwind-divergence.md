@@ -55,6 +55,8 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | `rounded-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3; Wind has NOT adopted the v4 rename shift |
 | `shadow-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3 |
 | `ring` (bare) | v3 default 3 px; v4 default 1 px | Wind matches v3 (default 3 px) |
+| `tracking-{tighter..widest}` | em fractions (`tracking-wide` = 0.025em, scales with font size) | Fixed px (`tighter` -2, `tight` -1, `wide` 1, `wider` 2, `widest` 4) because `TextStyle.letterSpacing` is pixel-based; NOT proportional across font sizes |
+| `max-w-prose` | `65ch`, font-relative (≈ 520-624 px depending on font) | Fixed `512 px`; a divergence, not an equivalent |
 
 ---
 
@@ -154,6 +156,9 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 - `mobile:` (iOS OR Android)
 - `web:` (web build)
 
+### Order scale starts at zero
+- `order-0` — Wind supports `order-0` through `order-12`; Tailwind's default scale starts at `order-1` (`order-0` is a Wind addition)
+
 ### Main-axis size (Flutter `MainAxisSize`)
 - `axis-min` — sets `MainAxisSize.min` on the parent flex
 - `axis-max` — sets `MainAxisSize.max`
@@ -173,7 +178,7 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 
 ### Debug instrumentation
 - `debug` token — triggers `WindLogger` to log composition tree + final styles
-- `Wind.installDebugResolver()` (Dart API) — exposes 6 fields per widget to external tooling
+- `Wind.installDebugResolver()` (Dart API) — exposes 7 fields per widget to external tooling
 
 ---
 
@@ -315,3 +320,20 @@ Notes on the port:
 - `truncate` on the `<p>` became `truncate` inside a `flex-1 min-w-0` wrapper.
 - Every color paired with `dark:`.
 - Outer `shadow-sm hover:shadow-md` kept; would auto-wrap in `WAnchor` because of the `hover:` prefix.
+
+## Unsupported Tailwind classes (use the wind equivalent)
+
+These canonical Tailwind classes are silently ignored by wind (unknown tokens are dropped). Use the listed equivalent:
+
+| Tailwind | Status | wind equivalent |
+|----------|--------|-----------------|
+| `inline-flex` | unsupported (Flutter has no inline layout) | `flex` + `self-start` |
+| `rounded-s-*` / `rounded-e-*` | unsupported (logical start/end radius) | `rounded-l-*` / `rounded-r-*` |
+| `ms-*` / `me-*` | unsupported (logical inline margin) | `ml-*` / `mr-*` |
+| `start-*` / `end-*` | unsupported (logical inset) | `left-*` / `right-*` |
+| `-space-x-*` / `-space-y-*` | unsupported (negative gap; no overlap primitive) | none |
+| `self-*` | supported (alias of `align-self-*`) | `self-center` etc. work directly |
+| `shrink-0` | supported (preserves intrinsic size, no Flexible wrap) | works directly |
+| `text-7xl` / `8xl` / `9xl` | silently capped (max is `text-6xl`) | `text-6xl` or arbitrary `text-[96px]` |
+
+Reminder: a wind page needs a Material ancestor (a `Scaffold`) for `WText` to inherit a default text style; without one, Flutter renders the yellow-underline fallback. Real apps always have a `Scaffold`, so this only bites bare `WDiv > WText` route bodies.

@@ -37,7 +37,7 @@ class BlogSectionExamplePage extends StatelessWidget {
                   category: "Marketing",
                   title: "Boost your conversion rate",
                   description:
-                      "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
+                      "Small copy tweaks on your pricing page can lift sign-ups more than a full redesign. We break down three A/B tests that each moved conversion by double digits, and the reasoning behind every change.",
                   authorName: "Michael Foster",
                   authorRole: "Co-Founder / CTO",
                   authorImage:
@@ -48,7 +48,7 @@ class BlogSectionExamplePage extends StatelessWidget {
                   category: "Sales",
                   title: "How to use search engine optimization to drive sales",
                   description:
-                      "Optio cum necessitatibus dolor voluptatum provident commodi et. Qui aperiam fugiat nemo cumque.",
+                      "Organic search still drives the cheapest qualified leads. Here is a practical SEO checklist your sales team can hand to marketing, from keyword intent to internal linking.",
                   authorName: "Lindsay Walton",
                   authorRole: "Front-end Developer",
                   authorImage:
@@ -59,7 +59,7 @@ class BlogSectionExamplePage extends StatelessWidget {
                   category: "Business",
                   title: "Improve your customer experience",
                   description:
-                      "Cupiditate maiores ullam eveniet adipisci in doloribus nulla minus. Voluptas iusto libero adipisci rem et corporis. Nostrud sint anim sunt aliqua. Nulla eu labore irure incididunt velit cillum quis magna dolore.",
+                      "Support tickets are a goldmine for product insight. Learn how we route, tag, and review customer feedback so the most common pain points reach the roadmap within a single sprint.",
                   authorName: "Tom Cook",
                   authorRole: "Director of Product",
                   authorImage:

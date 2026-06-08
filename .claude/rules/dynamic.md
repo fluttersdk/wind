@@ -72,7 +72,7 @@ Unknown action names are silently ignored (debugPrint only). Handler exceptions 
 ## Known bugs (test-documented)
 
 - **`WSelect<String>` + null value crash.** When `WSelect` receives simple string options and no initial `value`, the renderer infers `WSelect<String>`; the state-init expects non-nullable `String` and throws `type 'Null' is not a subtype of type 'String'`. The renderer's per-type catch path swallows it and emits the red error widget. Workaround for consumers: pass map-typed options or an explicit initial value. Out-of-scope follow-up to fix renderer-side.
-- **`WDatePicker.onChange` asymmetry.** `_buildWDatePicker` uses `parseAction(props['onChange'])` (no `_value` injection) instead of `parseValueAction<DateTime>`. To get the selected date, callers must read `state.get(id)` from inside the action handler, not args. Inconsistent with WInput/WCheckbox/WSelect; documented for awareness.
+- **`WDatePicker.onChange` API asymmetry (not a defect).** The renderer DOES write the selected date to state before dispatch (`state.set(id, date)` then the action callback). The asymmetry is delivery: because `_buildWDatePicker` uses `parseAction(props['onChange'])` rather than `parseValueAction<DateTime>`, the `DateTime` arrives via `state.get(id)`, not via the action `args._value`. Callers read the date from state inside the handler. Inconsistent with WInput/WCheckbox/WSelect, which inject `_value`; documented for awareness.
 
 ## Custom widgets via `builders`
 
@@ -89,7 +89,7 @@ Custom builders bypass the whitelist; they ARE the whitelist for their type. Use
 
 ## Custom icons via `customIcons`
 
-`WIcon` inside JSON resolves icon names through `_parseIcon`. 25 built-in mappings (`home`, `star`, `person`, ...). Override or extend via `customIcons` map: `{ 'rocket': Icons.rocket_launch }`.
+`WIcon` inside JSON resolves icon names through `_parseIcon`. 24 built-in mappings (`home`, `star`, `person`, ...). Override or extend via `customIcons` map: `{ 'rocket': Icons.rocket_launch }`.
 
 ## What never goes in `lib/src/dynamic/`
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:fluttersdk_wind/src/parser/parsers/text_parser.dart';
 
 WindContext createTestContext({Map<String, String>? fontFamilies}) {
   return WindContext(

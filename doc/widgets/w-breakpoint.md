@@ -137,6 +137,6 @@ Custom keys participate in the same descending resolution as built-ins.
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [Responsive Design](../layout/responsive.md)
+- [Responsive Design](../core-concepts/responsive-design.md)
 - [Flexbox & Layout](../layout/flexbox.md)
-- [WindTheme](../theme/wind-theme.md)
+- [WindTheme](../core-concepts/theming.md)

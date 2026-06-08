@@ -65,6 +65,11 @@ enum InputType {
 ///   onSubmitted: (value) => _focusNext(),
 /// )
 /// ```
+///
+/// See also:
+///
+///  * [WFormInput], which wraps `WInput` with form validation and `FormField` integration.
+///  * [WButton], which is the typical submit trigger paired with `WInput` in a form.
 class WInput extends StatefulWidget {
   /// The controlled value of the input.
   ///
@@ -72,6 +77,12 @@ class WInput extends StatefulWidget {
   final String? value;
 
   /// Called when the user changes the input value.
+  ///
+  /// Follows Flutter's `TextField.onChanged` contract: it fires on user and
+  /// IME edits only. Writing `controller.text` programmatically on an external
+  /// [controller] does NOT fire this callback, exactly as a bare `TextField`
+  /// behaves. For reactive binding, drive the field through [value] +
+  /// [onChanged], or use `WFormInput` when you need form-state propagation.
   final ValueChanged<String>? onChanged;
 
   /// The type of input, determining keyboard and behavior.
@@ -153,7 +164,9 @@ class WInput extends StatefulWidget {
 
   /// Optional external text editing controller.
   ///
-  /// If provided, `value` prop is ignored.
+  /// If provided, the [value] prop is ignored. Note that mutating
+  /// `controller.text` yourself updates the displayed text but does not fire
+  /// [onChanged], matching Flutter's `TextField` semantics. See [onChanged].
   final TextEditingController? controller;
 
   /// Custom states for dynamic styling (e.g., 'error', 'success').

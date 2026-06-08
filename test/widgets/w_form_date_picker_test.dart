@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide DatePickerMode;
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -235,7 +235,7 @@ void main() {
             Form(
               key: formKey,
               child: WFormDatePicker(
-                mode: DatePickerMode.range,
+                mode: WDatePickerMode.range,
                 validator: (value) => value == null ? 'Required' : null,
               ),
             ),
@@ -270,7 +270,7 @@ void main() {
           wrapWithTheme(
             Form(
               child: WFormDatePicker(
-                mode: DatePickerMode.range,
+                mode: WDatePickerMode.range,
                 onRangeChanged: (r) => changedRange = r,
               ),
             ),
@@ -298,7 +298,7 @@ void main() {
             Form(
               key: formKey,
               child: WFormDatePicker(
-                mode: DatePickerMode.range,
+                mode: WDatePickerMode.range,
               ),
             ),
           ),

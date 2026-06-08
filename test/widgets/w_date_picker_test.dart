@@ -1,5 +1,5 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart' hide DatePickerMode;
+import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
@@ -140,7 +140,7 @@ void main() {
       testWidgets('displays range placeholder', (tester) async {
         await tester.pumpWidget(wrapWithTheme(
           const WDatePicker(
-            mode: DatePickerMode.range,
+            mode: WDatePickerMode.range,
             placeholder: 'Select range',
           ),
         ));
@@ -156,7 +156,7 @@ void main() {
 
         await tester.pumpWidget(wrapWithTheme(
           WDatePicker(
-            mode: DatePickerMode.range,
+            mode: WDatePickerMode.range,
             range: range,
           ),
         ));
@@ -171,7 +171,7 @@ void main() {
 
         await tester.pumpWidget(wrapWithTheme(
           WDatePicker(
-            mode: DatePickerMode.range,
+            mode: WDatePickerMode.range,
             range: range,
           ),
         ));
@@ -186,7 +186,7 @@ void main() {
           StatefulBuilder(
             builder: (context, setState) {
               return WDatePicker(
-                mode: DatePickerMode.range,
+                mode: WDatePickerMode.range,
                 value: testDate, // Initial focus month
                 onRangeChanged: (r) {
                   selectedRange = r;
@@ -211,7 +211,7 @@ void main() {
           StatefulBuilder(
             builder: (context, setState) {
               return WDatePicker(
-                mode: DatePickerMode.range,
+                mode: WDatePickerMode.range,
                 range: DateRange(start: testDate), // Focuses Jan 2025
                 onRangeChanged: (r) => selectedRange = r,
               );
@@ -253,6 +253,43 @@ void main() {
 
         // Popover should close
         expect(find.text('January 2025'), findsNothing);
+      });
+    });
+
+    group('WDatePickerMode public name', () {
+      // Regression for the DatePickerMode -> WDatePickerMode rename: the public
+      // enum must drive single vs range behavior under its renamed identifier,
+      // proving the barrel-collision fix kept the API usable.
+      testWidgets('WDatePickerMode.single drives single-date display',
+          (tester) async {
+        await tester.pumpWidget(wrapWithTheme(
+          WDatePicker(
+            mode: WDatePickerMode.single,
+            value: testDate,
+          ),
+        ));
+
+        expect(find.text('Jan 15, 2025'), findsOneWidget);
+      });
+
+      testWidgets('WDatePickerMode.range drives range display', (tester) async {
+        await tester.pumpWidget(wrapWithTheme(
+          WDatePicker(
+            mode: WDatePickerMode.range,
+            range: DateRange(
+              start: DateTime(2025, 1, 10),
+              end: DateTime(2025, 1, 15),
+            ),
+          ),
+        ));
+
+        expect(find.text('Jan 10, 2025 - Jan 15, 2025'), findsOneWidget);
+      });
+
+      test('WDatePickerMode exposes single and range values', () {
+        expect(WDatePickerMode.values, hasLength(2));
+        expect(WDatePickerMode.values, contains(WDatePickerMode.single));
+        expect(WDatePickerMode.values, contains(WDatePickerMode.range));
       });
     });
 
@@ -330,7 +367,7 @@ void main() {
           StatefulBuilder(
             builder: (context, setState) {
               return WDatePicker(
-                mode: DatePickerMode.range,
+                mode: WDatePickerMode.range,
                 range: DateRange(start: DateTime(2025, 1, 15)),
                 onRangeChanged: (r) {
                   selectedRange = r;
@@ -374,7 +411,7 @@ void main() {
           StatefulBuilder(
             builder: (context, setState) {
               return WDatePicker(
-                mode: DatePickerMode.range,
+                mode: WDatePickerMode.range,
                 range: initialRange,
                 onRangeChanged: (r) {
                   selectedRange = r;
@@ -543,7 +580,7 @@ void main() {
             child: StatefulBuilder(
               builder: (context, setState) {
                 return WDatePicker(
-                  mode: DatePickerMode.range,
+                  mode: WDatePickerMode.range,
                   range: DateRange(start: DateTime(2025, 1, 10)),
                   minDate: DateTime(2025, 1, 10),
                   maxDate: DateTime(2025, 1, 20),

@@ -39,6 +39,11 @@ import 'w_text.dart';
 ///   child: Text('Submit'),
 /// )
 /// ```
+///
+/// See also:
+///
+///  * [WAnchor], which `WButton` delegates all state management and interaction handling to.
+///  * [WInput], which pairs with `WButton` in form submission flows.
 class WButton extends StatelessWidget {
   /// The button content when not loading.
   final Widget child;
@@ -101,6 +106,12 @@ class WButton extends StatelessWidget {
   /// Example: `states: {'error'}` activates `error:border-red-500`.
   final Set<String>? states;
 
+  /// An explicit accessible label for the button.
+  ///
+  /// Required in practice for icon-only buttons, where there is no text child
+  /// for the Semantics tree to absorb. Forwarded to [WAnchor.semanticLabel].
+  final String? semanticLabel;
+
   /// Creates a new [WButton] instance.
   const WButton({
     super.key,
@@ -116,6 +127,7 @@ class WButton extends StatelessWidget {
     this.loadingSize = 16,
     this.loadingColor,
     this.states,
+    this.semanticLabel,
   });
 
   @override
@@ -131,6 +143,7 @@ class WButton extends StatelessWidget {
       onDoubleTap: isInteractive ? onDoubleTap : null,
       isDisabled: disabled,
       states: states,
+      semanticLabel: semanticLabel,
       mouseCursor: isInteractive
           ? SystemMouseCursors.click
           : SystemMouseCursors.forbidden,

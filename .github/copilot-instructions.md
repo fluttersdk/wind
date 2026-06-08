@@ -8,12 +8,12 @@ Utility-first Flutter UI plugin. Translates `className` strings (Tailwind syntax
 
 ```
 lib/src/
-├── widgets/          # 20 W-prefix widgets (WDiv, WText, WButton, WSvg, WDynamic...)
+├── widgets/          # 22 W-prefix widgets (WDiv, WText, WButton, WSvg, WDynamic...)
 ├── parser/
-│   ├── wind_parser.dart      # Orchestrator — routes tokens to 17 parsers
+│   ├── wind_parser.dart      # Orchestrator — routes tokens to 19 parsers
 │   ├── wind_style.dart       # Immutable style value object (parse output)
 │   ├── wind_context.dart     # Theme + breakpoint + brightness + platform + states
-│   └── parsers/              # 17 domain parsers (bg, border, flex, text, shadow...)
+│   └── parsers/              # 19 domain parsers (bg, border, flex, text, shadow...)
 ├── theme/
 │   ├── wind_theme.dart       # WindTheme widget + WindThemeController
 │   ├── wind_theme_data.dart  # Config: colors, screens, spacing, fonts
@@ -23,7 +23,7 @@ lib/src/
 └── utils/            # Extensions, helpers, color utils, logger
 ```
 
-**Data flow:** `className` → WindParser.parse() → 17 parsers (first-match-wins) → WindStyle → Widget.build()
+**Data flow:** `className` → WindParser.parse() → 19 parsers (first-match-wins) → WindStyle → Widget.build()
 
 **Cache key:** className + breakpoint + brightness + platform + sorted states
 

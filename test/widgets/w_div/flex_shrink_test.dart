@@ -397,4 +397,65 @@ void main() {
       },
     );
   });
+
+  group('shrink-0 does not force-fill or assert (regression)', () {
+    setUp(WindParser.clearCache);
+
+    testWidgets(
+      'standalone shrink-0 WDiv builds with no Flexible self-wrap',
+      (tester) async {
+        // Regression: shrink-0 must NOT set flexFit. A non-null flexFit would
+        // self-wrap the WDiv in Flexible(fit: tight), forcing a fill and
+        // asserting outside a Flex.
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: Scaffold(
+                body: WDiv(
+                  className: 'shrink-0 w-16 h-16 bg-gray-200',
+                  child: SizedBox(),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.byType(Flexible), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'shrink-0 child in a Row keeps its intrinsic width',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: Scaffold(
+                body: WDiv(
+                  className: 'flex flex-row',
+                  children: [
+                    WDiv(
+                      className: 'shrink-0 w-16 h-16 bg-gray-200',
+                      child: SizedBox(),
+                    ),
+                    WDiv(
+                      className: 'flex-1 h-16 bg-blue-200',
+                      child: SizedBox(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        // w-16 = 16 * 4px = 64px; the sidebar holds its width, not forced fill.
+        expect(tester.getSize(find.byType(WDiv).at(1)).width, 64);
+      },
+    );
+  });
 }

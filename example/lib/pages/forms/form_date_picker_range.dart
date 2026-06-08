@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide DatePickerMode;
+import 'package:flutter/material.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 import '../../widgets/example_scaffold.dart';
@@ -36,7 +36,7 @@ class _FormDatePickerRangeExamplePageState
     return ExampleScaffold(
       title: 'Form Date Range',
       description:
-          'mode: DatePickerMode.range. Validator sees the range start; for length-based rules drive validation from onRangeChanged.',
+          'mode: WDatePickerMode.range. Validator sees the range start; for length-based rules drive validation from onRangeChanged.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
@@ -50,7 +50,7 @@ class _FormDatePickerRangeExamplePageState
               children: [
                 WFormDatePicker(
                   label: 'Trip Dates',
-                  mode: DatePickerMode.range,
+                  mode: WDatePickerMode.range,
                   placeholder: 'Check-in / check-out',
                   className: _triggerCls,
                   onRangeChanged: (range) {
@@ -120,7 +120,7 @@ class _MinStayDemoState extends State<_MinStayDemo> {
     return Form(
       child: WFormDatePicker(
         label: 'Stay (minimum 3 nights)',
-        mode: DatePickerMode.range,
+        mode: WDatePickerMode.range,
         placeholder: 'Check-in / check-out',
         className: widget.triggerCls,
         states: _externalError == null ? null : const {'error'},

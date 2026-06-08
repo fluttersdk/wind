@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide DatePickerMode;
+import 'package:flutter/material.dart';
 
 import 'w_date_picker.dart';
 import 'w_div.dart';
@@ -34,7 +34,7 @@ class WFormDatePicker extends FormField<DateTime> {
     // WDatePicker params
     super.initialValue,
     this.initialRange,
-    this.mode = DatePickerMode.single,
+    this.mode = WDatePickerMode.single,
     this.onChanged,
     this.onRangeChanged,
     this.minDate,
@@ -77,7 +77,7 @@ class WFormDatePicker extends FormField<DateTime> {
         );
 
   /// Selection mode: single date or date range.
-  final DatePickerMode mode;
+  final WDatePickerMode mode;
 
   /// The initially selected date range (range mode).
   final DateRange? initialRange;
@@ -148,7 +148,7 @@ class _WFormDatePickerContent extends StatefulWidget {
   });
 
   final FormFieldState<DateTime> state;
-  final DatePickerMode mode;
+  final WDatePickerMode mode;
   final DateRange? initialRange;
   final ValueChanged<DateTime>? onChanged;
   final ValueChanged<DateRange>? onRangeChanged;
@@ -185,7 +185,7 @@ class _WFormDatePickerContentState extends State<_WFormDatePickerContent> {
     super.didUpdateWidget(oldWidget);
 
     // Sync external state changes (e.g. form reset)
-    if (widget.mode == DatePickerMode.range) {
+    if (widget.mode == WDatePickerMode.range) {
       if (widget.state.value == null && _currentRange != null) {
         setState(() => _currentRange = null);
       } else if (widget.state.value != null &&

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:fluttersdk_wind/src/dynamic/w_dynamic_renderer.dart';
 
 /// Helper to wrap widget in MaterialApp with WindTheme
 Widget wrapWithTheme(Widget child) {
@@ -526,6 +527,30 @@ void main() {
 
         expect(onErrorCalled, isTrue);
         expect(find.text('Error in BrokenWidget'), findsOneWidget);
+      });
+
+      testWidgets('degrades gracefully when type is not a string',
+          (tester) async {
+        // Untrusted JSON must never throw past build(); a non-string type
+        // routes through the whitelist and emits the denied error widget.
+        await tester.pumpWidget(
+          wrapWithTheme(renderer.build({'type': 123})),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.textContaining('Error: Denied'), findsOneWidget);
+      });
+
+      testWidgets('degrades gracefully when children is not a list',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            renderer.build({'type': 'WDiv', 'children': 'oops'}),
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.byType(WDiv), findsOneWidget);
       });
     });
 

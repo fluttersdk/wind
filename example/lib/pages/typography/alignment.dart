@@ -40,7 +40,7 @@ class TypographyAlignmentPage extends StatelessWidget {
           const SizedBox(height: 4),
           WText(
             'Position text within its container',
-            className: 'text-sm text-gray-500',
+            className: 'text-sm text-gray-500 dark:text-gray-400',
           ),
           const SizedBox(height: 16),
 
@@ -137,7 +137,7 @@ class TypographyAlignmentPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: WText(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+              'Justified text spreads each line to fill the full container width, adding extra space between words so both the left and right edges stay flush. It works best for dense, multi-line paragraphs where a clean block shape matters more than even word spacing, such as printed articles or terms of service.',
               className: 'text-justify text-gray-800',
             ),
           ),

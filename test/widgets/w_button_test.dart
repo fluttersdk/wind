@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -36,6 +37,62 @@ void main() {
         );
 
         expect(find.byType(Container), findsOneWidget);
+      });
+    });
+
+    group('Semantics', () {
+      setUp(() {
+        WindParser.clearCache();
+      });
+
+      testWidgets('icon-only button exposes semanticLabel as its label',
+          (tester) async {
+        // An icon-only button has no text child for MergeSemantics to absorb,
+        // so without an explicit label it would be a nameless button. The
+        // semanticLabel must surface as the button's accessible name.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              semanticLabel: 'Add item',
+              child: const Icon(Icons.add),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WButton));
+        expect(node.flagsCollection.isButton, isTrue);
+        expect(node.label, 'Add item');
+      });
+
+      testWidgets(
+          'icon-only button with semanticLabel still fires onTap (Builder path)',
+          (tester) async {
+        // WButton routes through WAnchor via a Builder indirection. The
+        // excludeSemantics: true branch drops the descendant GestureDetector
+        // tap action, so onTap must be lifted onto the Semantics node for
+        // activation to survive across the Builder boundary.
+        var tapped = false;
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () => tapped = true,
+              semanticLabel: 'Add item',
+              child: const Icon(Icons.add),
+            ),
+          ),
+        );
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WButton));
+        expect(node.label, 'Add item');
+        expect(
+          node.getSemanticsData().hasAction(SemanticsAction.tap),
+          isTrue,
+        );
+
+        await tester.tap(find.byType(WButton));
+        await tester.pump();
+        expect(tapped, isTrue);
       });
     });
 

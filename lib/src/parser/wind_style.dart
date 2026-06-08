@@ -383,11 +383,14 @@ class WindStyle {
     double? positionBottom,
     double? positionLeft,
   }) {
-    final currentDec = this.decoration ?? const BoxDecoration();
-
-    final updatedDecoration = decoration == null
-        ? currentDec
-        : currentDec.copyWith(
+    // Preserve null when neither side carries a decoration. Fabricating an
+    // empty BoxDecoration here would flip the `decoration != null` gate that
+    // widgets use to decide whether to wrap a Container, so a padding-only or
+    // text-only style would needlessly wrap one. Only build a merged
+    // decoration when the incoming copyWith actually supplies one.
+    final BoxDecoration? updatedDecoration = decoration == null
+        ? this.decoration
+        : (this.decoration ?? const BoxDecoration()).copyWith(
             color: decoration.color,
             image: decoration.image,
             border: decoration.border,
