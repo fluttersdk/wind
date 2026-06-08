@@ -667,7 +667,7 @@ WKeyboardActions(
       WInput(
         focusNode: _amountFocus,
         placeholder: '0.00',
-        keyboardType: TextInputType.number,
+        type: InputType.number,
       ),
     ],
   ),

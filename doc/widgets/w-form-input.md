@@ -114,6 +114,7 @@ WFormInput({
 | `showError` | `bool` | `true` | Whether to display the error message string below the input. |
 | `errorClassName` | `String` | `'text-red-500...'` | Styling for the validation error message text. |
 | `controller` | `TextEditingController?` | `null` | Optional external controller for manual text management. |
+| `restorationId` | `String?` | `null` | Restoration bucket ID used by Flutter state restoration. |
 | `validator` | `String? Function(String?)?` | `null` | Form validation logic returning error string or null. |
 | `type` | `InputType` | `InputType.text` | Determines keyboard layout and visual masking (e.g., `password`). |
 | `prefix` | `Widget?` | `null` | Widget (like an Icon) displayed before the input text. |

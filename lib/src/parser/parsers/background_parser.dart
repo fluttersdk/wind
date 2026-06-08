@@ -251,10 +251,10 @@ class BackgroundParser implements WindParserInterface {
           imageUrlOrPath.startsWith('https://')) {
         imageProvider = NetworkImage(imageUrlOrPath);
       } else if (imageUrlOrPath.startsWith('/')) {
-        // `File` is unsupported on Flutter web and throws at runtime; an
-        // absolute filesystem path has no web meaning, so degrade gracefully by
-        // skipping the image instead of constructing `File`.
+        // An absolute filesystem path has no meaning on web, and `dart:io`
+        // `File` is unsupported there, so degrade gracefully by skipping it.
         if (kIsWeb) {
+          // Web has no dart:io File; skip rather than throw at runtime.
           return null; // coverage:ignore-line
         }
         imageProvider = FileImage(File(imageUrlOrPath));

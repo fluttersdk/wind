@@ -13,10 +13,16 @@ class WKeyboardActionsBasicExamplePage extends StatefulWidget {
 
 class _WKeyboardActionsBasicExamplePageState
     extends State<WKeyboardActionsBasicExamplePage> {
-  // 1. One FocusNode per field so WKeyboardActions can navigate between them.
+  // 1. One FocusNode per field instance. A FocusNode can only be attached to a
+  // single input at a time, so every WInput on the page owns a distinct node;
+  // sharing one across sections would trip the focus-attachment assertion.
   final _nameFocus = FocusNode();
   final _emailFocus = FocusNode();
   final _amountFocus = FocusNode();
+  final _quantityFocus = FocusNode();
+  final _contractorEmailFocus = FocusNode();
+  final _hoursFocus = FocusNode();
+  final _promoFocus = FocusNode();
 
   // 2. Track which platform mode the demo showcases.
   String _platform = 'all';
@@ -34,6 +40,10 @@ class _WKeyboardActionsBasicExamplePageState
     _nameFocus.dispose();
     _emailFocus.dispose();
     _amountFocus.dispose();
+    _quantityFocus.dispose();
+    _contractorEmailFocus.dispose();
+    _hoursFocus.dispose();
+    _promoFocus.dispose();
     super.dispose();
   }
 
@@ -90,7 +100,7 @@ class _WKeyboardActionsBasicExamplePageState
             className: 'flex flex-col gap-4',
             children: [
               WDiv(
-                className: 'flex flex-row gap-2 flex-wrap',
+                className: 'wrap gap-2',
                 children: [
                   for (final p in ['all', 'ios', 'android'])
                     WButton(
@@ -114,12 +124,12 @@ class _WKeyboardActionsBasicExamplePageState
               ),
               WKeyboardActions(
                 platform: _platform,
-                focusNodes: [_nameFocus],
+                focusNodes: [_quantityFocus],
                 toolbarClassName: 'bg-violet-50 dark:bg-violet-900',
                 child: _buildField(
                   label: 'Quantity',
                   placeholder: '1',
-                  focusNode: _nameFocus,
+                  focusNode: _quantityFocus,
                   type: InputType.number,
                 ),
               ),
@@ -132,7 +142,7 @@ class _WKeyboardActionsBasicExamplePageState
               'Supply closeWidgetBuilder to replace the default "Done" label with any widget. '
               'The builder receives the currently-focused FocusNode so you can call unfocus() on it.',
           child: WKeyboardActions(
-            focusNodes: [_emailFocus, _amountFocus],
+            focusNodes: [_contractorEmailFocus, _hoursFocus],
             toolbarClassName: 'bg-emerald-50 dark:bg-emerald-900',
             closeWidgetBuilder: (node) => WButton(
               onTap: node.unfocus,
@@ -151,13 +161,13 @@ class _WKeyboardActionsBasicExamplePageState
                 _buildField(
                   label: 'Email',
                   placeholder: 'contractor@example.com',
-                  focusNode: _emailFocus,
+                  focusNode: _contractorEmailFocus,
                   type: InputType.email,
                 ),
                 _buildField(
                   label: 'Hours Logged',
                   placeholder: '8',
-                  focusNode: _amountFocus,
+                  focusNode: _hoursFocus,
                   type: InputType.number,
                 ),
               ],
@@ -170,13 +180,13 @@ class _WKeyboardActionsBasicExamplePageState
               'Set nextFocus: false to remove the Previous/Next arrow buttons from the toolbar '
               'and show only the Done button.',
           child: WKeyboardActions(
-            focusNodes: [_nameFocus],
+            focusNodes: [_promoFocus],
             nextFocus: false,
             toolbarClassName: 'bg-amber-50 dark:bg-amber-900',
             child: _buildField(
               label: 'Promo Code',
               placeholder: 'WIND2025',
-              focusNode: _nameFocus,
+              focusNode: _promoFocus,
             ),
           ),
         ),

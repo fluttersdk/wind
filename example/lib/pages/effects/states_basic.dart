@@ -40,7 +40,7 @@ class StatesBasicExamplePage extends StatelessWidget {
               onTap: () {},
               child: WDiv(
                 className:
-                    "bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-6 py-3 rounded-lg",
+                    "bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 px-6 py-3 rounded-lg",
                 children: const [
                   WText(
                     "Click to focus",

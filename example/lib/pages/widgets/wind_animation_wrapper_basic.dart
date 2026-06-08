@@ -141,7 +141,10 @@ class _WindAnimationWrapperBasicExamplePageState
         children: [
           Positioned.fill(
             child: Center(
-              child: Icon(icon, size: 28, color: Colors.grey),
+              child: WIcon(
+                icon,
+                className: 'text-3xl text-gray-400 dark:text-gray-500',
+              ),
             ),
           ),
           Positioned(
