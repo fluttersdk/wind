@@ -583,37 +583,58 @@ class WDiv extends StatelessWidget {
       // token, each Wind child that does not control its own width is wrapped
       // in `SizedBox(width: infinity)` so it fills the column width (CSS
       // `align-items: stretch` default). `crossAxisAlignment` stays `start`,
-      // so an explicit `items-*` disables this path entirely. No LayoutBuilder:
-      // infinity resolves to the bounded column width, degrading to intrinsic
-      // size when the column is unbounded.
-      final List<Widget> columnChildren;
-      if (styles.crossAxisAlignment == null) {
-        columnChildren = basisChildren.map((child) {
-          // Gaps and pre-wrapped flex widgets are never stretched.
-          if (child is SizedBox || child is Flexible || child is Expanded) {
-            return child;
-          }
-          if (!_shouldStretchColumnChild(child, context)) return child;
-          return SizedBox(width: double.infinity, child: child);
-        }).toList();
-      } else {
-        columnChildren = basisChildren;
+      // so an explicit `items-*` disables this path entirely.
+      Widget buildColumn(bool stretch) {
+        final List<Widget> columnChildren;
+        if (stretch) {
+          columnChildren = basisChildren.map((child) {
+            // Gaps and pre-wrapped flex widgets are never stretched.
+            if (child is SizedBox || child is Flexible || child is Expanded) {
+              return child;
+            }
+            if (!_shouldStretchColumnChild(child, context)) return child;
+            return SizedBox(width: double.infinity, child: child);
+          }).toList();
+        } else {
+          columnChildren = basisChildren;
+        }
+
+        return WindFlexOverflowScope(
+          skipExpanded: isMainAxisScrollable,
+          child: Column(
+            mainAxisAlignment:
+                styles.mainAxisAlignment ?? MainAxisAlignment.start,
+            crossAxisAlignment:
+                styles.crossAxisAlignment ?? CrossAxisAlignment.start,
+            mainAxisSize: effectiveMainAxisSize,
+            textBaseline: styles.textBaseline,
+            verticalDirection: styles.flexReverse
+                ? VerticalDirection.up
+                : VerticalDirection.down,
+            children: columnChildren,
+          ),
+        );
       }
 
-      return WindFlexOverflowScope(
-        skipExpanded: isMainAxisScrollable,
-        child: Column(
-          mainAxisAlignment:
-              styles.mainAxisAlignment ?? MainAxisAlignment.start,
-          crossAxisAlignment:
-              styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-          mainAxisSize: effectiveMainAxisSize,
-          textBaseline: styles.textBaseline,
-          verticalDirection: styles.flexReverse
-              ? VerticalDirection.up
-              : VerticalDirection.down,
-          children: columnChildren,
-        ),
+      // The stretch wrap forces a tight infinite width, which THROWS under an
+      // unbounded-width constraint (a bare Row main-axis slot, UnconstrainedBox,
+      // horizontal scroll). Gate it on a finite incoming maxWidth via a
+      // LayoutBuilder, but ONLY when a stretch-eligible child exists so columns
+      // that cannot stretch pay no LayoutBuilder cost. An unbounded-width
+      // column degrades to content-sized children (the pre-stretch behavior)
+      // instead of crashing.
+      final bool hasStretchTarget = styles.crossAxisAlignment == null &&
+          basisChildren.any((child) =>
+              child is! SizedBox &&
+              child is! Flexible &&
+              child is! Expanded &&
+              _shouldStretchColumnChild(child, context));
+      if (!hasStretchTarget) {
+        return buildColumn(false);
+      }
+      return LayoutBuilder(
+        builder: (context, constraints) =>
+            buildColumn(constraints.maxWidth.isFinite),
       );
     } else {
       // For Row with space distribution OR overflow-hidden, wrap children with Flexible

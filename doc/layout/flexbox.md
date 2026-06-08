@@ -208,7 +208,7 @@ Controls how children are distributed along the **cross axis** (Vertical for `ro
 WDiv(className: 'flex items-center h-20')
 ```
 
-> **Column default — smart cross-axis stretch.** A `flex flex-col` with no explicit `items-*` token stretches each `WDiv` child that does not control its own width (no `w-*` / `min-w-*` / `max-w-*` / `w-full`, no `flex-*`, no `shrink-0` / `flex-none`, not absolute) to the column width, matching CSS `align-items: stretch`. Add any `items-*` token (e.g. `items-start`) to turn this off and let children size to content. Rows are never auto-stretched on the cross axis; non-`WDiv` children are left untouched.
+> **Column default — smart cross-axis stretch.** A `flex flex-col` with no explicit `items-*` token stretches each `WDiv` child that does not control its own width (no `w-*` / `min-w-*` / `max-w-*` / `w-full`, no `flex-*`, no `shrink-0` / `flex-none`, not absolute) to the column width, matching CSS `align-items: stretch`. Add any `items-*` token (e.g. `items-start`) to turn this off and let children size to content. Rows are never auto-stretched on the cross axis; non-`WDiv` children are left untouched. When the column itself sits in an unbounded-width context (a bare `Row` slot, `UnconstrainedBox`, horizontal scroll), the stretch safely falls back to content-sized children instead of forcing an infinite width.
 
 <a name="align-content"></a>
 ## Align Content

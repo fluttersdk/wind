@@ -78,6 +78,32 @@ void main() {
           );
         },
       );
+
+      testWidgets(
+        'baseline color follows platform brightness (white on dark)',
+        (tester) async {
+          await tester.pumpWidget(
+            MediaQuery(
+              data: const MediaQueryData(platformBrightness: Brightness.dark),
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: WindTheme(
+                  data: WindThemeData(),
+                  child: const WText('x'),
+                ),
+              ),
+            ),
+          );
+
+          final Text textWidget = tester.widget(find.byType(Text));
+          expect(
+            textWidget.style?.color,
+            Colors.white,
+            reason: 'Bare WText on a dark platform falls back to white, '
+                'not an invisible black.',
+          );
+        },
+      );
     });
 
     group('explicit styles still win over baseline', () {

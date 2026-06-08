@@ -256,4 +256,75 @@ void main() {
       expect(find.byType(Expanded), findsOneWidget);
     });
   });
+
+  group('smart column stretch — edge cases', () {
+    testWidgets('bounded-width column in a vertical scroll still stretches',
+        (tester) async {
+      // Height is unbounded (scroll), width is bounded → child fills width.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          SizedBox(
+            width: 280,
+            child: SingleChildScrollView(
+              child: WDiv(
+                className: 'flex flex-col',
+                children: const [
+                  WDiv(className: 'bg-red-500', child: SizedBox(height: 10)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(tester.getSize(find.byType(WDiv).at(1)).width, 280);
+    });
+
+    testWidgets('unbounded-width column does not crash (degrades gracefully)',
+        (tester) async {
+      // A flex-col placed where width is unbounded (a bare Row main-axis slot).
+      // The stretch wrap must not force an infinite-width render error.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              WDiv(
+                className: 'flex flex-col',
+                children: [
+                  WDiv(className: 'bg-red-500', child: Text('content')),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull,
+          reason: 'smart stretch must not throw on an unbounded-width column');
+    });
+
+    testWidgets('basis-* column child is not additionally width-stretched',
+        (tester) async {
+      // A basis-* child resolves to a sized SizedBox; the stretch pass skips
+      // SizedBox children, so it is not double-wrapped to full width.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const SizedBox(
+            width: 300,
+            height: 400,
+            child: WDiv(
+              className: 'flex flex-col',
+              children: [
+                WDiv(className: 'basis-1/2 bg-red-500', child: Text('half')),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+    });
+  });
 }

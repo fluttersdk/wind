@@ -180,9 +180,15 @@ class WText extends StatelessWidget {
     // Baseline color guarantee: when no color was resolved from className,
     // foregroundColor, or textStyle, apply a neutral fallback so the widget
     // does not inherit Flutter's debug yellow-underline appearance when there
-    // is no Material ancestor above us. Explicitly supplied colors always win.
+    // is no Material ancestor above us. The fallback follows the ambient
+    // platform brightness (white on dark, black on light) so bare text stays
+    // legible in both modes. Explicitly supplied colors always win.
     if (finalTextStyle.color == null) {
-      finalTextStyle = finalTextStyle.copyWith(color: Colors.black);
+      final isDark =
+          MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
+      finalTextStyle = finalTextStyle.copyWith(
+        color: isDark ? Colors.white : Colors.black,
+      );
     }
 
     // B. Apply Text Transformation (uppercase, lowercase)
