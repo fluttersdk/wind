@@ -141,6 +141,12 @@ class FlexGrowExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
+          title: 'Clickable Row Stretch (WAnchor / WButton)',
+          description:
+              'WAnchor and WButton column children also stretch to the column width by default. A nav sidebar built from WAnchor rows fills its container without w-full or items-stretch.',
+          child: const _ClickableStretchDemo(),
+        ),
+        ExampleSection(
           title: 'Quick Reference',
           description: 'Eight tokens cover the bulk of flex sizing scenarios.',
           child: WDiv(
@@ -286,6 +292,118 @@ class _BasisRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ClickableStretchDemo extends StatelessWidget {
+  const _ClickableStretchDemo();
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-col gap-4 p-4 rounded-xl
+        bg-white dark:bg-slate-800
+        border border-slate-200 dark:border-slate-700
+      ''',
+      children: [
+        WText(
+          'Sidebar nav: WAnchor rows fill column width automatically',
+          className: 'text-xs font-mono text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className: '''
+            flex flex-col
+            rounded-lg overflow-hidden
+            border border-slate-200 dark:border-slate-700
+          ''',
+          children: [
+            _NavRow(
+              icon: '▶',
+              label: 'Dashboard',
+              color: 'bg-orange-500 dark:bg-orange-600',
+              onTap: () {},
+            ),
+            _NavRow(
+              icon: '◉',
+              label: 'Projects',
+              color: 'bg-orange-400 dark:bg-orange-500',
+              onTap: () {},
+            ),
+            _NavRow(
+              icon: '◈',
+              label: 'Settings',
+              color: 'bg-orange-300 dark:bg-orange-400',
+              onTap: () {},
+            ),
+          ],
+        ),
+        WText(
+          'WButton rows also stretch, no w-full needed',
+          className: 'text-xs font-mono text-slate-500 dark:text-slate-400',
+        ),
+        WDiv(
+          className: 'flex flex-col gap-2',
+          children: [
+            WButton(
+              className: '''
+                px-4 py-3 rounded-lg
+                bg-slate-100 dark:bg-slate-700
+                text-slate-800 dark:text-slate-100
+              ''',
+              onTap: () {},
+              child: WText(
+                'Save draft',
+                className: 'font-semibold text-sm',
+              ),
+            ),
+            WButton(
+              className: '''
+                px-4 py-3 rounded-lg
+                bg-orange-500 dark:bg-orange-600
+              ''',
+              onTap: () {},
+              child: WText(
+                'Publish',
+                className: 'font-semibold text-sm text-white',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _NavRow extends StatelessWidget {
+  final String icon;
+  final String label;
+  final String color;
+  final VoidCallback onTap;
+
+  const _NavRow({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return WAnchor(
+      onTap: onTap,
+      child: WDiv(
+        className: '''
+          flex flex-row items-center gap-3
+          px-4 py-3
+          $color
+        ''',
+        children: [
+          WText(icon, className: 'text-white text-sm'),
+          WText(label, className: 'text-white font-semibold text-sm'),
+        ],
+      ),
     );
   }
 }
