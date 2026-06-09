@@ -7,6 +7,7 @@ import 'wind_animation_wrapper.dart';
 import '../state/wind_anchor_state_provider.dart';
 import '../state/wind_flex_overflow_scope.dart';
 import 'w_anchor.dart';
+import 'w_button.dart';
 import 'w_text.dart';
 
 /// **The Fundamental Building Block of Wind**
@@ -837,12 +838,49 @@ class WDiv extends StatelessWidget {
   /// effect, while breaking trees that locate sibling `SizedBox`es positionally
   /// (e.g. a `WSpacer` next to bare `WText`). Container children (`WDiv`) are
   /// the meaningful stretch targets.
+  ///
+  /// Interaction wrappers count too. A clickable row is authored as
+  /// `WAnchor(onTap: ...) > WDiv(...)` (WDiv carries no `onTap`), and a
+  /// `WButton` is the canonical button surface; CSS would stretch both to the
+  /// column width. So:
+  /// - `WButton` is eligible, gated by its own `className` exactly like a `WDiv`
+  ///   (an explicit width / self-flex / `absolute` opts it out).
+  /// - `WAnchor` delegates its eligibility to its effective child: when the
+  ///   child is a `WDiv`, the inner WDiv's `className` decides (a `WAnchor`
+  ///   carries no `className`), so a `WAnchor > WDiv(w-32)` keeps 128px and a
+  ///   `WAnchor > WDiv` carrying a self-flex token is excluded for the same
+  ///   reason a direct self-flexing `WDiv` is; when the child is anything else
+  ///   (a `WText`, a raw widget) the wrapper is stretched by policy: the
+  ///   `WAnchor` tap surface fills the column, and any explicit width on the
+  ///   wrapped widget still constrains its own content.
+  ///
+  /// The inner-WDiv self-flex check mirrors the direct-`WDiv` rule: stretching a
+  /// self-flexing `WDiv` (a `SizedBox(width: infinity)` around a `WDiv` that
+  /// self-wraps in `Expanded`/`Flexible`) asserts ParentDataWidget, so
+  /// `_selfWrapsInFlex` excludes it. A `WAnchor > WDiv(grow)` is itself an
+  /// unsupported configuration: the inner `WDiv`'s `Expanded` asserts because
+  /// its parent is the `WAnchor`'s non-`Flex` wrappers, not a `Flex`. Excluding
+  /// it from stretch does not rescue that case; it only keeps the eligibility
+  /// rule consistent with a direct `WDiv`.
   static bool _shouldStretchColumnChild(Widget child) {
     final String? className;
     if (child is WDiv) {
       className = child.className;
+    } else if (child is WButton) {
+      className = child.className;
+    } else if (child is WAnchor) {
+      // A WAnchor has no className of its own; delegate to its effective child.
+      final Widget inner = child.child;
+      if (inner is WDiv) {
+        className = inner.className;
+      } else {
+        // WText / raw widget: stretch the WAnchor surface by policy so the tap
+        // area fills the column; any explicit width on the wrapped widget still
+        // constrains its own content.
+        return true;
+      }
     } else {
-      // Non-WDiv children (raw Flutter widgets, WText leaves) are untouched.
+      // Non-Wind children (raw Flutter widgets, WText leaves) are untouched.
       return false;
     }
 
