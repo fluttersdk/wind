@@ -366,7 +366,7 @@ class _ClickableStretchDemo extends StatelessWidget {
               onTap: () {},
               child: WText(
                 'Publish',
-                className: 'font-semibold text-sm text-white',
+                className: 'font-semibold text-sm text-white dark:text-white',
               ),
             ),
           ],
@@ -400,8 +400,11 @@ class _NavRow extends StatelessWidget {
           $color
         ''',
         children: [
-          WText(icon, className: 'text-white text-sm'),
-          WText(label, className: 'text-white font-semibold text-sm'),
+          WText(icon, className: 'text-white dark:text-white text-sm'),
+          WText(
+            label,
+            className: 'text-white dark:text-white font-semibold text-sm',
+          ),
         ],
       ),
     );
@@ -441,7 +444,7 @@ class _StretchDemo extends StatelessWidget {
               ''',
               child: WText(
                 'Nav bar',
-                className: 'text-white font-semibold text-sm',
+                className: 'text-white dark:text-white font-semibold text-sm',
               ),
             ),
             WDiv(
@@ -451,7 +454,7 @@ class _StretchDemo extends StatelessWidget {
               ''',
               child: WText(
                 'Content card',
-                className: 'text-white text-sm',
+                className: 'text-white dark:text-white text-sm',
               ),
             ),
           ],
