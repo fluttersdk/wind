@@ -11,6 +11,10 @@ topics:
   - responsive
   - design-system
 
+screenshots:
+  - description: "Wind example gallery: Tailwind-syntax className UI rendered with W-prefix widgets, dark mode, and responsive breakpoints."
+    path: screenshots/wind-gallery-overview.png
+
 environment:
   sdk: ">=3.4.0 <4.0.0"
   flutter: ">=3.27.0"
