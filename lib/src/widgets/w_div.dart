@@ -7,6 +7,7 @@ import 'wind_animation_wrapper.dart';
 import '../state/wind_anchor_state_provider.dart';
 import '../state/wind_flex_overflow_scope.dart';
 import 'w_anchor.dart';
+import 'w_button.dart';
 import 'w_text.dart';
 
 /// **The Fundamental Building Block of Wind**
@@ -837,12 +838,41 @@ class WDiv extends StatelessWidget {
   /// effect, while breaking trees that locate sibling `SizedBox`es positionally
   /// (e.g. a `WSpacer` next to bare `WText`). Container children (`WDiv`) are
   /// the meaningful stretch targets.
+  ///
+  /// Interaction wrappers count too. A clickable row is authored as
+  /// `WAnchor(onTap: ...) > WDiv(...)` (WDiv carries no `onTap`), and a
+  /// `WButton` is the canonical button surface; CSS would stretch both to the
+  /// column width. So:
+  /// - `WButton` is eligible, gated by its own `className` exactly like a `WDiv`
+  ///   (an explicit width / self-flex / `absolute` opts it out).
+  /// - `WAnchor` delegates its eligibility to its effective child: when the
+  ///   child is a `WDiv`, the inner WDiv's `className` decides (a `WAnchor`
+  ///   carries no `className`), so a `WAnchor > WDiv(w-32)` keeps 128px and a
+  ///   `WAnchor > WDiv(grow)` stays a self-flexing child that must never be
+  ///   wrapped in a stretch `SizedBox`; when the child is anything else (a
+  ///   `WText`, a raw widget) there is no width to honor, so it is eligible.
+  ///
+  /// The inner-WDiv delegation is load-bearing for crash safety: a
+  /// `WAnchor > WDiv(grow)` self-wraps in `Expanded` during its own build, so
+  /// adding a `SizedBox(width: infinity)` stretch around it would compound the
+  /// flex wrap. `_selfWrapsInFlex` on the inner className excludes it.
   static bool _shouldStretchColumnChild(Widget child) {
     final String? className;
     if (child is WDiv) {
       className = child.className;
+    } else if (child is WButton) {
+      className = child.className;
+    } else if (child is WAnchor) {
+      // A WAnchor has no className of its own; delegate to its effective child.
+      final Widget inner = child.child;
+      if (inner is WDiv) {
+        className = inner.className;
+      } else {
+        // WText / raw widget: no cross-axis width to honor, always eligible.
+        return true;
+      }
     } else {
-      // Non-WDiv children (raw Flutter widgets, WText leaves) are untouched.
+      // Non-Wind children (raw Flutter widgets, WText leaves) are untouched.
       return false;
     }
 
