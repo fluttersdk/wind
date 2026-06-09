@@ -6,7 +6,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
-## [1.0.0] - TBD
+## [1.0.0] - 2026-06-09
 
 First stable release. wind is utility-first, Tailwind-syntax styling for Flutter; v1.0.0 is a complete rewrite of the 0.0.x line with a fresh API surface, a 19-parser pipeline with cached resolution, dark-mode pairs as a first-class contract, and a contracts-based debug bridge for external tooling. All public APIs follow Semantic Versioning 2.0.0 from this point forward.
 

@@ -4,7 +4,7 @@
 /// Pass a value as the `platform` parameter on `WKeyboardActions`. The
 /// string-based API (`'ios'`, `'android'`, `'all'`) maps to this enum
 /// internally; consumers that prefer a typed constant may use this directly
-/// once the barrel export lands in a later step.
+/// (exported from `package:fluttersdk_wind/fluttersdk_wind.dart`).
 enum WKeyboardPlatform {
   /// Show the toolbar only on Android.
   android,
