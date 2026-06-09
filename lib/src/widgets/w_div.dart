@@ -848,14 +848,20 @@ class WDiv extends StatelessWidget {
   /// - `WAnchor` delegates its eligibility to its effective child: when the
   ///   child is a `WDiv`, the inner WDiv's `className` decides (a `WAnchor`
   ///   carries no `className`), so a `WAnchor > WDiv(w-32)` keeps 128px and a
-  ///   `WAnchor > WDiv(grow)` stays a self-flexing child that must never be
-  ///   wrapped in a stretch `SizedBox`; when the child is anything else (a
-  ///   `WText`, a raw widget) there is no width to honor, so it is eligible.
+  ///   `WAnchor > WDiv` carrying a self-flex token is excluded for the same
+  ///   reason a direct self-flexing `WDiv` is; when the child is anything else
+  ///   (a `WText`, a raw widget) the wrapper is stretched by policy: the
+  ///   `WAnchor` tap surface fills the column, and any explicit width on the
+  ///   wrapped widget still constrains its own content.
   ///
-  /// The inner-WDiv delegation is load-bearing for crash safety: a
-  /// `WAnchor > WDiv(grow)` self-wraps in `Expanded` during its own build, so
-  /// adding a `SizedBox(width: infinity)` stretch around it would compound the
-  /// flex wrap. `_selfWrapsInFlex` on the inner className excludes it.
+  /// The inner-WDiv self-flex check mirrors the direct-`WDiv` rule: stretching a
+  /// self-flexing `WDiv` (a `SizedBox(width: infinity)` around a `WDiv` that
+  /// self-wraps in `Expanded`/`Flexible`) asserts ParentDataWidget, so
+  /// `_selfWrapsInFlex` excludes it. A `WAnchor > WDiv(grow)` is itself an
+  /// unsupported configuration: the inner `WDiv`'s `Expanded` asserts because
+  /// its parent is the `WAnchor`'s non-`Flex` wrappers, not a `Flex`. Excluding
+  /// it from stretch does not rescue that case; it only keeps the eligibility
+  /// rule consistent with a direct `WDiv`.
   static bool _shouldStretchColumnChild(Widget child) {
     final String? className;
     if (child is WDiv) {
@@ -868,7 +874,9 @@ class WDiv extends StatelessWidget {
       if (inner is WDiv) {
         className = inner.className;
       } else {
-        // WText / raw widget: no cross-axis width to honor, always eligible.
+        // WText / raw widget: stretch the WAnchor surface by policy so the tap
+        // area fills the column; any explicit width on the wrapped widget still
+        // constrains its own content.
         return true;
       }
     } else {

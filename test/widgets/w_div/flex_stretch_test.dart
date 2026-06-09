@@ -414,9 +414,10 @@ void main() {
 
     testWidgets('self-flexing WButton (grow) is not stretch-wrapped',
         (tester) async {
-      // A WButton whose own className self-wraps in Expanded must not be
-      // wrapped again in SizedBox(width: infinity); _selfWrapsInFlex on the
-      // button's className excludes it from the stretch pass.
+      // A WButton whose className carries a self-flex token (grow) is excluded
+      // from the stretch pass by _selfWrapsInFlex, mirroring the direct-WDiv
+      // rule. WButton itself does not wrap in Expanded; the exclusion keeps the
+      // eligibility rule consistent.
       await tester.pumpWidget(
         wrapWithTheme(
           SizedBox(
