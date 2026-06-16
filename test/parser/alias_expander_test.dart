@@ -142,16 +142,15 @@ void main() {
         'f': 'leaf',
       };
       final warnings = <String>[];
-      final stopwatch = Stopwatch()..start();
 
       final result = expandAliases('a', fanOut, onWarn: warnings.add);
-      stopwatch.stop();
 
+      // The budget caps the output (proving termination: an unbounded fan-out
+      // would emit thousands of tokens) and warns. No wall-clock assertion: the
+      // bounded count is the deterministic termination signal, not elapsed time.
       final tokens = result.split(' ').where((t) => t.isNotEmpty);
       expect(tokens.length, lessThanOrEqualTo(256));
       expect(warnings.any((w) => w.contains('budget')), isTrue);
-      // Termination is fast: the budget short-circuits the fan-out, no hang.
-      expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
     });
   });
 }

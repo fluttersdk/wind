@@ -84,7 +84,7 @@ String expandAliases(
         budgetWarned = true;
         onWarn?.call(
           'Wind alias expansion exceeded the $_maxOutputTokens-token budget; '
-          'remaining tokens left unexpanded.',
+          'remaining tokens were dropped.',
         );
       }
       return;
