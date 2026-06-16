@@ -28,6 +28,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - `WFormInput`, `WFormSelect`, `WFormCheckbox`, and `WFormDatePicker`: the default label, hint, and error class names now carry `dark:` pairs (`text-gray-700 dark:text-gray-300`, `text-gray-500 dark:text-gray-400`, `text-red-500 dark:text-red-400`), so labels and hints stay legible in dark mode instead of rendering dark-on-dark.
 - `WInput`: a conditional `prefix`/`suffix` (for example a clear button that appears once the field has text) no longer drops focus on the first keystroke, and an appearing suffix no longer grows the field height; the placeholder also shares the input strut so the box height stays constant between empty and filled.
 - `WInput`: `enabled: false` is now fully non-interactive again, the field cannot be tapped, focused, or expose selection handles/toolbar (the Material-free backend would otherwise still react to taps on the text).
+- `WInput`: a disabled field again reports `isEnabled: false` to assistive technology through its `Semantics` node. The Material-free rewrite had dropped the flag (the `EditableText` node carries only `isReadOnly`), so a screen reader could not tell a disabled field from a read-only one; the 1.0.0 Material `TextField` exposed it and parity is restored.
 
 ---
 
