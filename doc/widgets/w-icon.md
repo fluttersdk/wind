@@ -65,15 +65,18 @@ const WIcon(
 Utility classes are for **design tokens** (`text-primary-500`, `text-red-500`). When the color is a **runtime value**, a category icon color from the database or a user-picked brand color, use the `foregroundColor` prop instead of interpolating into `text-[#$hex]`.
 
 ```dart
+// `category.color` is a Color loaded at runtime (e.g. from the database).
+
 // Good: runtime-dynamic color via inline prop
 WIcon(
-  LucideIcons.star,
+  Icons.star,
   foregroundColor: category.color,
   className: 'text-lg',
 )
 
-// Avoid: string interpolation bloats the parser cache, one entry per unique hex
-WIcon(LucideIcons.star, className: 'text-lg text-[#${category.color.hex}]')
+// Avoid: interpolating a runtime value into className bloats the parser
+// cache with one entry per unique color (`categoryHex` is a String like 'ff5500')
+WIcon(Icons.star, className: 'text-lg text-[#$categoryHex]')
 ```
 
 Precedence: inline `foregroundColor` wins over any `text-*` / `dark:text-*` resolved from `className`. When `foregroundColor` is `null`, className behavior, including the `dark:` fallback, is unchanged. The inline color does not participate in the parser cache key.
