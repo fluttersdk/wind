@@ -110,15 +110,16 @@ class WFormInput extends FormField<String> {
 
     // Error display
     this.showError = true,
-    this.errorClassName = 'text-red-500 text-xs mt-1',
+    this.errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
 
     // Label
     this.label,
-    this.labelClassName = 'text-sm font-medium text-gray-700 mb-1',
+    this.labelClassName =
+        'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
 
     // Hint
     this.hint,
-    this.hintClassName = 'text-gray-500 text-xs mt-1',
+    this.hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
 
     // Prefix/Suffix
     this.prefix,

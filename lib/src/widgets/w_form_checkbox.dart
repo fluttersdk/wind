@@ -48,15 +48,15 @@ class WFormCheckbox extends FormField<bool> {
     // Label
     this.label,
     this.labelText,
-    this.labelClassName = 'text-sm text-gray-700',
+    this.labelClassName = 'text-sm text-gray-700 dark:text-gray-300',
 
     // Hint
     this.hint,
-    this.hintClassName = 'text-gray-500 text-xs mt-1',
+    this.hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
 
     // Error display
     this.showError = true,
-    this.errorClassName = 'text-red-500 text-xs mt-1',
+    this.errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
   }) : super(
           initialValue: value,
           builder: (FormFieldState<bool> state) {

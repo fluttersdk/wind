@@ -66,13 +66,14 @@ class WFormSelect<T> extends FormField<T> {
 
     // Label & Hint
     this.label,
-    this.labelClassName = 'text-sm font-medium text-gray-700 mb-1',
+    this.labelClassName =
+        'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
     this.hint,
-    this.hintClassName = 'text-gray-500 text-xs mt-1',
+    this.hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
 
     // Error display
     this.showError = true,
-    this.errorClassName = 'text-red-500 text-xs mt-1',
+    this.errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
   }) : super(
           initialValue: value,
           builder: (FormFieldState<T> state) {
@@ -378,13 +379,14 @@ class WFormMultiSelect<T> extends FormField<List<T>> {
 
     // Label & Hint
     this.label,
-    this.labelClassName = 'text-sm font-medium text-gray-700 mb-1',
+    this.labelClassName =
+        'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
     this.hint,
-    this.hintClassName = 'text-gray-500 text-xs mt-1',
+    this.hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
 
     // Error display
     this.showError = true,
-    this.errorClassName = 'text-red-500 text-xs mt-1',
+    this.errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
   }) : super(
           initialValue: values ?? [],
           builder: (FormFieldState<List<T>> state) {
