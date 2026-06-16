@@ -763,7 +763,10 @@ void main() {
         // With border-0, the _buildDecoration logic sets border = null (no border).
         // Find the innermost DecoratedBox belonging to the WInput and verify.
         final DecoratedBox decoratedBox = tester.firstWidget<DecoratedBox>(
-          find.byType(DecoratedBox),
+          find.descendant(
+            of: find.byType(WInput),
+            matching: find.byType(DecoratedBox),
+          ),
         );
         final BoxDecoration decoration =
             decoratedBox.decoration as BoxDecoration;
@@ -785,7 +788,10 @@ void main() {
 
         // Initially no border.
         final DecoratedBox before = tester.firstWidget<DecoratedBox>(
-          find.byType(DecoratedBox),
+          find.descendant(
+            of: find.byType(WInput),
+            matching: find.byType(DecoratedBox),
+          ),
         );
         expect((before.decoration as BoxDecoration).border, isNull);
 
@@ -795,7 +801,10 @@ void main() {
 
         // After focus, the ring promotes to a border.
         final DecoratedBox after = tester.firstWidget<DecoratedBox>(
-          find.byType(DecoratedBox),
+          find.descendant(
+            of: find.byType(WInput),
+            matching: find.byType(DecoratedBox),
+          ),
         );
         expect((after.decoration as BoxDecoration).border, isNotNull);
       });
@@ -810,7 +819,10 @@ void main() {
         );
 
         final DecoratedBox decoratedBox = tester.firstWidget<DecoratedBox>(
-          find.byType(DecoratedBox),
+          find.descendant(
+            of: find.byType(WInput),
+            matching: find.byType(DecoratedBox),
+          ),
         );
         final BoxDecoration decoration =
             decoratedBox.decoration as BoxDecoration;
@@ -1067,6 +1079,36 @@ void main() {
         );
 
         expect(find.byType(EditableText), findsOneWidget);
+      });
+
+      testWidgets('disabled input is non-interactive (no focus, no selection)',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(
+              enabled: false,
+              value: 'locked',
+              placeholder: 'p',
+            ),
+          ),
+        );
+
+        // IgnorePointer swallows the tap, so the field cannot gain focus.
+        await tester.tap(find.byType(WInput), warnIfMissed: false);
+        await tester.pump();
+
+        final EditableText editable =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(
+          editable.focusNode.hasFocus,
+          isFalse,
+          reason: 'a disabled field must not gain focus on tap.',
+        );
+        expect(
+          editable.enableInteractiveSelection,
+          isFalse,
+          reason: 'a disabled field must expose no selection UI.',
+        );
       });
 
       testWidgets('swapping an owned focus node for an external one re-wires',

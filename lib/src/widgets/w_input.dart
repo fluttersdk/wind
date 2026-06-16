@@ -492,10 +492,15 @@ class _WInputState extends State<WInput> {
       // cursor color.
       backgroundCursorColor: CupertinoColors.inactiveGray,
       selectionColor: _isFocused ? selectionColor : null,
-      selectionControls:
-          hasOverlay ? cupertinoTextSelectionHandleControls : null,
-      enableInteractiveSelection: hasOverlay,
-      contextMenuBuilder: hasOverlay ? _buildContextMenu : null,
+      // Selection UI needs an Overlay to host its toolbar/handles, and a
+      // disabled field must expose none of it (a read-only field stays
+      // selectable so its text can be copied).
+      selectionControls: hasOverlay && widget.enabled
+          ? cupertinoTextSelectionHandleControls
+          : null,
+      enableInteractiveSelection: hasOverlay && widget.enabled,
+      contextMenuBuilder:
+          hasOverlay && widget.enabled ? _buildContextMenu : null,
       // Caller-supplied formatters win outright; otherwise InputType.number
       // gets a signed-decimal filter so it is actually numeric on every
       // platform (the keyboard type alone enforces nothing on web).
@@ -585,6 +590,11 @@ class _WInputState extends State<WInput> {
         },
         child: result,
       );
+    } else {
+      // Disabled: swallow all pointer events so the field cannot be tapped,
+      // focused, or have its cursor placed, honoring the enabled: false
+      // contract (the EditableText otherwise still reacts to taps on glyphs).
+      result = IgnorePointer(child: result);
     }
 
     // Accessibility: attach the label to EditableText's own isTextField node.
