@@ -1095,6 +1095,101 @@ void main() {
       });
     });
 
+    group('Layout stability and theming', () {
+      testWidgets('box height does not change between empty and filled',
+          (tester) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Align(
+              alignment: Alignment.topLeft,
+              child: WInput(
+                controller: controller,
+                placeholder: 'you@example.com',
+                className: 'px-3 py-2',
+              ),
+            ),
+          ),
+        );
+
+        final double emptyHeight = tester.getSize(find.byType(WInput)).height;
+
+        await tester.enterText(find.byType(EditableText), 'hello');
+        await tester.pump();
+
+        final double filledHeight = tester.getSize(find.byType(WInput)).height;
+        expect(
+          filledHeight,
+          emptyHeight,
+          reason: 'Typing must not shift the field height; the placeholder '
+              'shares the EditableText strut so the box stays the same size.',
+        );
+      });
+
+      testWidgets('suffix-only field keeps the text off the left border',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Align(
+              alignment: Alignment.topLeft,
+              child: WInput(
+                placeholder: 'Enter password',
+                type: InputType.password,
+                className: 'px-3 py-2',
+                suffix: const Icon(Icons.visibility),
+              ),
+            ),
+          ),
+        );
+
+        final double boxLeft = tester.getTopLeft(find.byType(WInput)).dx;
+        final double editableLeft =
+            tester.getTopLeft(find.byType(EditableText)).dx;
+
+        // px-3 = 12px content inset; with no prefix the text must keep it.
+        expect(
+          editableLeft - boxLeft,
+          greaterThanOrEqualTo(12.0),
+          reason: 'With a suffix but no prefix the text must still keep the '
+              'horizontal content padding, not sit flush against the border.',
+        );
+      });
+
+      testWidgets('baseline text color follows Wind brightness, not the OS',
+          (tester) async {
+        // WindTheme forced dark; className carries no text color, so the
+        // baseline must resolve white (matching the dark background) rather
+        // than the OS platform brightness.
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(
+                brightness: Brightness.dark,
+                syncWithSystem: false,
+              ),
+              child: Scaffold(
+                body: WInput(
+                  placeholder: 'No text color set',
+                  className: 'px-3 py-2',
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final EditableText editable =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(
+          editable.style.color,
+          const Color(0xFFFFFFFF),
+          reason: 'In Wind dark mode the default text color must be white so '
+              'it stays legible on the dark-resolved background.',
+        );
+      });
+    });
+
     group('Selection Toolbar', () {
       testWidgets('renders Material-free localized buttons on selection',
           (tester) async {

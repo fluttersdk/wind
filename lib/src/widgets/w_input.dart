@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
+import '../theme/wind_theme.dart';
 import '../utils/wind_logger.dart';
 
 /// Input type enum for WInput widget
@@ -416,8 +417,12 @@ class _WInputState extends State<WInput> {
 
     // Build text style from WindStyle, with a brightness-aware baseline color
     // so text stays legible under a bare root with no Material/Cupertino theme.
-    final Brightness brightness =
-        MediaQuery.maybePlatformBrightnessOf(context) ?? Brightness.light;
+    // Prefer Wind's effective brightness (the source `dark:` classes resolve
+    // against) so the default color matches the rendered background; fall back
+    // to the platform brightness only when no WindTheme is present.
+    final Brightness brightness = WindTheme.maybeDataOf(context)?.brightness ??
+        MediaQuery.maybePlatformBrightnessOf(context) ??
+        Brightness.light;
     final Color baselineColor = brightness == Brightness.dark
         ? const Color(0xFFFFFFFF)
         : const Color(0xFF000000);
@@ -445,6 +450,19 @@ class _WInputState extends State<WInput> {
     // Gate it so typing/cursor/focus still work and only selection UI degrades.
     final bool hasOverlay = Overlay.maybeOf(context) != null;
 
+    // Shared by the EditableText and the placeholder Text so both occupy the
+    // exact same line height. Without forcing the same strut on the placeholder
+    // the empty-vs-filled box height differs by ~1-2px and the field jumps when
+    // the user starts typing.
+    final StrutStyle strutStyle = StrutStyle(
+      forceStrutHeight: true,
+      height: styles.effectiveLineHeight,
+      fontSize: styles.fontSize,
+      fontWeight: styles.fontWeight,
+      fontStyle: styles.fontStyle,
+      fontFamily: styles.fontFamily,
+    );
+
     final Widget editable = EditableText(
       controller: _controller,
       focusNode: _focusNode,
@@ -462,14 +480,7 @@ class _WInputState extends State<WInput> {
       maxLines: maxLines,
       minLines: minLines,
       style: textStyle,
-      strutStyle: StrutStyle(
-        forceStrutHeight: true,
-        height: styles.effectiveLineHeight,
-        fontSize: styles.fontSize,
-        fontWeight: styles.fontWeight,
-        fontStyle: styles.fontStyle,
-        fontFamily: styles.fontFamily,
-      ),
+      strutStyle: strutStyle,
       cursorColor: cursorColor,
       // The floating-cursor anchor (iOS trackpad drag) uses inactive grey by
       // convention, matching Material/Cupertino TextField; it is not the live
@@ -498,20 +509,34 @@ class _WInputState extends State<WInput> {
 
     // Stack the placeholder behind the EditableText so it shows only when the
     // field is empty (the EditableText-in-Container recipe; no Material hint).
-    Widget field = _wrapWithPlaceholder(editable, hintStyle, maxLines);
+    Widget field =
+        _wrapWithPlaceholder(editable, hintStyle, strutStyle, maxLines);
 
-    // Compose prefix/suffix into a Row inside the decorated box, preserving the
-    // previous 12/8 inset spacing and giving the suffix a usable tap target.
+    // Content padding wraps the text on every side. With a prefix/suffix the
+    // text keeps an 8px gap to the adornment while the adornment carries the
+    // outer inset to the border; on any side without an adornment the text
+    // keeps the full content inset, so it never sits flush against the border.
+    final EdgeInsets contentPadding = styles.padding ?? _defaultContentPadding;
     if (widget.prefix != null || widget.suffix != null) {
       field = Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (widget.prefix != null)
             Padding(
-              padding: const EdgeInsets.only(left: 12, right: 8),
+              padding: EdgeInsets.only(left: contentPadding.left),
               child: widget.prefix,
             ),
-          Expanded(child: field),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: widget.prefix != null ? 8 : contentPadding.left,
+                right: widget.suffix != null ? 8 : contentPadding.right,
+                top: contentPadding.top,
+                bottom: contentPadding.bottom,
+              ),
+              child: field,
+            ),
+          ),
           if (widget.suffix != null)
             ConstrainedBox(
               constraints: const BoxConstraints(
@@ -519,23 +544,15 @@ class _WInputState extends State<WInput> {
                 minHeight: _minSuffixTapTarget,
               ),
               child: Padding(
-                padding: const EdgeInsets.only(right: 12, left: 8),
+                padding: EdgeInsets.only(right: contentPadding.right),
                 child: Center(child: widget.suffix),
               ),
             ),
         ],
       );
+    } else {
+      field = Padding(padding: contentPadding, child: field);
     }
-
-    // The content padding only wraps the field itself; prefix/suffix carry
-    // their own inset so the row's edges stay flush to the border.
-    final EdgeInsets contentPadding = styles.padding ?? _defaultContentPadding;
-    field = Padding(
-      padding: widget.prefix != null || widget.suffix != null
-          ? EdgeInsets.symmetric(vertical: contentPadding.vertical / 2)
-          : contentPadding,
-      child: field,
-    );
 
     // Wrap in the decorated box (className → BoxDecoration, same path WDiv
     // uses), recomputing on focus so the ring/border reacts to `_isFocused`.
@@ -695,6 +712,7 @@ class _WInputState extends State<WInput> {
   Widget _wrapWithPlaceholder(
     Widget editable,
     TextStyle hintStyle,
+    StrutStyle strutStyle,
     int? maxLines,
   ) {
     if (widget.placeholder == null) {
@@ -715,9 +733,13 @@ class _WInputState extends State<WInput> {
             // merge a duplicate/extra label (e.g. "Email\nEmail").
             return ExcludeSemantics(
               child: IgnorePointer(
+                // The placeholder shares the EditableText strut so the box keeps
+                // the same height whether it is empty or filled (no jump on the
+                // first keystroke).
                 child: Text(
                   widget.placeholder!,
                   style: hintStyle,
+                  strutStyle: strutStyle,
                   maxLines: maxLines,
                   overflow: TextOverflow.ellipsis,
                 ),
