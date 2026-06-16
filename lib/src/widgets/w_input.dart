@@ -496,7 +496,13 @@ class _WInputState extends State<WInput> {
           hasOverlay ? cupertinoTextSelectionHandleControls : null,
       enableInteractiveSelection: hasOverlay,
       contextMenuBuilder: hasOverlay ? _buildContextMenu : null,
-      inputFormatters: widget.inputFormatters,
+      // Caller-supplied formatters win outright; otherwise InputType.number
+      // gets a signed-decimal filter so it is actually numeric on every
+      // platform (the keyboard type alone enforces nothing on web).
+      inputFormatters: widget.inputFormatters ??
+          (widget.type == InputType.number
+              ? const [_SignedDecimalTextInputFormatter()]
+              : null),
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
       onEditingComplete: widget.onEditingComplete,
@@ -641,7 +647,10 @@ class _WInputState extends State<WInput> {
       InputType.text => (TextInputType.text, false),
       InputType.password => (TextInputType.visiblePassword, true),
       InputType.email => (TextInputType.emailAddress, false),
-      InputType.number => (TextInputType.number, false),
+      InputType.number => (
+          const TextInputType.numberWithOptions(decimal: true, signed: true),
+          false
+        ),
       InputType.multiline => (TextInputType.multiline, false),
     };
   }
@@ -801,5 +810,26 @@ class _WInputState extends State<WInput> {
       ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
       _ => item.label ?? '',
     };
+  }
+}
+
+/// Restricts input to a signed decimal number: an optional leading minus, any
+/// number of digits, and at most one decimal point. Allows the in-progress
+/// states a user types through (`-`, `1.`, `.5`).
+///
+/// Applied by default for [InputType.number] (web included, where the keyboard
+/// type alone enforces nothing) unless the caller supplies their own
+/// [WInput.inputFormatters], which then take over entirely.
+class _SignedDecimalTextInputFormatter extends TextInputFormatter {
+  const _SignedDecimalTextInputFormatter();
+
+  static final RegExp _pattern = RegExp(r'^-?\d*\.?\d*$');
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return _pattern.hasMatch(newValue.text) ? newValue : oldValue;
   }
 }

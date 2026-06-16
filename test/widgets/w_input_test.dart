@@ -131,14 +131,18 @@ void main() {
         expect(editableText.keyboardType, TextInputType.emailAddress);
       });
 
-      testWidgets('InputType.number uses number keyboard', (tester) async {
+      testWidgets('InputType.number uses a signed-decimal number keyboard',
+          (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(const WInput(type: InputType.number)),
         );
 
         final editableText =
             tester.widget<EditableText>(find.byType(EditableText));
-        expect(editableText.keyboardType, TextInputType.number);
+        expect(
+          editableText.keyboardType,
+          const TextInputType.numberWithOptions(decimal: true, signed: true),
+        );
       });
 
       testWidgets('InputType.multiline allows multiple lines', (tester) async {
@@ -1252,6 +1256,76 @@ void main() {
           const Color(0xFFEF4444),
           reason: 'readOnly must activate readonly: prefixed classes '
               '(red-500), mirroring the disabled: state.',
+        );
+      });
+    });
+
+    group('Number input filtering', () {
+      testWidgets('keeps digits, a single decimal point and a leading sign',
+          (tester) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WInput(
+              controller: controller,
+              type: InputType.number,
+              placeholder: 'n',
+            ),
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), '-12.5');
+        await tester.pump();
+        expect(controller.text, '-12.5');
+      });
+
+      testWidgets('rejects non-numeric input and keeps the prior value',
+          (tester) async {
+        final controller = TextEditingController(text: '7');
+        addTearDown(controller.dispose);
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WInput(
+              controller: controller,
+              type: InputType.number,
+              placeholder: 'n',
+            ),
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), 'abc');
+        await tester.pump();
+        expect(
+          controller.text,
+          '7',
+          reason: 'letters are rejected by the default number formatter.',
+        );
+      });
+
+      testWidgets('caller inputFormatters override the number default',
+          (tester) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WInput(
+              controller: controller,
+              type: InputType.number,
+              placeholder: 'n',
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp('[a-z]')),
+              ],
+            ),
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), 'abc');
+        await tester.pump();
+        expect(
+          controller.text,
+          'abc',
+          reason: 'a caller-supplied formatter wins over the number default.',
         );
       });
     });
