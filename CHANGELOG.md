@@ -6,6 +6,24 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- `WInput`: debug `AssertionError` when both `value` and `controller` are supplied simultaneously; passing both was always a logic error and previously led to silent precedence behavior (controller wins). The assert surfaces the misuse immediately in debug builds (W2).
+
+### Changed
+
+- `WInput`: selection handles are now Cupertino-style on all platforms (previously Material-style on Android/web). The context menu reads `WidgetsLocalizations` so copy/cut/paste labels work under any ancestor, including bare `WidgetsApp`. This is a visual change on Android and web; behavior is identical.
+- `doc/layout/flexbox.md` and the `wind-ui` skill: layout-stability guidance added for `IntrinsicHeight`/`IntrinsicWidth` in animated subtrees; the safe alternative is `Stack`+`Positioned` or `items-stretch` (W3).
+
+### Fixed
+
+- `WInput` now renders Material-free (`EditableText` core, `BoxDecoration` border/padding) and no longer crashes under a non-Material ancestor such as a bare `WidgetsApp` or Cupertino app. Wrapping `WInput` in a `MaterialApp` is no longer required. (#102)
+- `WInput` emits a single clean `textField` semantics node; the previous implementation produced a double-textbox node under the old `MergeSemantics > TextField` wrapping (W1). Dusk snapshot consumers relying on a single textbox node per `WInput` can expect clean output from this release (pairs with dusk D2).
+
+---
+
 ## [1.0.0] - 2026-06-09
 
 First stable release. wind is utility-first, Tailwind-syntax styling for Flutter; v1.0.0 is a complete rewrite of the 0.0.x line with a fresh API surface, a 19-parser pipeline with cached resolution, dark-mode pairs as a first-class contract, and a contracts-based debug bridge for external tooling. All public APIs follow Semantic Versioning 2.0.0 from this point forward.
@@ -90,4 +108,5 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/fluttersdk/wind/releases/tag/1.0.0
