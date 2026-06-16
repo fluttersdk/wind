@@ -18,10 +18,12 @@ jobs:
     name: Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           channel: stable
           cache: true
@@ -48,7 +50,7 @@ jobs:
     needs: validate
     permissions:
       id-token: write # Required for authentication using OIDC
-    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@65eb853c7ba17dde3be364c3d2858773e7144260 # v1
 
   github-release:
     name: GitHub Release
@@ -58,20 +60,27 @@ jobs:
     permissions:
       contents: write # Required to create the GitHub Release
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
 
       - name: Extract changelog section
         id: notes
         env:
           VERSION: ${{ github.ref_name }}
         run: |
+          notes="$(awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
+            flag && /^## / { exit }
+            flag { print }
+          ' CHANGELOG.md)"
+          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
+            echo "::error::No CHANGELOG.md section found for $VERSION; refusing to create a release with empty notes." >&2
+            exit 1
+          fi
           {
             echo 'body<<CHANGELOG_EOF'
-            awk -v ver="$VERSION" '
-              $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
-              flag && /^## / { exit }
-              flag { print }
-            ' CHANGELOG.md
+            printf '%s\n' "$notes"
             echo 'CHANGELOG_EOF'
           } >> "$GITHUB_OUTPUT"
 
