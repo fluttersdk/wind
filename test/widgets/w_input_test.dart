@@ -1,3 +1,5 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -955,11 +957,11 @@ void main() {
     // `getByLabel(/email/i)` and `getByLabel(/password/i)` resolve via the
     // Flutter web accessibility tree.
     //
-    // NOTE: EditableText does not set `isEnabled` semantics (unlike Material
-    // TextField). `isEnabled` is always `Tristate.none`. Disabled state is
-    // signaled through `isReadOnly: true` (disabled routes to readOnly=true
-    // inside EditableText). The `isTextField` and `isObscured` contracts are
-    // unaffected.
+    // NOTE: the outer `Semantics(enabled: widget.enabled)` surfaces the
+    // enabled state (matching the 1.0.0 Material TextField), so a disabled
+    // field reports `isEnabled: false`. EditableText additionally routes a
+    // disabled field to `readOnly=true`, so `isReadOnly: true` holds as well.
+    // The `isTextField` and `isObscured` contracts are unaffected.
     //
     // The placeholder Text is wrapped in `ExcludeSemantics`, so the single outer
     // `Semantics(label:)` node owns the accessible name exactly (no `'<label>\n
@@ -1002,11 +1004,27 @@ void main() {
           ),
         );
 
-        // EditableText routes disabled=false to readOnly=true. The semantics
-        // node reflects this as isReadOnly rather than isEnabled=false.
+        // The outer Semantics(enabled:) surfaces isEnabled: false for assistive
+        // tech (1.0.0 parity). EditableText also routes disabled to readOnly,
+        // so isReadOnly holds too. Both cues are present.
         final SemanticsNode node = tester.getSemantics(find.byType(WInput));
         expect(node.flagsCollection.isTextField, isTrue);
+        // isEnabled is a Tristate: isFalse means "explicitly disabled" (not the
+        // unset `none` the field would report without the Semantics(enabled:)).
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
         expect(node.flagsCollection.isReadOnly, isTrue);
+      });
+
+      testWidgets('reports enabled state when enabled is true', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WInput(placeholder: 'Active', value: '')),
+        );
+
+        // An enabled field reports Tristate.isTrue, so the disabled cue above is
+        // a real distinction, not a constant: were the enabled flag unwired,
+        // this would read Tristate.none and fail.
+        final SemanticsNode node = tester.getSemantics(find.byType(WInput));
+        expect(node.flagsCollection.isEnabled, Tristate.isTrue);
       });
 
       // CRITICAL password regression test — locks the contract Step 9's

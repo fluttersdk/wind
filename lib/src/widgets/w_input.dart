@@ -36,6 +36,15 @@ enum InputType {
 /// shadcn, a custom root, or a bare `WidgetsApp`) without requiring a Material
 /// ancestor.
 ///
+/// ### Ancestor requirements:
+/// - Interactive text selection (the long-press toolbar and drag handles)
+///   needs an [Overlay] ancestor. `MaterialApp`, `CupertinoApp`, and
+///   `WidgetsApp` all provide one; under a custom root with no `Overlay`,
+///   typing, cursor movement, and focus still work, but selection UI is
+///   suppressed rather than throwing.
+/// - A tap anywhere in the input box (not only on the text glyphs) focuses the
+///   field and fires [onTap], restoring `TextField`'s whole-box tap target.
+///
 /// ### Supported Features:
 /// - **Controlled Value:** Pass `value` and `onChanged` for React-style binding
 /// - **Styling:** `bg-gray-50` `text-gray-900` `rounded-lg` `border-gray-300`
@@ -602,7 +611,14 @@ class _WInputState extends State<WInput> {
     // explicitChildNodes: false), producing exactly ONE textField node carrying
     // the label, instead of the second node the old container+MergeSemantics
     // wrapper minted. EditableText already reports value + obscured.
+    //
+    // `enabled` surfaces the disabled state to assistive tech: a disabled field
+    // reports isEnabled: false. EditableText's own node only carries isReadOnly
+    // (a disabled field is read-only), so without this a screen reader could
+    // not distinguish "disabled" from "read-only". The Material TextField in
+    // 1.0.0 exposed this flag; the Material-free rewrite must keep parity.
     result = Semantics(
+      enabled: widget.enabled,
       label: widget.semanticLabel ?? widget.placeholder,
       child: result,
     );
