@@ -6,6 +6,18 @@
 /// guard rather than the primary termination mechanism.
 const int _maxExpansionDepth = 8;
 
+/// Maximum number of expanded output tokens before expansion stops.
+///
+/// The depth cap and cycle guard bound chain LENGTH, not branching WIDTH: an
+/// acyclic map whose values each reference several further multi-token aliases
+/// (`{a: 'b b', b: 'c c', ...}`) fans out as O(width^depth) and would still
+/// blow up under the depth cap alone. This total-output budget bounds the
+/// worst case to a constant regardless of map shape. A real className carries
+/// at most a few dozen utility tokens, so the cap sits far above any legitimate
+/// use. On exhaustion the remaining tokens are dropped and [onWarn] fires once;
+/// the function never throws.
+const int _maxOutputTokens = 256;
+
 /// Expands user-defined className aliases into their underlying tokens.
 ///
 /// This is a PURE function: a className string plus an alias map go in, an
@@ -27,12 +39,20 @@ const int _maxExpansionDepth = 8;
 ///
 /// ### Termination
 ///
-/// Each token expands down its own chain, guarded by a per-chain visited-set:
-/// re-encountering a key already on the current chain (a self-cycle `a -> a` or
-/// a mutual cycle `a -> b -> a`) leaves the token unexpanded instead of
-/// looping. [_maxExpansionDepth] is a secondary backstop. On a cycle or cap hit
-/// the offending token is kept verbatim and [onWarn] (when provided) is invoked
-/// with a diagnostic message; the function never throws.
+/// Three independent guards bound the work:
+/// - A per-chain visited-set: re-encountering a key already on the current
+///   resolution chain (a self-cycle `a -> a` or a mutual cycle `a -> b -> a`)
+///   leaves the token unexpanded instead of looping. A fresh chain copy is
+///   passed down each branch so sibling occurrences of the same alias both
+///   expand.
+/// - [_maxExpansionDepth]: a depth backstop on chain LENGTH.
+/// - [_maxOutputTokens]: a total-output budget on branching WIDTH, so a
+///   fan-out map cannot explode the output exponentially.
+///
+/// On a cycle or depth-cap hit the offending token is kept verbatim; on a
+/// budget hit the remaining tokens are dropped. Each guard invokes [onWarn]
+/// (when provided, the budget warning once) with a diagnostic message. The
+/// function never throws.
 ///
 /// ### Example
 ///
@@ -50,13 +70,71 @@ String expandAliases(
     return className;
   }
 
-  final expanded = <String>[];
+  final out = <String>[];
+  // The budget warning fires at most once per call; it is shared across the
+  // whole recursion via this closure, which is why expansion is a nested
+  // function rather than a top-level one.
+  var budgetWarned = false;
 
-  for (final token in _tokenize(className)) {
-    _expandToken(token, aliases, <String>{}, 0, expanded, onWarn);
+  void expand(String token, Set<String> chain, int depth) {
+    // Output budget: stop once the total token count is reached so an acyclic
+    // fan-out map cannot grow the output without bound. Warn once.
+    if (out.length >= _maxOutputTokens) {
+      if (!budgetWarned) {
+        budgetWarned = true;
+        onWarn?.call(
+          'Wind alias expansion exceeded the $_maxOutputTokens-token budget; '
+          'remaining tokens were dropped.',
+        );
+      }
+      return;
+    }
+
+    // Bare-token contract: a prefixed token (anything carrying a ':' variant,
+    // such as md:row or dark:bg-gray-900) is never alias-expanded, even if the
+    // map happens to hold a matching prefixed key. Only whole unprefixed tokens
+    // are eligible, so the lookup is skipped before it can match.
+    if (token.contains(':')) {
+      out.add(token);
+      return;
+    }
+
+    final replacement = aliases[token];
+
+    // Not an alias key (unknown bare token): keep verbatim.
+    if (replacement == null) {
+      out.add(token);
+      return;
+    }
+
+    // Cycle guard: this key is already on the current resolution chain.
+    if (chain.contains(token)) {
+      onWarn?.call("Wind alias '$token' forms a cycle; left unexpanded.");
+      out.add(token);
+      return;
+    }
+
+    // Cap guard: chain deeper than the backstop allows.
+    if (depth >= _maxExpansionDepth) {
+      onWarn?.call(
+        "Wind alias '$token' exceeds the $_maxExpansionDepth-level "
+        'expansion cap; left unexpanded.',
+      );
+      out.add(token);
+      return;
+    }
+
+    final nextChain = {...chain, token};
+    for (final inner in _tokenize(replacement)) {
+      expand(inner, nextChain, depth + 1);
+    }
   }
 
-  return expanded.join(' ');
+  for (final token in _tokenize(className)) {
+    expand(token, <String>{}, 0);
+  }
+
+  return out.join(' ');
 }
 
 /// Splits a className string on whitespace, dropping empty fragments.
@@ -65,57 +143,3 @@ String expandAliases(
 /// tokenizes identically on both sides.
 Iterable<String> _tokenize(String value) =>
     value.split(RegExp(r'\s+')).where((s) => s.isNotEmpty);
-
-/// Expands a single [token], appending the resulting tokens to [out].
-///
-/// [chain] is the set of alias keys already expanded on the current resolution
-/// path; a token present in it (cycle) or a [depth] past [_maxExpansionDepth]
-/// (cap) is appended unexpanded after warning. A fresh chain copy is passed
-/// down each branch so sibling occurrences of the same alias both expand.
-void _expandToken(
-  String token,
-  Map<String, String> aliases,
-  Set<String> chain,
-  int depth,
-  List<String> out,
-  void Function(String message)? onWarn,
-) {
-  // Bare-token contract: a prefixed token (anything carrying a ':' variant,
-  // such as md:row or dark:bg-gray-900) is never alias-expanded, even if the
-  // map happens to hold a matching prefixed key. Only whole unprefixed tokens
-  // are eligible, so the lookup is skipped before it can match.
-  if (token.contains(':')) {
-    out.add(token);
-    return;
-  }
-
-  final replacement = aliases[token];
-
-  // Not an alias key (unknown bare token): keep verbatim.
-  if (replacement == null) {
-    out.add(token);
-    return;
-  }
-
-  // Cycle guard: this key is already on the current resolution chain.
-  if (chain.contains(token)) {
-    onWarn?.call("Wind alias '$token' forms a cycle; left unexpanded.");
-    out.add(token);
-    return;
-  }
-
-  // Cap guard: chain deeper than the backstop allows.
-  if (depth >= _maxExpansionDepth) {
-    onWarn?.call(
-      "Wind alias '$token' exceeds the $_maxExpansionDepth-level "
-      'expansion cap; left unexpanded.',
-    );
-    out.add(token);
-    return;
-  }
-
-  final nextChain = {...chain, token};
-  for (final inner in _tokenize(replacement)) {
-    _expandToken(inner, aliases, nextChain, depth + 1, out, onWarn);
-  }
-}

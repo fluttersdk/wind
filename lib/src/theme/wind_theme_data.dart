@@ -161,7 +161,10 @@ class WindThemeData {
   /// A map of animation class names to animation types.
   final Map<String, WindAnimationType> animations;
 
-  /// User-defined className shortcut aliases; expanded before parsing. See WindParser alias expansion.
+  /// User-defined className shortcut aliases; expanded before parsing. See
+  /// WindParser alias expansion. This is developer configuration: expansion is
+  /// bounded against cyclic and fan-out maps, but values are not a place to
+  /// interpolate untrusted runtime strings.
   final Map<String, String> aliases;
 
   /// Creates a new [WindThemeData] instance.

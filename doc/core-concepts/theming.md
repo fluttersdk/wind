@@ -230,6 +230,7 @@ WDiv(className: 'row-c bg-white dark:bg-gray-800')
 - Expansion is recursive: an alias value may reference other aliases. The expander resolves all aliases before handing the result to the parser.
 - Aliases are empty by default (`{}`). The feature is purely opt-in: a `WindThemeData` without an `aliases` key behaves identically to today.
 - If an alias key shadows a built-in token (for example, `'flex': 'flex flex-row'`), the alias wins and Wind emits a debug-mode warning so you can rename before shipping.
+- Expansion is bounded: a cyclic alias (`'a': 'a'`) and a deep or wide fan-out map terminate safely (the offending token is left unexpanded or the output is capped), so a misconfigured map never hangs rendering. Aliases are developer configuration, not a place to interpolate untrusted runtime strings.
 
 > [!NOTE]
 > Alias keys must be plain strings with no colons or slashes. Prefix variants such as `hover:row` or `md:col` are not expanded.
