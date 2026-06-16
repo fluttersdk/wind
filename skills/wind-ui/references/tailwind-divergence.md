@@ -43,6 +43,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | `text-{color}` | Pure font color | Overloaded across color / alignment / size / weight — resolves in order |
 | `w-full` inside a flex Row | Works (max-width: 100%) | Triggers RenderFlex overflow; use `flex-1` |
 | `h-full` inside a vertical scroll | Works (max-height: 100%) | Triggers "Vertical viewport unbounded"; restructure |
+| `IntrinsicHeight` / `IntrinsicWidth` (Flutter widget, not a token) | N/A | **Do not wrap animated subtrees in these.** They perform an intrinsic-dimension pass mid-layout and raise `RenderBox was not laid out` asserts inside sheet/route open animations (e.g. `DraggableScrollableSheet`). For a connector or rail that must fill the cross axis, use a `Stack` + `Positioned(top: 0, bottom: 0)` line, or wind's `items-stretch` column (intrinsic-free; `LayoutBuilder` + `SizedBox(width: double.infinity)` internally, see `lib/src/widgets/w_div.dart`). Wind itself uses no `IntrinsicHeight` or `IntrinsicWidth`. |
 | `overflow-y-auto` | Native browser scrollbar | Renders Flutter scroll view; needs constructor `scrollPrimary: true` for iOS tap-to-top |
 | `bg-red-500/50` | Color with 50% opacity (v3.x+) | Same syntax, same semantics |
 | `dark:bg-gray-900` | Active only when dark mode is enabled | Active only when `WindThemeData.brightness == Brightness.dark`; required to pair every color |

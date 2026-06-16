@@ -210,6 +210,27 @@ WDiv(className: 'flex items-center h-20')
 
 > **Column default: smart cross-axis stretch.** A `flex flex-col` with no explicit `items-*` token stretches each `WDiv`, `WAnchor` (any child), and `WButton` child that does not control its own width to the column width, matching CSS `align-items: stretch`. For `WAnchor`: when the anchor wraps a `WDiv`, the inner `WDiv`'s className decides (so `WAnchor > WDiv(w-32)` keeps 128 px; a `WAnchor > WDiv` with a self-flex token is excluded just as a direct self-flexing `WDiv` is); when the anchor wraps a `WText` or raw widget, the anchor stretches by policy so its tap surface fills the column. Left untouched: children with an explicit width (`w-*` / `min-w-*` / `max-w-*` / `w-full`, in any state/breakpoint variant), children that self-wrap in `Expanded`/`Flexible` (`grow`, `flex-grow`, `flex-auto`, `flex-initial`, `shrink`, `flex-shrink`, `flex-N`), absolute children, bare `WText` leaves, and raw Flutter widgets. `shrink-0` / `flex-none` children still stretch on the cross axis (`flex-shrink` is main-axis only, matching CSS). Add any `items-*` token (e.g. `items-start`) to turn this off and let children size to content. Rows are never auto-stretched on the cross axis. When the column itself sits in an unbounded-width context (a bare `Row` slot, `UnconstrainedBox`, horizontal scroll), the stretch safely falls back to content-sized children instead of forcing an infinite width.
 
+> **Layout stability: avoid `IntrinsicHeight` / `IntrinsicWidth` in animated subtrees.** Flutter's `IntrinsicHeight` and `IntrinsicWidth` perform an intrinsic-dimension pass that reads child sizes mid-layout. Inside a sheet or route open animation (e.g. `DraggableScrollableSheet`, `PageRouteBuilder`) this lands a `RenderBox was not laid out` assertion because the animation drives a frame before intrinsics resolve. For a connector, rail, or divider that must fill the cross axis to match the tallest sibling, use a `Stack` with a `Positioned(top: 0, bottom: 0)` line instead, or use wind's own `items-stretch` column which is intrinsic-free and animation-safe. Wind itself uses no `IntrinsicHeight` or `IntrinsicWidth`; its smart column stretch is `LayoutBuilder` + `SizedBox(width: double.infinity)` (see `lib/src/widgets/w_div.dart`).
+>
+> ```dart
+> // Safe connector pattern: Stack + Positioned, no IntrinsicHeight
+> Stack(
+>   children: [
+>     Row(children: [leftContent, rightContent]),
+>     Positioned(
+>       top: 0,
+>       bottom: 0,
+>       left: connectorX,
+>       width: 2,
+>       child: ColoredBox(color: railColor),
+>     ),
+>   ],
+> )
+>
+> // Or let wind do the stretch safely:
+> WDiv(className: 'flex flex-col items-stretch gap-4')
+> ```
+
 <a name="align-content"></a>
 ## Align Content
 
