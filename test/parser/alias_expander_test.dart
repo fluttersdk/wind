@@ -126,5 +126,32 @@ void main() {
       expect(warnings, isNotEmpty);
       expect(warnings.any((w) => w.contains('expansion cap')), isTrue);
     });
+
+    test('bounds an acyclic fan-out map by the output-token budget', () {
+      // The depth cap and cycle guard bound chain length, not branching width.
+      // This map is acyclic (distinct keys) and each value fans out to 4 tokens,
+      // so unbounded it would emit thousands of tokens. The output budget must
+      // cap it and warn. The literal 256 mirrors the private _maxOutputTokens;
+      // keep them in sync.
+      const fanOut = {
+        'a': 'b b b b',
+        'b': 'c c c c',
+        'c': 'd d d d',
+        'd': 'e e e e',
+        'e': 'f f f f',
+        'f': 'leaf',
+      };
+      final warnings = <String>[];
+      final stopwatch = Stopwatch()..start();
+
+      final result = expandAliases('a', fanOut, onWarn: warnings.add);
+      stopwatch.stop();
+
+      final tokens = result.split(' ').where((t) => t.isNotEmpty);
+      expect(tokens.length, lessThanOrEqualTo(256));
+      expect(warnings.any((w) => w.contains('budget')), isTrue);
+      // Termination is fast: the budget short-circuits the fan-out, no hang.
+      expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
+    });
   });
 }
