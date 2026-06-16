@@ -1188,6 +1188,65 @@ void main() {
               'it stays legible on the dark-resolved background.',
         );
       });
+
+      testWidgets('keeps the EditableText (and focus) when a suffix toggles in',
+          (tester) async {
+        String text = '';
+        await tester.pumpWidget(
+          wrapWithTheme(
+            StatefulBuilder(
+              builder: (context, setState) => WInput(
+                value: text,
+                onChanged: (v) => setState(() => text = v),
+                placeholder: 'type then clear',
+                className: 'px-3 py-2',
+                // Clear-button pattern: suffix only exists once there is text.
+                suffix: text.isEmpty ? null : const Icon(Icons.close),
+              ),
+            ),
+          ),
+        );
+
+        final EditableTextState before =
+            tester.state<EditableTextState>(find.byType(EditableText));
+
+        await tester.enterText(find.byType(EditableText), 'a');
+        await tester.pump();
+
+        final EditableTextState after =
+            tester.state<EditableTextState>(find.byType(EditableText));
+
+        expect(
+          identical(before, after),
+          isTrue,
+          reason: 'The conditional suffix must not rebuild the EditableText '
+              'from scratch; a GlobalKey moves the same element so focus is '
+              'kept mid-typing.',
+        );
+        expect(after.widget.focusNode.hasFocus, isTrue);
+      });
+
+      testWidgets('readOnly activates the readonly: state prefix',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(
+              readOnly: true,
+              value: 'locked',
+              className: 'px-3 py-2 text-slate-900 readonly:text-red-500',
+            ),
+          ),
+        );
+
+        final EditableText editable =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(
+          editable.style.color,
+          const Color(0xFFEF4444),
+          reason: 'readOnly must activate readonly: prefixed classes '
+              '(red-500), mirroring the disabled: state.',
+        );
+      });
     });
 
     group('Selection Toolbar', () {

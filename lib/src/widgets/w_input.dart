@@ -285,6 +285,13 @@ class _WInputState extends State<WInput> {
   bool _ownsController = false;
   bool _ownsFocusNode = false;
 
+  /// Stable identity for the EditableText element. A conditional prefix/suffix
+  /// (e.g. a clear button that appears once the field has text) changes the
+  /// field's ancestor chain between the Row and no-Row layouts; without a
+  /// GlobalKey Flutter would destroy and rebuild the EditableText on that
+  /// switch, dropping focus mid-typing. The key moves the same element instead.
+  final GlobalKey _editableTextKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -383,6 +390,7 @@ class _WInputState extends State<WInput> {
       ...?widget.states,
       if (_isFocused) 'focus',
       if (!widget.enabled) 'disabled',
+      if (widget.readOnly) 'readonly',
     };
 
     // Parse styles with current states
@@ -464,6 +472,7 @@ class _WInputState extends State<WInput> {
     );
 
     final Widget editable = EditableText(
+      key: _editableTextKey,
       controller: _controller,
       focusNode: _focusNode,
       keyboardType: keyboardType,
