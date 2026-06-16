@@ -907,7 +907,7 @@ void main() {
         expect(find.byType(EditableText), findsOneWidget);
       });
 
-      testWidgets('renders suffix widget with 48px minimum tap target', (
+      testWidgets('renders suffix widget and keeps it tappable', (
         tester,
       ) async {
         bool tapped = false;
@@ -923,17 +923,7 @@ void main() {
           ),
         );
 
-        // Suffix ConstrainedBox enforces minWidth/minHeight of 48px.
-        // Use firstWidget because the Scaffold may also produce ConstrainedBox
-        // descendants; the first one inside WInput is the suffix tap target.
-        final ConstrainedBox suffixBox = tester.firstWidget<ConstrainedBox>(
-          find.descendant(
-            of: find.byType(WInput),
-            matching: find.byType(ConstrainedBox),
-          ),
-        );
-        expect(suffixBox.constraints.minWidth, 48.0);
-        expect(suffixBox.constraints.minHeight, 48.0);
+        expect(find.byIcon(Icons.visibility), findsOneWidget);
 
         await tester.tap(find.byIcon(Icons.visibility));
         await tester.pump();
@@ -1189,19 +1179,28 @@ void main() {
         );
       });
 
-      testWidgets('keeps the EditableText (and focus) when a suffix toggles in',
+      testWidgets('keeps focus and height when a conditional suffix toggles in',
           (tester) async {
         String text = '';
         await tester.pumpWidget(
           wrapWithTheme(
-            StatefulBuilder(
-              builder: (context, setState) => WInput(
-                value: text,
-                onChanged: (v) => setState(() => text = v),
-                placeholder: 'type then clear',
-                className: 'px-3 py-2',
-                // Clear-button pattern: suffix only exists once there is text.
-                suffix: text.isEmpty ? null : const Icon(Icons.close),
+            Align(
+              alignment: Alignment.topLeft,
+              child: StatefulBuilder(
+                builder: (context, setState) => WInput(
+                  value: text,
+                  onChanged: (v) => setState(() => text = v),
+                  placeholder: 'type then clear',
+                  className: 'w-full px-3 py-2',
+                  // Clear-button pattern: suffix only exists once there is text.
+                  suffix: text.isEmpty
+                      ? null
+                      : WButton(
+                          onTap: () {},
+                          className: 'p-1',
+                          child: const Icon(Icons.close, size: 16),
+                        ),
+                ),
               ),
             ),
           ),
@@ -1209,12 +1208,14 @@ void main() {
 
         final EditableTextState before =
             tester.state<EditableTextState>(find.byType(EditableText));
+        final double emptyHeight = tester.getSize(find.byType(WInput)).height;
 
         await tester.enterText(find.byType(EditableText), 'a');
         await tester.pump();
 
         final EditableTextState after =
             tester.state<EditableTextState>(find.byType(EditableText));
+        final double filledHeight = tester.getSize(find.byType(WInput)).height;
 
         expect(
           identical(before, after),
@@ -1224,6 +1225,12 @@ void main() {
               'kept mid-typing.',
         );
         expect(after.widget.focusNode.hasFocus, isTrue);
+        expect(
+          filledHeight,
+          emptyHeight,
+          reason: 'A suffix appearing must not grow the field; the tap target '
+              'is width-only so the box height stays constant.',
+        );
       });
 
       testWidgets('readOnly activates the readonly: state prefix',

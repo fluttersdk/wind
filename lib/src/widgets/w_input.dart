@@ -275,10 +275,6 @@ class _WInputState extends State<WInput> {
   static const double _defaultBorderRadius = 4.0;
   static const Color _defaultBorderColor = Color(0xFFD1D5DB); // grey.shade300
 
-  /// Minimum hit target for the suffix slot, so an interactive control (e.g. a
-  /// visibility toggle) keeps a usable tap area now that we own the layout.
-  static const double _minSuffixTapTarget = 48.0;
-
   late TextEditingController _controller;
   late FocusNode _focusNode;
   bool _isFocused = false;
@@ -547,15 +543,14 @@ class _WInputState extends State<WInput> {
             ),
           ),
           if (widget.suffix != null)
-            ConstrainedBox(
-              constraints: const BoxConstraints(
-                minWidth: _minSuffixTapTarget,
-                minHeight: _minSuffixTapTarget,
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(right: contentPadding.right),
-                child: Center(child: widget.suffix),
-              ),
+            // The Row's CrossAxisAlignment.center vertically centers the suffix
+            // against the field's natural height. Do NOT wrap it in Center /
+            // force a min height: that expands to fill the available height and
+            // makes the box grow the moment a suffix appears. The suffix sizes
+            // to its own content (give it padding for a larger tap area).
+            Padding(
+              padding: EdgeInsets.only(right: contentPadding.right),
+              child: widget.suffix,
             ),
         ],
       );
