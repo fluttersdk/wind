@@ -177,6 +177,26 @@ void main() {
       );
     });
 
+    // (a.2) No Directionality ancestor: WInput injects its own ltr default.
+    testWidgets(
+      'injects a default Directionality when no ancestor provides one',
+      (tester) async {
+        // WindTheme but deliberately NO Directionality wrapper, so the
+        // self-injection branch runs.
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(),
+            child: const WInput(placeholder: 'No direction'),
+          ),
+        );
+
+        expect(find.byType(WInput), findsOneWidget);
+        expect(find.byType(EditableText), findsOneWidget);
+        expect(Directionality.of(tester.element(find.byType(EditableText))),
+            TextDirection.ltr);
+      },
+    );
+
     // (c) value + controller misuse throws AssertionError (W2 guard).
     group('value and controller mutual exclusion (W2)', () {
       test(

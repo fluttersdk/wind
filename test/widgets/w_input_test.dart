@@ -1045,5 +1045,84 @@ void main() {
         );
       });
     });
+
+    group('Box Model and Lifecycle', () {
+      testWidgets('w-full + margin route through the box-model Container',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(placeholder: 'Boxed', className: 'w-full m-2'),
+          ),
+        );
+
+        expect(
+          find.descendant(
+            of: find.byType(WInput),
+            matching: find.byType(Container),
+          ),
+          findsWidgets,
+        );
+      });
+
+      testWidgets('debug className enables the logger without crashing',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(placeholder: 'Debug', className: 'debug p-2'),
+          ),
+        );
+
+        expect(find.byType(EditableText), findsOneWidget);
+      });
+
+      testWidgets('swapping an owned focus node for an external one re-wires',
+          (tester) async {
+        final external = FocusNode();
+        addTearDown(external.dispose);
+
+        // First mount owns its focus node; the swap must dispose it and
+        // re-init around the external one.
+        await tester.pumpWidget(
+          wrapWithTheme(const WInput(placeholder: 'Focus')),
+        );
+        await tester.pumpWidget(
+          wrapWithTheme(WInput(placeholder: 'Focus', focusNode: external)),
+        );
+
+        external.requestFocus();
+        await tester.pump();
+        expect(external.hasFocus, isTrue);
+      });
+    });
+
+    group('Selection Toolbar', () {
+      testWidgets('renders Material-free localized buttons on selection',
+          (tester) async {
+        final controller = TextEditingController(text: 'hello world');
+        addTearDown(controller.dispose);
+
+        await tester.pumpWidget(
+          wrapWithTheme(WInput(controller: controller)),
+        );
+
+        await tester.tap(find.byType(EditableText));
+        await tester.pump();
+
+        final EditableTextState state =
+            tester.state<EditableTextState>(find.byType(EditableText));
+        state.userUpdateTextEditingValue(
+          controller.value.copyWith(
+            selection: const TextSelection(baseOffset: 0, extentOffset: 5),
+          ),
+          SelectionChangedCause.tap,
+        );
+        await tester.pump();
+        state.showToolbar();
+        await tester.pumpAndSettle();
+
+        // Labels come from WidgetsLocalizations, not Material's InputDecoration.
+        expect(find.text('Copy'), findsOneWidget);
+      });
+    });
   });
 }
