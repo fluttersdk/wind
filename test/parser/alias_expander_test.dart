@@ -24,7 +24,7 @@ void main() {
         },
       );
 
-      expect(result, contains('flex flex-row items-center'));
+      expect(result, 'flex flex-row items-center');
     });
 
     test('terminates on a self-cycle without hanging', () {
@@ -34,10 +34,9 @@ void main() {
     });
 
     test('terminates on a mutual cycle without hanging', () {
-      // a -> b -> a forms a loop; resolution stops at the repeated token.
-      final result = expandAliases('a', const {'a': 'b', 'b': 'a'});
-
-      expect(result.split(' '), isNotEmpty);
+      // a -> b -> a forms a loop; 'a' expands to 'b', 'b' expands back to 'a'
+      // which is already on the chain, so the repeated 'a' is left verbatim.
+      expect(expandAliases('a', const {'a': 'b', 'b': 'a'}), 'a');
     });
 
     test('passes an unknown token through unchanged', () {
@@ -49,6 +48,15 @@ void main() {
       // equal to the key `row`, so it passes through verbatim.
       expect(
         expandAliases('md:row', const {'row': 'flex flex-row'}),
+        'md:row',
+      );
+    });
+
+    test('never expands a prefixed token even when a prefixed key exists', () {
+      // A prefixed token is ineligible regardless of the map: a `md:row` key is
+      // not bare, so the bare-token contract leaves the token unexpanded.
+      expect(
+        expandAliases('md:row', const {'md:row': 'flex flex-row'}),
         'md:row',
       );
     });
@@ -83,7 +91,8 @@ void main() {
         onWarn: warnings.add,
       );
 
-      expect(warnings, isNotEmpty);
+      expect(warnings, hasLength(1));
+      expect(warnings.single, contains('cycle'));
     });
 
     test('stops at the depth cap on an acyclic chain longer than the cap', () {

@@ -80,9 +80,18 @@ void _expandToken(
   List<String> out,
   void Function(String message)? onWarn,
 ) {
+  // Bare-token contract: a prefixed token (anything carrying a ':' variant,
+  // such as md:row or dark:bg-gray-900) is never alias-expanded, even if the
+  // map happens to hold a matching prefixed key. Only whole unprefixed tokens
+  // are eligible, so the lookup is skipped before it can match.
+  if (token.contains(':')) {
+    out.add(token);
+    return;
+  }
+
   final replacement = aliases[token];
 
-  // Not an alias key (unknown token, or any prefixed token): keep verbatim.
+  // Not an alias key (unknown bare token): keep verbatim.
   if (replacement == null) {
     out.add(token);
     return;
