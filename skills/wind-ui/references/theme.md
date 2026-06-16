@@ -62,7 +62,7 @@ Defaults applied automatically: 22 color families, 5 responsive breakpoints (640
 
 ## 2. WindThemeData fields
 
-23 fields; pass only what you want to override. All are nullable except `brightness`, which defaults to `Brightness.light` rather than null, so they are not literally all nullable.
+24 fields; pass only what you want to override. All are nullable except `brightness`, which defaults to `Brightness.light` rather than null, so they are not literally all nullable.
 
 ```dart
 WindThemeData({
@@ -89,6 +89,7 @@ WindThemeData({
   Map<String, Duration>? transitionDurations,      // duration-* key → Duration
   Map<String, Curve>? transitionCurves,            // ease-* key → Curve
   Map<String, WindAnimationType>? animations,      // animate-* key → enum value
+  Map<String, String>? aliases,                    // bare-token shorthand → className string, expanded before parsing
 })
 ```
 
