@@ -5,6 +5,7 @@ The utility-first icon component for displaying vector icons with Tailwind-like 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
 - [Props](#props)
+- [Runtime-Dynamic Colors](#runtime-dynamic-colors)
 - [Layout Modes](#layout-modes)
 - [Event Handling](#event-handling)
 - [State Variants](#state-variants)
@@ -41,6 +42,7 @@ const WIcon(
   Key? key,
   String? className,
   Set<String>? states,
+  Color? foregroundColor,
   String? semanticLabel,
   TextDirection? textDirection,
 })
@@ -53,8 +55,31 @@ const WIcon(
 | `icon` | `IconData` | **Required** | The icon to display. |
 | `className` | `String?` | `null` | Wind utility classes for styling. |
 | `states` | `Set<String>?` | `null` | Custom states to activate prefix classes. |
+| `foregroundColor` | `Color?` | `null` | Inline icon color for runtime-dynamic values. Overrides any `text-*` / `dark:text-*` from `className`. See [Runtime-Dynamic Colors](#runtime-dynamic-colors). |
 | `semanticLabel` | `String?` | `null` | Optional semantic label for accessibility. |
 | `textDirection` | `TextDirection?` | `null` | Text direction for the icon. |
+
+<a name="runtime-dynamic-colors"></a>
+## Runtime-Dynamic Colors
+
+Utility classes are for **design tokens** (`text-primary-500`, `text-red-500`). When the color is a **runtime value**, a category icon color from the database or a user-picked brand color, use the `foregroundColor` prop instead of interpolating into `text-[#$hex]`.
+
+```dart
+// `category.color` is a Color loaded at runtime (e.g. from the database).
+
+// Good: runtime-dynamic color via inline prop
+WIcon(
+  Icons.star,
+  foregroundColor: category.color,
+  className: 'text-lg',
+)
+
+// Avoid: interpolating a runtime value into className bloats the parser
+// cache with one entry per unique color (`categoryHex` is a String like 'ff5500')
+WIcon(Icons.star, className: 'text-lg text-[#$categoryHex]')
+```
+
+Precedence: inline `foregroundColor` wins over any `text-*` / `dark:text-*` resolved from `className`. When `foregroundColor` is `null`, className behavior, including the `dark:` fallback, is unchanged. The inline color does not participate in the parser cache key.
 
 ## Layout Modes
 

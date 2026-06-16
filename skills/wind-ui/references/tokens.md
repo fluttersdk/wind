@@ -45,6 +45,7 @@ Resolution:
 Inline color escape hatches that bypass the cache key:
 - `WDiv(backgroundColor: Color)` overrides any `bg-*` / `dark:bg-*`.
 - `WText(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
+- `WIcon(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
 
 ---
 

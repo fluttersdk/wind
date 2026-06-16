@@ -46,6 +46,17 @@ class WIcon extends StatelessWidget {
   /// Example: `states: {'hover'}` activates `hover:text-red-500`.
   final Set<String>? states;
 
+  /// Inline icon color for **runtime-dynamic** values (e.g. a status color
+  /// resolved at runtime from a server response or user preference).
+  ///
+  /// Use `className: 'text-*'` for static design tokens. Reach for this prop
+  /// only when the color is a runtime value that would otherwise bloat the
+  /// parser cache via `text-[#\$hex]` interpolation.
+  ///
+  /// When non-null, this overrides any `text-*` / `dark:text-*` resolved
+  /// from [className]. Does NOT participate in the parser cache key.
+  final Color? foregroundColor;
+
   /// Optional semantic label for accessibility.
   final String? semanticLabel;
 
@@ -58,6 +69,7 @@ class WIcon extends StatelessWidget {
     super.key,
     this.className,
     this.states,
+    this.foregroundColor,
     this.semanticLabel,
     this.textDirection,
   });
@@ -69,12 +81,12 @@ class WIcon extends StatelessWidget {
     final double? inheritedSize = inheritedStyle.fontSize;
     final Color? inheritedColor = inheritedStyle.color;
 
-    // If no className, use inherited values
+    // If no className, use foregroundColor if provided, else inherited values.
     if (className == null) {
       return Icon(
         icon,
         size: inheritedSize,
-        color: inheritedColor,
+        color: foregroundColor ?? inheritedColor,
         semanticLabel: semanticLabel,
         textDirection: textDirection,
       );
@@ -91,8 +103,8 @@ class WIcon extends StatelessWidget {
     final double? size =
         styles.width ?? styles.height ?? styles.fontSize ?? inheritedSize;
 
-    // Determine color: className color > inherited color
-    final Color? color = styles.color ?? inheritedColor;
+    // Determine color: foregroundColor > className color > inherited color.
+    final Color? color = foregroundColor ?? styles.color ?? inheritedColor;
 
     Widget iconWidget = Icon(
       icon,

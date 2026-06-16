@@ -13,6 +13,73 @@ Widget wrapWithTheme(Widget child) {
 
 void main() {
   group('WIcon Widget Tests', () {
+    setUp(() {
+      WindParser.clearCache();
+    });
+
+    group('Inline foregroundColor', () {
+      testWidgets('applies foregroundColor when className has no color class',
+          (tester) async {
+        const color = Color(0xFF112233);
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(Icons.star,
+                className: 'text-lg', foregroundColor: color),
+          ),
+        );
+
+        final icon = tester.widget<Icon>(find.byType(Icon));
+        expect(icon.color, color);
+      });
+
+      testWidgets('foregroundColor wins over text-red-500 in className',
+          (tester) async {
+        const override = Color(0xFFCC00CC);
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WIcon(
+              Icons.star,
+              className: 'text-red-500',
+              foregroundColor: override,
+            ),
+          ),
+        );
+
+        final icon = tester.widget<Icon>(find.byType(Icon));
+        expect(icon.color, override);
+      });
+
+      testWidgets(
+          'parser cache entry is shared across WIcons with different '
+          'foregroundColor but identical className', (tester) async {
+        const sameClass = 'text-lg';
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: const Column(
+                children: [
+                  WIcon(
+                    Icons.star,
+                    className: sameClass,
+                    foregroundColor: Color(0xFF111111),
+                  ),
+                  WIcon(
+                    Icons.star,
+                    className: sameClass,
+                    foregroundColor: Color(0xFF222222),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        expect(WindParser.cacheSize, 1);
+      });
+    });
+
     group('Basic Rendering', () {
       testWidgets('renders icon without className', (tester) async {
         await tester.pumpWidget(wrapWithTheme(const WIcon(Icons.star)));

@@ -167,6 +167,7 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 ### Inline color escape hatches (bypass cache key for runtime-dynamic colors)
 - `WDiv(backgroundColor: Color)` — Dart prop, overrides className `bg-*`
 - `WText(foregroundColor: Color)` — Dart prop, overrides className `text-*`
+- `WIcon(foregroundColor: Color)` (Dart prop) overrides className `text-*`
 
 ### Per-breakpoint widget builders
 - `WBreakpoint(base: ..., sm: ..., md: ...)` — when className prefixes cannot express the change

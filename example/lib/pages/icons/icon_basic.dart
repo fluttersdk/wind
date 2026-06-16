@@ -3,11 +3,35 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 import '../../widgets/example_scaffold.dart';
 
-class IconBasicExamplePage extends StatelessWidget {
+/// Demonstrates WIcon: className-driven sizing and tinting, animations,
+/// opacity modifiers, and runtime-dynamic foregroundColor for values that
+/// cannot be expressed as a static text-{color} token.
+class IconBasicExamplePage extends StatefulWidget {
   const IconBasicExamplePage({super.key});
 
   @override
+  State<IconBasicExamplePage> createState() => _IconBasicExamplePageState();
+}
+
+class _IconBasicExamplePageState extends State<IconBasicExamplePage> {
+  // Simulates per-category colors coming from a database or runtime config.
+  // Using foregroundColor avoids creating a new parser-cache entry per value.
+  static const List<(String, Color)> _categoryPalette = <(String, Color)>[
+    ('Work', Color(0xFF3B82F6)),
+    ('Personal', Color(0xFF10B981)),
+    ('Urgent', Color(0xFFEF4444)),
+    ('Shopping', Color(0xFFF59E0B)),
+    ('Travel', Color(0xFF8B5CF6)),
+  ];
+  int _categoryIndex = 0;
+
+  (String, Color) get _activeCategory =>
+      _categoryPalette[_categoryIndex % _categoryPalette.length];
+
+  @override
   Widget build(BuildContext context) {
+    final (categoryName, categoryColor) = _activeCategory;
+
     return ExampleScaffold(
       title: 'WIcon',
       description:
@@ -93,6 +117,58 @@ class IconBasicExamplePage extends StatelessWidget {
                 hover:rotate-180
               ''',
             ),
+          ),
+        ),
+        ExampleSection(
+          title: 'Runtime-Dynamic Color',
+          description:
+              'Use foregroundColor for values unknown at compile time (per-category colors, user themes). '
+              'The className keeps text-{size} for sizing; foregroundColor overrides the tint at runtime '
+              'without creating a new parser-cache entry per value.',
+          child: WDiv(
+            className:
+                'flex flex-col gap-4 p-4 bg-gray-50 dark:bg-slate-800 rounded-lg',
+            children: [
+              WDiv(
+                className: 'flex flex-row items-center gap-4',
+                children: [
+                  WIcon(
+                    Icons.label,
+                    className: 'text-4xl',
+                    foregroundColor: categoryColor,
+                  ),
+                  WDiv(
+                    className: 'flex flex-col gap-1',
+                    children: [
+                      WText(
+                        categoryName,
+                        className:
+                            'text-base font-semibold text-gray-900 dark:text-white',
+                      ),
+                      WText(
+                        '#${categoryColor.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}',
+                        className:
+                            'text-xs font-mono text-gray-500 dark:text-gray-400',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              WAnchor(
+                onTap: () => setState(
+                  () => _categoryIndex =
+                      (_categoryIndex + 1) % _categoryPalette.length,
+                ),
+                child: const WDiv(
+                  className:
+                      'px-3 py-2 rounded-md bg-blue-500 hover:bg-blue-600',
+                  child: WText(
+                    'Cycle category color',
+                    className: 'text-white text-sm font-medium',
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],

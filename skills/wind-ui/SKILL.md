@@ -3,10 +3,10 @@ name: wind-ui
 description: "fluttersdk_wind 1.0: utility-first Flutter styling with Tailwind-syntax className strings. 22 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper + 5 WForm* wrappers) consume className through a 19-parser pipeline (19 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, or migrating a Tailwind className from web. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.2.0
+version: 2.3.0
 ---
 
-<!-- fluttersdk_wind 1.0.x | Skill v2.2.0 (2026-06-16) -->
+<!-- fluttersdk_wind 1.0.x | Skill v2.3.0 (2026-06-16) -->
 
 # Wind UI 1.0
 
@@ -76,7 +76,7 @@ The headline 20 (table below) are the ones an agent reaches for daily. Two more 
 | `WSpacer` | Layout | none | Lightweight `SizedBox` that reads only `w-N` / `h-N`. Skips every other token. |
 | `WBreakpoint` | Structural | none | Per-breakpoint `WidgetBuilder` map (`base`, `sm`, `md`, `lg`, `xl`, `xxl`, plus theme-defined custom keys). Escape hatch when className prefixes are not enough. |
 | `WText` | Display | `data: String` | Typography; supports `selectable` prop. Inline color prop: `foregroundColor`. No `child` / `children`. |
-| `WIcon` | Display | `icon: IconData` | Material icons; use `Icons.*_outlined` variants by convention. Reads `text-*` for size AND color (overloaded). Inherits from `DefaultTextStyle` when className is absent. |
+| `WIcon` | Display | `icon: IconData` | Material icons; use `Icons.*_outlined` variants by convention. Reads `text-*` for size AND color (overloaded). Inherits from `DefaultTextStyle` when className is absent. Inline color prop: `foregroundColor`. |
 | `WImage` | Display | none (requires `src` or `image`) | Network (URL) or asset (prefix `asset://path`) or `ImageProvider`. `object-cover` default. |
 | `WSvg` / `WSvg.string` | Display | `src` / `svg` | Vector graphics. `fill-*` / `stroke-*` for color. `preserve-colors` token disables tint for multi-color SVGs (QR codes, logos). |
 | `WAnchor` | Interactive | `child: Widget` | Low-level gesture + focus + hover propagator. Emits `Semantics(button: true)`. |
