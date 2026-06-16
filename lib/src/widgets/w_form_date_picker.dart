@@ -48,9 +48,9 @@ class WFormDatePicker extends FormField<DateTime> {
     this.labelClassName =
         'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
     this.showError = true,
-    this.errorClassName = 'text-red-500 text-xs mt-1',
+    this.errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
     this.hint,
-    this.hintClassName = 'text-gray-500 text-xs mt-1',
+    this.hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
   }) : super(
           builder: (FormFieldState<DateTime> state) {
             return _WFormDatePickerContent(

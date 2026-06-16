@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../theme/wind_theme.dart';
-import '../theme/wind_theme_data.dart';
 import '../utils/wind_logger.dart';
 
 /// Input type enum for WInput widget
@@ -31,6 +30,11 @@ enum InputType {
 ///
 /// `WInput` is a form input widget that combines React-style controlled state
 /// management with Tailwind-like utility class styling.
+///
+/// It renders Material-free: an [EditableText] core inside a decorated
+/// `Container`, so it works under any theming ancestor (Material, Cupertino,
+/// shadcn, a custom root, or a bare `WidgetsApp`) without requiring a Material
+/// ancestor.
 ///
 /// ### Supported Features:
 /// - **Controlled Value:** Pass `value` and `onChanged` for React-style binding
@@ -80,7 +84,7 @@ class WInput extends StatefulWidget {
   ///
   /// Follows Flutter's `TextField.onChanged` contract: it fires on user and
   /// IME edits only. Writing `controller.text` programmatically on an external
-  /// [controller] does NOT fire this callback, exactly as a bare `TextField`
+  /// [controller] does NOT fire this callback, exactly as a bare `EditableText`
   /// behaves. For reactive binding, drive the field through [value] +
   /// [onChanged], or use `WFormInput` when you need form-state propagation.
   final ValueChanged<String>? onChanged;
@@ -166,7 +170,7 @@ class WInput extends StatefulWidget {
   ///
   /// If provided, the [value] prop is ignored. Note that mutating
   /// `controller.text` yourself updates the displayed text but does not fire
-  /// [onChanged], matching Flutter's `TextField` semantics. See [onChanged].
+  /// [onChanged], matching Flutter's `EditableText` semantics. See [onChanged].
   final TextEditingController? controller;
 
   /// Custom states for dynamic styling (e.g., 'error', 'success').
@@ -249,18 +253,40 @@ class WInput extends StatefulWidget {
     this.prefix,
     this.suffix,
     this.semanticLabel,
-  });
+  }) : assert(
+          value == null || controller == null,
+          'WInput: pass value (controlled) or controller (external), not both; '
+          'value is ignored when controller is set.',
+        );
 
   @override
   State<WInput> createState() => _WInputState();
 }
 
 class _WInputState extends State<WInput> {
+  /// Default content padding (12 horizontal / 8 vertical) used when className
+  /// supplies no `p-*`.
+  static const EdgeInsets _defaultContentPadding =
+      EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+
+  /// Default visual box matching the previous Material defaults: a 1px grey
+  /// border at a 4px radius. Applied when className resolves no decoration.
+  static const double _defaultBorderWidth = 1.0;
+  static const double _defaultBorderRadius = 4.0;
+  static const Color _defaultBorderColor = Color(0xFFD1D5DB); // grey.shade300
+
   late TextEditingController _controller;
   late FocusNode _focusNode;
   bool _isFocused = false;
   bool _ownsController = false;
   bool _ownsFocusNode = false;
+
+  /// Stable identity for the EditableText element. A conditional prefix/suffix
+  /// (e.g. a clear button that appears once the field has text) changes the
+  /// field's ancestor chain between the Row and no-Row layouts; without a
+  /// GlobalKey Flutter would destroy and rebuild the EditableText on that
+  /// switch, dropping focus mid-typing. The key moves the same element instead.
+  final GlobalKey _editableTextKey = GlobalKey();
 
   @override
   void initState() {
@@ -360,6 +386,7 @@ class _WInputState extends State<WInput> {
       ...?widget.states,
       if (_isFocused) 'focus',
       if (!widget.enabled) 'disabled',
+      if (widget.readOnly) 'readonly',
     };
 
     // Parse styles with current states
@@ -382,35 +409,71 @@ class _WInputState extends State<WInput> {
         ? WindParser.parse(widget.placeholderClassName!, context)
         : const WindStyle();
 
-    // Build InputDecoration from WindStyle
-    final InputDecoration decoration = _buildInputDecoration(
-      context: context,
-      styles: styles,
-      placeholderStyles: placeholderStyles,
-    );
-
     // Determine keyboard type and obscure text
     final (TextInputType keyboardType, bool obscureText) = _getKeyboardConfig();
 
-    // Determine max/min lines
+    // Determine max/min lines. Password/single-line types force maxLines == 1,
+    // which EditableText asserts when obscureText is true.
     final int? maxLines =
         widget.type == InputType.multiline ? widget.maxLines : 1;
     final int minLines =
         widget.type == InputType.multiline ? widget.minLines : 1;
 
-    // Build text style from WindStyle
-    final TextStyle textStyle = styles.toTextStyle();
+    // Build text style from WindStyle, with a brightness-aware baseline color
+    // so text stays legible under a bare root with no Material/Cupertino theme.
+    // Prefer Wind's effective brightness (the source `dark:` classes resolve
+    // against) so the default color matches the rendered background; fall back
+    // to the platform brightness only when no WindTheme is present.
+    final Brightness brightness = WindTheme.maybeDataOf(context)?.brightness ??
+        MediaQuery.maybePlatformBrightnessOf(context) ??
+        Brightness.light;
+    final Color baselineColor = brightness == Brightness.dark
+        ? const Color(0xFFFFFFFF)
+        : const Color(0xFF000000);
+    final TextStyle textStyle = styles.toTextStyle().color == null
+        ? styles.toTextStyle().copyWith(color: baselineColor)
+        : styles.toTextStyle();
 
-    logger.setCoreWidget("TextField");
+    // EditableText requires both cursor colors explicitly (no theme to fall
+    // back to). Derive from the resolved text color, mirroring WText's
+    // brightness fallback (w_text.dart:181-193).
+    final Color cursorColor = styles.color ?? baselineColor;
+
+    // Selection highlight must be visible without a theme: prefer the ring
+    // color, else a translucent platform-aware default.
+    final Color selectionColor = styles.ringColor?.withValues(alpha: 0.4) ??
+        (brightness == Brightness.dark
+            ? const Color(0x66FFFFFF)
+            : const Color(0x663B82F6));
+
+    logger.setCoreWidget("EditableText");
     logger.printFinalCode();
 
-    Widget result = TextField(
+    // Interactive selection (handles + long-press toolbar) reaches for the root
+    // Overlay; under a bare root with no Overlay it would throw on long-press.
+    // Gate it so typing/cursor/focus still work and only selection UI degrades.
+    final bool hasOverlay = Overlay.maybeOf(context) != null;
+
+    // Shared by the EditableText and the placeholder Text so both occupy the
+    // exact same line height. Without forcing the same strut on the placeholder
+    // the empty-vs-filled box height differs by ~1-2px and the field jumps when
+    // the user starts typing.
+    final StrutStyle strutStyle = StrutStyle(
+      forceStrutHeight: true,
+      height: styles.effectiveLineHeight,
+      fontSize: styles.fontSize,
+      fontWeight: styles.fontWeight,
+      fontStyle: styles.fontStyle,
+      fontFamily: styles.fontFamily,
+    );
+
+    final Widget editable = EditableText(
+      key: _editableTextKey,
       controller: _controller,
       focusNode: _focusNode,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      enabled: widget.enabled,
-      readOnly: widget.readOnly,
+      readOnly: widget.readOnly || !widget.enabled,
       autofocus: widget.autofocus,
       textInputAction: widget.textInputAction ??
           (widget.type == InputType.multiline
@@ -422,38 +485,126 @@ class _WInputState extends State<WInput> {
       maxLines: maxLines,
       minLines: minLines,
       style: textStyle,
-      strutStyle: StrutStyle(
-        forceStrutHeight: true,
-        height: styles.effectiveLineHeight,
-        fontSize: styles.fontSize,
-        fontWeight: styles.fontWeight,
-        fontStyle: styles.fontStyle,
-        fontFamily: styles.fontFamily,
-      ),
-      decoration: decoration,
-      inputFormatters: widget.inputFormatters,
+      strutStyle: strutStyle,
+      cursorColor: cursorColor,
+      // The floating-cursor anchor (iOS trackpad drag) uses inactive grey by
+      // convention, matching Material/Cupertino TextField; it is not the live
+      // cursor color.
+      backgroundCursorColor: CupertinoColors.inactiveGray,
+      selectionColor: _isFocused ? selectionColor : null,
+      // Selection UI needs an Overlay to host its toolbar/handles, and a
+      // disabled field must expose none of it (a read-only field stays
+      // selectable so its text can be copied).
+      selectionControls: hasOverlay && widget.enabled
+          ? cupertinoTextSelectionHandleControls
+          : null,
+      enableInteractiveSelection: hasOverlay && widget.enabled,
+      contextMenuBuilder:
+          hasOverlay && widget.enabled ? _buildContextMenu : null,
+      // Caller-supplied formatters win outright; otherwise InputType.number
+      // gets a signed-decimal filter so it is actually numeric on every
+      // platform (the keyboard type alone enforces nothing on web).
+      inputFormatters: widget.inputFormatters ??
+          (widget.type == InputType.number
+              ? const [_SignedDecimalTextInputFormatter()]
+              : null),
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
       onEditingComplete: widget.onEditingComplete,
-      onTap: widget.onTap,
       onTapOutside: widget.onTapOutside,
     );
 
-    // Accessibility: surface this input as a `textField` SemanticsNode
-    // labelled with the placeholder. Wind routes labels through the parser
-    // (not through `InputDecoration.labelText`), so Material's TextField
-    // emits an empty Semantics label by default. The explicit wrap below
-    // keeps Playwright's `getByLabel(/email/i)` and obscured-input
-    // `getByLabel(/password/i)` resolution working on the Flutter web
-    // accessibility tree.
+    // Build the placeholder text style by inheriting typography from the input
+    // and applying a softer color when the placeholder className sets none.
+    final TextStyle hintStyle = _buildHintStyle(
+      styles: styles,
+      placeholderStyles: placeholderStyles,
+      textStyle: textStyle,
+      baselineColor: baselineColor,
+    );
+
+    // Stack the placeholder behind the EditableText so it shows only when the
+    // field is empty (the EditableText-in-Container recipe; no Material hint).
+    Widget field =
+        _wrapWithPlaceholder(editable, hintStyle, strutStyle, maxLines);
+
+    // Content padding wraps the text on every side. With a prefix/suffix the
+    // text keeps an 8px gap to the adornment while the adornment carries the
+    // outer inset to the border; on any side without an adornment the text
+    // keeps the full content inset, so it never sits flush against the border.
+    final EdgeInsets contentPadding = styles.padding ?? _defaultContentPadding;
+    if (widget.prefix != null || widget.suffix != null) {
+      field = Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (widget.prefix != null)
+            Padding(
+              padding: EdgeInsets.only(left: contentPadding.left),
+              child: widget.prefix,
+            ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: widget.prefix != null ? 8 : contentPadding.left,
+                right: widget.suffix != null ? 8 : contentPadding.right,
+                top: contentPadding.top,
+                bottom: contentPadding.bottom,
+              ),
+              child: field,
+            ),
+          ),
+          if (widget.suffix != null)
+            // The Row's CrossAxisAlignment.center vertically centers the suffix
+            // against the field's natural height. Do NOT wrap it in Center /
+            // force a min height: that expands to fill the available height and
+            // makes the box grow the moment a suffix appears. The suffix sizes
+            // to its own content (give it padding for a larger tap area).
+            Padding(
+              padding: EdgeInsets.only(right: contentPadding.right),
+              child: widget.suffix,
+            ),
+        ],
+      );
+    } else {
+      field = Padding(padding: contentPadding, child: field);
+    }
+
+    // Wrap in the decorated box (className → BoxDecoration, same path WDiv
+    // uses), recomputing on focus so the ring/border reacts to `_isFocused`.
+    Widget result = DecoratedBox(
+      decoration: _buildDecoration(styles),
+      child: field,
+    );
+
+    // Tapping anywhere in the box focuses the field (the box, not just the text
+    // glyphs, is the tap target) and fires onTap. EditableText alone only reacts
+    // to taps on the text itself; this restores TextField's whole-box behavior.
+    if (widget.enabled) {
+      result = GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          if (!_focusNode.hasFocus) {
+            _focusNode.requestFocus();
+          }
+          widget.onTap?.call();
+        },
+        child: result,
+      );
+    } else {
+      // Disabled: swallow all pointer events so the field cannot be tapped,
+      // focused, or have its cursor placed, honoring the enabled: false
+      // contract (the EditableText otherwise still reacts to taps on glyphs).
+      result = IgnorePointer(child: result);
+    }
+
+    // Accessibility: attach the label to EditableText's own isTextField node.
+    // A non-container Semantics merges into the descendant node (default
+    // explicitChildNodes: false), producing exactly ONE textField node carrying
+    // the label, instead of the second node the old container+MergeSemantics
+    // wrapper minted. EditableText already reports value + obscured.
     result = Semantics(
-      container: true,
-      textField: true,
       label: widget.semanticLabel ?? widget.placeholder,
-      value: widget.value,
-      enabled: widget.enabled,
-      obscured: obscureText,
-      child: MergeSemantics(child: result),
+      child: result,
     );
 
     // Apply Box Model (Margin, Width, Height)
@@ -490,6 +641,13 @@ class _WInputState extends State<WInput> {
       result = Flexible(fit: styles.flexFit!, child: result);
     }
 
+    // Directionality guarantee: provide a default TextDirection.ltr when no
+    // ancestor supplies one, so bare usages outside MaterialApp/WidgetsApp do
+    // not throw "No Directionality widget found" (mirrors WText:228-236).
+    if (Directionality.maybeOf(context) == null) {
+      result = Directionality(textDirection: TextDirection.ltr, child: result);
+    }
+
     return result;
   }
 
@@ -499,171 +657,189 @@ class _WInputState extends State<WInput> {
       InputType.text => (TextInputType.text, false),
       InputType.password => (TextInputType.visiblePassword, true),
       InputType.email => (TextInputType.emailAddress, false),
-      InputType.number => (TextInputType.number, false),
+      InputType.number => (
+          const TextInputType.numberWithOptions(decimal: true, signed: true),
+          false
+        ),
       InputType.multiline => (TextInputType.multiline, false),
     };
   }
 
-  /// Builds InputDecoration from WindStyle
-  InputDecoration _buildInputDecoration({
-    required BuildContext context,
-    required WindStyle styles,
-    required WindStyle placeholderStyles,
-  }) {
-    final theme = WindTheme.dataOf(context);
+  /// Builds the visual box from WindStyle, applying the previous Material
+  /// defaults (1px grey border, 4px radius) when className resolves none, and
+  /// surfacing the focus ring (`ring-*` → `ringColor`/`ringWidth`/`ringShadow`)
+  /// as a border + shadow when `_isFocused`.
+  BoxDecoration _buildDecoration(WindStyle styles) {
+    final BoxDecoration? parsed = styles.decoration;
 
-    // Extract padding from styles
-    final EdgeInsets contentPadding = styles.padding ??
-        const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+    final Color? fillColor = parsed?.color;
+    final BorderRadius borderRadius = parsed?.borderRadius is BorderRadius
+        ? parsed!.borderRadius as BorderRadius
+        : BorderRadius.circular(_defaultBorderRadius);
 
-    // Extract background color
-    Color? fillColor;
-    bool filled = false;
-    if (styles.decoration?.color != null) {
-      fillColor = styles.decoration!.color;
-      filled = true;
+    // Resolve the resting border: className-provided or the grey default.
+    // A border width of 0 (border-0) means no border.
+    BoxBorder? border;
+    if (parsed?.border is Border) {
+      final Border b = parsed!.border as Border;
+      border = b.top.width == 0 ? null : b;
+    } else {
+      border = Border.all(
+        color: _defaultBorderColor,
+        width: _defaultBorderWidth,
+      );
     }
 
-    // Extract border configuration
-    final InputBorder border = _buildBorder(styles, theme, isFocused: false);
-    final InputBorder focusedBorder = _buildBorder(
-      styles,
-      theme,
-      isFocused: true,
-    );
-    final InputBorder disabledBorder = _buildBorder(
-      styles,
-      theme,
-      isDisabled: true,
-    );
-
-    // Build hint style by merging input styles with placeholder styles
-    // This ensures font size, height, and family are inherited from the input
-    TextStyle baseTextStyle = styles.toTextStyle();
-    TextStyle hintBaseStyle = placeholderStyles.toTextStyle();
-    TextStyle hintStyle = baseTextStyle.merge(hintBaseStyle);
-
-    // If no placeholder color specified, use text color with lower opacity or default grey
-    if (placeholderStyles.color == null) {
-      if (styles.color != null) {
-        hintStyle = hintStyle.copyWith(
-          color: styles.color!.withValues(alpha: 0.5),
-        );
-      } else {
-        hintStyle = hintStyle.copyWith(color: Colors.grey.shade500);
-      }
+    // Focus ring: promote ring color/width to the border and paint the ring
+    // shadow, matching the previous focus-on border behavior.
+    List<BoxShadow>? boxShadow = styles.boxShadow;
+    if (_isFocused &&
+        styles.ringShadow != null &&
+        styles.ringShadow!.isNotEmpty) {
+      boxShadow = styles.ringShadow;
+      final Color ringColor = styles.ringColor ?? _defaultBorderColor;
+      final double ringWidth = styles.ringWidth ?? _defaultBorderWidth;
+      border = Border.all(color: ringColor, width: ringWidth);
     }
 
-    return InputDecoration(
-      hintText: widget.placeholder,
-      hintStyle: hintStyle,
-      contentPadding: contentPadding,
-      filled: filled,
-      fillColor: fillColor,
+    return BoxDecoration(
+      color: fillColor,
       border: border,
-      enabledBorder: border,
-      focusedBorder: focusedBorder,
-      disabledBorder: disabledBorder,
-      // isDense: false allows Flutter to respect line-height and padding naturally
-      isDense: false,
-      constraints: const BoxConstraints(minHeight: 0),
-      prefixIcon: widget.prefix != null
-          ? Padding(
-              padding: const EdgeInsets.only(left: 12, right: 8),
-              child: widget.prefix,
-            )
-          : null,
-      prefixIconConstraints: widget.prefix != null
-          ? const BoxConstraints(minWidth: 0, minHeight: 0)
-          : null,
-      suffixIcon: widget.suffix != null
-          ? Padding(
-              padding: const EdgeInsets.only(right: 12, left: 8),
-              child: widget.suffix,
-            )
-          : null,
-      suffixIconConstraints: widget.suffix != null
-          ? const BoxConstraints(minWidth: 0, minHeight: 0)
-          : null,
+      borderRadius: borderRadius,
+      boxShadow: boxShadow,
+      gradient: parsed?.gradient,
+      image: parsed?.image,
     );
   }
 
-  /// Builds border from WindStyle
-  InputBorder _buildBorder(
-    WindStyle styles,
-    WindThemeData theme, {
-    bool isFocused = false,
-    bool isDisabled = false,
+  /// Builds the placeholder text style by inheriting the input's typography and
+  /// softening the color when the placeholder className supplies none.
+  TextStyle _buildHintStyle({
+    required WindStyle styles,
+    required WindStyle placeholderStyles,
+    required TextStyle textStyle,
+    required Color baselineColor,
   }) {
-    // Get border from decoration if available
-    final boxDecoration = styles.decoration;
+    TextStyle hintStyle = textStyle.merge(placeholderStyles.toTextStyle());
 
-    // Default values
-    double borderWidth = 1.0;
-    Color borderColor = Colors.grey.shade300;
-    double borderRadius = 4.0;
-    bool hasBorder = true;
-
-    // Extract border properties from BoxDecoration
-    if (boxDecoration != null) {
-      // Border width and color
-      if (boxDecoration.border is Border) {
-        final border = boxDecoration.border as Border;
-        borderWidth = border.top.width;
-        borderColor = border.top.color;
-        // If border width is 0, mark as no border
-        if (borderWidth == 0) {
-          hasBorder = false;
-        }
-      }
-
-      // Border radius
-      if (boxDecoration.borderRadius is BorderRadius) {
-        final br = boxDecoration.borderRadius as BorderRadius;
-        borderRadius = br.topLeft.x;
-      }
+    if (placeholderStyles.color == null) {
+      final Color base = styles.color ?? baselineColor;
+      hintStyle = hintStyle.copyWith(color: base.withValues(alpha: 0.5));
     }
 
-    // If no border (border-0), return InputBorder.none
-    // But if focused with ring, we still want to show the ring as border
-    if (!hasBorder && !isFocused) {
-      return InputBorder.none;
+    return hintStyle;
+  }
+
+  /// Stacks the placeholder behind [editable], visible only while the field is
+  /// empty. Listens to the controller so it toggles as the user types.
+  Widget _wrapWithPlaceholder(
+    Widget editable,
+    TextStyle hintStyle,
+    StrutStyle strutStyle,
+    int? maxLines,
+  ) {
+    if (widget.placeholder == null) {
+      return editable;
     }
 
-    // Apply ring shadow as focus indicator if present
-    if (isFocused &&
-        styles.ringShadow != null &&
-        styles.ringShadow!.isNotEmpty) {
-      // Ring color becomes border color on focus
-      if (styles.ringColor != null) {
-        borderColor = styles.ringColor!;
-      }
-      // Ring width adds to border
-      if (styles.ringWidth != null && styles.ringWidth! > 0) {
-        borderWidth = styles.ringWidth!;
-      }
-    } else if (!hasBorder && isFocused) {
-      // If border-0 but focused without ring, return no border
-      return InputBorder.none;
-    }
-
-    // Disabled state
-    if (isDisabled) {
-      borderColor = Colors.grey.shade200;
-      // If originally no border, keep it that way when disabled
-      if (!hasBorder) {
-        return InputBorder.none;
-      }
-    }
-
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(borderRadius),
-      borderSide: BorderSide(color: borderColor, width: borderWidth),
-      // Wind routes labels through the parser instead of
-      // `InputDecoration.labelText`, so Material's default 4.0 gap reservation
-      // for a floating-label cutout has no purpose here and would add a
-      // phantom +4px on each horizontal edge over `px-*` (issue #61).
-      gapPadding: 0.0,
+    return Stack(
+      children: [
+        ValueListenableBuilder<TextEditingValue>(
+          valueListenable: _controller,
+          builder: (context, value, child) {
+            if (value.text.isNotEmpty) {
+              return const SizedBox.shrink();
+            }
+            // ExcludeSemantics: the visible placeholder must not leak into the
+            // accessible name. The single outer Semantics(label: ...) node owns
+            // the label (W1); without this exclusion the placeholder Text would
+            // merge a duplicate/extra label (e.g. "Email\nEmail").
+            return ExcludeSemantics(
+              child: IgnorePointer(
+                // The placeholder shares the EditableText strut so the box keeps
+                // the same height whether it is empty or filled (no jump on the
+                // first keystroke).
+                child: Text(
+                  widget.placeholder!,
+                  style: hintStyle,
+                  strutStyle: strutStyle,
+                  maxLines: maxLines,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            );
+          },
+        ),
+        editable,
+      ],
     );
+  }
+
+  /// Builds a Material-free selection toolbar (Cupertino chrome) whose action
+  /// labels read from [WidgetsLocalizations], which is always resolvable (via
+  /// `DefaultWidgetsLocalizations`) even with no Material/Cupertino ancestor.
+  Widget _buildContextMenu(
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
+    final WidgetsLocalizations localizations = WidgetsLocalizations.of(context);
+    final TextSelectionToolbarAnchors anchors =
+        editableTextState.contextMenuAnchors;
+
+    final List<Widget> children = [
+      for (final ContextMenuButtonItem item
+          in editableTextState.contextMenuButtonItems)
+        CupertinoTextSelectionToolbarButton.text(
+          onPressed: item.onPressed,
+          text: _contextMenuLabel(item, localizations),
+        ),
+    ];
+
+    if (children.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return CupertinoTextSelectionToolbar(
+      anchorAbove: anchors.primaryAnchor,
+      anchorBelow: anchors.secondaryAnchor ?? anchors.primaryAnchor,
+      children: children,
+    );
+  }
+
+  /// Maps a context-menu button to its localized label, preferring the
+  /// `WidgetsLocalizations` strings for the standard edit actions and falling
+  /// back to the button item's own label for anything else.
+  String _contextMenuLabel(
+    ContextMenuButtonItem item,
+    WidgetsLocalizations localizations,
+  ) {
+    return switch (item.type) {
+      ContextMenuButtonType.copy => localizations.copyButtonLabel,
+      ContextMenuButtonType.cut => localizations.cutButtonLabel,
+      ContextMenuButtonType.paste => localizations.pasteButtonLabel,
+      ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
+      _ => item.label ?? '',
+    };
+  }
+}
+
+/// Restricts input to a signed decimal number: an optional leading minus, any
+/// number of digits, and at most one decimal point. Allows the in-progress
+/// states a user types through (`-`, `1.`, `.5`).
+///
+/// Applied by default for [InputType.number] (web included, where the keyboard
+/// type alone enforces nothing) unless the caller supplies their own
+/// [WInput.inputFormatters], which then take over entirely.
+class _SignedDecimalTextInputFormatter extends TextInputFormatter {
+  const _SignedDecimalTextInputFormatter();
+
+  static final RegExp _pattern = RegExp(r'^-?\d*\.?\d*$');
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return _pattern.hasMatch(newValue.text) ? newValue : oldValue;
   }
 }

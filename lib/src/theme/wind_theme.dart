@@ -236,6 +236,19 @@ class WindTheme extends StatefulWidget {
     return inherited!.controller.data;
   }
 
+  /// Like [dataOf] but returns null instead of asserting when no [WindTheme]
+  /// ancestor exists.
+  ///
+  /// Used by Material-free widgets that must derive a theme-aware default
+  /// (e.g. WInput's baseline text/cursor color) from Wind's effective
+  /// brightness when a [WindTheme] is present, yet still render under a bare
+  /// root with no theme at all.
+  static WindThemeData? maybeDataOf(BuildContext context) {
+    final inherited =
+        context.dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
+    return inherited?.controller.data;
+  }
+
   @override
   State<WindTheme> createState() => _WindThemeState();
 }

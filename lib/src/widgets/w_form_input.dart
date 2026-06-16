@@ -110,15 +110,16 @@ class WFormInput extends FormField<String> {
 
     // Error display
     this.showError = true,
-    this.errorClassName = 'text-red-500 text-xs mt-1',
+    this.errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
 
     // Label
     this.label,
-    this.labelClassName = 'text-sm font-medium text-gray-700 mb-1',
+    this.labelClassName =
+        'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
 
     // Hint
     this.hint,
-    this.hintClassName = 'text-gray-500 text-xs mt-1',
+    this.hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
 
     // Prefix/Suffix
     this.prefix,
@@ -249,7 +250,7 @@ class WFormInput extends FormField<String> {
 
   /// Tailwind-like utility classes for styling the error message.
   ///
-  /// Defaults to `'text-red-500 text-xs mt-1'`.
+  /// Defaults to `'text-red-500 dark:text-red-400 text-xs mt-1'`.
   final String errorClassName;
 
   /// Optional label text displayed above the input.
@@ -265,7 +266,7 @@ class WFormInput extends FormField<String> {
 
   /// Tailwind-like utility classes for styling the label.
   ///
-  /// Defaults to `'text-sm font-medium text-gray-700 mb-1'`.
+  /// Defaults to `'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'`.
   final String labelClassName;
 
   /// Optional hint text displayed below the input.
@@ -283,7 +284,7 @@ class WFormInput extends FormField<String> {
 
   /// Tailwind-like utility classes for styling the hint.
   ///
-  /// Defaults to `'text-gray-500 text-xs mt-1'`.
+  /// Defaults to `'text-gray-500 dark:text-gray-400 text-xs mt-1'`.
   final String hintClassName;
 
   /// Widget to display before the input field (e.g., icon).
@@ -481,12 +482,20 @@ class _WFormInputContentState extends State<_WFormInputContent> {
       return input;
     }
 
-    // Build column with optional label, input, and bottom text
+    // Build column with optional label, input, and bottom text.
+    //
+    // The visible label is wrapped in ExcludeSemantics: its text is already the
+    // input's `semanticLabel` (see above), so without this exclusion the field's
+    // accessible name would be announced twice ("Email Address\nEmail Address").
+    // The field's Semantics node remains the single canonical name carrier that
+    // `getByLabel(...)` resolves against.
     return WDiv(
       className: 'flex flex-col',
       children: [
         if (widget.label != null)
-          WText(widget.label!, className: widget.labelClassName),
+          ExcludeSemantics(
+            child: WText(widget.label!, className: widget.labelClassName),
+          ),
         input,
         if (bottomText != null) bottomText,
       ],

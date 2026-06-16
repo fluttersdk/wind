@@ -1,6 +1,6 @@
 # WInput
 
-The `WInput` widget is a utility-first form input that combines React-style controlled state management with Tailwind-like styling. It replaces the standard `TextField` with a more flexible, composable alternative.
+A utility-first form input that combines React-style controlled state management with Tailwind-like styling. It renders Material-free (`EditableText` core inside a `Container`) and works under any theming ancestor: Material, Cupertino, a custom app, or a bare `WidgetsApp`. No Material ancestor required (fixes #102).
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -8,6 +8,7 @@ The `WInput` widget is a utility-first form input that combines React-style cont
 - [Layout Modes](#layout-modes)
 - [Event Handling](#event-handling)
 - [State Variants](#state-variants)
+- [Accessibility](#accessibility)
 - [Styling Examples](#styling-examples)
 - [All Supported Classes](#all-supported-classes)
 - [Customizing Theme](#customizing-theme)
@@ -26,9 +27,10 @@ WInput(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
-The `WInput` widget manages its internal state but can be easily controlled using the `value` and `onChanged` properties. By default, it renders as a standard text input.
+Pass `value` and `onChanged` for controlled (React-style) binding. Omit both to let the field manage its own state internally. `WInput` works under any ancestor widget tree. No `MaterialApp` required.
 
 ```dart
 WInput(
@@ -38,6 +40,7 @@ WInput(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -72,6 +75,7 @@ const WInput({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -80,7 +84,7 @@ const WInput({
 | `placeholderClassName` | `String?` | `null` | Utility classes for styling the hint text |
 | `value` | `String?` | `null` | The controlled value of the input |
 | `onChanged` | `ValueChanged<String>?` | `null` | Callback when text changes |
-| `type` | `InputType` | `InputType.text` | Input keyboard and behavior (`text`, `password`, `email`, `number`, `multiline`) |
+| `type` | `InputType` | `InputType.text` | Input keyboard and behavior (`text`, `password`, `email`, `number`, `multiline`). `number` restricts input to a signed decimal on every platform (web included); pass `inputFormatters` to override. |
 | `placeholder` | `String?` | `null` | Hint text shown when input is empty |
 | `enabled` | `bool` | `true` | Whether the input is interactive |
 | `readOnly` | `bool` | `false` | Whether the input is read-only |
@@ -101,8 +105,9 @@ const WInput({
 | `textCapitalization` | `TextCapitalization` | `TextCapitalization.none` | Auto-capitalize behavior (`none` / `sentences` / `words` / `characters`) |
 | `autocorrect` | `bool` | `true` | Enable OS autocorrect suggestions |
 | `enableSuggestions` | `bool` | `true` | Enable OS suggestion bar (Android) |
-| `semanticLabel` | `String?` | `null` | Accessibility label exposed via `Semantics(textField: true, label: ...)`. Falls back to `placeholder` when null. |
+| `semanticLabel` | `String?` | `null` | Accessible name for the single textbox semantics node. Falls back to `placeholder` when `null`. Used by screen readers and `getByLabel`-style locators. |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
 ### Multiline Input
@@ -121,6 +126,7 @@ WInput(
 )
 ```
 
+<a name="event-handling"></a>
 ## Event Handling
 
 `WInput` provides standard callbacks for user interaction. Use `onSubmitted` for handling "Enter" or keyboard action buttons.
@@ -136,9 +142,10 @@ WInput(
 )
 ```
 
+<a name="state-variants"></a>
 ## State Variants
 
-Wind automatically manages `focus:` and `disabled:` states. You can also trigger custom states like `error:` by passing them to the `states` property.
+Wind automatically manages `focus:`, `disabled:` (when `enabled: false`), and `readonly:` (when `readOnly: true`) states. You can also trigger custom states like `error:` by passing them to the `states` property.
 
 ```dart
 WInput(
@@ -150,6 +157,22 @@ WInput(
 > [!NOTE]
 > `focus:` styles (like `ring-2`) are applied automatically when the field gains focus.
 
+<a name="accessibility"></a>
+## Accessibility
+
+`WInput` emits exactly **one** typeable textbox semantics node. Its accessible name is `semanticLabel` when provided, falling back to `placeholder`. This single-node shape ensures label-by-text locators (e.g., Playwright `getByLabel`, `dusk` label lookup) resolve cleanly with no duplicate accessible names.
+
+`InputType.password` fields report `isObscured: true` in the semantics tree so screen readers announce the field as a password input.
+
+When the field is `enabled: false`, it is non-editable and reports `isReadOnly` in the semantics tree.
+
+> [!NOTE]
+> `WInput` uses Cupertino-style selection handles on all platforms. The long-press selection toolbar and handles require an `Overlay` ancestor. Under a bare root without an `Overlay` (unusual in practice), typing, cursor movement, and focus still work; only the selection toolbar does not appear.
+
+> [!WARNING]
+> Passing both `value` and `controller` at the same time throws an `AssertionError` in debug mode. Use either `value` + `onChanged` (controlled) or `controller` (external), not both.
+
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Search Input with Prefix
@@ -181,6 +204,7 @@ WInput(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 | Category | Classes |
@@ -192,6 +216,7 @@ WInput(
 | Borders | `border`, `border-{n}`, `rounded-{size}`, `border-{color}` |
 | Effects | `shadow-{size}`, `opacity-{n}`, `ring-{n}`, `ring-offset-{n}` |
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
 You can override the default input appearance through `WindThemeData`. This is useful for setting global border colors or padding defaults.
@@ -206,6 +231,7 @@ WindThemeData(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WFormInput](./w-form-input.md) - Form-integrated input with labels and validation.

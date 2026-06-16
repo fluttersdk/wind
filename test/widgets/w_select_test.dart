@@ -47,6 +47,8 @@ Future<void> tapDropdownOption(WidgetTester tester, String label) async {
 }
 
 void main() {
+  setUp(WindParser.clearCache);
+
   final testOptions = [
     const SelectOption(value: 'apple', label: 'Apple'),
     const SelectOption(value: 'banana', label: 'Banana'),
@@ -277,7 +279,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Enter search query
-        await tester.enterText(find.byType(TextField), 'ban');
+        await tester.enterText(find.byType(EditableText), 'ban');
         await tester.pumpAndSettle();
 
         // Should only show Banana
@@ -300,7 +302,7 @@ void main() {
         await tester.tap(find.text('Select an option'));
         await tester.pumpAndSettle();
 
-        await tester.enterText(find.byType(TextField), 'xyz');
+        await tester.enterText(find.byType(EditableText), 'xyz');
         await tester.pumpAndSettle();
 
         expect(find.text('No options found'), findsOneWidget);
@@ -713,7 +715,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Type a non-existing value
-      await tester.enterText(find.byType(TextField), 'NewTag');
+      await tester.enterText(find.byType(EditableText), 'NewTag');
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Create'), findsOneWidget);
@@ -800,7 +802,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify the builder prop is accepted (actual loading UI tested manually)
-      expect(find.byType(TextField), findsOneWidget);
+      expect(find.byType(EditableText), findsOneWidget);
     });
   });
 
@@ -918,7 +920,7 @@ void main() {
       // Open and search for "ap" so a search query is active.
       await tester.tap(find.text('Select an option'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'ap');
+      await tester.enterText(find.byType(EditableText), 'ap');
       await tester.pumpAndSettle();
       // Currently only "Apple" matches.
       expect(find.text('Apple'), findsOneWidget);
@@ -1141,7 +1143,7 @@ void main() {
 
       await tester.tap(find.text('Select an option'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'mar');
+      await tester.enterText(find.byType(EditableText), 'mar');
       await tester.pumpAndSettle();
 
       expect(find.text('Mars'), findsOneWidget);
@@ -1164,7 +1166,7 @@ void main() {
 
       await tester.tap(find.text('Select an option'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'xyz');
+      await tester.enterText(find.byType(EditableText), 'xyz');
       await tester.pumpAndSettle();
 
       // Loading indicator must not remain after the error.
@@ -1185,13 +1187,13 @@ void main() {
 
       await tester.tap(find.text('Select an option'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'cher');
+      await tester.enterText(find.byType(EditableText), 'cher');
       await tester.pumpAndSettle();
       expect(find.text('Cherry'), findsOneWidget);
       expect(find.text('Apple'), findsNothing);
 
       // Clear the query — branch where query.isEmpty restores full options.
-      await tester.enterText(find.byType(TextField), '');
+      await tester.enterText(find.byType(EditableText), '');
       await tester.pumpAndSettle();
       expect(find.text('Apple'), findsOneWidget);
       expect(find.text('Banana'), findsOneWidget);
@@ -1316,7 +1318,7 @@ void main() {
 
       await tester.tap(find.text('Select an option'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'mango');
+      await tester.enterText(find.byType(EditableText), 'mango');
       await tester.pumpAndSettle();
 
       // Default create button labelled 'Create "mango"'.
@@ -1353,7 +1355,7 @@ void main() {
 
       await tester.tap(find.text('Select an option'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'pear');
+      await tester.enterText(find.byType(EditableText), 'pear');
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('custom-create')), findsOneWidget);

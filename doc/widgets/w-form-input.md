@@ -1,6 +1,6 @@
 # WFormInput
 
-A Wind-styled input that integrates seamlessly with Flutter's native Form validation system. It extends `FormField` to provide automatic error handling, label management, and state-based styling through utility classes.
+A Wind-styled input that integrates seamlessly with Flutter's native Form validation system. It extends `FormField` to provide automatic error handling, label management, and state-based styling through utility classes. `WFormInput` delegates its rendering to `WInput` and therefore inherits Material-free rendering: it works under any ancestor widget tree (Material, Cupertino, custom root) without requiring a Material ancestor.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)

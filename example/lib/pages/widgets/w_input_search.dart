@@ -13,6 +13,7 @@ class WInputSearchExamplePage extends StatefulWidget {
 
 class _WInputSearchExamplePageState extends State<WInputSearchExamplePage> {
   String _query = '';
+  String _clearable = '';
   bool _obscure = true;
 
   @override
@@ -26,7 +27,8 @@ class _WInputSearchExamplePageState extends State<WInputSearchExamplePage> {
         ExampleSection(
           title: 'Basic Usage',
           description:
-              'WIcon as prefix; padding-left compensates for the icon overlap.',
+              'WIcon as prefix; the icon sits in a leading slot and the text '
+              'flows after it (no manual padding needed).',
           child: WInput(
             value: _query,
             onChanged: (v) => setState(() => _query = v),
@@ -36,7 +38,7 @@ class _WInputSearchExamplePageState extends State<WInputSearchExamplePage> {
               className: 'text-slate-400 dark:text-slate-500',
             ),
             className: '''
-              w-full pl-10 pr-3 py-2 rounded-full
+              w-full px-4 py-2 rounded-full
               bg-slate-100 dark:bg-slate-700
               border border-transparent
               focus:bg-white dark:focus:bg-slate-800
@@ -75,13 +77,13 @@ class _WInputSearchExamplePageState extends State<WInputSearchExamplePage> {
           description:
               'Show a clear button only when the field has text. Tap clears value.',
           child: WInput(
-            value: _query,
-            onChanged: (v) => setState(() => _query = v),
+            value: _clearable,
+            onChanged: (v) => setState(() => _clearable = v),
             placeholder: 'Type then clear…',
-            suffix: _query.isEmpty
+            suffix: _clearable.isEmpty
                 ? null
                 : WButton(
-                    onTap: () => setState(() => _query = ''),
+                    onTap: () => setState(() => _clearable = ''),
                     className:
                         'p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700',
                     child: WIcon(Icons.close,

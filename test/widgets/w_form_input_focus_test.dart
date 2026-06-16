@@ -3,9 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 void main() {
+  setUp(WindParser.clearCache);
+
   group('WFormInput FocusNode', () {
-    testWidgets('passes focusNode to underlying TextField', (tester) async {
+    testWidgets('passes focusNode to underlying EditableText', (tester) async {
       final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -22,11 +25,10 @@ void main() {
         ),
       );
 
-      // Find TextField and verify it has the focusNode
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      expect(textField.focusNode, equals(focusNode));
-
-      focusNode.dispose();
+      // Find EditableText and verify it has the focusNode
+      final editableText =
+          tester.widget<EditableText>(find.byType(EditableText));
+      expect(editableText.focusNode, equals(focusNode));
     });
 
     testWidgets('creates internal focusNode when not provided', (tester) async {
@@ -42,13 +44,15 @@ void main() {
         ),
       );
 
-      // Find TextField and verify it has a focusNode (internally created)
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      expect(textField.focusNode, isNotNull);
+      // Find EditableText and verify it has a focusNode (internally created)
+      final editableText =
+          tester.widget<EditableText>(find.byType(EditableText));
+      expect(editableText.focusNode, isNotNull);
     });
 
     testWidgets('focusNode receives focus when requested', (tester) async {
       final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -74,8 +78,6 @@ void main() {
 
       // Now should have focus
       expect(focusNode.hasFocus, isTrue);
-
-      focusNode.dispose();
     });
   });
 }

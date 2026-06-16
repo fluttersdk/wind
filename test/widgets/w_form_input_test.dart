@@ -14,6 +14,8 @@ Widget wrapWithTheme(Widget child) {
 }
 
 void main() {
+  setUp(WindParser.clearCache);
+
   group('WFormInput Widget Tests', () {
     group('Basic Rendering', () {
       testWidgets('renders WInput inside FormField', (tester) async {
@@ -28,7 +30,7 @@ void main() {
           ),
         );
 
-        expect(find.byType(TextField), findsOneWidget);
+        expect(find.byType(EditableText), findsOneWidget);
         expect(find.text('Enter text'), findsOneWidget);
       });
 
@@ -183,14 +185,14 @@ void main() {
         );
 
         // Initially no error
-        expect(find.byType(TextField), findsOneWidget);
+        expect(find.byType(EditableText), findsOneWidget);
 
         // Trigger validation
         formKey.currentState!.validate();
         await tester.pump();
 
         // Widget should rebuild with error state (WInput with error in states)
-        expect(find.byType(TextField), findsOneWidget);
+        expect(find.byType(EditableText), findsOneWidget);
       });
 
       testWidgets('error state is removed when validation passes', (
@@ -254,7 +256,7 @@ void main() {
         await tester.pump();
 
         // Both loading and error states should be active
-        expect(find.byType(TextField), findsOneWidget);
+        expect(find.byType(EditableText), findsOneWidget);
       });
     });
 
@@ -303,7 +305,7 @@ void main() {
         );
 
         // Type text
-        await tester.enterText(find.byType(TextField), 'User Input');
+        await tester.enterText(find.byType(EditableText), 'User Input');
         await tester.pump();
 
         // Validate - should pass
@@ -320,7 +322,7 @@ void main() {
           ),
         );
 
-        await tester.enterText(find.byType(TextField), 'Test');
+        await tester.enterText(find.byType(EditableText), 'Test');
         expect(changedValue, 'Test');
       });
     });
@@ -339,7 +341,7 @@ void main() {
         );
 
         // Type something
-        await tester.enterText(find.byType(TextField), 'User typed text');
+        await tester.enterText(find.byType(EditableText), 'User typed text');
         await tester.pump();
         expect(find.text('User typed text'), findsOneWidget);
 
@@ -393,8 +395,9 @@ void main() {
           ),
         );
 
-        final textField = tester.widget<TextField>(find.byType(TextField));
-        expect(textField.obscureText, isTrue);
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.obscureText, isTrue);
       });
 
       testWidgets('email type uses email keyboard', (tester) async {
@@ -402,8 +405,9 @@ void main() {
           wrapWithTheme(Form(child: WFormInput(type: InputType.email))),
         );
 
-        final textField = tester.widget<TextField>(find.byType(TextField));
-        expect(textField.keyboardType, TextInputType.emailAddress);
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.keyboardType, TextInputType.emailAddress);
       });
 
       testWidgets('multiline type allows multiple lines', (tester) async {
@@ -419,9 +423,10 @@ void main() {
           ),
         );
 
-        final textField = tester.widget<TextField>(find.byType(TextField));
-        expect(textField.minLines, 3);
-        expect(textField.maxLines, 5);
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.minLines, 3);
+        expect(editableText.maxLines, 5);
       });
     });
 
@@ -439,8 +444,9 @@ void main() {
           wrapWithTheme(Form(child: WFormInput(readOnly: true))),
         );
 
-        final textField = tester.widget<TextField>(find.byType(TextField));
-        expect(textField.readOnly, isTrue);
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.readOnly, isTrue);
       });
 
       testWidgets('enabled is forwarded', (tester) async {
@@ -448,8 +454,11 @@ void main() {
           wrapWithTheme(Form(child: WFormInput(enabled: false))),
         );
 
-        final textField = tester.widget<TextField>(find.byType(TextField));
-        expect(textField.enabled, isFalse);
+        // WInput maps enabled:false to EditableText.readOnly:true (no enabled
+        // field on EditableText; the field is non-interactable when read-only).
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.readOnly, isTrue);
       });
 
       testWidgets('autofocus is forwarded', (tester) async {
@@ -457,8 +466,9 @@ void main() {
           wrapWithTheme(Form(child: WFormInput(autofocus: true))),
         );
 
-        final textField = tester.widget<TextField>(find.byType(TextField));
-        expect(textField.autofocus, isTrue);
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofocus, isTrue);
       });
 
       testWidgets('textInputAction is forwarded', (tester) async {
@@ -468,8 +478,9 @@ void main() {
           ),
         );
 
-        final textField = tester.widget<TextField>(find.byType(TextField));
-        expect(textField.textInputAction, TextInputAction.search);
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.textInputAction, TextInputAction.search);
       });
 
       testWidgets('onSubmitted is called', (tester) async {
@@ -483,7 +494,7 @@ void main() {
           ),
         );
 
-        await tester.enterText(find.byType(TextField), 'Submit me');
+        await tester.enterText(find.byType(EditableText), 'Submit me');
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pump();
 
@@ -532,7 +543,7 @@ void main() {
         expect(find.text('Required'), findsNothing);
 
         // Clear the text to trigger validation
-        await tester.enterText(find.byType(TextField), '');
+        await tester.enterText(find.byType(EditableText), '');
         await tester.pumpAndSettle();
 
         // Error should appear on user interaction
