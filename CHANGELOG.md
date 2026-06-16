@@ -14,7 +14,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- `WInput`: selection handles are now Cupertino-style on all platforms (previously Material-style on Android/web). The context menu reads `WidgetsLocalizations` so copy/cut/paste labels work under any ancestor, including bare `WidgetsApp`. This is a visual change on Android and web; behavior is identical.
+- `WInput`: selection handles are now Cupertino-style on all platforms (previously Material-style on Android/web). The context menu reads `WidgetsLocalizations` so copy/cut/paste labels work under any ancestor, including bare `WidgetsApp`. This is a visual change on Android and web; behavior is identical. Under a custom root with no `Overlay` ancestor (unusual; `MaterialApp` / `CupertinoApp` / `WidgetsApp` all provide one), typing, cursor movement, and focus still work, but the long-press selection toolbar and handles are suppressed instead of throwing.
 - `doc/layout/flexbox.md` and the `wind-ui` skill: layout-stability guidance added for `IntrinsicHeight`/`IntrinsicWidth` in animated subtrees; the safe alternative is `Stack`+`Positioned` or `items-stretch` (W3).
 
 ### Fixed

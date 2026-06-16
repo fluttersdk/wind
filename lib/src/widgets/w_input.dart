@@ -471,7 +471,10 @@ class _WInputState extends State<WInput> {
         fontFamily: styles.fontFamily,
       ),
       cursorColor: cursorColor,
-      backgroundCursorColor: cursorColor,
+      // The floating-cursor anchor (iOS trackpad drag) uses inactive grey by
+      // convention, matching Material/Cupertino TextField; it is not the live
+      // cursor color.
+      backgroundCursorColor: CupertinoColors.inactiveGray,
       selectionColor: _isFocused ? selectionColor : null,
       selectionControls:
           hasOverlay ? cupertinoTextSelectionHandleControls : null,
