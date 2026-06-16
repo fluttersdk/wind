@@ -85,5 +85,37 @@ void main() {
 
       expect(warnings, isNotEmpty);
     });
+
+    test('stops at the depth cap on an acyclic chain longer than the cap', () {
+      // A non-cyclic chain (every link is a distinct key, so the per-chain
+      // visited-set never trips) longer than the cap exercises the depth
+      // backstop: resolution stops, leaves the deep token unexpanded, and warns.
+      // The chain length (12) must stay greater than _maxExpansionDepth (8) for
+      // this test to keep hitting the cap branch; widen it if the cap is raised.
+      const chain = {
+        'a1': 'a2',
+        'a2': 'a3',
+        'a3': 'a4',
+        'a4': 'a5',
+        'a5': 'a6',
+        'a6': 'a7',
+        'a7': 'a8',
+        'a8': 'a9',
+        'a9': 'a10',
+        'a10': 'a11',
+        'a11': 'a12',
+        'a12': 'leaf',
+      };
+      final warnings = <String>[];
+
+      final result = expandAliases('a1', chain, onWarn: warnings.add);
+
+      // The cap trips before the chain resolves to its 'leaf' tail; the
+      // offending token is kept verbatim rather than expanded further.
+      expect(result, isNot(contains('leaf')));
+      expect(result.split(' '), hasLength(1));
+      expect(warnings, isNotEmpty);
+      expect(warnings.any((w) => w.contains('expansion cap')), isTrue);
+    });
   });
 }
