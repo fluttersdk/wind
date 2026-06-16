@@ -1,6 +1,6 @@
 # fluttersdk_wind
 
-> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 23-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 22 W-prefix widgets, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, and a skill distributed to 8+ AI clients via fluttersdk/ai). Open Source. Tailwind syntax. Flutter native. Version 1.0.0 stable.
+> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 24-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 22 W-prefix widgets, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, and a skill distributed to 8+ AI clients via fluttersdk/ai). Open Source. Tailwind syntax. Flutter native. Version 1.0.0 stable.
 
 **Stack**: Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `fluttersdk_wind_diagnostics_contracts`. No `mockito`, no state management library, no router.
 
@@ -78,7 +78,7 @@ if (kDebugMode) Wind.installDebugResolver();
 
 - [Installation](https://fluttersdk.com/wind/getting-started/installation.md): pubspec add + WindTheme wrap + first className.
 - [Utility-first](https://fluttersdk.com/wind/core-concepts/utility-first.md): why className beats nested widgets.
-- [Theming](https://fluttersdk.com/wind/core-concepts/theming.md): 23 `WindThemeData` fields, override patterns.
+- [Theming](https://fluttersdk.com/wind/core-concepts/theming.md): 24 `WindThemeData` fields, override patterns.
 - [Theme binding](https://fluttersdk.com/wind/core-concepts/theme-binding.md): `WindTheme` placement, `OverlayEntry` caveat.
 - [Dark mode](https://fluttersdk.com/wind/core-concepts/dark-mode.md): `dark:` prefix, runtime toggle, system sync.
 - [Responsive design](https://fluttersdk.com/wind/core-concepts/responsive-design.md): breakpoint prefixes + `WBreakpoint` escape hatch.

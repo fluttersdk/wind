@@ -33,13 +33,13 @@
 flutter pub add fluttersdk_wind
 ```
 
-Wrap your app in `WindTheme`, then write `className` strings. The full setup walkthrough, all 22 widgets, every parser token, the 23 theme fields, and the three AI integration layers live at the [Getting Started guide](https://fluttersdk.com/wind/getting-started/installation).
+Wrap your app in `WindTheme`, then write `className` strings. The full setup walkthrough, all 22 widgets, every parser token, the 24 theme fields, and the three AI integration layers live at the [Getting Started guide](https://fluttersdk.com/wind/getting-started/installation).
 
 ## Why Wind?
 
 Do you like using Tailwind CSS to style your UIs? **This helps you do that in Flutter.**
 
-Wind is **not** a widget library. It is a utility-first styling engine that maps Tailwind-syntax `className` strings to optimized Flutter widget trees, with a 23-field theme, 19 parsers, and 22 W-prefix widgets. Flutter's structural styling produces six-widget pyramids for a rounded card with a hover state. The Flutter team itself acknowledged the [verbosity pain](https://github.com/flutter/flutter/issues/161345), ran an experimental Decorators feature, found mixed results, and shelved it. Wind closes that gap.
+Wind is **not** a widget library. It is a utility-first styling engine that maps Tailwind-syntax `className` strings to optimized Flutter widget trees, with a 24-field theme, 19 parsers, and 22 W-prefix widgets. Flutter's structural styling produces six-widget pyramids for a rounded card with a hover state. The Flutter team itself acknowledged the [verbosity pain](https://github.com/flutter/flutter/issues/161345), ran an experimental Decorators feature, found mixed results, and shelved it. Wind closes that gap.
 
 ```dart
 // Before: Flutter native (15 lines)
@@ -82,7 +82,7 @@ WDiv(
 | 🌙 | **First-class dark mode** | `dark:` prefix with runtime toggle and automatic system-brightness sync. Every color token carries its `dark:` pair in the same className. |
 | 🎯 | **State prefixes** | `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, and any custom state. Zero `MouseRegion`, zero `setState`, zero `_isHovered` booleans. |
 | 🔌 | **Platform prefixes** | `ios:`, `android:`, `web:`, `mobile:` for conditional styling without a single `if`. Works on all 6 Flutter platforms. |
-| 🎭 | **Customizable theme** | 23 configurable `WindThemeData` fields. Override every token scale: colors, spacing, typography, shadows, breakpoints, animations. Defaults match Tailwind v3 / v4. |
+| 🎭 | **Customizable theme** | 24 configurable `WindThemeData` fields. Override every token scale: colors, spacing, typography, shadows, breakpoints, animations. Defaults match Tailwind v3 / v4. Define `aliases` to create bare-token className shortcuts expanded before parsing. |
 | 📡 | **Server-driven UI** | `WDynamic` renders widget trees from JSON. Ship UI updates without ship-blocking releases. Whitelisted 13 Wind widgets + 16 Flutter core widgets. |
 | 🤖 | **AI-first** | Canonical `wind-ui` skill at `skills/wind-ui/` and a hosted MCP server at `mcp.fluttersdk.com`, distributed to 8+ agents (Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline, Roo Code) via [fluttersdk/ai](https://github.com/fluttersdk/ai). No other Flutter styling library ships this. |
 
@@ -130,7 +130,7 @@ WDiv(
 
 ## Documentation
 
-Full docs with live examples at **[fluttersdk.com/wind](https://fluttersdk.com/wind)**: every widget, every parser token, the 23 theme fields, dark mode, responsive design, server-driven UI via `WDynamic`, and the AI integration setup. The internal architecture lives in [`ARCHITECTURE.md`](ARCHITECTURE.md). The LLM-readable inventory lives in [`llms.txt`](llms.txt).
+Full docs with live examples at **[fluttersdk.com/wind](https://fluttersdk.com/wind)**: every widget, every parser token, the 24 theme fields, dark mode, responsive design, server-driven UI via `WDynamic`, and the AI integration setup. The internal architecture lives in [`ARCHITECTURE.md`](ARCHITECTURE.md). The LLM-readable inventory lives in [`llms.txt`](llms.txt).
 
 ## Contributing
 
