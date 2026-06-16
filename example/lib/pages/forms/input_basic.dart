@@ -121,12 +121,17 @@ class _InputBasicExamplePageState extends State<InputBasicExamplePage> {
               WInput(
                 enabled: false,
                 value: 'disabled value',
-                className: _inputCls,
+                className: '$_inputCls '
+                    'disabled:bg-slate-100 dark:disabled:bg-slate-900 '
+                    'disabled:text-slate-400 dark:disabled:text-slate-500 '
+                    'disabled:border-slate-200 dark:disabled:border-slate-700',
               ),
               WInput(
                 readOnly: true,
                 value: 'read-only value',
-                className: _inputCls,
+                className: '$_inputCls '
+                    'readonly:bg-slate-100 dark:readonly:bg-slate-800 '
+                    'readonly:text-slate-500 dark:readonly:text-slate-400',
               ),
             ],
           ),
