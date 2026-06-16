@@ -279,7 +279,7 @@ For most cases Pattern A is correct. Reach for B only when the form's submit is 
 
 ## 7. TextEditingController vs FormField
 
-`WFormInput` accepts both `controller: TextEditingController?` and inherits `initialValue: String?` from `FormField<String>`. They conflict at construction (pass one or the other).
+`WFormInput` accepts both `controller: TextEditingController?` and inherits `initialValue: String?` from `FormField<String>`. They conflict at construction (pass one or the other). Likewise, passing both `value:` and `controller:` on a raw `WInput` throws `AssertionError` in debug; use `value` + `onChanged` for controlled binding OR `controller` for imperative needs, never both.
 
 Pass a controller when:
 - You need to imperatively clear the field after submit: `_emailController.clear()`.
@@ -352,5 +352,5 @@ For very long forms inside a `ListView.builder` (each row is a field), pass each
 | `validator: async (v) => await check(v)` | Validator signature is sync; async returns get dropped | Use `forceErrorText` after the submit handler runs the async check |
 | `setState` after `await` without `mounted` check | Sets state on a disposed widget; runtime error | `if (!mounted) return;` before `setState` |
 | Validating range completeness via WFormDatePicker validator | Validator only sees `range.start` | Use `forceErrorText` + custom `_rangeError` state |
-| Mixing `value:` and `controller:` on the same field | They conflict | Pick one |
+| Mixing `value:` and `controller:` on the same `WInput` / `WFormInput` | Throws `AssertionError` in debug (use `value` + `onChanged` OR `controller`, not both) | Pick one |
 | Calling `_formKey.currentState!.validate()` to enable a button without rebuild | `currentState` is read at button construction; stale | Use `Form(onChanged: () => setState(() {}))` (Pattern B) |
