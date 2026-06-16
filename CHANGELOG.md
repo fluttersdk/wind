@@ -10,6 +10,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### Added
 
+- `WIcon`: inline `foregroundColor` prop for runtime-dynamic icon colors. Overrides any `text-*` / `dark:text-*` from `className` and stays out of the parser cache key, matching `WText.foregroundColor`. (#103)
 - `WInput`: debug `AssertionError` when both `value` and `controller` are supplied simultaneously; passing both was always a logic error and previously led to silent precedence behavior (controller wins). The assert surfaces the misuse immediately in debug builds (W2).
 - `WInput`: `readOnly: true` now activates a `readonly` state, so `readonly:` prefixed classes style a read-only field just like `disabled:` does for a disabled one.
 
