@@ -481,12 +481,20 @@ class _WFormInputContentState extends State<_WFormInputContent> {
       return input;
     }
 
-    // Build column with optional label, input, and bottom text
+    // Build column with optional label, input, and bottom text.
+    //
+    // The visible label is wrapped in ExcludeSemantics: its text is already the
+    // input's `semanticLabel` (see above), so without this exclusion the field's
+    // accessible name would be announced twice ("Email Address\nEmail Address").
+    // The field's Semantics node remains the single canonical name carrier that
+    // `getByLabel(...)` resolves against.
     return WDiv(
       className: 'flex flex-col',
       children: [
         if (widget.label != null)
-          WText(widget.label!, className: widget.labelClassName),
+          ExcludeSemantics(
+            child: WText(widget.label!, className: widget.labelClassName),
+          ),
         input,
         if (bottomText != null) bottomText,
       ],
