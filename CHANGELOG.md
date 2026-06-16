@@ -11,16 +11,20 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 ### Added
 
 - `WInput`: debug `AssertionError` when both `value` and `controller` are supplied simultaneously; passing both was always a logic error and previously led to silent precedence behavior (controller wins). The assert surfaces the misuse immediately in debug builds (W2).
+- `WInput`: `readOnly: true` now activates a `readonly` state, so `readonly:` prefixed classes style a read-only field just like `disabled:` does for a disabled one.
 
 ### Changed
 
 - `WInput`: selection handles are now Cupertino-style on all platforms (previously Material-style on Android/web). The context menu reads `WidgetsLocalizations` so copy/cut/paste labels work under any ancestor, including bare `WidgetsApp`. This is a visual change on Android and web; behavior is identical. Under a custom root with no `Overlay` ancestor (unusual; `MaterialApp` / `CupertinoApp` / `WidgetsApp` all provide one), typing, cursor movement, and focus still work, but the long-press selection toolbar and handles are suppressed instead of throwing.
 - `doc/layout/flexbox.md` and the `wind-ui` skill: layout-stability guidance added for `IntrinsicHeight`/`IntrinsicWidth` in animated subtrees; the safe alternative is `Stack`+`Positioned` or `items-stretch` (W3).
+- `WInput`: `InputType.number` now restricts input to a signed decimal (digits, one decimal point, optional leading minus) on every platform via a default formatter, so it is numeric on web too, where the keyboard type alone enforces nothing. A caller-supplied `inputFormatters` overrides this default. The number keyboard is now `numberWithOptions(decimal: true, signed: true)`.
 
 ### Fixed
 
 - `WInput` now renders Material-free (`EditableText` core, `BoxDecoration` border/padding) and no longer crashes under a non-Material ancestor such as a bare `WidgetsApp` or Cupertino app. Wrapping `WInput` in a `MaterialApp` is no longer required. (#102)
 - `WInput` emits a single clean `textField` semantics node; the previous implementation produced a double-textbox node under the old `MergeSemantics > TextField` wrapping (W1). Dusk snapshot consumers relying on a single textbox node per `WInput` can expect clean output from this release (pairs with dusk D2).
+- `WFormInput`, `WFormSelect`, `WFormCheckbox`, and `WFormDatePicker`: the default label, hint, and error class names now carry `dark:` pairs (`text-gray-700 dark:text-gray-300`, `text-gray-500 dark:text-gray-400`, `text-red-500 dark:text-red-400`), so labels and hints stay legible in dark mode instead of rendering dark-on-dark.
+- `WInput`: a conditional `prefix`/`suffix` (for example a clear button that appears once the field has text) no longer drops focus on the first keystroke, and an appearing suffix no longer grows the field height; the placeholder also shares the input strut so the box height stays constant between empty and filled.
 
 ---
 

@@ -84,7 +84,7 @@ const WInput({
 | `placeholderClassName` | `String?` | `null` | Utility classes for styling the hint text |
 | `value` | `String?` | `null` | The controlled value of the input |
 | `onChanged` | `ValueChanged<String>?` | `null` | Callback when text changes |
-| `type` | `InputType` | `InputType.text` | Input keyboard and behavior (`text`, `password`, `email`, `number`, `multiline`) |
+| `type` | `InputType` | `InputType.text` | Input keyboard and behavior (`text`, `password`, `email`, `number`, `multiline`). `number` restricts input to a signed decimal on every platform (web included); pass `inputFormatters` to override. |
 | `placeholder` | `String?` | `null` | Hint text shown when input is empty |
 | `enabled` | `bool` | `true` | Whether the input is interactive |
 | `readOnly` | `bool` | `false` | Whether the input is read-only |
@@ -145,7 +145,7 @@ WInput(
 <a name="state-variants"></a>
 ## State Variants
 
-Wind automatically manages `focus:` and `disabled:` states. You can also trigger custom states like `error:` by passing them to the `states` property.
+Wind automatically manages `focus:`, `disabled:` (when `enabled: false`), and `readonly:` (when `readOnly: true`) states. You can also trigger custom states like `error:` by passing them to the `states` property.
 
 ```dart
 WInput(
