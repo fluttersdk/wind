@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'parsers/background_parser.dart';
@@ -20,6 +21,7 @@ import 'parsers/transition_parser.dart';
 import 'parsers/ring_parser.dart';
 import 'parsers/svg_parser.dart';
 import 'parsers/animation_parser.dart';
+import 'alias_expander.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
 
@@ -78,6 +80,12 @@ class WindParser {
   /// Cache for parsed styles
   static final Map<String, WindStyle> _styleCache = {};
 
+  /// Alias keys already warned about this session (debug-only).
+  ///
+  /// Both shadow warnings and cycle/cap warnings dedup through this set so a
+  /// repeated render of the same offending className logs once, not per frame.
+  static final Set<String> _warnedAliases = {};
+
   /// Map of property names to their respective parsers
   static final Map<String, WindParserInterface> _parserMap = {
     'background': const BackgroundParser(),
@@ -108,6 +116,7 @@ class WindParser {
   /// invalidated per unique context, so manual clearing is rarely needed.
   static void clearCache() {
     _styleCache.clear();
+    _warnedAliases.clear();
   }
 
   /// Number of entries currently held in the style cache.
@@ -147,7 +156,26 @@ class WindParser {
     Set<String>? states,
   }) {
     final windContext = WindContext.build(context, states: states);
-    final cacheKey = windContext.cacheKey(className);
+
+    // Expand user-defined aliases BEFORE the cache key is computed so the key
+    // reflects the resolved tokens: two themes whose alias maps differ for the
+    // same raw className produce distinct keys, and every W-widget plus
+    // WDynamic shares this central expansion. The expander returns the input
+    // unchanged when no aliases are configured, so the hot path is untouched.
+    final aliases = windContext.theme.aliases;
+    final expanded = expandAliases(
+      className,
+      aliases,
+      // The pure expander stays Flutter-free; the kDebugMode gate and the
+      // warn-once dedup live here, in the caller.
+      onWarn: kDebugMode ? (message) => _warnAlias(className, message) : null,
+    );
+
+    if (kDebugMode) {
+      _warnOnShadowedAliases(aliases);
+    }
+
+    final cacheKey = windContext.cacheKey(expanded);
 
     // Cache key is composed from windContext + className only; it does NOT
     // include baseStyle. Reading from or writing into the cache when a caller
@@ -159,7 +187,39 @@ class WindParser {
       return _styleCache[cacheKey]!;
     }
 
-    return _parseAndCache(className, windContext, cacheKey, baseStyle);
+    return _parseAndCache(expanded, windContext, cacheKey, baseStyle);
+  }
+
+  /// Emits a debug-only cycle/cap warning, deduped per session.
+  ///
+  /// Keyed by the offending [className] so a repeated render of the same input
+  /// logs once. The diagnostic [message] comes from the alias expander.
+  static void _warnAlias(String className, String message) {
+    if (_warnedAliases.add('cycle:$className')) {
+      debugPrint(message);
+    }
+  }
+
+  /// Emits a debug-only warning for any alias key that shadows a built-in
+  /// token, deduped per session.
+  ///
+  /// An alias whose key a real parser would `canParse` makes that built-in
+  /// token unreachable, so the developer is told once. This walks the alias map
+  /// against every parser and is gated behind `kDebugMode` at the call site, so
+  /// release builds never run it.
+  static void _warnOnShadowedAliases(Map<String, String> aliases) {
+    for (final key in aliases.keys) {
+      if (!_warnedAliases.add('shadow:$key')) continue;
+
+      final shadowsBuiltIn =
+          _parserMap.values.any((parser) => parser.canParse(key));
+      if (shadowsBuiltIn) {
+        debugPrint(
+          "Wind alias '$key' shadows a built-in token; "
+          'the built-in is now unreachable.',
+        );
+      }
+    }
   }
 
   /// Internal method to parse and cache the style.
