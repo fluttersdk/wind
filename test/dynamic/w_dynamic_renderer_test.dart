@@ -21,6 +21,7 @@ void main() {
     late WDynamicRenderer renderer;
 
     setUp(() {
+      WindParser.clearCache();
       state = WDynamicState();
       actionHandler = WActionHandler(actions: {}, state: state);
       config = const WDynamicConfig();
@@ -323,7 +324,7 @@ void main() {
         await tester.pumpWidget(wrapWithTheme(customRenderer.build(json)));
 
         // Enter text
-        await tester.enterText(find.byType(TextField), 'test@example.com');
+        await tester.enterText(find.byType(EditableText), 'test@example.com');
         await tester.pump();
 
         // Check state was updated
@@ -1434,7 +1435,7 @@ void main() {
           ),
         );
 
-        await tester.enterText(find.byType(TextField), 'Anilcan');
+        await tester.enterText(find.byType(EditableText), 'Anilcan');
         await tester.pump();
 
         expect(capturedState.get('name'), 'Anilcan');
@@ -1502,7 +1503,7 @@ void main() {
           ),
         );
 
-        await tester.enterText(find.byType(TextField), 'a@b.co');
+        await tester.enterText(find.byType(EditableText), 'a@b.co');
         await tester.pump();
 
         expect(captured, isNotNull);
