@@ -250,7 +250,7 @@ class WFormInput extends FormField<String> {
 
   /// Tailwind-like utility classes for styling the error message.
   ///
-  /// Defaults to `'text-red-500 text-xs mt-1'`.
+  /// Defaults to `'text-red-500 dark:text-red-400 text-xs mt-1'`.
   final String errorClassName;
 
   /// Optional label text displayed above the input.
@@ -266,7 +266,7 @@ class WFormInput extends FormField<String> {
 
   /// Tailwind-like utility classes for styling the label.
   ///
-  /// Defaults to `'text-sm font-medium text-gray-700 mb-1'`.
+  /// Defaults to `'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'`.
   final String labelClassName;
 
   /// Optional hint text displayed below the input.
@@ -284,7 +284,7 @@ class WFormInput extends FormField<String> {
 
   /// Tailwind-like utility classes for styling the hint.
   ///
-  /// Defaults to `'text-gray-500 text-xs mt-1'`.
+  /// Defaults to `'text-gray-500 dark:text-gray-400 text-xs mt-1'`.
   final String hintClassName;
 
   /// Widget to display before the input field (e.g., icon).
