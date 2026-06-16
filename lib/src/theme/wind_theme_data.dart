@@ -161,6 +161,9 @@ class WindThemeData {
   /// A map of animation class names to animation types.
   final Map<String, WindAnimationType> animations;
 
+  /// User-defined className shortcut aliases; expanded before parsing. See WindParser alias expansion.
+  final Map<String, String> aliases;
+
   /// Creates a new [WindThemeData] instance.
   ///
   /// If [colors] or [screens] are not provided, they will default
@@ -189,6 +192,7 @@ class WindThemeData {
     Map<String, Duration>? transitionDurations,
     Map<String, Curve>? transitionCurves,
     Map<String, WindAnimationType>? animations,
+    Map<String, String>? aliases,
   })  : colors = (Map<String, MaterialColor>.from(_initColors())
           ..addAll(colors ?? {})),
         fontSizes = (Map<String, double>.from(default_font_sizes.fontSizes)
@@ -233,7 +237,8 @@ class WindThemeData {
         )..addAll(transitionCurves ?? {})),
         animations = (Map<String, WindAnimationType>.from(
           default_animations.animations,
-        )..addAll(animations ?? {}));
+        )..addAll(animations ?? {})),
+        aliases = Map<String, String>.from(aliases ?? const {});
 
   /// Initializes the default colors from the predefined color map.
   ///
@@ -342,6 +347,7 @@ class WindThemeData {
     Map<String, Duration>? transitionDurations,
     Map<String, Curve>? transitionCurves,
     Map<String, WindAnimationType>? animations,
+    Map<String, String>? aliases,
   }) {
     return WindThemeData(
       brightness: brightness ?? this.brightness,
@@ -404,6 +410,9 @@ class WindThemeData {
       animations: animations != null
           ? (Map.from(this.animations)..addAll(animations))
           : this.animations,
+      aliases: aliases != null
+          ? (Map.from(this.aliases)..addAll(aliases))
+          : this.aliases,
     );
   }
 
@@ -508,7 +517,8 @@ class WindThemeData {
         mapEquals(other.shadows, shadows) &&
         mapEquals(other.transitionDurations, transitionDurations) &&
         mapEquals(other.transitionCurves, transitionCurves) &&
-        mapEquals(other.animations, animations);
+        mapEquals(other.animations, animations) &&
+        mapEquals(other.aliases, aliases);
   }
 
   // hashCode is composed from the scalar fields only. The map fields are

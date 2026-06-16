@@ -14,7 +14,7 @@ lib/src/
 │   └── parsers/              # 19 domain parsers (see .claude/rules/parsers.md)
 ├── theme/
 │   ├── wind_theme.dart       # WindTheme StatefulWidget + WindThemeController
-│   ├── wind_theme_data.dart  # 23 configurable fields; merges with defaults/
+│   ├── wind_theme_data.dart  # 24 configurable fields; merges with defaults/
 │   └── defaults/             # 16 default token scales
 ├── dynamic/          # WDynamic JSON renderer (see .claude/rules/dynamic.md)
 ├── state/            # WindAnchorStateProvider (hover/focus/press via InheritedWidget)
@@ -48,7 +48,7 @@ Wrap the app once at the top:
 
 ```dart
 WindTheme(
-  data: WindThemeData(/* 23 fields, all optional, merged with defaults */),
+  data: WindThemeData(/* 24 fields, all optional, merged with defaults */),
   builder: (context, controller) => MaterialApp(
     theme: controller.toThemeData(),
     home: ...,

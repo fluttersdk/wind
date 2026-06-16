@@ -3,10 +3,10 @@ name: wind-ui
 description: "fluttersdk_wind 1.0: utility-first Flutter styling with Tailwind-syntax className strings. 22 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper + 5 WForm* wrappers) consume className through a 19-parser pipeline (19 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, or migrating a Tailwind className from web. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.3.0
+version: 2.4.0
 ---
 
-<!-- fluttersdk_wind 1.0.x | Skill v2.3.0 (2026-06-16) -->
+<!-- fluttersdk_wind 1.0.x | Skill v2.4.0 (2026-06-17) -->
 
 # Wind UI 1.0
 
@@ -394,7 +394,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WindTheme(
-      data: WindThemeData(/* 23 optional fields; defaults applied otherwise */),
+      data: WindThemeData(/* 24 optional fields; defaults applied otherwise */),
       builder: (context, controller) => MaterialApp(
         theme: controller.toThemeData(),
         home: const Scaffold(body: HomePage()),
@@ -405,6 +405,8 @@ class MyApp extends StatelessWidget {
 ```
 
 Brightness syncs with the OS by default. Toggle manually via `context.windTheme.toggleTheme()` (disables auto-sync). Reset to OS via `context.windTheme.resetToSystem()`. Read brightness from `context.windIsDark`. Full theme customization (custom color palettes, custom breakpoints, custom font families, `baseSpacingUnit` for non-4 px spacing scale): `${CLAUDE_SKILL_DIR}/references/theme.md`.
+
+`WindThemeData.aliases` (`Map<String, String>`, empty by default) maps bare-token shorthand keys to full className strings (for example `{'btn-primary': 'bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg'}`). Keys must be bare tokens (no prefix, no colon). Expansion is recursive (an alias may expand to another alias), alias wins over a real token of the same name (debug warning on shadow), and expansion happens centrally in `WindParser.parse` before any parser runs, so aliases work in every widget and in `WDynamic` without additional wiring.
 
 `Wind.installDebugResolver()` is one-time setup inside `kDebugMode`. Idempotent; tree-shaken in release. Do NOT add it on every UI change — it belongs in `main.dart` only.
 

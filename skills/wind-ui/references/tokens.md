@@ -47,6 +47,8 @@ Inline color escape hatches that bypass the cache key:
 - `WText(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
 - `WIcon(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
 
+`WindThemeData.aliases` shorthand expansion: if the active theme has `aliases` set, `WindParser.parse` expands matching bare tokens to their full className strings before the 19-parser pipeline runs. Aliases are not tokens themselves and do not appear in the catalog below; they are transparent to every parser. See `references/theme.md` and `references/tailwind-divergence.md` for details.
+
 ---
 
 ## 2. Layout (flexbox + grid + display)

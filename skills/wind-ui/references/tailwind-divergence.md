@@ -178,6 +178,9 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 ### SVG fill preservation
 - `preserve-colors` — disables Wind's color filter; renders embedded SVG colors unchanged (QR codes, logos, multi-color illustrations)
 
+### className aliases (runtime shorthand expansion)
+- `WindThemeData.aliases` (`Map<String, String>`) maps bare-token keys to className strings, expanded recursively by `WindParser.parse` before any parser runs. Closest Tailwind analogue: `@layer components` / UnoCSS shortcuts; unlike those, there is no CSS cascade and expansion is a pure string substitution at runtime. Keys are bare tokens only (no prefix, no colon). An alias that shadows a real token wins and emits a debug warning. Empty by default; works in every widget and in `WDynamic` without additional wiring.
+
 ### Debug instrumentation
 - `debug` token — triggers `WindLogger` to log composition tree + final styles
 - `Wind.installDebugResolver()` (Dart API) — exposes 7 fields per widget to external tooling

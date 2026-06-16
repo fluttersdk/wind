@@ -9,6 +9,7 @@
 - [Spacing and Sizing](#spacing-and-sizing)
 - [Borders and Shadows](#borders-and-shadows)
 - [Customizing Defaults](#customizing-defaults)
+- [Aliases](#aliases)
 - [Quick Reference](#quick-reference)
 
 <x-preview path="core-concepts/theming_example" size="md" source="example/lib/pages/core-concepts/theming_example.dart"></x-preview>
@@ -197,10 +198,46 @@ final darkTheme = myDefaultTheme.copyWith(
 );
 ```
 
+<a name="aliases"></a>
+## Aliases
+
+`WindThemeData(aliases: {...})` lets you define short, bare-token names that expand to full utility strings before parsing. Every `W` widget resolves aliases centrally, so a class name like `row` becomes `flex flex-row` everywhere without any per-widget wiring.
+
+```dart
+WindThemeData(
+  aliases: {
+    'row':   'flex flex-row',
+    'col':   'flex flex-col',
+    'center': 'items-center justify-center',
+    'row-c': 'row center',      // recursive: expands 'row' and 'center' first
+  },
+)
+```
+
+With this configuration, the following `className` values are equivalent:
+
+```dart
+// Before aliases
+WDiv(className: 'flex flex-row items-center justify-center bg-white dark:bg-gray-800')
+
+// After aliases
+WDiv(className: 'row-c bg-white dark:bg-gray-800')
+```
+
+**How expansion works:**
+
+- Only bare, unprefixed tokens are matched. `md:row` is **not** expanded; only a standalone `row` token qualifies.
+- Expansion is recursive: an alias value may reference other aliases. The expander resolves all aliases before handing the result to the parser.
+- Aliases are empty by default (`{}`). The feature is purely opt-in: a `WindThemeData` without an `aliases` key behaves identically to today.
+- If an alias key shadows a built-in token (for example, `'flex': 'flex flex-row'`), the alias wins and Wind emits a debug-mode warning so you can rename before shipping.
+
+> [!NOTE]
+> Alias keys must be plain strings with no colons or slashes. Prefix variants such as `hover:row` or `md:col` are not expanded.
+
 <a name="quick-reference"></a>
 ## Quick Reference
 
-`WindThemeData` exposes 23 configurable fields. The table below groups them by concern.
+`WindThemeData` exposes 24 configurable fields. The table below groups them by concern.
 
 ### Mode and Behavior
 
@@ -233,6 +270,7 @@ final darkTheme = myDefaultTheme.copyWith(
 | `transitionDurations` | `Map<String, Duration>` | Duration scale (`duration-200`, etc.) |
 | `transitionCurves` | `Map<String, Curve>` | Easing scale (`ease-in-out`, etc.) |
 | `animations` | `Map<String, WindAnimationType>` | Animation types (`animate-spin`, etc.) |
+| `aliases` | `Map<String, String>` | Bare-token shorthands that expand (recursively) before parsing. Default `{}`. See [Aliases](#aliases). |
 
 ### Ring (Focus) Effects
 

@@ -13,7 +13,7 @@ class ThemingExamplePage extends StatelessWidget {
     return ExampleScaffold(
       title: 'Theme Configuration',
       description:
-          'WindThemeData drives every utility. Override any of 23 fields; unset ones inherit the Tailwind-equivalent defaults.',
+          'WindThemeData drives every utility. Override any of 24 fields; unset ones inherit the Tailwind-equivalent defaults.',
       gradient: 'from-emerald-500 to-teal-600',
       children: [
         ExampleSection(
@@ -40,6 +40,7 @@ class ThemingExamplePage extends StatelessWidget {
         const _TypographyScaleSection(),
         const _BorderRadiusSection(),
         const _ShadowScaleSection(),
+        const _AliasesSection(),
         ExampleSection(
           title: 'Theme Change Callbacks',
           description:
@@ -301,6 +302,115 @@ class _ShadowScaleSection extends StatelessWidget {
             ],
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+class _AliasesSection extends StatelessWidget {
+  const _AliasesSection();
+
+  @override
+  Widget build(BuildContext context) {
+    const aliasMap = {
+      'row': 'flex flex-row',
+      'col': 'flex flex-col',
+      'center': 'items-center justify-center',
+    };
+
+    return ExampleSection(
+      title: 'Aliases',
+      description:
+          'Map shorthand tokens to full class strings via WindThemeData(aliases: {...}). '
+          'The alias is expanded recursively before parsing, so "row center gap-2" and '
+          '"flex flex-row items-center justify-center gap-2" produce identical layout.',
+      child: WindTheme(
+        data: WindThemeData(aliases: aliasMap),
+        child: WDiv(
+          className: 'flex flex-col gap-4',
+          children: [
+            WDiv(
+              className: 'flex flex-col gap-2',
+              children: [
+                WText(
+                  'Alias form',
+                  className: 'text-xs font-semibold uppercase tracking-wide '
+                      'text-slate-500 dark:text-slate-400',
+                ),
+                WDiv(
+                  className: 'p-3 rounded-lg bg-slate-100 dark:bg-slate-800',
+                  child: WDiv(
+                    className: 'row center gap-2',
+                    children: [
+                      WDiv(
+                        className: 'w-8 h-8 rounded bg-emerald-500',
+                      ),
+                      WDiv(
+                        className: 'w-8 h-8 rounded bg-teal-500',
+                      ),
+                      WDiv(
+                        className: 'w-8 h-8 rounded bg-cyan-500',
+                      ),
+                      WText(
+                        'row center gap-2',
+                        className:
+                            'text-xs font-mono text-slate-600 dark:text-slate-300',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            WDiv(
+              className: 'flex flex-col gap-2',
+              children: [
+                WText(
+                  'Expanded form (identical output)',
+                  className: 'text-xs font-semibold uppercase tracking-wide '
+                      'text-slate-500 dark:text-slate-400',
+                ),
+                WDiv(
+                  className: 'p-3 rounded-lg bg-slate-100 dark:bg-slate-800',
+                  child: WDiv(
+                    className:
+                        'flex flex-row items-center justify-center gap-2',
+                    children: [
+                      WDiv(
+                        className: 'w-8 h-8 rounded bg-emerald-500',
+                      ),
+                      WDiv(
+                        className: 'w-8 h-8 rounded bg-teal-500',
+                      ),
+                      WDiv(
+                        className: 'w-8 h-8 rounded bg-cyan-500',
+                      ),
+                      WText(
+                        'flex flex-row items-center justify-center gap-2',
+                        className:
+                            'text-xs font-mono text-slate-600 dark:text-slate-300',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            _CodeBlock(
+              code: 'WindTheme(\n'
+                  '  data: WindThemeData(\n'
+                  '    aliases: {\n'
+                  "      'row': 'flex flex-row',\n"
+                  "      'col': 'flex flex-col',\n"
+                  "      'center': 'items-center justify-center',\n"
+                  '    },\n'
+                  '  ),\n'
+                  '  child: WDiv(\n'
+                  "    className: 'row center gap-2',\n"
+                  '    children: [...],\n'
+                  '  ),\n'
+                  ')',
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -58,7 +58,7 @@ When source under `lib/` changes, the agent updates each of these in the same ch
 
 - Update only when the change is overview-worthy: a new widget added to the public roster, a new top-level feature (theme field, parser token family, integration entry point), a public API addition or removal.
 - Internal refactors, test additions, doc fixes, dependency tweaks: NO README update needed — the noise harms more than the precision helps.
-- Acceptance: README's "What you get" / "The Wind Surface" sections reflect the v1 roster (22 widgets, 19 parsers, 23 theme fields) accurately.
+- Acceptance: README's "What you get" / "The Wind Surface" sections reflect the v1 roster (22 widgets, 19 parsers, 24 theme fields) accurately.
 
 **One change set, all five surfaces.** Do not split "code now, docs later" — the next session loses context and the docs rot.
 
