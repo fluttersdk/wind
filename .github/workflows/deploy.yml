@@ -192,3 +192,34 @@ jobs:
             -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts -r \
             demo-build/. \
             "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+
+      # Drop Cloudflare's edge copies of the demo's stable-named entry files.
+      # nginx serves them immutable (max-age=315360000) and Flutter keeps the
+      # same filenames across builds, so the edge would otherwise pin returning
+      # visitors to the previous build until the next ?v=<hash> reference lands.
+      # Targeted file purge (not purge_everything) so the rest of the
+      # fluttersdk.com zone is untouched. Skips cleanly when no token is set.
+      - name: Purge Cloudflare edge cache
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID || '478745d343e7c481b65a3d904ba69553' }}
+        run: |
+          if [ -z "$CF_API_TOKEN" ]; then
+            echo "Cloudflare purge skipped: CLOUDFLARE_API_TOKEN secret not set."
+            exit 0
+          fi
+          curl -fsS -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data '{"files":[
+              "https://wind-demo.fluttersdk.com/",
+              "https://wind-demo.fluttersdk.com/index.html",
+              "https://wind-demo.fluttersdk.com/flutter_bootstrap.js",
+              "https://wind-demo.fluttersdk.com/main.dart.js",
+              "https://wind-demo.fluttersdk.com/flutter.js",
+              "https://wind-demo.fluttersdk.com/flutter_service_worker.js",
+              "https://wind-demo.fluttersdk.com/manifest.json",
+              "https://wind-demo.fluttersdk.com/version.json"
+            ]}'
+          echo "Cloudflare edge cache purged for wind-demo entry files."
