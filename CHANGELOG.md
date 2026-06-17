@@ -8,6 +8,8 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-17
+
 ### Added
 
 - `WindThemeData.aliases` (`Map<String, String>`, empty by default): bare-token recursive className shortcuts expanded centrally in `WindParser.parse` before the 19-parser pipeline runs, so they work in every widget and in `WDynamic` without additional wiring. An alias that shadows a real token wins and emits a debug warning. Expansion is bounded three ways (per-chain cycle guard, depth cap, and a total-output-token budget) so a cyclic or fan-out alias map can never hang the parse. Resolves the `#101` class of silent unknown-token failures caused by shorthand tokens not being in the default token catalog. (#104)
@@ -29,6 +31,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - `WInput`: a conditional `prefix`/`suffix` (for example a clear button that appears once the field has text) no longer drops focus on the first keystroke, and an appearing suffix no longer grows the field height; the placeholder also shares the input strut so the box height stays constant between empty and filled.
 - `WInput`: `enabled: false` is now fully non-interactive again, the field cannot be tapped, focused, or expose selection handles/toolbar (the Material-free backend would otherwise still react to taps on the text).
 - `WInput`: a disabled field again reports `isEnabled: false` to assistive technology through its `Semantics` node. The Material-free rewrite had dropped the flag (the `EditableText` node carries only `isReadOnly`), so a screen reader could not tell a disabled field from a read-only one; the 1.0.0 Material `TextField` exposed it and parity is restored.
+
+### Quality
+
+- CI: pushing a version tag (`X.Y.Z`) now auto-creates a GitHub Release from the matching `CHANGELOG.md` section via `.github/workflows/publish.yml`, alongside the existing pub.dev publish step. (#105)
 
 ---
 
@@ -116,5 +122,6 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/fluttersdk/wind/releases/tag/1.1.0
 [1.0.0]: https://github.com/fluttersdk/wind/releases/tag/1.0.0
