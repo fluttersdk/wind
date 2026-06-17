@@ -130,7 +130,7 @@ WDiv(
 
 ## Documentation
 
-Full docs with live examples at **[fluttersdk.com/wind](https://fluttersdk.com/wind)**: every widget, every parser token, the 24 theme fields, dark mode, responsive design, server-driven UI via `WDynamic`, and the AI integration setup. The internal architecture lives in [`ARCHITECTURE.md`](ARCHITECTURE.md). The LLM-readable inventory lives in [`llms.txt`](llms.txt).
+Full docs with live examples at **[fluttersdk.com/wind](https://fluttersdk.com/wind)**: every widget, every parser token, the 24 theme fields, dark mode, responsive design, server-driven UI via `WDynamic`, and the AI integration setup. Upgrading from an earlier release? See the [Upgrade Guide](doc/getting-started/upgrade-guide.md). The internal architecture lives in [`ARCHITECTURE.md`](ARCHITECTURE.md). The LLM-readable inventory lives in [`llms.txt`](llms.txt).
 
 ## Contributing
 
