@@ -94,7 +94,7 @@ jobs:
           else
             BASE="${{ github.event.before }}"
           fi
-          if git diff --name-only "$BASE" HEAD 2>/dev/null | grep -qE '^(lib|example|web)/|^pubspec\.(yaml|lock)$'; then
+          if git diff --name-only "$BASE" HEAD 2>/dev/null | grep -qE '^(lib|example|web|tool)/|^pubspec\.(yaml|lock)$|^\.github/workflows/deploy\.yml$'; then
             echo "demo=true" >> "$GITHUB_OUTPUT"
             echo "demo-affecting changes detected"
           else
@@ -125,9 +125,19 @@ jobs:
         working-directory: example
         # --no-tree-shake-icons keeps the full MaterialIcons-Regular.otf
         # (~340KB vs 17KB tree-shaken). The shaker can't see through WIcon's
-        # `IconData icon` parameter indirection — almost every Icons.* glyph
-        # gets stripped from the production bundle, rendering empty squares.
-        run: flutter build web --release --target lib/main.dart --base-href / --no-tree-shake-icons
+        # `IconData icon` parameter indirection (almost every Icons.* glyph
+        # gets stripped from the production bundle, rendering empty squares).
+        #
+        # --pwa-strategy=none drops Flutter's service worker. The CloudPanel
+        # nginx vhost serves .js immutable (max-age=315360000) behind
+        # Cloudflare, and Flutter's entry files (flutter_bootstrap.js,
+        # main.dart.js) keep the same names across builds, so an SW plus an
+        # immutable edge copy together pin returning visitors to the previous
+        # build. With the SW gone, the stamp step below appends ?v=<hash> so
+        # every layer (browser, nginx, Cloudflare) sees a fresh cache key.
+        run: |
+          flutter build web --release --target lib/main.dart --base-href / --no-tree-shake-icons --pwa-strategy=none
+          ../tool/stamp-demo-cache-bust.sh build/web
 
       - name: Upload Demo artifact
         uses: actions/upload-artifact@v7
