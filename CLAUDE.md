@@ -3,7 +3,7 @@
 Utility-first Flutter styling. Translates Tailwind-syntax `className` strings into Flutter widget trees through a modular parsing pipeline.
 
 **Stack:** Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `fluttersdk_wind_diagnostics_contracts`. No `mockito`, no state management library, no router.
-**Branch:** `master` is the active 1.0.x stable line (formerly `v1`). The legacy v0 line lives on the `v0` branch.
+**Branch:** `master` is the active 1.x stable line (formerly `v1`). The legacy v0 line lives on the `v0` branch.
 
 For architecture / internals, see [ARCHITECTURE.md](ARCHITECTURE.md).
 For the user-facing surface, see [README.md](README.md).

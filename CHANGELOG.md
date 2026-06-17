@@ -8,6 +8,8 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-17
+
 ### Added
 
 - `WindThemeData.aliases` (`Map<String, String>`, empty by default): bare-token recursive className shortcuts expanded centrally in `WindParser.parse` before the 19-parser pipeline runs, so they work in every widget and in `WDynamic` without additional wiring. An alias that shadows a real token wins and emits a debug warning. Expansion is bounded three ways (per-chain cycle guard, depth cap, and a total-output-token budget) so a cyclic or fan-out alias map can never hang the parse. Resolves the `#101` class of silent unknown-token failures caused by shorthand tokens not being in the default token catalog. (#104)
@@ -116,5 +118,6 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/fluttersdk/wind/releases/tag/1.1.0
 [1.0.0]: https://github.com/fluttersdk/wind/releases/tag/1.0.0
