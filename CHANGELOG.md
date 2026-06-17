@@ -32,6 +32,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - `WInput`: `enabled: false` is now fully non-interactive again, the field cannot be tapped, focused, or expose selection handles/toolbar (the Material-free backend would otherwise still react to taps on the text).
 - `WInput`: a disabled field again reports `isEnabled: false` to assistive technology through its `Semantics` node. The Material-free rewrite had dropped the flag (the `EditableText` node carries only `isReadOnly`), so a screen reader could not tell a disabled field from a read-only one; the 1.0.0 Material `TextField` exposed it and parity is restored.
 
+### Quality
+
+- CI: pushing a version tag (`X.Y.Z`) now auto-creates a GitHub Release from the matching `CHANGELOG.md` section via `.github/workflows/publish.yml`, alongside the existing pub.dev publish step. (#105)
+
 ---
 
 ## [1.0.0] - 2026-06-09
