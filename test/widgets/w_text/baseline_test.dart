@@ -179,5 +179,47 @@ void main() {
         },
       );
     });
+
+    group('inherits an ancestor color (CSS cascade)', () {
+      testWidgets(
+        'colorless WText inherits an ancestor DefaultTextStyle color over the '
+        'platform baseline',
+        (tester) async {
+          // A parent WDiv with a `text-*` class publishes its color through a
+          // DefaultTextStyle.merge; a colorless WText must inherit it exactly
+          // like CSS text-color cascades. The platform here is dark, which the
+          // old baseline would have forced to white, hiding the text whenever
+          // the app theme disagreed with the OS theme.
+          const ancestorColor = Color(0xFF00AA55);
+          await tester.pumpWidget(
+            MediaQuery(
+              data: const MediaQueryData(platformBrightness: Brightness.dark),
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: WindTheme(
+                  data: WindThemeData(),
+                  child: const DefaultTextStyle(
+                    style: TextStyle(color: ancestorColor),
+                    child: WText('x'),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          final Text textWidget = tester.widget(find.byType(Text));
+          final BuildContext ctx = tester.element(find.byType(Text));
+          final TextStyle effective = DefaultTextStyle.of(ctx).style.merge(
+                textWidget.style,
+              );
+          expect(
+            effective.color,
+            ancestorColor,
+            reason: 'A colorless WText must inherit the ancestor color, not '
+                'the platform-brightness baseline.',
+          );
+        },
+      );
+    });
   });
 }
