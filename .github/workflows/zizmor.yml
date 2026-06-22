@@ -22,7 +22,7 @@ jobs:
           persist-credentials: false
 
       - id: zizmor
-        uses: zizmorcore/zizmor-action@v0.5.6
+        uses: zizmorcore/zizmor-action@v0.5.7
 
       - uses: github/codeql-action/upload-sarif@v4
         with:
