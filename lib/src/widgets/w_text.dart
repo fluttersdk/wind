@@ -178,13 +178,22 @@ class WText extends StatelessWidget {
       finalTextStyle = finalTextStyle.copyWith(color: foregroundColor);
     }
 
-    // Baseline color guarantee: when no color was resolved from className,
-    // foregroundColor, or textStyle, apply a neutral fallback so the widget
-    // does not inherit Flutter's debug yellow-underline appearance when there
-    // is no Material ancestor above us. The fallback follows the ambient
-    // platform brightness (white on dark, black on light) so bare text stays
-    // legible in both modes. Explicitly supplied colors always win.
-    if (finalTextStyle.color == null) {
+    // Color resolution when className, foregroundColor, and textStyle leave
+    // the color unset, in CSS-cascade order:
+    //   1. Inherit an ancestor DefaultTextStyle color when one exists. A parent
+    //      `WDiv` with a `text-*` class publishes one (via DefaultTextStyle.merge),
+    //      and so does a Material ancestor. Leaving the color null lets Flutter's
+    //      Text merge that ancestor color, exactly like text color cascades in CSS.
+    //      Without this, a colorless WText inside a styled container (e.g. a
+    //      secondary button whose text color lives on the container) was painted
+    //      with the platform-brightness fallback instead of the container color,
+    //      so it vanished whenever the app theme disagreed with the OS theme.
+    //   2. Only when no ancestor supplies a color (bare text with no Material
+    //      ancestor, which would otherwise render Flutter's debug yellow
+    //      underline) fall back to a brightness-aware neutral so the text stays
+    //      legible. Explicitly supplied colors always win.
+    if (finalTextStyle.color == null &&
+        DefaultTextStyle.of(context).style.color == null) {
       final isDark =
           MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
       finalTextStyle = finalTextStyle.copyWith(

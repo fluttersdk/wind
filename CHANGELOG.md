@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- `WText` with no color in its own `className` now inherits an ancestor `DefaultTextStyle` color (the CSS text-color cascade) before falling back to the platform-brightness baseline. A parent `WDiv` with a `text-*` class publishes its color through `DefaultTextStyle.merge`, but `WText` previously ignored it and forced `Colors.white`/`Colors.black` from the OS platform brightness. That made colorless text vanish whenever the app theme disagreed with the OS theme: a secondary/outline button whose text color lives on the container (e.g. a dialog Cancel button) rendered an invisible label in a light app theme on a dark-mode OS. The brightness-aware baseline still applies only when no ancestor supplies a color (bare text with no Material ancestor), preserving the no-yellow-underline guarantee. (`lib/src/widgets/w_text.dart`; covered by `WText baseline rendering > inherits an ancestor color (CSS cascade)`.)
+
 ## [1.1.0] - 2026-06-17
 
 ### Added
