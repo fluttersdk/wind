@@ -1,17 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
-// Material is imported for two platform-adaptive selection-handle CONSTANTS
-// only: `materialTextSelectionHandleControls` and
-// `desktopTextSelectionHandleControls` live in material.dart (their Cupertino
-// peers live in cupertino.dart). WInput remains Material-free: no Material
-// widget, Theme.of, or MaterialLocalizations is used; these constants mix in
-// `TextSelectionHandleControls`, so they paint handles without a Material
-// ancestor and route the toolbar through `contextMenuBuilder` instead of
-// `buildToolbar`.
-import 'package:flutter/material.dart'
-    show
-        desktopTextSelectionHandleControls,
-        materialTextSelectionHandleControls;
 import 'package:flutter/services.dart';
 
 import '../parser/wind_parser.dart';
@@ -558,14 +546,16 @@ class _WInputState extends State<WInput>
       rendererIgnoresPointer: true,
       // Selection UI needs an Overlay to host its toolbar/handles, and a
       // disabled field must expose none of it (a read-only field stays
-      // selectable so its text can be copied). The handle controls are
-      // platform-adaptive `*HandleControls` CONSTANTS: each mixes in
-      // [TextSelectionHandleControls], which suppresses the legacy
-      // `buildToolbar` (so the Material-free `contextMenuBuilder` stays the only
-      // toolbar path and the MaterialLocalizations assert is never hit) and is
-      // NOT deprecated (so `dart analyze` stays clean).
-      selectionControls:
-          hasOverlay && widget.enabled ? _platformSelectionControls() : null,
+      // selectable so its text can be copied). Cupertino handle controls on
+      // every platform keep WInput cupertino-only (no `package:flutter/material.dart`
+      // import): `cupertinoTextSelectionHandleControls` mixes in
+      // [TextSelectionHandleControls], which suppresses the legacy `buildToolbar`
+      // (so the Material-free `contextMenuBuilder` stays the only toolbar path and
+      // the MaterialLocalizations assert is never hit) and is NOT deprecated (so
+      // `dart analyze` stays clean).
+      selectionControls: hasOverlay && widget.enabled
+          ? cupertinoTextSelectionHandleControls
+          : null,
       enableInteractiveSelection: hasOverlay && widget.enabled,
       contextMenuBuilder:
           hasOverlay && widget.enabled ? _buildContextMenu : null,
@@ -848,25 +838,6 @@ class _WInputState extends State<WInput>
         editable,
       ],
     );
-  }
-
-  /// Picks the platform-native selection-handle controls. Each is a
-  /// `*HandleControls` CONSTANT that mixes in [TextSelectionHandleControls], so
-  /// the legacy `buildToolbar` is suppressed (the toolbar comes only from
-  /// [_buildContextMenu] via `contextMenuBuilder`) and no Material ancestor is
-  /// required to paint the drag handles. A getter-driven `defaultTargetPlatform`
-  /// read (not cached) keeps this honest under test platform overrides.
-  TextSelectionControls _platformSelectionControls() {
-    return switch (defaultTargetPlatform) {
-      TargetPlatform.iOS => cupertinoTextSelectionHandleControls,
-      TargetPlatform.macOS => cupertinoDesktopTextSelectionHandleControls,
-      TargetPlatform.android ||
-      TargetPlatform.fuchsia =>
-        materialTextSelectionHandleControls,
-      TargetPlatform.linux ||
-      TargetPlatform.windows =>
-        desktopTextSelectionHandleControls,
-    };
   }
 
   /// Builds a Material-free selection toolbar (Cupertino chrome) whose action

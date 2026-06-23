@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
@@ -312,21 +311,13 @@ void main() {
       });
     });
 
-    // QA (7): platform-adaptive handle controls are wired per platform, and the
-    // bare harness never trips debugCheckHasMaterialLocalizations.
-    group('platform-adaptive handle controls', () {
-      final Map<TargetPlatform, Type> expected = {
-        TargetPlatform.iOS: cupertinoTextSelectionHandleControls.runtimeType,
-        TargetPlatform.android: materialTextSelectionHandleControls.runtimeType,
-        TargetPlatform.macOS:
-            cupertinoDesktopTextSelectionHandleControls.runtimeType,
-        TargetPlatform.linux: desktopTextSelectionHandleControls.runtimeType,
-        TargetPlatform.fuchsia: materialTextSelectionHandleControls.runtimeType,
-        TargetPlatform.windows: desktopTextSelectionHandleControls.runtimeType,
-      };
-
-      for (final TargetPlatform platform in expected.keys) {
-        testWidgets('wires the right controls on $platform', (tester) async {
+    // QA (7): WInput wires Cupertino handle controls on EVERY platform (it stays
+    // cupertino-only / no package:flutter/material.dart import), and the bare
+    // harness never trips debugCheckHasMaterialLocalizations on any platform.
+    group('cupertino-only handle controls', () {
+      for (final TargetPlatform platform in TargetPlatform.values) {
+        testWidgets('wires Cupertino handle controls on $platform',
+            (tester) async {
           debugDefaultTargetPlatformOverride = platform;
           try {
             final controller = TextEditingController(text: 'sample');
@@ -345,8 +336,9 @@ void main() {
                 tester.widget<EditableText>(find.byType(EditableText));
             expect(
               editable.selectionControls.runtimeType,
-              expected[platform],
-              reason: 'WInput must wire the $platform handle controls.',
+              cupertinoTextSelectionHandleControls.runtimeType,
+              reason: 'WInput must wire Cupertino handle controls on every '
+                  'platform (cupertino-only, no material.dart import).',
             );
             expect(tester.takeException(), isNull);
           } finally {
