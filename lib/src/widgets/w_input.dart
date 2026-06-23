@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/services.dart';
 
 import '../parser/wind_parser.dart';
@@ -37,11 +38,11 @@ enum InputType {
 /// ancestor.
 ///
 /// ### Ancestor requirements:
-/// - Interactive text selection (the long-press toolbar and drag handles)
-///   needs an [Overlay] ancestor. `MaterialApp`, `CupertinoApp`, and
-///   `WidgetsApp` all provide one; under a custom root with no `Overlay`,
-///   typing, cursor movement, and focus still work, but selection UI is
-///   suppressed rather than throwing.
+/// - Interactive text selection (drag-select, double-tap word, long-press, the
+///   drag handles, and the toolbar) needs an [Overlay] ancestor. `MaterialApp`,
+///   `CupertinoApp`, and `WidgetsApp` all provide one; under a custom root with
+///   no `Overlay`, typing and focus still work, but all interactive selection
+///   is suppressed rather than throwing.
 /// - A tap anywhere in the input box (not only on the text glyphs) focuses the
 ///   field and fires [onTap], restoring `TextField`'s whole-box tap target.
 ///
@@ -272,7 +273,8 @@ class WInput extends StatefulWidget {
   State<WInput> createState() => _WInputState();
 }
 
-class _WInputState extends State<WInput> {
+class _WInputState extends State<WInput>
+    implements TextSelectionGestureDetectorBuilderDelegate {
   /// Default content padding (12 horizontal / 8 vertical) used when className
   /// supplies no `p-*`.
   static const EdgeInsets _defaultContentPadding =
@@ -295,13 +297,49 @@ class _WInputState extends State<WInput> {
   /// field's ancestor chain between the Row and no-Row layouts; without a
   /// GlobalKey Flutter would destroy and rebuild the EditableText on that
   /// switch, dropping focus mid-typing. The key moves the same element instead.
-  final GlobalKey _editableTextKey = GlobalKey();
+  ///
+  /// Typed `GlobalKey<EditableTextState>` because it doubles as the delegate's
+  /// [editableTextKey]: the [TextSelectionGestureDetectorBuilder] reaches
+  /// through it to `currentState!.renderEditable` to hit-test taps/drags in
+  /// global coordinates. There is exactly ONE key (no second instance), so the
+  /// gesture layer and the focus-preserving element move are the same node.
+  final GlobalKey<EditableTextState> _editableTextKey =
+      GlobalKey<EditableTextState>();
+
+  /// Builds the native selection gesture layer (tap-to-focus, drag-select,
+  /// double-tap word, long-press) around the EditableText. This is the
+  /// framework's canonical Material-free recipe (the one [CupertinoTextField]
+  /// uses): instead of a hand-rolled whole-box [GestureDetector], the builder
+  /// hit-tests against the EditableText's [RenderEditable] in global coords, so
+  /// it handles glyph-level selection AND whole-box taps in one detector.
+  late final _WInputSelectionGestureDetectorBuilder
+      _selectionGestureDetectorBuilder;
+
+  // === TextSelectionGestureDetectorBuilderDelegate ===
+
+  /// The single [GlobalKey] the gesture builder uses to reach the EditableText.
+  @override
+  GlobalKey<EditableTextState> get editableTextKey => _editableTextKey;
+
+  /// iOS force-press (3D Touch) selection support. A getter, not an initState
+  /// cache, so `debugDefaultTargetPlatformOverride` in tests takes effect.
+  @override
+  bool get forcePressEnabled => defaultTargetPlatform == TargetPlatform.iOS;
+
+  /// Whether the user may select text. Mirrors the EditableText's own
+  /// `enableInteractiveSelection` gate: selection UI needs an [Overlay] to host
+  /// its handles/toolbar and a disabled field exposes none of it.
+  @override
+  bool get selectionEnabled =>
+      Overlay.maybeOf(context) != null && widget.enabled;
 
   @override
   void initState() {
     super.initState();
     _initController();
     _initFocusNode();
+    _selectionGestureDetectorBuilder =
+        _WInputSelectionGestureDetectorBuilder(state: this);
   }
 
   void _initController() {
@@ -501,9 +539,23 @@ class _WInputState extends State<WInput> {
       // cursor color.
       backgroundCursorColor: CupertinoColors.inactiveGray,
       selectionColor: _isFocused ? selectionColor : null,
-      // Selection UI needs an Overlay to host its toolbar/handles, and a
-      // disabled field must expose none of it (a read-only field stays
-      // selectable so its text can be copied).
+      // RenderEditable must NOT handle pointers itself: the gesture layer is the
+      // `_selectionGestureDetectorBuilder` wrapping the whole box (below), which
+      // hit-tests the RenderEditable in global coords. Leaving this false would
+      // double-handle taps (the render box and the builder both reacting).
+      rendererIgnoresPointer: true,
+      // Interactive selection is gated on an Overlay (which hosts the
+      // handles/toolbar): with no Overlay, `enableInteractiveSelection` below
+      // is false too, so drag-select / double-tap / long-press are all off and
+      // only typing + focus work. A disabled field must expose none of it (a
+      // read-only field stays selectable so its text can be copied). Cupertino
+      // handle controls on
+      // every platform keep WInput cupertino-only (no `package:flutter/material.dart`
+      // import): `cupertinoTextSelectionHandleControls` mixes in
+      // [TextSelectionHandleControls], which suppresses the legacy `buildToolbar`
+      // (so the Material-free `contextMenuBuilder` stays the only toolbar path and
+      // the MaterialLocalizations assert is never hit) and is NOT deprecated (so
+      // `dart analyze` stays clean).
       selectionControls: hasOverlay && widget.enabled
           ? cupertinoTextSelectionHandleControls
           : null,
@@ -585,18 +637,18 @@ class _WInputState extends State<WInput> {
       child: field,
     );
 
-    // Tapping anywhere in the box focuses the field (the box, not just the text
-    // glyphs, is the tap target) and fires onTap. EditableText alone only reacts
-    // to taps on the text itself; this restores TextField's whole-box behavior.
+    // Native selection gesture layer wraps the WHOLE decorated box (padding +
+    // prefix/suffix Row + DecoratedBox). The builder hit-tests against the
+    // EditableText's RenderEditable in global coordinates, so a tap anywhere in
+    // the box focuses the field (whole-box tap target, restoring TextField's
+    // behavior) while a drag over the glyphs selects text and a double-tap
+    // selects a word. Translucent behavior lets the box-area taps reach the
+    // builder even where there is no opaque child. Focus flows through the
+    // builder's own `onSingleTapUp`/`requestKeyboard`; `onUserTap` only fires
+    // `widget.onTap` (see the builder subclass below).
     if (widget.enabled) {
-      result = GestureDetector(
+      result = _selectionGestureDetectorBuilder.buildGestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {
-          if (!_focusNode.hasFocus) {
-            _focusNode.requestFocus();
-          }
-          widget.onTap?.call();
-        },
         child: result,
       );
     } else {
@@ -836,6 +888,35 @@ class _WInputState extends State<WInput> {
       ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
       _ => item.label ?? '',
     };
+  }
+}
+
+/// The gesture layer for [WInput]'s native text selection.
+///
+/// This is the framework's canonical Material-free recipe: it extends
+/// [TextSelectionGestureDetectorBuilder] (the same base [CupertinoTextField]
+/// uses) and inherits every default selection gesture (tap-to-focus,
+/// drag-select, double-tap word, triple-tap line, long-press, force-press on
+/// iOS). It hit-tests against the EditableText's [RenderEditable] in global
+/// coordinates via the delegate's `editableTextKey`, so wrapping the whole
+/// decorated box preserves both whole-box tap and glyph-level drag-select.
+///
+/// Only [onUserTap] is overridden, to forward [WInput.onTap]. Focus is NOT
+/// requested here: the builder's own `onSingleTapUp` already calls
+/// `requestKeyboard`, which focuses the field. Calling `requestFocus` again
+/// would be redundant (and the docs of `onUserTap` warn it fires AFTER the
+/// focusing tap handler).
+class _WInputSelectionGestureDetectorBuilder
+    extends TextSelectionGestureDetectorBuilder {
+  _WInputSelectionGestureDetectorBuilder({required _WInputState state})
+      : _state = state,
+        super(delegate: state);
+
+  final _WInputState _state;
+
+  @override
+  void onUserTap() {
+    _state.widget.onTap?.call();
   }
 }
 

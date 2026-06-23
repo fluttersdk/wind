@@ -14,6 +14,11 @@ class _InputBasicExamplePageState extends State<InputBasicExamplePage> {
   String _email = '';
   bool _hasError = false;
 
+  // Realistic prefilled text for the selection demo.
+  static const _selectionSample =
+      'Order #ORD-20240614 was shipped to 42 Maple Street, Portland OR 97201. '
+      'Expected delivery: Monday 17 June. Tracking: 1Z999AA10123456784.';
+
   static const _inputCls = '''
     w-full px-3 py-2 rounded-lg
     bg-white dark:bg-slate-800
@@ -107,6 +112,58 @@ class _InputBasicExamplePageState extends State<InputBasicExamplePage> {
                   _hasError ? 'Clear error' : 'Trigger error state',
                   className: 'text-white font-medium',
                 ),
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Text Selection',
+          description:
+              'Mouse-drag to select a range, double-click to select a word, '
+              'or long-press on mobile for selection handles. '
+              'The field is read-only so the value stays intact while you explore.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: [
+              WInput(
+                readOnly: true,
+                value: _selectionSample,
+                className: '''
+                  w-full px-3 py-2 rounded-lg
+                  bg-white dark:bg-slate-800
+                  border border-slate-300 dark:border-slate-600
+                  text-slate-800 dark:text-slate-200
+                  focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30
+                ''',
+              ),
+              WDiv(
+                className: '''
+                  flex flex-row items-start gap-2 px-3 py-2 rounded-lg
+                  bg-blue-50 dark:bg-blue-950
+                  border border-blue-200 dark:border-blue-800
+                ''',
+                children: [
+                  WIcon(
+                    Icons.info_outline_rounded,
+                    className:
+                        'text-blue-500 dark:text-blue-400 w-4 h-4 mt-0.5',
+                  ),
+                  WDiv(
+                    className: 'flex flex-col gap-1',
+                    children: [
+                      WText(
+                        'Native text selection',
+                        className:
+                            'text-sm font-semibold text-blue-700 dark:text-blue-300',
+                      ),
+                      WText(
+                        'Desktop / web: drag to select, double-click for a word, Ctrl+A for all. '
+                        'Mobile: long-press for handles, then drag.',
+                        className: 'text-xs text-blue-600 dark:text-blue-400',
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
