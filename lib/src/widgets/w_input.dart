@@ -38,11 +38,11 @@ enum InputType {
 /// ancestor.
 ///
 /// ### Ancestor requirements:
-/// - Interactive text selection (the long-press toolbar and drag handles)
-///   needs an [Overlay] ancestor. `MaterialApp`, `CupertinoApp`, and
-///   `WidgetsApp` all provide one; under a custom root with no `Overlay`,
-///   typing, cursor movement, and focus still work, but selection UI is
-///   suppressed rather than throwing.
+/// - Interactive text selection (drag-select, double-tap word, long-press, the
+///   drag handles, and the toolbar) needs an [Overlay] ancestor. `MaterialApp`,
+///   `CupertinoApp`, and `WidgetsApp` all provide one; under a custom root with
+///   no `Overlay`, typing and focus still work, but all interactive selection
+///   is suppressed rather than throwing.
 /// - A tap anywhere in the input box (not only on the text glyphs) focuses the
 ///   field and fires [onTap], restoring `TextField`'s whole-box tap target.
 ///
@@ -544,9 +544,12 @@ class _WInputState extends State<WInput>
       // hit-tests the RenderEditable in global coords. Leaving this false would
       // double-handle taps (the render box and the builder both reacting).
       rendererIgnoresPointer: true,
-      // Selection UI needs an Overlay to host its toolbar/handles, and a
-      // disabled field must expose none of it (a read-only field stays
-      // selectable so its text can be copied). Cupertino handle controls on
+      // Interactive selection is gated on an Overlay (which hosts the
+      // handles/toolbar): with no Overlay, `enableInteractiveSelection` below
+      // is false too, so drag-select / double-tap / long-press are all off and
+      // only typing + focus work. A disabled field must expose none of it (a
+      // read-only field stays selectable so its text can be copied). Cupertino
+      // handle controls on
       // every platform keep WInput cupertino-only (no `package:flutter/material.dart`
       // import): `cupertinoTextSelectionHandleControls` mixes in
       // [TextSelectionHandleControls], which suppresses the legacy `buildToolbar`
