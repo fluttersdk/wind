@@ -120,7 +120,7 @@ class _InputBasicExamplePageState extends State<InputBasicExamplePage> {
           title: 'Text Selection',
           description:
               'Mouse-drag to select a range, double-click to select a word, '
-              'or long-press on mobile for platform-adaptive handles. '
+              'or long-press on mobile for selection handles. '
               'The field is read-only so the value stays intact while you explore.',
           child: WDiv(
             className: 'flex flex-col gap-3',
