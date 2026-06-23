@@ -25,6 +25,8 @@ Building forms with validation. Use this file when picking between raw `W*` and 
 
 Both families share the same className surface and visual output. The split is purely about validation flow.
 
+`WInput` (and by extension `WFormInput`) uses native text selection: mouse-drag selects a substring, double-click or double-tap selects a word, and tapping the box moves the cursor. Selection handles are platform-adaptive (Cupertino on iOS, Cupertino-desktop on macOS, Material on Android/Fuchsia, desktop on Linux/Windows). An `Overlay` ancestor is required for selection handles and the selection toolbar to render; without one, typing and cursor movement still work but handles and toolbar are suppressed. Both widget families are Material-free at their core (`EditableText`), so no Material ancestor is required for the input itself.
+
 ---
 
 ## 2. Standard form skeleton
