@@ -112,6 +112,8 @@ While `WPopover` itself isn't a layout container, it supports various **Alignmen
 
 The `triggerBuilder` provides the `isOpen` and `isHovering` states, allowing you to reactively style the trigger. The `contentBuilder` provides a `close` callback to dismiss the popover from within the content (e.g., when a menu item is clicked).
 
+When `enableTriggerOnTap` is `true` (the default), tapping the trigger toggles the popover, and this works even when the trigger is an interactive widget that owns its own `onTap` (a `WButton` or `WAnchor`): the trigger's own callback and the popover toggle both fire on the same tap. Set `enableTriggerOnTap: false` for manual control via a `PopoverController`.
+
 ```dart
 WPopover(
   triggerBuilder: (context, isOpen, isHovering) => WDiv(

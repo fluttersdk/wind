@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../parser/wind_parser.dart';
@@ -133,6 +134,11 @@ class WPopover extends StatefulWidget {
   /// Whether tapping the trigger toggles the popover.
   ///
   /// Default: `true`. Set to `false` for manual control (e.g. text inputs).
+  ///
+  /// When `true` and the trigger is an interactive widget that owns its own
+  /// `onTap` (a `WButton` or `WAnchor`), the trigger's callback and the popover
+  /// toggle both fire on the same tap. Use a non-interactive trigger (a plain
+  /// `WDiv`) or a null/empty `onTap` for a pure popover trigger.
   final bool enableTriggerOnTap;
 
   /// Where to position the popover relative to the trigger.
@@ -221,6 +227,17 @@ class _WPopoverState extends State<WPopover> {
 
   bool _isOpen = false;
   bool _isHovering = false;
+
+  /// Suppresses the first outside-tap dismiss after the popover opens.
+  ///
+  /// The opening tap is a single physical gesture: the pointer-down toggles
+  /// the popover open (via [Listener]), the overlay mounts and registers its
+  /// [TapRegion] mid-gesture, then the matching pointer-up is reported to that
+  /// freshly mounted region as an "outside" tap and would dismiss the popover
+  /// on the very frame it opened. This flag swallows exactly that one event.
+  /// It is armed on [open] and disarmed one frame later, so a genuine,
+  /// separate outside tap on a later frame still closes the popover.
+  bool _suppressNextTapOutside = false;
 
   /// Pre-calculated effective alignment (computed before opening).
   PopoverAlignment? _effectiveAlignment;
@@ -361,6 +378,15 @@ class _WPopoverState extends State<WPopover> {
   void open() {
     if (_isOpen || widget.disabled) return;
 
+    // Arm the dismiss guard so the opening gesture's own pointer-up cannot
+    // immediately dismiss the popover via the freshly mounted overlay's
+    // onTapOutside. Disarm one frame later so a later, separate outside tap
+    // still closes the popover.
+    _suppressNextTapOutside = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _suppressNextTapOutside = false;
+    });
+
     // Calculate effective alignment BEFORE showing overlay
     if (widget.autoFlip) {
       _calculateEffectiveAlignment();
@@ -411,9 +437,28 @@ class _WPopoverState extends State<WPopover> {
     }
   }
 
+  /// Handles an outside tap reported by the overlay's [TapRegion].
+  ///
+  /// Swallows the first event after opening (the opening gesture's own
+  /// pointer-up); any later outside tap dismisses the popover normally.
+  void _handleTapOutside() {
+    if (_suppressNextTapOutside) {
+      // Fires only in the live engine, where the opening pointer reaches the
+      // freshly mounted overlay within the same frame. flutter_test mounts the
+      // overlay and runs the post-frame disarm in one pump, leaving no window
+      // where the overlay is mounted and this flag is still armed, so this
+      // branch is unreachable from the test binding (the disarm and close
+      // paths are covered).
+      _suppressNextTapOutside = false; // coverage:ignore-line
+      return;
+    }
+    close();
+  }
+
   /// Close the popover.
   void close() {
     if (!_isOpen) return;
+    _suppressNextTapOutside = false;
     setState(() {
       _isOpen = false;
       _overlayController.hide();
@@ -504,7 +549,30 @@ class _WPopoverState extends State<WPopover> {
     );
 
     if (widget.enableTriggerOnTap) {
-      return GestureDetector(onTap: toggle, child: trigger);
+      // Toggle through a Listener (pointer events) rather than a
+      // GestureDetector (tap arena). An interactive trigger such as
+      // WButton/WAnchor owns its own GestureDetector and wins the tap arena,
+      // so an outer onTap would never fire and the popover would never open.
+      // Pointer events bypass the arena entirely, so opening works regardless
+      // of the trigger's interactivity. Filter to the primary button so a
+      // secondary (right) click does not toggle. `toggle` already guards
+      // `disabled`.
+      //
+      // A Listener is pointer-only and invisible to assistive technologies, so
+      // wrap it in Semantics with a tap action: screen readers and keyboard
+      // activation reach `toggle` through the semantic action while pointer
+      // input reaches it through the Listener.
+      return Semantics(
+        button: true,
+        enabled: !widget.disabled,
+        onTap: widget.disabled ? null : toggle,
+        child: Listener(
+          onPointerDown: (event) {
+            if (event.buttons == kPrimaryButton) toggle();
+          },
+          child: trigger,
+        ),
+      );
     }
 
     return trigger;
@@ -587,7 +655,7 @@ class _WPopoverState extends State<WPopover> {
         heightFactor: 1,
         child: TapRegion(
           groupId: _tapRegionGroupId,
-          onTapOutside: (_) => close(),
+          onTapOutside: (_) => _handleTapOutside(),
           child: GestureDetector(
             onTap: widget.closeOnContentTap ? close : null,
             behavior: HitTestBehavior.translucent,
