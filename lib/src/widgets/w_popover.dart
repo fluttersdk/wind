@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../parser/wind_parser.dart';
@@ -442,7 +443,13 @@ class _WPopoverState extends State<WPopover> {
   /// pointer-up); any later outside tap dismisses the popover normally.
   void _handleTapOutside() {
     if (_suppressNextTapOutside) {
-      _suppressNextTapOutside = false;
+      // Fires only in the live engine, where the opening pointer reaches the
+      // freshly mounted overlay within the same frame. flutter_test mounts the
+      // overlay and runs the post-frame disarm in one pump, leaving no window
+      // where the overlay is mounted and this flag is still armed, so this
+      // branch is unreachable from the test binding (the disarm and close
+      // paths are covered).
+      _suppressNextTapOutside = false; // coverage:ignore-line
       return;
     }
     close();
@@ -542,15 +549,29 @@ class _WPopoverState extends State<WPopover> {
     );
 
     if (widget.enableTriggerOnTap) {
-      // Use a Listener (pointer events) rather than a GestureDetector (tap
-      // arena). An interactive trigger such as WButton/WAnchor owns its own
-      // GestureDetector and wins the tap arena, so an outer onTap would never
-      // fire and the popover would never open. Pointer events bypass the
-      // arena entirely, so toggling on pointer-down opens reliably regardless
-      // of the trigger's interactivity. `toggle` already guards `disabled`.
-      return Listener(
-        onPointerDown: (_) => toggle(),
-        child: trigger,
+      // Toggle through a Listener (pointer events) rather than a
+      // GestureDetector (tap arena). An interactive trigger such as
+      // WButton/WAnchor owns its own GestureDetector and wins the tap arena,
+      // so an outer onTap would never fire and the popover would never open.
+      // Pointer events bypass the arena entirely, so opening works regardless
+      // of the trigger's interactivity. Filter to the primary button so a
+      // secondary (right) click does not toggle. `toggle` already guards
+      // `disabled`.
+      //
+      // A Listener is pointer-only and invisible to assistive technologies, so
+      // wrap it in Semantics with a tap action: screen readers and keyboard
+      // activation reach `toggle` through the semantic action while pointer
+      // input reaches it through the Listener.
+      return Semantics(
+        button: true,
+        enabled: !widget.disabled,
+        onTap: widget.disabled ? null : toggle,
+        child: Listener(
+          onPointerDown: (event) {
+            if (event.buttons == kPrimaryButton) toggle();
+          },
+          child: trigger,
+        ),
       );
     }
 

@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -191,6 +193,65 @@ void main() {
       expect(find.text('Content Item'), findsOneWidget);
 
       await tester.tapAt(const Offset(5, 5));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content Item'), findsNothing);
+    });
+  });
+
+  group('WPopover trigger accessibility', () {
+    // The trigger toggles on raw pointer events (to bypass the gesture arena),
+    // which is invisible to assistive tech. A Semantics tap action must keep
+    // the trigger reachable by screen readers and keyboard activation.
+    testWidgets('semantic tap action opens the popover (assistive-tech path)',
+        (tester) async {
+      final handle = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Center(
+            child: WPopover(
+              triggerBuilder: (context, isOpen, isHovering) => const WDiv(
+                className: 'px-4 py-2 rounded-lg bg-slate-100',
+                child: WText('Trigger'),
+              ),
+              contentBuilder: (context, close) => const SizedBox(
+                height: 40,
+                child: Text('Content Item'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Content Item'), findsNothing);
+
+      final node = tester.getSemantics(find.text('Trigger'));
+      expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+
+      node.owner!.performAction(node.id, SemanticsAction.tap);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Content Item'), findsOneWidget);
+      handle.dispose();
+    });
+
+    // A secondary (right) button press must not toggle the popover; only the
+    // primary button does.
+    testWidgets('a secondary (right) button press does not open the popover',
+        (tester) async {
+      await tester
+          .pumpWidget(wrapWithTheme(Center(child: _divTriggerPopover())));
+
+      expect(find.text('Content Item'), findsNothing);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.text('Trigger')),
+        buttons: kSecondaryButton,
+        kind: PointerDeviceKind.mouse,
+      );
+      await tester.pump();
+      await gesture.up();
       await tester.pumpAndSettle();
 
       expect(find.text('Content Item'), findsNothing);
