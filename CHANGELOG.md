@@ -8,6 +8,8 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-06-25
+
 ### Fixed
 
 - `WPopover` now opens reliably when `triggerBuilder` returns an interactive widget (a `WButton` or `WAnchor` with its own `onTap`), and no longer dismisses itself on the same gesture that opened it. Two defects were in play. First, the trigger was wired through an outer `GestureDetector(onTap: toggle)`; an interactive trigger owns its own `GestureDetector`, won the gesture arena, and the outer `onTap` never fired, so the popover never opened. The trigger now toggles through a `Listener(onPointerDown:)`, whose pointer events bypass the tap arena entirely, so opening works regardless of the trigger's interactivity (`enableTriggerOnTap` and `disabled` semantics are unchanged). Second, because the trigger and overlay share a `TapRegion` group id (intentionally, so a trigger re-tap does not self-close), the opening gesture's pointer-up reached the freshly mounted overlay's `onTapOutside` and dismissed the popover on the frame it opened. A one-shot, post-frame guard now swallows exactly that first outside-tap; a genuine, later outside tap still closes the popover. (`lib/src/widgets/w_popover.dart`; covered by `test/widgets/w_popover/gesture_regression_test.dart`, the four-behavior regression set parameterized over `WButton` and `WDiv` triggers.) Because the pointer `Listener` is invisible to assistive technologies, the trigger is wrapped in `Semantics(button: true, onTap: ...)` so screen readers and keyboard activation still reach the toggle, and the pointer toggle is filtered to the primary button so a secondary (right) click no longer opens the popover.
@@ -137,7 +139,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.1.1...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.1.2...HEAD
+[1.1.2]: https://github.com/fluttersdk/wind/releases/tag/1.1.2
 [1.1.1]: https://github.com/fluttersdk/wind/releases/tag/1.1.1
 [1.1.0]: https://github.com/fluttersdk/wind/releases/tag/1.1.0
 [1.0.0]: https://github.com/fluttersdk/wind/releases/tag/1.0.0
