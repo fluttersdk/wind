@@ -1,12 +1,12 @@
 ---
 name: wind-ui
-description: "fluttersdk_wind 1.1: utility-first Flutter styling with Tailwind-syntax className strings. 22 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper + 5 WForm* wrappers) consume className through a 19-parser pipeline (19 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
+description: "fluttersdk_wind 1.1: utility-first Flutter styling with Tailwind-syntax className strings. 27 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper, WBadge, WCard, WSwitch, WRadio, WTabs + 5 WForm* wrappers) consume className through a 19-parser pipeline (19 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. WindRecipe / WindSlotRecipe compose className variants (base + axes + compoundVariants + caller) in strict emission order, no dedupe/sort/twMerge. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
-  Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, or migrating a Tailwind className from web. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.6.0
+  Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, migrating a Tailwind className from web, or composing a WindRecipe / WindSlotRecipe for a variant-driven component. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
+version: 2.7.0
 ---
 
-<!-- fluttersdk_wind 1.1.x | Skill v2.6.0 (2026-06-23) -->
+<!-- fluttersdk_wind 1.1.x | Skill v2.7.0 (2026-06-25) -->
 
 # Wind UI 1.1
 
@@ -64,11 +64,11 @@ These hold for every line of Wind code. Apply each as a hard constraint, not a s
 
 10. **`active:` prefix is reserved but not wired.** `WAnchor` tracks hover and focus only; there is no onTapDown/onTapUp tracking. Don't rely on `active:bg-blue-700` for press feedback. Use a transient state in the consumer's controller and `states: {'pressed'}` if you genuinely need press feedback today.
 
-## 2. The 22 public widgets at a glance
+## 2. The 27 public widgets (+ WindRecipe) at a glance
 
-`fluttersdk_wind` v1 ships 22 public widgets, all imported from the single barrel `package:fluttersdk_wind/fluttersdk_wind.dart`. No sub-barrels exist; do not write `import 'package:fluttersdk_wind/widgets.dart'`.
+`fluttersdk_wind` v1 ships 27 public widgets plus the `WindRecipe` / `WindSlotRecipe` variant-composition primitives, all imported from the single barrel `package:fluttersdk_wind/fluttersdk_wind.dart`. No sub-barrels exist; do not write `import 'package:fluttersdk_wind/widgets.dart'`.
 
-The headline 20 (table below) are the ones an agent reaches for daily. Two more cover narrow surfaces and live outside the table: `WKeyboardActions` (iOS keyboard toolbar overlay for `Done` / `Next` actions on a focused `TextField`) and `WindAnimationWrapper` (the internal stateful wrapper that drives looping `animate-*` tokens; consumers normally do not instantiate it directly).
+The headline 25 (table below) are the ones an agent reaches for daily. Two more cover narrow surfaces and live outside the table: `WKeyboardActions` (iOS keyboard toolbar overlay for `Done` / `Next` actions on a focused `TextField`) and `WindAnimationWrapper` (the internal stateful wrapper that drives looping `animate-*` tokens; consumers normally do not instantiate it directly).
 
 | Widget | Category | Required positional | One-line purpose |
 |---|---|---|---|
@@ -92,15 +92,51 @@ The headline 20 (table below) are the ones an agent reaches for daily. Two more 
 | `WFormCheckbox` | Form (FormField) | none | `extends FormField<bool>`; validation hook + label + error display. |
 | `WFormDatePicker` | Form (FormField) | none | `extends FormField<DateTime>`. Range mode stores `range.start` only in FormFieldState; validators only see the start date. |
 | `WDynamic` | Structural / SSR | `json: Map` | Renders a JSON node tree into Wind widgets. 13 Wind types + 16 Flutter core types allowed by default; `builders:` adds custom types; `denyWidgets:` blocks. Max recursion depth default 50. |
+| `WBadge` | Display | `label: String` | Inline status/label pill. Composes a rounded-full `WDiv` around `WText(text-xs)`. All tone via `className` (`bg-*`, `text-*`, `dark:` pairs). No positional child; label is the only positional param. |
+| `WCard` | Layout / container | `child: Widget` | Surface container. `header:`, `child:` (required), `footer:` slots; delegates to `WDiv(flex-col)`. No colors baked in; all tone via `className`. |
+| `WSwitch` | Form (raw) | none | Controlled toggle. `value` + `onChanged`. `className` styles the track; `thumbClassName` styles the indicator dot. `checked:` state activates when `value: true`. `checked:translate-x-*` slides the thumb. `disabled:` when `disabled: true`. |
+| `WRadio<T>` | Form (raw) | none | Controlled radio. `value`, `groupValue`, `onChanged`. `selected:` activates when `value == groupValue`. Outer ring: `className`. Inner dot: `indicatorClassName` (defaults to blue filled circle). Group exclusivity is the caller's responsibility. |
+| `WTabs` | Form (raw) / Layout | none | Controlled tabs. `tabs: List<String>`, `selectedIndex`, `panelBuilder`. `selected:` activates on the active tab. Slot classNames: `listClassName`, `tabClassName`, `selectedTabClassName`, `panelClassName`. |
 
 Full constructor surface, every named parameter, every default: `${CLAUDE_SKILL_DIR}/references/widgets.md`.
+
+### WindRecipe / WindSlotRecipe (variant-composition primitives)
+
+`WindRecipe` and `WindSlotRecipe` are callable objects (not widgets) that compose className strings from variant axes. Use them to centralise multi-variant component styling instead of scattering conditional className strings across the call sites.
+
+```dart
+final button = WindRecipe(
+  base: 'inline-flex items-center rounded-lg font-medium',
+  variants: {
+    'intent': {'primary': 'bg-blue-600 dark:bg-blue-500 text-white', 'ghost': 'bg-transparent text-blue-600 dark:text-blue-400'},
+    'size':   {'sm': 'px-3 py-1.5 text-sm', 'md': 'px-4 py-2 text-base'},
+  },
+  compoundVariants: [
+    WindCompoundVariant(conditions: {'intent': 'primary', 'size': 'lg'}, className: 'shadow-lg'),
+  ],
+  defaultVariants: {'intent': 'primary', 'size': 'md'},
+);
+
+button()                                       // uses defaults
+button(variants: {'intent': 'ghost'})          // override one axis
+button(variants: {'size': null})               // null clears the default (no size classes)
+button(className: 'w-full')                    // caller suffix, appended last
+```
+
+Resolution order (strict, never sorted): `base ++ variant-classes(definition order) ++ matched-compound(array order) ++ caller`.
+
+**Same-granularity contract:** a variant must override a base token at the same granularity. Mixing `p-4` (base) and `px-2` (variant) is silent: the parser's per-family last-wins keeps the shorthand. Override `px-*` with `px-*` or `p-*` with `p-*`.
+
+`WindSlotRecipe` returns `Map<String, String>` (slot -> className). Use the slot keys directly on widget `className:` props.
+
+**Core Law addition for recipes:** pass enum variant values as `.name` (`ButtonIntent.ghost.name`); recipe axes are plain strings.
 
 ## 3. The state system (three layers)
 
 | Layer | Set by | Examples |
 |---|---|---|
 | **Automatic** | `WAnchor` from pointer / keyboard events | `hover:` (MouseRegion `onEnter`/`onExit`), `focus:` (`FocusNode` listener) |
-| **Framework-managed** | The widget itself, from its own props | `loading:` (WButton.isLoading), `disabled:` (any widget's `disabled` / `enabled` prop), `checked:` (WCheckbox.value), `error:` (WForm* when `FormFieldState.hasError`) |
+| **Framework-managed** | The widget itself, from its own props | `loading:` (WButton.isLoading), `disabled:` (any widget's `disabled` / `enabled` prop), `checked:` (WCheckbox.value, WSwitch.value), `selected:` (WRadio when value==groupValue, WTabs active tab), `error:` (WForm* when `FormFieldState.hasError`) |
 | **Consumer-passed** | `states: Set<String>?` on the widget | `selected:` (card toggles), `highlighted:`, `new:`, any custom string. No registration required. |
 
 WDiv and WButton auto-wrap themselves in WAnchor whenever className contains the literal substrings `hover:`, `focus:`, or `active:`. Other widgets do not. If you need hover detection on a `WText`, wrap it in `WDiv` or `WAnchor` explicitly.

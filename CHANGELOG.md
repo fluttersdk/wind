@@ -8,6 +8,15 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `WindRecipe` and `WindSlotRecipe` (+ `WindCompoundVariant`, `WindSlotCompoundVariant`): a `tv()` (tailwind-variants) equivalent. `WindRecipe` resolves a single className from `base` + variant axes + compoundVariants + a caller `className`, in strict emission order (`base ++ variant ++ compound ++ caller`), with no dedupe/sort/twMerge. `WindSlotRecipe` extends the same model to multi-slot components and returns a `Map<String, String>` (slot -> className). (`lib/src/recipe/wind_recipe.dart`)
+- `WBadge`: inline status/label pill. Composes a rounded-full `WDiv` around a `WText(text-xs)`; all visual tone is className-driven (`bg-*`, `text-*`, `dark:` pairs). (`lib/src/widgets/w_badge.dart`)
+- `WCard`: surface container with optional `header` and `footer` slots. Delegates to `WDiv` (flex-col); all styling is className-driven. (`lib/src/widgets/w_card.dart`)
+- `WSwitch`: controlled toggle switch. Pushes the `checked:` state prefix when `value` is `true`; `thumbClassName` drives thumb position via `checked:translate-x-*`. Wraps `WAnchor` for hover/focus/disabled state propagation. (`lib/src/widgets/w_switch.dart`)
+- `WRadio<T>`: controlled radio button. Drives the `selected:` state prefix when `value == groupValue`. Group behavior (mutual exclusivity) is the caller's responsibility. (`lib/src/widgets/w_radio.dart`)
+- `WTabs`: controlled tabs widget. The `selected:` state prefix activates on the active tab; `listClassName`, `tabClassName`, `selectedTabClassName`, and `panelClassName` cover every structural region. `panelBuilder` receives the selected index each rebuild. (`lib/src/widgets/w_tabs.dart`)
+
 ## [1.1.2] - 2026-06-25
 
 ### Fixed

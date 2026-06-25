@@ -135,6 +135,7 @@ import 'pages/styling/background_color_basic.dart';
 import 'pages/styling/background_color_opacity.dart';
 import 'pages/styling/background_gradient_basic.dart';
 import 'pages/styling/background_gradient_stops.dart';
+import 'pages/styling/wind_recipe_basic.dart';
 
 // SVG
 import 'pages/svg/svg_basic.dart';
@@ -204,6 +205,12 @@ import 'pages/widgets/w_form_checkbox.dart';
 import 'pages/widgets/w_form_checkbox_layout.dart';
 import 'pages/widgets/w_keyboard_actions_basic.dart';
 import 'pages/widgets/wind_animation_wrapper_basic.dart';
+
+import 'pages/widgets/w_badge_basic.dart';
+import 'pages/widgets/w_card_basic.dart';
+import 'pages/widgets/w_radio_basic.dart';
+import 'pages/widgets/w_switch_basic.dart';
+import 'pages/widgets/w_tabs_basic.dart';
 
 import 'pages/widgets/w_svg.dart';
 
@@ -351,6 +358,7 @@ final Map<String, Widget> appRoutes = {
       const BackgroundGradientBasicExamplePage(),
   '/styling/background_gradient_stops':
       const BackgroundGradientStopsExamplePage(),
+  '/styling/wind_recipe_basic': const WindRecipeBasicExamplePage(),
 
   // SVG
   '/svg/svg_basic': const SvgBasicExamplePage(),
@@ -425,6 +433,12 @@ final Map<String, Widget> appRoutes = {
   '/widgets/w_keyboard_actions_basic': const WKeyboardActionsBasicExamplePage(),
   '/widgets/wind_animation_wrapper_basic':
       const WindAnimationWrapperBasicExamplePage(),
+
+  '/widgets/w_badge_basic': const WBadgeBasicExamplePage(),
+  '/widgets/w_card_basic': const WCardBasicExamplePage(),
+  '/widgets/w_radio_basic': const WRadioBasicExamplePage(),
+  '/widgets/w_switch_basic': const WSwitchBasicExamplePage(),
+  '/widgets/w_tabs_basic': const WTabsBasicExamplePage(),
 
   '/widgets/w_svg': const WSvgExamplePage(),
 };
