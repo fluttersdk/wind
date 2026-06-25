@@ -1,4 +1,4 @@
-import 'dart:ui' show CheckedState;
+import 'dart:ui' show CheckedState, Tristate;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -147,6 +147,36 @@ void main() {
         // onChanged should not fire when already selected.
         expect(received, isNull);
       });
+
+      testWidgets(
+        'a null onChanged makes the radio non-interactive (no gesture, '
+        'disabled state)',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WRadio<String>(
+                value: 'a',
+                groupValue: 'b',
+                onChanged: null,
+                className: 'w-5 h-5 disabled:opacity-50',
+              ),
+            ),
+          );
+          await tester.pump();
+
+          // No gesture handler is attached when onChanged is null.
+          final anchor = tester.widget<WAnchor>(find.byType(WAnchor));
+          expect(anchor.onTap, isNull);
+          expect(anchor.isDisabled, isTrue);
+
+          // The disabled: prefix activates on the radio WDivs.
+          final divs = tester.widgetList<WDiv>(find.byType(WDiv)).toList();
+          expect(
+            divs.any((d) => d.states?.contains('disabled') ?? false),
+            isTrue,
+          );
+        },
+      );
     });
 
     group('State Styling', () {
@@ -296,6 +326,24 @@ void main() {
           find.byType(WRadio<String>),
         );
         expect(node.flagsCollection.isChecked, CheckedState.isFalse);
+      });
+
+      testWidgets('reports not-enabled when onChanged is null', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WRadio<String>(
+              value: 'a',
+              groupValue: 'b',
+              onChanged: null,
+            ),
+          ),
+        );
+        await tester.pump();
+
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WRadio<String>),
+        );
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
       });
     });
   });

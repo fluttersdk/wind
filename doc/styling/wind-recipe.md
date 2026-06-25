@@ -130,7 +130,7 @@ WindSlotCompoundVariant({
 
 Every call resolves in this strict order: no dedupe, no sort, no twMerge:
 
-```
+```text
 base ++ variant-classes(definition order) ++ matched-compound(array order) ++ caller
 ```
 

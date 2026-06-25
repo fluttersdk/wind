@@ -19,8 +19,8 @@ void main() {
   group('WTabs Widget Tests', () {
     group('Construction', () {
       test('creates with required props', () {
-        const widget = WTabs(
-          tabs: ['One', 'Two'],
+        final widget = WTabs(
+          tabs: const ['One', 'Two'],
           selectedIndex: 0,
           panelBuilder: _fakePanelBuilder,
         );
@@ -29,8 +29,8 @@ void main() {
       });
 
       test('accepts optional classNames', () {
-        const widget = WTabs(
-          tabs: ['A'],
+        final widget = WTabs(
+          tabs: const ['A'],
           selectedIndex: 0,
           panelBuilder: _fakePanelBuilder,
           listClassName: 'flex gap-2',
@@ -42,6 +42,39 @@ void main() {
         expect(widget.tabClassName, 'px-4 py-2');
         expect(widget.selectedTabClassName, 'border-b-2');
         expect(widget.panelClassName, 'pt-4');
+      });
+
+      test('asserts tabs must not be empty', () {
+        expect(
+          () => WTabs(
+            tabs: const [],
+            selectedIndex: 0,
+            panelBuilder: _fakePanelBuilder,
+          ),
+          throwsA(isA<AssertionError>()),
+        );
+      });
+
+      test('asserts selectedIndex must be within range (too high)', () {
+        expect(
+          () => WTabs(
+            tabs: const ['One', 'Two'],
+            selectedIndex: 2,
+            panelBuilder: _fakePanelBuilder,
+          ),
+          throwsA(isA<AssertionError>()),
+        );
+      });
+
+      test('asserts selectedIndex must be within range (negative)', () {
+        expect(
+          () => WTabs(
+            tabs: const ['One', 'Two'],
+            selectedIndex: -1,
+            panelBuilder: _fakePanelBuilder,
+          ),
+          throwsA(isA<AssertionError>()),
+        );
       });
     });
 
@@ -237,6 +270,29 @@ void main() {
 
         expect(tappedIndex, 0);
       });
+
+      testWidgets(
+        'a null onChanged leaves each tab non-interactive (no gesture)',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WTabs(
+                tabs: const ['One', 'Two'],
+                selectedIndex: 0,
+                panelBuilder: _fakePanelBuilder,
+              ),
+            ),
+          );
+          await tester.pump();
+
+          final anchors =
+              tester.widgetList<WAnchor>(find.byType(WAnchor)).toList();
+          expect(anchors, isNotEmpty);
+          for (final anchor in anchors) {
+            expect(anchor.onTap, isNull);
+          }
+        },
+      );
 
       testWidgets('panel swaps when selectedIndex changes', (tester) async {
         int currentIndex = 0;

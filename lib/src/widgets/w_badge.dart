@@ -24,7 +24,7 @@ import 'w_text.dart';
 ///
 /// WBadge(
 ///   'Error',
-///   className: 'bg-red-100 text-red-800',
+///   className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
 /// )
 /// ```
 ///

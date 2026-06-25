@@ -139,6 +139,32 @@ void main() {
 
         expect(received, isNull);
       });
+
+      testWidgets(
+        'a null onChanged makes the switch non-interactive (no gesture, '
+        'disabled state)',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WSwitch(
+                value: false,
+                onChanged: null,
+                className: 'w-11 h-6 rounded-full checked:bg-blue-500',
+              ),
+            ),
+          );
+          await tester.pump();
+
+          // No gesture handler is attached when onChanged is null.
+          final anchor = tester.widget<WAnchor>(find.byType(WAnchor));
+          expect(anchor.onTap, isNull);
+          expect(anchor.isDisabled, isTrue);
+
+          // The disabled: prefix activates on the track WDiv.
+          final trackDiv = tester.widgetList<WDiv>(find.byType(WDiv)).first;
+          expect(trackDiv.states, contains('disabled'));
+        },
+      );
     });
 
     group('State Styling', () {
@@ -215,6 +241,16 @@ void main() {
 
         final SemanticsNode node = tester.getSemantics(find.byType(WSwitch));
         expect(node.flagsCollection.isToggled, Tristate.isFalse);
+      });
+
+      testWidgets('reports not-enabled when onChanged is null', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WSwitch(value: false, onChanged: null)),
+        );
+        await tester.pump();
+
+        final SemanticsNode node = tester.getSemantics(find.byType(WSwitch));
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
       });
     });
   });

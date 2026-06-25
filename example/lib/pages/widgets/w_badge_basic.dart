@@ -24,7 +24,7 @@ class _WBadgeBasicExamplePageState extends State<WBadgeBasicExamplePage> {
           description:
               'Each badge carries bg-* and text-* with dark: pairs for full dark-mode support.',
           child: WDiv(
-            className: 'flex flex-row flex-wrap gap-3',
+            className: 'wrap gap-3',
             children: [
               WBadge(
                 'Active',

@@ -25,7 +25,7 @@ import 'w_div.dart';
 ///   className: 'rounded-xl border border-gray-200 dark:border-gray-700 p-4 flex flex-col gap-4',
 ///   header: WText('Settings', className: 'text-lg font-semibold'),
 ///   child: WDiv(className: 'flex flex-col gap-2', children: [...]),
-///   footer: WButton(onPressed: save, className: '...', child: WText('Save')),
+///   footer: WButton(onTap: save, className: '...', child: WText('Save')),
 /// )
 /// ```
 ///

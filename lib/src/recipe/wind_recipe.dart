@@ -366,8 +366,10 @@ bool _lintShorthandLonghand(List<String> parts) {
         (token) => token.isNotEmpty,
       );
 
-  // Track which granularities of each family appear.
-  final seenShorthand = <String>{};
+  // Track which granularities of each family appear, keeping the actual
+  // offending tokens so two distinct recipes mixing the same family (but
+  // different tokens) each warn once instead of the first one muting the rest.
+  final seenShorthand = <String, Set<String>>{};
   final seenLonghand = <String, Set<String>>{};
 
   for (final token in tokens) {
@@ -375,27 +377,36 @@ bool _lintShorthandLonghand(List<String> parts) {
 
     for (final family in _shorthandFamilies.entries) {
       if (bare.startsWith(family.key)) {
-        seenShorthand.add(family.key);
+        seenShorthand.putIfAbsent(family.key, () => <String>{}).add(bare);
         continue;
       }
       for (final longhand in family.value) {
         if (bare.startsWith(longhand)) {
-          seenLonghand.putIfAbsent(family.key, () => <String>{}).add(longhand);
+          seenLonghand.putIfAbsent(family.key, () => <String>{}).add(bare);
         }
       }
     }
   }
 
-  for (final family in seenShorthand) {
-    final longhands = seenLonghand[family];
-    if (longhands == null || longhands.isEmpty) continue;
+  for (final family in seenShorthand.keys) {
+    final shorthandTokens = seenShorthand[family]!;
+    final longhandTokens = seenLonghand[family];
+    if (longhandTokens == null || longhandTokens.isEmpty) continue;
 
-    final key = '$family${longhands.join(',')}';
+    // Key on the actual offending token set (sorted, so order is irrelevant)
+    // rather than the family pair alone: a different offending mix still warns,
+    // while a repeated identical offense stays idempotent (logs once).
+    final sortedOffenders = [...shorthandTokens, ...longhandTokens]..sort();
+    final key = '$family|${sortedOffenders.join(',')}';
     if (!_lintedKeys.add(key)) continue;
+
+    final longhandPrefixes = _shorthandFamilies[family]!
+        .where((prefix) => longhandTokens.any((t) => t.startsWith(prefix)))
+        .join('*, ');
 
     debugPrint(
       "WindRecipe: a shorthand '$family*' and longhand "
-      "'${longhands.join("*, ")}*' of the same family both appear; "
+      "'$longhandPrefixes*' of the same family both appear; "
       'wind parser last-wins is per-family and will silently keep the '
       'shorthand. Override at the same granularity instead.',
     );

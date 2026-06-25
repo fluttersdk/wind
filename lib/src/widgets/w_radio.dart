@@ -103,10 +103,15 @@ class WRadio<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A null onChanged means the radio is non-interactive: treat it exactly
+    // like disabled == true so the disabled: prefix activates, no gesture is
+    // attached, and Semantics reports the control as not enabled.
+    final bool isDisabled = disabled || onChanged == null;
+
     // 1. Build the active states set from props + custom states.
     final Set<String> activeStates = {
       if (_isSelected) 'selected',
-      if (disabled) 'disabled',
+      if (isDisabled) 'disabled',
       ...?states,
     };
 
@@ -148,8 +153,8 @@ class WRadio<T> extends StatelessWidget {
     // Tapping a radio that is already selected is a no-op (radio semantics:
     // you cannot de-select a radio by re-tapping it).
     final Widget anchor = WAnchor(
-      onTap: disabled || _isSelected ? null : () => onChanged?.call(value),
-      isDisabled: disabled,
+      onTap: isDisabled || _isSelected ? null : () => onChanged!.call(value),
+      isDisabled: isDisabled,
       states: activeStates,
       semanticLabel: semanticLabel,
       child: shell,
@@ -162,7 +167,7 @@ class WRadio<T> extends StatelessWidget {
     return Semantics(
       container: true,
       checked: _isSelected,
-      enabled: !disabled,
+      enabled: !isDisabled,
       inMutuallyExclusiveGroup: true,
       child: MergeSemantics(child: anchor),
     );

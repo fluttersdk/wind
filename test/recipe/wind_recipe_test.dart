@@ -281,6 +281,57 @@ void main() {
 
         expect(logs, isEmpty);
       });
+
+      test(
+        'two DISTINCT offending recipes of the same family each warn once',
+        () {
+          // Both recipes mix m-* shorthand with my-* longhand, but with
+          // different tokens. The dedupe key is the offending token set, so the
+          // first warning must not silence the second distinct offense.
+          final recipeA = WindRecipe(base: 'm-4 my-2');
+          final recipeB = WindRecipe(base: 'm-8 my-6');
+
+          final logs = <String>[];
+          final original = debugPrint;
+          debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+          try {
+            recipeA();
+            recipeB();
+          } finally {
+            debugPrint = original;
+          }
+
+          final warnings =
+              logs.where((l) => l.contains('m-') && l.contains('my-')).toList();
+          expect(
+            warnings.length,
+            2,
+            reason: 'each distinct offending mix must warn once',
+          );
+        },
+      );
+
+      test('the SAME offending recipe warns once across repeated calls', () {
+        // Idempotency: a repeated identical offense logs once per process, so a
+        // re-rendered recipe does not spam the console.
+        final recipe = WindRecipe(base: 'inset-4 top-2');
+
+        final logs = <String>[];
+        final original = debugPrint;
+        debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+        try {
+          recipe();
+          recipe();
+          recipe();
+        } finally {
+          debugPrint = original;
+        }
+
+        final warnings = logs
+            .where((l) => l.contains('inset-') && l.contains('top-'))
+            .toList();
+        expect(warnings.length, 1);
+      });
     });
   });
 

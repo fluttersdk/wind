@@ -104,10 +104,15 @@ class WSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A null onChanged means the switch is non-interactive: treat it exactly
+    // like disabled == true so the disabled: prefix activates, no gesture is
+    // attached, and Semantics reports the control as not enabled.
+    final bool isDisabled = disabled || onChanged == null;
+
     // 1. Build active states by merging built-in flags with caller states.
     final Set<String> activeStates = {
       if (value) 'checked',
-      if (disabled) 'disabled',
+      if (isDisabled) 'disabled',
       ...?states,
     };
 
@@ -133,11 +138,11 @@ class WSwitch extends StatelessWidget {
     return Semantics(
       container: true,
       toggled: value,
-      enabled: !disabled,
+      enabled: !isDisabled,
       child: MergeSemantics(
         child: WAnchor(
-          onTap: disabled ? null : () => onChanged?.call(!value),
-          isDisabled: disabled,
+          onTap: isDisabled ? null : () => onChanged!.call(!value),
+          isDisabled: isDisabled,
           states: activeStates,
           semanticLabel: semanticLabel,
           // 4. Render track and thumb as WDivs so className + state

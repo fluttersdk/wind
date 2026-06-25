@@ -106,7 +106,7 @@ class _WindRecipeBasicExamplePageState
             className: 'flex flex-col gap-4',
             children: [
               WDiv(
-                className: 'flex flex-row flex-wrap gap-3',
+                className: 'wrap gap-3',
                 children: [
                   WButton(
                     onTap: () {},
@@ -127,7 +127,7 @@ class _WindRecipeBasicExamplePageState
                 ],
               ),
               WDiv(
-                className: 'flex flex-row flex-wrap gap-3',
+                className: 'wrap gap-3',
                 children: [
                   WButton(
                     onTap: () {},
@@ -154,7 +154,7 @@ class _WindRecipeBasicExamplePageState
           description:
               'A recipe with a single axis; defaultVariants covers the no-argument call.',
           child: WDiv(
-            className: 'flex flex-row flex-wrap gap-2',
+            className: 'wrap gap-2',
             children: [
               WBadge('Deployed',
                   className: _badge(variants: {'tone': 'success'})),
@@ -239,7 +239,7 @@ class _WindRecipeBasicExamplePageState
           description:
               'Pass className: to _recipe() to append extra classes after the resolved set.',
           child: WDiv(
-            className: 'flex flex-row flex-wrap gap-3',
+            className: 'wrap gap-3',
             children: [
               WButton(
                 onTap: () {},

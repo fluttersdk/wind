@@ -90,7 +90,11 @@ class WTabs extends StatelessWidget {
   final String? panelClassName;
 
   /// Creates a [WTabs] widget.
-  const WTabs({
+  ///
+  /// The constructor is not `const`: the [tabs] non-emptiness and
+  /// [selectedIndex] range asserts read `tabs.length`, which is not a valid
+  /// constant expression, so a `const` constructor cannot host them.
+  WTabs({
     super.key,
     required this.tabs,
     required this.selectedIndex,
@@ -100,7 +104,11 @@ class WTabs extends StatelessWidget {
     this.tabClassName,
     this.selectedTabClassName,
     this.panelClassName,
-  });
+  })  : assert(tabs.isNotEmpty, 'WTabs: tabs must not be empty.'),
+        assert(
+          selectedIndex >= 0 && selectedIndex < tabs.length,
+          'WTabs: selectedIndex must be within the tabs range.',
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +171,9 @@ class WTabs extends StatelessWidget {
     ]);
 
     return WAnchor(
-      onTap: () => onChanged?.call(index),
+      // Only attach a gesture when a callback exists; a null onChanged keeps
+      // the tab non-interactive instead of a no-op tappable surface.
+      onTap: onChanged == null ? null : () => onChanged!.call(index),
       states: tabStates,
       child: WDiv(
         className: effectiveTabClassName,
