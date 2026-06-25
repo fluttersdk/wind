@@ -128,7 +128,7 @@ WindSlotCompoundVariant({
 <a name="resolution-order"></a>
 ## Resolution Order
 
-Every call resolves in this strict order — no dedupe, no sort, no twMerge:
+Every call resolves in this strict order: no dedupe, no sort, no twMerge:
 
 ```
 base ++ variant-classes(definition order) ++ matched-compound(array order) ++ caller
@@ -224,6 +224,6 @@ WCard(
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [WBadge](../widgets/w-badge.md) — a natural fit for a `WindRecipe` badge tone axis.
-- [WCard](../widgets/w-card.md) — pairs with `WindSlotRecipe` for multi-slot card variants.
-- [WButton](../widgets/w-button.md) — commonly driven by a `WindRecipe` for intent + size axes.
+- [WBadge](../widgets/w-badge.md): a natural fit for a `WindRecipe` badge tone axis.
+- [WCard](../widgets/w-card.md): pairs with `WindSlotRecipe` for multi-slot card variants.
+- [WButton](../widgets/w-button.md): commonly driven by a `WindRecipe` for intent + size axes.

@@ -78,7 +78,7 @@ WDiv(
 |:--|:--------|:------------|
 | 🎨 | **Tailwind syntax, natively** | Same utility classes you write on the web: `flex`, `p-4`, `bg-blue-500`, `rounded-lg`, `shadow-md`. Paste classes between web and Flutter; they work unmodified. |
 | 🧩 | **27 W-prefix widgets** | `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDatePicker`, `WDynamic`, `WBadge`, `WCard`, `WSwitch`, `WRadio`, `WTabs`, and 5 `FormField` wrappers (`WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`). |
-| 🎨 | **WindRecipe / WindSlotRecipe** | `tv()`-style variant-composition primitives. Compose a `className` (or per-slot map) from `base` + variant axes + compoundVariants + caller override — strict emission order, no dedupe/sort/twMerge. |
+| 🎨 | **WindRecipe / WindSlotRecipe** | `tv()`-style variant-composition primitives. Compose a `className` (or per-slot map) from `base` + variant axes + compoundVariants + caller override: strict emission order, no dedupe/sort/twMerge. |
 | 📱 | **Responsive prefixes** | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoints, plus custom breakpoints via the theme. |
 | 🌙 | **First-class dark mode** | `dark:` prefix with runtime toggle and automatic system-brightness sync. Every color token carries its `dark:` pair in the same className. |
 | 🎯 | **State prefixes** | `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, and any custom state. Zero `MouseRegion`, zero `setState`, zero `_isHovered` booleans. |

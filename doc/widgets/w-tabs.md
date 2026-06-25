@@ -41,7 +41,7 @@ WTabs(
 | `panelBuilder` | `Widget Function(int index)` | **Required** | Returns the panel content for the currently selected tab. |
 | `onChanged` | `ValueChanged<int>?` | `null` | Called with the tapped tab's index. The caller updates `selectedIndex` in response. |
 | `listClassName` | `String?` | `null` | Utility classes for the tab-list row container. Example: `'flex flex-row border-b border-gray-200 dark:border-gray-700'`. |
-| `tabClassName` | `String?` | `null` | Utility classes applied to every tab's inner `WDiv`. Supports `selected:` prefixed tokens — they activate only on the selected tab. |
+| `tabClassName` | `String?` | `null` | Utility classes applied to every tab's inner `WDiv`. Supports `selected:` prefixed tokens: they activate only on the selected tab. |
 | `selectedTabClassName` | `String?` | `null` | Extra utility classes appended to the active tab's `WDiv` only. Applied after `tabClassName`. |
 | `panelClassName` | `String?` | `null` | Utility classes for the panel wrapper `WDiv`. Example: `'pt-4'`. |
 
@@ -126,6 +126,6 @@ WTabs(
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [WAnchor](./w-anchor.md) — each tab is wrapped in a `WAnchor` providing hover and focus state.
-- [WDiv](./w-div.md) — renders the tab list and panel containers.
-- [WCheckbox](./w-checkbox.md) — another controlled widget that drives state prefixes from a prop.
+- [WAnchor](./w-anchor.md): each tab is wrapped in a `WAnchor` providing hover and focus state.
+- [WDiv](./w-div.md): renders the tab list and panel containers.
+- [WCheckbox](./w-checkbox.md): another controlled widget that drives state prefixes from a prop.

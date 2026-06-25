@@ -132,6 +132,6 @@ WRadio<String>(
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [WCheckbox](./w-checkbox.md) — boolean input that mirrors the state-prefix pattern.
-- [WAnchor](./w-anchor.md) — provides hover and focus state propagation used by `WRadio` internally.
-- [WDiv](./w-div.md) — renders the ring shell and indicator surfaces.
+- [WCheckbox](./w-checkbox.md): boolean input that mirrors the state-prefix pattern.
+- [WAnchor](./w-anchor.md): provides hover and focus state propagation used by `WRadio` internally.
+- [WDiv](./w-div.md): renders the ring shell and indicator surfaces.

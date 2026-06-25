@@ -1,6 +1,6 @@
 # WSwitch
 
-Controlled toggle switch. Composes `WAnchor` + `WDiv` (track) + `WDiv` (thumb). Pushes the `checked:` state prefix into the className context when `value` is `true`, so callers can drive all visual changes — track color, thumb position, opacity — through className tokens alone.
+Controlled toggle switch. Composes `WAnchor` + `WDiv` (track) + `WDiv` (thumb). Pushes the `checked:` state prefix into the className context when `value` is `true`, so callers can drive all visual changes: track color, thumb position, opacity: through className tokens alone.
 
 ## Table of Contents
 
@@ -126,6 +126,6 @@ WSwitch(
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [WAnchor](./w-anchor.md) — provides hover, focus, and gesture state propagation for the switch.
-- [WCheckbox](./w-checkbox.md) — boolean input that mirrors the `checked:` state pattern.
-- [WDiv](./w-div.md) — renders the track and thumb surfaces.
+- [WAnchor](./w-anchor.md): provides hover, focus, and gesture state propagation for the switch.
+- [WCheckbox](./w-checkbox.md): boolean input that mirrors the `checked:` state pattern.
+- [WDiv](./w-div.md): renders the track and thumb surfaces.

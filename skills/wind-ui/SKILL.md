@@ -19,7 +19,7 @@ This skill assumes the host app already depends on `fluttersdk_wind` and has `Wi
 Three quick checks. Each pays off across the whole session.
 
 1. **Confirm Wind is installed.** Look at `pubspec.yaml` for `fluttersdk_wind:`. If absent, jump to §13 first.
-2. **Read the project's `WindThemeData` setup.** Usually in `lib/main.dart` or `lib/config/wind.dart`. Note any custom color families (`primary`, `accent`, `incident`, etc.) — those become available as `bg-primary-500`, `text-incident-700`, etc. without registration. Skip this and the agent risks writing tokens that silently no-op, or missing the brand palette entirely.
+2. **Read the project's `WindThemeData` setup.** Usually in `lib/main.dart` or `lib/config/wind.dart`. Note any custom color families (`primary`, `accent`, `incident`, etc.): those become available as `bg-primary-500`, `text-incident-700`, etc. without registration. Skip this and the agent risks writing tokens that silently no-op, or missing the brand palette entirely.
 3. **Scan one existing view in `lib/` for the project's className idioms.** Triple-quoted style? Single-line preferred? Custom states (`pressed:`, `expanded:`)? Match the surrounding code, don't invent a new dialect.
 
 After these, the agent has the project's color landscape, breakpoint set, and className voice loaded.
@@ -158,29 +158,29 @@ Prefix order does not matter at the parser level; all stacked prefixes must matc
 
 Inline this catalog as your default reach-for set. For the full per-parser regex catalog (every flag, every arbitrary-value pattern): `${CLAUDE_SKILL_DIR}/references/tokens.md`.
 
-**Layout** — `flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `wrap` `grid` `grid-cols-N` `block` `hidden`. `justify-start` `-center` `-end` `-between` `-around` `-evenly`. `items-start` `-center` `-end` `-baseline` `-stretch`. `axis-min` `axis-max` (Wind-only, sets `MainAxisSize`).
+**Layout**: `flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `wrap` `grid` `grid-cols-N` `block` `hidden`. `justify-start` `-center` `-end` `-between` `-around` `-evenly`. `items-start` `-center` `-end` `-baseline` `-stretch`. `axis-min` `axis-max` (Wind-only, sets `MainAxisSize`).
 
-**Flex child** — `flex-1` `flex-auto` `flex-none` `flex-N` (numeric). `shrink-0` `grow`. `self-start` / `-end` / `-center` / `-stretch` / `-auto` (align-self shorthand; `align-self-*` long form also works). `order-0` through `order-12`, `order-first` / `order-last` / `order-none`, arbitrary `order-[-5]`.
+**Flex child**: `flex-1` `flex-auto` `flex-none` `flex-N` (numeric). `shrink-0` `grow`. `self-start` / `-end` / `-center` / `-stretch` / `-auto` (align-self shorthand; `align-self-*` long form also works). `order-0` through `order-12`, `order-first` / `order-last` / `order-none`, arbitrary `order-[-5]`.
 
-**Spacing** — `p-N` `px-N` `py-N` `pt-N` `pr-N` `pb-N` `pl-N` (no `ps-`/`pe-`). `m-N` and axes (no negative margin, no `ms-`/`me-`, `mx-auto` for horizontal centering). `gap-N` `gap-x-N` `gap-y-N` `space-x-N` `space-y-N`. Arbitrary `p-[18px]`, `gap-[3.5]` (no `%` for spacing). Default unit: 4 px per step. `p-4` = 16 px.
+**Spacing**: `p-N` `px-N` `py-N` `pt-N` `pr-N` `pb-N` `pl-N` (no `ps-`/`pe-`). `m-N` and axes (no negative margin, no `ms-`/`me-`, `mx-auto` for horizontal centering). `gap-N` `gap-x-N` `gap-y-N` `space-x-N` `space-y-N`. Arbitrary `p-[18px]`, `gap-[3.5]` (no `%` for spacing). Default unit: 4 px per step. `p-4` = 16 px.
 
-**Sizing** — `w-N` `h-N` (theme scale). `w-1/2` `w-1/3` `w-2/3` `w-1/4` `w-3/4` `w-full` `w-screen`. `h-full` `h-screen`. Arbitrary `w-[300px]` `h-[50%]`. `min-w-0` `min-w-full` `min-h-screen`. `max-w-xs` through `max-w-7xl`, `max-w-prose`, `max-w-full`. No `w-auto` / `h-auto` (silently skipped).
+**Sizing**: `w-N` `h-N` (theme scale). `w-1/2` `w-1/3` `w-2/3` `w-1/4` `w-3/4` `w-full` `w-screen`. `h-full` `h-screen`. Arbitrary `w-[300px]` `h-[50%]`. `min-w-0` `min-w-full` `min-h-screen`. `max-w-xs` through `max-w-7xl`, `max-w-prose`, `max-w-full`. No `w-auto` / `h-auto` (silently skipped).
 
-**Position** — `relative` `absolute`. `top-N` `right-N` `bottom-N` `left-N` `inset-N` `inset-x-N` `inset-y-N`, negative `-top-N` `-inset-N`, arbitrary `top-[24px]` (no `%` for offsets). `fixed` / `sticky` are recognised by the parser but produce no visual effect.
+**Position**: `relative` `absolute`. `top-N` `right-N` `bottom-N` `left-N` `inset-N` `inset-x-N` `inset-y-N`, negative `-top-N` `-inset-N`, arbitrary `top-[24px]` (no `%` for offsets). `fixed` / `sticky` are recognised by the parser but produce no visual effect.
 
-**Colors** (every line needs a `dark:` peer) — `bg-{family}-{shade}` `bg-[#hex]` `bg-transparent` `bg-white` `bg-black`. Opacity modifier `/N` (0-100): `bg-red-500/50`. Same shape for `text-*` `border-*` `ring-*` `shadow-*` `fill-*` `stroke-*`. Bare shade defaults to 500: `bg-red` = `bg-red-500`. Gradients: `bg-gradient-to-{t|tr|r|br|b|bl|l|tl}` + `from-{c}-{shade}` `via-{c}-{shade}` `to-{c}-{shade}`.
+**Colors** (every line needs a `dark:` peer): `bg-{family}-{shade}` `bg-[#hex]` `bg-transparent` `bg-white` `bg-black`. Opacity modifier `/N` (0-100): `bg-red-500/50`. Same shape for `text-*` `border-*` `ring-*` `shadow-*` `fill-*` `stroke-*`. Bare shade defaults to 500: `bg-red` = `bg-red-500`. Gradients: `bg-gradient-to-{t|tr|r|br|b|bl|l|tl}` + `from-{c}-{shade}` `via-{c}-{shade}` `to-{c}-{shade}`.
 
-**Borders** — `border` `border-N` `border-t` `border-r` `border-b` `border-l` `border-x` `border-y`. `border-solid` `border-none` (only these two; `border-dashed` / `border-dotted` are recognised but not wired). `rounded` `rounded-{sm|md|lg|xl|2xl|3xl|full|none}`, directional `rounded-t-lg` `rounded-tl-xl`, arbitrary `rounded-[8px]`.
+**Borders**: `border` `border-N` `border-t` `border-r` `border-b` `border-l` `border-x` `border-y`. `border-solid` `border-none` (only these two; `border-dashed` / `border-dotted` are recognised but not wired). `rounded` `rounded-{sm|md|lg|xl|2xl|3xl|full|none}`, directional `rounded-t-lg` `rounded-tl-xl`, arbitrary `rounded-[8px]`.
 
-**Typography** (order of resolution inside `text-*`) — color → align → size → weight → style. `text-xs` `text-sm` `text-base` `text-lg` `text-xl` `text-2xl` through `text-6xl` (60 px). `text-7xl` / `text-8xl` / `text-9xl` are no-ops; do not write them. `font-thin` through `font-black`. `text-left` `text-center` `text-right` `text-justify` `text-start` `text-end` (RTL-aware). `truncate` (= `text-ellipsis` + `maxLines: 1` + `softWrap: false`). `line-clamp-N`. `whitespace-nowrap` / `text-nowrap`. `uppercase` `lowercase` `capitalize` `normal-case`. `italic` / `not-italic`. `underline` `line-through` `no-underline`, plus `decoration-{color}/{style}/{thickness}`. `leading-tight` `leading-snug` `leading-normal` `leading-relaxed` `leading-loose` or arbitrary `leading-[24px]`. `tracking-tighter` through `tracking-widest`. Font size + line height combined: `text-xl/8`.
+**Typography** (order of resolution inside `text-*`): color → align → size → weight → style. `text-xs` `text-sm` `text-base` `text-lg` `text-xl` `text-2xl` through `text-6xl` (60 px). `text-7xl` / `text-8xl` / `text-9xl` are no-ops; do not write them. `font-thin` through `font-black`. `text-left` `text-center` `text-right` `text-justify` `text-start` `text-end` (RTL-aware). `truncate` (= `text-ellipsis` + `maxLines: 1` + `softWrap: false`). `line-clamp-N`. `whitespace-nowrap` / `text-nowrap`. `uppercase` `lowercase` `capitalize` `normal-case`. `italic` / `not-italic`. `underline` `line-through` `no-underline`, plus `decoration-{color}/{style}/{thickness}`. `leading-tight` `leading-snug` `leading-normal` `leading-relaxed` `leading-loose` or arbitrary `leading-[24px]`. `tracking-tighter` through `tracking-widest`. Font size + line height combined: `text-xl/8`.
 
-**Effects** — `opacity-N` (5-step scale, plus arbitrary `opacity-[0.5]`). `shadow-sm` `shadow` `shadow-md` `shadow-lg` `shadow-xl` `shadow-2xl` `shadow-inner` `shadow-none`. Colored shadow `shadow-blue-500/20`. `ring-N` `ring-{color}` `ring-offset-N` `ring-inset`. `aspect-square` `aspect-video` `aspect-[4/3]`. `z-0` `z-10` through `z-50`, arbitrary `z-[100]`, `z-auto`.
+**Effects**: `opacity-N` (5-step scale, plus arbitrary `opacity-[0.5]`). `shadow-sm` `shadow` `shadow-md` `shadow-lg` `shadow-xl` `shadow-2xl` `shadow-inner` `shadow-none`. Colored shadow `shadow-blue-500/20`. `ring-N` `ring-{color}` `ring-offset-N` `ring-inset`. `aspect-square` `aspect-video` `aspect-[4/3]`. `z-0` `z-10` through `z-50`, arbitrary `z-[100]`, `z-auto`.
 
-**Overflow** — `overflow-hidden` `overflow-visible` `overflow-scroll` `overflow-auto`, axis-specific `overflow-x-auto` `overflow-y-auto`. Scrolling requires the constructor prop `scrollPrimary: true` for iOS tap-to-top (there is no className for it).
+**Overflow**: `overflow-hidden` `overflow-visible` `overflow-scroll` `overflow-auto`, axis-specific `overflow-x-auto` `overflow-y-auto`. Scrolling requires the constructor prop `scrollPrimary: true` for iOS tap-to-top (there is no className for it).
 
-**Transitions / animations** — `duration-{75|100|150|200|300|500|700|1000}` plus arbitrary `duration-[500ms]`. `ease-linear` `ease-in` `ease-out` `ease-in-out`. `animate-spin` `animate-pulse` `animate-ping` `animate-bounce` `animate-none`. The bare `transition` / `transition-all` / `transition-colors` tokens are recognised in docs but NOT wired in the parser; pair `duration-*` + `ease-*` to enable transitions on `opacity` and color changes.
+**Transitions / animations**: `duration-{75|100|150|200|300|500|700|1000}` plus arbitrary `duration-[500ms]`. `ease-linear` `ease-in` `ease-out` `ease-in-out`. `animate-spin` `animate-pulse` `animate-ping` `animate-bounce` `animate-none`. The bare `transition` / `transition-all` / `transition-colors` tokens are recognised in docs but NOT wired in the parser; pair `duration-*` + `ease-*` to enable transitions on `opacity` and color changes.
 
-**Prefixes** — Responsive `sm:` `md:` `lg:` `xl:` `2xl:` (default 640 / 768 / 1024 / 1280 / 1536 px, customizable via `WindThemeData.screens`). Dark `dark:`. Platform `ios:` `android:` `macos:` `web:` `mobile:` `windows:` `linux:`. State (Core Laws §3). Stackable freely.
+**Prefixes**: Responsive `sm:` `md:` `lg:` `xl:` `2xl:` (default 640 / 768 / 1024 / 1280 / 1536 px, customizable via `WindThemeData.screens`). Dark `dark:`. Platform `ios:` `android:` `macos:` `web:` `mobile:` `windows:` `linux:`. State (Core Laws §3). Stackable freely.
 
 ## 5. Wind ≠ Tailwind (the cheat sheet a web developer needs first)
 
@@ -207,7 +207,7 @@ A developer fluent in Tailwind v3 or v4 will default to assumptions Wind partial
 | `w-auto` / `h-auto` | Silently skipped. Omit the token (Flutter defaults to intrinsic sizing). |
 | `shadow-sm` / `shadow` / `rounded-sm` / `rounded` semantics | Match Tailwind v3 (Wind has not rolled the v4 rename one step down). |
 
-**Wind-only additions Tailwind lacks** — `ios:` `android:` `macos:` `windows:` `linux:` `web:` `mobile:` platform prefixes. `axis-min` / `axis-max` for Flutter `MainAxisSize`. Inline color props (`WDiv.backgroundColor`, `WText.foregroundColor`) that bypass the cache key. `WBreakpoint` for per-breakpoint widget builders. `WDynamic` for JSON-driven trees. `preserve-colors` token for `WSvg`.
+**Wind-only additions Tailwind lacks**: `ios:` `android:` `macos:` `windows:` `linux:` `web:` `mobile:` platform prefixes. `axis-min` / `axis-max` for Flutter `MainAxisSize`. Inline color props (`WDiv.backgroundColor`, `WText.foregroundColor`) that bypass the cache key. `WBreakpoint` for per-breakpoint widget builders. `WDynamic` for JSON-driven trees. `preserve-colors` token for `WSvg`.
 
 ## 6. Flutter constraint reality (the six layout rules CSS does not have)
 
@@ -342,10 +342,10 @@ Per change (every UI edit), verify all seven:
 1. **Every color token has a `dark:` peer** in the same className block. Grep your diff for `bg-`, `text-`, `border-`, `ring-`, `fill-`, `shadow-` and confirm a `dark:` peer on each.
 2. **Every multi-concern className (3+ token families) is triple-quoted**, one concern per line, dark pairs grouped beside their light variant.
 3. **Every interactive surface has `hover:` and `focus:` states** (web/desktop targets) on `WButton`, `WAnchor`, `WInput`, `WSelect`, `WCheckbox`, `WDatePicker`, plus `disabled:` styling wherever the widget exposes an `enabled` / `disabled` parameter.
-4. **Every `child` XOR `children`** — never both. Construction-time assertion.
+4. **Every `child` XOR `children`**: never both. Construction-time assertion.
 5. **Every scrollable root `WDiv` has `scrollPrimary: true`** on at least one ancestor in the scroll chain so iOS status-bar-tap scrolls to top.
 6. **No Dart string interpolation inside className**, no inline `BoxDecoration` / `TextStyle` / `EdgeInsets` when a token covers it, no `Icons.*` (non-outlined) without a deliberate reason, no `WIcon` without `Icons.*_outlined`.
-7. **Every icon-only `WButton` / `WAnchor` has a `semanticLabel`** — without it the control is nameless to screen readers and `getByRole('button', { name })`. When set, the child subtree is excluded from semantics, so `semanticLabel` overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already carries readable text. Do not put the word "button" in the label; the role appends it.
+7. **Every icon-only `WButton` / `WAnchor` has a `semanticLabel`**: without it the control is nameless to screen readers and `getByRole('button', { name })`. When set, the child subtree is excluded from semantics, so `semanticLabel` overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already carries readable text. Do not put the word "button" in the label; the role appends it.
 
 Run `dart analyze` on the touched files and visually verify the change in light AND dark mode (toggle via `context.windTheme.toggleTheme()` if there is no UI for it yet) before reporting done. Missing dark pairs only surface when the app is actually in dark mode.
 
@@ -365,12 +365,12 @@ Run `dart analyze` on the touched files and visually verify the change in light 
 | Disabled secondary action | `WButton(disabled: true, className: 'disabled:opacity-50 disabled:cursor-not-allowed', ...)` |
 | Loading button | `WButton(isLoading: _isSubmitting, className: 'loading:bg-blue-400 ...', child: const Text('Save'))` |
 | Avatar with fallback | `WImage(src: user.avatarUrl, className: 'w-12 h-12 rounded-full object-cover', errorBuilder: (_, __, ___) => WIcon(Icons.person_outlined, className: 'text-gray-400'))` |
-| Form field error styling | className includes `error:border-red-500 error:ring-1 error:ring-red-500` — auto-activates when validator returns non-null |
+| Form field error styling | className includes `error:border-red-500 error:ring-1 error:ring-red-500`: auto-activates when validator returns non-null |
 | Popover menu | `WPopover(triggerBuilder: (_, isOpen, __) => WButton(...), contentBuilder: (_, close) => WDiv(...), alignment: PopoverAlignment.bottomRight)` |
 | Per-breakpoint widget swap | `WBreakpoint(base: (_) => MobileLayout(), md: (_) => TabletLayout(), lg: (_) => DesktopLayout())` |
 | Status badge / pill | `WDiv(className: 'inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 text-xs font-medium', children: [WIcon(Icons.circle_outlined, className: 'w-2 h-2'), const WText('Active')])` |
 | Empty state | `WDiv(className: 'flex flex-col items-center justify-center gap-3 p-8', children: [WIcon(Icons.inbox_outlined, className: 'w-12 h-12 text-gray-400 dark:text-gray-500'), const WText('No items yet', className: 'text-base font-medium text-gray-700 dark:text-gray-200'), const WText('Tap the + button to add one.', className: 'text-sm text-gray-500 dark:text-gray-400 text-center'), WButton(onTap: _create, className: 'mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg', child: const Text('Create'))])` |
-| App shell | `Scaffold(appBar: AppBar(title: const Text(...)), body: WDiv(className: 'flex flex-col h-full', children: [...]))` — Material `Scaffold` + `AppBar` wraps; Wind owns the body |
+| App shell | `Scaffold(appBar: AppBar(title: const Text(...)), body: WDiv(className: 'flex flex-col h-full', children: [...]))`: Material `Scaffold` + `AppBar` wraps; Wind owns the body |
 | Icon-only button (48dp tap target) | `WButton(className: 'p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700', onTap: _close, child: const WIcon(Icons.close_outlined))` |
 
 Full 12+ recipe catalog with code: `${CLAUDE_SKILL_DIR}/references/layouts.md`.
@@ -383,7 +383,7 @@ Compact catalog of consistent footguns. Each entry: what's wrong, why, the corre
 |---|---|---|
 | `WDiv(child: x, children: [y])` | Construction-time assertion fails | one or the other |
 | `WIcon(Icons.settings)` | Filled Material icon (off-brand for Wind) | `WIcon(Icons.settings_outlined)` |
-| `className: 'flex-wrap'` | No-op; Wind uses `wrap` for `Wrap`-style layout | `'wrap gap-2'` (or `'flex flex-wrap gap-2'`) — note `wrap` is Wind's only wrapping token |
+| `className: 'flex-wrap'` | No-op; Wind uses `wrap` for `Wrap`-style layout | `'wrap gap-2'` (or `'flex flex-wrap gap-2'`): note `wrap` is Wind's only wrapping token |
 | `className: 'text-7xl'` | Font scale stops at 6xl; silent no-op | `'text-6xl'` (cap) or use `font-size` via custom theme |
 | `className: 'w-full'` inside a Row | RenderFlex overflow | `'flex-1'` |
 | `className: 'h-full'` inside a scrollable | Vertical viewport unbounded | `'flex-1 overflow-y-auto'` + `scrollPrimary: true` on the constructor |
@@ -403,7 +403,7 @@ Compact catalog of consistent footguns. Each entry: what's wrong, why, the corre
 
 ## 13. Quick install
 
-The skill's TRIGGER says "Flutter app that depends on `fluttersdk_wind`", so this section is the rare bootstrap path — only fires when the host app does NOT yet have Wind.
+The skill's TRIGGER says "Flutter app that depends on `fluttersdk_wind`", so this section is the rare bootstrap path: only fires when the host app does NOT yet have Wind.
 
 ```yaml
 # pubspec.yaml
@@ -444,7 +444,7 @@ Brightness syncs with the OS by default. Toggle manually via `context.windTheme.
 
 `WindThemeData.aliases` (`Map<String, String>`, empty by default) maps bare-token shorthand keys to full className strings (for example `{'btn-primary': 'bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg'}`). Keys must be bare tokens (no prefix, no colon). Expansion is recursive (an alias may expand to another alias), alias wins over a real token of the same name (debug warning on shadow), and expansion happens centrally in `WindParser.parse` before any parser runs, so aliases work in every widget and in `WDynamic` without additional wiring.
 
-`Wind.installDebugResolver()` is one-time setup inside `kDebugMode`. Idempotent; tree-shaken in release. Do NOT add it on every UI change — it belongs in `main.dart` only.
+`Wind.installDebugResolver()` is one-time setup inside `kDebugMode`. Idempotent; tree-shaken in release. Do NOT add it on every UI change: it belongs in `main.dart` only.
 
 ## 14. References (load on trigger)
 
