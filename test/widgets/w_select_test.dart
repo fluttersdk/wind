@@ -948,7 +948,12 @@ void main() {
       expect(find.text('Apricot'), findsOneWidget);
     });
 
-    testWidgets('focus loss closes an open menu', (tester) async {
+    testWidgets('focus loss alone does not close an open menu', (tester) async {
+      // The menu's dismissal is driven by an outside tap (the overlay's
+      // TapRegion.onTapOutside), NOT by the trigger losing focus. On web the
+      // trigger blurs transiently right after the opening click; closing on
+      // that blur dismissed the menu on the frame it opened. The menu must
+      // stay open through a focus change and close only on a real outside tap.
       final unrelatedFocus = FocusNode();
       addTearDown(unrelatedFocus.dispose);
 
@@ -963,13 +968,11 @@ void main() {
         ),
       );
 
-      // Open the dropdown, then explicitly focus the WSelect's internal Focus
-      // node so a subsequent unrelated focus request actually fires the
-      // listener that closes the menu.
       await tester.tap(find.text('Select an option'));
       await tester.pumpAndSettle();
       expect(find.text('Apple'), findsOneWidget);
 
+      // Focus the WSelect's internal node, then move focus away from it.
       final Finder focusInsideSelect = find.descendant(
         of: find.byType(WSelect<String>),
         matching: find.byType(Focus),
@@ -977,12 +980,11 @@ void main() {
       final Focus focusWidget = tester.widget<Focus>(focusInsideSelect.first);
       focusWidget.focusNode!.requestFocus();
       await tester.pumpAndSettle();
-
-      // Move focus away from the WSelect.
       unrelatedFocus.requestFocus();
       await tester.pumpAndSettle();
 
-      expect(find.text('Apple'), findsNothing);
+      // Still open: focus loss must not dismiss the menu.
+      expect(find.text('Apple'), findsOneWidget);
     });
 
     testWidgets('scroll near bottom triggers onLoadMore', (tester) async {

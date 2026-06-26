@@ -179,13 +179,14 @@ void main() {
         ),
       );
 
-      // Open the dropdown.
+      // Open the dropdown. The overlay mount is deferred one frame, so settle
+      // rather than single-pump before the option list is present.
       await tester.tap(find.text('Pick one'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // Tap an option inside the overlay.
       await tester.tap(find.text('Banana').last);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(selected, 'b');
     });
