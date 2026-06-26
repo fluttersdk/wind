@@ -156,10 +156,12 @@ class WSwitch extends StatelessWidget {
             // Stack (thumb pinned top-left), which kills `justify-*`. The track
             // must stay a flex Row so `justify-start` -> `checked:justify-end`
             // (supplied by the caller className) actually slides the thumb.
-            className: 'flex items-center ${className ?? ''}',
+            className: className == null
+                ? 'flex items-center'
+                : 'flex items-center $className',
             states: activeStates,
             child: WDiv(
-              className: thumbClassName ?? '',
+              className: thumbClassName,
               states: activeStates,
             ),
           ),
