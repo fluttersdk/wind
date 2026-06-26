@@ -26,7 +26,7 @@ WRadio<String>(
     w-5 h-5 rounded-full border border-gray-300 dark:border-gray-600
     flex items-center justify-center
     selected:border-blue-500 dark:selected:border-blue-400
-    hover:border-blue-400
+    hover:border-blue-400 dark:hover:border-blue-300
   ''',
   indicatorClassName: 'w-2.5 h-2.5 rounded-full bg-blue-500 dark:bg-blue-400',
 )
@@ -39,7 +39,7 @@ WRadio<String>(
 |:-----|:-----|:--------|:------------|
 | `value` | `T` | **Required** | The value this radio represents. |
 | `groupValue` | `T?` | **Required** | The currently selected value for the group. When `value == groupValue`, `selected:` state activates. |
-| `onChanged` | `ValueChanged<T>?` | **Required** | Called with `value` when this radio is tapped and not already selected. Pass `null` for a non-interactive radio. |
+| `onChanged` | `ValueChanged<T>?` | `null` | Called with `value` when this radio is tapped and not already selected. Omit or pass `null` for a non-interactive radio. |
 | `className` | `String?` | `null` | Utility classes for the outer ring shell. Defaults to `'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-blue-500'` when `null`. |
 | `indicatorClassName` | `String?` | `null` | Utility classes for the inner filled dot (visible only when selected). Defaults to `'w-2.5 h-2.5 rounded-full bg-blue-500 selected:opacity-100'` when `null`. |
 | `disabled` | `bool` | `false` | Blocks tap and activates the `disabled:` prefix. |
@@ -54,7 +54,7 @@ WRadio<T>({
   Key? key,
   required T value,
   required T? groupValue,
-  required ValueChanged<T>? onChanged,
+  ValueChanged<T>? onChanged,
   String? className,
   String? indicatorClassName,
   bool disabled = false,
@@ -80,7 +80,7 @@ WRadio<String>(
     border-gray-300 dark:border-gray-600
     flex items-center justify-center
     selected:border-indigo-500 dark:selected:border-indigo-400
-    hover:border-indigo-400
+    hover:border-indigo-400 dark:hover:border-indigo-300
     disabled:opacity-50
   ''',
   indicatorClassName: '''
@@ -106,7 +106,7 @@ WDiv(
             value: option,
             groupValue: _theme,
             onChanged: (val) => setState(() => _theme = val),
-            className: 'w-5 h-5 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center selected:border-blue-500',
+            className: 'w-5 h-5 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center selected:border-blue-500 dark:selected:border-blue-400',
             indicatorClassName: 'w-2.5 h-2.5 rounded-full bg-blue-500 dark:bg-blue-400',
           ),
           WText(option, className: 'text-sm text-gray-700 dark:text-gray-300'),

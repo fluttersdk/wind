@@ -103,7 +103,7 @@ WCard(
     className: 'px-5 py-4 border-t border-gray-200 dark:border-gray-700 flex flex-row justify-end',
     child: WButton(
       onTap: save,
-      className: 'px-4 py-2 rounded-lg bg-blue-600 dark:bg-blue-500 hover:bg-blue-700',
+      className: 'px-4 py-2 rounded-lg bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600',
       child: WText('Save', className: 'text-white text-sm font-medium'),
     ),
   ),
