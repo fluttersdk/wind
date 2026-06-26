@@ -545,35 +545,43 @@ class _WSelectState<T> extends State<WSelect<T>> {
   }
 
   Widget _buildTrigger(BuildContext context) {
-    // Custom trigger builders
+    // Custom trigger builders. Tag them with the shared tap group too, so the
+    // open menu's onTapOutside ignores the tap that lands on a custom trigger
+    // (a bare GestureDetector would be seen as an outside tap and self-close).
     if (widget.isMulti && widget.multiTriggerBuilder != null) {
-      return GestureDetector(
-        onTap: _toggleMenu,
-        child: MouseRegion(
-          onEnter: (_) => _setHovering(true),
-          onExit: (_) => _setHovering(false),
-          cursor: widget.disabled
-              ? SystemMouseCursors.forbidden
-              : SystemMouseCursors.click,
-          child: widget.multiTriggerBuilder!(
-            context,
-            _selectedOptions,
-            _isOpen,
+      return TapRegion(
+        groupId: _tapGroupId,
+        child: GestureDetector(
+          onTap: _toggleMenu,
+          child: MouseRegion(
+            onEnter: (_) => _setHovering(true),
+            onExit: (_) => _setHovering(false),
+            cursor: widget.disabled
+                ? SystemMouseCursors.forbidden
+                : SystemMouseCursors.click,
+            child: widget.multiTriggerBuilder!(
+              context,
+              _selectedOptions,
+              _isOpen,
+            ),
           ),
         ),
       );
     }
 
     if (!widget.isMulti && widget.triggerBuilder != null) {
-      return GestureDetector(
-        onTap: _toggleMenu,
-        child: MouseRegion(
-          onEnter: (_) => _setHovering(true),
-          onExit: (_) => _setHovering(false),
-          cursor: widget.disabled
-              ? SystemMouseCursors.forbidden
-              : SystemMouseCursors.click,
-          child: widget.triggerBuilder!(context, _selectedOption, _isOpen),
+      return TapRegion(
+        groupId: _tapGroupId,
+        child: GestureDetector(
+          onTap: _toggleMenu,
+          child: MouseRegion(
+            onEnter: (_) => _setHovering(true),
+            onExit: (_) => _setHovering(false),
+            cursor: widget.disabled
+                ? SystemMouseCursors.forbidden
+                : SystemMouseCursors.click,
+            child: widget.triggerBuilder!(context, _selectedOption, _isOpen),
+          ),
         ),
       );
     }
