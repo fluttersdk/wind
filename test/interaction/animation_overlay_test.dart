@@ -206,14 +206,15 @@ void main() {
       // Closed: options not shown.
       expect(find.text('Yttrium'), findsNothing);
 
-      // Open.
+      // Open. The overlay mount is deferred one frame (so the opening tap's
+      // pointer-up cannot self-close it), so settle rather than single-pump.
       await tester.tap(find.text('Choose'));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('Yttrium'), findsOneWidget);
 
       // Select an option -> single-select closes the menu.
       await tester.tap(find.text('Yttrium'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(selected, 'y');
       expect(find.text('Yttrium'), findsNothing);

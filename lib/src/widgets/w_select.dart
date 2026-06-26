@@ -256,22 +256,11 @@ class _WSelectState<T> extends State<WSelect<T>> {
   bool _isHovering = false;
   bool _openUpward = false;
 
-  /// Shared [TapRegion] group for the trigger and the open menu. Tagging both
-  /// with the same group stops the menu's `onTapOutside` from firing on the
-  /// very tap that opened it (which otherwise closes the menu immediately on
-  /// web, where the opening pointer-up reaches the freshly mounted overlay).
+  /// Shared [TapRegion] group for the trigger and the open menu, so re-tapping
+  /// the trigger toggles it closed (the tap is inside the group) rather than
+  /// being treated as an outside tap. The opening-tap self-close is handled
+  /// separately by deferring the overlay mount one frame (see [_toggleMenu]).
   final Object _tapGroupId = Object();
-
-  /// Suppresses the first outside-tap dismiss after the menu opens.
-  ///
-  /// On web the opening tap's pointer-up reaches the freshly mounted overlay's
-  /// [TapRegion] within the same frame and is reported to `onTapOutside`,
-  /// closing the menu on the very frame it opened. The shared [_tapGroupId] is
-  /// not enough on its own (the overlay registers into the group mid-gesture,
-  /// after the down was already routed). This flag swallows exactly that one
-  /// event; it is disarmed one frame later so a later, separate outside tap
-  /// still closes the menu. Mirrors the `WPopover` self-close guard.
-  bool _suppressNextTapOutside = false;
   String _searchQuery = '';
   List<SelectOption<T>> _filteredOptions = [];
   bool _isSearching = false;
@@ -283,7 +272,6 @@ class _WSelectState<T> extends State<WSelect<T>> {
   void initState() {
     super.initState();
     _filteredOptions = widget.options;
-    _focusNode.addListener(_onFocusChange);
     _scrollController.addListener(_onScroll);
   }
 
@@ -300,17 +288,10 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   @override
   void dispose() {
-    _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onFocusChange() {
-    if (!_focusNode.hasFocus && _isOpen) {
-      _closeMenu();
-    }
   }
 
   /// Handle scroll for infinite scroll pagination
@@ -361,38 +342,22 @@ class _WSelectState<T> extends State<WSelect<T>> {
     setState(() {
       _isOpen = !_isOpen;
       if (_isOpen) {
-        // Arm the dismiss guard so the opening gesture's own pointer-up cannot
-        // immediately close the menu via the freshly mounted overlay's
-        // onTapOutside. Disarm one frame later so a later outside tap still
-        // closes the menu.
-        _suppressNextTapOutside = true;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _suppressNextTapOutside = false;
-        });
-        _overlayController.show();
         _searchQuery = '';
         _filteredOptions = widget.options;
         _hoveredIndex = -1;
+        // Defer the overlay mount to the next frame so the opening tap's own
+        // pointer-up is fully dispatched BEFORE the overlay's TapRegion exists.
+        // OverlayPortal mounts synchronously, so showing it now routes that
+        // same pointer-up to the fresh overlay's onTapOutside, closing the menu
+        // on the frame it opened (a one-frame suppress guard is not enough).
+        // The shared groupId still stops a trigger re-tap from self-closing.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _isOpen) _overlayController.show();
+        });
       } else {
         _overlayController.hide();
       }
     });
-  }
-
-  /// Handles an outside tap reported by the overlay's [TapRegion].
-  ///
-  /// Swallows the first event after opening (the opening gesture's own
-  /// pointer-up); any later outside tap dismisses the menu normally.
-  void _handleTapOutside() {
-    if (_suppressNextTapOutside) {
-      // Fires only in the live engine, where the opening pointer reaches the
-      // freshly mounted overlay within the same frame. flutter_test mounts the
-      // overlay and runs the post-frame disarm in one pump, leaving no window
-      // where the overlay is mounted and this flag is still armed.
-      _suppressNextTapOutside = false; // coverage:ignore-line
-      return;
-    }
-    _closeMenu();
   }
 
   void _closeMenu() {
@@ -777,7 +742,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
         heightFactor: 1,
         child: TapRegion(
           groupId: _tapGroupId,
-          onTapOutside: (_) => _handleTapOutside(),
+          onTapOutside: (_) => _closeMenu(),
           child: Material(
             elevation: 0,
             color: Colors.transparent,
