@@ -24,7 +24,7 @@ WRadio<String>(
   onChanged: (val) => setState(() => _theme = val),
   className: '''
     w-5 h-5 rounded-full border border-gray-300 dark:border-gray-600
-    items-center justify-center
+    flex items-center justify-center
     selected:border-blue-500 dark:selected:border-blue-400
     hover:border-blue-400
   ''',
@@ -40,7 +40,7 @@ WRadio<String>(
 | `value` | `T` | **Required** | The value this radio represents. |
 | `groupValue` | `T?` | **Required** | The currently selected value for the group. When `value == groupValue`, `selected:` state activates. |
 | `onChanged` | `ValueChanged<T>?` | **Required** | Called with `value` when this radio is tapped and not already selected. Pass `null` for a non-interactive radio. |
-| `className` | `String?` | `null` | Utility classes for the outer ring shell. Defaults to `'w-5 h-5 rounded-full border border-gray-300 items-center justify-center selected:border-blue-500'` when `null`. |
+| `className` | `String?` | `null` | Utility classes for the outer ring shell. Defaults to `'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-blue-500'` when `null`. |
 | `indicatorClassName` | `String?` | `null` | Utility classes for the inner filled dot (visible only when selected). Defaults to `'w-2.5 h-2.5 rounded-full bg-blue-500 selected:opacity-100'` when `null`. |
 | `disabled` | `bool` | `false` | Blocks tap and activates the `disabled:` prefix. |
 | `states` | `Set<String>?` | `null` | Extra custom states merged with built-in `selected` and `disabled`. |
@@ -78,7 +78,7 @@ WRadio<String>(
   className: '''
     w-5 h-5 rounded-full border-2
     border-gray-300 dark:border-gray-600
-    items-center justify-center
+    flex items-center justify-center
     selected:border-indigo-500 dark:selected:border-indigo-400
     hover:border-indigo-400
     disabled:opacity-50
@@ -106,7 +106,7 @@ WDiv(
             value: option,
             groupValue: _theme,
             onChanged: (val) => setState(() => _theme = val),
-            className: 'w-5 h-5 rounded-full border border-gray-300 dark:border-gray-600 items-center justify-center selected:border-blue-500',
+            className: 'w-5 h-5 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center selected:border-blue-500',
             indicatorClassName: 'w-2.5 h-2.5 rounded-full bg-blue-500 dark:bg-blue-400',
           ),
           WText(option, className: 'text-sm text-gray-700 dark:text-gray-300'),

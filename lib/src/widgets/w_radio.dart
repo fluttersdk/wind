@@ -141,7 +141,7 @@ class WRadio<T> extends StatelessWidget {
     // 4. Compose the radio shell with an optional indicator.
     final Widget shell = WDiv(
       className: className ??
-          'w-5 h-5 rounded-full border border-gray-300 items-center justify-center selected:border-blue-500',
+          'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-blue-500',
       states: activeStates,
       children: [
         if (_isSelected) indicator,

@@ -65,7 +65,7 @@ class _WRadioBasicExamplePageState extends State<WRadioBasicExamplePage> {
                       className: '''
                         w-5 h-5 rounded-full border-2
                         border-gray-300 dark:border-gray-600
-                        items-center justify-center
+                        flex items-center justify-center
                         selected:border-indigo-500 dark:selected:border-indigo-400
                         hover:border-indigo-400 dark:hover:border-indigo-300
                       ''',
@@ -101,7 +101,7 @@ class _WRadioBasicExamplePageState extends State<WRadioBasicExamplePage> {
                       className: '''
                         w-5 h-5 rounded-full border-2
                         border-gray-300 dark:border-gray-600
-                        items-center justify-center
+                        flex items-center justify-center
                         selected:border-indigo-500 dark:selected:border-indigo-400
                       ''',
                       indicatorClassName: '''
@@ -147,7 +147,7 @@ class _WRadioBasicExamplePageState extends State<WRadioBasicExamplePage> {
             className: '''
             w-5 h-5 rounded-full border-2
             border-gray-300 dark:border-gray-600
-            items-center justify-center
+            flex items-center justify-center
             selected:border-indigo-500 dark:selected:border-indigo-400
           ''',
             indicatorClassName: '''
