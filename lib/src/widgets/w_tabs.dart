@@ -157,10 +157,16 @@ class WTabs extends StatelessWidget {
   Widget _buildTab(BuildContext context, int index) {
     final bool isSelected = index == selectedIndex;
 
+    // A null onChanged makes the whole tab strip non-interactive: mark each tab
+    // disabled so WAnchor reports `enabled: false`, suppresses hover/focus, and
+    // activates `disabled:` className tokens via the state provider.
+    final bool isDisabled = onChanged == null;
+
     // The `selected:` state activates className tokens like
     // `selected:text-blue-600` or `selected:border-b-2` on the active tab.
     final Set<String> tabStates = {
       if (isSelected) 'selected',
+      if (isDisabled) 'disabled',
     };
 
     // Build the effective tab className:
@@ -173,7 +179,8 @@ class WTabs extends StatelessWidget {
     return WAnchor(
       // Only attach a gesture when a callback exists; a null onChanged keeps
       // the tab non-interactive instead of a no-op tappable surface.
-      onTap: onChanged == null ? null : () => onChanged!.call(index),
+      onTap: isDisabled ? null : () => onChanged!.call(index),
+      isDisabled: isDisabled,
       states: tabStates,
       child: WDiv(
         className: effectiveTabClassName,
