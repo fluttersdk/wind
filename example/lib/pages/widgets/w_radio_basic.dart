@@ -128,43 +128,49 @@ class _WRadioBasicExamplePageState extends State<WRadioBasicExamplePage> {
     required String description,
   }) {
     final isSelected = _plan == value;
-    return WDiv(
-      className: '''
+    // The whole card reads as one selectable option, so forward a tap anywhere
+    // on the row to the same state change the radio control performs.
+    return GestureDetector(
+      onTap: () => setState(() => _plan = value),
+      child: WDiv(
+        className: '''
         flex flex-row items-center gap-4 p-4 rounded-lg border-2
         border-gray-200 dark:border-gray-700
         bg-white dark:bg-gray-800
         ${isSelected ? 'border-indigo-500 dark:border-indigo-400 bg-indigo-50 dark:bg-indigo-950' : ''}
       ''',
-      children: [
-        WRadio<String>(
-          value: value,
-          groupValue: _plan,
-          onChanged: (val) => setState(() => _plan = val),
-          className: '''
+        children: [
+          WRadio<String>(
+            value: value,
+            groupValue: _plan,
+            onChanged: (val) => setState(() => _plan = val),
+            className: '''
             w-5 h-5 rounded-full border-2
             border-gray-300 dark:border-gray-600
             items-center justify-center
             selected:border-indigo-500 dark:selected:border-indigo-400
           ''',
-          indicatorClassName: '''
+            indicatorClassName: '''
             w-2.5 h-2.5 rounded-full
             bg-indigo-500 dark:bg-indigo-400
           ''',
-        ),
-        WDiv(
-          className: 'flex flex-col gap-0.5 flex-1',
-          children: [
-            WText(
-              label,
-              className: 'text-sm font-semibold text-gray-900 dark:text-white',
-            ),
-            WText(
-              description,
-              className: 'text-xs text-gray-500 dark:text-gray-400',
-            ),
-          ],
-        ),
-      ],
+          ),
+          WDiv(
+            className: 'flex flex-col gap-0.5 flex-1',
+            children: [
+              WText(
+                label,
+                className:
+                    'text-sm font-semibold text-gray-900 dark:text-white',
+              ),
+              WText(
+                description,
+                className: 'text-xs text-gray-500 dark:text-gray-400',
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

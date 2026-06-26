@@ -150,7 +150,7 @@ WindRecipe(
   variants: {'size': {'sm': 'px-2'}},  // overrides px-4 correctly
 )
 
-// Incorrect: base px-* vs variant p-* (same family, different granularity)
+// Incorrect: base p-* vs variant px-* (same family, different granularity)
 WindRecipe(
   base: 'p-4',
   variants: {'size': {'sm': 'px-2'}},  // px-2 does NOT override p-4; p-4 wins silently

@@ -109,7 +109,7 @@ final button = WindRecipe(
   base: 'inline-flex items-center rounded-lg font-medium',
   variants: {
     'intent': {'primary': 'bg-blue-600 dark:bg-blue-500 text-white', 'ghost': 'bg-transparent text-blue-600 dark:text-blue-400'},
-    'size':   {'sm': 'px-3 py-1.5 text-sm', 'md': 'px-4 py-2 text-base'},
+    'size':   {'sm': 'px-3 py-1.5 text-sm', 'md': 'px-4 py-2 text-base', 'lg': 'px-6 py-3 text-lg'},
   },
   compoundVariants: [
     WindCompoundVariant(conditions: {'intent': 'primary', 'size': 'lg'}, className: 'shadow-lg'),
@@ -294,7 +294,7 @@ Form(
         onSaved: (value) => _email = value ?? '',
       ),
       WButton(
-        className: 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg',
+        className: 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-6 py-3 rounded-lg',
         onTap: () {
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
@@ -369,7 +369,7 @@ Run `dart analyze` on the touched files and visually verify the change in light 
 | Popover menu | `WPopover(triggerBuilder: (_, isOpen, __) => WButton(...), contentBuilder: (_, close) => WDiv(...), alignment: PopoverAlignment.bottomRight)` |
 | Per-breakpoint widget swap | `WBreakpoint(base: (_) => MobileLayout(), md: (_) => TabletLayout(), lg: (_) => DesktopLayout())` |
 | Status badge / pill | `WDiv(className: 'inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 text-xs font-medium', children: [WIcon(Icons.circle_outlined, className: 'w-2 h-2'), const WText('Active')])` |
-| Empty state | `WDiv(className: 'flex flex-col items-center justify-center gap-3 p-8', children: [WIcon(Icons.inbox_outlined, className: 'w-12 h-12 text-gray-400 dark:text-gray-500'), const WText('No items yet', className: 'text-base font-medium text-gray-700 dark:text-gray-200'), const WText('Tap the + button to add one.', className: 'text-sm text-gray-500 dark:text-gray-400 text-center'), WButton(onTap: _create, className: 'mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg', child: const Text('Create'))])` |
+| Empty state | `WDiv(className: 'flex flex-col items-center justify-center gap-3 p-8', children: [WIcon(Icons.inbox_outlined, className: 'w-12 h-12 text-gray-400 dark:text-gray-500'), const WText('No items yet', className: 'text-base font-medium text-gray-700 dark:text-gray-200'), const WText('Tap the + button to add one.', className: 'text-sm text-gray-500 dark:text-gray-400 text-center'), WButton(onTap: _create, className: 'mt-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg', child: const Text('Create'))])` |
 | App shell | `Scaffold(appBar: AppBar(title: const Text(...)), body: WDiv(className: 'flex flex-col h-full', children: [...]))`: Material `Scaffold` + `AppBar` wraps; Wind owns the body |
 | Icon-only button (48dp tap target) | `WButton(className: 'p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700', onTap: _close, child: const WIcon(Icons.close_outlined))` |
 

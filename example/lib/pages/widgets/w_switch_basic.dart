@@ -44,7 +44,8 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
                   checked:bg-teal-500 checked:border-teal-500
                   dark:checked:bg-teal-400 dark:checked:border-teal-400
                 ''',
-                thumbClassName: 'w-4 h-4 rounded-full bg-white shadow',
+                thumbClassName:
+                    'w-4 h-4 rounded-full bg-white dark:bg-gray-100 shadow',
               ),
               WText(
                 'Push notifications',
@@ -103,7 +104,8 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
                   dark:checked:bg-teal-600 dark:checked:border-teal-600
                   disabled:opacity-50
                 ''',
-                thumbClassName: 'w-4 h-4 rounded-full bg-white',
+                thumbClassName:
+                    'w-4 h-4 rounded-full bg-white dark:bg-gray-100',
               ),
               WText(
                 'Enforced by admin (disabled)',
@@ -155,7 +157,8 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
             checked:bg-teal-500 checked:border-teal-500
             dark:checked:bg-teal-400 dark:checked:border-teal-400
           ''',
-          thumbClassName: 'w-4 h-4 rounded-full bg-white shadow',
+          thumbClassName:
+              'w-4 h-4 rounded-full bg-white dark:bg-gray-100 shadow',
         ),
       ],
     );

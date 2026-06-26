@@ -276,6 +276,11 @@ final class WindSlotRecipe {
 /// dropped from the result), reproducing `tv()`'s `undefined`-clears behavior.
 /// Throws [ArgumentError] when an axis is unknown so typos fail loudly instead
 /// of silently emitting nothing.
+///
+/// Values are intentionally NOT validated: like `tv()`, an undeclared value
+/// simply emits no class for that axis. This is load-bearing for compound
+/// variants, whose conditions are matched against the resolved value as-is, so
+/// a non-matching value must flow through rather than throw.
 Map<String, String> _resolveSelection(
   Map<String, Object> knownAxes,
   Map<String, String> defaults,

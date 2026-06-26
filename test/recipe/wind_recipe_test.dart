@@ -232,6 +232,20 @@ void main() {
       );
     });
 
+    test('an undeclared value emits no class for its axis (tv-permissive)', () {
+      final recipe = WindRecipe(
+        base: 'btn',
+        variants: {
+          'size': {'sm': 'px-2', 'md': 'px-4'},
+        },
+      );
+
+      // Like tailwind-variants, a non-matching value is not an error: it simply
+      // contributes nothing. Only an unknown AXIS throws. This keeps compound
+      // conditions matchable against arbitrary resolved values.
+      expect(recipe(variants: {'size': 'lg'}), 'btn');
+    });
+
     group('shorthand/longhand debug lint', () {
       test(
         'warns when base and a resolved variant touch a shorthand+longhand '
@@ -422,6 +436,21 @@ void main() {
       final result = recipe(classNames: {'root': 'mt-4'});
 
       expect(result['root'], 'flex mt-4');
+    });
+
+    test('an undeclared value emits no slot class (tv-permissive)', () {
+      final recipe = WindSlotRecipe(
+        slots: {'root': 'flex'},
+        variants: {
+          'tone': {
+            'primary': {'root': 'bg-blue-500'},
+          },
+        },
+      );
+
+      // Symmetric with WindRecipe: an undeclared value is not an error, it
+      // contributes nothing. Only an unknown axis throws.
+      expect(recipe(variants: {'tone': 'secondary'})['root'], 'flex');
     });
   });
 }
