@@ -91,7 +91,7 @@ class WRadio<T> extends StatelessWidget {
     super.key,
     required this.value,
     required this.groupValue,
-    required this.onChanged,
+    this.onChanged,
     this.className,
     this.indicatorClassName,
     this.disabled = false,

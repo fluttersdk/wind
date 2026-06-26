@@ -98,7 +98,7 @@ class WSwitch extends StatelessWidget {
   const WSwitch({
     super.key,
     required this.value,
-    required this.onChanged,
+    this.onChanged,
     this.className,
     this.thumbClassName,
     this.disabled = false,
@@ -120,11 +120,19 @@ class WSwitch extends StatelessWidget {
       ...?states,
     };
 
-    // 2. Parse track className for debug logging (the track WDiv re-parses
-    //    with these same states; we parse here only to surface the debug flag).
-    final WindStyle styles = className != null
-        ? WindParser.parse(className!, context, states: activeStates)
-        : const WindStyle();
+    // 2. The track always renders as a flex Row so `justify-start` ->
+    //    `checked:justify-end` slides the thumb; build the effective track
+    //    className once and reuse it for both the debug parse and the WDiv, so
+    //    debug output matches the classes actually applied.
+    final String trackClassName = className == null
+        ? 'flex items-center'
+        : 'flex items-center $className';
+
+    final WindStyle styles = WindParser.parse(
+      trackClassName,
+      context,
+      states: activeStates,
+    );
 
     final logger = WindLogger(
       debug: styles.debug,
@@ -132,7 +140,7 @@ class WSwitch extends StatelessWidget {
     );
 
     if (styles.debug) {
-      logger.logStep('ClassName', "'$className'");
+      logger.logStep('ClassName', "'$trackClassName'");
       logger.setCoreWidget('WAnchor -> WDiv (track) -> WDiv (thumb)');
       logger.printFinalCode();
     }
@@ -156,9 +164,7 @@ class WSwitch extends StatelessWidget {
             // Stack (thumb pinned top-left), which kills `justify-*`. The track
             // must stay a flex Row so `justify-start` -> `checked:justify-end`
             // (supplied by the caller className) actually slides the thumb.
-            className: className == null
-                ? 'flex items-center'
-                : 'flex items-center $className',
+            className: trackClassName,
             states: activeStates,
             child: WDiv(
               className: thumbClassName,
