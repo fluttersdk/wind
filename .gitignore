@@ -50,3 +50,6 @@ app.*.map.json
 
 # Local agent-instruction sync tool cache (machine-specific absolute paths)
 .sync-agents-cache.json
+
+# Local sibling-package path wiring (dev only)
+pubspec_overrides.yaml

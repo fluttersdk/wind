@@ -11,14 +11,16 @@ import '../utils/wind_logger.dart';
 /// `WSwitch` is a controlled toggle that composes `WAnchor` + `WDiv` (track)
 /// + `WDiv` (thumb). It pushes the `checked:` state prefix into the className
 /// context, mirroring how `WCheckbox` and `WButton` push framework states via
-/// their active-states sets. The thumb translates right when checked via the
-/// caller's `checked:translate-x-*` className.
+/// their active-states sets. The thumb is a flex child of the track, so the
+/// caller moves it with `justify-start` -> `checked:justify-end` on the track
+/// className. Do NOT use `translate-x-*`: Wind has no transform parser, so a
+/// translate-based thumb never moves.
 ///
 /// ### Supported Features:
 /// - **Checked State:** `checked:bg-blue-600`, `checked:border-transparent`
 /// - **Disabled State:** `disabled:opacity-50`
 /// - **Hover / Focus:** `hover:ring-2 focus:ring-2`
-/// - **Thumb translate:** caller supplies `thumbClassName: 'checked:translate-x-5'`
+/// - **Thumb position:** the track uses `justify-start checked:justify-end`
 ///
 /// ### Example Usage:
 ///
@@ -27,12 +29,12 @@ import '../utils/wind_logger.dart';
 ///   value: isOn,
 ///   onChanged: (val) => setState(() => isOn = val),
 ///   className: '''
-///     w-11 h-6 rounded-full border-2
+///     w-11 h-6 rounded-full px-0.5
+///     flex items-center justify-start checked:justify-end
 ///     bg-gray-200 checked:bg-blue-600
-///     border-gray-300 checked:border-blue-600
 ///     disabled:opacity-50
 ///   ''',
-///   thumbClassName: 'translate-x-0 checked:translate-x-5 w-4 h-4 rounded-full bg-white',
+///   thumbClassName: 'w-5 h-5 rounded-full bg-white shadow',
 /// )
 /// ```
 ///
@@ -60,9 +62,11 @@ class WSwitch extends StatelessWidget {
 
   /// Utility classes for styling the thumb (the circular indicator).
   ///
-  /// Use `checked:translate-x-*` to slide the thumb when the switch is on.
+  /// The thumb's POSITION is owned by the track's `justify-*` (it is a flex
+  /// child); this className supplies only its shape and color. Do not use
+  /// `translate-x-*` (Wind has no transform parser, so it is a no-op).
   ///
-  /// Example: `'w-4 h-4 rounded-full bg-white shadow translate-x-0 checked:translate-x-5'`
+  /// Example: `'w-5 h-5 rounded-full bg-white shadow'`
   final String? thumbClassName;
 
   /// Whether the switch is disabled.
@@ -148,7 +152,11 @@ class WSwitch extends StatelessWidget {
           // 4. Render track and thumb as WDivs so className + state
           //    prefixes flow through WindParser normally.
           child: WDiv(
-            className: 'flex items-center relative ${className ?? ''}',
+            // No `relative`: a single-child WDiv with `relative` renders as a
+            // Stack (thumb pinned top-left), which kills `justify-*`. The track
+            // must stay a flex Row so `justify-start` -> `checked:justify-end`
+            // (supplied by the caller className) actually slides the thumb.
+            className: 'flex items-center ${className ?? ''}',
             states: activeStates,
             child: WDiv(
               className: thumbClassName ?? '',

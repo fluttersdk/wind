@@ -28,7 +28,8 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
         ExampleSection(
           title: 'Basic Toggle',
           description:
-              'Track and thumb are fully className-driven. checked:translate-x-* slides the thumb.',
+              'Track and thumb are fully className-driven. The thumb is a flex '
+              'child; justify-start -> checked:justify-end slides it.',
           child: WDiv(
             className: 'flex flex-row items-center gap-3',
             children: [
@@ -36,17 +37,14 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
                 value: _notifications,
                 onChanged: (val) => setState(() => _notifications = val),
                 className: '''
-                  w-11 h-6 rounded-full border-2
+                  w-11 h-6 rounded-full px-0.5 border-2
+                  flex items-center justify-start checked:justify-end
                   border-gray-300 dark:border-gray-600
                   bg-gray-200 dark:bg-gray-700
                   checked:bg-teal-500 checked:border-teal-500
                   dark:checked:bg-teal-400 dark:checked:border-teal-400
                 ''',
-                thumbClassName: '''
-                  w-4 h-4 rounded-full bg-white
-                  translate-x-0 checked:translate-x-5
-                  shadow
-                ''',
+                thumbClassName: 'w-4 h-4 rounded-full bg-white shadow',
               ),
               WText(
                 'Push notifications',
@@ -98,16 +96,14 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
                 onChanged: null,
                 disabled: true,
                 className: '''
-                  w-11 h-6 rounded-full border-2
+                  w-11 h-6 rounded-full px-0.5 border-2
+                  flex items-center justify-start checked:justify-end
                   border-teal-400 dark:border-teal-600
                   checked:bg-teal-400 checked:border-teal-400
                   dark:checked:bg-teal-600 dark:checked:border-teal-600
                   disabled:opacity-50
                 ''',
-                thumbClassName: '''
-                  w-4 h-4 rounded-full bg-white
-                  translate-x-0 checked:translate-x-5
-                ''',
+                thumbClassName: 'w-4 h-4 rounded-full bg-white',
               ),
               WText(
                 'Enforced by admin (disabled)',
@@ -152,17 +148,14 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
           value: value,
           onChanged: onChanged,
           className: '''
-            w-11 h-6 rounded-full border-2
+            w-11 h-6 rounded-full px-0.5 border-2
+            flex items-center justify-start checked:justify-end
             border-gray-300 dark:border-gray-600
             bg-gray-200 dark:bg-gray-700
             checked:bg-teal-500 checked:border-teal-500
             dark:checked:bg-teal-400 dark:checked:border-teal-400
           ''',
-          thumbClassName: '''
-            w-4 h-4 rounded-full bg-white
-            translate-x-0 checked:translate-x-5
-            shadow
-          ''',
+          thumbClassName: 'w-4 h-4 rounded-full bg-white shadow',
         ),
       ],
     );

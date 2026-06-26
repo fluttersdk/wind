@@ -255,6 +255,23 @@ class _WSelectState<T> extends State<WSelect<T>> {
   bool _isOpen = false;
   bool _isHovering = false;
   bool _openUpward = false;
+
+  /// Shared [TapRegion] group for the trigger and the open menu. Tagging both
+  /// with the same group stops the menu's `onTapOutside` from firing on the
+  /// very tap that opened it (which otherwise closes the menu immediately on
+  /// web, where the opening pointer-up reaches the freshly mounted overlay).
+  final Object _tapGroupId = Object();
+
+  /// Suppresses the first outside-tap dismiss after the menu opens.
+  ///
+  /// On web the opening tap's pointer-up reaches the freshly mounted overlay's
+  /// [TapRegion] within the same frame and is reported to `onTapOutside`,
+  /// closing the menu on the very frame it opened. The shared [_tapGroupId] is
+  /// not enough on its own (the overlay registers into the group mid-gesture,
+  /// after the down was already routed). This flag swallows exactly that one
+  /// event; it is disarmed one frame later so a later, separate outside tap
+  /// still closes the menu. Mirrors the `WPopover` self-close guard.
+  bool _suppressNextTapOutside = false;
   String _searchQuery = '';
   List<SelectOption<T>> _filteredOptions = [];
   bool _isSearching = false;
@@ -344,6 +361,14 @@ class _WSelectState<T> extends State<WSelect<T>> {
     setState(() {
       _isOpen = !_isOpen;
       if (_isOpen) {
+        // Arm the dismiss guard so the opening gesture's own pointer-up cannot
+        // immediately close the menu via the freshly mounted overlay's
+        // onTapOutside. Disarm one frame later so a later outside tap still
+        // closes the menu.
+        _suppressNextTapOutside = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _suppressNextTapOutside = false;
+        });
         _overlayController.show();
         _searchQuery = '';
         _filteredOptions = widget.options;
@@ -352,6 +377,22 @@ class _WSelectState<T> extends State<WSelect<T>> {
         _overlayController.hide();
       }
     });
+  }
+
+  /// Handles an outside tap reported by the overlay's [TapRegion].
+  ///
+  /// Swallows the first event after opening (the opening gesture's own
+  /// pointer-up); any later outside tap dismisses the menu normally.
+  void _handleTapOutside() {
+    if (_suppressNextTapOutside) {
+      // Fires only in the live engine, where the opening pointer reaches the
+      // freshly mounted overlay within the same frame. flutter_test mounts the
+      // overlay and runs the post-frame disarm in one pump, leaving no window
+      // where the overlay is mounted and this flag is still armed.
+      _suppressNextTapOutside = false; // coverage:ignore-line
+      return;
+    }
+    _closeMenu();
   }
 
   void _closeMenu() {
@@ -606,36 +647,42 @@ class _WSelectState<T> extends State<WSelect<T>> {
       logger.printFinalCode();
     }
 
-    // Default trigger rendering
-    return GestureDetector(
-      onTap: _toggleMenu,
-      child: MouseRegion(
-        onEnter: (_) => _setHovering(true),
-        onExit: (_) => _setHovering(false),
-        cursor: widget.disabled
-            ? SystemMouseCursors.forbidden
-            : SystemMouseCursors.click,
-        child: WDiv(
-          className: triggerClassName,
-          states: activeStates,
-          children: [
-            WDiv(
-              className: 'flex items-center gap-2',
-              children: [
-                WDiv(
-                  className: 'flex-1',
-                  child: widget.isMulti
-                      ? _buildMultiSelectTriggerContent()
-                      : _buildSingleSelectTriggerContent(),
-                ),
-                Icon(
-                  _isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  size: 20,
-                  color: Colors.grey.shade600,
-                ),
-              ],
-            ),
-          ],
+    // Default trigger rendering. Tag it with the shared tap group so the open
+    // menu's onTapOutside ignores the tap that opened it.
+    return TapRegion(
+      groupId: _tapGroupId,
+      child: GestureDetector(
+        onTap: _toggleMenu,
+        child: MouseRegion(
+          onEnter: (_) => _setHovering(true),
+          onExit: (_) => _setHovering(false),
+          cursor: widget.disabled
+              ? SystemMouseCursors.forbidden
+              : SystemMouseCursors.click,
+          child: WDiv(
+            className: triggerClassName,
+            states: activeStates,
+            children: [
+              WDiv(
+                className: 'flex items-center gap-2',
+                children: [
+                  WDiv(
+                    className: 'flex-1',
+                    child: widget.isMulti
+                        ? _buildMultiSelectTriggerContent()
+                        : _buildSingleSelectTriggerContent(),
+                  ),
+                  Icon(
+                    _isOpen
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: Colors.grey.shade600,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -729,7 +776,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
         widthFactor: 1,
         heightFactor: 1,
         child: TapRegion(
-          onTapOutside: (_) => _closeMenu(),
+          groupId: _tapGroupId,
+          onTapOutside: (_) => _handleTapOutside(),
           child: Material(
             elevation: 0,
             color: Colors.transparent,

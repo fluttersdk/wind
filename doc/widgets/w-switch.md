@@ -20,13 +20,14 @@ WSwitch(
   value: isOn,
   onChanged: (val) => setState(() => isOn = val),
   className: '''
-    w-11 h-6 rounded-full border-2
+    w-11 h-6 rounded-full px-0.5 border-2
+    flex items-center justify-start checked:justify-end
     bg-gray-200 checked:bg-blue-600
     border-gray-300 checked:border-blue-600
     dark:bg-gray-700 dark:checked:bg-blue-500
     dark:border-gray-600 dark:checked:border-blue-500
   ''',
-  thumbClassName: 'w-4 h-4 rounded-full bg-white shadow translate-x-0 checked:translate-x-5',
+  thumbClassName: 'w-4 h-4 rounded-full bg-white shadow',
 )
 ```
 
@@ -38,7 +39,7 @@ WSwitch(
 | `value` | `bool` | **Required** | Whether the switch is on. Drives the `checked:` state prefix. |
 | `onChanged` | `ValueChanged<bool>?` | **Required** | Called with the new value when the switch is tapped. Pass `null` to make the switch non-interactive. |
 | `className` | `String?` | `null` | Utility classes for the track (the outer pill). Supports `checked:`, `disabled:`, `hover:`, and `focus:` prefixes. |
-| `thumbClassName` | `String?` | `null` | Utility classes for the thumb (the circular indicator). Use `checked:translate-x-*` to slide the thumb when on. |
+| `thumbClassName` | `String?` | `null` | Utility classes for the thumb (the circular indicator) — shape and color only. The thumb is a flex child of the track; position it with `justify-start` / `checked:justify-end` on the track `className`, not with `translate-x-*` (Wind has no transform parser, so translate is a no-op). |
 | `disabled` | `bool` | `false` | Blocks tap and activates the `disabled:` prefix. |
 | `states` | `Set<String>?` | `null` | Extra custom states merged with built-in `checked` and `disabled`. |
 | `semanticLabel` | `String?` | `null` | Accessible label for the switch Semantics node. Set this when the switch has no adjacent visible text label. |
@@ -71,28 +72,29 @@ WSwitch(
   value: isOn,
   onChanged: (val) => setState(() => isOn = val),
   className: '''
-    w-11 h-6 rounded-full border-2
+    w-11 h-6 rounded-full px-0.5 border-2
+    flex items-center justify-start checked:justify-end
     bg-gray-200 dark:bg-gray-700
     border-gray-300 dark:border-gray-600
     checked:bg-teal-500 dark:checked:bg-teal-400
     checked:border-teal-500 dark:checked:border-teal-400
     focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
   ''',
-  thumbClassName: '''
-    w-4 h-4 rounded-full bg-white shadow
-    translate-x-0 checked:translate-x-5
-  ''',
+  thumbClassName: 'w-4 h-4 rounded-full bg-white shadow',
 )
 ```
 
 ### Thumb Position
 
-The thumb starts at `translate-x-0` (left) and slides to `checked:translate-x-*` (right) when on. Match the translate offset to your track width minus thumb width:
+The thumb is a flex child of the track, so the track owns its position. Put `flex items-center` on the track to lay the thumb out, then slide it with `justify-start` (left, off) to `checked:justify-end` (right, on). A little horizontal padding (`px-0.5`) keeps the thumb off the track edge:
 
 ```dart
-// Track w-11 (44px), thumb w-5 (20px) → offset ~ translate-x-6 (24px)
-thumbClassName: 'w-5 h-5 rounded-full bg-white shadow translate-x-0 checked:translate-x-6',
+// Track w-11 (44px), thumb w-5 (20px): flex justify-end seats it on the right
+className: 'w-11 h-6 rounded-full px-0.5 flex items-center justify-start checked:justify-end ...',
+thumbClassName: 'w-5 h-5 rounded-full bg-white shadow',
 ```
+
+Do NOT use `translate-x-*`: Wind has no transform parser, so a translate-based thumb never moves.
 
 ### Disabled State
 
@@ -102,12 +104,13 @@ WSwitch(
   onChanged: null,
   disabled: true,
   className: '''
-    w-11 h-6 rounded-full border-2
+    w-11 h-6 rounded-full px-0.5 border-2
+    flex items-center justify-start checked:justify-end
     checked:bg-teal-400 checked:border-teal-400
     dark:checked:bg-teal-600 dark:checked:border-teal-600
     disabled:opacity-50
   ''',
-  thumbClassName: 'w-4 h-4 rounded-full bg-white translate-x-0 checked:translate-x-5',
+  thumbClassName: 'w-4 h-4 rounded-full bg-white',
 )
 ```
 
@@ -118,8 +121,8 @@ WSwitch(
   value: isOn,
   onChanged: (_) {},
   states: {'error'},
-  className: 'w-11 h-6 rounded-full border-2 border-gray-300 error:border-red-500 error:ring-2 error:ring-red-100',
-  thumbClassName: 'w-4 h-4 rounded-full bg-white translate-x-0 checked:translate-x-5',
+  className: 'w-11 h-6 rounded-full px-0.5 flex items-center justify-start checked:justify-end border-2 border-gray-300 error:border-red-500 error:ring-2 error:ring-red-100',
+  thumbClassName: 'w-4 h-4 rounded-full bg-white',
 )
 ```
 

@@ -71,6 +71,39 @@ void main() {
 
         expect(find.byType(WAnchor), findsOneWidget);
       });
+
+      testWidgets(
+        'checked track is a flex Row honoring justify-end, not a relative Stack',
+        (tester) async {
+          // Regression: WSwitch must NOT inject `relative` into the track. A
+          // single-child WDiv with `relative` renders as a Stack (thumb pinned
+          // top-left) before the flex branch runs, which kills `justify-*`.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WSwitch(
+                value: true,
+                onChanged: (_) {},
+                className:
+                    'w-11 h-6 flex items-center justify-start checked:justify-end',
+                thumbClassName: 'w-5 h-5',
+              ),
+            ),
+          );
+          await tester.pump();
+
+          final Finder trackRows = find.descendant(
+            of: find.byType(WAnchor),
+            matching: find.byType(Row),
+          );
+          expect(trackRows, findsWidgets);
+          final Iterable<Row> rows = tester.widgetList<Row>(trackRows);
+          expect(
+            rows.any((Row r) => r.mainAxisAlignment == MainAxisAlignment.end),
+            isTrue,
+            reason: 'checked track must seat the thumb with justify-end',
+          );
+        },
+      );
     });
 
     group('Interaction', () {
