@@ -3,10 +3,10 @@ name: wind-ui
 description: "fluttersdk_wind 1.1: utility-first Flutter styling with Tailwind-syntax className strings. 27 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper, WBadge, WCard, WSwitch, WRadio, WTabs + 5 WForm* wrappers) consume className through a 19-parser pipeline (19 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. WindRecipe / WindSlotRecipe compose className variants (base + axes + compoundVariants + caller) in strict emission order, no dedupe/sort/twMerge. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, migrating a Tailwind className from web, or composing a WindRecipe / WindSlotRecipe for a variant-driven component. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.7.0
+version: 2.8.0
 ---
 
-<!-- fluttersdk_wind 1.1.x | Skill v2.7.0 (2026-06-25) -->
+<!-- fluttersdk_wind 1.1.x | Skill v2.8.0 (2026-07-01) -->
 
 # Wind UI 1.1
 
@@ -226,6 +226,8 @@ Wind hides most boilerplate but never changes Flutter's "constraints down, sizes
 | **`semanticLabel` excludes the word "button"** | `semanticLabel: 'Close button'` (announced as "Close button button") | `semanticLabel: 'Close'` (the role appends "button") |
 
 `items-stretch` inside a `SingleChildScrollView` needs an `IntrinsicHeight` wrapper from native Flutter; Wind has no token for it. Rare; reach for it when row children inside a scroll must match heights.
+
+**Intrinsic sizing limitation.** Wrapping Wind content in `IntrinsicHeight` / `IntrinsicWidth` (or a `Row`/`Column` that needs child intrinsic heights for equal-height columns) throws `LayoutBuilder does not support returning intrinsic dimensions` WHEN that content resolves `h-full` or a flex `basis-*` — both insert an internal `LayoutBuilder`, which cannot answer intrinsic queries (a Flutter constraint, not a Wind bug). Escape hatches: use explicit `h-*` / `size-*` instead of `h-full`; do not wrap such content in `IntrinsicHeight`; for equal-height rows use a `Stack` + `Positioned(top:0,bottom:0)`. Wind's own `items-stretch` column is intrinsic-free and safe.
 
 ## 7. className formatting
 

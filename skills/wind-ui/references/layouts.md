@@ -383,6 +383,8 @@ WDiv(
 
 `IntrinsicHeight` is documented as relatively expensive (it runs a speculative layout pass). Reach for it only when this exact stretch-inside-scroll pattern is required.
 
+> **Caveat — intrinsic sizing fails through `h-full` / `basis-*` content.** If any child inside the `IntrinsicHeight` resolves `h-full` or a flex `basis-*`, Wind wraps that child in an internal `LayoutBuilder`, and the wrap throws `LayoutBuilder does not support returning intrinsic dimensions` (a Flutter constraint, not a Wind bug). Keep the children explicitly sized (`flex-1` for width is fine; avoid `h-full` / `basis-*` under an `IntrinsicHeight`). For equal-height cards outside a scroll, prefer fixed `h-*` cells or a `Stack` + `Positioned(top:0,bottom:0)` over `IntrinsicHeight`.
+
 ---
 
 ## 8. Touch targets
