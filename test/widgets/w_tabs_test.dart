@@ -17,6 +17,78 @@ void main() {
   });
 
   group('WTabs Widget Tests', () {
+    group('Full-width tab list (issue #128)', () {
+      Finder listRow() => find.descendant(
+            of: find.byType(WTabs),
+            matching: find.byType(Row),
+          );
+
+      testWidgets('tab list spans the full container width by default',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            SizedBox(
+              width: 400,
+              child: WTabs(
+                tabs: const ['A', 'B'],
+                selectedIndex: 0,
+                onChanged: (_) {},
+                listClassName:
+                    'flex flex-row border-b border-gray-200 dark:border-gray-700',
+                panelBuilder: (i) => const Text('panel'),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.getSize(listRow()).width, 400);
+      });
+
+      testWidgets('fullWidthList: false keeps the list content-width',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            SizedBox(
+              width: 400,
+              child: WTabs(
+                tabs: const ['A', 'B'],
+                selectedIndex: 0,
+                onChanged: (_) {},
+                fullWidthList: false,
+                listClassName: 'flex flex-row border-b',
+                panelBuilder: (i) => const Text('panel'),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.getSize(listRow()).width, lessThan(400));
+      });
+
+      testWidgets(
+          'fullWidthList: false honors an explicit width in listClassName',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            SizedBox(
+              width: 400,
+              child: WTabs(
+                tabs: const ['A', 'B'],
+                selectedIndex: 0,
+                onChanged: (_) {},
+                fullWidthList: false,
+                listClassName: 'flex flex-row w-32 border-b',
+                panelBuilder: (i) => const Text('panel'),
+              ),
+            ),
+          ),
+        );
+
+        // w-32 -> 128px, no prepended w-full to conflict with it.
+        expect(tester.getSize(listRow()).width, 128);
+      });
+    });
+
     group('Construction', () {
       test('creates with required props', () {
         final widget = WTabs(

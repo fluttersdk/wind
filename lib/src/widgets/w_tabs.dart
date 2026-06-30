@@ -89,6 +89,18 @@ class WTabs extends StatelessWidget {
   /// Example: `'pt-4'`
   final String? panelClassName;
 
+  /// Whether the tab list stretches to the full container width.
+  ///
+  /// A `flex-row` [WDiv] is content-width by default, so a `border-b` underline
+  /// on [listClassName] would span only the tabs, not the container. With this
+  /// `true` (the default), `w-full` is prepended to the tab list so the baseline
+  /// rule spans the full width, the common tab design. The tabs themselves stay
+  /// content-sized (left-aligned via the default `justify-start`). Set to
+  /// `false` for a content-width tab strip (e.g. centered pill tabs) or when you
+  /// drive the list width with an explicit `w-*` token in [listClassName] (mixing
+  /// the prepended `w-full` with an explicit width is ambiguous, so opt out).
+  final bool fullWidthList;
+
   /// Creates a [WTabs] widget.
   ///
   /// The constructor is not `const`: the [tabs] non-emptiness and
@@ -104,6 +116,7 @@ class WTabs extends StatelessWidget {
     this.tabClassName,
     this.selectedTabClassName,
     this.panelClassName,
+    this.fullWidthList = true,
   })  : assert(tabs.isNotEmpty, 'WTabs: tabs must not be empty.'),
         assert(
           selectedIndex >= 0 && selectedIndex < tabs.length,
@@ -129,9 +142,15 @@ class WTabs extends StatelessWidget {
       logger.printFinalCode();
     }
 
-    // 2. Build the tab list row.
+    // 2. Build the tab list row. Prepend w-full (unless opted out) so a
+    //    border-b baseline spans the full container width; an explicit width
+    //    token in listClassName still wins via last-class semantics.
+    final String? effectiveListClassName = _joinClassNames([
+      if (fullWidthList) 'w-full',
+      listClassName,
+    ]);
     final Widget tabList = WDiv(
-      className: listClassName,
+      className: effectiveListClassName,
       children: List<Widget>.generate(tabs.length, (index) {
         return _buildTab(context, index);
       }),

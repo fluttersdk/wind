@@ -44,6 +44,7 @@ WTabs(
 | `tabClassName` | `String?` | `null` | Utility classes applied to every tab's inner `WDiv`. Supports `selected:` prefixed tokens: they activate only on the selected tab. |
 | `selectedTabClassName` | `String?` | `null` | Extra utility classes appended to the active tab's `WDiv` only. Applied after `tabClassName`. |
 | `panelClassName` | `String?` | `null` | Utility classes for the panel wrapper `WDiv`. Example: `'pt-4'`. |
+| `fullWidthList` | `bool` | `true` | When true, prepends `w-full` to the tab list so a `border-b` baseline spans the full container width (tabs stay content-sized, left-aligned). Set `false` for a content-width strip (centered pill tabs) or when you set an explicit `w-*` on `listClassName`. |
 
 <a name="constructor"></a>
 ## Constructor
@@ -59,6 +60,7 @@ WTabs({
   String? tabClassName,
   String? selectedTabClassName,
   String? panelClassName,
+  bool fullWidthList = true,
 })
 ```
 
