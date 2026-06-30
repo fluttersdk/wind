@@ -39,7 +39,7 @@ Wrap your app in `WindTheme`, then write `className` strings. The full setup wal
 
 Do you like using Tailwind CSS to style your UIs? **This helps you do that in Flutter.**
 
-Wind is **not** a widget library. It is a utility-first styling engine that maps Tailwind-syntax `className` strings to optimized Flutter widget trees, with a 24-field theme, 19 parsers, 27 W-prefix widgets, and the `WindRecipe` / `WindSlotRecipe` variant-composition primitives. Flutter's structural styling produces six-widget pyramids for a rounded card with a hover state. The Flutter team itself acknowledged the [verbosity pain](https://github.com/flutter/flutter/issues/161345), ran an experimental Decorators feature, found mixed results, and shelved it. Wind closes that gap.
+Wind is **not** a widget library. It is a utility-first styling engine that maps Tailwind-syntax `className` strings to optimized Flutter widget trees, with a 24-field theme, 20 parsers, 27 W-prefix widgets, and the `WindRecipe` / `WindSlotRecipe` variant-composition primitives. Flutter's structural styling produces six-widget pyramids for a rounded card with a hover state. The Flutter team itself acknowledged the [verbosity pain](https://github.com/flutter/flutter/issues/161345), ran an experimental Decorators feature, found mixed results, and shelved it. Wind closes that gap.
 
 ```dart
 // Before: Flutter native (15 lines)

@@ -271,6 +271,21 @@ class WDiv extends StatelessWidget {
       }
     }
 
+    // 8.5 CURSOR (Interaction Layer)
+    // Wrap with a MouseRegion when a cursor-* utility is set so a plain
+    // container shows the requested cursor on web/desktop. When the WDiv also
+    // carries hover:/focus:/active: it is already wrapped in WAnchor (whose
+    // MouseRegion uses click only when the anchor has gesture callbacks, else
+    // basic); either way this inner cursor MouseRegion is deeper in the tree,
+    // so its cursor wins for the area it covers.
+    if (styles.mouseCursor != null) {
+      logger.wrapWith("MouseRegion", "cursor: ${styles.mouseCursor}");
+      finalWidget = MouseRegion(
+        cursor: styles.mouseCursor!,
+        child: finalWidget,
+      );
+    }
+
     // 9. ANIMATION (animate-spin, animate-pulse, etc.)
     // Wrap with animation if animationType is set.
     if (styles.animationType != null &&

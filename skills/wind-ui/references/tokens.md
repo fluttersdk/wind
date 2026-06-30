@@ -21,7 +21,8 @@ Exhaustive per-parser token reference. Reach for this file when verifying a clas
 13. [Debug token](#13-debug-token)
 14. [Prefixes](#14-prefixes)
 15. [Arbitrary values](#15-arbitrary-values)
-16. [Tokens that look real but are not wired](#16-tokens-that-look-real-but-are-not-wired)
+16. [Cursor (web / desktop)](#16-cursor-web--desktop)
+17. [Tokens that look real but are not wired](#17-tokens-that-look-real-but-are-not-wired)
 
 ---
 
@@ -442,7 +443,33 @@ Arbitrary values bypass theme lookup (matched BEFORE theme resolution). They are
 
 ---
 
-## 16. Tokens that look real but are not wired
+## 16. Cursor (web / desktop)
+
+`cursor-*` sets the mouse cursor over an element via a `MouseRegion` that `WDiv` adds when a cursor token is present. Pointer-only: inert on touch platforms. Last token wins; an unknown `cursor-*` name is a silent no-op.
+
+| Token | Flutter `SystemMouseCursors` |
+|-------|------------------------------|
+| `cursor-auto` / `cursor-default` | `basic` (no "auto" cursor in Flutter) |
+| `cursor-pointer` | `click` |
+| `cursor-wait` / `cursor-progress` | `wait` / `progress` |
+| `cursor-text` / `cursor-vertical-text` | `text` / `verticalText` |
+| `cursor-move` / `cursor-all-scroll` | `move` / `allScroll` |
+| `cursor-help` / `cursor-context-menu` | `help` / `contextMenu` |
+| `cursor-not-allowed` / `cursor-no-drop` | `forbidden` / `noDrop` |
+| `cursor-none` | `none` |
+| `cursor-cell` / `cursor-crosshair` | `cell` / `precise` |
+| `cursor-alias` / `cursor-copy` | `alias` / `copy` |
+| `cursor-grab` / `cursor-grabbing` | `grab` / `grabbing` |
+| `cursor-zoom-in` / `cursor-zoom-out` | `zoomIn` / `zoomOut` |
+| `cursor-col-resize` / `cursor-row-resize` | `resizeColumn` / `resizeRow` |
+| `cursor-ew-resize` / `cursor-ns-resize` | `resizeLeftRight` / `resizeUpDown` |
+| `cursor-nesw-resize` / `cursor-nwse-resize` | `resizeUpRightDownLeft` / `resizeUpLeftDownRight` |
+| `cursor-{n,e,s,w}-resize` | `resize{Up,Right,Down,Left}` |
+| `cursor-{ne,nw,se,sw}-resize` | `resize{UpRight,UpLeft,DownRight,DownLeft}` |
+
+On a `WDiv` that also carries `hover:` / `focus:` / `active:` (so it auto-wraps in `WAnchor`, whose `MouseRegion` uses `click` only when the anchor has gesture callbacks, otherwise `basic`), the `cursor-*` `MouseRegion` is deeper in the tree and wins regardless of the anchor's default.
+
+## 17. Tokens that look real but are not wired
 
 If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it is probably in this list. Wind drops them silently.
 
@@ -475,7 +502,6 @@ If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it 
 - `mix-blend-*` / `bg-blend-*`
 
 **Interactivity:**
-- `cursor-pointer` / `cursor-not-allowed` / any `cursor-*` (use `mouseCursor` constructor prop on `WAnchor`)
 - `pointer-events-none`
 - `select-none` / `select-text`
 - `scroll-smooth`
