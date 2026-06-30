@@ -63,6 +63,8 @@ const WPopover({
   String? className,
   Offset offset = const Offset(0, 4),
   double maxHeight = 400,
+  double? width,
+  double? maxWidth,
   bool disabled = false,
   bool closeOnContentTap = false,
   VoidCallback? onOpen,
@@ -82,6 +84,8 @@ const WPopover({
 | `alignment` | `PopoverAlignment` | `bottomLeft` | Where to position the popover relative to the trigger. |
 | `offset` | `Offset` | `Offset(0, 4)` | Gap between the trigger and the popover. |
 | `maxHeight` | `double` | `400` | Maximum height for the content. It will scroll if exceeded. |
+| `width` | `double?` | `null` | Pins the overlay to a fixed width (like `WSelect`'s `menuWidth`). Overrides a `w-*` token in `className`. |
+| `maxWidth` | `double?` | `null` | Upper bound for the overlay width. Falls back to a `max-w-*` token, then to the screen width, so the overlay never stretches off-screen. Ignored when a fixed `width` (or `w-*`) is set. |
 | `enableTriggerOnTap` | `bool` | `true` | Whether tapping the trigger toggles the popover. |
 | `closeOnContentTap` | `bool` | `false` | Whether tapping inside the content closes the popover. |
 | `disabled` | `bool` | `false` | When true, the trigger will not respond to interactions. |
