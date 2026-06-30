@@ -104,13 +104,16 @@ void main() {
     });
 
     testWidgets('cursor wins on an interactive (hover:) WDiv', (tester) async {
+      // Use cursor-text, NOT cursor-pointer: the auto-wrapped WAnchor's own
+      // MouseRegion resolves to click/basic, so a click cursor could not prove
+      // the cursor-* wrapper applied. `text` is distinct from both, so finding
+      // it confirms the inner cursor MouseRegion is present and wins.
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
             data: WindThemeData(),
             child: const WDiv(
-              className:
-                  'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800',
+              className: 'cursor-text hover:bg-gray-100 dark:hover:bg-gray-800',
               child: Text('Row'),
             ),
           ),
@@ -124,8 +127,10 @@ void main() {
         ),
       );
       expect(
-        regions.any((r) => r.cursor == SystemMouseCursors.click),
+        regions.any((r) => r.cursor == SystemMouseCursors.text),
         isTrue,
+        reason: 'the cursor-text MouseRegion must be present and distinct from '
+            "the WAnchor's own click/basic cursor",
       );
     });
 

@@ -467,7 +467,7 @@ Arbitrary values bypass theme lookup (matched BEFORE theme resolution). They are
 | `cursor-{n,e,s,w}-resize` | `resize{Up,Right,Down,Left}` |
 | `cursor-{ne,nw,se,sw}-resize` | `resize{UpRight,UpLeft,DownRight,DownLeft}` |
 
-On a `WDiv` that also carries `hover:` / `focus:` / `active:` (so it auto-wraps in `WAnchor`, whose default cursor is `click`), the `cursor-*` `MouseRegion` is deeper in the tree and wins.
+On a `WDiv` that also carries `hover:` / `focus:` / `active:` (so it auto-wraps in `WAnchor`, whose `MouseRegion` uses `click` only when the anchor has gesture callbacks, otherwise `basic`), the `cursor-*` `MouseRegion` is deeper in the tree and wins regardless of the anchor's default.
 
 ## 17. Tokens that look real but are not wired
 

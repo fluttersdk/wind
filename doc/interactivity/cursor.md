@@ -63,7 +63,7 @@ Flutter has no "auto" cursor, so `cursor-auto` resolves to the same basic arrow 
 <a name="how-it-works"></a>
 ## How It Works
 
-`WDiv` wraps its content in a `MouseRegion` when a `cursor-*` token is present. When the `WDiv` also carries `hover:` / `focus:` / `active:` classes it is already wrapped in `WAnchor` (whose default cursor is `click`); the `cursor-*` `MouseRegion` sits deeper in the tree, so its cursor wins for the area it covers. Last token wins: `cursor-pointer cursor-text` resolves to text.
+`WDiv` wraps its content in a `MouseRegion` when a `cursor-*` token is present. When the `WDiv` also carries `hover:` / `focus:` / `active:` classes it is already wrapped in `WAnchor` (whose `MouseRegion` uses `click` only when the anchor has gesture callbacks, otherwise `basic`); the `cursor-*` `MouseRegion` sits deeper in the tree, so its cursor wins for the area it covers regardless of the anchor's default. Last token wins: `cursor-pointer cursor-text` resolves to text.
 
 Cursors are a no-op on touch platforms (there is no pointer to style); the token is simply inert there.
 
