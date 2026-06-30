@@ -226,7 +226,7 @@ WDiv(className: 'row-c bg-white dark:bg-gray-800')
 
 **How expansion works:**
 
-- Only bare, unprefixed tokens are matched. `md:row` is **not** expanded; only a standalone `row` token qualifies.
+- Alias keys are always **bare** (no prefix). A prefixed token still resolves: its prefix is peeled off, its bare body is matched against the map, and the prefix is re-applied to every produced token. `md:row` becomes `md:flex md:flex-row`, and `hover:bg-surface` carries `hover:` onto each token the `bg-surface` alias produces (including its `dark:` peer, yielding `hover:dark:...`, which the parser resolves regardless of prefix order). Define keys bare (`row`, `bg-surface`), never `md:row`.
 - Expansion is recursive: an alias value may reference other aliases. The expander resolves all aliases before handing the result to the parser.
 - Aliases are empty by default (`{}`). The feature is purely opt-in: a `WindThemeData` without an `aliases` key behaves identically to today.
 - If an alias key shadows a built-in token (for example, `'flex': 'flex flex-row'`), the alias wins and Wind emits a debug-mode warning so you can rename before shipping.
