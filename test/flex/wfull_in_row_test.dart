@@ -15,26 +15,27 @@ void main() {
   group('w-full inside a flex-row (issue #122)', () {
     testWidgets('a w-full child does not assert and fills the row',
         (tester) async {
+      const fillKey = Key('wfull-fill');
       await tester.pumpWidget(
         wrap(
-          WDiv(
-            className: 'flex flex-row justify-end gap-3',
-            children: [
-              WDiv(className: 'w-full', child: const Text('Submit')),
-            ],
+          // Bound the row to a known width so the assertion is not tied to the
+          // default test viewport.
+          SizedBox(
+            width: 500,
+            child: WDiv(
+              className: 'flex flex-row justify-end gap-3',
+              children: const [
+                WDiv(key: fillKey, className: 'w-full', child: Text('Submit')),
+              ],
+            ),
           ),
         ),
       );
 
       expect(tester.takeException(), isNull);
       expect(find.text('Submit'), findsOneWidget);
-      // The w-full child is wrapped in Expanded, so the inner WDiv fills the
-      // row (full surface width, 800 on the default test viewport).
-      final inner = find.ancestor(
-        of: find.text('Submit'),
-        matching: find.byType(WDiv),
-      );
-      expect(tester.getSize(inner.first).width, 800);
+      // The keyed w-full child is wrapped in Expanded, so it fills the 500px row.
+      expect(tester.getSize(find.byKey(fillKey)).width, 500);
     });
 
     testWidgets('the w-full child is wrapped in an Expanded', (tester) async {
@@ -79,14 +80,21 @@ void main() {
       // Regression guard: the inner w-full is NOT a direct row child, so it must
       // keep its SizedBox(infinity) behavior bounded by the w-32 parent, not be
       // turned into an Expanded (which would assert outside a Flex).
+      const outerKey = Key('w32-outer');
+      const nestedKey = Key('wfull-nested');
       await tester.pumpWidget(
         wrap(
           WDiv(
             className: 'flex flex-row',
-            children: [
+            children: const [
               WDiv(
+                key: outerKey,
                 className: 'w-32',
-                child: WDiv(className: 'w-full', child: const Text('Nested')),
+                child: WDiv(
+                  key: nestedKey,
+                  className: 'w-full',
+                  child: Text('Nested'),
+                ),
               ),
             ],
           ),
@@ -95,10 +103,14 @@ void main() {
 
       expect(tester.takeException(), isNull);
       // w-32 -> 128px bounds the nested w-full.
-      final outer = find
-          .ancestor(of: find.text('Nested'), matching: find.byType(WDiv))
-          .last;
-      expect(tester.getSize(outer).width, 128);
+      expect(tester.getSize(find.byKey(outerKey)).width, 128);
+      // The nested w-full must NOT be wrapped in an Expanded (it is not a direct
+      // row child); doing so would assert outside a Flex.
+      expect(
+        find.ancestor(
+            of: find.byKey(nestedKey), matching: find.byType(Expanded)),
+        findsNothing,
+      );
     });
 
     testWidgets('w-full combined with flex-1 does not double-wrap',
@@ -118,6 +130,35 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(
         find.ancestor(of: find.text('Both'), matching: find.byType(Expanded)),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('a non-WDiv Wind child (WButton) with w-full also expands',
+        (tester) async {
+      // WButton (and WInput etc.) also turn w-full into an infinite width, so
+      // the Row expand must key off the className of any Wind widget, not just
+      // WDiv.
+      await tester.pumpWidget(
+        wrap(
+          WDiv(
+            className: 'flex flex-row',
+            children: [
+              WButton(
+                className: 'w-full',
+                onTap: () {},
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Save'), findsOneWidget);
+      expect(
+        find.ancestor(
+            of: find.byType(WButton), matching: find.byType(Expanded)),
         findsOneWidget,
       );
     });

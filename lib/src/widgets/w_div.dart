@@ -650,14 +650,17 @@ class WDiv extends StatelessWidget {
       // child's own infinite-width SizedBox resolves. Skipped on a scrollable
       // row (no bounded extent to share). Prefixed `md:w-full` is intentionally
       // not matched: it is conditional, and unconditional Expanding would break
-      // the responsive intent.
+      // the responsive intent. Detection reads the className off ANY Wind widget
+      // (WDiv, WButton, WInput, ...) via `_extractChildClassName`, since they all
+      // turn `w-full` into an infinite width and hit the same assertion.
       final bool canExpandFullWidth = !isMainAxisScrollable;
       bool hasFullWidthChild = false;
       final List<Widget> rowChildren = basisChildren.map((child) {
+        final String? childClassName = _extractChildClassName(child);
         if (canExpandFullWidth &&
-            child is WDiv &&
-            _hasBareFullWidth(child.className) &&
-            !_selfWrapsInFlex(child.className)) {
+            childClassName != null &&
+            _hasBareFullWidth(childClassName) &&
+            !_selfWrapsInFlex(childClassName)) {
           hasFullWidthChild = true;
           return Expanded(child: child);
         }
