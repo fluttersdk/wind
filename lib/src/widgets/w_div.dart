@@ -1059,6 +1059,14 @@ class WDiv extends StatelessWidget {
       );
     }
 
+    // `items-stretch` opts into equal-height rows (CSS Grid's default
+    // `align-items: stretch`). The default Wrap path sizes each cell to its own
+    // content, so a taller cell leaves its row ragged. Build a Column of
+    // IntrinsicHeight Rows instead, so every cell in a row matches the tallest.
+    if (styles.crossAxisAlignment == CrossAxisAlignment.stretch) {
+      return _buildStretchGrid(cols, gapX, gapY, logger);
+    }
+
     logger.setCoreWidget(
       "Wrap-Grid(cols: $cols, children: [${children!.length}])",
     );
@@ -1083,6 +1091,67 @@ class WDiv extends StatelessWidget {
           }).toList(),
         );
       },
+    );
+  }
+
+  /// Builds an equal-height grid (`grid ... items-stretch`).
+  ///
+  /// A `Column` of `IntrinsicHeight` `Row`s, `cols` cells per row, each cell an
+  /// `Expanded` so the row divides width evenly and `CrossAxisAlignment.stretch`
+  /// forces every cell to the row's tallest height. The last row is padded with
+  /// empty `Expanded` slots so columns stay aligned.
+  ///
+  /// Cells should size from their own content; do NOT put `h-full` on a cell
+  /// (it inserts a `LayoutBuilder`, which asserts under `IntrinsicHeight` — see
+  /// the intrinsic-sizing limitation in the sizing docs). The stretch already
+  /// equalizes height, so `h-full` is unnecessary here.
+  Widget _buildStretchGrid(
+    int cols,
+    double gapX,
+    double gapY,
+    WindLogger logger,
+  ) {
+    logger.setCoreWidget(
+      "Column-Grid(items-stretch, cols: $cols, children: [${children!.length}])",
+    );
+
+    final items = children!;
+    final rows = <Widget>[];
+
+    for (var start = 0; start < items.length; start += cols) {
+      final end = (start + cols) > items.length ? items.length : start + cols;
+      final rowItems = items.sublist(start, end);
+
+      final rowChildren = <Widget>[];
+      for (var c = 0; c < cols; c++) {
+        if (c > 0 && gapX > 0) {
+          rowChildren.add(SizedBox(width: gapX));
+        }
+        // Pad a short final row with empty slots so columns line up.
+        rowChildren.add(
+          Expanded(
+            child: c < rowItems.length ? rowItems[c] : const SizedBox.shrink(),
+          ),
+        );
+      }
+
+      if (rows.isNotEmpty && gapY > 0) {
+        rows.add(SizedBox(height: gapY));
+      }
+      rows.add(
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: rowChildren,
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: rows,
     );
   }
 

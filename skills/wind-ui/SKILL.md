@@ -3,10 +3,10 @@ name: wind-ui
 description: "fluttersdk_wind 1.1: utility-first Flutter styling with Tailwind-syntax className strings. 27 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper, WBadge, WCard, WSwitch, WRadio, WTabs + 5 WForm* wrappers) consume className through a 19-parser pipeline (19 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. WindRecipe / WindSlotRecipe compose className variants (base + axes + compoundVariants + caller) in strict emission order, no dedupe/sort/twMerge. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, migrating a Tailwind className from web, or composing a WindRecipe / WindSlotRecipe for a variant-driven component. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.7.0
+version: 2.8.0
 ---
 
-<!-- fluttersdk_wind 1.1.x | Skill v2.7.0 (2026-06-25) -->
+<!-- fluttersdk_wind 1.1.x | Skill v2.8.0 (2026-07-01) -->
 
 # Wind UI 1.1
 
@@ -60,7 +60,7 @@ These hold for every line of Wind code. Apply each as a hard constraint, not a s
 
 8. **`WindTheme` lives BELOW `MaterialApp` in the runtime tree.** The builder pattern inverts apparent order: `WindTheme(data: ..., builder: (ctx, controller) => MaterialApp(...))`. Consequence: `OverlayEntry.builder` contexts cannot reach `WindTheme` via ancestor walk. Capture the State's `context` before showing an overlay, then pass it to `WindParser.parse` from inside the overlay builder. `WPopover` / `WSelect` already handle this internally.
 
-9. **Wind composes with Flutter, not against it.** `Scaffold`, `AppBar`, `Dialog`, `BottomSheet`, `Drawer`, `SnackBar`, `Navigator`, `Hero`, `FutureBuilder`, `StreamBuilder`, `ValueListenableBuilder` remain canonical. `ListView` / `GridView.builder` / `CustomScrollView` are the right choice for virtualised lists; `WDiv` with `grid-cols-N` produces a static `Wrap`, not a virtualised grid. See [Wind ≠ Flutter rules of thumb](#9-wind--flutter-rules-of-thumb).
+9. **Wind composes with Flutter, not against it.** `Scaffold`, `AppBar`, `Dialog`, `BottomSheet`, `Drawer`, `SnackBar`, `Navigator`, `Hero`, `FutureBuilder`, `StreamBuilder`, `ValueListenableBuilder` remain canonical. `ListView` / `GridView.builder` / `CustomScrollView` are the right choice for virtualised lists; `WDiv` with `grid-cols-N` produces a static `Wrap` (or, with `items-stretch`, equal-height rows), not a virtualised grid. See [Wind ≠ Flutter rules of thumb](#9-wind--flutter-rules-of-thumb).
 
 10. **`active:` prefix is reserved but not wired.** `WAnchor` tracks hover and focus only; there is no onTapDown/onTapUp tracking. Don't rely on `active:bg-blue-700` for press feedback. Use a transient state in the consumer's controller and `states: {'pressed'}` if you genuinely need press feedback today.
 
@@ -158,7 +158,7 @@ Prefix order does not matter at the parser level; all stacked prefixes must matc
 
 Inline this catalog as your default reach-for set. For the full per-parser regex catalog (every flag, every arbitrary-value pattern): `${CLAUDE_SKILL_DIR}/references/tokens.md`.
 
-**Layout**: `flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `wrap` `grid` `grid-cols-N` `block` `hidden`. `justify-start` `-center` `-end` `-between` `-around` `-evenly`. `items-start` `-center` `-end` `-baseline` `-stretch`. `axis-min` `axis-max` (Wind-only, sets `MainAxisSize`).
+**Layout**: `flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `wrap` `grid` `grid-cols-N` `block` `hidden`. `justify-start` `-center` `-end` `-between` `-around` `-evenly`. `items-start` `-center` `-end` `-baseline` `-stretch`. `axis-min` `axis-max` (Wind-only, sets `MainAxisSize`). On a `grid`, `items-stretch` opts into equal-height rows (cells match the tallest per row); the default grid sizes each cell to its own content.
 
 **Flex child**: `flex-1` `flex-auto` `flex-none` `flex-N` (numeric). `shrink-0` `grow`. `self-start` / `-end` / `-center` / `-stretch` / `-auto` (align-self shorthand; `align-self-*` long form also works). `order-0` through `order-12`, `order-first` / `order-last` / `order-none`, arbitrary `order-[-5]`.
 
@@ -330,7 +330,7 @@ Full Form patterns + validation recipes + async error flow: `${CLAUDE_SKILL_DIR}
 | Routing | `go_router` (community-canonical) or `Navigator 2.0`; Wind has no router |
 | Async state stream | `FutureBuilder` / `StreamBuilder` / `ValueListenableBuilder` (Flutter), composed with W-widgets in the builder |
 | Static row / column / wrap / stack | `WDiv` with `flex` / `flex-row` / `flex-col` / `wrap` / `relative+absolute` tokens |
-| Static grid | `WDiv` with `grid grid-cols-N gap-N` (renders as `Wrap`, not virtualised) |
+| Static grid | `WDiv` with `grid grid-cols-N gap-N` (renders as `Wrap`, not virtualised; add `items-stretch` for equal-height rows) |
 | Form integration with validation | `WForm*` family inside Flutter's `Form` + `GlobalKey<FormState>` |
 
 `WDynamic` is the JSON-driven alternative when a server, A/B framework, or remote-config service supplies the widget tree at runtime. Whitelisted by default (13 Wind + 16 Flutter core types); extend with `builders:` / `customIcons:`; restrict with `denyWidgets:`. Reach for it only when remote rendering is a hard requirement; for static UI write Dart.
