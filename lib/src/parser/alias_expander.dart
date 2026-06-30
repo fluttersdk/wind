@@ -29,10 +29,16 @@ const int _maxOutputTokens = 256;
 /// - When [aliases] is empty, the input is returned unchanged (zero-cost fast
 ///   path; the hot rendering path pays nothing when no aliases are configured).
 /// - Otherwise the className is split on whitespace and each token is expanded
-///   independently. Only a WHOLE unprefixed token equal to an alias key is
-///   replaced (`row` matches the key `row`; `md:row` does not). The replacement
-///   is the alias value's own tokens, which may themselves contain prefixes or
-///   further aliases and are expanded recursively.
+///   independently. Alias keys are always BARE (no prefix); the lookup matches
+///   a token's bare body, not the prefix chain. An unprefixed token matches a
+///   key directly (`row` -> key `row`). A prefixed token has its prefix chain
+///   peeled off, its bare body matched against the map, and on a hit the outer
+///   prefix is re-applied to every produced token (`md:row` ->
+///   `md:flex md:flex-row`; `hover:bg-surface` -> the surface alias' tokens
+///   each carrying `hover:`). Prefix order is irrelevant to the parser, so a
+///   `hover:` re-applied over a value's own `dark:` yields `hover:dark:...`.
+///   The replacement is the alias value's own tokens, which may themselves
+///   contain prefixes or further aliases and are expanded recursively.
 /// - Token order and duplicates are preserved (no dedup); the parser is
 ///   last-class-wins, so dropping a trailing duplicate would change semantics.
 ///   Two independent occurrences of the same alias both expand.
@@ -90,26 +96,28 @@ String expandAliases(
       return;
     }
 
-    // Bare-token contract: a prefixed token (anything carrying a ':' variant,
-    // such as md:row or dark:bg-gray-900) is never alias-expanded, even if the
-    // map happens to hold a matching prefixed key. Only whole unprefixed tokens
-    // are eligible, so the lookup is skipped before it can match.
-    if (token.contains(':')) {
-      out.add(token);
-      return;
-    }
+    // Peel any prefix chain (everything up to and including the LAST ':') off
+    // the token; alias keys are always bare, so only the body can match. A
+    // prefixed token whose body is an alias expands the body and re-applies the
+    // prefix to each produced token, so hover:bg-surface and md:row resolve
+    // instead of silently passing through. An unprefixed token has an empty
+    // prefix and matches directly.
+    final colon = token.lastIndexOf(':');
+    final String prefix = colon == -1 ? '' : token.substring(0, colon + 1);
+    final String body = colon == -1 ? token : token.substring(colon + 1);
 
-    final replacement = aliases[token];
+    final replacement = aliases[body];
 
-    // Not an alias key (unknown bare token): keep verbatim.
+    // Not an alias key (unknown bare token, or a prefixed token whose body is
+    // not an alias key): keep the ORIGINAL token verbatim.
     if (replacement == null) {
       out.add(token);
       return;
     }
 
     // Cycle guard: this key is already on the current resolution chain.
-    if (chain.contains(token)) {
-      onWarn?.call("Wind alias '$token' forms a cycle; left unexpanded.");
+    if (chain.contains(body)) {
+      onWarn?.call("Wind alias '$body' forms a cycle; left unexpanded.");
       out.add(token);
       return;
     }
@@ -117,16 +125,19 @@ String expandAliases(
     // Cap guard: chain deeper than the backstop allows.
     if (depth >= _maxExpansionDepth) {
       onWarn?.call(
-        "Wind alias '$token' exceeds the $_maxExpansionDepth-level "
+        "Wind alias '$body' exceeds the $_maxExpansionDepth-level "
         'expansion cap; left unexpanded.',
       );
       out.add(token);
       return;
     }
 
-    final nextChain = {...chain, token};
+    final nextChain = {...chain, body};
     for (final inner in _tokenize(replacement)) {
-      expand(inner, nextChain, depth + 1);
+      // Re-apply the outer prefix (if any) to each produced token. Prefix order
+      // is irrelevant to the parser, so hover: over a value's dark: becomes
+      // hover:dark:... and still resolves.
+      expand(prefix.isEmpty ? inner : '$prefix$inner', nextChain, depth + 1);
     }
   }
 

@@ -83,6 +83,7 @@ import 'pages/icons/icon_basic.dart';
 // Interactivity
 import 'pages/interactivity/anchor_basic.dart';
 import 'pages/interactivity/animation_basic.dart';
+import 'pages/interactivity/cursor_basic.dart';
 import 'pages/interactivity/transition_basic.dart';
 
 // Images
@@ -302,6 +303,7 @@ final Map<String, Widget> appRoutes = {
   // Interactivity
   '/interactivity/anchor_basic': const AnchorBasicExamplePage(),
   '/interactivity/animation_basic': const InteractivityAnimationExamplePage(),
+  '/interactivity/cursor_basic': const CursorBasicExamplePage(),
   '/interactivity/transition_basic': const TransitionBasicExamplePage(),
 
   // Images
