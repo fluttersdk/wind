@@ -1030,7 +1030,11 @@ class WDiv extends StatelessWidget {
   /// When overflow-x-scroll is set, we use Row instead of Wrap to allow
   /// horizontal scrolling with intrinsic child widths.
   Widget _buildGridStructure(WindStyle styles, WindLogger logger) {
-    final cols = styles.gridCols ?? 2;
+    // Clamp to >= 1: `grid-cols-0` (the parser regex allows 0) would divide by
+    // zero in the Wrap itemWidth and never advance the items-stretch row loop
+    // (`start += cols`), hanging the build. One column is the safe floor.
+    final rawCols = styles.gridCols ?? 2;
+    final cols = rawCols < 1 ? 1 : rawCols;
     final gapX = styles.gapX ?? 0;
     final gapY = styles.gapY ?? 0;
 

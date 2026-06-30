@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-Widget wrap(Widget child, {double width = 600}) => MaterialApp(
+Widget wrapWithTheme(Widget child, {double width = 600}) => MaterialApp(
       home: WindTheme(
         data: WindThemeData(),
         child: Scaffold(body: SizedBox(width: width, child: child)),
@@ -19,7 +19,7 @@ void main() {
   group('grid items-stretch equal-height (issue #126)', () {
     testWidgets('cells in a row stretch to the tallest', (tester) async {
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'grid grid-cols-2 gap-4 items-stretch',
             children: [
@@ -44,7 +44,7 @@ void main() {
     testWidgets('cells divide the row width evenly (minus the gap)',
         (tester) async {
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'grid grid-cols-2 gap-4 items-stretch',
             children: [
@@ -63,7 +63,7 @@ void main() {
     testWidgets('a ragged final row does not crash and keeps columns aligned',
         (tester) async {
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'grid grid-cols-2 gap-4 items-stretch',
             children: [
@@ -83,7 +83,7 @@ void main() {
     testWidgets('default grid (no items-stretch) keeps intrinsic heights',
         (tester) async {
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'grid grid-cols-2 gap-4',
             children: [
@@ -103,6 +103,27 @@ void main() {
       expect(tester.takeException(), isNull);
       // Wrap path: the short cell stays at its own intrinsic height.
       expect(cellOf(tester, 'ds').height, 40);
+    });
+
+    testWidgets('grid-cols-0 is clamped to 1 and does not hang',
+        (tester) async {
+      // The parser allows grid-cols-0; cols must clamp to 1 so the stretch row
+      // loop advances (start += cols) and the Wrap width math avoids /0.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WDiv(
+            className: 'grid grid-cols-0 gap-2 items-stretch',
+            children: const [
+              WDiv(child: Text('z1')),
+              WDiv(child: Text('z2')),
+            ],
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('z1'), findsOneWidget);
+      expect(find.text('z2'), findsOneWidget);
     });
   });
 }
