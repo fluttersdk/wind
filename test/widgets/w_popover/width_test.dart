@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-Widget _wrap(Widget child) => MaterialApp(
+Widget wrapWithTheme(Widget child) => MaterialApp(
       home: WindTheme(
         data: WindThemeData(),
         child: Scaffold(body: Center(child: child)),
@@ -44,7 +44,7 @@ void main() {
   setUp(WindParser.clearCache);
 
   Future<void> open(WidgetTester tester, WPopover popover) async {
-    await tester.pumpWidget(_wrap(popover));
+    await tester.pumpWidget(wrapWithTheme(popover));
     await tester.tap(find.text('Trigger'));
     await tester.pumpAndSettle();
     expect(find.text('PopoverBody'), findsOneWidget);

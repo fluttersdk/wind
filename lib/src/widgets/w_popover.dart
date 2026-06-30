@@ -173,7 +173,7 @@ class WPopover extends StatefulWidget {
   ///
   /// When set, the overlay is pinned to exactly this width (like [WSelect]'s
   /// `menuWidth`). Takes precedence over a `w-*` token in [className]. When
-  /// null, the overlay sizes between [minWidth] (the trigger width) and
+  /// null, the overlay sizes between the trigger width (its minimum) and
   /// [maxWidth].
   final double? width;
 
@@ -642,8 +642,6 @@ class _WPopoverState extends State<WPopover> {
             : null;
     final double effectiveMaxWidth =
         widget.maxWidth ?? classMaxWidth ?? screenWidth;
-    // A `w-*` token in className still drives auto-flip sizing below.
-    final double? parsedWidth = fixedWidth;
 
     // Use pre-calculated alignment if available, otherwise calculate now
     PopoverAlignment effectiveAlignment =
@@ -655,7 +653,14 @@ class _WPopoverState extends State<WPopover> {
       if (triggerBox != null && triggerBox.hasSize) {
         final Offset triggerPosition = triggerBox.localToGlobal(Offset.zero);
         final Size screenSize = MediaQuery.sizeOf(context);
-        final double popoverWidth = parsedWidth ?? triggerWidth;
+        // Match the actual overlay constraint: a flexible-width overlay is
+        // clamped to effectiveMaxWidth, so feed the clamped width to auto-flip
+        // rather than a raw triggerWidth that may exceed the bound (which would
+        // overestimate the popover and flip unnecessarily).
+        final double popoverWidth = fixedWidth ??
+            (triggerWidth > effectiveMaxWidth
+                ? effectiveMaxWidth
+                : triggerWidth);
         final double popoverHeight = widget.maxHeight;
         effectiveAlignment = computeEffectiveAlignment(
           requested: widget.alignment,
