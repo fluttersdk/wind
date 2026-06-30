@@ -101,5 +101,34 @@ void main() {
       expect(c.minWidth, 200);
       expect(c.maxWidth, 200);
     });
+
+    testWidgets(
+        'a trigger wider than maxWidth opens without error (auto-flip '
+        'width is clamped)', (tester) async {
+      // Wide trigger + small maxWidth: the auto-flip width estimate must clamp
+      // to maxWidth rather than the trigger width, and the popover still opens.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WPopover(
+            maxWidth: 120,
+            triggerBuilder: (context, isOpen, isHovering) => const WDiv(
+              className: 'w-80 px-4 py-2 bg-slate-100',
+              child: WText('Wide Trigger'),
+            ),
+            contentBuilder: (context, close) => const WDiv(
+              className: 'flex flex-col',
+              child: WText('PopoverBody'),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Wide Trigger'));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('PopoverBody'), findsOneWidget);
+      // The overlay is bounded to maxWidth despite the 320px trigger.
+      expect(_overlayConstraints(tester).maxWidth, 120);
+    });
   });
 }

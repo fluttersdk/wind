@@ -431,14 +431,25 @@ class _WPopoverState extends State<WPopover> {
       final triggerPosition = triggerBox.localToGlobal(Offset.zero);
       final screenSize = MediaQuery.of(context).size;
 
-      // Parse width from className if available
-      double popoverWidth = triggerBox.size.width;
+      // Estimate the overlay width the way the overlay itself sizes it, so the
+      // flip decision matches the rendered box. A fixed width (`width` prop or a
+      // `w-*` token) pins it; otherwise it is the trigger width clamped to the
+      // upper bound (`maxWidth` prop, a `max-w-*` token, else the screen width),
+      // so a trigger wider than the bound does not overestimate and over-flip.
+      double? fixedWidth = widget.width;
+      double? classMaxWidth;
       if (widget.className != null) {
         final styles = WindParser.parse(widget.className!, context);
-        if (styles.width != null) {
-          popoverWidth = styles.width!;
-        }
+        fixedWidth ??= styles.width;
+        final cmw = styles.constraints?.maxWidth;
+        if (cmw != null && cmw.isFinite) classMaxWidth = cmw;
       }
+      final double effectiveMaxWidth =
+          widget.maxWidth ?? classMaxWidth ?? screenSize.width;
+      final double popoverWidth = fixedWidth ??
+          (triggerBox.size.width > effectiveMaxWidth
+              ? effectiveMaxWidth
+              : triggerBox.size.width);
 
       final double popoverHeight = widget.maxHeight;
 
@@ -653,10 +664,9 @@ class _WPopoverState extends State<WPopover> {
       if (triggerBox != null && triggerBox.hasSize) {
         final Offset triggerPosition = triggerBox.localToGlobal(Offset.zero);
         final Size screenSize = MediaQuery.sizeOf(context);
-        // Match the actual overlay constraint: a flexible-width overlay is
-        // clamped to effectiveMaxWidth, so feed the clamped width to auto-flip
-        // rather than a raw triggerWidth that may exceed the bound (which would
-        // overestimate the popover and flip unnecessarily).
+        // Defensive fallback (the alignment is normally pre-computed in
+        // _calculateEffectiveAlignment, which applies the same clamp). Keep the
+        // estimate within the overlay's actual bound here too.
         final double popoverWidth = fixedWidth ??
             (triggerWidth > effectiveMaxWidth
                 ? effectiveMaxWidth
