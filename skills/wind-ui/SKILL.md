@@ -164,7 +164,7 @@ Inline this catalog as your default reach-for set. For the full per-parser regex
 
 **Spacing**: `p-N` `px-N` `py-N` `pt-N` `pr-N` `pb-N` `pl-N` (no `ps-`/`pe-`). `m-N` and axes (no negative margin, no `ms-`/`me-`, `mx-auto` for horizontal centering). `gap-N` `gap-x-N` `gap-y-N` `space-x-N` `space-y-N`. Arbitrary `p-[18px]`, `gap-[3.5]` (no `%` for spacing). Default unit: 4 px per step. `p-4` = 16 px.
 
-**Sizing**: `w-N` `h-N` (theme scale). `w-1/2` `w-1/3` `w-2/3` `w-1/4` `w-3/4` `w-full` `w-screen`. `h-full` `h-screen`. Arbitrary `w-[300px]` `h-[50%]`. `min-w-0` `min-w-full` `min-h-screen`. `max-w-xs` through `max-w-7xl`, `max-w-prose`, `max-w-full`. No `w-auto` / `h-auto` (silently skipped).
+**Sizing**: `w-N` `h-N` (theme scale). `w-1/2` `w-1/3` `w-2/3` `w-1/4` `w-3/4` `w-full` `w-screen`. `h-full` `h-screen`. `size-N` sets BOTH width and height (`size-2`, `size-full`, `size-1/2`, `size-[20px]`); works on a childless `WDiv` (status dot). Arbitrary `w-[300px]` `h-[50%]`. `min-w-0` `min-w-full` `min-h-screen`. `max-w-xs` through `max-w-7xl`, `max-w-prose`, `max-w-full`. No `w-auto` / `h-auto` (silently skipped).
 
 **Position**: `relative` `absolute`. `top-N` `right-N` `bottom-N` `left-N` `inset-N` `inset-x-N` `inset-y-N`, negative `-top-N` `-inset-N`, arbitrary `top-[24px]` (no `%` for offsets). `fixed` / `sticky` are recognised by the parser but produce no visual effect.
 

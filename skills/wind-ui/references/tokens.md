@@ -122,6 +122,7 @@ NOT supported (silently no-op):
 | Token | Effect |
 |---|---|
 | `w-N` / `h-N` | Theme scale (4 px per unit) |
+| `size-N` / `size-full` / `size-1/2` / `size-screen` / `size-[20px]` / `size-[50%]` | Sets BOTH width and height in one token (Tailwind v3.4+). Works on a childless `WDiv` (e.g. a `size-2 rounded-full` status dot). A later same-mode `w-*` / `h-*` overrides the matching axis (`size-2 w-8` -> width 32, height 8); mixing an absolute and a fractional value on one axis retains both, exactly as `w-*` / `h-*` already do. |
 | `w-1/2` / `w-1/3` / `w-2/3` / `w-1/4` / `w-3/4` | Fractional (any numerator/denominator) |
 | `w-full` / `h-full` | `widthFactor: 1.0` / `heightFactor: 1.0` |
 | `w-screen` / `h-screen` | Viewport dimensions |
