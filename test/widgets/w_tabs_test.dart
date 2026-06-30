@@ -87,6 +87,29 @@ void main() {
         // w-32 -> 128px, no prepended w-full to conflict with it.
         expect(tester.getSize(listRow()).width, 128);
       });
+
+      testWidgets(
+          'an explicit width in listClassName wins even with fullWidthList true',
+          (tester) async {
+        // The default fullWidthList: true must NOT prepend w-full when the
+        // caller already set a width token, so the explicit width wins cleanly.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            SizedBox(
+              width: 400,
+              child: WTabs(
+                tabs: const ['A', 'B'],
+                selectedIndex: 0,
+                onChanged: (_) {},
+                listClassName: 'flex flex-row w-32 border-b',
+                panelBuilder: (i) => const Text('panel'),
+              ),
+            ),
+          ),
+        );
+
+        expect(tester.getSize(listRow()).width, 128);
+      });
     });
 
     group('Construction', () {
