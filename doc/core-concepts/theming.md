@@ -233,7 +233,7 @@ WDiv(className: 'row-c bg-white dark:bg-gray-800')
 - Expansion is bounded: a cyclic alias (`'a': 'a'`) and a deep or wide fan-out map terminate safely (the offending token is left unexpanded or the output is capped), so a misconfigured map never hangs rendering. Aliases are developer configuration, not a place to interpolate untrusted runtime strings.
 
 > [!NOTE]
-> Alias keys must be plain strings with no colons or slashes. Prefix variants such as `hover:row` or `md:col` are not expanded.
+> Alias keys must be plain strings with no colons or slashes. A prefixed token still resolves: its prefix is peeled off, the bare body is matched against the map, and the prefix is re-applied to each produced token (`md:col` -> `md:flex md:flex-col`, `hover:row` -> `hover:flex hover:flex-row`).
 
 <a name="quick-reference"></a>
 ## Quick Reference
