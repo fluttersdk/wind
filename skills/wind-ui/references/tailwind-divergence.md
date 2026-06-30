@@ -41,7 +41,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | `text-{xs..6xl}` | Sizes go to `9xl` (128 px) | Stops at `6xl` (60 px). `7xl` / `8xl` / `9xl` silently no-op |
 | `text-7xl`+ | Larger sizes available | No-op |
 | `text-{color}` | Pure font color | Overloaded across color / alignment / size / weight — resolves in order |
-| `w-full` inside a flex Row | Works (max-width: 100%) | Triggers RenderFlex overflow; use `flex-1` |
+| `w-full` inside a flex Row | Works (max-width: 100%) | A bare `w-full` row child is treated as `flex-1` (wrapped in `Expanded`) and fills the row; `flex-1` is the clearer, idiomatic choice. `md:w-full` is not auto-expanded. |
 | `h-full` inside a vertical scroll | Works (max-height: 100%) | Triggers "Vertical viewport unbounded"; restructure |
 | `IntrinsicHeight` / `IntrinsicWidth` (Flutter widget, not a token) | N/A | **Do not wrap animated subtrees in these.** They perform an intrinsic-dimension pass mid-layout and raise `RenderBox was not laid out` asserts inside sheet/route open animations (e.g. `DraggableScrollableSheet`). For a connector or rail that must fill the cross axis, use a `Stack` + `Positioned(top: 0, bottom: 0)` line, or wind's `items-stretch` column (intrinsic-free; `LayoutBuilder` + `SizedBox(width: double.infinity)` internally, see `lib/src/widgets/w_div.dart`). Wind itself uses no `IntrinsicHeight` or `IntrinsicWidth`. |
 | `overflow-y-auto` | Native browser scrollbar | Renders Flutter scroll view; needs constructor `scrollPrimary: true` for iOS tap-to-top |

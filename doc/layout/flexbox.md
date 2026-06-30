@@ -289,6 +289,8 @@ Control how individual children resize to fill available space.
 | `basis-1/2` / `basis-1/3` / `basis-1/4` / `basis-full` | Fractional flex-basis: initial main-axis size (width in a row, height in a column). Approximates CSS `flex-basis`; ignores grow/shrink interplay. |
 | `basis-[Npx]` | Fixed flex-basis: a fixed main-axis size in logical pixels (e.g., `basis-[120px]`). |
 
+> **`w-full` on a Row child is treated as `flex-1`.** A `flex flex-row` hands non-flex children an unbounded main-axis width, so a bare `w-full` child would otherwise assert `RenderBox was not laid out`. Wind now wraps such a child in `Expanded`, so `w-full` fills the row exactly like `flex-1`. Prefer `flex-1` for clarity; reach for `w-full` only when sharing a className across row and non-row contexts. A prefixed `md:w-full` is not auto-expanded (use `md:flex-1`).
+
 <x-preview path="layout/flex_grow" size="md" source="example/lib/pages/layout/flex_grow.dart"></x-preview>
 
 ```dart
