@@ -746,6 +746,8 @@ const WPopover({
   String? className,                     // overlay container styling
   Offset offset = const Offset(0, 4),    // trigger-to-popover gap
   double maxHeight = 400,
+  double? width,                         // fixed overlay width (WSelect parity); overrides w-* token
+  double? maxWidth,                      // upper bound; falls back to max-w-* token then screen width
   bool disabled = false,
   bool closeOnContentTap = false,
   VoidCallback? onOpen,

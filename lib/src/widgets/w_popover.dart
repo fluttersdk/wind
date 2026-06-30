@@ -169,6 +169,22 @@ class WPopover extends StatefulWidget {
   /// Default: `400`
   final double maxHeight;
 
+  /// Fixed width for the popover overlay.
+  ///
+  /// When set, the overlay is pinned to exactly this width (like [WSelect]'s
+  /// `menuWidth`). Takes precedence over a `w-*` token in [className]. When
+  /// null, the overlay sizes between [minWidth] (the trigger width) and
+  /// [maxWidth].
+  final double? width;
+
+  /// Upper bound for the popover overlay width.
+  ///
+  /// Without this, the overlay could stretch to the full screen width and
+  /// overflow a narrow content column. Falls back to a `max-w-*` token in
+  /// [className], then to the screen width so the overlay never overflows the
+  /// viewport. Ignored when [width] (or a `w-*` token) pins a fixed width.
+  final double? maxWidth;
+
   /// Whether the popover is disabled.
   ///
   /// When true, the trigger will not respond to taps.
@@ -205,6 +221,8 @@ class WPopover extends StatefulWidget {
     this.className,
     this.offset = const Offset(0, 4),
     this.maxHeight = 400,
+    this.width,
+    this.maxWidth,
     this.disabled = false,
     this.closeOnContentTap = false,
     this.onOpen,
@@ -609,8 +627,23 @@ class _WPopoverState extends State<WPopover> {
       logger.printFinalCode();
     }
 
-    // Use parsed width or fallback to trigger width
-    final double? parsedWidth = styles.width;
+    // Width resolution (parity with WSelect, which always pins a width):
+    // an explicit `width` prop or a `w-*` token fixes the overlay width;
+    // otherwise the overlay sizes between the trigger width and an upper bound
+    // (`maxWidth` prop, a `max-w-*` token, or the screen width) so a menu can
+    // never stretch off-screen the way an unbounded overlay does.
+    final double? fixedWidth = widget.width ?? styles.width;
+    final double screenWidth = MediaQuery.sizeOf(context).width;
+    // A `max-w-*` token surfaces as a finite constraints.maxWidth; an absent one
+    // is either null or infinity, both of which fall back to the screen width.
+    final double? classMaxWidth =
+        (styles.constraints?.maxWidth.isFinite ?? false)
+            ? styles.constraints!.maxWidth
+            : null;
+    final double effectiveMaxWidth =
+        widget.maxWidth ?? classMaxWidth ?? screenWidth;
+    // A `w-*` token in className still drives auto-flip sizing below.
+    final double? parsedWidth = fixedWidth;
 
     // Use pre-calculated alignment if available, otherwise calculate now
     PopoverAlignment effectiveAlignment =
@@ -663,11 +696,22 @@ class _WPopoverState extends State<WPopover> {
               elevation: 0,
               color: Colors.transparent,
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: widget.maxHeight,
-                  // Use trigger width as minimum if no width in className
-                  minWidth: parsedWidth ?? triggerWidth,
-                ),
+                constraints: fixedWidth != null
+                    // Fixed width: pin the overlay exactly (WSelect parity).
+                    ? BoxConstraints(
+                        maxHeight: widget.maxHeight,
+                        minWidth: fixedWidth,
+                        maxWidth: fixedWidth,
+                      )
+                    // Flexible width: at least the trigger width (clamped so it
+                    // never exceeds the bound), at most effectiveMaxWidth.
+                    : BoxConstraints(
+                        maxHeight: widget.maxHeight,
+                        minWidth: triggerWidth > effectiveMaxWidth
+                            ? effectiveMaxWidth
+                            : triggerWidth,
+                        maxWidth: effectiveMaxWidth,
+                      ),
                 child: WDiv(
                   className: effectiveClassName,
                   child: widget.contentBuilder(context, close),

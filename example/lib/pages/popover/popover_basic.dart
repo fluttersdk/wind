@@ -49,6 +49,51 @@ class PopoverBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
+          title: 'Bounded Width (maxWidth)',
+          description:
+              'maxWidth caps the overlay so a long-content menu cannot stretch '
+              'across the viewport. Use width to pin a fixed width instead.',
+          child: WPopover(
+            maxWidth: 220,
+            className: '''
+              rounded-lg p-2
+              bg-white dark:bg-slate-800
+              shadow-xl border border-slate-200 dark:border-slate-700
+            ''',
+            triggerBuilder: (context, isOpen, isHovering) => WButton(
+              onTap: () {},
+              className: '''
+                bg-violet-600 hover:bg-violet-700
+                text-white px-4 py-2 rounded-lg duration-200
+              ''',
+              child: const WText(
+                'Last 24 hours',
+                className: 'text-white font-medium',
+              ),
+            ),
+            contentBuilder: (context, close) => WDiv(
+              className: 'flex flex-col',
+              children: [
+                _MenuItem(
+                  icon: Icons.schedule_outlined,
+                  label: 'Last 24 hours',
+                  onTap: close,
+                ),
+                _MenuItem(
+                  icon: Icons.calendar_today_outlined,
+                  label: 'Last 7 days',
+                  onTap: close,
+                ),
+                _MenuItem(
+                  icon: Icons.date_range_outlined,
+                  label: 'Last 30 days',
+                  onTap: close,
+                ),
+              ],
+            ),
+          ),
+        ),
+        ExampleSection(
           title: 'Trigger State',
           description:
               'triggerBuilder receives isOpen + isHovering — style the trigger reactively.',
