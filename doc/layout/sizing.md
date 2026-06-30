@@ -158,7 +158,7 @@ Wrapping Wind content in `IntrinsicHeight` or `IntrinsicWidth` (or placing it in
 LayoutBuilder does not support returning intrinsic dimensions.
 ```
 
-**Why.** To resolve `h-full` and flex `basis-*` against the parent's real constraints, Wind wraps that content in a `LayoutBuilder` (see `lib/src/widgets/w_div.dart`). `LayoutBuilder` runs during the layout phase, not the intrinsic-sizing phase, so any intrinsic-dimension query that passes through such Wind content asserts. This is a fundamental Flutter constraint (`LayoutBuilder` genuinely cannot answer intrinsics), not a Wind bug. Wind content that does **not** resolve `h-full` or `basis-*` carries no `LayoutBuilder` and is safe to wrap.
+**Why.** To resolve some sizes against the parent's real constraints, Wind introduces a `LayoutBuilder` (see `lib/src/widgets/w_div.dart`): `h-full` adds one around the cell only when the incoming height is unbounded, and a flex `basis-*` adds a single one around the surrounding flex when any direct child uses `basis-*`. `LayoutBuilder` runs during the layout phase, not the intrinsic-sizing phase, so an intrinsic-dimension query that passes through one of those `LayoutBuilder` paths asserts. This is a fundamental Flutter constraint (`LayoutBuilder` genuinely cannot answer intrinsics), not a Wind bug. Wind content that does **not** hit those `h-full` / `basis-*` paths carries no `LayoutBuilder` and is safe to wrap.
 
 **What triggers it.** A `WDiv` (or any W-widget) whose `className` resolves `h-full` or a flex `basis-*`, anywhere inside the subtree you wrap in `IntrinsicHeight` / `IntrinsicWidth`. A `Row` of cards that you try to equalize with `IntrinsicHeight` is the common case.
 

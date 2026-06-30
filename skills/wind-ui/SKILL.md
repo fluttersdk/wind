@@ -227,7 +227,7 @@ Wind hides most boilerplate but never changes Flutter's "constraints down, sizes
 
 `items-stretch` inside a `SingleChildScrollView` needs an `IntrinsicHeight` wrapper from native Flutter; Wind has no token for it. Rare; reach for it when row children inside a scroll must match heights.
 
-**Intrinsic sizing limitation.** Wrapping Wind content in `IntrinsicHeight` / `IntrinsicWidth` (or a `Row`/`Column` that needs child intrinsic heights for equal-height columns) throws `LayoutBuilder does not support returning intrinsic dimensions` WHEN that content resolves `h-full` or a flex `basis-*` — both insert an internal `LayoutBuilder`, which cannot answer intrinsic queries (a Flutter constraint, not a Wind bug). Escape hatches: use explicit `h-*` / `size-*` instead of `h-full`; do not wrap such content in `IntrinsicHeight`; for equal-height rows use a `Stack` + `Positioned(top:0,bottom:0)`. Wind's own `items-stretch` column is intrinsic-free and safe.
+**Intrinsic sizing limitation.** Wrapping Wind content in `IntrinsicHeight` / `IntrinsicWidth` (or a `Row`/`Column` that needs child intrinsic heights for equal-height columns) throws `LayoutBuilder does not support returning intrinsic dimensions` WHEN that content triggers Wind's internal `LayoutBuilder` paths: `h-full` (only in an unbounded-height context) or a flex `basis-*` (a single `LayoutBuilder` around the surrounding flex). `LayoutBuilder` cannot answer intrinsic queries (a Flutter constraint, not a Wind bug). Escape hatches: use explicit `h-*` / `size-*` instead of `h-full`; do not wrap such content in `IntrinsicHeight`; for equal-height rows use a `Stack` + `Positioned(top:0,bottom:0)`. Wind's own `items-stretch` column is intrinsic-free and safe.
 
 ## 7. className formatting
 
