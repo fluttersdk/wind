@@ -59,6 +59,48 @@ void main() {
         expect(updatedStyles.heightFactor, 0.25);
       });
 
+      test('parses size-N as both width and height (theme spacing)', () {
+        final styles = parser.parse(WindStyle(), ['size-2'], context);
+        expect(styles.width, 8);
+        expect(styles.height, 8);
+      });
+
+      test('parses size-full as both width and height factors', () {
+        final styles = parser.parse(WindStyle(), ['size-full'], context);
+        expect(styles.widthFactor, 1.0);
+        expect(styles.heightFactor, 1.0);
+      });
+
+      test('parses size fraction as both factors', () {
+        final styles = parser.parse(WindStyle(), ['size-1/2'], context);
+        expect(styles.widthFactor, 0.5);
+        expect(styles.heightFactor, 0.5);
+      });
+
+      test('parses arbitrary size px and percent', () {
+        final px = parser.parse(WindStyle(), ['size-[20px]'], context);
+        expect(px.width, 20);
+        expect(px.height, 20);
+
+        final pct = parser.parse(WindStyle(), ['size-[50%]'], context);
+        expect(pct.widthFactor, 0.5);
+        expect(pct.heightFactor, 0.5);
+      });
+
+      test('parses size-screen as viewport dimensions', () {
+        final styles = parser.parse(WindStyle(), ['size-screen'], context);
+        expect(styles.width, context.screenWidth);
+        expect(styles.height, context.screenHeight);
+      });
+
+      test('a later w-* overrides the width set by size-*', () {
+        // Reverse-iteration last-wins: w-10 (after size-2) wins on width,
+        // size-2 still supplies height.
+        final styles = parser.parse(WindStyle(), ['size-2', 'w-10'], context);
+        expect(styles.width, 40);
+        expect(styles.height, 8);
+      });
+
       test('parses max-width classes correctly', () {
         final styles = WindStyle();
         final classes = ['max-w-300', 'max-w-screen'];
@@ -161,6 +203,12 @@ void main() {
       test('returns true for min-height classes', () {
         expect(parser.canParse('min-h-0'), isTrue);
         expect(parser.canParse('min-h-screen'), isTrue);
+      });
+
+      test('returns true for size classes', () {
+        expect(parser.canParse('size-2'), isTrue);
+        expect(parser.canParse('size-full'), isTrue);
+        expect(parser.canParse('size-[20px]'), isTrue);
       });
 
       test('returns false for non-sizing classes', () {

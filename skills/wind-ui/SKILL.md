@@ -3,10 +3,10 @@ name: wind-ui
 description: "fluttersdk_wind 1.1: utility-first Flutter styling with Tailwind-syntax className strings. 27 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper, WBadge, WCard, WSwitch, WRadio, WTabs + 5 WForm* wrappers) consume className through a 19-parser pipeline (19 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. WindRecipe / WindSlotRecipe compose className variants (base + axes + compoundVariants + caller) in strict emission order, no dedupe/sort/twMerge. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, migrating a Tailwind className from web, or composing a WindRecipe / WindSlotRecipe for a variant-driven component. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.7.0
+version: 2.8.0
 ---
 
-<!-- fluttersdk_wind 1.1.x | Skill v2.7.0 (2026-06-25) -->
+<!-- fluttersdk_wind 1.1.x | Skill v2.8.0 (2026-07-01) -->
 
 # Wind UI 1.1
 
@@ -164,7 +164,7 @@ Inline this catalog as your default reach-for set. For the full per-parser regex
 
 **Spacing**: `p-N` `px-N` `py-N` `pt-N` `pr-N` `pb-N` `pl-N` (no `ps-`/`pe-`). `m-N` and axes (no negative margin, no `ms-`/`me-`, `mx-auto` for horizontal centering). `gap-N` `gap-x-N` `gap-y-N` `space-x-N` `space-y-N`. Arbitrary `p-[18px]`, `gap-[3.5]` (no `%` for spacing). Default unit: 4 px per step. `p-4` = 16 px.
 
-**Sizing**: `w-N` `h-N` (theme scale). `w-1/2` `w-1/3` `w-2/3` `w-1/4` `w-3/4` `w-full` `w-screen`. `h-full` `h-screen`. Arbitrary `w-[300px]` `h-[50%]`. `min-w-0` `min-w-full` `min-h-screen`. `max-w-xs` through `max-w-7xl`, `max-w-prose`, `max-w-full`. No `w-auto` / `h-auto` (silently skipped).
+**Sizing**: `w-N` `h-N` (theme scale). `w-1/2` `w-1/3` `w-2/3` `w-1/4` `w-3/4` `w-full` `w-screen`. `h-full` `h-screen`. `size-N` sets BOTH width and height (`size-2`, `size-full`, `size-1/2`, `size-[20px]`); works on a childless `WDiv` (status dot). Arbitrary `w-[300px]` `h-[50%]`. `min-w-0` `min-w-full` `min-h-screen`. `max-w-xs` through `max-w-7xl`, `max-w-prose`, `max-w-full`. No `w-auto` / `h-auto` (silently skipped).
 
 **Position**: `relative` `absolute`. `top-N` `right-N` `bottom-N` `left-N` `inset-N` `inset-x-N` `inset-y-N`, negative `-top-N` `-inset-N`, arbitrary `top-[24px]` (no `%` for offsets). `fixed` / `sticky` are recognised by the parser but produce no visual effect.
 

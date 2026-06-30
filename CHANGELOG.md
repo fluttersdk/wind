@@ -10,6 +10,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### Added
 
+- `size-*` sizing utility (Tailwind v3.4+ shorthand): `size-2`, `size-full`, `size-1/2`, `size-[20px]`, `size-[50%]`, `size-screen` set BOTH width and height in one token. Fixes childless `WDiv` sizing: a `WDiv(className: 'size-2 rounded-full bg-...')` status dot now renders its box instead of collapsing (the previous gap was that `size-*` was unrecognized, not that `w-*`/`h-*` were ignored, which already worked childless). A later `w-*`/`h-*` overrides the matching axis. (`lib/src/parser/parsers/sizing_parser.dart`) (#123)
 - `WindRecipe` and `WindSlotRecipe` (+ `WindCompoundVariant`, `WindSlotCompoundVariant`): a `tv()` (tailwind-variants) equivalent. `WindRecipe` resolves a single className from `base` + variant axes + compoundVariants + a caller `className`, in strict emission order (`base ++ variant ++ compound ++ caller`), with no dedupe/sort/twMerge. `WindSlotRecipe` extends the same model to multi-slot components and returns a `Map<String, String>` (slot -> className). (`lib/src/recipe/wind_recipe.dart`)
 - `WBadge`: inline status/label pill. Composes a rounded-full `WDiv` around a `WText(text-xs)`; all visual tone is className-driven (`bg-*`, `text-*`, `dark:` pairs). (`lib/src/widgets/w_badge.dart`)
 - `WCard`: surface container with optional `header` and `footer` slots. Delegates to `WDiv` (flex-col); all styling is className-driven. (`lib/src/widgets/w_card.dart`)

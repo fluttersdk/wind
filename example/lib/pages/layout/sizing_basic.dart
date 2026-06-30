@@ -28,6 +28,31 @@ class SizingBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
+          title: 'Size (Both Axes)',
+          description:
+              'size-{n} sets width AND height at once. Squares such as status '
+              'dots and avatars need no child to keep their box.',
+          child: WDiv(
+            className: 'flex flex-row items-center gap-4',
+            children: const [
+              WDiv(
+                className: 'size-2 rounded-full bg-green-500 dark:bg-green-400',
+              ),
+              WDiv(
+                className: 'size-8 rounded-lg bg-blue-500 dark:bg-blue-400',
+              ),
+              WDiv(
+                className:
+                    'size-12 rounded-full bg-purple-500 dark:bg-purple-400',
+              ),
+              WDiv(
+                className:
+                    'size-16 rounded-xl bg-orange-500 dark:bg-orange-400',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
           title: 'Max-Width Scale',
           description:
               'max-w-{key} caps the width. Combine with mx-auto for a centered, readable column.',
