@@ -58,7 +58,8 @@ class PopoverBasicExamplePage extends StatelessWidget {
             className: '''
               rounded-lg p-2
               bg-white dark:bg-slate-800
-              shadow-xl border border-slate-200 dark:border-slate-700
+              shadow-xl dark:shadow-xl
+              border border-slate-200 dark:border-slate-700
             ''',
             triggerBuilder: (context, isOpen, isHovering) => WButton(
               onTap: () {},

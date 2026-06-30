@@ -643,7 +643,14 @@ class _WPopoverState extends State<WPopover> {
     // otherwise the overlay sizes between the trigger width and an upper bound
     // (`maxWidth` prop, a `max-w-*` token, or the screen width) so a menu can
     // never stretch off-screen the way an unbounded overlay does.
-    final double? fixedWidth = widget.width ?? styles.width;
+    // Sanitize incoming widths: only a finite, positive value is a usable
+    // constraint. A negative / NaN / infinite `width` or `maxWidth` would assert
+    // (or produce an invalid box) when fed to BoxConstraints, so drop it.
+    final double? rawFixedWidth = widget.width ?? styles.width;
+    final double? fixedWidth =
+        (rawFixedWidth != null && rawFixedWidth.isFinite && rawFixedWidth > 0)
+            ? rawFixedWidth
+            : null;
     final double screenWidth = MediaQuery.sizeOf(context).width;
     // A `max-w-*` token surfaces as a finite constraints.maxWidth; an absent one
     // is either null or infinity, both of which fall back to the screen width.
@@ -651,8 +658,13 @@ class _WPopoverState extends State<WPopover> {
         (styles.constraints?.maxWidth.isFinite ?? false)
             ? styles.constraints!.maxWidth
             : null;
+    final double? propMaxWidth = (widget.maxWidth != null &&
+            widget.maxWidth!.isFinite &&
+            widget.maxWidth! > 0)
+        ? widget.maxWidth
+        : null;
     final double effectiveMaxWidth =
-        widget.maxWidth ?? classMaxWidth ?? screenWidth;
+        propMaxWidth ?? classMaxWidth ?? screenWidth;
 
     // Use pre-calculated alignment if available, otherwise calculate now
     PopoverAlignment effectiveAlignment =

@@ -6,6 +6,7 @@ Utilities for setting the width and height of elements.
 - [Quick Reference](#quick-reference)
 - [Width](#width)
 - [Height](#height)
+- [Size (Both Axes)](#size-both-axes)
 - [Min & Max Dimensions](#min--max-dimensions)
 - [Responsive Design](#responsive-design)
 - [Dark Mode](#dark-mode)
@@ -98,6 +99,24 @@ WDiv(className: 'h-16 bg-red-200')
 // Full screen height
 WDiv(className: 'h-screen bg-red-300')
 ```
+
+<a name="size-both-axes"></a>
+## Size (Both Axes)
+
+`size-{value}` sets width AND height in a single token (the Tailwind v3.4+ shorthand). It accepts the same values as `w-` / `h-`: spacing numbers, `full`, fractions, and arbitrary `[px]` / `[%]`. It works on a childless `WDiv`, so a fixed-size square such as a status dot needs no wrapper.
+
+```dart
+// 8x8 status dot, no child required
+WDiv(className: 'size-2 rounded-full bg-green-500 dark:bg-green-400')
+
+// Square avatar
+WDiv(className: 'size-12 rounded-full bg-gray-200 dark:bg-gray-700')
+
+// Fill the parent on both axes
+WDiv(className: 'size-full bg-blue-500 dark:bg-blue-600')
+```
+
+A later `w-*` or `h-*` overrides the matching axis: `size-4 w-8` is 32px wide, 16px tall.
 
 <a name="min--max-dimensions"></a>
 ## Min & Max Dimensions

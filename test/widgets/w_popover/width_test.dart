@@ -130,5 +130,25 @@ void main() {
       // The overlay is bounded to maxWidth despite the 320px trigger.
       expect(_overlayConstraints(tester).maxWidth, 120);
     });
+
+    testWidgets('a negative width is ignored instead of asserting',
+        (tester) async {
+      await open(tester, _popover(width: -50));
+      final c = _overlayConstraints(tester);
+      // The invalid fixed width is dropped: the overlay falls back to flexible
+      // sizing (min = trigger width, max = screen width), not a -50 box.
+      expect(tester.takeException(), isNull);
+      expect(c.maxWidth, greaterThan(0));
+      expect(c.minWidth, greaterThanOrEqualTo(0));
+    });
+
+    testWidgets('an infinite maxWidth falls back to the screen width',
+        (tester) async {
+      await open(tester, _popover(maxWidth: double.infinity));
+      final c = _overlayConstraints(tester);
+      expect(tester.takeException(), isNull);
+      // Infinite is not a usable bound; falls back to the 800px test viewport.
+      expect(c.maxWidth, 800);
+    });
   });
 }

@@ -43,12 +43,56 @@ void main() {
       expect(expandAliases('foo', const {'row': 'flex flex-row'}), 'foo');
     });
 
-    test('does not match a prefixed token against a bare alias key', () {
-      // Only an unprefixed whole token may match an alias key; `md:row` is not
-      // equal to the key `row`, so it passes through verbatim.
+    test(
+        'expands a prefixed token whose body is an alias, re-applying the '
+        'prefix to each produced token', () {
+      // The prefix is peeled off, the bare body matches the key, and the prefix
+      // is re-applied to every produced token (#124).
       expect(
         expandAliases('md:row', const {'row': 'flex flex-row'}),
-        'md:row',
+        'md:flex md:flex-row',
+      );
+    });
+
+    test(
+        're-applies a state prefix across an alias value that has its own '
+        'dark pair', () {
+      // hover:bg-surface -> the surface alias tokens, each carrying hover:.
+      // hover: over the value's dark: yields hover:dark:..., which the parser
+      // resolves regardless of prefix order.
+      expect(
+        expandAliases(
+          'hover:bg-surface',
+          const {'bg-surface': 'bg-gray-100 dark:bg-gray-800'},
+        ),
+        'hover:bg-gray-100 hover:dark:bg-gray-800',
+      );
+    });
+
+    test('expands a stacked-prefix token through an alias', () {
+      expect(
+        expandAliases('dark:hover:row', const {'row': 'flex flex-row'}),
+        'dark:hover:flex dark:hover:flex-row',
+      );
+    });
+
+    test('detects a cycle reached through a prefixed token', () {
+      // a -> hover:a re-enters key 'a' on the chain; the repeat is left as the
+      // original prefixed token rather than looping.
+      final warnings = <String>[];
+      final result = expandAliases(
+        'a',
+        const {'a': 'hover:a'},
+        onWarn: warnings.add,
+      );
+      expect(result, 'hover:a');
+      expect(warnings.any((w) => w.contains('cycle')), isTrue);
+    });
+
+    test('leaves a prefixed token verbatim when its body is not an alias', () {
+      expect(
+        expandAliases('hover:bg-blue-500', const {'row': 'flex flex-row'}),
+        'hover:bg-blue-500',
       );
     });
 

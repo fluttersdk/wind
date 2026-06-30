@@ -237,6 +237,12 @@ class WindStyle {
   /// Animation type e.g., animate-spin, animate-pulse, animate-bounce
   final WindAnimationType? animationType;
 
+  // ============== INTERACTION PROPERTIES ==============
+
+  /// Mouse cursor for hover regions e.g., cursor-pointer, cursor-not-allowed.
+  /// Applied by [WDiv] through a `MouseRegion` on web/desktop targets.
+  final MouseCursor? mouseCursor;
+
   // ============== POSITIONING PROPERTIES ==============
 
   /// Position type e.g., relative, absolute
@@ -320,6 +326,7 @@ class WindStyle {
     this.strokeColor,
     this.animationType,
     this.preserveColors = false,
+    this.mouseCursor,
     this.positionType,
     this.positionTop,
     this.positionRight,
@@ -393,6 +400,7 @@ class WindStyle {
     Color? strokeColor,
     WindAnimationType? animationType,
     bool? preserveColors,
+    MouseCursor? mouseCursor,
     WindPositionType? positionType,
     double? positionTop,
     double? positionRight,
@@ -484,6 +492,7 @@ class WindStyle {
       strokeColor: strokeColor ?? this.strokeColor,
       animationType: animationType ?? this.animationType,
       preserveColors: preserveColors ?? this.preserveColors,
+      mouseCursor: mouseCursor ?? this.mouseCursor,
       positionType: positionType ?? this.positionType,
       positionTop: positionTop ?? this.positionTop,
       positionRight: positionRight ?? this.positionRight,
@@ -562,6 +571,7 @@ class WindStyle {
           strokeColor == other.strokeColor &&
           animationType == other.animationType &&
           preserveColors == other.preserveColors &&
+          mouseCursor == other.mouseCursor &&
           positionType == other.positionType &&
           positionTop == other.positionTop &&
           positionRight == other.positionRight &&
@@ -635,6 +645,7 @@ class WindStyle {
       strokeColor.hashCode ^
       animationType.hashCode ^
       preserveColors.hashCode ^
+      mouseCursor.hashCode ^
       positionType.hashCode ^
       positionTop.hashCode ^
       positionRight.hashCode ^
@@ -746,6 +757,7 @@ class WindStyle {
         'strokeColor: $strokeColor, '
         'animationType: $animationType, '
         'preserveColors: $preserveColors, '
+        'mouseCursor: $mouseCursor, '
         'positionType: $positionType, '
         'positionTop: $positionTop, '
         'positionRight: $positionRight, '
