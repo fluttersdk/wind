@@ -1197,11 +1197,11 @@ class WDiv extends StatelessWidget {
         rows.add(SizedBox(height: gapY));
       }
       // WindEqualHeightRow measures each cell with a real (loose-height) layout
-      // and re-lays it to at least the row max (min height), instead of the
-      // intrinsic query IntrinsicHeight would run,
-      // intrinsic query. A `flex flex-col` cell (which carries a LayoutBuilder)
-      // can then be stretched without the "LayoutBuilder does not support
-      // returning intrinsic dimensions" assert (#139).
+      // and re-lays it to at least the row max via a MIN height, instead of the
+      // intrinsic query IntrinsicHeight would run. A `flex flex-col` cell (which
+      // carries a LayoutBuilder) can then be stretched without the "LayoutBuilder
+      // does not support returning intrinsic dimensions" assert (#139), and the
+      // min (never tight) height leaves no residual RenderFlex overflow (#141).
       rows.add(WindEqualHeightRow(spacing: gapX, children: rowChildren));
     }
 
