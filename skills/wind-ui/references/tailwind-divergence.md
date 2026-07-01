@@ -96,7 +96,7 @@ When a className inherited from a web project includes any of these, expect sile
 - `filter` / `backdrop-filter`
 
 ### Interactivity
-- `cursor-pointer` / `cursor-not-allowed` / any `cursor-*` — use `mouseCursor:` constructor prop on `WAnchor` instead
+- `cursor-*` IS supported (`cursor-pointer`, `cursor-not-allowed`, resize/zoom/grab, etc.) via a `MouseRegion` `WDiv` adds; see `tokens.md` §16. `WAnchor` also exposes a `mouseCursor:` constructor prop for imperative control.
 - `pointer-events-none` — wrap in `IgnorePointer`
 - `select-none` / `select-text`
 - `scroll-smooth`
@@ -232,7 +232,7 @@ focus-within:* /       → drop
 print:* /              → drop
   motion-safe:* /
   motion-reduce:*
-cursor-*               → drop (set mouseCursor on WAnchor if interactive)
+cursor-*               → SUPPORTED (WDiv adds MouseRegion; tokens.md §16)
 pointer-events-none    → wrap in IgnorePointer
 select-none            → drop (set selectable: false on WText)
 scroll-smooth /        → drop

@@ -271,6 +271,21 @@ class WDiv extends StatelessWidget {
       }
     }
 
+    // 8.5 CURSOR (Interaction Layer)
+    // Wrap with a MouseRegion when a cursor-* utility is set so a plain
+    // container shows the requested cursor on web/desktop. When the WDiv also
+    // carries hover:/focus:/active: it is already wrapped in WAnchor (whose
+    // MouseRegion uses click only when the anchor has gesture callbacks, else
+    // basic); either way this inner cursor MouseRegion is deeper in the tree,
+    // so its cursor wins for the area it covers.
+    if (styles.mouseCursor != null) {
+      logger.wrapWith("MouseRegion", "cursor: ${styles.mouseCursor}");
+      finalWidget = MouseRegion(
+        cursor: styles.mouseCursor!,
+        child: finalWidget,
+      );
+    }
+
     // 9. ANIMATION (animate-spin, animate-pulse, etc.)
     // Wrap with animation if animationType is set.
     if (styles.animationType != null &&
@@ -649,7 +664,7 @@ class WDiv extends StatelessWidget {
       // Expanded hands it a bounded width (its flex share), inside which the
       // child's own infinite-width SizedBox resolves. Skipped on a scrollable
       // row (no bounded extent to share). Prefixed `md:w-full` is intentionally
-      // not matched: it is conditional, and unconditional Expanding would break
+      // not matched: it is conditional, and unconditional expanding would break
       // the responsive intent. Detection reads the className off ANY Wind widget
       // (WDiv, WButton, WInput, ...) via `_extractChildClassName`, since they all
       // turn `w-full` into an infinite width and hit the same assertion.

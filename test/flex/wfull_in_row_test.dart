@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
-Widget wrap(Widget child) => MaterialApp(
+Widget wrapWithTheme(Widget child) => MaterialApp(
       home: WindTheme(
         data: WindThemeData(),
         child: Scaffold(body: child),
@@ -17,7 +17,7 @@ void main() {
         (tester) async {
       const fillKey = Key('wfull-fill');
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           // Bound the row to a known width so the assertion is not tied to the
           // default test viewport.
           SizedBox(
@@ -40,7 +40,7 @@ void main() {
 
     testWidgets('the w-full child is wrapped in an Expanded', (tester) async {
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'flex flex-row',
             children: [
@@ -59,7 +59,7 @@ void main() {
     testWidgets('w-full coexists with a fixed-width sibling without crashing',
         (tester) async {
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'flex flex-row gap-2',
             children: [
@@ -83,7 +83,7 @@ void main() {
       const outerKey = Key('w32-outer');
       const nestedKey = Key('wfull-nested');
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'flex flex-row',
             children: const [
@@ -117,7 +117,7 @@ void main() {
         (tester) async {
       // flex-1 self-wraps in Expanded; the w-full path must defer to it.
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'flex flex-row',
             children: [
@@ -140,7 +140,7 @@ void main() {
       // the Row expand must key off the className of any Wind widget, not just
       // WDiv.
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'flex flex-row',
             children: [
@@ -166,7 +166,7 @@ void main() {
     testWidgets('w-full inside a column is unaffected (no crash)',
         (tester) async {
       await tester.pumpWidget(
-        wrap(
+        wrapWithTheme(
           WDiv(
             className: 'flex flex-col',
             children: [

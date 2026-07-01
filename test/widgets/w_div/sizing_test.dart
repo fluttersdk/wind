@@ -3,6 +3,66 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 void main() {
+  setUp(WindParser.clearCache);
+
+  group('Childless sizing (issue #123)', () {
+    testWidgets('a childless WDiv honors size-* (renders a square box)',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const Center(
+              child: WDiv(className: 'size-2 rounded-full bg-red-500'),
+            ),
+          ),
+        ),
+      );
+
+      // size-2 -> 2 * 4 = 8 logical px on both axes.
+      expect(tester.getSize(find.byType(WDiv)), const Size(8, 8));
+    });
+
+    testWidgets('a childless WDiv honors w-*/h-* without a child',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const Center(
+              child: WDiv(className: 'w-10 h-10 bg-red-500'),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.getSize(find.byType(WDiv)), const Size(40, 40));
+    });
+
+    testWidgets('a childless size-* dot keeps its box inside a flex row',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const Center(
+              child: WDiv(
+                className: 'flex flex-row items-center gap-2',
+                children: [
+                  WDiv(className: 'size-2 rounded-full bg-green-500'),
+                  Text('Active'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final dot = find.byType(WDiv).last;
+      expect(tester.getSize(dot), const Size(8, 8));
+    });
+  });
+
   group('Sizing Parsing Tests', () {
     testWidgets('Parsing width/height numeric values correctly (using theme)', (
       tester,
