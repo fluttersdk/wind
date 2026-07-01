@@ -164,5 +164,37 @@ void main() {
           cellOf(tester, 'Revenue').height, cellOf(tester, 'Signups').height);
       expect(cellOf(tester, 'Revenue').height, greaterThan(0));
     });
+
+    testWidgets(
+        'stretching an unequal flex-col cell emits no overflow warning (#141)',
+        (tester) async {
+      // Follow-up to #139: the stretch must not leave a residual RenderFlex
+      // overflow on the stretched row. WindEqualHeightRow uses a min-height
+      // (never a tight squeeze), so a stretched cell's content is never forced
+      // below its own height.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WDiv(
+            className: 'grid grid-cols-2 gap-4 items-stretch',
+            children: [
+              // taller (3 rows)
+              WDiv(
+                className: 'flex flex-col gap-1',
+                children: const [WText('A'), WText('1'), WText('note')],
+              ),
+              // shorter (2 rows) -> stretched to the taller
+              WDiv(
+                className: 'flex flex-col gap-1',
+                children: const [WText('B'), WText('2')],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // No "RenderFlex overflowed" (or any) exception, and heights match.
+      expect(tester.takeException(), isNull);
+      expect(cellOf(tester, 'A').height, cellOf(tester, 'B').height);
+    });
   });
 }

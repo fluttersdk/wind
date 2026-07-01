@@ -79,7 +79,7 @@ WDiv(
 )
 ```
 
-The equal-height rows are laid out for real (each cell is measured with a loose height, then re-laid tight to the row's tallest), NOT via `IntrinsicHeight`, so cells whose content is itself a `flex flex-col`, or that use `h-full` / `basis-*` (which carry a `LayoutBuilder`), stretch correctly instead of asserting `LayoutBuilder does not support returning intrinsic dimensions`. Cells simply fill the row height.
+The equal-height rows are laid out for real (each cell is measured with a loose height, then re-laid to at least the row's tallest via a **min** height, never a tight squeeze), NOT via `IntrinsicHeight`, so cells whose content is itself a `flex flex-col`, or that use `h-full` / `basis-*` (which carry a `LayoutBuilder`), stretch correctly instead of asserting `LayoutBuilder does not support returning intrinsic dimensions`. Because a cell is never forced below its own content height, a stretched cell also produces no residual `RenderFlex overflowed` warning (#141).
 
 <a name="responsive"></a>
 ## Responsive

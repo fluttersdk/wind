@@ -11,9 +11,12 @@ import 'package:flutter/widgets.dart';
 /// dry-layout queries, so `IntrinsicHeight` asserts `LayoutBuilder does not
 /// support returning intrinsic dimensions` the moment it has to stretch an
 /// unequal cell (issue #139). This widget instead lays each child out for real
-/// with a loose height to measure it, then lays it out again tight to the row's
-/// max height. Real layout is exactly what `LayoutBuilder` supports, so a
-/// `flex flex-col` cell stretches without asserting.
+/// with a loose height to measure it, then lays it out again to the row's max
+/// height via a MIN constraint (never a tight one). Real layout is exactly what
+/// `LayoutBuilder` supports, so a `flex flex-col` cell stretches without
+/// asserting; and because a cell is never forced BELOW its own content height, a
+/// stretched cell leaves no residual `RenderFlex overflowed` warning the way a
+/// tight re-lay could on fractional (sub-pixel) content (issue #141).
 ///
 /// Every child is given an equal share of the incoming width (`(maxWidth -
 /// spacing * (n - 1)) / n`), matching the grid's fixed column count, so callers
@@ -107,15 +110,46 @@ class _RenderEqualHeightRow extends RenderBox
     // Honor the incoming height constraint: if the parent forces a taller (or
     // caps at a shorter) row, cells stretch to that height, not just the
     // measured tallest, so the row and its cells stay consistent.
-    final double rowHeight =
+    final double target =
         maxHeight.clamp(constraints.minHeight, constraints.maxHeight);
 
-    // Pass 2: stretch every cell to the row height and position left to right.
+    // Pass 2: re-lay each cell with a MIN height of `target` (never a tight
+    // height) to settle the true row height. A tight height would squeeze a
+    // cell whose content, laid out for real, needs a hair more than the
+    // loose-measured max (sub-pixel text/flex rounding), producing a
+    // "RenderFlex overflowed by ~2px" warning (#141). A min constraint instead
+    // lets such a cell keep its own (larger) height, so `rowHeight` ends up >=
+    // every cell's content and no cell is ever squeezed.
+    double rowHeight = target;
+    child = firstChild;
+    while (child != null) {
+      child.layout(
+        BoxConstraints(
+          minWidth: cellWidth,
+          maxWidth: cellWidth,
+          minHeight: target,
+          maxHeight: constraints.maxHeight,
+        ),
+        parentUsesSize: true,
+      );
+      if (child.size.height > rowHeight) rowHeight = child.size.height;
+      child = childAfter(child);
+    }
+    rowHeight = rowHeight.clamp(constraints.minHeight, constraints.maxHeight);
+
+    // Pass 3: lay every cell to the settled `rowHeight` (still a MIN height, so
+    // no squeeze) and position it. This equalizes any cell that measured shorter
+    // than a sibling which grew in pass 2, so all cells share the row height.
     double dx = 0;
     child = firstChild;
     while (child != null) {
       child.layout(
-        BoxConstraints.tightFor(width: cellWidth, height: rowHeight),
+        BoxConstraints(
+          minWidth: cellWidth,
+          maxWidth: cellWidth,
+          minHeight: rowHeight,
+          maxHeight: constraints.maxHeight,
+        ),
         parentUsesSize: true,
       );
       (child.parentData as _EqualHeightParentData).offset = Offset(dx, 0);
