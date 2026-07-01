@@ -125,5 +125,44 @@ void main() {
       expect(find.text('z1'), findsOneWidget);
       expect(find.text('z2'), findsOneWidget);
     });
+
+    testWidgets(
+        'stretches UNEQUAL flex-col cells (with nested WDiv) without asserting '
+        '(#139)', (tester) async {
+      // The regression: an unequal `flex flex-col` cell carries a LayoutBuilder,
+      // which IntrinsicHeight could not measure. The real-layout stretch row
+      // must equalize it without the "LayoutBuilder does not support returning
+      // intrinsic dimensions" cascade.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WDiv(
+            className: 'grid grid-cols-2 gap-4 items-stretch',
+            children: [
+              WDiv(
+                className: 'flex flex-col gap-1 p-4 bg-white dark:bg-gray-800',
+                children: const [WText('Revenue'), WText('\$12k')],
+              ),
+              WDiv(
+                className: 'flex flex-col gap-1 p-4 bg-white dark:bg-gray-800',
+                children: [
+                  const WText('Signups'),
+                  const WText('1,204'),
+                  WDiv(
+                    className: 'flex flex-row gap-1',
+                    children: const [WText('+8%')],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      // The shorter cell is stretched to the taller cell's height.
+      expect(
+          cellOf(tester, 'Revenue').height, cellOf(tester, 'Signups').height);
+      expect(cellOf(tester, 'Revenue').height, greaterThan(0));
+    });
   });
 }

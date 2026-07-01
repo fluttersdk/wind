@@ -9,6 +9,7 @@ import '../state/wind_flex_overflow_scope.dart';
 import 'w_anchor.dart';
 import 'w_button.dart';
 import 'w_text.dart';
+import 'wind_equal_height_row.dart';
 
 /// **The Fundamental Building Block of Wind**
 ///
@@ -1183,30 +1184,22 @@ class WDiv extends StatelessWidget {
       final end = (start + cols) > items.length ? items.length : start + cols;
       final rowItems = items.sublist(start, end);
 
-      final rowChildren = <Widget>[];
-      for (var c = 0; c < cols; c++) {
-        if (c > 0 && gapX > 0) {
-          rowChildren.add(SizedBox(width: gapX));
-        }
-        // Pad a short final row with empty slots so columns line up.
-        rowChildren.add(
-          Expanded(
-            child: c < rowItems.length ? rowItems[c] : const SizedBox.shrink(),
-          ),
-        );
-      }
+      // One child per column so widths line up; pad a short final row with
+      // blank cells. WindEqualHeightRow assigns each an equal width share.
+      final rowChildren = <Widget>[
+        for (var c = 0; c < cols; c++)
+          c < rowItems.length ? rowItems[c] : const SizedBox.shrink(),
+      ];
 
       if (rows.isNotEmpty && gapY > 0) {
         rows.add(SizedBox(height: gapY));
       }
-      rows.add(
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: rowChildren,
-          ),
-        ),
-      );
+      // WindEqualHeightRow measures each cell with a real (loose-height) layout
+      // and re-lays it tight to the row max, instead of IntrinsicHeight's
+      // intrinsic query. A `flex flex-col` cell (which carries a LayoutBuilder)
+      // can then be stretched without the "LayoutBuilder does not support
+      // returning intrinsic dimensions" assert (#139).
+      rows.add(WindEqualHeightRow(spacing: gapX, children: rowChildren));
     }
 
     return Column(
