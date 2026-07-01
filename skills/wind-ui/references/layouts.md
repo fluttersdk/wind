@@ -107,7 +107,7 @@ WDiv(
 );
 ```
 
-Note: Wind's `grid` renders as `Wrap` with computed column widths; it is NOT virtualized. For large or dynamic item counts, use Flutter's `GridView.builder` with W-widgets inside.
+Note: Wind's `grid` renders as `Wrap` with computed column widths; it is NOT virtualized. For large or dynamic item counts, use Flutter's `GridView.builder` with W-widgets inside. Add `items-stretch` for equal-height rows (cells match the tallest per row; the grid then renders as a column of `IntrinsicHeight` rows, so avoid `h-full` on a stretched cell per the intrinsic-sizing limitation).
 
 ### Sticky header + scrollable body
 

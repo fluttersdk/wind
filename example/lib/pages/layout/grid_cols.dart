@@ -64,6 +64,24 @@ class GridColsExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
+          title: 'Equal-Height Rows (items-stretch)',
+          description:
+              'Add items-stretch so every card in a row matches the tallest. '
+              'The middle card has an extra line; all three still align.',
+          child: WDiv(
+            className: 'grid grid-cols-3 gap-3 items-stretch',
+            children: const [
+              _StatCard(label: 'Revenue', value: '\$12,480'),
+              _StatCard(
+                label: 'Signups',
+                value: '1,204',
+                delta: '+8% vs last week',
+              ),
+              _StatCard(label: 'Churn', value: '2.1%'),
+            ],
+          ),
+        ),
+        ExampleSection(
           title: 'Arbitrary Integers',
           description:
               'No bracket syntax needed. Just write the integer you want.',
@@ -142,6 +160,40 @@ class _RefRow extends StatelessWidget {
           'crossAxisCount: $crossAxis',
           className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
         ),
+      ],
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final String? delta;
+
+  const _StatCard({required this.label, required this.value, this.delta});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        p-4 rounded-lg
+        bg-white dark:bg-slate-800
+        border border-slate-200 dark:border-slate-700
+      ''',
+      children: [
+        WText(
+          label,
+          className: 'text-sm text-slate-500 dark:text-slate-400',
+        ),
+        WText(
+          value,
+          className: 'text-2xl font-bold text-slate-900 dark:text-white',
+        ),
+        if (delta != null)
+          WText(
+            delta!,
+            className: 'text-xs text-green-600 dark:text-green-400',
+          ),
       ],
     );
   }

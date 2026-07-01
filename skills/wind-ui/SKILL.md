@@ -60,7 +60,7 @@ These hold for every line of Wind code. Apply each as a hard constraint, not a s
 
 8. **`WindTheme` lives BELOW `MaterialApp` in the runtime tree.** The builder pattern inverts apparent order: `WindTheme(data: ..., builder: (ctx, controller) => MaterialApp(...))`. Consequence: `OverlayEntry.builder` contexts cannot reach `WindTheme` via ancestor walk. Capture the State's `context` before showing an overlay, then pass it to `WindParser.parse` from inside the overlay builder. `WPopover` / `WSelect` already handle this internally.
 
-9. **Wind composes with Flutter, not against it.** `Scaffold`, `AppBar`, `Dialog`, `BottomSheet`, `Drawer`, `SnackBar`, `Navigator`, `Hero`, `FutureBuilder`, `StreamBuilder`, `ValueListenableBuilder` remain canonical. `ListView` / `GridView.builder` / `CustomScrollView` are the right choice for virtualised lists; `WDiv` with `grid-cols-N` produces a static `Wrap`, not a virtualised grid. See [Wind ≠ Flutter rules of thumb](#9-wind--flutter-rules-of-thumb).
+9. **Wind composes with Flutter, not against it.** `Scaffold`, `AppBar`, `Dialog`, `BottomSheet`, `Drawer`, `SnackBar`, `Navigator`, `Hero`, `FutureBuilder`, `StreamBuilder`, `ValueListenableBuilder` remain canonical. `ListView` / `GridView.builder` / `CustomScrollView` are the right choice for virtualised lists; `WDiv` with `grid-cols-N` produces a static `Wrap` (or, with `items-stretch`, equal-height rows), not a virtualised grid. See [Wind ≠ Flutter rules of thumb](#9-wind--flutter-rules-of-thumb).
 
 10. **`active:` prefix is reserved but not wired.** `WAnchor` tracks hover and focus only; there is no onTapDown/onTapUp tracking. Don't rely on `active:bg-blue-700` for press feedback. Use a transient state in the consumer's controller and `states: {'pressed'}` if you genuinely need press feedback today.
 
@@ -158,7 +158,7 @@ Prefix order does not matter at the parser level; all stacked prefixes must matc
 
 Inline this catalog as your default reach-for set. For the full per-parser regex catalog (every flag, every arbitrary-value pattern): `${CLAUDE_SKILL_DIR}/references/tokens.md`.
 
-**Layout**: `flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `wrap` `grid` `grid-cols-N` `block` `hidden`. `justify-start` `-center` `-end` `-between` `-around` `-evenly`. `items-start` `-center` `-end` `-baseline` `-stretch`. `axis-min` `axis-max` (Wind-only, sets `MainAxisSize`).
+**Layout**: `flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `wrap` `grid` `grid-cols-N` `block` `hidden`. `justify-start` `-center` `-end` `-between` `-around` `-evenly`. `items-start` `-center` `-end` `-baseline` `-stretch`. `axis-min` `axis-max` (Wind-only, sets `MainAxisSize`). On a `grid`, `items-stretch` opts into equal-height rows (cells match the tallest per row); the default grid sizes each cell to its own content.
 
 **Flex child**: `flex-1` `flex-auto` `flex-none` `flex-N` (numeric). `shrink-0` `grow`. `self-start` / `-end` / `-center` / `-stretch` / `-auto` (align-self shorthand; `align-self-*` long form also works). `order-0` through `order-12`, `order-first` / `order-last` / `order-none`, arbitrary `order-[-5]`.
 
@@ -334,7 +334,7 @@ Full Form patterns + validation recipes + async error flow: `${CLAUDE_SKILL_DIR}
 | Routing | `go_router` (community-canonical) or `Navigator 2.0`; Wind has no router |
 | Async state stream | `FutureBuilder` / `StreamBuilder` / `ValueListenableBuilder` (Flutter), composed with W-widgets in the builder |
 | Static row / column / wrap / stack | `WDiv` with `flex` / `flex-row` / `flex-col` / `wrap` / `relative+absolute` tokens |
-| Static grid | `WDiv` with `grid grid-cols-N gap-N` (renders as `Wrap`, not virtualised) |
+| Static grid | `WDiv` with `grid grid-cols-N gap-N` (renders as `Wrap`, not virtualised; add `items-stretch` for equal-height rows) |
 | Form integration with validation | `WForm*` family inside Flutter's `Form` + `GlobalKey<FormState>` |
 
 `WDynamic` is the JSON-driven alternative when a server, A/B framework, or remote-config service supplies the widget tree at runtime. Whitelisted by default (13 Wind + 16 Flutter core types); extend with `builders:` / `customIcons:`; restrict with `denyWidgets:`. Reach for it only when remote rendering is a hard requirement; for static UI write Dart.

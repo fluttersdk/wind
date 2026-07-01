@@ -4,6 +4,7 @@ Utilities for specifying the columns in a grid layout.
 
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
+- [Equal-Height Rows](#equal-height-rows)
 - [Responsive](#responsive)
 - [Dark Mode](#dark-mode)
 - [Arbitrary Values](#arbitrary-values)
@@ -54,6 +55,31 @@ WDiv(
 
 > [!NOTE]
 > Wind's parser supports **any integer** value for `grid-cols-{n}`, not just the standard Tailwind scale (1-12).
+
+<a name="equal-height-rows"></a>
+## Equal-Height Rows
+
+By default a Wind grid sizes each cell to its own content (it renders as a `Wrap`), so a row where one card is taller leaves the others short. Add `items-stretch` to make every cell in a row match the tallest, mirroring CSS Grid's default `align-items: stretch`. With `items-stretch` the grid renders as a column of equal-height rows instead of a `Wrap`.
+
+```dart
+// KPI stat cards that all share the tallest card's height per row
+WDiv(
+  className: 'grid grid-cols-3 gap-4 items-stretch',
+  children: [
+    WDiv(
+      className: 'p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
+      children: [
+        WText('Revenue', className: 'text-sm text-gray-500 dark:text-gray-400'),
+        WText('\$12,480', className: 'text-2xl font-bold text-gray-900 dark:text-white'),
+        WText('+8% vs last week', className: 'text-xs text-green-600 dark:text-green-400'),
+      ],
+    ),
+    // ...sibling cards stretch to match the tallest
+  ],
+)
+```
+
+The stretch already equalizes height, so cells should size from their own content. Do **not** put `h-full` on a stretched grid cell: that inserts an internal `LayoutBuilder`, which asserts under the `IntrinsicHeight` the equal-height grid uses (see the [intrinsic-sizing limitation](./sizing.md#intrinsic-sizing-limitation)).
 
 <a name="responsive"></a>
 ## Responsive

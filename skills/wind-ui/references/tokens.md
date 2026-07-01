@@ -79,7 +79,7 @@ Inline color escape hatches that bypass the cache key:
 | `align-content-start` / `-end` / `-center` / `-between` / `-around` / `-evenly` / `-stretch` | Wrap-only, `WrapAlignment` for runs |
 | `align-self-start` / `-end` / `-center` / `-stretch` / `-auto` (or the `self-*` shorthand) | Per-child cross-axis override |
 | `axis-min` / `axis-max` | Wind-only: `MainAxisSize.min` / `.max` on the parent flex |
-| `grid-cols-N` | N columns (any integer); renders as `Wrap` with computed column widths |
+| `grid-cols-N` | N columns (any integer); renders as `Wrap` with computed column widths. Add `items-stretch` for equal-height rows (renders as a column of `IntrinsicHeight` rows instead; do not put `h-full` on a stretched cell) |
 | `order-0` through `order-12` | Child order index |
 | `order-first` / `order-last` / `order-none` | Sentinel order (first=-9999, last=9999, none=0) |
 | `order-[N]` | Arbitrary signed integer (e.g. `order-[-5]`) |
