@@ -11,6 +11,10 @@ import 'wind_parser_interface.dart';
 /// ### Supported Utility Classes:
 /// - **Width (`w-`):** `w-4` (spacing), `w-full` (100%), `w-screen` (viewport width), `w-1/2` (factor), `w-[300px]` (arbitrary)
 /// - **Height (`h-`):** `h-4`, `h-full`, `h-screen`, `h-3/4`, `h-[50%]`
+/// - **Size (`size-`):** sets BOTH width and height in one token: `size-2`
+///   (spacing), `size-full`, `size-1/2` (factor), `size-[20px]` / `size-[50%]`
+///   (arbitrary). The Tailwind v3.4+ shorthand; useful for square boxes such as
+///   a status dot, even on a childless `WDiv`.
 /// - **Min Width (`min-w-`):** `min-w-0`, `min-w-full`, `min-w-screen`, `min-w-[100px]`
 /// - **Max Width (`max-w-`):** `max-w-md` (named), `max-w-7xl`, `max-w-full`, `max-w-prose`, `max-w-screen`
 /// - **Min Height (`min-h-`):** `min-h-0`, `min-h-full`, `min-h-screen`
@@ -30,12 +34,12 @@ class SizingParser implements WindParserInterface {
 
   /// Regular expression to match sizing classes
   static final RegExp _sizingRegExp = RegExp(
-    r'^(?<root>w|h|min-w|max-w|min-h|max-h)-(?<value>[a-zA-Z0-9./]+|screen)$',
+    r'^(?<root>w|h|min-w|max-w|min-h|max-h|size)-(?<value>[a-zA-Z0-9./]+|screen)$',
   );
 
   /// Regular expression to match arbitrary sizing classes
   static final RegExp _arbitraryRegExp = RegExp(
-    r'^(?<root>w|h|min-w|max-w|min-h|max-h)-\[(?<value>[0-9.]+%?(?:px)?)\]$',
+    r'^(?<root>w|h|min-w|max-w|min-h|max-h|size)-\[(?<value>[0-9.]+%?(?:px)?)\]$',
   );
 
   /// Named max-width sizes from Tailwind CSS default config
@@ -98,11 +102,21 @@ class SizingParser implements WindParserInterface {
 
           if (root == 'w' && widthFactor == null) widthFactor = factor;
           if (root == 'h' && heightFactor == null) heightFactor = factor;
+          // size-[N%] sets both width and height factors.
+          if (root == 'size') {
+            widthFactor ??= factor;
+            heightFactor ??= factor;
+          }
         } else {
           final value = double.tryParse(valueStr.replaceAll('px', '')) ?? 0.0;
 
           if (root == 'w' && width == null) width = value;
           if (root == 'h' && height == null) height = value;
+          // size-[Npx] sets both width and height.
+          if (root == 'size') {
+            width ??= value;
+            height ??= value;
+          }
           if (root == 'min-w' && minWidth == null) minWidth = value;
           if (root == 'max-w' && maxWidth == null) maxWidth = value;
           if (root == 'min-h' && minHeight == null) minHeight = value;
@@ -131,6 +145,11 @@ class SizingParser implements WindParserInterface {
           if (root == 'max-h' && maxHeight == null) {
             maxHeight = context.screenHeight;
           }
+          // size-screen sets both axes to the viewport dimensions.
+          if (root == 'size') {
+            width ??= context.screenWidth;
+            height ??= context.screenHeight;
+          }
         } else if (valueKey == 'full') {
           // Handle full for all roots
           if (root == 'w' && widthFactor == null) {
@@ -149,6 +168,10 @@ class SizingParser implements WindParserInterface {
             maxWidth = double.infinity;
           } else if (root == 'max-h' && maxHeight == null) {
             maxHeight = double.infinity;
+          } else if (root == 'size') {
+            // size-full fills both axes.
+            widthFactor ??= 1.0;
+            heightFactor ??= 1.0;
           }
         } else if (root == 'max-w' && _namedMaxWidths.containsKey(valueKey)) {
           // Handle named max-widths: max-w-xs, max-w-sm, max-w-md, etc.
@@ -195,6 +218,11 @@ class SizingParser implements WindParserInterface {
           if (type == 'factor') {
             if (root == 'w' && widthFactor == null) widthFactor = value;
             if (root == 'h' && heightFactor == null) heightFactor = value;
+            // size-1/2 etc. sets both width and height factors.
+            if (root == 'size') {
+              widthFactor ??= value;
+              heightFactor ??= value;
+            }
             if (root == 'max-w' && (value == double.infinity || value == 1.0)) {
               maxWidth ??= double.infinity;
             }
@@ -202,6 +230,11 @@ class SizingParser implements WindParserInterface {
           } else {
             if (root == 'w' && width == null) width = value;
             if (root == 'h' && height == null) height = value;
+            // size-2 etc. (theme spacing) sets both width and height.
+            if (root == 'size') {
+              width ??= value;
+              height ??= value;
+            }
             if (root == 'min-w' && minWidth == null) minWidth = value;
             if (root == 'max-w' && maxWidth == null) maxWidth = value;
             if (root == 'min-h' && minHeight == null) minHeight = value;
@@ -262,6 +295,7 @@ class SizingParser implements WindParserInterface {
   bool canParse(String className) {
     return className.startsWith('w-') ||
         className.startsWith('h-') ||
+        className.startsWith('size-') ||
         className.startsWith('max-w-') ||
         className.startsWith('max-h-') ||
         className.startsWith('min-w-') ||

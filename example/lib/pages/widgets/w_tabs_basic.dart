@@ -59,11 +59,13 @@ class _WTabsBasicExamplePageState extends State<WTabsBasicExamplePage> {
         ExampleSection(
           title: 'Pill Tabs',
           description:
-              'Segmented control style using background and rounded tokens.',
+              'Segmented control style using background and rounded tokens. '
+              'fullWidthList: false keeps the strip content-width.',
           child: WTabs(
             tabs: _pillLabels,
             selectedIndex: _pillTab,
             onChanged: (i) => setState(() => _pillTab = i),
+            fullWidthList: false,
             listClassName: '''
               flex flex-row gap-1
               p-1 rounded-lg

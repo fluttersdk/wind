@@ -6,7 +6,9 @@ Utilities for setting the width and height of elements.
 - [Quick Reference](#quick-reference)
 - [Width](#width)
 - [Height](#height)
+- [Size (Both Axes)](#size-both-axes)
 - [Min & Max Dimensions](#min--max-dimensions)
+- [Intrinsic Sizing Limitation](#intrinsic-sizing-limitation)
 - [Responsive Design](#responsive-design)
 - [Dark Mode](#dark-mode)
 - [Arbitrary Values](#arbitrary-values)
@@ -99,6 +101,24 @@ WDiv(className: 'h-16 bg-red-200')
 WDiv(className: 'h-screen bg-red-300')
 ```
 
+<a name="size-both-axes"></a>
+## Size (Both Axes)
+
+`size-{value}` sets width AND height in a single token (the Tailwind v3.4+ shorthand). It accepts the same values as `w-` / `h-`: spacing numbers, `full`, fractions, and arbitrary `[px]` / `[%]`. It works on a childless `WDiv`, so a fixed-size square such as a status dot needs no wrapper.
+
+```dart
+// 8x8 status dot, no child required
+WDiv(className: 'size-2 rounded-full bg-green-500 dark:bg-green-400')
+
+// Square avatar
+WDiv(className: 'size-12 rounded-full bg-gray-200 dark:bg-gray-700')
+
+// Fill the parent on both axes
+WDiv(className: 'size-full bg-blue-500 dark:bg-blue-600')
+```
+
+A later `w-*` or `h-*` overrides the matching axis: `size-4 w-8` is 32px wide, 16px tall.
+
 <a name="min--max-dimensions"></a>
 ## Min & Max Dimensions
 
@@ -147,6 +167,42 @@ WDiv(
 | `min-h-screen` | 100vh |
 | `max-h-full` | 100% |
 | `max-h-screen` | 100vh |
+
+<a name="intrinsic-sizing-limitation"></a>
+## Intrinsic Sizing Limitation
+
+Wrapping Wind content in `IntrinsicHeight` or `IntrinsicWidth` (or placing it in a `Row` / `Column` that needs child intrinsic heights, e.g. for equal-height columns) can throw:
+
+```
+LayoutBuilder does not support returning intrinsic dimensions.
+```
+
+**Why.** To resolve some sizes against the parent's real constraints, Wind introduces a `LayoutBuilder` (see `lib/src/widgets/w_div.dart`): `h-full` adds one around the cell only when the incoming height is unbounded, and a flex `basis-*` adds a single one around the surrounding flex when any direct child uses `basis-*`. `LayoutBuilder` runs during the layout phase, not the intrinsic-sizing phase, so an intrinsic-dimension query that passes through one of those `LayoutBuilder` paths asserts. This is a fundamental Flutter constraint (`LayoutBuilder` genuinely cannot answer intrinsics), not a Wind bug. Wind content that hits none of Wind's `LayoutBuilder` paths (`h-full` in an unbounded height, `basis-*`, or the column cross-axis stretch above) carries no `LayoutBuilder` and is safe to wrap.
+
+**What triggers it.** A `WDiv` (or any W-widget) whose `className` resolves `h-full` or a flex `basis-*`, anywhere inside the subtree you wrap in `IntrinsicHeight` / `IntrinsicWidth`. A `Row` of cards that you try to equalize with `IntrinsicHeight` is the common case.
+
+**Escape hatches.**
+
+- Prefer explicit sizing: give the cells a fixed `h-*` (or `size-*`) instead of `h-full` + `IntrinsicHeight`.
+- Do not wrap Wind content that uses `h-full` / `basis-*` in `IntrinsicHeight` / `IntrinsicWidth`.
+- For an equal-height row, use a `Stack` with a `Positioned(top: 0, bottom: 0)` element for the part that must fill, or reserve equal content so natural heights already match.
+- Wind's own column cross-axis stretch (`items-stretch`, the `flex flex-col` default) equalizes width WITHOUT you wrapping it in `IntrinsicHeight`. It uses a `LayoutBuilder` + `SizedBox(width: double.infinity)` internally (gated on a bounded width), so treat it as a REPLACEMENT for `IntrinsicHeight`, not something to nest inside one.
+
+```dart
+// Throws if a card resolves h-full / basis-* internally:
+IntrinsicHeight(
+  child: WDiv(className: 'flex flex-row', children: cards),
+)
+
+// Safe: explicit height on each cell, no IntrinsicHeight needed.
+WDiv(
+  className: 'flex flex-row gap-4',
+  children: [
+    WDiv(className: 'h-40 ...', child: card1),
+    WDiv(className: 'h-40 ...', child: card2),
+  ],
+)
+```
 
 <a name="responsive-design"></a>
 ## Responsive Design

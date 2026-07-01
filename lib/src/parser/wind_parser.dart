@@ -21,6 +21,7 @@ import 'parsers/transition_parser.dart';
 import 'parsers/ring_parser.dart';
 import 'parsers/svg_parser.dart';
 import 'parsers/animation_parser.dart';
+import 'parsers/cursor_parser.dart';
 import 'alias_expander.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
@@ -107,6 +108,7 @@ class WindParser {
     'ring': const RingParser(),
     'svg': const SvgParser(),
     'animation': const AnimationParser(),
+    'cursor': const CursorParser(),
   };
 
   /// Clears the entire style cache.
