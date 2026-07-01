@@ -1160,7 +1160,8 @@ class WDiv extends StatelessWidget {
   ///
   /// A `Column` of [WindEqualHeightRow]s, `cols` cells per row. Each row lays
   /// its cells out for real (a loose-height pass to measure the tallest, then a
-  /// tight re-layout to that height) and gives each an equal width share, so
+  /// re-layout to at least that height via a min constraint) and gives each an
+  /// equal width share, so
   /// every cell matches the row's tallest. The last row is padded with blank
   /// cells so columns stay aligned.
   ///
@@ -1196,7 +1197,8 @@ class WDiv extends StatelessWidget {
         rows.add(SizedBox(height: gapY));
       }
       // WindEqualHeightRow measures each cell with a real (loose-height) layout
-      // and re-lays it tight to the row max, instead of IntrinsicHeight's
+      // and re-lays it to at least the row max (min height), instead of the
+      // intrinsic query IntrinsicHeight would run,
       // intrinsic query. A `flex flex-col` cell (which carries a LayoutBuilder)
       // can then be stretched without the "LayoutBuilder does not support
       // returning intrinsic dimensions" assert (#139).

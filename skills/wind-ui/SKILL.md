@@ -3,10 +3,10 @@ name: wind-ui
 description: "fluttersdk_wind 1.1: utility-first Flutter styling with Tailwind-syntax className strings. 27 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper, WBadge, WCard, WSwitch, WRadio, WTabs + 5 WForm* wrappers) consume className through a 20-parser pipeline (20 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. WindRecipe / WindSlotRecipe compose className variants (base + axes + compoundVariants + caller) in strict emission order, no dedupe/sort/twMerge. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens fail silently. Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, migrating a Tailwind className from web, or composing a WindRecipe / WindSlotRecipe for a variant-driven component. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.8.1
+version: 2.8.2
 ---
 
-<!-- fluttersdk_wind 1.1.x | Skill v2.8.1 (2026-07-01) -->
+<!-- fluttersdk_wind 1.1.x | Skill v2.8.2 (2026-07-01) -->
 
 # Wind UI 1.1
 

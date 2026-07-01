@@ -107,17 +107,32 @@ class _RenderEqualHeightRow extends RenderBox
     // Honor the incoming height constraint: if the parent forces a taller (or
     // caps at a shorter) row, cells stretch to that height, not just the
     // measured tallest, so the row and its cells stay consistent.
-    final double rowHeight =
+    final double target =
         maxHeight.clamp(constraints.minHeight, constraints.maxHeight);
 
-    // Pass 2: stretch every cell to the row height and position left to right.
+    // Pass 2: stretch every cell to at least `target` using a MIN height (never
+    // a tight height) and position it. A tight height would squeeze a cell
+    // whose content, laid out for real, needs a hair more than the
+    // loose-measured max (sub-pixel text/flex rounding) and produce a
+    // "RenderFlex overflowed by ~2px" warning (#141). A min constraint instead
+    // lets such a cell grow, so the re-laid height is always >= the cell's own
+    // content and overflow is impossible. The row takes the tallest resulting
+    // height; in the common case every cell settles at `target` (equal), and in
+    // the rare sub-pixel case a grown cell simply sets a marginally taller row.
+    double rowHeight = target;
     double dx = 0;
     child = firstChild;
     while (child != null) {
       child.layout(
-        BoxConstraints.tightFor(width: cellWidth, height: rowHeight),
+        BoxConstraints(
+          minWidth: cellWidth,
+          maxWidth: cellWidth,
+          minHeight: target,
+          maxHeight: constraints.maxHeight,
+        ),
         parentUsesSize: true,
       );
+      if (child.size.height > rowHeight) rowHeight = child.size.height;
       (child.parentData as _EqualHeightParentData).offset = Offset(dx, 0);
       dx += cellWidth + _spacing;
       child = childAfter(child);
