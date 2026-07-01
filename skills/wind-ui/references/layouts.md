@@ -24,7 +24,7 @@ Every `RenderBox` receives a `BoxConstraints` (`minWidth`, `maxWidth`, `minHeigh
 
 Two consequences drive almost every Wind layout footgun:
 
-1. **`Row` and `Column` pass UNBOUNDED constraints to non-flex children in step 1.** A child that responds with `double.infinity` (Wind's `w-full` inside a Row, or `h-full` inside a Column inside a scroll) blows up the parent's bounded layout. `flex-1` is the canonical fix because it moves the child to step 2 (bounded share of remaining space).
+1. **`Row` and `Column` pass UNBOUNDED constraints to non-flex children in step 1.** A child that responds with `double.infinity` (e.g. `h-full` inside a Column inside a scroll) blows up the parent's bounded layout. `flex-1` is the canonical fix because it moves the child to step 2 (bounded share of remaining space). (A bare `w-full` on a direct Row child is auto-handled: Wind wraps it in `Expanded` so it behaves as `flex-1` instead of asserting; prefer `flex-1` for clarity.)
 
 2. **Scrollables remove the max on their axis.** A `SingleChildScrollView` (Wind's `overflow-y-auto`) passes `maxHeight: double.infinity` to its child. A child that asserts on finite height (`Column` with `Expanded` children) throws "Vertical viewport was given unbounded height".
 
@@ -40,7 +40,7 @@ When Flutter throws, map the error to a Wind-shaped fix.
 
 | Assertion | Cause | Fix |
 |---|---|---|
-| `A RenderFlex overflowed by N pixels` | Sum of non-flex children exceeds the Row/Column's bounded constraint. Often `w-full` on a Row child. | Wrap the offending child in `WDiv(className: 'flex-1', child: ...)` instead of `'w-full'` |
+| `A RenderFlex overflowed by N pixels` | Sum of non-flex children exceeds the Row/Column's bounded constraint. | Wrap the offending child in `WDiv(className: 'flex-1', child: ...)` (a bare `w-full` Row child is already auto-treated as `flex-1`) |
 | `RenderFlex children have non-zero flex but incoming width/height constraints are unbounded` | `flex-1` or `Expanded` inside a parent that does not constrain the main axis (typically a `SingleChildScrollView`) | Either remove the `flex-1` from the child or give the parent a bounded size (`h-screen`, fixed `h-N`, or `min-h-screen`) |
 | `An InputDecorator cannot have an unbounded width` | `WFormInput` / `TextField` in a Row without `flex-1` or fixed width | Wrap in `WDiv(className: 'flex-1', child: WFormInput(...))` |
 | `Vertical viewport was given unbounded height` | `SingleChildScrollView` (or any vertical scrollable) inside an unbounded parent — typically a `Column` outside a `Scaffold` | Wrap the scroll's ancestor in a fixed-height container, or wrap the chain in `Scaffold(body: ...)` |
@@ -454,7 +454,7 @@ For very different mobile vs desktop layouts (not just sizing), reach for `WBrea
 
 | Wrong | Why | Right |
 |---|---|---|
-| `WDiv(className: 'w-full')` inside a Row | RenderFlex overflow | `'flex-1'` |
+| `WDiv(className: 'w-full')` inside a Row (works, treated as `flex-1`) | — | `'flex-1'` (clearer) |
 | `WDiv(className: 'h-full overflow-y-auto')` inside a Column | Unbounded height assertion | `'flex-1 overflow-y-auto'` + `scrollPrimary: true`, parent has `h-full` |
 | `WDiv(className: 'absolute top-0')` without `relative` ancestor | No Stack to anchor | wrap parent in `'relative'` |
 | `WText(..., className: 'truncate')` directly inside a Row | Unbounded width; ellipsis never fires | wrap in `WDiv(className: 'flex-1 min-w-0')` |

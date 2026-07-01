@@ -658,35 +658,62 @@ class WDiv extends StatelessWidget {
       // scrollable row, `Flexible` is also invalid — skip it too.
       final needsFlexible =
           (needsSpaceDistribution || hasOverflowClip) && !isMainAxisScrollable;
-      final rowChildren = needsFlexible
-          ? basisChildren.map((child) {
-              // Don't wrap gaps, already-flex widgets, or basis-sized children
-              // (FractionallySizedBox/SizedBox carry an explicit main size).
-              if (child is SizedBox ||
-                  child is FractionallySizedBox ||
-                  child is Flexible ||
-                  child is Expanded) {
-                return child;
-              }
-              // Don't wrap children that self-wrap in Expanded/Flexible
-              // (flex-N, grow, flex-grow, flex-auto, flex-initial, shrink,
-              // flex-shrink) — wrapping them again asserts ParentDataWidget.
-              if (child is WDiv && _selfWrapsInFlex(child.className)) {
-                return child;
-              }
-              if (child is WText && _selfWrapsInFlex(child.className)) {
-                return child;
-              }
-              // Skip shrink-0 children (should not shrink — keep intrinsic size)
-              if (child is WDiv && _hasShrinkZero(child.className)) {
-                return child;
-              }
-              if (child is WText && _hasShrinkZero(child.className)) {
-                return child;
-              }
-              return Flexible(child: child);
-            }).toList()
-          : basisChildren;
+      // A Row hands non-flex children an UNBOUNDED main-axis constraint, so a
+      // direct child carrying `w-full` (-> SizedBox(width: infinity)) asserts
+      // "RenderBox was not laid out". Treat a bare `w-full` child as flex-1:
+      // Expanded hands it a bounded width (its flex share), inside which the
+      // child's own infinite-width SizedBox resolves. Skipped on a scrollable
+      // row (no bounded extent to share). Prefixed `md:w-full` is intentionally
+      // not matched: it is conditional, and unconditional expanding would break
+      // the responsive intent. Detection reads the className off ANY Wind widget
+      // (WDiv, WButton, WInput, ...) via `_extractChildClassName`, since they all
+      // turn `w-full` into an infinite width and hit the same assertion.
+      final bool canExpandFullWidth = !isMainAxisScrollable;
+      bool hasFullWidthChild = false;
+      final List<Widget> rowChildren = basisChildren.map((child) {
+        final String? childClassName = _extractChildClassName(child);
+        if (canExpandFullWidth &&
+            childClassName != null &&
+            _hasBareFullWidth(childClassName) &&
+            !_selfWrapsInFlex(childClassName)) {
+          hasFullWidthChild = true;
+          return Expanded(child: child);
+        }
+        if (!needsFlexible) return child;
+        // Don't wrap gaps, already-flex widgets, or basis-sized children
+        // (FractionallySizedBox/SizedBox carry an explicit main size).
+        if (child is SizedBox ||
+            child is FractionallySizedBox ||
+            child is Flexible ||
+            child is Expanded) {
+          return child;
+        }
+        // Don't wrap children that self-wrap in Expanded/Flexible
+        // (flex-N, grow, flex-grow, flex-auto, flex-initial, shrink,
+        // flex-shrink) — wrapping them again asserts ParentDataWidget.
+        if (child is WDiv && _selfWrapsInFlex(child.className)) {
+          return child;
+        }
+        if (child is WText && _selfWrapsInFlex(child.className)) {
+          return child;
+        }
+        // Skip shrink-0 children (should not shrink — keep intrinsic size)
+        if (child is WDiv && _hasShrinkZero(child.className)) {
+          return child;
+        }
+        if (child is WText && _hasShrinkZero(child.className)) {
+          return child;
+        }
+        return Flexible(child: child);
+      }).toList();
+
+      // An Expanded child needs the Row to claim its bounded main extent;
+      // default the row to MainAxisSize.max so the flex share is the available
+      // width (the caller can still force min via axis-min).
+      final MainAxisSize rowMainAxisSize =
+          (hasFullWidthChild && styles.mainAxisSize == null)
+              ? MainAxisSize.max
+              : effectiveMainAxisSize;
 
       TextDirection? rowTextDirection;
       if (styles.flexReverse) {
@@ -703,7 +730,7 @@ class WDiv extends StatelessWidget {
               styles.mainAxisAlignment ?? MainAxisAlignment.start,
           crossAxisAlignment:
               styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-          mainAxisSize: effectiveMainAxisSize,
+          mainAxisSize: rowMainAxisSize,
           textBaseline: styles.textBaseline,
           textDirection: rowTextDirection,
           children: rowChildren,
@@ -937,6 +964,21 @@ class WDiv extends StatelessWidget {
           _numericFlexRegex.hasMatch(token)) {
         return true;
       }
+    }
+    return false;
+  }
+
+  /// Whether [className] carries a bare (unprefixed) `w-full` token.
+  ///
+  /// Used by the Row composer to treat a `w-full` child as flex-1 (`Expanded`)
+  /// instead of an infinite-width `SizedBox` that would assert on the Row's
+  /// unbounded main axis. A prefixed `md:w-full` is deliberately excluded: it is
+  /// conditional, so wrapping it in `Expanded` unconditionally would break the
+  /// responsive intent at breakpoints where it does not apply.
+  static bool _hasBareFullWidth(String? className) {
+    if (className == null || className.isEmpty) return false;
+    for (final raw in className.split(RegExp(r'\s+'))) {
+      if (raw == 'w-full') return true;
     }
     return false;
   }
