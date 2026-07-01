@@ -9,6 +9,7 @@ import '../state/wind_flex_overflow_scope.dart';
 import 'w_anchor.dart';
 import 'w_button.dart';
 import 'w_text.dart';
+import 'wind_equal_height_row.dart';
 
 /// **The Fundamental Building Block of Wind**
 ///
@@ -1157,15 +1158,16 @@ class WDiv extends StatelessWidget {
 
   /// Builds an equal-height grid (`grid ... items-stretch`).
   ///
-  /// A `Column` of `IntrinsicHeight` `Row`s, `cols` cells per row, each cell an
-  /// `Expanded` so the row divides width evenly and `CrossAxisAlignment.stretch`
-  /// forces every cell to the row's tallest height. The last row is padded with
-  /// empty `Expanded` slots so columns stay aligned.
+  /// A `Column` of [WindEqualHeightRow]s, `cols` cells per row. Each row lays
+  /// its cells out for real (a loose-height pass to measure the tallest, then a
+  /// tight re-layout to that height) and gives each an equal width share, so
+  /// every cell matches the row's tallest. The last row is padded with blank
+  /// cells so columns stay aligned.
   ///
-  /// Cells should size from their own content; do NOT put `h-full` on a cell
-  /// (it inserts a `LayoutBuilder`, which asserts under `IntrinsicHeight` — see
-  /// the intrinsic-sizing limitation in the sizing docs). The stretch already
-  /// equalizes height, so `h-full` is unnecessary here.
+  /// Because the row uses real layout rather than the intrinsic protocol, cells
+  /// whose content is a `flex flex-col`, or that use `h-full` / `basis-*` (all
+  /// of which carry a `LayoutBuilder`), stretch correctly instead of asserting
+  /// `LayoutBuilder does not support returning intrinsic dimensions` (#139).
   Widget _buildStretchGrid(
     int cols,
     double gapX,
@@ -1183,30 +1185,22 @@ class WDiv extends StatelessWidget {
       final end = (start + cols) > items.length ? items.length : start + cols;
       final rowItems = items.sublist(start, end);
 
-      final rowChildren = <Widget>[];
-      for (var c = 0; c < cols; c++) {
-        if (c > 0 && gapX > 0) {
-          rowChildren.add(SizedBox(width: gapX));
-        }
-        // Pad a short final row with empty slots so columns line up.
-        rowChildren.add(
-          Expanded(
-            child: c < rowItems.length ? rowItems[c] : const SizedBox.shrink(),
-          ),
-        );
-      }
+      // One child per column so widths line up; pad a short final row with
+      // blank cells. WindEqualHeightRow assigns each an equal width share.
+      final rowChildren = <Widget>[
+        for (var c = 0; c < cols; c++)
+          c < rowItems.length ? rowItems[c] : const SizedBox.shrink(),
+      ];
 
       if (rows.isNotEmpty && gapY > 0) {
         rows.add(SizedBox(height: gapY));
       }
-      rows.add(
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: rowChildren,
-          ),
-        ),
-      );
+      // WindEqualHeightRow measures each cell with a real (loose-height) layout
+      // and re-lays it tight to the row max, instead of IntrinsicHeight's
+      // intrinsic query. A `flex flex-col` cell (which carries a LayoutBuilder)
+      // can then be stretched without the "LayoutBuilder does not support
+      // returning intrinsic dimensions" assert (#139).
+      rows.add(WindEqualHeightRow(spacing: gapX, children: rowChildren));
     }
 
     return Column(

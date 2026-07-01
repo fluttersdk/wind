@@ -79,7 +79,7 @@ WDiv(
 )
 ```
 
-The stretch already equalizes height, so cells should size from their own content. Do **not** put `h-full` on a stretched grid cell: that inserts an internal `LayoutBuilder`, which asserts under the `IntrinsicHeight` the equal-height grid uses (see the [intrinsic-sizing limitation](./sizing.md#intrinsic-sizing-limitation)).
+The equal-height rows are laid out for real (each cell is measured with a loose height, then re-laid tight to the row's tallest), NOT via `IntrinsicHeight`, so cells whose content is itself a `flex flex-col`, or that use `h-full` / `basis-*` (which carry a `LayoutBuilder`), stretch correctly instead of asserting `LayoutBuilder does not support returning intrinsic dimensions`. Cells simply fill the row height.
 
 <a name="responsive"></a>
 ## Responsive
