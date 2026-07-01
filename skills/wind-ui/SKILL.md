@@ -96,7 +96,7 @@ The headline 25 (table below) are the ones an agent reaches for daily. Two more 
 | `WCard` | Layout / container | `child: Widget` | Surface container. `header:`, `child:` (required), `footer:` slots; delegates to `WDiv(flex-col)`. No colors baked in; all tone via `className`. |
 | `WSwitch` | Form (raw) | none | Controlled toggle. `value` + `onChanged`. `className` styles the track; `thumbClassName` styles the indicator dot. `checked:` state activates when `value: true`. The thumb is a flex child of the track, so it slides via `justify-start` -> `checked:justify-end` on the track `className` (Wind has no transform parser; `translate-x-*` is a no-op). `disabled:` when `disabled: true`. |
 | `WRadio<T>` | Form (raw) | none | Controlled radio. `value`, `groupValue`, `onChanged`. `selected:` activates when `value == groupValue`. Outer ring: `className`. Inner dot: `indicatorClassName` (defaults to blue filled circle). Group exclusivity is the caller's responsibility. |
-| `WTabs` | Form (raw) / Layout | none | Controlled tabs. `tabs: List<String>`, `selectedIndex`, `panelBuilder`. `selected:` activates on the active tab. Slot classNames: `listClassName`, `tabClassName`, `selectedTabClassName`, `panelClassName`. |
+| `WTabs` | Form (raw) / Layout | none | Controlled tabs. `tabs: List<String>`, `selectedIndex`, `panelBuilder`. `selected:` activates on the active tab. Slot classNames: `listClassName`, `tabClassName`, `selectedTabClassName`, `panelClassName`. `fullWidthList` (default `true`) prepends `w-full` so a `border-b` underline spans the container; set `false` for content-width / pill tabs. |
 
 Full constructor surface, every named parameter, every default: `${CLAUDE_SKILL_DIR}/references/widgets.md`.
 

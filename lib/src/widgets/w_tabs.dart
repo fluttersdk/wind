@@ -89,6 +89,18 @@ class WTabs extends StatelessWidget {
   /// Example: `'pt-4'`
   final String? panelClassName;
 
+  /// Whether the tab list stretches to the full container width.
+  ///
+  /// A `flex-row` [WDiv] is content-width by default, so a `border-b` underline
+  /// on [listClassName] would span only the tabs, not the container. With this
+  /// `true` (the default), `w-full` is prepended to the tab list so the baseline
+  /// rule spans the full width, the common tab design. The tabs themselves stay
+  /// content-sized (left-aligned via the default `justify-start`). When
+  /// [listClassName] already carries its own width token (`w-*`), that width is
+  /// respected and `w-full` is NOT prepended, so an explicit width always wins.
+  /// Set to `false` for a content-width tab strip (e.g. centered pill tabs).
+  final bool fullWidthList;
+
   /// Creates a [WTabs] widget.
   ///
   /// The constructor is not `const`: the [tabs] non-emptiness and
@@ -104,6 +116,7 @@ class WTabs extends StatelessWidget {
     this.tabClassName,
     this.selectedTabClassName,
     this.panelClassName,
+    this.fullWidthList = true,
   })  : assert(tabs.isNotEmpty, 'WTabs: tabs must not be empty.'),
         assert(
           selectedIndex >= 0 && selectedIndex < tabs.length,
@@ -129,9 +142,19 @@ class WTabs extends StatelessWidget {
       logger.printFinalCode();
     }
 
-    // 2. Build the tab list row.
+    // 2. Build the tab list row. Prepend w-full so a border-b baseline spans
+    //    the full container width, UNLESS the caller opted out or already set
+    //    their own width token: w-full and an explicit w-* target different
+    //    WindStyle fields (widthFactor vs width), so adding both would be
+    //    ambiguous. Skipping the prepend lets an explicit width win cleanly.
+    final bool prependFullWidth =
+        fullWidthList && !_hasWidthToken(listClassName);
+    final String? effectiveListClassName = _joinClassNames([
+      if (prependFullWidth) 'w-full',
+      listClassName,
+    ]);
     final Widget tabList = WDiv(
-      className: listClassName,
+      className: effectiveListClassName,
       children: List<Widget>.generate(tabs.length, (index) {
         return _buildTab(context, index);
       }),
@@ -198,5 +221,19 @@ class WTabs extends StatelessWidget {
         .map((p) => p!.trim())
         .join(' ');
     return joined.isEmpty ? null : joined;
+  }
+
+  /// Whether [className] already carries a width token (`w-full`, `w-32`,
+  /// `w-1/2`, `w-screen`, `w-[..]`, including a state/breakpoint variant), so
+  /// the auto `w-full` prepend should be skipped and the caller's width respected.
+  /// `min-w-*` / `max-w-*` are constraints, not a width, so they do not count.
+  static bool _hasWidthToken(String? className) {
+    if (className == null) return false;
+    for (final raw in className.split(RegExp(r'\s+'))) {
+      if (raw.isEmpty) continue;
+      final token = raw.contains(':') ? raw.split(':').last : raw;
+      if (token.startsWith('w-')) return true;
+    }
+    return false;
   }
 }
