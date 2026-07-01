@@ -177,7 +177,7 @@ Wrapping Wind content in `IntrinsicHeight` or `IntrinsicWidth` (or placing it in
 LayoutBuilder does not support returning intrinsic dimensions.
 ```
 
-**Why.** To resolve some sizes against the parent's real constraints, Wind introduces a `LayoutBuilder` (see `lib/src/widgets/w_div.dart`): `h-full` adds one around the cell only when the incoming height is unbounded, and a flex `basis-*` adds a single one around the surrounding flex when any direct child uses `basis-*`. `LayoutBuilder` runs during the layout phase, not the intrinsic-sizing phase, so an intrinsic-dimension query that passes through one of those `LayoutBuilder` paths asserts. This is a fundamental Flutter constraint (`LayoutBuilder` genuinely cannot answer intrinsics), not a Wind bug. Wind content that does **not** hit those `h-full` / `basis-*` paths carries no `LayoutBuilder` and is safe to wrap.
+**Why.** To resolve some sizes against the parent's real constraints, Wind introduces a `LayoutBuilder` (see `lib/src/widgets/w_div.dart`): `h-full` adds one around the cell only when the incoming height is unbounded, and a flex `basis-*` adds a single one around the surrounding flex when any direct child uses `basis-*`. `LayoutBuilder` runs during the layout phase, not the intrinsic-sizing phase, so an intrinsic-dimension query that passes through one of those `LayoutBuilder` paths asserts. This is a fundamental Flutter constraint (`LayoutBuilder` genuinely cannot answer intrinsics), not a Wind bug. Wind content that hits none of Wind's `LayoutBuilder` paths (`h-full` in an unbounded height, `basis-*`, or the column cross-axis stretch above) carries no `LayoutBuilder` and is safe to wrap.
 
 **What triggers it.** A `WDiv` (or any W-widget) whose `className` resolves `h-full` or a flex `basis-*`, anywhere inside the subtree you wrap in `IntrinsicHeight` / `IntrinsicWidth`. A `Row` of cards that you try to equalize with `IntrinsicHeight` is the common case.
 
@@ -186,7 +186,7 @@ LayoutBuilder does not support returning intrinsic dimensions.
 - Prefer explicit sizing: give the cells a fixed `h-*` (or `size-*`) instead of `h-full` + `IntrinsicHeight`.
 - Do not wrap Wind content that uses `h-full` / `basis-*` in `IntrinsicHeight` / `IntrinsicWidth`.
 - For an equal-height row, use a `Stack` with a `Positioned(top: 0, bottom: 0)` element for the part that must fill, or reserve equal content so natural heights already match.
-- Wind's own column cross-axis stretch (`items-stretch`, the `flex flex-col` default) is intrinsic-free (`LayoutBuilder` + `SizedBox(width: double.infinity)`), so it is animation-safe and does not hit this assertion.
+- Wind's own column cross-axis stretch (`items-stretch`, the `flex flex-col` default) equalizes width WITHOUT you wrapping it in `IntrinsicHeight`. It uses a `LayoutBuilder` + `SizedBox(width: double.infinity)` internally (gated on a bounded width), so treat it as a REPLACEMENT for `IntrinsicHeight`, not something to nest inside one.
 
 ```dart
 // Throws if a card resolves h-full / basis-* internally:
