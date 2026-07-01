@@ -77,6 +77,7 @@ void main() {
             children: [
               const SizedBox(height: 80, child: Text('fixed')),
               LayoutBuilder(
+                key: const Key('lb'),
                 builder: (context, constraints) =>
                     const SizedBox(height: 30, child: Text('lb')),
               ),
@@ -86,8 +87,9 @@ void main() {
       );
 
       expect(tester.takeException(), isNull);
-      // The LayoutBuilder cell was stretched to the 80px tall sibling.
-      expect(tester.getSize(find.text('lb').first), isNotNull);
+      // The LayoutBuilder cell was actually stretched to the 80px tall sibling
+      // (its natural height is 30) — proving real layout, not an intrinsic query.
+      expect(tester.getSize(find.byKey(const Key('lb'))).height, 80);
     });
 
     testWidgets('renders with no children (empty)', (tester) async {
