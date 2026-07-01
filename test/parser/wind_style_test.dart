@@ -35,4 +35,26 @@ void main() {
           const BorderRadius.all(Radius.circular(8)));
     });
   });
+
+  group('WindStyle equality and hashCode', () {
+    test('two equal styles compare equal and share a hashCode', () {
+      const a = WindStyle(mouseCursor: SystemMouseCursors.click);
+      const b = WindStyle(mouseCursor: SystemMouseCursors.click);
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('a differing mouseCursor breaks equality', () {
+      const a = WindStyle(mouseCursor: SystemMouseCursors.click);
+      const c = WindStyle(mouseCursor: SystemMouseCursors.text);
+      expect(a == c, isFalse);
+    });
+
+    test('copyWith carries mouseCursor through', () {
+      const base = WindStyle();
+      final updated = base.copyWith(mouseCursor: SystemMouseCursors.forbidden);
+      expect(updated.mouseCursor, SystemMouseCursors.forbidden);
+      expect(updated.toString(), contains('mouseCursor'));
+    });
+  });
 }
