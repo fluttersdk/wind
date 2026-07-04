@@ -63,6 +63,31 @@ PopoverAlignment computeEffectiveAlignment({
   );
 }
 
+/// Computes a horizontal correction (dx) that pulls the overlay back inside the
+/// viewport when the resolved [alignment] would still place part of it off-screen
+/// after [computeEffectiveAlignment] has already swapped the anchored side.
+///
+/// Returns 0 when the popover is already fully within the viewport.
+double computeHorizontalClamp({
+  required PopoverAlignment alignment,
+  required Offset triggerPosition,
+  required Size triggerSize,
+  required double popoverWidth,
+  required Size screenSize,
+  required Offset offset,
+  double margin = 8,
+}) {
+  return _WPopoverState.computeHorizontalClamp(
+    alignment: alignment,
+    triggerPosition: triggerPosition,
+    triggerSize: triggerSize,
+    popoverWidth: popoverWidth,
+    screenSize: screenSize,
+    offset: offset,
+    margin: margin,
+  );
+}
+
 /// Controller for programmatic popover control
 class PopoverController extends ChangeNotifier {
   bool _isOpen = false;
@@ -340,6 +365,56 @@ class _WPopoverState extends State<WPopover> {
     }
 
     return effective;
+  }
+
+  /// Computes a horizontal correction (dx) that pulls the overlay back inside
+  /// the viewport when the resolved [alignment] would still place part of it
+  /// off-screen.
+  ///
+  /// [computeEffectiveAlignment] only swaps the anchored side (left <-> right),
+  /// so a popover wider than the space on BOTH sides (a wide panel next to a
+  /// near-centered trigger on a narrow screen) still spills off-screen after the
+  /// flip. This returns the dx to fold into the follower offset so the panel
+  /// stays within [screenSize] width minus [margin] on each edge. When the
+  /// popover is wider than the available viewport it is pinned to the left
+  /// margin (its start stays visible) rather than centered off both edges.
+  static double computeHorizontalClamp({
+    required PopoverAlignment alignment,
+    required Offset triggerPosition,
+    required Size triggerSize,
+    required double popoverWidth,
+    required Size screenSize,
+    required Offset offset,
+    double margin = 8,
+  }) {
+    final bool isRight = alignment == PopoverAlignment.bottomRight ||
+        alignment == PopoverAlignment.topRight;
+    final bool isCenter = alignment == PopoverAlignment.bottomCenter ||
+        alignment == PopoverAlignment.topCenter;
+
+    final double followerLeft = isRight
+        ? triggerPosition.dx + triggerSize.width - popoverWidth + offset.dx
+        : isCenter
+            ? triggerPosition.dx +
+                (triggerSize.width - popoverWidth) / 2 +
+                offset.dx
+            : triggerPosition.dx + offset.dx;
+    final double followerRight = followerLeft + popoverWidth;
+
+    // Only intervene on genuine off-screen overflow; a popover already fully
+    // within [0, screenWidth] is left untouched (no forced inset that would nudge
+    // an edge-anchored popover away from its trigger). When pulling an overflowing
+    // popover in, seat it [margin] px from the edge for breathing room.
+    double correction = 0;
+    if (followerRight > screenSize.width) {
+      correction = (screenSize.width - margin) - followerRight;
+    }
+    // Re-check the left edge after any right-edge pull. The left clamp wins so a
+    // popover wider than the viewport keeps its start (top-left) on-screen.
+    if (followerLeft + correction < 0) {
+      correction = margin - followerLeft;
+    }
+    return correction;
   }
 
   @override
@@ -700,9 +775,31 @@ class _WPopoverState extends State<WPopover> {
         effectiveAlignment == PopoverAlignment.topLeft ||
             effectiveAlignment == PopoverAlignment.topCenter ||
             effectiveAlignment == PopoverAlignment.topRight;
-    final effectiveOffset = isTopAlignment
+    final Offset baseOffset = isTopAlignment
         ? Offset(widget.offset.dx, -widget.offset.dy)
         : widget.offset;
+
+    // Horizontal viewport clamp: autoFlip only swaps the anchored side, so a
+    // panel wider than the space on both sides still spills off-screen after the
+    // flip (a wide popover next to a near-centered trigger on a narrow phone).
+    // Pull it back inside the viewport using the same width estimate the overlay
+    // renders. Gated on autoFlip: that flag already promises "keep me on screen".
+    Offset effectiveOffset = baseOffset;
+    if (widget.autoFlip && triggerBox != null && triggerBox.hasSize) {
+      final double popoverWidth = fixedWidth ??
+          (triggerWidth > effectiveMaxWidth ? effectiveMaxWidth : triggerWidth);
+      final double dxCorrection = computeHorizontalClamp(
+        alignment: effectiveAlignment,
+        triggerPosition: triggerBox.localToGlobal(Offset.zero),
+        triggerSize: triggerBox.size,
+        popoverWidth: popoverWidth,
+        screenSize: MediaQuery.sizeOf(context),
+        offset: baseOffset,
+      );
+      if (dxCorrection != 0) {
+        effectiveOffset = Offset(baseOffset.dx + dxCorrection, baseOffset.dy);
+      }
+    }
 
     return CompositedTransformFollower(
       link: _layerLink,
