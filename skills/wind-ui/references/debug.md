@@ -1,4 +1,4 @@
-# Wind 1.1: Debug bridge, parser cache, logger
+# Wind 1.2: Debug bridge, parser cache, logger
 
 Wiring `Wind.installDebugResolver()` for E2E tooling (Dusk, Telescope, Playwright), understanding the parser cache (and why tests need `WindParser.clearCache()`), and reading `WindLogger` output for performance / composition debugging.
 

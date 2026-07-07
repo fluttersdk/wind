@@ -1,4 +1,4 @@
-# Wind 1.1: Theme, dark mode, responsive, platform
+# Wind 1.2: Theme, dark mode, responsive, platform
 
 Customizing `WindThemeData`, brightness control, breakpoint scale, platform prefixes. Reach for this file when adding custom colors, overriding the spacing scale, wiring a dark-mode toggle, defining a custom breakpoint, or recovering from the OverlayEntry context caveat.
 

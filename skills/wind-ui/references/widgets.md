@@ -1,4 +1,4 @@
-# Wind 1.1: Widget reference
+# Wind 1.2: Widget reference
 
 Full constructor surface, every named parameter, every default. Reach for this file when picking a widget, wiring callbacks, or recovering from a "what does this prop do?" stall.
 

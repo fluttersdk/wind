@@ -1,4 +1,4 @@
-# Wind 1.1: WDynamic (server-driven UI)
+# Wind 1.2: WDynamic (server-driven UI)
 
 JSON node tree → Wind widget tree. Reach for this file when rendering UI from a CMS, A/B framework, remote-config service, or any source where the widget shape is decided at runtime.
 

@@ -1,4 +1,4 @@
-# Wind 1.1: Layouts
+# Wind 1.2: Layouts
 
 12+ canonical layout recipes plus the Flutter constraint model that drives every overflow. Reach for this file when picking a layout pattern or recovering from RenderFlex / unbounded-height assertions.
 

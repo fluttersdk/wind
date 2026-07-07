@@ -1,4 +1,4 @@
-# Wind 1.1: Token catalog
+# Wind 1.2: Token catalog
 
 Exhaustive per-parser token reference. Reach for this file when verifying a className token exists, picking the right family, looking up an arbitrary-value pattern, or auditing className for unsupported syntax.
 

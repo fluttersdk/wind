@@ -1,4 +1,4 @@
-# Wind 1.1: Forms
+# Wind 1.2: Forms
 
 Building forms with validation. Use this file when picking between raw `W*` and `WForm*`, wiring `FormState.validate()`, handling async / server-side errors, or working around the WFormDatePicker range gotcha.
 

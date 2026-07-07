@@ -1,4 +1,4 @@
-# Wind 1.1: Wind ≠ Tailwind divergence catalog
+# Wind 1.2: Wind ≠ Tailwind divergence catalog
 
 Comprehensive map of where Wind diverges from Tailwind CSS v3 and v4. Reach for this file when migrating a className from web, recovering from a "this token does not seem to do anything" stall, or auditing a Tailwind-trained codebase.
 

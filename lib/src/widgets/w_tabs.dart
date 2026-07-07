@@ -71,7 +71,7 @@ class WTabs extends StatelessWidget {
 
   /// Utility classes applied to every tab's inner [WDiv].
   ///
-  /// Supports `selected:` prefix tokens, they activate only on the selected tab.
+  /// Supports `selected:` prefix tokens; they activate only on the selected tab.
   ///
   /// Example: `'px-4 py-2 text-sm text-gray-600 selected:text-blue-600'`
   final String? tabClassName;
