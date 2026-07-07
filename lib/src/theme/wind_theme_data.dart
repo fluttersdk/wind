@@ -443,8 +443,22 @@ class WindThemeData {
       return MaterialColor(raw[500]!.toARGB32(), raw);
     }
 
-    // Resolve colors or use defaults
-    final primary = colors['primary'] ?? getDefault('indigo');
+    // Resolve colors or use defaults.
+    //
+    // `primary` is always present in the color map (it is seeded to the Tailwind
+    // blue swatch so `bg-primary` resolves for Wind widgets). That default seed
+    // must NOT drive the Material ColorScheme: the Material layer keeps its
+    // indigo baseline unless the consumer sets an explicit brand color. We treat
+    // a `primary` equal to the seeded default as "not customized" and fall back
+    // to indigo, so `toThemeData()` only repaints Material widgets when the
+    // brand color genuinely differs from Wind's default.
+    final seededPrimary =
+        (default_colors.colors['primary'] as Map<int, Color>)[500]!.toARGB32();
+    final MaterialColor? configuredPrimary = colors['primary'];
+    final primary = (configuredPrimary != null &&
+            configuredPrimary.toARGB32() != seededPrimary)
+        ? configuredPrimary
+        : getDefault('indigo');
     final secondary = colors['secondary'] ?? getDefault('teal');
     final error = colors['error'] ?? getDefault('red');
 

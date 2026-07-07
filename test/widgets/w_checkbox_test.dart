@@ -14,7 +14,36 @@ Widget wrapWithTheme(Widget child) {
   );
 }
 
+Widget wrapWithPrimary(Widget child, MaterialColor primary) {
+  return MaterialApp(
+    home: WindTheme(
+      data: WindThemeData(colors: {'primary': primary}),
+      child: Scaffold(body: child),
+    ),
+  );
+}
+
+/// Returns the first non-null `BoxDecoration` background color under [of].
+Color? firstDecorationColor(WidgetTester tester, Finder of) {
+  final containers = tester.widgetList<Container>(
+    find.descendant(of: of, matching: find.byType(Container)),
+  );
+
+  for (final container in containers) {
+    final decoration = container.decoration;
+    if (decoration is BoxDecoration && decoration.color != null) {
+      return decoration.color;
+    }
+  }
+
+  return null;
+}
+
 void main() {
+  setUp(() {
+    WindParser.clearCache();
+  });
+
   group('WCheckbox Widget Tests', () {
     group('Construction', () {
       test('creates with required value', () {
@@ -149,6 +178,36 @@ void main() {
 
         final wDiv = tester.widget<WDiv>(find.byType(WDiv));
         expect(wDiv.states, contains('disabled'));
+      });
+    });
+
+    group('Theme-driven selection color (WIND-3)', () {
+      testWidgets(
+          'checked background uses the default primary (blue) when '
+          'the theme is unchanged', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WCheckbox(value: true)),
+        );
+        await tester.pump();
+
+        expect(
+          firstDecorationColor(tester, find.byType(WCheckbox))?.toARGB32(),
+          const Color(0xFF3B82F6).toARGB32(),
+        );
+      });
+
+      testWidgets('checked background follows a custom theme primary', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithPrimary(const WCheckbox(value: true), Colors.red),
+        );
+        await tester.pump();
+
+        expect(
+          firstDecorationColor(tester, find.byType(WCheckbox))?.toARGB32(),
+          Colors.red.shade500.toARGB32(),
+        );
       });
     });
 

@@ -20,7 +20,7 @@ import '../parser/wind_style.dart';
 /// - **Selection:** drives the `selected:` state prefix on className tokens
 /// - **Disabled:** drives the `disabled:` state prefix, blocks tap
 /// - **Styling:** `w-5`, `h-5`, `rounded-full`, `border`, `border-gray-300`
-/// - **Selected State:** `selected:border-blue-500`, `selected:bg-blue-500`
+/// - **Selected State:** `selected:border-primary-500`, `selected:bg-primary`
 /// - **Hover / Focus:** inherited from the wrapping `WAnchor`
 ///
 /// ### Example Usage:
@@ -32,8 +32,8 @@ import '../parser/wind_style.dart';
 ///   onChanged: (val) => setState(() => _theme = val),
 ///   className: '''
 ///     w-5 h-5 rounded-full border border-gray-300
-///     selected:border-blue-500
-///     hover:border-blue-400
+///     selected:border-primary-500
+///     hover:border-primary-400
 ///     disabled:opacity-50
 ///   ''',
 /// )
@@ -58,15 +58,15 @@ class WRadio<T> extends StatelessWidget {
   /// - **Dimensions:** `w-5`, `h-5` (required for a visible hit area)
   /// - **Shape:** `rounded-full`
   /// - **Border:** `border`, `border-gray-300`
-  /// - **States:** `selected:border-blue-500`, `hover:border-blue-400`,
+  /// - **States:** `selected:border-primary-500`, `hover:border-primary-400`,
   ///   `disabled:opacity-50`
   ///
-  /// Example: `'w-5 h-5 rounded-full border border-gray-300 selected:border-blue-500'`
+  /// Example: `'w-5 h-5 rounded-full border border-gray-300 selected:border-primary-500'`
   final String? className;
 
   /// Utility classes for the inner indicator dot shown when selected.
   ///
-  /// Defaults to a filled circle. Example: `'w-2.5 h-2.5 rounded-full bg-blue-500'`
+  /// Defaults to a filled circle. Example: `'w-2.5 h-2.5 rounded-full bg-primary'`
   final String? indicatorClassName;
 
   /// Whether this radio button is disabled.
@@ -134,14 +134,14 @@ class WRadio<T> extends StatelessWidget {
     // 3. The indicator dot is visible only when selected.
     final Widget indicator = WDiv(
       className: indicatorClassName ??
-          'w-2.5 h-2.5 rounded-full bg-blue-500 selected:opacity-100',
+          'w-2.5 h-2.5 rounded-full bg-primary selected:opacity-100',
       states: activeStates,
     );
 
     // 4. Compose the radio shell with an optional indicator.
     final Widget shell = WDiv(
       className: className ??
-          'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-blue-500',
+          'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-primary-500',
       states: activeStates,
       children: [
         if (_isSelected) indicator,

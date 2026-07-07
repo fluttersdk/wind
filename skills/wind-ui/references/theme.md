@@ -148,7 +148,9 @@ WindThemeData(
 )
 ```
 
-The custom `primary` is added; the 22 default families remain available. `bg-primary-500` works; `bg-blue-500` still works.
+The custom `primary` overrides the seeded default; the 22 default families remain available. `bg-primary-500` works; `bg-blue-500` still works.
+
+`primary` is a seeded default token (aliased 1:1 to the Tailwind `blue` swatch), so `bg-primary` / `text-primary` / `border-primary` resolve out of the box even before you register a brand color. The built-in interactive widgets (`WSelect`, `WCheckbox`, `WRadio`, `WDatePicker`) route their selection colors through `primary`, so overriding it here recolors those widgets to your brand while leaving the default look (blue) unchanged when you do not.
 
 ---
 
@@ -377,7 +379,7 @@ className: 'border-incident-500 text-incident-700 dark:text-incident-300'
 className: 'shadow-primary-500/20'
 ```
 
-`toThemeData()` reads `colors['primary']`, `colors['secondary']`, `colors['error']`, `colors['background']` for the Material `ColorScheme.fromSeed`. Always register at least `primary` if you want `MaterialApp.theme` to reflect the brand.
+`toThemeData()` reads `colors['primary']`, `colors['secondary']`, `colors['error']`, `colors['background']` for the Material `ColorScheme.fromSeed`. The seeded default `primary` (blue) drives Wind widgets only: it is NOT pushed into the Material `ColorScheme`, which keeps its indigo baseline until you register a brand `primary`. Register a custom `primary` if you want `MaterialApp.theme` to reflect the brand.
 
 ---
 

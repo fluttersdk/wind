@@ -14,8 +14,8 @@ import '../parser/wind_style.dart';
 ///
 /// ### Supported Features:
 /// - **Styling:** `w-6`, `h-6`, `rounded`, `border-2`, `border-gray-300`
-/// - **Checked State:** `checked:bg-blue-600`, `checked:border-transparent`
-/// - **Interactive States:** `hover:border-blue-400`, `disabled:opacity-50`
+/// - **Checked State:** `checked:bg-primary`, `checked:border-transparent`
+/// - **Interactive States:** `hover:border-primary-400`, `disabled:opacity-50`
 /// - **Icons:** Customize status icon via `iconClassName` and `checkIcon`
 ///
 /// ### Example Usage:
@@ -24,7 +24,7 @@ import '../parser/wind_style.dart';
 /// WCheckbox(
 ///   value: isChecked,
 ///   onChanged: (val) => setState(() => isChecked = val),
-///   className: 'w-5 h-5 rounded border border-gray-300 checked:bg-blue-500 checked:border-transparent transition-colors',
+///   className: 'w-5 h-5 rounded border border-gray-300 checked:bg-primary checked:border-transparent transition-colors',
 /// )
 /// ```
 class WCheckbox extends StatelessWidget {
@@ -39,7 +39,7 @@ class WCheckbox extends StatelessWidget {
   /// Supports:
   /// - **Dimensions:** `w-5`, `h-5` (Required)
   /// - **Appearance:** `rounded-md`, `border`, `border-gray-300`
-  /// - **States:** `checked:bg-blue-600`, `hover:border-blue-500`, `disabled:bg-gray-100`
+  /// - **States:** `checked:bg-primary`, `hover:border-primary-400`, `disabled:bg-gray-100`
   ///
   /// Example: `'w-6 h-6 rounded-full border-2 border-red-500 checked:bg-red-500'`
   final String? className;
@@ -130,7 +130,7 @@ class WCheckbox extends StatelessWidget {
           states: activeStates,
           child: WDiv(
             className:
-                'w-5 h-5 rounded border border-gray-300 items-center justify-center checked:bg-blue-500 error:border-red-500 checked:bg-primary checked:border-transparent ${className != null ? ' $className' : ''}',
+                'w-5 h-5 rounded border border-gray-300 items-center justify-center error:border-red-500 checked:bg-primary checked:border-transparent ${className != null ? ' $className' : ''}',
             states: activeStates, // Pass states to WDiv for checked: prefix
             children: [
               if (value)

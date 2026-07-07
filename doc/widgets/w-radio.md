@@ -40,8 +40,8 @@ WRadio<String>(
 | `value` | `T` | **Required** | The value this radio represents. |
 | `groupValue` | `T?` | **Required** | The currently selected value for the group. When `value == groupValue`, `selected:` state activates. |
 | `onChanged` | `ValueChanged<T>?` | `null` | Called with `value` when this radio is tapped and not already selected. Omit or pass `null` for a non-interactive radio. |
-| `className` | `String?` | `null` | Utility classes for the outer ring shell. Defaults to `'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-blue-500'` when `null`. |
-| `indicatorClassName` | `String?` | `null` | Utility classes for the inner filled dot (visible only when selected). Defaults to `'w-2.5 h-2.5 rounded-full bg-blue-500 selected:opacity-100'` when `null`. |
+| `className` | `String?` | `null` | Utility classes for the outer ring shell. Defaults to `'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-primary-500'` when `null`. |
+| `indicatorClassName` | `String?` | `null` | Utility classes for the inner filled dot (visible only when selected). Defaults to `'w-2.5 h-2.5 rounded-full bg-primary selected:opacity-100'` when `null`. |
 | `disabled` | `bool` | `false` | Blocks tap and activates the `disabled:` prefix. |
 | `states` | `Set<String>?` | `null` | Extra custom states merged with built-in `selected` and `disabled`. |
 | `semanticLabel` | `String?` | `null` | Accessible label for the Semantics node. Required on icon-only radios. |
@@ -118,10 +118,10 @@ WDiv(
 
 ### Default Fallback Styling
 
-When `className` or `indicatorClassName` is omitted, `WRadio` falls back to its built-in defaults (blue indicator). Override only when the design calls for a different tone:
+When `className` or `indicatorClassName` is omitted, `WRadio` falls back to its built-in defaults, which route through the theme `primary` token (blue by default; override `primary` in `WindThemeData` to rebrand). Override the classNames only when the design calls for a different tone:
 
 ```dart
-// Uses built-in blue defaults
+// Uses built-in primary defaults (blue unless the theme's primary is overridden)
 WRadio<String>(
   value: 'option',
   groupValue: _value,
