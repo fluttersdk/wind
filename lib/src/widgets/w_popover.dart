@@ -409,10 +409,22 @@ class _WPopoverState extends State<WPopover> {
     if (followerRight > screenSize.width) {
       correction = (screenSize.width - margin) - followerRight;
     }
-    // Re-check the left edge after any right-edge pull. The left clamp wins so a
-    // popover wider than the viewport keeps its start (top-left) on-screen.
+    // Re-check the left edge after any right-edge pull. When the panel is too wide
+    // to honor both [margin]s (popoverWidth > screenWidth - margin), seating the
+    // left edge at [margin] would shove the right edge back off-screen, so cap the
+    // left inset at the point that keeps the right edge flush to the viewport
+    // (giving up the tighter margin rather than re-overflowing). A panel wider than
+    // the viewport itself keeps its start (top-left) on-screen.
     if (followerLeft + correction < 0) {
-      correction = margin - followerLeft;
+      final double leftSeat = margin - followerLeft;
+      if (popoverWidth <= screenSize.width) {
+        final double minShift = -followerLeft; // left edge flush at 0
+        final double maxShift =
+            screenSize.width - followerRight; // right edge flush at screenWidth
+        correction = leftSeat.clamp(minShift, maxShift);
+      } else {
+        correction = leftSeat;
+      }
     }
     return correction;
   }
