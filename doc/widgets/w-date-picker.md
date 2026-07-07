@@ -326,8 +326,8 @@ The calendar grid consists of:
 | **Weekday row** | `Mo Tu We Th Fr Sa Su` (Monday start) |
 | **Date grid** | 6 rows × 7 columns = 42 cells |
 | **Today** | Highlighted with `bg-gray-100 dark:bg-gray-700 rounded-full` |
-| **Selected** | `bg-blue-500 text-white rounded-full` |
-| **In range** | `bg-blue-100 dark:bg-blue-900/30 text-blue-700` |
+| **Selected** | `bg-primary text-white rounded-full` |
+| **In range** | `bg-primary-100 dark:bg-primary-900/30 text-primary-700` |
 | **Out of month** | `text-gray-300 dark:text-gray-600` |
 | **Disabled** | `text-gray-300 dark:text-gray-600`, no click |
 
@@ -359,19 +359,18 @@ The calendar popover, header, weekday labels, and day cells use internal Wind cl
 
 ## Customizing Theme
 
-The calendar's selection colors (`bg-blue-500`, `bg-blue-100`) and neutral grays use Tailwind color scales from `WindThemeData`. Override them to change the visual appearance:
+The calendar's selection colors route through the theme `primary` token (`bg-primary` for the selected day, `bg-primary-100` / `text-primary-700` for the in-range fill). Override `primary` to recolor the calendar to your brand; the neutral grays remain configurable via their own palette keys. The default `primary` is aliased to the Tailwind blue swatch, so leaving it unchanged keeps the original blue look.
 
 ```dart
 WindTheme(
   data: WindThemeData(
     colors: {
-      ...WindThemeData.defaultColors,
-      'blue': {
-        100: Color(0xFFDBEAFE),  // Range fill
-        500: Color(0xFF3B82F6),  // Selected day
-        700: Color(0xFF1D4ED8),  // Range text
-        900: Color(0xFF1E3A8A),  // Dark mode range
-      },
+      'primary': MaterialColor(0xFF16A34A, {
+        100: Color(0xFFDCFCE7),  // Range fill
+        500: Color(0xFF16A34A),  // Selected day (shade 500 == bg-primary)
+        700: Color(0xFF15803D),  // Range text
+        900: Color(0xFF14532D),  // Dark mode range
+      }),
     },
   ),
   child: MyApp(),
