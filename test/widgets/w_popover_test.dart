@@ -14,6 +14,11 @@ Widget wrapWithTheme(Widget child) {
 }
 
 void main() {
+  // WPopover parses className through WindParser; clear the shared style cache
+  // before every test so a cached (breakpoint, brightness, platform, states)
+  // result from one test cannot leak into the next.
+  setUp(WindParser.clearCache);
+
   group('WPopover Widget Tests', () {
     // Ensure overlay state is cleaned up between tests
     tearDown(() async {
@@ -928,6 +933,30 @@ void main() {
         );
 
         expect(result, closeTo(-153, 0.001));
+      });
+
+      test(
+          'panel too wide for both margins seats flush to the viewport edge, '
+          'not past it', () {
+        // popoverWidth (396) > screenWidth - margin (392) but still < screenWidth
+        // (400), so both 8px margins cannot hold. followerLeft = 30,
+        // followerRight = 426 > 400 -> right pull correction = (400 - 8) - 426 = -34,
+        // which pushes the left edge to -4 (off-screen). Seating the left edge at
+        // margin (correction -22) would leave the right edge at 404 (off-screen);
+        // the clamp instead caps at -26 so the right edge lands exactly on 400 and
+        // the whole panel stays visible.
+        final result = computeHorizontalClamp(
+          alignment: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(30, 60),
+          triggerSize: const Size(36, 36),
+          popoverWidth: 396,
+          screenSize: const Size(400, 800),
+          offset: Offset.zero,
+        );
+
+        expect(result, closeTo(-26, 0.001));
+        // Right edge is on-screen (flush at 400), not pushed past it.
+        expect(30 + 396 + result, closeTo(400, 0.001));
       });
     });
 
