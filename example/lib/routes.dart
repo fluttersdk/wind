@@ -100,6 +100,7 @@ import 'pages/layout/grid_cols.dart';
 import 'pages/layout/grid_gap.dart';
 import 'pages/layout/grid_responsive.dart';
 import 'pages/layout/responsive.dart';
+import 'pages/layout/responsive_table.dart';
 import 'pages/layout/responsive_display.dart';
 import 'pages/layout/visibility.dart';
 import 'pages/layout/z_index.dart';
@@ -320,6 +321,7 @@ final Map<String, Widget> appRoutes = {
   '/layout/grid_gap': const GridGapExamplePage(),
   '/layout/grid_responsive': const GridResponsiveExamplePage(),
   '/layout/responsive': const ResponsiveExamplePage(),
+  '/layout/responsive_table': const ResponsiveTableExamplePage(),
   '/layout/responsive_display': const ResponsiveDisplayExamplePage(),
   '/layout/visibility': const VisibilityExamplePage(),
   '/layout/z_index': const ZIndexExamplePage(),
