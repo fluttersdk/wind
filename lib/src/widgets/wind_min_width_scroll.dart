@@ -166,9 +166,26 @@ class _RenderMinWidthBox extends RenderProxyBox {
       return;
     }
     final double? viewport = _port.value;
-    final double base =
-        (viewport != null && viewport.isFinite) ? viewport : 0.0;
-    final double target = math.max(base, _floorMinWidth);
+    if (viewport == null || !viewport.isFinite) {
+      // No finite viewport width to fill against (the scroll sits in an
+      // unbounded-width context, or the width has not been published yet).
+      // Degrade to the child's content width honoring the min-w-* floor,
+      // instead of forcing a tight (possibly 0) width that would collapse it.
+      // This mirrors how WindCrossStretch / WindFractionBasis pass through on
+      // an unbounded axis.
+      child.layout(
+        BoxConstraints(
+          minWidth: _floorMinWidth,
+          maxWidth: double.infinity,
+          minHeight: constraints.minHeight,
+          maxHeight: constraints.maxHeight,
+        ),
+        parentUsesSize: true,
+      );
+      size = child.size;
+      return;
+    }
+    final double target = math.max(viewport, _floorMinWidth);
     child.layout(
       BoxConstraints(
         minWidth: target,
