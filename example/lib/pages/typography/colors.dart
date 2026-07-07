@@ -35,7 +35,7 @@ class TypographyColorsPage extends StatelessWidget {
             children: [
               WDiv(
                 className:
-                    'flex flex-wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
+                    'flex wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
                 children: [
                   _buildColorChip('text-red-500', 'Red'),
                   _buildColorChip('text-blue-500', 'Blue'),
@@ -55,7 +55,7 @@ class TypographyColorsPage extends StatelessWidget {
             children: [
               WDiv(
                 className:
-                    'flex flex-wrap gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
+                    'flex wrap gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
                 children: [
                   WText(
                     '50',

@@ -240,7 +240,7 @@ class _WindAnimationWrapperBasicExamplePageState
       className: 'flex flex-col gap-4',
       children: [
         WDiv(
-          className: 'flex gap-2 flex-wrap',
+          className: 'flex gap-2 wrap',
           children: types.map((type) {
             final isActive = type == _selectedType;
             return WButton(

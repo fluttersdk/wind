@@ -30,7 +30,7 @@ class ResponsiveGridExamplePage extends StatelessWidget {
           'w-full p-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500',
       children: [
         WDiv(
-          className: 'flex flex-wrap items-center gap-2',
+          className: 'flex wrap items-center gap-2',
           children: [
             WDiv(
               className: 'px-3 py-1 rounded-full bg-white/20',
