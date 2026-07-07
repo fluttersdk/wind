@@ -101,6 +101,27 @@ void main() {
         expect(styles.height, 8);
       });
 
+      test(
+        'a caller-appended w-full wins over a base w-1/2 (WIND-1 proof: '
+        'per-family last-wins resolves an appended className without '
+        'twMerge)',
+        () {
+          // Mirrors WindRecipe(base: 'w-1/2')(className: 'w-full'): the
+          // recipe only APPENDS (see wind_recipe_test.dart), both tokens
+          // reach the parser in order, and reverse-iteration last-wins here
+          // picks the trailing (caller) token.
+          final classes = WindParser.findAndGroupClasses(
+            'w-1/2 w-full',
+            context,
+          )['sizing']!;
+          expect(classes, ['w-1/2', 'w-full']);
+
+          final styles = parser.parse(WindStyle(), classes, context);
+
+          expect(styles.widthFactor, 1.0);
+        },
+      );
+
       test('parses max-width classes correctly', () {
         final styles = WindStyle();
         final classes = ['max-w-300', 'max-w-screen'];
