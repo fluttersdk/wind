@@ -1,6 +1,6 @@
 # fluttersdk_wind
 
-> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 24-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 22 W-prefix widgets, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, and a skill distributed to 8+ AI clients via fluttersdk/ai). Open Source. Tailwind syntax. Flutter native. Version 1.1.2 stable.
+> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 24-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 27 W-prefix widgets, `WindRecipe` / `WindSlotRecipe` variant composition, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, and a skill distributed to 8+ AI clients via fluttersdk/ai). Open Source. Tailwind syntax. Flutter native. Version 1.2.0 stable.
 
 **Stack**: Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `fluttersdk_wind_diagnostics_contracts`. No `mockito`, no state management library, no router.
 
@@ -31,7 +31,7 @@ WDiv(
 if (kDebugMode) Wind.installDebugResolver();
 ```
 
-**Prefix stack** in className: `<state>:<breakpoint>:<dark>:<platform>:<utility>`. Last class wins; unknown tokens fail silently. Every color token (`bg-` / `text-` / `border-` / `fill-` / `ring-`) carries a `dark:` pair in the same className.
+**Prefix stack** in className: `<state>:<breakpoint>:<dark>:<platform>:<utility>`. Last class wins; unknown tokens are dropped and a one-time `kDebugMode` hint names each (release builds stay silent). Every color token (`bg-` / `text-` / `border-` / `fill-` / `ring-` / `shadow-`) carries a `dark:` pair in the same className.
 
 **Parser cache key**: `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. Stable across rebuilds; invalidate via `WindParser.clearCache()` in test `setUp` only, never in production.
 
@@ -43,12 +43,15 @@ if (kDebugMode) Wind.installDebugResolver();
 - [WText](https://fluttersdk.com/wind/widgets/w-text.md): Text widget with `className`-driven font, color, alignment, decoration.
 - [WSpacer](https://fluttersdk.com/wind/widgets/w-spacer.md): Flex-aware spacer that obeys responsive prefixes.
 - [WBreakpoint](https://fluttersdk.com/wind/widgets/w-breakpoint.md): Declarative per-breakpoint widget tree switcher; escape hatch when prefixes are not enough.
+- [WCard](https://fluttersdk.com/wind/widgets/w-card.md): Surface container with optional `header` and `footer` slots; all styling `className`-driven.
+- [WBadge](https://fluttersdk.com/wind/widgets/w-badge.md): Inline status/label pill; composes a rounded-full `WDiv` around a `WText`.
 
 ### Interactive
 
 - [WButton](https://fluttersdk.com/wind/widgets/w-button.md): Button with `hover:` / `focus:` / `active:` / `loading:` / `disabled:` state prefixes.
 - [WAnchor](https://fluttersdk.com/wind/widgets/w-anchor.md): Inline interactive wrapper; auto-wraps `WDiv` / `WButton` when hover/focus prefixes are detected.
 - [WPopover](https://fluttersdk.com/wind/widgets/w-popover.md): Overlay container with alignment + trigger / content builders.
+- [WTabs](https://fluttersdk.com/wind/widgets/w-tabs.md): Controlled tabs; `selected:` state prefix marks the active tab, `panelBuilder` renders the active panel.
 - [WKeyboardActions](https://fluttersdk.com/wind/widgets/w-keyboard-actions.md): Above-keyboard toolbar with Done button and field navigation for iOS numeric keyboards; platform-targeted via `platform: 'ios'`.
 - [WindAnimationWrapper](https://fluttersdk.com/wind/widgets/wind-animation-wrapper.md): Low-level animation engine; wraps a child in spin, ping, pulse, or bounce with configurable `duration` and `curve`. Used internally by `animate-*` className tokens.
 
@@ -57,6 +60,8 @@ if (kDebugMode) Wind.installDebugResolver();
 - [WInput](https://fluttersdk.com/wind/widgets/w-input.md): TextField with `className` styling + `InputType` (text, email, number, password, multiline, search).
 - [WSelect](https://fluttersdk.com/wind/widgets/w-select.md): Dropdown with optional search, multi-select, pagination.
 - [WCheckbox](https://fluttersdk.com/wind/widgets/w-checkbox.md): Checkbox or switch with `className`.
+- [WSwitch](https://fluttersdk.com/wind/widgets/w-switch.md): Controlled toggle switch; pushes the `checked:` state prefix, thumb positioned via `justify-*` on the track.
+- [WRadio](https://fluttersdk.com/wind/widgets/w-radio.md): Controlled radio button; drives the `selected:` state prefix when `value == groupValue`.
 - [WDatePicker](https://fluttersdk.com/wind/widgets/w-date-picker.md): Single-date and date-range picker.
 - [WFormInput](https://fluttersdk.com/wind/widgets/w-form-input.md): Form-bound `WInput` wrapper with validator.
 - [WFormSelect](https://fluttersdk.com/wind/widgets/w-form-select.md): Form-bound `WSelect` wrapper with validator.
@@ -84,12 +89,13 @@ if (kDebugMode) Wind.installDebugResolver();
 - [Responsive design](https://fluttersdk.com/wind/core-concepts/responsive-design.md): breakpoint prefixes + `WBreakpoint` escape hatch.
 - [State management](https://fluttersdk.com/wind/core-concepts/state-management.md): `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, custom states.
 - [Dynamic rendering](https://fluttersdk.com/wind/core-concepts/dynamic-rendering.md): `WDynamic` JSON schema + security model.
-- [Debugging](https://fluttersdk.com/wind/core-concepts/debugging.md): `WindLogger`, `Wind.installDebugResolver()`, cache inspection.
+- [Debugging](https://fluttersdk.com/wind/core-concepts/debugging.md): `WindLogger`, `Wind.installDebugResolver()`, cache inspection, unknown-className debug hint.
+- [Recipes](https://fluttersdk.com/wind/styling/wind-recipe.md): `WindRecipe` / `WindSlotRecipe` variant composition (base + axes + compoundVariants + caller className) in strict emission order, no dedupe / sort / twMerge.
 
 ## Utility families
 
 - [Layout](https://fluttersdk.com/wind/layout/index.md): flex, grid, position, overflow, aspect-ratio, z-index, order.
-- [Sizing](https://fluttersdk.com/wind/layout/sizing.md): `w-*`, `h-*`, `min-*`, `max-*`, arbitrary `w-[200px]`.
+- [Sizing](https://fluttersdk.com/wind/layout/sizing.md): `w-*`, `h-*`, `size-*` (width + height shorthand), `min-*`, `max-*`, arbitrary `w-[200px]`.
 - [Spacing](https://fluttersdk.com/wind/layout/spacing.md): padding (`p-*`, `px-*`, `pt-*`), margin (`m-*`, `-mt-*`), gap (`gap-*`, `space-x-*`).
 - [Typography](https://fluttersdk.com/wind/typography/index.md): `text-*` (size + color + alignment overload), `font-*`, `leading-*`, `tracking-*`, `truncate`.
 - [Backgrounds](https://fluttersdk.com/wind/styling/background-color.md): `bg-*`, gradients, images.
@@ -97,6 +103,7 @@ if (kDebugMode) Wind.installDebugResolver();
 - [Shadows](https://fluttersdk.com/wind/styling/shadow.md): `shadow`, `shadow-md`, colored shadows (`shadow-blue-500/20`).
 - [Opacity](https://fluttersdk.com/wind/styling/opacity.md): `opacity-*` + opacity modifiers (`bg-red-500/50`).
 - [Transitions & animations](https://fluttersdk.com/wind/interactivity/index.md): `duration-*`, `ease-*`, `animate-spin` / `pulse` / `bounce` / `ping`.
+- [Cursor](https://fluttersdk.com/wind/interactivity/cursor.md): `cursor-pointer`, `cursor-not-allowed`, `cursor-text`, grab / zoom / resize families mapped to `SystemMouseCursors` via `MouseRegion`.
 
 ## Utility helpers (Dart APIs)
 

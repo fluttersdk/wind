@@ -1,4 +1,4 @@
-# Wind 1.0 — Theme, dark mode, responsive, platform
+# Wind 1.2: Theme, dark mode, responsive, platform
 
 Customizing `WindThemeData`, brightness control, breakpoint scale, platform prefixes. Reach for this file when adding custom colors, overriding the spacing scale, wiring a dark-mode toggle, defining a custom breakpoint, or recovering from the OverlayEntry context caveat.
 
@@ -184,7 +184,7 @@ class WindThemeController extends ChangeNotifier {
   void resetToSystem();                            // re-enables syncWithSystem; reads OS brightness
 
   // Bridge to Material
-  ThemeData toThemeData();                         // for MaterialApp.theme — uses 'primary', 'secondary', 'error', 'background'
+  ThemeData toThemeData();                         // for MaterialApp.theme: uses 'primary', 'secondary', 'error', 'background'
 }
 ```
 

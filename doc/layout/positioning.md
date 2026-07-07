@@ -15,7 +15,7 @@ Utilities for controlling how elements are positioned in the layout using `relat
 <x-preview path="layout/positioning" size="lg" source="example/lib/pages/layout/positioning.dart"></x-preview>
 
 ```dart
-// Badge overlay — red dot on an avatar
+// Badge overlay: red dot on an avatar
 WDiv(
   className: 'relative',
   children: [
@@ -97,7 +97,7 @@ Apply offsets to multiple sides at once with `inset-*` shorthand classes.
 | `inset-0` | top, right, bottom, left | Full stretch (fills parent) |
 
 ```dart
-// Full overlay — covers the entire relative parent
+// Full overlay: covers the entire relative parent
 WDiv(
   className: 'relative w-full h-48',
   children: [
@@ -115,7 +115,7 @@ WDiv(
 ```
 
 ```dart
-// Horizontal inset — leaves top and bottom unconstrained
+// Horizontal inset: leaves top and bottom unconstrained
 WDiv(
   className: 'absolute inset-x-4 bottom-4 bg-white rounded p-3',
   child: WText('Bottom bar'),
@@ -136,7 +136,7 @@ Prefix any offset class with `-` to pull an element outside its parent's boundar
 | `-inset-{n}` | negative all sides | Expands element beyond all four parent edges |
 
 ```dart
-// Notification badge — overlaps the top-right corner of an icon button
+// Notification badge: overlaps the top-right corner of an icon button
 WDiv(
   className: 'relative',
   children: [
@@ -152,13 +152,13 @@ WDiv(
 <a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-Use bracket notation when you need an exact pixel value not in the theme scale. Only `px` values are supported — percentage (`%`) offsets are not supported because Flutter's `Positioned` widget uses logical pixels, not relative units.
+Use bracket notation when you need an exact pixel value not in the theme scale. Only `px` values are supported; percentage (`%`) offsets are not supported because Flutter's `Positioned` widget uses logical pixels, not relative units.
 
 ```dart
 // Exact pixel value
 WDiv(className: 'absolute top-[24px] left-[12px]')
 
-// Mixed — precise multi-side offset
+// Mixed: precise multi-side offset
 WDiv(className: 'absolute top-[12px] right-[8px] bottom-[12px] left-[8px]')
 ```
 
@@ -223,7 +223,7 @@ WDiv(
 <a name="combining-with-flex"></a>
 ## Combining with Flex
 
-`relative` and `absolute` compose naturally with flex layouts. The `relative` container itself can be a flex row or column — the `Stack` wraps around the flex widget, and `absolute` children are layered on top.
+`relative` and `absolute` compose naturally with flex layouts. The `relative` container itself can be a flex row or column; the `Stack` wraps around the flex widget, and `absolute` children are layered on top.
 
 ```dart
 // Navigation bar with an absolute badge on the icon
@@ -254,8 +254,8 @@ The following position types are tracked but not yet implemented in v1:
 
 | Class | Status |
 |:------|:-------|
-| `fixed` | Deferred — maps to Flutter's `Overlay`/`Stack` at the root level |
-| `sticky` | Deferred — requires custom `SliverPersistentHeader` integration |
+| `fixed` | Deferred: maps to Flutter's `Overlay`/`Stack` at the root level |
+| `sticky` | Deferred: requires custom `SliverPersistentHeader` integration |
 
 Until these land, use `Overlay` directly or Flutter's `Stack` at the `Scaffold` body level for fixed positioning.
 

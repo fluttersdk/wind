@@ -78,7 +78,7 @@ class WSpacerBasicExamplePage extends StatelessWidget {
             children: const [
               _Box(label: 'Above'),
               WSpacer(className: 'h-[13px]'),
-              _Box(label: 'Below — 13px gap above'),
+              _Box(label: 'Below (13px gap above)'),
             ],
           ),
         ),

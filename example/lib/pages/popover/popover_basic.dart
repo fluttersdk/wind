@@ -97,7 +97,7 @@ class PopoverBasicExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Trigger State',
           description:
-              'triggerBuilder receives isOpen + isHovering — style the trigger reactively.',
+              'triggerBuilder receives isOpen + isHovering, style the trigger reactively.',
           child: WPopover(
             className: '''
               w-64 rounded-lg p-3

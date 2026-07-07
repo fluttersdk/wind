@@ -148,9 +148,9 @@ WDatePicker(
 
 How range selection works:
 
-1. **First click** — Sets the range start. The `onRangeChanged` callback fires with a `DateRange` where `end` is `null`.
-2. **Hover** — As the user moves the mouse, dates between start and the hovered date are highlighted with a blue tint.
-3. **Second click** — Completes the range. If the second date is before the first, they're automatically swapped. The popover closes.
+1. **First click**: Sets the range start. The `onRangeChanged` callback fires with a `DateRange` where `end` is `null`.
+2. **Hover**: As the user moves the mouse, dates between start and the hovered date are highlighted with a blue tint.
+3. **Second click**: Completes the range. If the second date is before the first, they're automatically swapped. The popover closes.
 
 The trigger display text updates throughout: `"Jan 15, 2025 - ..."` while in progress, then `"Jan 15, 2025 - Jan 20, 2025"` when complete.
 
@@ -205,7 +205,7 @@ WDatePicker(
 
 ### Range Mode
 
-`onRangeChanged` fires twice during a range selection — once on the first click (start only) and once on the second click (complete range):
+`onRangeChanged` fires twice during a range selection: once on the first click (start only) and once on the second click (complete range):
 
 ```dart
 WDatePicker(

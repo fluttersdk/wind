@@ -13,7 +13,7 @@ import '../../theme/wind_theme_data.dart';
 /// ### Supported Utility Classes:
 /// - **Fill:** `fill-red-500`, `fill-none`, `fill-current`
 /// - **Stroke:** `stroke-blue-500`, `stroke-none`, `stroke-[2px]` (future)
-/// - **Preserve:** `preserve-colors` — disables any [ColorFilter] on the SVG,
+/// - **Preserve:** `preserve-colors`: disables any [ColorFilter] on the SVG,
 ///   rendering embedded colours unchanged (ideal for QR codes and logos).
 ///
 /// Returns a [WindStyle] with `fillColor`, `strokeColor`, and `preserveColors`.
@@ -43,7 +43,7 @@ class SvgParser implements WindParserInterface {
     final theme = context.theme;
 
     for (final className in classes) {
-      // Handle preserve-colors — disables ColorFilter entirely for multi-colour SVGs.
+      // Handle preserve-colors: disables ColorFilter entirely for multi-colour SVGs.
       if (className == 'preserve-colors') {
         preserveColors = true;
       }

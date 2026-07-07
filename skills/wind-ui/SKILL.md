@@ -1,12 +1,12 @@
 ---
 name: wind-ui
-description: "fluttersdk_wind 1.1: utility-first Flutter styling with Tailwind-syntax className strings. 27 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper, WBadge, WCard, WSwitch, WRadio, WTabs + 5 WForm* wrappers) consume className through a 20-parser pipeline (20 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. WindRecipe / WindSlotRecipe compose className variants (base + axes + compoundVariants + caller) in strict emission order, no dedupe/sort/twMerge. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens are dropped (a one-time `kDebugMode` hint names each, no exception). Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
+description: "fluttersdk_wind 1.2: utility-first Flutter styling with Tailwind-syntax className strings. 27 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper, WBadge, WCard, WSwitch, WRadio, WTabs + 5 WForm* wrappers) consume className through a 20-parser pipeline (20 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. WindRecipe / WindSlotRecipe compose className variants (base + axes + compoundVariants + caller) in strict emission order, no dedupe/sort/twMerge. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens are dropped (a one-time `kDebugMode` hint names each, no exception). Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
 when_to_use: |
   Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, migrating a Tailwind className from web, or composing a WindRecipe / WindSlotRecipe for a variant-driven component. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
 version: 2.9.0
 ---
 
-<!-- fluttersdk_wind 1.1.x | Skill v2.9.0 (2026-07-07) -->
+<!-- fluttersdk_wind 1.2.x | Skill v2.9.0 (2026-07-07) -->
 
 # Wind UI 1.1
 
@@ -219,7 +219,7 @@ Wind hides most boilerplate but never changes Flutter's "constraints down, sizes
 
 | Rule | Wrong | Right |
 |---|---|---|
-| **Row children: prefer `flex-1`** (a bare `w-full` now also works, treated as `flex-1`) | — | `WDiv(className: 'flex flex-row', children: [WDiv(className: 'flex-1', ...)])` |
+| **Row children: prefer `flex-1`** (a bare `w-full` now also works, treated as `flex-1`) | n/a | `WDiv(className: 'flex flex-row', children: [WDiv(className: 'flex-1', ...)])` |
 | **Scrollable children use `flex-1`, not `h-full`** | `WDiv(className: 'flex flex-col', children: [WDiv(className: 'overflow-y-auto h-full', ...)])` → unbounded height | `WDiv(className: 'flex flex-col h-full', children: [WDiv(className: 'flex-1 overflow-y-auto', scrollPrimary: true, ...)])` |
 | **`absolute` requires `relative` parent** | `WDiv(className: 'flex', children: [..., WDiv(className: 'absolute top-0 right-0')])` does not position correctly | `WDiv(className: 'relative flex', children: [..., WDiv(className: 'absolute top-0 right-0')])` |
 | **`truncate` requires bounded width** | `WText('long...', className: 'truncate')` inside a Row | wrap in `WDiv(className: 'flex-1', child: WText(..., className: 'truncate'))` |
@@ -391,7 +391,7 @@ Compact catalog of consistent footguns. Each entry: what's wrong, why, the corre
 | `WIcon(Icons.settings)` | Filled Material icon (off-brand for Wind) | `WIcon(Icons.settings_outlined)` |
 | `className: 'flex-wrap'` | Works (aliased to `wrap`), but `wrap` is the canonical token and avoids the debug hint | `'wrap gap-2'` |
 | `className: 'text-7xl'` | Font scale stops at 6xl; silent no-op | `'text-6xl'` (cap) or use `font-size` via custom theme |
-| `className: 'w-full'` inside a Row (works, but `flex-1` is clearer) | — | `'flex-1'` |
+| `className: 'w-full'` inside a Row (works, but `flex-1` is clearer) | No failure, just intent clarity | `'flex-1'` |
 | `className: 'h-full'` inside a scrollable | Vertical viewport unbounded | `'flex-1 overflow-y-auto'` + `scrollPrimary: true` on the constructor |
 | `className: 'overflow-y-auto'` without `scrollPrimary: true` | iOS tap-to-top broken | add the constructor prop |
 | `className: 'bg-white'` alone | Missing dark pair = bug | `'bg-white dark:bg-gray-800'` |

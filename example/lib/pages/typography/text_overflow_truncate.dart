@@ -42,7 +42,7 @@ class TextOverflowTruncateExamplePage extends StatelessWidget {
               WDiv(
                 className: 'flex-1 min-w-0',
                 child: const WText(
-                  'Jane Doe — Senior Engineer at a long-named company that has many people',
+                  'Jane Doe, Senior Engineer at a long-named company that has many people',
                   className: 'truncate text-slate-900 dark:text-white',
                 ),
               ),

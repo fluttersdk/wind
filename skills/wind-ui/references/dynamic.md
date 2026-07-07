@@ -1,4 +1,4 @@
-# Wind 1.0 — WDynamic (server-driven UI)
+# Wind 1.2: WDynamic (server-driven UI)
 
 JSON node tree → Wind widget tree. Reach for this file when rendering UI from a CMS, A/B framework, remote-config service, or any source where the widget shape is decided at runtime.
 
@@ -37,9 +37,9 @@ Every node is a `Map<String, dynamic>` with one required field and two optional 
 }
 ```
 
-- `type` (required, String) — the widget type name. Must match an allowed type (§2) or a registered custom builder (§7), or the node renders an error box.
-- `props` (optional, `Map<String, dynamic>`) — widget constructor arguments. Keys are widget-prop names exactly (no auto-rename; see §4).
-- `children` (optional, `List<Map>`) — nested nodes. Recursively processed depth-first.
+- `type` (required, String): the widget type name. Must match an allowed type (§2) or a registered custom builder (§7), or the node renders an error box.
+- `props` (optional, `Map<String, dynamic>`): widget constructor arguments. Keys are widget-prop names exactly (no auto-rename; see §4).
+- `children` (optional, `List<Map>`): nested nodes. Recursively processed depth-first.
 
 All `Map` values are deep-converted to `Map<String, dynamic>` internally; mixed `Map<Object?, Object?>` payloads from JSON parsers are normalized automatically.
 
@@ -179,11 +179,11 @@ WDynamic(
 ```
 
 Handler signature is auto-detected in order:
-1. `Function(Map<String, dynamic>, WDynamicState)` — preferred when handler needs to read or mutate state
-2. `Function(Map<String, dynamic>)` — pure action with no state access
-3. Fallback `Function.apply(handler, [args, state])` — for handlers with unusual signatures
+1. `Function(Map<String, dynamic>, WDynamicState)`: preferred when handler needs to read or mutate state
+2. `Function(Map<String, dynamic>)`: pure action with no state access
+3. Fallback `Function.apply(handler, [args, state])`: for handlers with unusual signatures
 
-Unknown action names log `WindDynamic: Unknown action "<name>" — ignored.` via `debugPrint` and return null. Exceptions inside handlers are caught and logged via `debugPrint('WindDynamic: Action "<name>" error: <err>')`. Neither crashes the build.
+Unknown action names log `WindDynamic: Unknown action "<name>", ignored.` via `debugPrint` and return null. Exceptions inside handlers are caught and logged via `debugPrint('WindDynamic: Action "<name>" error: <err>')`. Neither crashes the build.
 
 Value actions (used by WInput, WCheckbox, WSelect, WDatePicker):
 - The widget's `onChange` callback is wired through `parseValueAction<T>`.
@@ -277,7 +277,7 @@ The `customIcons:` map merges with the built-in defaults; user keys override.
 Threat model considerations:
 - **JSON source matters.** A controlled backend rendering a known schema is safe. Untrusted client input is not; even with whitelist enforcement, props can hold dangerous data (URLs that load attacker-controlled assets via `WImage(src:)`, action names that overlap with privileged handlers).
 - **`builders:` is the escape hatch.** If you don't add custom builders, the surface is bounded by the 29-widget whitelist + the action handlers you registered. Action handlers run consumer Dart code; they are the trust boundary.
-- **Action argument coercion is shallow.** `args['_value'] as String?` will succeed if the JSON sends `"_value": "<script>"` — the script tag is just a string. But `args['url']` passed to `Magic.launch.url(args['url'])` opens the URL. Validate at the handler.
+- **Action argument coercion is shallow.** `args['_value'] as String?` will succeed if the JSON sends `"_value": "<script>"`. The script tag is just a string. But `args['url']` passed to `Magic.launch.url(args['url'])` opens the URL. Validate at the handler.
 - **Recursion limit prevents stack overflow.** Default `maxDepth: 50` is plenty for legitimate UI; reduce for stricter bounds when accepting third-party JSON.
 
 ---

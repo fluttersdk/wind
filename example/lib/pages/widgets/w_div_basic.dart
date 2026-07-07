@@ -60,7 +60,7 @@ class WDivBasicExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Layout Modes',
           description:
-              'block, flex, grid, wrap, hidden — each maps to a different Flutter widget under the hood.',
+              'block, flex, grid, wrap, hidden: each maps to a different Flutter widget under the hood.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [

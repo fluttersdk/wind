@@ -6,16 +6,16 @@ import 'w_div.dart';
 ///
 /// `WCard` composes a `WDiv` (flex-col) with an optional `header` slot,
 /// a required `child` body, and an optional `footer` slot. All styling is
-/// className-driven — no colors or variants are baked in; tone and appearance
+/// className-driven: no colors or variants are baked in; tone and appearance
 /// are the caller's responsibility via `className` or a `WindRecipe` in the
 /// consuming component layer.
 ///
 /// ### Slots
 ///
-/// - **header** — optional widget rendered above the body (e.g. a title row,
+/// - **header**: optional widget rendered above the body (e.g. a title row,
 ///   an image, or a section label).
-/// - **child** — required body content.
-/// - **footer** — optional widget rendered below the body (e.g. action buttons
+/// - **child**: required body content.
+/// - **footer**: optional widget rendered below the body (e.g. action buttons
 ///   or metadata).
 ///
 /// ### Example Usage:

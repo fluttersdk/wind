@@ -51,7 +51,7 @@ class GridColsExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Quick Reference',
           description:
-              'Default scale covers 1–12 columns. Any other integer also resolves correctly.',
+              'Default scale covers 1 to 12 columns. Any other integer also resolves correctly.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [

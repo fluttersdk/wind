@@ -1,4 +1,4 @@
-# Wind 1.0 — Wind ≠ Tailwind divergence catalog
+# Wind 1.2: Wind ≠ Tailwind divergence catalog
 
 Comprehensive map of where Wind diverges from Tailwind CSS v3 and v4. Reach for this file when migrating a className from web, recovering from a "this token does not seem to do anything" stall, or auditing a Tailwind-trained codebase.
 
@@ -40,7 +40,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | `flex-wrap` | Enables wrapping on a flex container | Aliased directly to `wrap` (the canonical token); emits a one-time `kDebugMode` hint pointing at `wrap` |
 | `text-{xs..6xl}` | Sizes go to `9xl` (128 px) | Stops at `6xl` (60 px). `7xl` / `8xl` / `9xl` silently no-op |
 | `text-7xl`+ | Larger sizes available | No-op |
-| `text-{color}` | Pure font color | Overloaded across color / alignment / size / weight — resolves in order |
+| `text-{color}` | Pure font color | Overloaded across color / alignment / size / weight; resolves in order |
 | `w-full` inside a flex Row | Works (max-width: 100%) | A bare `w-full` row child is treated as `flex-1` (wrapped in `Expanded`) and fills the row; `flex-1` is the clearer, idiomatic choice. `md:w-full` is not auto-expanded. |
 | `h-full` inside a vertical scroll | Works (max-height: 100%) | Raises an actionable dev assert ("use `flex-1` inside a `flex flex-col` instead of `h-full` inside a vertical scroll"); the scrollable parent threads a vertical-unbounded flag so the child can fail fast. Stripped in release. |
 | `overflow-x-auto` + `w-full min-w-[Npx]` (shadcn Table pattern) | Fills container, scrolls when content exceeds it | Same behavior, composed from existing tokens (no new token). `w-full` inside a horizontal scroll is sized to `max(viewport, min-w-*)` via the threaded viewport width instead of asserting on the scroll's unbounded width: fills on wide, scrolls on narrow. |
@@ -71,8 +71,8 @@ When a className inherited from a web project includes any of these, expect sile
 - `flex-wrap-reverse`
 
 ### Spacing
-- `ps-N` / `pe-N` / `ms-N` / `me-N` (logical inline-start/end) — use `pl-` / `pr-` / `ml-` / `mr-` (physical) instead
-- `-m-N` / `-mt-N` etc. (negative margins) — restructure layout
+- `ps-N` / `pe-N` / `ms-N` / `me-N` (logical inline-start/end); use `pl-` / `pr-` / `ml-` / `mr-` (physical) instead
+- `-m-N` / `-mt-N` etc. (negative margins); restructure layout
 - `p-[10%]` or any `%` arbitrary for padding / margin
 
 ### Sizing
@@ -97,7 +97,7 @@ When a className inherited from a web project includes any of these, expect sile
 
 ### Interactivity
 - `cursor-*` IS supported (`cursor-pointer`, `cursor-not-allowed`, resize/zoom/grab, etc.) via a `MouseRegion` `WDiv` adds; see `tokens.md` §16. `WAnchor` also exposes a `mouseCursor:` constructor prop for imperative control.
-- `pointer-events-none` — wrap in `IgnorePointer`
+- `pointer-events-none`: wrap in `IgnorePointer`
 - `select-none` / `select-text`
 - `scroll-smooth`
 - `snap-*` (scroll snap)
@@ -139,12 +139,12 @@ When a className inherited from a web project includes any of these, expect sile
 - `active:` (reserved, NOT wired; WAnchor tracks hover and focus only)
 
 ### Container queries
-- `@container`, `@sm:`, `@md:`, `@lg:`, `@max-md:`, named containers (`@sm/sidebar:`) — viewport-only in Wind
+- `@container`, `@sm:`, `@md:`, `@lg:`, `@max-md:`, named containers (`@sm/sidebar:`): viewport-only in Wind
 
 ### CSS-only constructs
-- `@apply` / `@layer` / `@variant` / `@theme` directives — Wind has no CSS layer
+- `@apply` / `@layer` / `@variant` / `@theme` directives: Wind has no CSS layer
 - `!important` modifier (`!flex` v3, `flex!` v4)
-- `bg-opacity-N` / `text-opacity-N` / `border-opacity-N` (v3 legacy) — use slash modifier `/N`
+- `bg-opacity-N` / `text-opacity-N` / `border-opacity-N` (v3 legacy): use slash modifier `/N`
 
 ---
 
@@ -158,32 +158,32 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 - `web:` (web build)
 
 ### Order scale starts at zero
-- `order-0` — Wind supports `order-0` through `order-12`; Tailwind's default scale starts at `order-1` (`order-0` is a Wind addition)
+- `order-0`: Wind supports `order-0` through `order-12`; Tailwind's default scale starts at `order-1` (`order-0` is a Wind addition)
 
 ### Main-axis size (Flutter `MainAxisSize`)
-- `axis-min` — sets `MainAxisSize.min` on the parent flex
-- `axis-max` — sets `MainAxisSize.max`
+- `axis-min`: sets `MainAxisSize.min` on the parent flex
+- `axis-max`: sets `MainAxisSize.max`
 
 ### Inline color escape hatches (bypass cache key for runtime-dynamic colors)
-- `WDiv(backgroundColor: Color)` — Dart prop, overrides className `bg-*`
-- `WText(foregroundColor: Color)` — Dart prop, overrides className `text-*`
+- `WDiv(backgroundColor: Color)`: Dart prop, overrides className `bg-*`
+- `WText(foregroundColor: Color)`: Dart prop, overrides className `text-*`
 - `WIcon(foregroundColor: Color)` (Dart prop) overrides className `text-*`
 
 ### Per-breakpoint widget builders
-- `WBreakpoint(base: ..., sm: ..., md: ...)` — when className prefixes cannot express the change
+- `WBreakpoint(base: ..., sm: ..., md: ...)`: when className prefixes cannot express the change
 
 ### Server-driven UI
-- `WDynamic(json: ...)` — renders a JSON node tree into Wind widgets
+- `WDynamic(json: ...)`: renders a JSON node tree into Wind widgets
 
 ### SVG fill preservation
-- `preserve-colors` — disables Wind's color filter; renders embedded SVG colors unchanged (QR codes, logos, multi-color illustrations)
+- `preserve-colors`: disables Wind's color filter; renders embedded SVG colors unchanged (QR codes, logos, multi-color illustrations)
 
 ### className aliases (runtime shorthand expansion)
 - `WindThemeData.aliases` (`Map<String, String>`) maps bare-token keys to className strings, expanded recursively by `WindParser.parse` before any parser runs. Closest Tailwind analogue: `@layer components` / UnoCSS shortcuts; unlike those, there is no CSS cascade and expansion is a pure string substitution at runtime. Keys are bare tokens only (no prefix, no colon). An alias that shadows a real token wins and emits a debug warning. Empty by default; works in every widget and in `WDynamic` without additional wiring.
 
 ### Debug instrumentation
-- `debug` token — triggers `WindLogger` to log composition tree + final styles
-- `Wind.installDebugResolver()` (Dart API) — exposes 7 fields per widget to external tooling
+- `debug` token: triggers `WindLogger` to log composition tree + final styles
+- `Wind.installDebugResolver()` (Dart API): exposes 7 fields per widget to external tooling
 
 ---
 
@@ -218,7 +218,7 @@ Wind 1.0 is anchored to Tailwind v3 semantics for shadow / radius / blur / ring 
 
 When porting a className from a web project:
 
-**Step 1 — strip the unwired.** Run the className through these substitutions (paste / search-replace, or do it mentally):
+**Step 1: strip the unwired.** Run the className through these substitutions (paste / search-replace, or do it mentally):
 
 ```
 group-hover:*          → drop, or replace with states: + custom state string
@@ -266,17 +266,17 @@ rounded-*              → same name, same semantics (v3 scale)
 bg-opacity-N           → bg-{color}-{shade}/N (slash modifier)
 ```
 
-**Step 2 — pair every color with `dark:`.** Wind contract; not optional.
+**Step 2: pair every color with `dark:`.** Wind contract; not optional.
 
-**Step 3 — re-express conditional styling via `states:`.** Where the original Tailwind used `group-hover:` or `peer-focus:` or imperative DOM class flips, route through `states: Set<String>?` plus prefixed classes.
+**Step 3: re-express conditional styling via `states:`.** Where the original Tailwind used `group-hover:` or `peer-focus:` or imperative DOM class flips, route through `states: Set<String>?` plus prefixed classes.
 
-**Step 4 — verify layout assumptions.** `w-full` inside a Row becomes `flex-1`. `h-full` inside a scrollable becomes `flex-1`. `absolute` needs a `relative` parent. `truncate` needs a bounded width (wrap in `flex-1 min-w-0`).
+**Step 4: verify layout assumptions.** `w-full` inside a Row becomes `flex-1`. `h-full` inside a scrollable becomes `flex-1`. `absolute` needs a `relative` parent. `truncate` needs a bounded width (wrap in `flex-1 min-w-0`).
 
-**Step 5 — add `scrollPrimary: true`** to the outermost scrollable on every page.
+**Step 5: add `scrollPrimary: true`** to the outermost scrollable on every page.
 
-**Step 6 — re-test in both brightness modes.** Toggle via `context.windTheme.toggleTheme()`. A missing dark peer reveals itself instantly.
+**Step 6: re-test in both brightness modes.** Toggle via `context.windTheme.toggleTheme()`. A missing dark peer reveals itself instantly.
 
-**Step 7 — for any remaining gaps** (transform, blur, drop shadow, container queries, custom animations): reach for native Flutter (`Transform`, `BackdropFilter`, `AnimatedContainer`, `LayoutBuilder`, `TweenAnimationBuilder`). Wind composes freely with all of these; the W-widget remains the child.
+**Step 7: for any remaining gaps** (transform, blur, drop shadow, container queries, custom animations): reach for native Flutter (`Transform`, `BackdropFilter`, `AnimatedContainer`, `LayoutBuilder`, `TweenAnimationBuilder`). Wind composes freely with all of these; the W-widget remains the child.
 
 Example port:
 

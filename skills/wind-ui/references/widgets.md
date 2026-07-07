@@ -1,4 +1,4 @@
-# Wind 1.0 — Widget reference
+# Wind 1.2: Widget reference
 
 Full constructor surface, every named parameter, every default. Reach for this file when picking a widget, wiring callbacks, or recovering from a "what does this prop do?" stall.
 
@@ -22,17 +22,18 @@ No sub-barrels (`lib/dusk_integration.dart` and similar were removed in 1.0 alph
 8. [Animation: WindAnimationWrapper](#8-animation-windanimationwrapper)
 9. [Overlay: WPopover](#9-overlay-wpopover)
 10. [Structural: WDynamic](#10-structural-wdynamic)
-11. [Supporting types: SelectOption, DateRange, InputType, WDatePickerMode, PopoverAlignment, WindAnimationType](#11-supporting-types)
+11. [Composed: WBadge, WCard, WSwitch, WRadio, WTabs](#11-composed-wbadge-wcard-wswitch-wradio-wtabs)
+12. [Supporting types: SelectOption, DateRange, InputType, WDatePickerMode, PopoverAlignment, WindAnimationType](#12-supporting-types)
 
 ---
 
 ## 1. Conventions shared across W-widgets
 
-- **`className: String?`** — the styling surface. Every W-widget that renders anything visual accepts it. Triple-quoted multi-line when 3+ concerns.
-- **`states: Set<String>?`** — consumer-passed state strings (e.g. `{'selected'}`). Merges with the widget's automatic states (`hover`, `focus`, `loading`, `disabled`, `checked`, `error`).
-- **`child` XOR `children`** — for widgets that accept both, the assertion fires at construction. Pass exactly one.
-- **Outlined icon convention** — when using `Icons.*`, prefer the `_outlined` variant. `Icons.settings_outlined`, not `Icons.settings`.
-- **`semanticLabel` for icon-only controls** — `WButton` / `WAnchor` accept `semanticLabel: String?`. An icon-only button (no text child) is nameless to screen readers and Playwright `getByRole('button', { name })` without it; always set it when the child carries no readable text. When set, the child subtree is excluded from semantics, so the label overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already exposes readable text. The label must NOT contain the word "button"; the role appends it (`'Close button'` becomes "Close button button").
+- **`className: String?`**: the styling surface. Every W-widget that renders anything visual accepts it. Triple-quoted multi-line when 3+ concerns.
+- **`states: Set<String>?`**: consumer-passed state strings (e.g. `{'selected'}`). Merges with the widget's automatic states (`hover`, `focus`, `loading`, `disabled`, `checked`, `error`).
+- **`child` XOR `children`**: for widgets that accept both, the assertion fires at construction. Pass exactly one.
+- **Outlined icon convention**: when using `Icons.*`, prefer the `_outlined` variant. `Icons.settings_outlined`, not `Icons.settings`.
+- **`semanticLabel` for icon-only controls**: `WButton` / `WAnchor` accept `semanticLabel: String?`. An icon-only button (no text child) is nameless to screen readers and Playwright `getByRole('button', { name })` without it; always set it when the child carries no readable text. When set, the child subtree is excluded from semantics, so the label overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already exposes readable text. The label must NOT contain the word "button"; the role appends it (`'Close button'` becomes "Close button button").
 - **Inline color escape hatches**:
   - `WDiv(backgroundColor: Color)` overrides any `bg-*` / `dark:bg-*`.
   - `WText(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
@@ -284,9 +285,9 @@ Disabled state:
 - The `disabled:` state prefix activates className branches.
 
 State injection summary:
-- `loading` — from `isLoading: true`
-- `disabled` — from `disabled: true` or `isLoading: true`
-- `hover` / `focus` — from `WAnchor` automatically
+- `loading`: from `isLoading: true`
+- `disabled`: from `disabled: true` or `isLoading: true`
+- `hover` / `focus`: from `WAnchor` automatically
 
 ---
 
@@ -652,7 +653,7 @@ const WKeyboardActions({
 Usage:
 - Create one `FocusNode` per input field. Pass them in focus-navigation order via `focusNodes`.
 - Set `platform: 'ios'` to limit the toolbar to iOS (most common pattern for numeric keyboards).
-- Set `nextFocus: false` for single-field forms — shows only the Done button.
+- Set `nextFocus: false` for single-field forms: shows only the Done button.
 - `toolbarClassName` accepts any `bg-*` Wind class; always pair with `dark:`. When null the toolbar uses `Theme.of(context).colorScheme.surfaceContainerHighest`.
 - `closeWidgetBuilder(node)` receives the focused `FocusNode`; call `node.unfocus()` to dismiss.
 
@@ -822,7 +823,97 @@ Full JSON contract + state binding + security model: `${CLAUDE_SKILL_DIR}/refere
 
 ---
 
-## 11. Supporting types
+## 11. Composed: WBadge, WCard, WSwitch, WRadio, WTabs
+
+Five design-system widgets composed from `WDiv` / `WText` / `WAnchor`. All visual tone is `className`-driven, so every color token needs its `dark:` pair in the same string.
+
+### `WBadge`
+
+Inline status/label pill. Composes a rounded-full `WDiv` around a `WText(text-xs)`.
+
+```dart
+const WBadge(
+  String label, {                        // positional; the pill text
+  Key? key,
+  String? className,                     // pill tone: bg-* / text-* / dark: pairs, padding, radius
+})
+```
+
+### `WCard`
+
+Surface container with optional `header` and `footer` slots. Delegates to a `flex-col` `WDiv`.
+
+```dart
+const WCard({
+  Key? key,
+  required Widget child,                 // card body
+  Widget? header,                        // optional top slot
+  Widget? footer,                        // optional bottom slot
+  String? className,                     // surface styling; a default is applied when null
+})
+```
+
+### `WSwitch`
+
+Controlled toggle switch. Pushes the `checked:` state prefix when `value` is `true`.
+
+```dart
+const WSwitch({
+  Key? key,
+  required bool value,
+  ValueChanged<bool>? onChanged,         // null (or disabled) makes it inert
+  String? className,                     // the track: a flex Row; position the thumb with justify-* here
+  String? thumbClassName,                // thumb shape + color ONLY
+  bool disabled = false,
+  Set<String>? states,
+  String? semanticLabel,
+})
+```
+
+The thumb is a flex child of the track, so the caller animates it with `justify-start` then `checked:justify-end` on the track `className`. `WSwitch` does not inject `relative`. `translate-x-*` is intentionally unsupported (Wind has no transform parser). Wraps `WAnchor` for hover/focus/disabled propagation.
+
+### `WRadio<T>`
+
+Controlled radio button. Drives the `selected:` state prefix when `value == groupValue`. Group behavior (mutual exclusivity) is the caller's responsibility.
+
+```dart
+const WRadio<T>({
+  Key? key,
+  required T value,                      // this button's value
+  required T? groupValue,                // the group's current value
+  ValueChanged<T>? onChanged,            // null (or disabled) makes it inert
+  String? className,                     // the ring shell
+  String? indicatorClassName,            // the inner dot
+  bool disabled = false,
+  Set<String>? states,
+  String? semanticLabel,
+})
+```
+
+### `WTabs`
+
+Controlled tabs widget. The `selected:` state prefix activates on the active tab; a null `onChanged` marks the whole strip disabled.
+
+```dart
+WTabs({                                  // NOT const (asserts on tabs / selectedIndex)
+  Key? key,
+  required List<String> tabs,            // tab labels
+  required int selectedIndex,            // active tab (must be in range)
+  required Widget Function(int index) panelBuilder,  // receives the selected index each rebuild
+  ValueChanged<int>? onChanged,          // null makes the strip non-interactive
+  String? listClassName,                 // tab strip container
+  String? tabClassName,                  // every tab
+  String? selectedTabClassName,          // appended to the active tab only
+  String? panelClassName,                // the panel region
+  bool fullWidthList = true,             // strip spans the container; false for content-width / pill strips
+})
+```
+
+`fullWidthList` defaults to `true` so a `border-b` underline spans the full container; Wind prepends `w-full` to the strip unless the caller already set a width token. Set `fullWidthList: false` for a content-width or pill tab strip.
+
+---
+
+## 12. Supporting types
 
 ### `SelectOption<T>`
 

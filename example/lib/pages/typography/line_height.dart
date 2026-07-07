@@ -64,7 +64,7 @@ class LineHeightExamplePage extends StatelessWidget {
           description:
               'Brackets accept fixed px, rem, or unitless multipliers.',
           child: const WText(
-            'Custom 1.8 multiplier — the lines have a precise 1.8× breathing distance from one another for editorial layouts.',
+            'Custom 1.8 multiplier: the lines have a precise 1.8× breathing distance from one another for editorial layouts.',
             className: 'leading-[1.8] text-base text-slate-900 dark:text-white',
           ),
         ),

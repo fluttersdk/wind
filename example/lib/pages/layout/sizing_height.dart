@@ -52,7 +52,7 @@ class SizingHeightExamplePage extends StatelessWidget {
                   bg-yellow-100 dark:bg-yellow-900/30
                 ''',
                 child: const WText(
-                  'min-h-32 — at least 128px tall',
+                  'min-h-32: at least 128px tall',
                   className: 'text-sm text-slate-700 dark:text-slate-200',
                 ),
               ),

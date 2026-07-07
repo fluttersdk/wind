@@ -97,7 +97,7 @@ class _StyleParserBasicExamplePageState
         ExampleSection(
           title: 'Apply to Plain Flutter Widgets',
           description:
-              'Use wStyle to bring Wind into Container, Text, AppBar, ListTile — anything outside the W-prefixed family.',
+              'Use wStyle to bring Wind into Container, Text, AppBar, ListTile: anything outside the W-prefixed family.',
           child: _CodeBlock(
             code: 'final style = wStyle(context, "p-4 bg-red-500 rounded");\n\n'
                 'return Container(\n'

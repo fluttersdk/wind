@@ -48,7 +48,7 @@ class _ButtonBasicExamplePageState extends State<ButtonBasicExamplePage> {
         ExampleSection(
           title: 'Button Variants',
           description:
-              'Same WButton, different className. Primary, secondary, outline, danger — all utility-driven.',
+              'Same WButton, different className. Primary, secondary, outline, danger: all utility-driven.',
           child: WDiv(
             className: 'wrap gap-3',
             children: [

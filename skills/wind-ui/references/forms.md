@@ -1,4 +1,4 @@
-# Wind 1.0 — Forms
+# Wind 1.2: Forms
 
 Building forms with validation. Use this file when picking between raw `W*` and `WForm*`, wiring `FormState.validate()`, handling async / server-side errors, or working around the WFormDatePicker range gotcha.
 
@@ -341,7 +341,7 @@ The `forceErrorText` + `validator` pair both reflect the completeness check so t
 - Accumulate values across steps in `State` (a `Map<String, dynamic> _formData = {}` or per-step typed model).
 - On final submit, validate all keys: `_stepKeys.every((k) => k.currentState!.validate())`.
 
-For very long forms inside a `ListView.builder` (each row is a field), pass each field its own `controller` and listen on each — `Form` keys still work but the lazy rebuild means individual field state lifetimes are short. Controllers survive the rebuild.
+For very long forms inside a `ListView.builder` (each row is a field), pass each field its own `controller` and listen on each; `Form` keys still work but the lazy rebuild means individual field state lifetimes are short. Controllers survive the rebuild.
 
 ---
 

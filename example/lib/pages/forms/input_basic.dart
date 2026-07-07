@@ -66,22 +66,22 @@ class _InputBasicExamplePageState extends State<InputBasicExamplePage> {
             children: [
               WInput(
                 type: InputType.text,
-                placeholder: 'text — default',
+                placeholder: 'text: default',
                 className: _inputCls,
               ),
               WInput(
                 type: InputType.email,
-                placeholder: 'email — email keyboard',
+                placeholder: 'email: email keyboard',
                 className: _inputCls,
               ),
               WInput(
                 type: InputType.password,
-                placeholder: 'password — obscured',
+                placeholder: 'password: obscured',
                 className: _inputCls,
               ),
               WInput(
                 type: InputType.number,
-                placeholder: 'number — numeric keyboard',
+                placeholder: 'number: numeric keyboard',
                 className: _inputCls,
               ),
             ],

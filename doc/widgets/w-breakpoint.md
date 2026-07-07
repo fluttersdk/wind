@@ -1,6 +1,6 @@
 # WBreakpoint
 
-Declarative breakpoint-keyed builder for rendering different widget trees per responsive breakpoint. An **escape hatch** for cases where the widget structure genuinely differs between breakpoints — reach for className prefixes first.
+Declarative breakpoint-keyed builder for rendering different widget trees per responsive breakpoint. An **escape hatch** for cases where the widget structure genuinely differs between breakpoints; reach for className prefixes first.
 
 - [Basic Usage](#basic-usage)
 - [When to Use](#when-to-use)
@@ -52,7 +52,7 @@ Prefer className-first patterns. `WBreakpoint` is a last resort:
 | Render different widget **types** | `WBreakpoint` |
 | Render different child **counts** | `WBreakpoint` |
 
-If your two branches differ only in className, use prefixes instead — you'll get less code and a cleaner diff.
+If your two branches differ only in className, use prefixes instead: you'll get less code and a cleaner diff.
 
 <a name="constructor"></a>
 ## Constructor

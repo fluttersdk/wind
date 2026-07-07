@@ -1,4 +1,4 @@
-# Wind 1.0 — Debug bridge, parser cache, logger
+# Wind 1.2: Debug bridge, parser cache, logger
 
 Wiring `Wind.installDebugResolver()` for E2E tooling (Dusk, Telescope, Playwright), understanding the parser cache (and why tests need `WindParser.clearCache()`), and reading `WindLogger` output for performance / composition debugging.
 
@@ -136,9 +136,9 @@ Output (sample):
 ```
 
 What it shows:
-1. **Composition tree** — pseudo-Dart pseudo-code of the widget hierarchy Wind constructs (Container → Padding → Column / Row / etc.).
-2. **Final WindStyle** — the immutable value object after all parsers have run.
-3. **Build time** — microseconds from className-receive to widget-return.
+1. **Composition tree**: pseudo-Dart pseudo-code of the widget hierarchy Wind constructs (Container → Padding → Column / Row / etc.).
+2. **Final WindStyle**: the immutable value object after all parsers have run.
+3. **Build time**: microseconds from className-receive to widget-return.
 
 The `debug` token does NOT draw visual borders or wireframes. For visual debugging, reach for Flutter's `debugPaintSizeEnabled = true` (set in `main()` inside `kDebugMode`).
 

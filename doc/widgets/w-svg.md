@@ -152,16 +152,16 @@ WSvg(
 
 ### Preserving Original Colors
 
-By default, `WSvg` applies a `ColorFilter` based on the color priority chain above. For SVGs that contain multiple colors you want to keep intact—like QR codes, branded logos, or multi-color illustrations—use the `preserve-colors` utility class.
+By default, `WSvg` applies a `ColorFilter` based on the color priority chain above. For SVGs that contain multiple colors you want to keep intact (like QR codes, branded logos, or multi-color illustrations), use the `preserve-colors` utility class.
 
 ```dart
-// Multi-color logo — keep original colors
+// Multi-color logo: keep original colors
 WSvg(
   src: 'assets/logo-colored.svg',
   className: 'w-32 h-32 preserve-colors',
 )
 
-// QR code — must not be tinted
+// QR code: must not be tinted
 WSvg(
   src: 'assets/qr-code.svg',
   className: 'w-48 h-48 preserve-colors',

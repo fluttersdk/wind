@@ -135,9 +135,9 @@ class DisplayExamplePage extends StatelessWidget {
               _RefRow(cls: 'block', body: 'Default. Container or Column.'),
               _RefRow(cls: 'flex', body: 'Row/Column with flex semantics.'),
               _RefRow(cls: 'grid', body: 'GridView with grid-cols-{n}.'),
-              _RefRow(cls: 'wrap', body: 'Wrap widget — multi-line flow.'),
+              _RefRow(cls: 'wrap', body: 'Wrap widget: multi-line flow.'),
               _RefRow(
-                  cls: 'hidden', body: 'SizedBox.shrink — removes from tree.'),
+                  cls: 'hidden', body: 'SizedBox.shrink: removes from tree.'),
             ],
           ),
         ),

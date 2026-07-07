@@ -1,8 +1,8 @@
-# Wind 1.0 — Token catalog
+# Wind 1.2: Token catalog
 
 Exhaustive per-parser token reference. Reach for this file when verifying a className token exists, picking the right family, looking up an arbitrary-value pattern, or auditing className for unsupported syntax.
 
-19 parsers run first-match-wins. Order within className matters: last class within the same property wins (including duplicate tokens; `top-8 top-4 top-8` resolves to `top-8`). Unknown tokens drop silently.
+20 parsers run first-match-wins. Order within className matters: last class within the same property wins (including duplicate tokens; `top-8 top-4 top-8` resolves to `top-8`). Unknown tokens are dropped from output, and a one-time `kDebugMode` hint names each (release builds stay silent).
 
 ## Contents
 
@@ -38,7 +38,7 @@ Cache hit-rate is near-100% in production; the cache survives hot reload. Cleare
 
 Resolution:
 - Each token is matched against parsers in registration order; the first parser whose `canParse()` returns `true` claims it.
-- Unknown tokens drop silently (no warning, no exception).
+- Unknown tokens are dropped from output; a one-time `kDebugMode` hint names each (release builds stay silent, no exception is thrown).
 - Within a parser, last-class-wins via reverse iteration: `p-4 p-8` resolves to `p-8`.
 - Across parsers, conflicts coexist by targeting different `WindStyle` fields: `text-red-500` (color) and `text-center` (alignment) both apply.
 - Prefix resolution: every `:` segment must be active for the class to apply. `md:hover:dark:bg-blue-500` requires breakpoint ≥ md AND hover state AND dark brightness. Prefix order is arbitrary.
@@ -48,7 +48,7 @@ Inline color escape hatches that bypass the cache key:
 - `WText(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
 - `WIcon(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
 
-`WindThemeData.aliases` shorthand expansion: if the active theme has `aliases` set, `WindParser.parse` expands matching bare tokens to their full className strings before the 19-parser pipeline runs. Aliases are not tokens themselves and do not appear in the catalog below; they are transparent to every parser. See `references/theme.md` and `references/tailwind-divergence.md` for details.
+`WindThemeData.aliases` shorthand expansion: if the active theme has `aliases` set, `WindParser.parse` expands matching bare tokens to their full className strings before the 20-parser pipeline runs. Aliases are not tokens themselves and do not appear in the catalog below; they are transparent to every parser. See `references/theme.md` and `references/tailwind-divergence.md` for details.
 
 ---
 
@@ -302,27 +302,27 @@ Order: covered in §2.
 | `text-[18px]/[24px]` | Arbitrary size AND line-height (slash-separated, both bracketed) |
 | `text-xl/8` | Preset size + numeric line-height |
 
-**Color** — `text-{family}-{shade}`, `text-[#hex]`, `text-{family}-{shade}/{N}`, `text-transparent`, `text-current` (inherits), `text-inherit`. Needs `dark:` peer.
+**Color**: `text-{family}-{shade}`, `text-[#hex]`, `text-{family}-{shade}/{N}`, `text-transparent`, `text-current` (inherits), `text-inherit`. Needs `dark:` peer.
 
-**Alignment** — `text-left` `text-center` `text-right` `text-justify` `text-start` `text-end` (last two are RTL-aware via `Directionality`).
+**Alignment**: `text-left` `text-center` `text-right` `text-justify` `text-start` `text-end` (last two are RTL-aware via `Directionality`).
 
-**Weight** — `font-thin` (100) `font-extralight` (200) `font-light` (300) `font-normal` (400) `font-medium` (500) `font-semibold` (600) `font-bold` (700) `font-extrabold` (800) `font-black` (900). Arbitrary: `font-[100]` through `font-[900]`.
+**Weight**: `font-thin` (100) `font-extralight` (200) `font-light` (300) `font-normal` (400) `font-medium` (500) `font-semibold` (600) `font-bold` (700) `font-extrabold` (800) `font-black` (900). Arbitrary: `font-[100]` through `font-[900]`.
 
-**Style** — `italic` / `not-italic`.
+**Style**: `italic` / `not-italic`.
 
-**Decoration** — `underline` / `overline` / `line-through` / `no-underline`. Color: `decoration-{family}-{shade}` / `decoration-[#hex]`. Style: `decoration-solid` / `-double` / `-dotted` / `-dashed` / `-wavy`. Thickness: `decoration-N` / `decoration-[3px]`.
+**Decoration**: `underline` / `overline` / `line-through` / `no-underline`. Color: `decoration-{family}-{shade}` / `decoration-[#hex]`. Style: `decoration-solid` / `-double` / `-dotted` / `-dashed` / `-wavy`. Thickness: `decoration-N` / `decoration-[3px]`.
 
-**Transform** — `uppercase` / `lowercase` / `capitalize` / `normal-case`.
+**Transform**: `uppercase` / `lowercase` / `capitalize` / `normal-case`.
 
-**Tracking (letter-spacing)** — `tracking-tighter` (-2) / `-tight` (-1) / `-normal` (0) / `-wide` (1) / `-wider` (2) / `-widest` (4). Arbitrary `tracking-[0.5]`.
+**Tracking (letter-spacing)**: `tracking-tighter` (-2) / `-tight` (-1) / `-normal` (0) / `-wide` (1) / `-wider` (2) / `-widest` (4). Arbitrary `tracking-[0.5]`.
 
-**Leading (line-height)** — `leading-tight` (1.25) / `-snug` (1.375) / `-normal` (1.5) / `-relaxed` (1.625) / `-loose` (2.0). Arbitrary `leading-[24px]`, numeric `leading-6` (6 × 4 px).
+**Leading (line-height)**: `leading-tight` (1.25) / `-snug` (1.375) / `-normal` (1.5) / `-relaxed` (1.625) / `-loose` (2.0). Arbitrary `leading-[24px]`, numeric `leading-6` (6 × 4 px).
 
-**Overflow** — `truncate` (sets `TextOverflow.ellipsis` + `maxLines: 1` + `softWrap: false`) / `text-ellipsis` (ellipsis only) / `text-clip` (no ellipsis). `line-clamp-N` for multi-line ellipsis. `line-clamp-none` to reset.
+**Overflow**: `truncate` (sets `TextOverflow.ellipsis` + `maxLines: 1` + `softWrap: false`) / `text-ellipsis` (ellipsis only) / `text-clip` (no ellipsis). `line-clamp-N` for multi-line ellipsis. `line-clamp-none` to reset.
 
-**Whitespace / wrap** — `whitespace-normal` / `whitespace-nowrap` / `text-wrap` / `text-nowrap` / `text-balance`.
+**Whitespace / wrap**: `whitespace-normal` / `whitespace-nowrap` / `text-wrap` / `text-nowrap` / `text-balance`.
 
-**Family** — `font-sans` / `font-serif` / `font-mono`. Custom via `WindThemeData.fontFamilies`: `font-{customKey}`. Arbitrary: `font-[CustomName]`.
+**Family**: `font-sans` / `font-serif` / `font-mono`. Custom via `WindThemeData.fontFamilies`: `font-{customKey}`. Arbitrary: `font-[CustomName]`.
 
 ---
 
@@ -403,12 +403,12 @@ Custom breakpoints via `WindThemeData.screens`: `{'tablet': 900}` enables `table
 
 **State (built-in):** `hover:` `focus:` `disabled:` `loading:` `checked:` `error:`. The first two come from `WAnchor`; the others from the widget itself.
 
-**State (custom):** `selected:` `highlighted:` `new:` `pressed:` `expanded:` — any string. Pass via `states: Set<String>?`. No registration required.
+**State (custom):** `selected:` `highlighted:` `new:` `pressed:` `expanded:`, or any string. Pass via `states: Set<String>?`. No registration required.
 
 NOT supported as prefixes:
 - `active:` (reserved, not wired; WAnchor tracks hover and focus only)
 - `group-hover:` / `peer-focus:` / `first:` / `last:` / `odd:` / `even:` / `before:` / `after:` / `focus-within:` / `focus-visible:`
-- `@container` / `@sm:` (container queries) — viewport-only
+- `@container` / `@sm:` (container queries), viewport-only
 
 ---
 
@@ -475,9 +475,10 @@ On a `WDiv` that also carries `hover:` / `focus:` / `active:` (so it auto-wraps 
 If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it is probably in this list. Wind drops them silently.
 
 **Layout / flex:**
-- `flex-wrap` (use `wrap`)
 - `flex-nowrap` (default; omit `wrap`)
 - `flex-wrap-reverse`
+
+(`flex-wrap` is NOT in this list: it is aliased to `wrap` and resolves, printing a one-time `kDebugMode` hint that points at the canonical `wrap`.)
 
 **Spacing:**
 - `ps-N` / `pe-N` / `ms-N` / `me-N` (logical inline-start/end)
@@ -546,7 +547,7 @@ If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it 
 
 **Container queries:** `@container`, `@sm:`, `@md:`, `@lg:`, `@max-md:`, named containers like `@sm/sidebar:`.
 
-**Important modifier:** `!flex` (v3 prefix), `flex!` (v4 suffix) — neither parsed.
+**Important modifier:** `!flex` (v3 prefix), `flex!` (v4 suffix); neither parsed.
 
 **Tailwind CSS-only:**
 - `@apply` / `@layer` / `@variant` / `@theme` directives

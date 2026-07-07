@@ -499,7 +499,7 @@ class WDiv extends StatelessWidget {
       isColumn: isColumn,
     );
 
-    // Resolve child ordering (order-*) before gap injection — sort stably by
+    // Resolve child ordering (order-*) before gap injection: sort stably by
     // resolved order (children without `order-*` default to 0). `flex-*-reverse`
     // is applied via Row.textDirection / Column.verticalDirection below so the
     // main-axis semantics (justify-start etc.) mirror correctly, matching CSS.
@@ -661,7 +661,7 @@ class WDiv extends StatelessWidget {
     } else {
       // For Row with space distribution OR overflow-hidden, wrap children with Flexible
       // This mimics CSS flex-shrink: 1 default behavior. Inside a horizontally
-      // scrollable row, `Flexible` is also invalid — skip it too.
+      // scrollable row, `Flexible` is also invalid, skip it too.
       final needsFlexible =
           (needsSpaceDistribution || hasOverflowClip) && !isMainAxisScrollable;
       // A Row hands non-flex children an UNBOUNDED main-axis constraint, so a
@@ -698,14 +698,14 @@ class WDiv extends StatelessWidget {
         }
         // Don't wrap children that self-wrap in Expanded/Flexible
         // (flex-N, grow, flex-grow, flex-auto, flex-initial, shrink,
-        // flex-shrink) — wrapping them again asserts ParentDataWidget.
+        // flex-shrink): wrapping them again asserts ParentDataWidget.
         if (child is WDiv && _selfWrapsInFlex(child.className)) {
           return child;
         }
         if (child is WText && _selfWrapsInFlex(child.className)) {
           return child;
         }
-        // Skip shrink-0 children (should not shrink — keep intrinsic size)
+        // Skip shrink-0 children (should not shrink, keep intrinsic size)
         if (child is WDiv && _hasShrinkZero(child.className)) {
           return child;
         }
@@ -1535,9 +1535,9 @@ class WDiv extends StatelessWidget {
     //   _debugRelayoutBoundaryAlreadyMarkedNeedsLayout() is not true
     //
     // Strategy:
-    //   - w-full: SizedBox(width: infinity) — no LayoutBuilder needed
-    //   - w-full + max-w-*: ConstrainedBox + SizedBox — no LayoutBuilder needed
-    //   - w-1/2, w-1/3 etc: FractionallySizedBox — no LayoutBuilder needed
+    //   - w-full: SizedBox(width: infinity), no LayoutBuilder needed
+    //   - w-full + max-w-*: ConstrainedBox + SizedBox, no LayoutBuilder needed
+    //   - w-1/2, w-1/3 etc: FractionallySizedBox, no LayoutBuilder needed
     //   - h-full: LayoutBuilder only when vertical axis is unbounded
     if (styles.widthFactor != null || styles.heightFactor != null) {
       final innerChild = widgetToBuild;
@@ -1566,7 +1566,7 @@ class WDiv extends StatelessWidget {
         'instead of `h-full` inside a vertical scroll.',
       );
 
-      // Fast path: width-only sizing (no heightFactor) — avoids LayoutBuilder
+      // Fast path: width-only sizing (no heightFactor), avoids LayoutBuilder
       // Covers: w-full, w-full max-w-*, w-1/2, w-1/3, etc.
       if (styles.heightFactor == null) {
         if (isFullWidth && scrollScope?.horizontalPort != null) {
@@ -1763,14 +1763,14 @@ class WDiv extends StatelessWidget {
       );
     }
 
-    // Absolute-positioned elements are out of normal flow —
+    // Absolute-positioned elements are out of normal flow:
     // skip Expanded/Flexible wrapping (parent handles Positioned).
     if (styles.positionType == WindPositionType.absolute) {
       return widgetToBuild ?? const SizedBox.shrink();
     }
 
     // Apply Flex/Expanded (flex-*). Skipped when an ancestor signals that
-    // the flex main axis is scrollable — `Expanded`/`Flexible` inside an
+    // the flex main axis is scrollable: `Expanded`/`Flexible` inside an
     // unbounded-width/height flex would assert.
     if (!skipFlexWrap) {
       if (styles.flex != null) {

@@ -305,7 +305,7 @@ class WText extends StatelessWidget {
       widgetToBuild = Align(alignment: styles.alignment!, child: widgetToBuild);
     }
 
-    // Step E: Flex (Expanded/Flexible) — skipped inside a scrollable main axis.
+    // Step E: Flex (Expanded/Flexible), skipped inside a scrollable main axis.
     if (!skipFlexWrap) {
       if (styles.flex != null) {
         logger.wrapWith("Expanded", "flex: ${styles.flex}");

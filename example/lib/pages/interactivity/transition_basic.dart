@@ -25,7 +25,7 @@ class TransitionBasicExamplePage extends StatelessWidget {
               px-6 py-4 rounded-lg self-start
             ''',
             child: const WText(
-              'Hover me — 300ms ease-in-out',
+              'Hover me: 300ms ease-in-out',
               className: 'text-white font-medium',
             ),
           ),

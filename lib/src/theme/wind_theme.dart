@@ -260,7 +260,7 @@ class _WindThemeState extends State<WindTheme> with WidgetsBindingObserver {
   /// When true, [onThemeChanged] will NOT fire.
   bool _isSystemChange = false;
 
-  /// Previous brightness — used to detect actual changes.
+  /// Previous brightness, used to detect actual changes.
   Brightness? _previousBrightness;
 
   @override

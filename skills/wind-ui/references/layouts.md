@@ -1,4 +1,4 @@
-# Wind 1.0 — Layouts
+# Wind 1.2: Layouts
 
 12+ canonical layout recipes plus the Flutter constraint model that drives every overflow. Reach for this file when picking a layout pattern or recovering from RenderFlex / unbounded-height assertions.
 
@@ -43,7 +43,7 @@ When Flutter throws, map the error to a Wind-shaped fix.
 | `A RenderFlex overflowed by N pixels` | Sum of non-flex children exceeds the Row/Column's bounded constraint. | Wrap the offending child in `WDiv(className: 'flex-1', child: ...)` (a bare `w-full` Row child is already auto-treated as `flex-1`) |
 | `RenderFlex children have non-zero flex but incoming width/height constraints are unbounded` | `flex-1` or `Expanded` inside a parent that does not constrain the main axis (typically a `SingleChildScrollView`) | Either remove the `flex-1` from the child or give the parent a bounded size (`h-screen`, fixed `h-N`, or `min-h-screen`) |
 | `An InputDecorator cannot have an unbounded width` | `WFormInput` / `TextField` in a Row without `flex-1` or fixed width | Wrap in `WDiv(className: 'flex-1', child: WFormInput(...))` |
-| `Vertical viewport was given unbounded height` | `SingleChildScrollView` (or any vertical scrollable) inside an unbounded parent — typically a `Column` outside a `Scaffold` | Wrap the scroll's ancestor in a fixed-height container, or wrap the chain in `Scaffold(body: ...)` |
+| `Vertical viewport was given unbounded height` | `SingleChildScrollView` (or any vertical scrollable) inside an unbounded parent, typically a `Column` outside a `Scaffold` | Wrap the scroll's ancestor in a fixed-height container, or wrap the chain in `Scaffold(body: ...)` |
 | `BoxConstraints forces an infinite width/height` | A widget requiring tight constraints (`SizedBox.expand`) received `double.infinity` from its parent | Constrain the parent (`max-w-*`, fixed `w-N`) |
 | `RenderBox was not laid out` | Secondary error; look earlier in the trace for the primary constraint violation | Fix the earlier assertion; this one cascades |
 | `A Positioned widget must be a descendant of a Stack` | `absolute` token without a `relative` ancestor | Wrap the parent in `WDiv(className: 'relative ...', children: [..., WDiv(className: 'absolute ...')])` |
@@ -335,7 +335,7 @@ Negative offsets work (`-top-2`, `-inset-1`). Percentage offsets (`top-[50%]`) d
 Fix: wrap the text in a flex child.
 
 ```dart
-// Wrong — overflows the Row
+// Wrong: overflows the Row
 WDiv(
   className: 'flex flex-row gap-2',
   children: [
@@ -344,7 +344,7 @@ WDiv(
   ],
 );
 
-// Right — flex-1 gives the text bounded width
+// Right: flex-1 gives the text bounded width
 WDiv(
   className: 'flex flex-row gap-2 items-center',
   children: [
@@ -385,7 +385,7 @@ WDiv(
 
 > **Column width-stretch is intrinsic-free (no `IntrinsicHeight` needed).** The reverse case, a `flex flex-col items-stretch` (equal child WIDTHS), needs no `IntrinsicHeight`: Wind's column cross-axis stretch is a real render object (`WindCrossStretch`), and `basis-*` resolves without a `LayoutBuilder`. So a `flex flex-col` (with or without `basis-*`) renders under an `IntrinsicHeight`, a `Table`, or an `items-stretch` grid cell without asserting. Only the ROW height-match above still uses `IntrinsicHeight`.
 
-> **Caveat — `h-full` still fails through an `IntrinsicHeight`.** A child that resolves `h-full` in an unbounded-height context still uses a Wind internal `LayoutBuilder`, so under an `IntrinsicHeight` it throws `LayoutBuilder does not support returning intrinsic dimensions` (a Flutter constraint, not a Wind bug). Keep children explicitly sized under an `IntrinsicHeight` and avoid `h-full` there. (Fractional `basis-*` no longer triggers this: it resolves against the flex's own extent via a real render object.) For equal-height cards outside a scroll, prefer fixed `h-*` cells or a `Stack` + `Positioned(top:0,bottom:0)`.
+> **Caveat: `h-full` still fails through an `IntrinsicHeight`.** A child that resolves `h-full` in an unbounded-height context still uses a Wind internal `LayoutBuilder`, so under an `IntrinsicHeight` it throws `LayoutBuilder does not support returning intrinsic dimensions` (a Flutter constraint, not a Wind bug). Keep children explicitly sized under an `IntrinsicHeight` and avoid `h-full` there. (Fractional `basis-*` no longer triggers this: it resolves against the flex's own extent via a real render object.) For equal-height cards outside a scroll, prefer fixed `h-*` cells or a `Stack` + `Positioned(top:0,bottom:0)`.
 
 ---
 
@@ -458,7 +458,7 @@ For very different mobile vs desktop layouts (not just sizing), reach for `WBrea
 
 | Wrong | Why | Right |
 |---|---|---|
-| `WDiv(className: 'w-full')` inside a Row (works, treated as `flex-1`) | — | `'flex-1'` (clearer) |
+| `WDiv(className: 'w-full')` inside a Row (works, treated as `flex-1`) | No failure, just intent clarity | `'flex-1'` (clearer) |
 | `WDiv(className: 'h-full overflow-y-auto')` inside a Column | Unbounded height assertion | `'flex-1 overflow-y-auto'` + `scrollPrimary: true`, parent has `h-full` |
 | `WDiv(className: 'absolute top-0')` without `relative` ancestor | No Stack to anchor | wrap parent in `'relative'` |
 | `WText(..., className: 'truncate')` directly inside a Row | Unbounded width; ellipsis never fires | wrap in `WDiv(className: 'flex-1 min-w-0')` |

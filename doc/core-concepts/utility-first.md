@@ -94,7 +94,7 @@ Wind uses a high-performance pipeline to transform strings into native Flutter s
 
 1. **Context Initialization**: `WindContext` captures the current environment, including screen size (breakpoints), brightness, and theme scales.
 2. **Parsing**: The `WindParser` tokenizes the `className` string and delegates to specialized parsers for colors, spacing, borders, and more.
-3. **Style Composition**: Parsers generate a `WindStyle` object—an immutable, typed representation of the requested styles.
+3. **Style Composition**: Parsers generate a `WindStyle` object, an immutable, typed representation of the requested styles.
 4. **Widget Application**: `W-prefixed` widgets consume this `WindStyle` to dynamically build the optimal Flutter widget hierarchy (e.g., injecting `Padding` or `DecoratedBox` only when needed).
 
 > [!NOTE]
