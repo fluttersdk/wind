@@ -30,7 +30,7 @@ class ResponsiveLayoutExamplePage extends StatelessWidget {
                 className: 'text-sm text-cyan-100 mb-3',
               ),
               WDiv(
-                className: 'flex flex-wrap items-center gap-2',
+                className: 'flex wrap items-center gap-2',
                 children: [
                   WDiv(
                     className: 'px-3 py-1 rounded-full bg-white/20',
@@ -151,7 +151,7 @@ class ResponsiveLayoutExamplePage extends StatelessWidget {
         ),
         WDiv(className: 'h-4'),
         WDiv(
-          className: 'flex flex-wrap gap-2',
+          className: 'flex wrap gap-2',
           children: [
             _buildTag('flex-col'),
             _buildTag('lg:flex-row'),

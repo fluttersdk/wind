@@ -24,7 +24,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | Wrapping | `flex-wrap` (CSS flex-wrap property) | `wrap` (Flutter `Wrap` widget is structurally separate from `flex`) |
 | Container layout | `flex` works on any element | `flex` requires `WDiv`; raw `Container` does not parse className |
 | `dark:` opt-in | Optional (use only when needed) | Required for every color token; missing peer is a bug |
-| Unknown tokens | Build-time warning OR ignored depending on config | Silent no-op at runtime; no warning, no exception |
+| Unknown tokens | Build-time warning OR ignored depending on config | No-op at runtime (dropped). A one-time `kDebugMode` `debugPrint` names the token only when NO parser recognizes it (its prefix matches no parser); a recognized family with an unsupported value (e.g. `text-7xl`, claimed by `text-*`) drops silently with no hint. Valid tokens handled outside the parser map (widget-consumed `object-*`, the `inline-flex`/`inline-block`/`inline` display keywords, inert compat tokens like `transition-colors` / `antialiased` / `sr-only` / `tabular-nums`) are exempt, so the hint targets genuine unknown-family typos |
 | Important modifier | `!flex` (v3) or `flex!` (v4) | Not implemented |
 | Container queries | `@container`, `@sm:`, `@max-md:` | Not implemented; viewport-only |
 | Group / peer state | `group-hover:`, `peer-focus:` | Not implemented; use `states: Set<String>` |
@@ -37,7 +37,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 
 | Token | Tailwind | Wind |
 |---|---|---|
-| `flex-wrap` | Enables wrapping on a flex container | No-op (use `wrap` instead) |
+| `flex-wrap` | Enables wrapping on a flex container | Aliased directly to `wrap` (the canonical token); emits a one-time `kDebugMode` hint pointing at `wrap` |
 | `text-{xs..6xl}` | Sizes go to `9xl` (128 px) | Stops at `6xl` (60 px). `7xl` / `8xl` / `9xl` silently no-op |
 | `text-7xl`+ | Larger sizes available | No-op |
 | `text-{color}` | Pure font color | Overloaded across color / alignment / size / weight — resolves in order |
@@ -66,7 +66,6 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 When a className inherited from a web project includes any of these, expect silent no-ops. Strip them, or find a Wind-shaped substitute.
 
 ### Layout / flex
-- `flex-wrap` (use `wrap` instead)
 - `flex-nowrap` (default; omit `wrap`)
 - `flex-wrap-reverse`
 

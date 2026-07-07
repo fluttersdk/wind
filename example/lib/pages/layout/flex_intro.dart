@@ -85,9 +85,10 @@ class FlexIntroExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
-          title: 'Wrap (not flex-wrap)',
+          title: 'Wrap',
           description:
-              'Flutter Row/Column do not wrap. Use the wrap utility to render a Wrap widget instead.',
+              'Flutter Row/Column do not wrap. Use the wrap utility to render a Wrap widget instead '
+              '(the Tailwind spelling is aliased to this token for callers coming from CSS).',
           child: WDiv(
             className: '''
               wrap gap-2 p-4 rounded-lg

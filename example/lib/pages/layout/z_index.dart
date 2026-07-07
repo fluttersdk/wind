@@ -102,7 +102,7 @@ class ZIndexExamplePage extends StatelessWidget {
             description: 'Standard z-index values from theme',
             children: [
               WDiv(
-                className: 'flex flex-wrap gap-2 overflow-x-auto',
+                className: 'flex wrap gap-2 overflow-x-auto',
                 children: [
                   _buildZIndexChip('z-0', '0'),
                   _buildZIndexChip('z-10', '10'),
@@ -121,7 +121,7 @@ class ZIndexExamplePage extends StatelessWidget {
             description: 'Custom z-index with bracket notation',
             children: [
               WDiv(
-                className: 'flex flex-wrap gap-2 overflow-x-auto',
+                className: 'flex wrap gap-2 overflow-x-auto',
                 children: [
                   _buildZIndexChip('z-[100]', '100'),
                   _buildZIndexChip('z-[1000]', '1000'),

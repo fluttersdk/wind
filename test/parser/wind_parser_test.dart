@@ -96,6 +96,79 @@ void main() {
         "background": ["bg-red-500", "bg-blue-500"],
       });
     });
+
+    test('drops a className no parser recognizes', () {
+      // The unclaimed token emits the one-time kDebugMode hint; silence it so
+      // the suite output stays quiet (kDebugMode is true under flutter test).
+      final original = debugPrint;
+      addTearDown(() => debugPrint = original);
+      debugPrint = (message, {wrapWidth}) {};
+
+      final className = "bg-red-500 not-a-real-token";
+      final context = createTestContext();
+      final result = WindParser.findAndGroupClasses(className, context);
+      expect(result, {
+        "background": ["bg-red-500"],
+      });
+      expect(
+        result.values.expand((classes) => classes),
+        isNot(contains('not-a-real-token')),
+      );
+    });
+  });
+
+  group('WindParser unknown-token debug diagnostics', () {
+    setUp(WindParser.clearCache);
+
+    test('warns exactly once per unique unknown token this session', () {
+      final logs = <String>[];
+      final original = debugPrint;
+      debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+
+      try {
+        final context = createTestContext();
+        WindParser.findAndGroupClasses(
+          'bg-red-500 not-a-real-token',
+          context,
+        );
+        // Re-parsing the same unknown token must not print a second time.
+        WindParser.findAndGroupClasses('not-a-real-token', context);
+      } finally {
+        debugPrint = original;
+      }
+
+      expect(
+        logs.where((l) => l.contains("'not-a-real-token'")),
+        hasLength(1),
+      );
+    });
+
+    test(
+      'does not warn on valid tokens handled outside the parser map '
+      '(widget-consumed object-fit + inert compat tokens)',
+      () {
+        final logs = <String>[];
+        final original = debugPrint;
+        debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+
+        try {
+          final context = createTestContext();
+          // object-cover is consumed by WImage; transition-colors is emitted by
+          // Wind's own widget docstrings; tabular-nums is in the consumer
+          // contract; antialiased / sr-only are inert. None is a typo, so none
+          // may warn.
+          WindParser.findAndGroupClasses(
+            'object-cover transition-colors tabular-nums antialiased sr-only '
+            'inline-flex inline-block',
+            context,
+          );
+        } finally {
+          debugPrint = original;
+        }
+
+        expect(logs.where((l) => l.contains('unknown className')), isEmpty);
+      },
+    );
   });
 
   group('WindParser.resolveClasses', () {

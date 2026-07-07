@@ -39,12 +39,18 @@ void main() {
     setUp(() {
       parser = const FlexboxGridParser();
       context = createTestContext();
+      FlexboxGridParser.resetWarnings();
     });
 
     group('parse', () {
       test('parses flex display class', () {
         final styles = parser.parse(WindStyle(), ['flex'], context);
         expect(styles.displayType, WindDisplayType.flex);
+      });
+
+      test('parses flex-wrap as an alias for wrap display', () {
+        final styles = parser.parse(WindStyle(), ['flex-wrap'], context);
+        expect(styles.displayType, WindDisplayType.wrap);
       });
 
       test('parses grid-cols class', () {
@@ -309,6 +315,7 @@ void main() {
         expect(parser.canParse('self-center'), isTrue);
         expect(parser.canParse('self-start'), isTrue);
         expect(parser.canParse('align-self-center'), isTrue);
+        expect(parser.canParse('flex-wrap'), isTrue);
       });
 
       test('returns true for grid related classes', () {
@@ -396,6 +403,26 @@ void main() {
         final styles = parser.parse(WindStyle(), ['basis-[120px]'], context);
         expect(styles.basisSize, 120.0);
         expect(styles.basisFactor, isNull);
+      });
+    });
+
+    group('flex-wrap debug hint', () {
+      test('warns exactly once per session when flex-wrap is parsed', () {
+        final logs = <String>[];
+        final original = debugPrint;
+        debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+
+        try {
+          parser.parse(WindStyle(), ['flex-wrap'], context);
+          parser.parse(WindStyle(), ['flex-wrap'], context);
+        } finally {
+          debugPrint = original;
+        }
+
+        expect(
+          logs.where((l) => l.contains("'flex-wrap' is aliased to 'wrap'")),
+          hasLength(1),
+        );
       });
     });
   });

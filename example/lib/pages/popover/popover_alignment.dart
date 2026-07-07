@@ -36,7 +36,7 @@ class PopoverAlignmentExamplePage extends StatelessWidget {
             description: 'Opens below the trigger',
             children: [
               WDiv(
-                className: 'flex gap-4 flex-wrap',
+                className: 'flex gap-4 wrap',
                 children: [
                   _alignmentDemo('bottomLeft', PopoverAlignment.bottomLeft),
                   _alignmentDemo('bottomCenter', PopoverAlignment.bottomCenter),
@@ -55,7 +55,7 @@ class PopoverAlignmentExamplePage extends StatelessWidget {
             description: 'Opens above the trigger',
             children: [
               WDiv(
-                className: 'flex gap-4 flex-wrap',
+                className: 'flex gap-4 wrap',
                 children: [
                   _alignmentDemo('topLeft', PopoverAlignment.topLeft),
                   _alignmentDemo('topCenter', PopoverAlignment.topCenter),
