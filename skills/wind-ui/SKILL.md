@@ -54,7 +54,7 @@ These hold for every line of Wind code. Apply each as a hard constraint, not a s
 
 5. **`child` XOR `children` on every W-widget that accepts both.** Passing both fails an assertion at construction. Passing neither renders an empty `SizedBox`.
 
-6. **Unknown tokens are dropped, with a debug hint.** `text-7xl` (Wind stops at `text-6xl`), `flex-cow` (typo), `ps-4` (logical-inline, unsupported), `-m-4` (negative margin, unsupported) all parse to nothing. The parser drops them and, in `kDebugMode`, prints a one-time `debugPrint` naming the token (deduped per unique token per session); release builds stay silent. Spell-check by hand or load `references/tokens.md` to verify the family.
+6. **Unknown tokens are dropped; the debug hint fires only for tokens no parser recognizes.** Two cases, and they behave differently. A token whose prefix matches NO parser (`ps-4` logical-inline, `-m-4` negative margin, a mistyped family like `wibble-4`) is dropped and, in `kDebugMode`, prints a one-time `debugPrint` naming it (deduped per unique token per session; release builds stay silent). A token whose family IS recognized but whose value is unsupported (`text-7xl`, past wind's `text-6xl` cap; `flex-cow`, which still matches `flex-*`) is claimed by that parser and drops SILENTLY, with no hint. So the hint catches unknown-family typos, not bad-value ones; spell-check values by hand or load `references/tokens.md` to verify the family.
 
 7. **Last class wins within a parser family.** `p-4 p-8` resolves to `p-8`. `bg-red-500 bg-blue-500` resolves to `bg-blue-500`. Conflicts inside the same property are stable but silent; conflicts across properties (`text-red-500` color + `text-center` alignment) coexist because they target different fields.
 
@@ -192,7 +192,7 @@ A developer fluent in Tailwind v3 or v4 will default to assumptions Wind partial
 |---|---|
 | `flex-wrap` enables wrapping | Aliased to `wrap` (Flutter `Wrap` is a separate widget); prefer `wrap` directly, `flex-wrap` prints a one-time debug hint. |
 | Font sizes go to `9xl` | Stop at `6xl` (60 px). `7xl`/`8xl`/`9xl` silently no-op. |
-| `text-7xl` typo fails loudly | Every unknown token is dropped; a `kDebugMode` hint names it once. Hand-check spelling. |
+| `text-7xl` typo fails loudly | A token no parser recognizes is dropped with a one-time `kDebugMode` hint; a recognized family with an unsupported value (like `text-7xl`, claimed by `text-*`) drops silently. Hand-check values. |
 | Spacing in rem | Logical pixels (4 px per unit; `p-4` = 16 px). Adjust via `WindThemeData.baseSpacingUnit`. |
 | `w-full` inside a Row works | A bare `w-full` row child is treated as `flex-1` (wrapped in `Expanded`) and fills the row; prefer `flex-1` for clarity. `md:w-full` is not auto-expanded. |
 | `h-full` inside a scrollable parent works | Triggers unbounded-height assertion. Use `min-h-screen` or wrap the parent in a fixed-height container. |
