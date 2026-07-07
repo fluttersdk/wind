@@ -1,6 +1,6 @@
 # fluttersdk_wind
 
-> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 24-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 27 W-prefix widgets, `WindRecipe` / `WindSlotRecipe` variant composition, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, and a skill distributed to 8+ AI clients via fluttersdk/ai). Open Source. Tailwind syntax. Flutter native. Stable 1.x line.
+> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 24-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 27 W-prefix widgets, `WindRecipe` / `WindSlotRecipe` variant composition, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, and a skill distributed to 8+ AI clients via fluttersdk/ai). Open Source. Tailwind syntax. Flutter native. Version 1.2.0 stable.
 
 **Stack**: Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `fluttersdk_wind_diagnostics_contracts`. No `mockito`, no state management library, no router.
 

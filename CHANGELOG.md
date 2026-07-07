@@ -8,6 +8,8 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-08
+
 ### Changed
 
 - Wind's internal `flex` layout is now fully intrinsic-safe: the column cross-axis stretch and the `basis-*` resolution no longer use a `LayoutBuilder`. Column stretch is a real render object (`WindCrossStretch`) and fractional `basis-*` resolves against the flex's own extent via `WindMainExtentProvider`/`WindFractionBasis`. A `flex flex-col` (with or without `basis-*`) now renders inside an `items-stretch` grid cell, under a Flutter `IntrinsicHeight`/`IntrinsicWidth`, or in a `Table` cell without the `LayoutBuilder does not support returning intrinsic dimensions` assert (the web `_owner != null` cascade that produced). (`lib/src/widgets/w_div.dart`, `lib/src/widgets/wind_equal_height_row.dart`) (WIND-4)
@@ -182,7 +184,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.1.2...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/fluttersdk/wind/releases/tag/1.2.0
 [1.1.2]: https://github.com/fluttersdk/wind/releases/tag/1.1.2
 [1.1.1]: https://github.com/fluttersdk/wind/releases/tag/1.1.1
 [1.1.0]: https://github.com/fluttersdk/wind/releases/tag/1.1.0
