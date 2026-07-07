@@ -14,12 +14,72 @@ Widget wrapWithTheme(Widget child) {
   );
 }
 
+Widget wrapWithPrimary(Widget child, MaterialColor primary) {
+  return MaterialApp(
+    home: WindTheme(
+      data: WindThemeData(colors: {'primary': primary}),
+      child: Scaffold(body: child),
+    ),
+  );
+}
+
+/// Returns the first non-null `BoxDecoration` background color under [of].
+Color? firstDecorationColor(WidgetTester tester, Finder of) {
+  final containers = tester.widgetList<Container>(
+    find.descendant(of: of, matching: find.byType(Container)),
+  );
+
+  for (final container in containers) {
+    final decoration = container.decoration;
+    if (decoration is BoxDecoration && decoration.color != null) {
+      return decoration.color;
+    }
+  }
+
+  return null;
+}
+
 void main() {
   setUp(() {
     WindParser.clearCache();
   });
 
   group('WRadio Widget Tests', () {
+    group('Theme-driven selection color (WIND-3)', () {
+      testWidgets('selected indicator uses the default primary (blue)', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WRadio<String>(value: 'a', groupValue: 'a', onChanged: (_) {}),
+          ),
+        );
+        await tester.pump();
+
+        expect(
+          firstDecorationColor(tester, find.byType(WRadio<String>))?.toARGB32(),
+          const Color(0xFF3B82F6).toARGB32(),
+        );
+      });
+
+      testWidgets('selected indicator follows a custom theme primary', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithPrimary(
+            WRadio<String>(value: 'a', groupValue: 'a', onChanged: (_) {}),
+            Colors.red,
+          ),
+        );
+        await tester.pump();
+
+        expect(
+          firstDecorationColor(tester, find.byType(WRadio<String>))?.toARGB32(),
+          Colors.red.shade500.toARGB32(),
+        );
+      });
+    });
+
     group('Construction', () {
       test('creates with required props', () {
         final widget = WRadio<String>(
