@@ -131,6 +131,8 @@ Resolution order (strict, never sorted): `base ++ variant-classes(definition ord
 
 **Core Law addition for recipes:** pass enum variant values as `.name` (`ButtonIntent.ghost.name`); recipe axes are plain strings.
 
+**Caller-append contract (no twMerge):** the recipe only appends the caller's `className` last; it never dedupes or resolves conflicts itself. `WindRecipe(base: 'w-1/2')(className: 'w-full')` emits `'w-1/2 w-full'`, both tokens intact. The conflict resolves one layer down: `WindParser` groups same-family classes and each parser applies last-class-wins, so the appended `w-full` wins at parse time. Wind deliberately has no Dart `twMerge`/`cn` port; see `doc/styling/wind-recipe.md` "The Caller-Append Contract (No twMerge)". A component that treats an incoming `className` as a full replacement instead of appending it is a consumer bug, not a wind defect.
+
 ## 3. The state system (three layers)
 
 | Layer | Set by | Examples |

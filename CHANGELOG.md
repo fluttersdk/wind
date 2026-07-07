@@ -10,6 +10,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Documented and test-proved the `WindRecipe`/`WindSlotRecipe` caller-`className` merge contract: the recipe only appends the caller's className last (already the behavior since introduction); the conflict with a base token is resolved one layer down, at parse time, by `WindParser`'s per-family last-wins. No twMerge/`cn` port was added or is planned. (`test/recipe/wind_recipe_test.dart`, `test/parser/parsers/sizing_parser_test.dart`, `doc/styling/wind-recipe.md`, `skills/wind-ui/SKILL.md`)
 - `skills/wind-ui/references/tailwind-divergence.md`, `skills/wind-ui/SKILL.md`, and `doc/layout/display.md` reconciled to reflect the `flex-wrap` alias (no longer a listed unsupported token) and the unknown-token debug hint (no longer purely silent). Example pages under `example/lib/pages/` switched from `flex-wrap` to the canonical `wrap` token. (WIND-5)
 
 ### Added
@@ -27,6 +28,8 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - `WTabs`: controlled tabs widget. The `selected:` state prefix activates on the active tab; `listClassName`, `tabClassName`, `selectedTabClassName`, and `panelClassName` cover every structural region. `panelBuilder` receives the selected index each rebuild. The tab list defaults to full container width (`fullWidthList: true`) so a `border-b` underline spans the container rather than only the tabs; set `fullWidthList: false` for a content-width / pill tab strip. (#128) (`lib/src/widgets/w_tabs.dart`)
 
 ### Fixed
+
+- `WPopover` overlay no longer overflows the right edge of the viewport when `autoFlip` is on. A wide panel next to a near-centered trigger on a narrow screen flipped to the opposite side but still spilled off-screen; a `computeHorizontalClamp` helper now folds a corrective `dx` into the follower offset so the panel is pulled fully inside the viewport (seated `8px` from the edge, or flush when it is too wide to honor both margins). The clamp engages only on genuine off-screen overflow, so an edge-anchored popover already fully visible is left untouched. (`lib/src/widgets/w_popover.dart`)
 
 - `grid ... items-stretch` no longer emits a residual `RenderFlex overflowed by ~2px on the bottom` when it stretches an unequal cell (follow-up to #139). `WindEqualHeightRow` previously re-laid each cell to a TIGHT height equal to the loose-measured row max; a cell whose `flex flex-col` content needs a hair more under the tight re-lay (sub-pixel text/flex rounding on real rendering, e.g. CanvasKit) overflowed by a couple of pixels. It now stretches with a MIN height instead (never a tight squeeze), so a cell is never forced below its own content and the row takes the tallest resulting height — overflow-free by construction. (`lib/src/widgets/wind_equal_height_row.dart`) (#141)
 

@@ -14,6 +14,11 @@ Widget wrapWithTheme(Widget child) {
 }
 
 void main() {
+  // WPopover parses className through WindParser; clear the shared style cache
+  // before every test so a cached (breakpoint, brightness, platform, states)
+  // result from one test cannot leak into the next.
+  setUp(WindParser.clearCache);
+
   group('WPopover Widget Tests', () {
     // Ensure overlay state is cleaned up between tests
     tearDown(() async {
@@ -838,7 +843,175 @@ void main() {
       });
     });
 
+    group('computeHorizontalClamp', () {
+      test('fully on-screen popover returns zero correction', () {
+        final result = computeHorizontalClamp(
+          alignment: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(50, 50),
+          triggerSize: const Size(50, 30),
+          popoverWidth: 100,
+          screenSize: const Size(400, 300),
+          offset: Offset.zero,
+        );
+
+        expect(result, 0);
+      });
+
+      test('edge-anchored popover flush at the left edge is not nudged', () {
+        // Trigger at x=0, left-anchored: follower left = 0 (on-screen, flush).
+        // Must NOT be pushed inward, or it would misalign from the trigger.
+        final result = computeHorizontalClamp(
+          alignment: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(0, 50),
+          triggerSize: const Size(60, 30),
+          popoverWidth: 192,
+          screenSize: const Size(400, 300),
+          offset: Offset.zero,
+        );
+
+        expect(result, 0);
+      });
+
+      test('right-overflowing popover is pulled left to the margin', () {
+        // The reported bug: a near-centered trigger with a wide panel that
+        // flipped to bottomLeft still spills past the right edge.
+        // followerLeft = 190, followerRight = 190 + 320 = 510 > 411.
+        // correction = (411 - 8) - 510 = -107.
+        final result = computeHorizontalClamp(
+          alignment: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(190, 60),
+          triggerSize: const Size(36, 36),
+          popoverWidth: 320,
+          screenSize: const Size(411, 800),
+          offset: Offset.zero,
+        );
+
+        expect(result, closeTo(-107, 0.001));
+      });
+
+      test('left-overflowing popover is pushed right to the margin', () {
+        // bottomRight anchor: follower right = 5 + 20 = 25, left = 25 - 200 = -175.
+        // correction = margin - followerLeft = 8 - (-175) = 183.
+        final result = computeHorizontalClamp(
+          alignment: PopoverAlignment.bottomRight,
+          triggerPosition: const Offset(5, 50),
+          triggerSize: const Size(20, 30),
+          popoverWidth: 200,
+          screenSize: const Size(400, 300),
+          offset: Offset.zero,
+        );
+
+        expect(result, closeTo(183, 0.001));
+      });
+
+      test('popover wider than the viewport keeps its start (left) on-screen',
+          () {
+        // followerLeft = 100, followerRight = 600 > 400 -> corr = 392 - 600 = -208;
+        // then left + corr = -108 < 0 -> corr = 8 - 100 = -92 so left seats at 8.
+        final result = computeHorizontalClamp(
+          alignment: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(100, 50),
+          triggerSize: const Size(50, 30),
+          popoverWidth: 500,
+          screenSize: const Size(400, 300),
+          offset: Offset.zero,
+        );
+
+        expect(result, closeTo(-92, 0.001));
+      });
+
+      test('center-anchored popover overflowing right is pulled in', () {
+        // bottomCenter: followerLeft = 340 + (40 - 320) / 2 = 200, right = 520 > 375.
+        // correction = (375 - 8) - 520 = -153.
+        final result = computeHorizontalClamp(
+          alignment: PopoverAlignment.bottomCenter,
+          triggerPosition: const Offset(340, 60),
+          triggerSize: const Size(40, 36),
+          popoverWidth: 320,
+          screenSize: const Size(375, 800),
+          offset: Offset.zero,
+        );
+
+        expect(result, closeTo(-153, 0.001));
+      });
+
+      test(
+          'panel too wide for both margins seats flush to the viewport edge, '
+          'not past it', () {
+        // popoverWidth (396) > screenWidth - margin (392) but still < screenWidth
+        // (400), so both 8px margins cannot hold. followerLeft = 30,
+        // followerRight = 426 > 400 -> right pull correction = (400 - 8) - 426 = -34,
+        // which pushes the left edge to -4 (off-screen). Seating the left edge at
+        // margin (correction -22) would leave the right edge at 404 (off-screen);
+        // the clamp instead caps at -26 so the right edge lands exactly on 400 and
+        // the whole panel stays visible.
+        final result = computeHorizontalClamp(
+          alignment: PopoverAlignment.bottomLeft,
+          triggerPosition: const Offset(30, 60),
+          triggerSize: const Size(36, 36),
+          popoverWidth: 396,
+          screenSize: const Size(400, 800),
+          offset: Offset.zero,
+        );
+
+        expect(result, closeTo(-26, 0.001));
+        // Right edge is on-screen (flush at 400), not pushed past it.
+        expect(30 + 396 + result, closeTo(400, 0.001));
+      });
+    });
+
     group('Auto-Flip Widget Integration', () {
+      testWidgets(
+          'near-centered trigger with a wide panel stays on-screen (clamp)',
+          (tester) async {
+        // Regression for the notification-bell bug: a w-80 (320px) panel next to
+        // a near-centered bell on a narrow phone flips bottomRight -> bottomLeft
+        // and then overflows the right edge. The horizontal clamp must pull it
+        // fully back inside the viewport.
+        tester.view.physicalSize = const Size(390, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Stack(
+              children: [
+                Positioned(
+                  left: 190,
+                  top: 40,
+                  child: WPopover(
+                    alignment: PopoverAlignment.bottomRight,
+                    className: 'w-80 max-w-full',
+                    triggerBuilder: (context, isOpen, isHovering) => Container(
+                      width: 36,
+                      height: 36,
+                      color: Colors.blue,
+                      child: const Text('Trigger'),
+                    ),
+                    contentBuilder: (context, close) =>
+                        const Text('Notifications'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Trigger'));
+        await tester.pumpAndSettle();
+
+        final renderBox =
+            tester.renderObject<RenderBox>(find.text('Notifications'));
+        final Offset topLeft = renderBox.localToGlobal(Offset.zero);
+        final Offset bottomRight =
+            renderBox.localToGlobal(renderBox.size.bottomRight(Offset.zero));
+        expect(topLeft.dx, greaterThanOrEqualTo(0));
+        expect(bottomRight.dx, lessThanOrEqualTo(390));
+      });
+
       testWidgets('right edge trigger with bottomRight and w-56 stays visible',
           (tester) async {
         tester.view.physicalSize = const Size(400, 300);
