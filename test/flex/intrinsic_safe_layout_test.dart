@@ -21,10 +21,6 @@ Widget wrapWithTheme(Widget child, {double? width, double? height}) {
   );
 }
 
-/// Width of the [RenderBox] that paints the given visible text.
-double textWidth(WidgetTester tester, String text) =>
-    tester.renderObject<RenderBox>(find.text(text)).size.width;
-
 void main() {
   setUp(WindParser.clearCache);
 
