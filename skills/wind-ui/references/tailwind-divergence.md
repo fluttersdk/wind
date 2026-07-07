@@ -24,7 +24,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | Wrapping | `flex-wrap` (CSS flex-wrap property) | `wrap` (Flutter `Wrap` widget is structurally separate from `flex`) |
 | Container layout | `flex` works on any element | `flex` requires `WDiv`; raw `Container` does not parse className |
 | `dark:` opt-in | Optional (use only when needed) | Required for every color token; missing peer is a bug |
-| Unknown tokens | Build-time warning OR ignored depending on config | No-op at runtime (dropped); a one-time `kDebugMode` `debugPrint` names the token, deduped per unique token per session, no exception |
+| Unknown tokens | Build-time warning OR ignored depending on config | No-op at runtime (dropped); a one-time `kDebugMode` `debugPrint` names the token, deduped per unique token per session, no exception. Valid tokens handled outside the parser map (widget-consumed `object-*`, the `inline-flex`/`inline-block`/`inline` display keywords, inert compat tokens like `transition-colors` / `antialiased` / `sr-only` / `tabular-nums`) are exempt, so the warning targets genuine typos |
 | Important modifier | `!flex` (v3) or `flex!` (v4) | Not implemented |
 | Container queries | `@container`, `@sm:`, `@max-md:` | Not implemented; viewport-only |
 | Group / peer state | `group-hover:`, `peer-focus:` | Not implemented; use `states: Set<String>` |
