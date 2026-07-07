@@ -86,4 +86,28 @@ void main() {
     // clamped up to the min-w floor (200), never a tight 0.
     expect(tester.getSize(find.byType(WindMinWidthBox)).width, 200);
   });
+
+  testWidgets('respects a finite parent width instead of violating constraints',
+      (tester) async {
+    // If the box is ever laid out under a finite width (outside a scroll, or
+    // before a finite viewport is published), it must not size past the
+    // incoming constraint even when the child wants more.
+    final port = WindViewportWidthPort(); // value == null
+    await tester.pumpWidget(
+      host(
+        SizedBox(
+          width: 300,
+          child: WindMinWidthBox(
+            port: port,
+            floorMinWidth: 0,
+            child: const SizedBox(width: 500, height: 20),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    // Child wants 500 but the parent only allows 300: the box stays at 300.
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 300);
+  });
 }

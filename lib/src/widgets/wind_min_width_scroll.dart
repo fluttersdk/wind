@@ -172,20 +172,29 @@ class _RenderMinWidthBox extends RenderProxyBox {
       // Degrade to the child's content width honoring the min-w-* floor,
       // instead of forcing a tight (possibly 0) width that would collapse it.
       // This mirrors how WindCrossStretch / WindFractionBasis pass through on
-      // an unbounded axis.
+      // an unbounded axis. The floor is clamped into the INCOMING width range
+      // (and the size re-constrained) so the box still respects a finite parent
+      // constraint if it is ever laid out outside a scroll.
+      final double childMin =
+          _floorMinWidth.clamp(constraints.minWidth, constraints.maxWidth);
       child.layout(
         BoxConstraints(
-          minWidth: _floorMinWidth,
-          maxWidth: double.infinity,
+          minWidth: childMin,
+          maxWidth: constraints.maxWidth,
           minHeight: constraints.minHeight,
           maxHeight: constraints.maxHeight,
         ),
         parentUsesSize: true,
       );
-      size = child.size;
+      size = constraints.constrain(child.size);
       return;
     }
-    final double target = math.max(viewport, _floorMinWidth);
+    // Fill the viewport, honoring the min-w-* floor. `target` is clamped into
+    // the incoming width range so the tight layout can never exceed a finite
+    // parent constraint.
+    final double target = math
+        .max(viewport, _floorMinWidth)
+        .clamp(constraints.minWidth, constraints.maxWidth);
     child.layout(
       BoxConstraints(
         minWidth: target,
@@ -195,6 +204,6 @@ class _RenderMinWidthBox extends RenderProxyBox {
       ),
       parentUsesSize: true,
     );
-    size = child.size;
+    size = constraints.constrain(child.size);
   }
 }
