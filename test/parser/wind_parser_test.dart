@@ -136,6 +136,33 @@ void main() {
         hasLength(1),
       );
     });
+
+    test(
+      'does not warn on valid tokens handled outside the parser map '
+      '(widget-consumed object-fit + inert compat tokens)',
+      () {
+        final logs = <String>[];
+        final original = debugPrint;
+        debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+
+        try {
+          final context = createTestContext();
+          // object-cover is consumed by WImage; transition-colors is emitted by
+          // Wind's own widget docstrings; tabular-nums is in the consumer
+          // contract; antialiased / sr-only are inert. None is a typo, so none
+          // may warn.
+          WindParser.findAndGroupClasses(
+            'object-cover transition-colors tabular-nums antialiased sr-only '
+            'inline-flex inline-block',
+            context,
+          );
+        } finally {
+          debugPrint = original;
+        }
+
+        expect(logs.where((l) => l.contains('unknown className')), isEmpty);
+      },
+    );
   });
 
   group('WindParser.resolveClasses', () {

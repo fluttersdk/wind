@@ -87,6 +87,39 @@ class WindParser {
   /// repeated render of the same offending className logs once, not per frame.
   static final Set<String> _warnedAliases = {};
 
+  /// Valid Wind tokens that no parser in [_parserMap] claims, so the
+  /// unknown-token warning must NOT fire on them. Two groups:
+  ///
+  /// - Widget-consumed: `object-*` is read by `WImage._parseObjectFit`, not by
+  ///   a parser, yet the full className still flows through here.
+  /// - Deliberately inert compat tokens that Wind accepts as no-ops and that
+  ///   Wind's own widget docstrings / the documented consumer contract emit
+  ///   (e.g. `transition-colors` in `WButton`, `tabular-nums` in a metric
+  ///   column). Warning "ignored" on these is a false positive: they are valid
+  ///   Tailwind tokens, not typos, so silencing them keeps the warning aimed at
+  ///   genuine typos. Whole families are listed (not cherry-picked members) so
+  ///   the set stays coherent.
+  static const Set<String> _knownUnparsedTokens = {
+    // object-fit (consumed by WImage)
+    'object-cover', 'object-contain', 'object-fill', 'object-none',
+    'object-scale-down',
+    // inline display keywords (FlexboxGridParser claims flex/grid/block/hidden
+    // but not the inline-* family; inline-flex is emitted by WBadge, and inline
+    // display has no Flutter layout meaning so these are inert, not typos)
+    'inline-flex', 'inline-block', 'inline',
+    // transition shorthands (TransitionParser only claims duration-/ease-)
+    'transition', 'transition-all', 'transition-colors', 'transition-transform',
+    'transition-opacity', 'transition-shadow', 'transition-none',
+    // font smoothing (inert)
+    'antialiased', 'subpixel-antialiased',
+    // screen-reader visibility (inert)
+    'sr-only', 'not-sr-only',
+    // font-variant-numeric (inert; tabular-nums is in the consumer contract)
+    'normal-nums', 'ordinal', 'slashed-zero', 'lining-nums', 'oldstyle-nums',
+    'proportional-nums', 'tabular-nums', 'diagonal-fractions',
+    'stacked-fractions',
+  };
+
   /// Map of property names to their respective parsers
   static final Map<String, WindParserInterface> _parserMap = {
     'background': const BackgroundParser(),
@@ -316,8 +349,10 @@ class WindParser {
 
       // An unclaimed class is still dropped (no parser owns it), but the
       // developer is told once per unique token so a typo does not silently
-      // no-op forever.
-      if (!claimed && kDebugMode) {
+      // no-op forever. Tokens that are valid Wind vocabulary yet handled
+      // outside the parser map (widget-consumed or deliberately inert) are
+      // exempt so the warning stays aimed at genuine typos.
+      if (!claimed && kDebugMode && !_knownUnparsedTokens.contains(cls)) {
         _warnUnknownToken(cls);
       }
     }
