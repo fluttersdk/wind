@@ -381,9 +381,11 @@ WDiv(
 );
 ```
 
-`IntrinsicHeight` is documented as relatively expensive (it runs a speculative layout pass). Reach for it only when this exact stretch-inside-scroll pattern is required.
+`IntrinsicHeight` is documented as relatively expensive (it runs a speculative layout pass). Reach for it only when this exact row height-match-inside-scroll pattern is required.
 
-> **Caveat — intrinsic sizing fails through `h-full` / `basis-*` content.** If a child inside the `IntrinsicHeight` triggers a Wind internal `LayoutBuilder` — `h-full` in an unbounded-height context, or a flex `basis-*` (which wraps the surrounding flex in one `LayoutBuilder`) — the intrinsic pass throws `LayoutBuilder does not support returning intrinsic dimensions` (a Flutter constraint, not a Wind bug). Keep the children explicitly sized (`flex-1` for width is fine; avoid `h-full` / `basis-*` under an `IntrinsicHeight`). For equal-height cards outside a scroll, prefer fixed `h-*` cells or a `Stack` + `Positioned(top:0,bottom:0)` over `IntrinsicHeight`.
+> **Column width-stretch is intrinsic-free (no `IntrinsicHeight` needed).** The reverse case, a `flex flex-col items-stretch` (equal child WIDTHS), needs no `IntrinsicHeight`: Wind's column cross-axis stretch is a real render object (`WindCrossStretch`), and `basis-*` resolves without a `LayoutBuilder`. So a `flex flex-col` (with or without `basis-*`) renders under an `IntrinsicHeight`, a `Table`, or an `items-stretch` grid cell without asserting. Only the ROW height-match above still uses `IntrinsicHeight`.
+
+> **Caveat — `h-full` still fails through an `IntrinsicHeight`.** A child that resolves `h-full` in an unbounded-height context still uses a Wind internal `LayoutBuilder`, so under an `IntrinsicHeight` it throws `LayoutBuilder does not support returning intrinsic dimensions` (a Flutter constraint, not a Wind bug). Keep children explicitly sized under an `IntrinsicHeight` and avoid `h-full` there. (Fractional `basis-*` no longer triggers this: it resolves against the flex's own extent via a real render object.) For equal-height cards outside a scroll, prefer fixed `h-*` cells or a `Stack` + `Positioned(top:0,bottom:0)`.
 
 ---
 

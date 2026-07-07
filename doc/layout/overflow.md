@@ -99,6 +99,31 @@ WDiv(className: 'overflow-x-scroll overflow-y-hidden')
 | `overflow-x-hidden` | Clip horizontal overflow |
 | `overflow-y-visible` | Allow vertical overflow |
 
+<a name="min-width-scroll"></a>
+## Fill on Desktop, Scroll on Narrow (Responsive Table)
+
+Compose `overflow-x-auto` on a wrapper with `w-full` (optionally `min-w-[Npx]`) on the inner content, the same pattern shadcn's `<Table>` uses. The inner content fills the viewport when it is wide and honors its minimum width (so the wrapper scrolls) when it is narrow:
+
+```dart
+WDiv(
+  className: 'overflow-x-auto',
+  child: WDiv(
+    className: 'w-full min-w-[600px] flex flex-row',
+    children: [
+      WDiv(className: 'flex-1', child: WText('Name')),
+      WDiv(className: 'flex-1', child: WText('Status')),
+      WDiv(className: 'flex-1', child: WText('Updated')),
+    ],
+  ),
+)
+```
+
+On a viewport wider than `600px` the row fills the container (no horizontal scroll). On a narrower viewport it stays `600px` wide and the wrapper scrolls horizontally. This works with no new token: `w-full` inside a horizontal scroll is threaded the viewport width instead of asserting on the scroll's unbounded width, and `min-w-[Npx]` sets the scroll floor. Without a `min-w-*` floor, `w-full` simply fills the viewport.
+
+<x-preview path="layout/responsive_table" size="lg" source="example/lib/pages/layout/responsive_table.dart"></x-preview>
+
+> **`h-full` inside a vertical scroll is a layout error.** A child that resolves `h-full` inside an `overflow-y-auto` / `overflow-y-scroll` parent has an unbounded height and produces a cryptic Flutter failure. Wind raises an actionable assert in debug pointing at the fix: use `flex-1` inside a `flex flex-col` (with the scroll on the column) instead of `h-full` inside a vertical scroll. The scroll container itself may still carry `h-full` (it is bounded by its own parent).
+
 <a name="responsive-design"></a>
 ## Responsive Design
 

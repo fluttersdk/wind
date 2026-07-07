@@ -6,10 +6,12 @@ import '../utils/wind_logger.dart';
 import 'wind_animation_wrapper.dart';
 import '../state/wind_anchor_state_provider.dart';
 import '../state/wind_flex_overflow_scope.dart';
+import '../state/wind_min_width_scroll_scope.dart';
 import 'w_anchor.dart';
 import 'w_button.dart';
 import 'w_text.dart';
 import 'wind_equal_height_row.dart';
+import 'wind_min_width_scroll.dart';
 
 /// **The Fundamental Building Block of Wind**
 ///
@@ -215,6 +217,7 @@ class WDiv extends StatelessWidget {
       styles: styles,
       content: coreContent,
       logger: logger,
+      context: context,
       skipFlexWrap: skipFlexWrap,
     );
 
@@ -540,33 +543,45 @@ class WDiv extends StatelessWidget {
 
     // `basis-*` resolves a fraction/fixed size against the flex's own bounded
     // main extent. Flex hands non-flex children an unbounded main-axis
-    // constraint, so a fractional box cannot self-size — we measure the extent
-    // with a LayoutBuilder around the whole flex and pass it down. Only taken
-    // when a child actually carries `basis-*`, so the common case is unwrapped.
+    // constraint, so a fractional box cannot self-size; the flex publishes its
+    // own extent to the box at layout time (see WindMainExtentProvider below),
+    // with no LayoutBuilder. Only taken when a child actually carries `basis-*`,
+    // so the common case is unwrapped.
     final bool hasBasisChild = _anyChildHasBasis(gappedChildren);
     if (hasBasisChild) {
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          final double mainExtent =
-              isColumn ? constraints.maxHeight : constraints.maxWidth;
-          final resolvedChildren = _applyMainAxisBasis(
-            gappedChildren,
-            context,
-            isColumn: isColumn,
-            mainExtent: mainExtent,
-          );
-          return _composeFlex(
-            styles: styles,
-            isColumn: isColumn,
-            basisChildren: resolvedChildren,
-            effectiveMainAxisSize: effectiveMainAxisSize,
-            isMainAxisScrollable: isMainAxisScrollable,
-            hasOverflowClip: hasOverflowClip,
-            needsSpaceDistribution: needsSpaceDistribution,
-            context: context,
-          );
-        },
+      // Resolve `basis-*` intrinsic-safely: fixed `basis-[Npx]` becomes a
+      // SizedBox at build time; fractional `basis-1/2` becomes a
+      // WindFractionBasis that reads the flex's own main extent, published by
+      // the WindMainExtentProvider below. There is no LayoutBuilder, so the flex
+      // renders under an intrinsic-measuring ancestor (IntrinsicHeight, Table,
+      // grid cell) without the "LayoutBuilder does not support returning
+      // intrinsic dimensions" assert.
+      final port = WindMainExtentPort();
+      final resolvedChildren = _applyMainAxisBasis(
+        gappedChildren,
+        context,
+        isColumn: isColumn,
+        port: port,
       );
+      final Widget flex = _composeFlex(
+        styles: styles,
+        isColumn: isColumn,
+        basisChildren: resolvedChildren,
+        effectiveMainAxisSize: effectiveMainAxisSize,
+        isMainAxisScrollable: isMainAxisScrollable,
+        hasOverflowClip: hasOverflowClip,
+        needsSpaceDistribution: needsSpaceDistribution,
+        context: context,
+      );
+      // Only publish the main extent when a fractional basis actually needs it.
+      if (port.needsProvider) {
+        return WindMainExtentProvider(
+          port: port,
+          isColumn: isColumn,
+          child: flex,
+        );
+      }
+      return flex;
     }
 
     return _composeFlex(
@@ -596,62 +611,52 @@ class WDiv extends StatelessWidget {
     required BuildContext context,
   }) {
     if (isColumn) {
-      // Smart cross-axis stretch (column-only): with no explicit `items-*`
-      // token, each Wind child that does not control its own width is wrapped
-      // in `SizedBox(width: infinity)` so it fills the column width (CSS
-      // `align-items: stretch` default). `crossAxisAlignment` stays `start`,
-      // so an explicit `items-*` disables this path entirely.
-      Widget buildColumn(bool stretch) {
-        final List<Widget> columnChildren;
-        if (stretch) {
-          columnChildren = basisChildren.map((child) {
-            // Gaps and pre-wrapped flex widgets are never stretched.
-            if (child is SizedBox || child is Flexible || child is Expanded) {
-              return child;
-            }
-            if (!_shouldStretchColumnChild(child)) return child;
-            return SizedBox(width: double.infinity, child: child);
-          }).toList();
-        } else {
-          columnChildren = basisChildren;
-        }
+      // Cross-axis (width) stretch is active with NO explicit `items-*` token
+      // (CSS `align-items: stretch` default) OR an explicit `items-stretch`.
+      // Each stretch-eligible child is wrapped in `WindCrossStretch`, which
+      // fills the column width when it is bounded and degrades to content width
+      // when it is not. Unlike the old `LayoutBuilder` + `SizedBox(width:
+      // infinity)` gate, `WindCrossStretch` is a real render object: it answers
+      // intrinsic queries (so a stretched column renders under `IntrinsicHeight`
+      // / a grid cell without asserting) and never forces an infinite width on
+      // an unbounded slot. An explicit `items-start`/`center`/`end` disables it.
+      final bool stretchActive = styles.crossAxisAlignment == null ||
+          styles.crossAxisAlignment == CrossAxisAlignment.stretch;
 
-        return WindFlexOverflowScope(
-          skipExpanded: isMainAxisScrollable,
-          child: Column(
-            mainAxisAlignment:
-                styles.mainAxisAlignment ?? MainAxisAlignment.start,
-            crossAxisAlignment:
-                styles.crossAxisAlignment ?? CrossAxisAlignment.start,
-            mainAxisSize: effectiveMainAxisSize,
-            textBaseline: styles.textBaseline,
-            verticalDirection: styles.flexReverse
-                ? VerticalDirection.up
-                : VerticalDirection.down,
-            children: columnChildren,
-          ),
-        );
-      }
+      final List<Widget> columnChildren = stretchActive
+          ? basisChildren.map((child) {
+              // Gaps, pre-wrapped flex widgets, and basis-sized children carry
+              // their own cross size and are never stretched.
+              if (child is SizedBox ||
+                  child is Flexible ||
+                  child is Expanded ||
+                  child is WindFractionBasis) {
+                return child;
+              }
+              if (!_shouldStretchColumnChild(child)) return child;
+              return WindCrossStretch(child: child);
+            }).toList()
+          : basisChildren;
 
-      // The stretch wrap forces a tight infinite width, which THROWS under an
-      // unbounded-width constraint (a bare Row main-axis slot, UnconstrainedBox,
-      // horizontal scroll). Gate it on a finite incoming maxWidth via a
-      // LayoutBuilder, but ONLY when a stretch-eligible child exists so columns
-      // that cannot stretch pay no LayoutBuilder cost. An unbounded-width
-      // column degrades to content-sized children (the pre-stretch behavior)
-      // instead of crashing.
-      final bool hasStretchTarget = styles.crossAxisAlignment == null &&
-          basisChildren.any((child) =>
-              child is! SizedBox &&
-              child is! Flexible &&
-              child is! Expanded &&
-              _shouldStretchColumnChild(child));
-      if (!hasStretchTarget) {
-        return buildColumn(false);
-      }
-      return LayoutBuilder(
-        builder: (context, constraints) =>
-            buildColumn(constraints.maxWidth.isFinite),
+      return WindFlexOverflowScope(
+        skipExpanded: isMainAxisScrollable,
+        child: Column(
+          mainAxisAlignment:
+              styles.mainAxisAlignment ?? MainAxisAlignment.start,
+          // `WindCrossStretch` performs the stretch, so the Column itself never
+          // uses `CrossAxisAlignment.stretch` (which requires a bounded width
+          // and would crash on an unbounded main-axis slot). Only a non-stretch
+          // explicit alignment is forwarded.
+          crossAxisAlignment: stretchActive
+              ? CrossAxisAlignment.start
+              : styles.crossAxisAlignment!,
+          mainAxisSize: effectiveMainAxisSize,
+          textBaseline: styles.textBaseline,
+          verticalDirection: styles.flexReverse
+              ? VerticalDirection.up
+              : VerticalDirection.down,
+          children: columnChildren,
+        ),
       );
     } else {
       // For Row with space distribution OR overflow-hidden, wrap children with Flexible
@@ -682,9 +687,11 @@ class WDiv extends StatelessWidget {
         }
         if (!needsFlexible) return child;
         // Don't wrap gaps, already-flex widgets, or basis-sized children
-        // (FractionallySizedBox/SizedBox carry an explicit main size).
+        // (WindFractionBasis/FractionallySizedBox/SizedBox carry an explicit
+        // main size).
         if (child is SizedBox ||
             child is FractionallySizedBox ||
+            child is WindFractionBasis ||
             child is Flexible ||
             child is Expanded) {
           return child;
@@ -815,34 +822,39 @@ class WDiv extends StatelessWidget {
   ///
   /// A `FractionallySizedBox` cannot be used here because flex hands non-flex
   /// children an UNBOUNDED main-axis constraint, which makes a fractional box
-  /// throw. Instead the caller measures the flex's own bounded main extent via
-  /// a `LayoutBuilder` and passes it as [mainExtent]; the fraction resolves to
-  /// a concrete pixel size. When [mainExtent] is not finite (unbounded flex),
-  /// fractional basis degrades to the child's intrinsic size (passthrough);
-  /// fixed `basis-[Npx]` always applies.
+  /// throw. Fixed `basis-[Npx]` resolves to a `SizedBox` immediately (no extent
+  /// needed). Fractional `basis-1/2` is wrapped in a [WindFractionBasis] that
+  /// reads the flex's own main extent from [port] at layout time (published by
+  /// a [WindMainExtentProvider]); when that extent is not finite (unbounded
+  /// flex), it degrades to the child's intrinsic size (passthrough). Neither
+  /// path uses a `LayoutBuilder`, so the flex stays intrinsic-safe.
   static List<Widget> _applyMainAxisBasis(
     List<Widget> children,
     BuildContext context, {
     required bool isColumn,
-    required double mainExtent,
+    required WindMainExtentPort port,
   }) {
     return children.map((child) {
       final basis = _resolveChildBasis(child, context);
       if (basis == null) return child;
 
-      double? size;
       if (basis.size != null) {
-        size = basis.size;
-      } else if (basis.factor != null && mainExtent.isFinite) {
-        size = mainExtent * basis.factor!;
+        return SizedBox(
+          width: isColumn ? null : basis.size,
+          height: isColumn ? basis.size : null,
+          child: child,
+        );
       }
-      if (size == null) return child;
-
-      return SizedBox(
-        width: isColumn ? null : size,
-        height: isColumn ? size : null,
-        child: child,
-      );
+      if (basis.factor != null) {
+        port.needsProvider = true;
+        return WindFractionBasis(
+          port: port,
+          factor: basis.factor!,
+          isColumn: isColumn,
+          child: child,
+        );
+      }
+      return child;
     }).toList();
   }
 
@@ -1259,6 +1271,7 @@ class WDiv extends StatelessWidget {
     required WindStyle styles,
     required Widget? content,
     required WindLogger logger,
+    required BuildContext context,
     bool skipFlexWrap = false,
   }) {
     Widget? widgetToBuild = content;
@@ -1420,19 +1433,31 @@ class WDiv extends StatelessWidget {
     if (hasOverflowScroll) {
       if (styles.overflowX == WindOverflow.scroll ||
           styles.overflowX == WindOverflow.auto) {
-        // Horizontal scroll only
+        // Horizontal scroll only. Thread the viewport width down through the
+        // scope so a `w-full` child fills the viewport when it is wide and
+        // honors `min-w-*` (so the viewport scrolls) when it is narrow, instead
+        // of asserting on the scroll's unbounded width.
         logger.wrapWith(
           "SingleChildScrollView",
           "horizontal${scrollPrimary ? ', primary' : ''}",
         );
-        widgetToBuild = SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          primary: scrollPrimary,
-          child: widgetToBuild,
+        final port = WindViewportWidthPort();
+        widgetToBuild = WindViewportWidthProvider(
+          port: port,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            primary: scrollPrimary,
+            child: WindMinWidthScrollScope(
+              horizontalPort: port,
+              child: widgetToBuild ?? const SizedBox.shrink(),
+            ),
+          ),
         );
       } else if (styles.overflowY == WindOverflow.scroll ||
           styles.overflowY == WindOverflow.auto) {
-        // Vertical scroll only
+        // Vertical scroll only. Signal descendants that the vertical axis is
+        // unbounded so a child that resolves `h-full` can raise an actionable
+        // assert instead of a cryptic unbounded-height failure.
         logger.wrapWith(
           "SingleChildScrollView",
           "vertical${scrollPrimary ? ', primary' : ''}",
@@ -1440,7 +1465,10 @@ class WDiv extends StatelessWidget {
         widgetToBuild = SingleChildScrollView(
           scrollDirection: Axis.vertical,
           primary: scrollPrimary,
-          child: widgetToBuild,
+          child: WindMinWidthScrollScope(
+            verticalUnbounded: true,
+            child: widgetToBuild ?? const SizedBox.shrink(),
+          ),
         );
       } else {
         // Both directions scroll - use nested ScrollViews
@@ -1449,13 +1477,21 @@ class WDiv extends StatelessWidget {
           "SingleChildScrollView",
           "both (nested)${scrollPrimary ? ', primary on outer' : ''}",
         );
-        widgetToBuild = SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          primary: scrollPrimary,
+        final port = WindViewportWidthPort();
+        widgetToBuild = WindViewportWidthProvider(
+          port: port,
           child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            primary: false, // Inner scroll is never primary
-            child: widgetToBuild,
+            scrollDirection: Axis.vertical,
+            primary: scrollPrimary,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              primary: false, // Inner scroll is never primary
+              child: WindMinWidthScrollScope(
+                horizontalPort: port,
+                verticalUnbounded: true,
+                child: widgetToBuild ?? const SizedBox.shrink(),
+              ),
+            ),
           ),
         );
       }
@@ -1514,10 +1550,37 @@ class WDiv extends StatelessWidget {
       final bool isFullWidth = styles.widthFactor == 1.0;
       final bool isFullHeight = styles.heightFactor == 1.0;
 
+      // A scrollable ancestor threads its axis info here (it cannot inspect this
+      // child's className directly).
+      final WindMinWidthScrollScope? scrollScope =
+          WindMinWidthScrollScope.maybeOf(context);
+
+      // Actionable dev-time guard (stripped in release): `h-full` inside a
+      // vertical scroll resolves to an unbounded height and yields a cryptic
+      // Flutter failure. Point the developer at the `flex-1` fix instead.
+      assert(
+        !(isFullHeight && (scrollScope?.verticalUnbounded ?? false)),
+        'Wind: `h-full` on a child inside a vertical scroll '
+        '(overflow-y-auto/overflow-y-scroll) resolves to an unbounded height. '
+        'Use `flex-1` inside a `flex flex-col` (with the scroll on the column) '
+        'instead of `h-full` inside a vertical scroll.',
+      );
+
       // Fast path: width-only sizing (no heightFactor) — avoids LayoutBuilder
       // Covers: w-full, w-full max-w-*, w-1/2, w-1/3, etc.
       if (styles.heightFactor == null) {
-        if (isFullWidth) {
+        if (isFullWidth && scrollScope?.horizontalPort != null) {
+          // `w-full` inside a horizontal scroll: fill the viewport when wide,
+          // honor `min-w-*` (so the viewport scrolls) when narrow. A plain
+          // SizedBox(width: infinity) would assert on the scroll's unbounded
+          // width; WindMinWidthBox reads the threaded viewport width instead.
+          logger.wrapWith("WindMinWidthBox", "w-full in horizontal scroll");
+          widgetToBuild = WindMinWidthBox(
+            port: scrollScope!.horizontalPort!,
+            floorMinWidth: styles.constraints?.minWidth ?? 0,
+            child: innerChild,
+          );
+        } else if (isFullWidth) {
           // w-full: expand to fill available width
           logger.wrapWith("SizedBox", "w-full (no LayoutBuilder)");
           widgetToBuild = SizedBox(
