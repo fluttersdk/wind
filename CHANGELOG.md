@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Documented and test-proved the `WindRecipe`/`WindSlotRecipe` caller-`className` merge contract: the recipe only appends the caller's className last (already the behavior since introduction); the conflict with a base token is resolved one layer down, at parse time, by `WindParser`'s per-family last-wins. No twMerge/`cn` port was added or is planned. (`test/recipe/wind_recipe_test.dart`, `test/parser/parsers/sizing_parser_test.dart`, `doc/styling/wind-recipe.md`, `skills/wind-ui/SKILL.md`)
+
 ### Added
 
 - `cursor-*` utilities: a new `CursorParser` maps Tailwind cursor names (`cursor-pointer`, `cursor-not-allowed`, `cursor-text`, `cursor-grab`/`cursor-grabbing`, `cursor-zoom-in`/`cursor-zoom-out`, the full resize set, etc.) to the matching `SystemMouseCursors`. `WDiv` applies the resolved cursor through a `MouseRegion`, so a plain container can feel clickable on web/desktop without `WAnchor` or a manual `MouseRegion`; on a `hover:`/`focus:`/`active:` `WDiv` the cursor `MouseRegion` sits below the auto-wrapped `WAnchor` and wins. Inert on touch platforms; last token wins; unknown names no-op. (`lib/src/parser/parsers/cursor_parser.dart`, `lib/src/parser/wind_style.dart`, `lib/src/widgets/w_div.dart`) (#125)

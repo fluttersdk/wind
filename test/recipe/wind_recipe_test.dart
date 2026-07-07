@@ -218,6 +218,24 @@ void main() {
       expect(recipe(className: 'p-2'), 'p-2 p-4 p-2');
     });
 
+    test(
+      'a caller className conflicting with the base is appended last, not '
+      'merged (WIND-1 proof: the caller-append contract has no twMerge step)',
+      () {
+        // The base sets a width via w-1/2; the caller passes a conflicting
+        // w-full. WindRecipe does not resolve this itself: it only appends.
+        // The emitted string must carry BOTH tokens, caller last, so wind's
+        // parser (per-family last-wins at parse-time) can pick the winner.
+        // See test/parser/parsers/sizing_parser_test.dart for the matching
+        // parser-level proof that w-full actually wins.
+        final recipe = WindRecipe(base: 'w-1/2');
+
+        final result = recipe(className: 'w-full');
+
+        expect(result, 'w-1/2 w-full');
+      },
+    );
+
     test('throws when a selected axis is unknown', () {
       final recipe = WindRecipe(
         base: 'btn',
