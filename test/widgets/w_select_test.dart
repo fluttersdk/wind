@@ -125,6 +125,38 @@ void main() {
         expect(find.text('Cherry'), findsOneWidget);
       });
 
+      testWidgets(
+          'a partial primary swatch does not crash the raw icon shade lookups',
+          (tester) async {
+        // A consumer may register a primary MaterialColor with only its base
+        // shade. The raw Icon colors read shades 400/600/700 through a safe
+        // lookup that falls back to the base color, so a partial swatch must
+        // render (open + selected check icon) without throwing.
+        const partialPrimary =
+            MaterialColor(0xFF16A34A, {500: Color(0xFF16A34A)});
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(colors: const {'primary': partialPrimary}),
+              child: Scaffold(
+                body: WSelect<String>(
+                  value: 'apple',
+                  options: testOptions,
+                  onChange: (_) {},
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // Open the dropdown: the selected option paints its check icon through
+        // the primary swatch (shade 600), the exact path that used to throw.
+        await tester.tap(find.text('Apple'));
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+      });
+
       testWidgets('shows up arrow when open', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(

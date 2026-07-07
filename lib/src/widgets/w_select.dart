@@ -263,6 +263,12 @@ class _WSelectState<T> extends State<WSelect<T>> {
   /// icons the same way `bg-primary`/`text-primary` drive the surrounding text.
   MaterialColor get _primaryColor => context.windColors['primary']!;
 
+  /// A specific [shade] of the theme `primary` swatch for a raw [Icon] color,
+  /// falling back to the swatch's base color when a consumer registered a
+  /// partial `primary` `MaterialColor` without that shade, so a custom theme
+  /// can never crash the icon lookup (the `.shadeN` getters would throw).
+  Color _primaryShade(int shade) => _primaryColor[shade] ?? _primaryColor;
+
   /// Shared [TapRegion] group for the trigger and the open menu, so re-tapping
   /// the trigger toggles it closed (the tap is inside the group) rather than
   /// being treated as an outside tap. The opening-tap self-close is handled
@@ -714,7 +720,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
           child: Icon(
             Icons.close,
             size: 14,
-            color: _primaryColor.shade700,
+            color: _primaryShade(700),
           ),
         ),
       ],
@@ -873,7 +879,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
             Icon(
               Icons.add,
               size: 16,
-              color: _primaryColor.shade400,
+              color: _primaryShade(400),
             ),
           WText(
             'Create "$_searchQuery"',
@@ -957,9 +963,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
                 Icon(
                   isSelected ? Icons.check_box : Icons.check_box_outline_blank,
                   size: 18,
-                  color: isSelected
-                      ? _primaryColor.shade600
-                      : Colors.grey.shade400,
+                  color: isSelected ? _primaryShade(600) : Colors.grey.shade400,
                 ),
               if (option.icon != null) option.icon!,
               WDiv(
@@ -970,7 +974,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
                 Icon(
                   Icons.check,
                   size: 18,
-                  color: _primaryColor.shade600,
+                  color: _primaryShade(600),
                 ),
             ],
           ),
