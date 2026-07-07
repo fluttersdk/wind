@@ -723,12 +723,12 @@ class _CalendarGrid extends StatelessWidget {
     } else if (!isSelectable) {
       textClass = 'text-gray-300 dark:text-gray-600';
     } else if (isSelected || isRangeStart || isRangeEnd) {
-      bgClass = 'bg-blue-500';
+      bgClass = 'bg-primary';
       textClass = 'text-white font-medium';
       roundedClass = 'rounded-full';
     } else if (isInRange) {
-      bgClass = 'bg-blue-100 dark:bg-blue-900/30';
-      textClass = 'text-blue-700 dark:text-blue-300';
+      bgClass = 'bg-primary-100 dark:bg-primary-900/30';
+      textClass = 'text-primary-700 dark:text-primary-300';
     } else if (isToday) {
       bgClass = 'bg-gray-100 dark:bg-gray-700';
       textClass = 'text-gray-900 dark:text-gray-100 font-medium';

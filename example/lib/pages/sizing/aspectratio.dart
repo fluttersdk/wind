@@ -73,7 +73,7 @@ class AspectRatioExamplePage extends StatelessWidget {
             description: 'Custom aspect ratios with bracket notation',
             children: [
               WDiv(
-                className: 'flex flex-wrap gap-4 overflow-x-auto',
+                className: 'flex wrap gap-4 overflow-x-auto',
                 children: [
                   _buildAspectBox('aspect-[4/3]', '4:3', 'purple', 120),
                   _buildAspectBox('aspect-[21/9]', '21:9', 'orange', 160),

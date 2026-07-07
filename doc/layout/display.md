@@ -83,8 +83,8 @@ WDiv(
 
 Use `wrap` to create a wrapping container. This renders a Flutter `Wrap` widget.
 
-> [!WARNING]
-> Do **not** use `flex flex-wrap`. In Flutter, `Row`/`Column` cannot wrap. Always use the `wrap` display utility instead.
+> [!NOTE]
+> In Flutter, `Row`/`Column` cannot wrap, so `wrap` renders a dedicated `Wrap` widget rather than composing with `flex`. Prefer `wrap` directly; `flex-wrap` is aliased to it for callers coming from CSS (emits a one-time debug hint suggesting `wrap`).
 
 ```dart
 WDiv(

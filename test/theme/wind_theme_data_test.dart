@@ -190,5 +190,64 @@ void main() {
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
+
+    group('default primary token (WIND-3 brand seed)', () {
+      test('seeds a default `primary` color aliased to Tailwind blue', () {
+        final theme = WindThemeData();
+
+        expect(theme.isValidColor('primary'), isTrue);
+        expect(theme.isValidColor('primary', shade: 500), isTrue);
+        expect(
+          theme.getColor('primary', 500),
+          default_colors.colors['blue'][500],
+        );
+      });
+
+      test('primary shades mirror the blue swatch 1:1', () {
+        final theme = WindThemeData();
+
+        for (final shade in <int>[50, 100, 500, 600, 700, 900]) {
+          expect(
+            theme.getColor('primary', shade),
+            default_colors.colors['blue'][shade],
+            reason: 'primary-$shade should equal blue-$shade',
+          );
+        }
+      });
+
+      test('a consumer primary overrides the seeded default', () {
+        final theme = WindThemeData(colors: {'primary': Colors.red});
+
+        expect(
+          theme.getColor('primary', 500)?.toARGB32(),
+          Colors.red.shade500.toARGB32(),
+        );
+      });
+
+      test(
+        'toThemeData keeps its indigo Material baseline when primary is '
+        'left at the seeded default',
+        () {
+          final themeData = WindThemeData().toThemeData();
+
+          // The seeded `primary` token drives Wind widgets only; the Material
+          // ColorScheme retains indigo unless the consumer sets a brand color.
+          expect(
+            themeData.colorScheme.primary.toARGB32(),
+            default_colors.colors['indigo'][500].toARGB32(),
+          );
+        },
+      );
+
+      test('toThemeData seeds the Material scheme from a custom primary', () {
+        final themeData =
+            WindThemeData(colors: {'primary': Colors.purple}).toThemeData();
+
+        expect(
+          themeData.colorScheme.primary.toARGB32(),
+          Colors.purple.shade500.toARGB32(),
+        );
+      });
+    });
   });
 }

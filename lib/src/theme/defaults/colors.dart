@@ -4,6 +4,24 @@ const Map<String, dynamic> colors = {
   'transparent': Color(0x00000000),
   'black': Color(0xFF000000),
   'white': Color(0xFFFFFFFF),
+  // Semantic brand token. Seeded so `bg-primary`/`text-primary`/`border-primary`
+  // resolve out of the box and Wind widgets (select, checkbox, radio, date
+  // picker) can route their selection colors through it. The default mirrors
+  // the Tailwind blue swatch 1:1 so the shipped look is unchanged; a consumer
+  // overrides it with `colors: {'primary': <brand>}` to recolor those widgets.
+  'primary': {
+    50: Color(0xffeff6ff),
+    100: Color(0xffdbeafe),
+    200: Color(0xffbfdbfe),
+    300: Color(0xff93c5fd),
+    400: Color(0xff60a5fa),
+    500: Color(0xff3b82f6),
+    600: Color(0xff2563eb),
+    700: Color(0xff1d4ed8),
+    800: Color(0xff1e40af),
+    900: Color(0xff1e3a8a),
+    950: Color(0xff172554),
+  },
   'slate': {
     50: Color(0xfff8fafc),
     100: Color(0xfff1f5f9),
