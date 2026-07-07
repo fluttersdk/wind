@@ -37,7 +37,7 @@ class BackgroundColorsPage extends StatelessWidget {
             description: 'Common background colors',
             children: [
               WDiv(
-                className: 'flex flex-wrap gap-3 overflow-x-auto',
+                className: 'flex wrap gap-3 overflow-x-auto',
                 children: [
                   _buildColorBox('bg-red-500', 'Red'),
                   _buildColorBox('bg-blue-500', 'Blue'),
@@ -56,7 +56,7 @@ class BackgroundColorsPage extends StatelessWidget {
             description: 'From 50 (light) to 900 (dark)',
             children: [
               WDiv(
-                className: 'flex flex-wrap gap-2',
+                className: 'flex wrap gap-2',
                 children: [
                   _buildShadeBox('bg-blue-50', '50', dark: true),
                   _buildShadeBox('bg-blue-100', '100', dark: true),
@@ -81,7 +81,7 @@ class BackgroundColorsPage extends StatelessWidget {
               WDiv(
                 className: 'p-4 bg-gray-200 dark:bg-slate-700 rounded-lg',
                 child: WDiv(
-                  className: 'flex flex-wrap gap-3 overflow-x-auto',
+                  className: 'flex wrap gap-3 overflow-x-auto',
                   children: [
                     _buildOpacityBox('bg-red-500', '100%'),
                     _buildOpacityBox('bg-red-500/75', '75%'),
@@ -100,7 +100,7 @@ class BackgroundColorsPage extends StatelessWidget {
             description: 'Custom hex colors with bracket notation',
             children: [
               WDiv(
-                className: 'flex flex-wrap gap-3 overflow-x-auto',
+                className: 'flex wrap gap-3 overflow-x-auto',
                 children: [
                   _buildColorBox('bg-[#1da1f2]', 'Twitter'),
                   _buildColorBox('bg-[#FF5733]', 'Custom'),
@@ -116,7 +116,7 @@ class BackgroundColorsPage extends StatelessWidget {
             description: 'Common background values',
             children: [
               WDiv(
-                className: 'flex flex-wrap gap-3 overflow-x-auto',
+                className: 'flex wrap gap-3 overflow-x-auto',
                 children: [
                   WDiv(
                     className: 'bg-white p-4 rounded-lg border border-gray-300',
