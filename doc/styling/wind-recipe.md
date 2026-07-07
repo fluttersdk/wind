@@ -138,6 +138,16 @@ The caller's `className` / `classNames` always arrive last, so they override ear
 
 A `null` value in `variants:` clears the default for that axis (no class emitted for it), matching `tv()`'s `undefined`-clears semantics.
 
+### The Caller-Append Contract (No twMerge)
+
+`WindRecipe` and `WindSlotRecipe` only APPEND the caller's `className` / `classNames`; they never dedupe, sort, or resolve a conflict themselves. A caller passing a className that conflicts with the base (e.g. `WindRecipe(base: 'w-1/2')(className: 'w-full')`) gets both tokens in the emitted string, in that order: `'w-1/2 w-full'`.
+
+The conflict is resolved one layer down, when the string reaches `WindParser`: `findAndGroupClasses` groups same-family classes together WITHOUT deduping, and each parser resolves them with last-class-wins (see `wind_recipe.dart:71-78`). So the appended `w-full` wins over the base `w-1/2` at parse time, not at recipe-call time. There is intentionally no Dart port of `tailwind-merge`: wind's parse-time per-family last-wins already achieves the same outcome for every token family the parsers understand.
+
+This is verified by `test/recipe/wind_recipe_test.dart` (proves the append, order preserved) and `test/parser/parsers/sizing_parser_test.dart` (proves the appended `w-full` resolves to the winning style).
+
+Note: the className-REPLACE anti-pattern (a component treating an incoming `className` as a full recipe bypass instead of appending it) is a consumer-component bug, not a wind defect; wind's own recipes always append. That defect lives in `magic_starter`'s component layer, outside this package.
+
 <a name="same-granularity-override-contract"></a>
 ## Same-Granularity Override Contract
 
