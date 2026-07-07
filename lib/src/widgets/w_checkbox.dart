@@ -39,7 +39,7 @@ class WCheckbox extends StatelessWidget {
   /// Supports:
   /// - **Dimensions:** `w-5`, `h-5` (Required)
   /// - **Appearance:** `rounded-md`, `border`, `border-gray-300`
-  /// - **States:** `checked:bg-primary`, `hover:border-primary-500`, `disabled:bg-gray-100`
+  /// - **States:** `checked:bg-primary`, `hover:border-primary-400`, `disabled:bg-gray-100`
   ///
   /// Example: `'w-6 h-6 rounded-full border-2 border-red-500 checked:bg-red-500'`
   final String? className;

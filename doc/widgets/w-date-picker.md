@@ -377,6 +377,8 @@ WindTheme(
 )
 ```
 
+The calendar only reads shades `100` / `500` / `700` / `900`, so the partial swatch above is enough for it. Other `primary`-driven widgets read further shades (`WSelect` uses `400` / `600` / `700` for its raw icon colors); a missing shade safely falls back to the swatch's base color rather than throwing, but if you share one `primary` across widgets, prefer a complete `50`-`950` swatch (e.g. a generated `MaterialColor`) so every shade renders as intended.
+
 ## Related Documentation
 
 - [WFormDatePicker](./w-form-date-picker.md) - Form-integrated date picker with validation
