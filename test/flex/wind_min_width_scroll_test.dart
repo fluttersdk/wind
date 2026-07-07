@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttersdk_wind/src/state/wind_min_width_scroll_scope.dart';
 import 'package:fluttersdk_wind/src/widgets/wind_min_width_scroll.dart';
 
 /// WIND-4 min-width-stretch scroll: `WindMinWidthBox` sizes a `w-full` child to
@@ -109,5 +110,60 @@ void main() {
     expect(tester.takeException(), isNull);
     // Child wants 500 but the parent only allows 300: the box stays at 300.
     expect(tester.getSize(find.byType(WindMinWidthBox)).width, 300);
+  });
+
+  testWidgets('re-lays out when the min-w floor changes', (tester) async {
+    final port = WindViewportWidthPort()..value = 50;
+    Widget tree(double floor) => host(
+          WindMinWidthBox(
+            port: port,
+            floorMinWidth: floor,
+            child: const SizedBox(width: 20, height: 20),
+          ),
+        );
+
+    await tester.pumpWidget(tree(100));
+    // Floor 100 > viewport 50.
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 100);
+    // Same widget position, new floor: exercises the floorMinWidth setter.
+    await tester.pumpWidget(tree(250));
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 250);
+  });
+
+  test('WindMinWidthScrollScope.updateShouldNotify tracks port and axis flag',
+      () {
+    const child = SizedBox();
+    final portA = WindViewportWidthPort();
+    final portB = WindViewportWidthPort();
+    final base = WindMinWidthScrollScope(
+      horizontalPort: portA,
+      child: child,
+    );
+
+    // Same port and flag: no rebuild.
+    expect(
+      base.updateShouldNotify(
+        WindMinWidthScrollScope(horizontalPort: portA, child: child),
+      ),
+      isFalse,
+    );
+    // Different port: rebuild.
+    expect(
+      base.updateShouldNotify(
+        WindMinWidthScrollScope(horizontalPort: portB, child: child),
+      ),
+      isTrue,
+    );
+    // Different vertical-unbounded flag: rebuild.
+    expect(
+      base.updateShouldNotify(
+        WindMinWidthScrollScope(
+          horizontalPort: portA,
+          verticalUnbounded: true,
+          child: child,
+        ),
+      ),
+      isTrue,
+    );
   });
 }
