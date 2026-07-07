@@ -152,7 +152,7 @@ class FlexGrowExamplePage extends StatelessWidget {
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
-              _RefRow(cls: 'flex-1', desc: 'Expanded() — grow to fill'),
+              _RefRow(cls: 'flex-1', desc: 'Expanded(): grow to fill'),
               _RefRow(
                   cls: 'flex-{n}',
                   desc: 'Specific flex factor (n is any integer)'),

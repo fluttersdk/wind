@@ -15,7 +15,7 @@ class ColorHelpersBasicExamplePage extends StatelessWidget {
       gradient: 'from-pink-500 to-rose-600',
       children: [
         ExampleSection(
-          title: 'wColor() — Resolve Theme Color',
+          title: 'wColor(): Resolve Theme Color',
           description:
               'Pass a color name and shade. Wind returns the resolved Color from the active theme.',
           child: WDiv(
@@ -31,7 +31,7 @@ class ColorHelpersBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
-          title: 'hexToColor() — Hex String to Color',
+          title: 'hexToColor(): Hex String to Color',
           description: 'Accepts 3/4/6/8-digit hex with optional # prefix.',
           child: WDiv(
             className: 'wrap gap-3',
@@ -44,7 +44,7 @@ class ColorHelpersBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
-          title: 'applyOpacity() — Adjust Alpha',
+          title: 'applyOpacity(): Adjust Alpha',
           description:
               'Same base color, descending alpha via applyOpacity(color, N).',
           child: WDiv(
@@ -59,7 +59,7 @@ class ColorHelpersBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
-          title: 'context.wColorExt — Extension Shortcut',
+          title: 'context.wColorExt: Extension Shortcut',
           description:
               'Same as wColor(context, ...). Cleaner inside build methods.',
           child: _CodeBlock(

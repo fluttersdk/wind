@@ -197,11 +197,11 @@ WFormDatePicker(
 ```
 
 > [!NOTE]
-> The `validator` receives the range's start `DateTime` — not a `DateRange` object. For more complex range validation (e.g., minimum stay duration), use the `onRangeChanged` callback to manage validation externally.
+> The `validator` receives the range's start `DateTime`, not a `DateRange` object. For more complex range validation (e.g., minimum stay duration), use the `onRangeChanged` callback to manage validation externally.
 
 ## Event Handling
 
-`onChanged` and `onRangeChanged` fire alongside the form state updates. The `FormFieldState` is updated automatically — you don't need to call `didChange` yourself.
+`onChanged` and `onRangeChanged` fire alongside the form state updates. The `FormFieldState` is updated automatically; you don't need to call `didChange` yourself.
 
 ```dart
 WFormDatePicker(

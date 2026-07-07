@@ -19,7 +19,7 @@
 
 Wind is designed to be fully customizable from the ground up. If you've ever used Tailwind CSS, you'll feel right at home with how we handle "design tokens." Instead of hunting through nested widget properties to change a color or a font size, you define your design system once in your theme configuration.
 
-Everything in Wind—from the colors in `bg-blue-500` to the spacing in `p-4`—is driven by `WindThemeData`. This ensures that your UI remains consistent across the entire application while giving you the freedom to break away from defaults whenever you need to.
+Everything in Wind (from the colors in `bg-blue-500` to the spacing in `p-4`) is driven by `WindThemeData`. This ensures that your UI remains consistent across the entire application while giving you the freedom to break away from defaults whenever you need to.
 
 <a name="the-windtheme-widget"></a>
 ## The WindTheme Widget
@@ -54,7 +54,7 @@ void main() {
 <a name="theme-change-callbacks"></a>
 ## Theme Change Callbacks
 
-When a user manually toggles the theme via `toggleTheme()`, you may want to persist their preference. The `onThemeChanged` callback fires only on user-initiated theme changes—it does **not** fire when the system brightness changes automatically.
+When a user manually toggles the theme via `toggleTheme()`, you may want to persist their preference. The `onThemeChanged` callback fires only on user-initiated theme changes; it does **not** fire when the system brightness changes automatically.
 
 ```dart
 WindTheme(

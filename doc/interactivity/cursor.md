@@ -88,5 +88,5 @@ WDiv(className: 'cursor-pointer bg-white dark:bg-gray-800')
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [WAnchor](../widgets/w-anchor.md) — exposes a `mouseCursor` constructor prop for fully imperative control.
-- [Transitions](./transition.md) — smooth state changes on hover.
+- [WAnchor](../widgets/w-anchor.md): exposes a `mouseCursor` constructor prop for fully imperative control.
+- [Transitions](./transition.md): smooth state changes on hover.

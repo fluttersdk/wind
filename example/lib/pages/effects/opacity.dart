@@ -134,7 +134,7 @@ class _CompareCard extends StatelessWidget {
         WDiv(
           className: '$cls rounded-lg',
           child: WText(
-            'Sample Text — $note',
+            'Sample Text: $note',
             className: 'font-medium',
           ),
         ),

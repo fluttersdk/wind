@@ -19,7 +19,7 @@ import 'w_text.dart';
 /// Use [onChanged] to react to tab taps.
 ///
 /// ### Supported Features:
-/// - **Controlled:** [selectedIndex] + [onChanged] — no internal state.
+/// - **Controlled:** [selectedIndex] + [onChanged], no internal state.
 /// - **Selected state:** `selected:` className prefix activates on the active tab.
 /// - **Slot classNames:** [listClassName], [tabClassName], [selectedTabClassName],
 ///   [panelClassName] for each structural region.
@@ -71,7 +71,7 @@ class WTabs extends StatelessWidget {
 
   /// Utility classes applied to every tab's inner [WDiv].
   ///
-  /// Supports `selected:` prefix tokens — they activate only on the selected tab.
+  /// Supports `selected:` prefix tokens, they activate only on the selected tab.
   ///
   /// Example: `'px-4 py-2 text-sm text-gray-600 selected:text-blue-600'`
   final String? tabClassName;
@@ -125,7 +125,7 @@ class WTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Parse panel className for debug — delegates the tab-level parse to each tab builder.
+    // 1. Parse panel className for debug: delegates the tab-level parse to each tab builder.
     final WindStyle panelStyles = panelClassName != null
         ? WindParser.parse(panelClassName!, context)
         : const WindStyle();

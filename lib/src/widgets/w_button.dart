@@ -213,7 +213,7 @@ class WButton extends StatelessWidget {
     // Determine spinner color:
     // 1. Explicit loadingColor takes priority.
     // 2. Text color from className (styles.color).
-    // 3. Contrast color based on background — prevents invisible spinners
+    // 3. Contrast color based on background: prevents invisible spinners
     //    (e.g., white spinner on white button).
     // 4. Final fallback: white.
     final Color spinnerColor =
@@ -244,7 +244,7 @@ class WButton extends StatelessWidget {
   /// Returns a contrasting spinner color based on background luminance.
   ///
   /// If the background is light (luminance > 0.5), returns a dark color.
-  /// Otherwise returns white — matching the common pattern of light text
+  /// Otherwise returns white, matching the common pattern of light text
   /// on dark buttons.
   Color _contrastColor(WindStyle styles) {
     final Color? bgColor = styles.decoration?.color;
@@ -252,7 +252,7 @@ class WButton extends StatelessWidget {
 
     // Use W3C relative luminance to determine if background is light.
     return bgColor.computeLuminance() > 0.5
-        ? const Color(0xFF1E293B) // slate-800 — readable on light bg
+        ? const Color(0xFF1E293B) // slate-800, readable on light bg
         : Colors.white;
   }
 }

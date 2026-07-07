@@ -42,15 +42,15 @@ class FontSizeExamplePage extends StatelessWidget {
             className: 'flex flex-col gap-3',
             children: const [
               WText(
-                'text-lg/loose — generous breathing room',
+                'text-lg/loose: generous breathing room',
                 className: 'text-lg/loose text-slate-900 dark:text-white',
               ),
               WText(
-                'text-base/7 — fixed 28px line height',
+                'text-base/7: fixed 28px line height',
                 className: 'text-base/7 text-slate-900 dark:text-white',
               ),
               WText(
-                'text-xl/[32px] — arbitrary',
+                'text-xl/[32px]: arbitrary',
                 className: 'text-xl/[32px] text-slate-900 dark:text-white',
               ),
             ],
@@ -69,7 +69,7 @@ class FontSizeExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Arbitrary Sizes',
           description:
-              'Brackets accept exact px or rem. Use sparingly — prefer the scale for consistency.',
+              'Brackets accept exact px or rem. Use sparingly; prefer the scale for consistency.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [

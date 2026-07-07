@@ -227,7 +227,7 @@ class WindStyle {
   /// SVG stroke color e.g., stroke-blue-500, stroke-current
   final Color? strokeColor;
 
-  /// When true, no [ColorFilter] is applied to the SVG — the widget renders
+  /// When true, no [ColorFilter] is applied to the SVG; the widget renders
   /// with its own embedded colors unchanged. Use `preserve-colors` in className.
   /// Ideal for QR codes, logos, and multi-colour illustrations.
   final bool preserveColors;

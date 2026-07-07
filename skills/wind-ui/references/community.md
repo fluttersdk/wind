@@ -37,7 +37,7 @@ A genuine wind-side bug per SKILL.md §15. If the symptom matches any of the doc
 
 Not-bug-worthy (documented behavior, recover per the cited section):
 
-- Core Law 6 silent-no-op: any unknown token, `text-7xl` / `text-8xl` / `text-9xl`, `flex-wrap`, `ps-*` / `pe-*` / `ms-*` / `me-*`, `-m-N`, `w-auto` / `h-auto`, bare `transition` / `transition-all` / `transition-colors`, `border-dashed` / `border-dotted`, `fixed` / `sticky`, `divide-*`, `cursor-*`, `filter`, `backdrop-blur`, `group-*`, `peer-*`, `@apply`, `!important`. See SKILL.md §4, §5, and `references/tailwind-divergence.md`.
+- Core Law 6 silent-no-op: any unknown token, `text-7xl` / `text-8xl` / `text-9xl`, `ps-*` / `pe-*` / `ms-*` / `me-*`, `-m-N`, `w-auto` / `h-auto`, bare `transition` / `transition-all` / `transition-colors`, `border-dashed` / `border-dotted`, `fixed` / `sticky`, `divide-*`, `filter`, `backdrop-blur`, `group-*`, `peer-*`, `@apply`, `!important`. (`flex-wrap` is aliased to `wrap`, and `cursor-*` is a supported utility, so neither is a silent no-op.) See SKILL.md §4, §5, and `references/tailwind-divergence.md`.
 - `active:` prefix has no effect (Core Law 10: reserved but not wired). Recover by tracking press in consumer state and passing `states: {'pressed'}`.
 - RenderFlex overflow from `w-full` inside a Row, "Vertical viewport was given unbounded height" from `h-full` inside a scrollable parent, or `absolute` not positioning without a `relative` ancestor (§6 layout rules: Flutter constraint reality, not Wind bugs).
 - Missing `dark:` peer producing light-only colors in dark mode (Core Law 2: consumer-code bug).

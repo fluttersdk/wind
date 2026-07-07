@@ -411,7 +411,7 @@ WDynamic(
 )
 ```
 
-This is a lightweight alternative to custom builders when you only need to extend the icon library. See [WDynamic — Custom Icons](../widgets/w-dynamic.md#custom-icons) for complete configuration details.
+This is a lightweight alternative to custom builders when you only need to extend the icon library. See [WDynamic: Custom Icons](../widgets/w-dynamic.md#custom-icons) for complete configuration details.
 
 <a name="error-handling"></a>
 ## Error Handling

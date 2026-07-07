@@ -29,7 +29,7 @@ class CursorBasicExamplePage extends StatelessWidget {
               dark:bg-blue-600 dark:hover:bg-blue-700
             ''',
             child: const WText(
-              'Hover me — cursor-pointer',
+              'Hover me (cursor-pointer)',
               className: 'text-white font-medium',
             ),
           ),

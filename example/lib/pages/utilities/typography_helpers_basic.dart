@@ -15,7 +15,7 @@ class TypographyHelpersBasicExamplePage extends StatelessWidget {
       gradient: 'from-amber-500 to-orange-500',
       children: [
         ExampleSection(
-          title: 'wFontSize() — Resolve Pixel Size',
+          title: 'wFontSize(): Resolve Pixel Size',
           description:
               'Every named size from xs to 6xl maps to a double pixel value.',
           child: WDiv(
@@ -32,7 +32,7 @@ class TypographyHelpersBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
-          title: 'wFontWeight() — Resolve FontWeight',
+          title: 'wFontWeight(): Resolve FontWeight',
           description: 'Named weights map to Flutter FontWeight constants.',
           child: WDiv(
             className: 'flex flex-col gap-2',

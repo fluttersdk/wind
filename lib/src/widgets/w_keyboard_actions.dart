@@ -133,7 +133,7 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
   OverlayEntry? _overlayEntry;
   int? _currentIndex;
 
-  /// Parsed platform gate — derived from widget.platform once in initState.
+  /// Parsed platform gate, derived from widget.platform once in initState.
   late WKeyboardPlatform _platform;
 
   @override
@@ -236,16 +236,16 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
   /// itself as long as the overlay remains active.
   ///
   /// Transient callbacks fire BEFORE the build phase, so any [setState] from
-  /// [_removeOverlay] takes effect within the same rendered frame — no extra
+  /// [_removeOverlay] takes effect within the same rendered frame; no extra
   /// pump needed.
   void _schedulePlatformGuard() {
     SchedulerBinding.instance.scheduleFrameCallback((_) {
       if (!mounted || _overlayEntry == null) return;
       if (!_platformMatches()) {
-        // 2. Platform no longer matches — remove the toolbar in this frame.
+        // 2. Platform no longer matches, remove the toolbar in this frame.
         _removeOverlay();
       } else {
-        // 3. Platform still valid — reschedule for the next frame.
+        // 3. Platform still valid, reschedule for the next frame.
         _schedulePlatformGuard();
       }
     });
@@ -257,7 +257,7 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
   ///
   /// The parameter shadows the State's `context` getter; use `this.context` to
   /// reach the State's own context when needed (e.g. for `WindParser`, which
-  /// must walk up to `WindTheme` — see `_resolveToolbarColor`).
+  /// must walk up to `WindTheme`, see `_resolveToolbarColor`).
   Widget _buildToolbar(BuildContext context) {
     final index = _currentIndex;
     if (index == null) return const SizedBox.shrink();

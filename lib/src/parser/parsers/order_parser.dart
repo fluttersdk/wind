@@ -10,11 +10,11 @@ import 'wind_parser_interface.dart';
 /// stable-sorts them before layout.
 ///
 /// ### Supported Utility Classes:
-/// - `order-0` .. `order-12` — explicit index
-/// - `order-first` — sentinel `-9999`
-/// - `order-last` — sentinel `9999`
-/// - `order-none` — reset to `0`
-/// - `order-[N]` — arbitrary integer value (supports negative)
+/// - `order-0` .. `order-12`: explicit index
+/// - `order-first`: sentinel `-9999`
+/// - `order-last`: sentinel `9999`
+/// - `order-none`: reset to `0`
+/// - `order-[N]`: arbitrary integer value (supports negative)
 ///
 /// Prefixes such as `sm:`, `dark:`, `hover:` are stripped by the orchestrator
 /// before classes reach this parser; the full responsive + state stack works
@@ -33,7 +33,7 @@ class OrderParser implements WindParserInterface {
 
   @override
   bool canParse(String className) {
-    // Fast path — `canParse` must stay O(1). We match the literal prefix and
+    // Fast path: `canParse` must stay O(1). We match the literal prefix and
     // let `parse` do the full regex validation.
     return className.startsWith('order-');
   }
@@ -48,7 +48,7 @@ class OrderParser implements WindParserInterface {
 
     int? order;
 
-    // Reverse iteration — last class wins, consistent with other parsers.
+    // Reverse iteration: last class wins, consistent with other parsers.
     for (var i = classes.length - 1; i >= 0; i--) {
       final match = _orderRegex.firstMatch(classes[i]);
       if (match == null) continue;

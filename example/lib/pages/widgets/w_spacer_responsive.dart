@@ -17,7 +17,7 @@ class WSpacerResponsiveExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Basic Usage',
           description:
-              'h-4 md:h-8 — 16px gap on mobile, 32px on md+. Resize the window to see the spacing change.',
+              'h-4 md:h-8: 16px gap on mobile, 32px on md+. Resize the window to see the spacing change.',
           child: WDiv(
             className: 'flex flex-col items-stretch',
             children: const [
@@ -36,7 +36,7 @@ class WSpacerResponsiveExamplePage extends StatelessWidget {
             children: const [
               _Card(label: 'First'),
               WSpacer(className: 'h-2 sm:h-4 lg:h-8 xl:h-12'),
-              _Card(label: 'Second — cascading gap'),
+              _Card(label: 'Second (cascading gap)'),
             ],
           ),
         ),

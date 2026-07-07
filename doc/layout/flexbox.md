@@ -67,7 +67,7 @@ WDiv(
 | `items-{alignment}` | `align-items: ...` | `CrossAxisAlignment` |
 | `gap-{n}` | `gap: {n}` | `SizedBox` (spacer) |
 | `flex-1` | `flex: 1` | `Expanded()` |
-| `shrink-0` | `flex-shrink: 0` | No wrapper — preserves intrinsic size |
+| `shrink-0` | `flex-shrink: 0` | No wrapper: preserves intrinsic size |
 
 <a name="flex-direction"></a>
 ## Flex Direction
@@ -132,7 +132,7 @@ WDiv(
 // Visual order: B, C, A
 ```
 
-Responsive reordering is a common use case — swap the layout per breakpoint without duplicating children:
+Responsive reordering is a common use case: swap the layout per breakpoint without duplicating children:
 
 ```dart
 WDiv(
@@ -281,10 +281,10 @@ Control how individual children resize to fill available space.
 |:------|:------------|
 | `flex-1` | Allow child to grow and fill available space (`Expanded`). |
 | `flex-grow` / `grow` | Alias for `flex-1` (Tailwind v3 and v4 names). |
-| `grow-0` | Do not grow — child keeps its intrinsic main-axis size. |
+| `grow-0` | Do not grow: child keeps its intrinsic main-axis size. |
 | `flex-{n}` | Specific flex factor (e.g., `flex-2`). |
 | `shrink` | Allow child to shrink if needed (`FlexFit.loose`). |
-| `shrink-0` | Preserve intrinsic size — no Flexible wrapper, child keeps its natural dimensions. |
+| `shrink-0` | Preserve intrinsic size: no Flexible wrapper, child keeps its natural dimensions. |
 | `flex-none` | CSS `flex: 0 0 auto`: do not grow AND do not shrink. Keeps intrinsic size (same no-shrink path as `shrink-0`). |
 | `basis-1/2` / `basis-1/3` / `basis-1/4` / `basis-full` | Fractional flex-basis: initial main-axis size (width in a row, height in a column). Approximates CSS `flex-basis`; ignores grow/shrink interplay. |
 | `basis-[Npx]` | Fixed flex-basis: a fixed main-axis size in logical pixels (e.g., `basis-[120px]`). |
@@ -371,7 +371,7 @@ WindThemeData(
 <a name="flex-and-overflow"></a>
 ## Flex Children Inside a Scrollable Axis
 
-When a flex container's own main axis is scrollable (`flex-row` with `overflow-x-auto|scroll`, or `flex-col` with `overflow-y-auto|scroll`), Flutter's `Expanded`/`Flexible` cannot resolve — the incoming constraint is unbounded. Wind detects this at resolution time and skips the `Expanded`/`Flexible` wrap for direct flex children in that pass, so `flex-N` becomes a no-op while the axis is scrollable.
+When a flex container's own main axis is scrollable (`flex-row` with `overflow-x-auto|scroll`, or `flex-col` with `overflow-y-auto|scroll`), Flutter's `Expanded`/`Flexible` cannot resolve: the incoming constraint is unbounded. Wind detects this at resolution time and skips the `Expanded`/`Flexible` wrap for direct flex children in that pass, so `flex-N` becomes a no-op while the axis is scrollable.
 
 This enables the common responsive pattern of "scroll on narrow, distribute on wide":
 

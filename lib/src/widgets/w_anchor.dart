@@ -188,7 +188,7 @@ class _WAnchorState extends State<WAnchor> {
         widget.onLongPress != null ||
         widget.onDoubleTap != null;
 
-    // Focus is always present — needed for focus: class prefix to work
+    // Focus is always present, needed for focus: class prefix to work
     Widget innerChild = Focus(
       focusNode: _focusNode,
       canRequestFocus: !widget.isDisabled,

@@ -44,7 +44,7 @@ class ContextExtensionsBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
-          title: 'context.windTheme — Toggle from Anywhere',
+          title: 'context.windTheme: Toggle from Anywhere',
           description:
               'The header toggle uses this exact call. Available globally without provider drilling.',
           child: _CodeBlock(
@@ -53,7 +53,7 @@ class ContextExtensionsBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
-          title: 'context.wColorExt — Color Resolver',
+          title: 'context.wColorExt: Color Resolver',
           description:
               'Resolves a theme color in one call. The block below shows three live resolutions.',
           child: WDiv(
@@ -66,7 +66,7 @@ class ContextExtensionsBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
-          title: 'context.wStyleExt — Parse className',
+          title: 'context.wStyleExt: Parse className',
           description:
               'Parse any utility string into a WindStyle to apply on plain Flutter widgets.',
           child: _CodeBlock(

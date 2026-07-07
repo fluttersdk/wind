@@ -9,6 +9,7 @@
 - [How WindLogger Works](#how-windlogger-works)
 - [Quick Reference](#quick-reference)
 - [Common Scenarios](#common-scenarios)
+- [Unknown className Warnings](#unknown-classname-warnings)
 - [External Tooling Integration](#external-tooling-integration)
 
 <a name="introduction"></a>
@@ -121,6 +122,22 @@ Let's look at common debugging workflows using the `debug` class:
 - **Inspecting Responsive Styles**: Resize the viewport while `debug` is active. The logger will re-trigger and show the new `Final Styles` for the active breakpoint.
 - **Verifying State Variants**: Hover over or focus a widget with state-based classes (like `hover:bg-blue-600`). The log will update to show the merged style.
 - **Analyzing Layout Layers**: Use the `Composition Tree` to determine which utility class is responsible for a specific Flutter wrapper, helping identify unexpected padding or alignment issues.
+
+<a name="unknown-classname-warnings"></a>
+## Unknown className Warnings
+
+Wind drops any token no parser recognizes: an unknown token never throws and never renders. That keeps a typo from crashing the UI, but a silent drop also hides the typo. To surface it, the parser prints a one-time hint in `kDebugMode` whenever it meets a className it cannot resolve:
+
+```text
+Wind: unknown className 'flex-col-reverse' was ignored.
+```
+
+The hint fires once per unique token per session (deduped like the alias shadow and cycle warnings), so a token repeated across many widgets logs a single line. Release builds print nothing: the check sits behind `kDebugMode` and is tree-shaken out.
+
+> [!NOTE]
+> The warning targets genuine typos. Valid Wind tokens that a widget consumes outside the parser map are exempt and never warn: the `object-*` fit family (read by `WImage`), the `inline-flex` / `inline-block` / `inline` display keywords (emitted by `WBadge`, inert in Flutter), and deliberately inert compatibility tokens (`transition` / `transition-colors`, `antialiased`, `sr-only`, and the `*-nums` font-variant family such as `tabular-nums`).
+
+If a token you expect to work triggers the warning, check the [Token catalog](https://fluttersdk.com/wind/layout/index.md) for the canonical spelling. A common case is a CSS name that Wind aliases: `flex-wrap` prints the hint and points you at the canonical `wrap`.
 
 <a name="external-tooling-integration"></a>
 ## External Tooling Integration

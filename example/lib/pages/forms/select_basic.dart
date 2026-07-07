@@ -32,7 +32,7 @@ class _SelectBasicExamplePageState extends State<SelectBasicExamplePage> {
     return ExampleScaffold(
       title: 'WSelect',
       description:
-          'Utility-first dropdown built on WPopover. Single + multi + searchable + async load + tagging — all from one widget.',
+          'Utility-first dropdown built on WPopover. Single + multi + searchable + async load + tagging: all from one widget.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(

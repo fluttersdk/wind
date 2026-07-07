@@ -69,7 +69,7 @@ class InteractivityAnimationExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Ping',
           description:
-              'Element scales outward and fades — radar pulse / notification dot.',
+              'Element scales outward and fades (radar pulse / notification dot).',
           child: WDiv(
             className: 'wrap gap-8 items-center py-6',
             children: const [

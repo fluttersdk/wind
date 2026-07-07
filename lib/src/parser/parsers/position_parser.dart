@@ -36,7 +36,7 @@ class PositionParser implements WindParserInterface {
 
   /// Regex for arbitrary offset classes
   /// e.g., top-[24px], left-[12px], -inset-[10px]
-  /// Note: percentage values (e.g., left-[50%]) are intentionally unsupported —
+  /// Note: percentage values (e.g., left-[50%]) are intentionally unsupported:
   /// Flutter's Positioned uses logical pixels, not percentages.
   static final _arbitraryOffsetRegex = RegExp(
     r'^-?(?<root>top|bottom|left|right|inset-x|inset-y|inset)-\[(?<value>[0-9.]+(?:px)?)\]$',
@@ -72,7 +72,7 @@ class PositionParser implements WindParserInterface {
           } else if (className == 'absolute') {
             positionType = WindPositionType.absolute;
           }
-          // fixed/sticky are claimed but ignored — no style change
+          // fixed/sticky are claimed but ignored, no style change
         }
         continue;
       }

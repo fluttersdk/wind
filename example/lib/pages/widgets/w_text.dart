@@ -83,7 +83,7 @@ class WTextExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Layout Compose',
           description:
-              'WText accepts padding, background, and borders — Wind auto-wraps in Container.',
+              'WText accepts padding, background, and borders; Wind auto-wraps in Container.',
           child: WText(
             'Alert: build failed at 14:32. Please retry.',
             className: '''

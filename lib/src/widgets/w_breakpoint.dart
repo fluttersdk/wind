@@ -10,9 +10,9 @@ import '../parser/wind_context.dart';
 ///
 /// This is an **escape hatch**. Prefer className-first solutions when the
 /// difference is purely stylistic:
-/// - `sm:flex-row`, `md:gap-8` — swap styles per breakpoint
-/// - `hidden sm:block` / `block sm:hidden` — swap visibility per breakpoint
-/// - `order-2 md:order-1` — reorder flex children per breakpoint
+/// - `sm:flex-row`, `md:gap-8`: swap styles per breakpoint
+/// - `hidden sm:block` / `block sm:hidden`: swap visibility per breakpoint
+/// - `order-2 md:order-1`: reorder flex children per breakpoint
 ///
 /// Reach for `WBreakpoint` only when the widget **tree structure** genuinely
 /// differs per breakpoint (different widget types, different child counts,
@@ -23,7 +23,7 @@ import '../parser/wind_context.dart';
 /// 1. Reads active breakpoint via [WindContext.build].
 /// 2. Walks the breakpoint chain in descending order by min width, restricted
 ///    to breakpoints whose min width ≤ the active breakpoint's min width.
-/// 3. Returns the first builder found — i.e. the builder for the highest
+/// 3. Returns the first builder found: the builder for the highest
 ///    defined breakpoint that is still ≤ the active breakpoint.
 /// 4. Falls back to [base] if no matching builder exists.
 ///

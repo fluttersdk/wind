@@ -37,7 +37,7 @@ class SpacingHelpersBasicExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Fractional Multipliers',
           description:
-              'wSpacing also accepts decimals — useful for tight spacings that the className scale does not include.',
+              'wSpacing also accepts decimals, useful for tight spacings that the className scale does not include.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [

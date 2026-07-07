@@ -50,7 +50,7 @@ class WAnchorFlexExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Card Lift Effect',
           description:
-              'Hover raises shadow + tints background — works for entire interactive cards.',
+              'Hover raises shadow + tints background, works for entire interactive cards.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(

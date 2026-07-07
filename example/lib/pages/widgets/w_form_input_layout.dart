@@ -53,7 +53,7 @@ class WFormInputLayoutExamplePage extends StatelessWidget {
         ExampleSection(
           title: 'Hide Error String',
           description:
-              'showError: false keeps the error: prefix active on the input but suppresses the message text — useful when you render your own.',
+              'showError: false keeps the error: prefix active on the input but suppresses the message text; useful when you render your own.',
           child: WFormInput(
             label: 'Email',
             placeholder: 'you@example.com',

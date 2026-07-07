@@ -85,7 +85,7 @@ import 'w_dynamic_state.dart';
 /// ## Error Handling
 ///
 /// **Unknown action**: If an action name is not in the registered actions map, the call
-/// is silently ignored and a debug message is printed: `"Unknown action {name} — ignored."`
+/// is silently ignored and a debug message is printed: `"Unknown action {name}, ignored."`
 ///
 /// **Handler exception**: If a handler throws an exception, it is caught and logged:
 /// `"Action {name} error: {exception}"`. The error does not propagate to the widget tree.
@@ -147,7 +147,7 @@ class WActionHandler {
   FutureOr<void> dispatch(String actionName, Map<String, dynamic> args) {
     final handler = _actions[actionName];
     if (handler == null) {
-      debugPrint('WindDynamic: Unknown action "$actionName" — ignored.');
+      debugPrint('WindDynamic: Unknown action "$actionName", ignored.');
       return null;
     }
 
