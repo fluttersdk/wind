@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../wind_context.dart';
@@ -11,7 +12,7 @@ import 'wind_parser_interface.dart';
 /// [WDiv] and other layout-aware widgets arrange their children.
 ///
 /// ### Supported Utility Classes:
-/// - **Display:** `flex`, `grid`, `wrap`, `block`, `hidden`
+/// - **Display:** `flex`, `grid`, `wrap` (also aliased from `flex-wrap`), `block`, `hidden`
 /// - **Direction:** `flex-row`, `flex-col`
 /// - **Justify Content:** `justify-start`, `justify-end`, `justify-center`, `justify-between`, `justify-around`, `justify-evenly`
 /// - **Align Items:** `items-start`, `items-end`, `items-center`, `items-baseline`, `items-stretch`
@@ -32,6 +33,31 @@ import 'wind_parser_interface.dart';
 /// Returns a [WindStyle] affecting layout properties like `mainAxisAlignment`, `crossAxisAlignment`, etc.
 class FlexboxGridParser implements WindParserInterface {
   const FlexboxGridParser();
+
+  /// Whether the `flex-wrap` -> `wrap` alias hint has already been printed
+  /// this session (debug-only, dedup to one line regardless of how many
+  /// `flex-wrap` occurrences are parsed).
+  static bool _warnedFlexWrapAlias = false;
+
+  /// Emits a one-time debug hint pointing callers at the canonical `wrap`
+  /// token, mirroring the `_warnedAliases` dedup pattern in `WindParser`.
+  static void _warnFlexWrapAlias() {
+    if (_warnedFlexWrapAlias) return;
+    _warnedFlexWrapAlias = true;
+    debugPrint(
+      "Wind: 'flex-wrap' is aliased to 'wrap'; prefer 'wrap' directly.",
+    );
+  }
+
+  /// Resets the one-time `flex-wrap` alias hint (test-only).
+  ///
+  /// Mirrors `WindParser.clearCache()` resetting `_warnedAliases`, so a test
+  /// asserting the hint fires is not order-dependent on earlier tests that
+  /// already parsed `flex-wrap`.
+  @visibleForTesting
+  static void resetWarnings() {
+    _warnedFlexWrapAlias = false;
+  }
 
   /// Matches theme-based gap classes (e.g., `gap-4`, `gap-x-2`, `gap-y-1/2`)
   /// Also matches space-x and space-y as aliases (Tailwind's margin-based spacing)
@@ -215,6 +241,20 @@ class FlexboxGridParser implements WindParserInterface {
         if (!visibilitySet) {
           isHidden = false;
           visibilitySet = true;
+        }
+      } else if (displayType == null && className == 'flex-wrap') {
+        // Tailwind's `flex-wrap` sets `flex-wrap: wrap` on an existing flex
+        // container; wind has no separate wrap-property slot from `display`,
+        // so it is aliased directly to `WindDisplayType.wrap` (wind's
+        // dedicated wrap-display token). This is an ADDED alias, not a
+        // replacement: `wrap` keeps its own meaning and behavior.
+        displayType = WindDisplayType.wrap;
+        if (!visibilitySet) {
+          isHidden = false;
+          visibilitySet = true;
+        }
+        if (kDebugMode) {
+          _warnFlexWrapAlias();
         }
       } else if (flexDirection == null &&
           _directionMap.containsKey(className)) {
