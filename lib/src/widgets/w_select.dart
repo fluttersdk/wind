@@ -8,6 +8,7 @@ import 'select_option.dart';
 import 'w_div.dart';
 import 'w_input.dart';
 import 'w_text.dart';
+import '../utils/wind_extensions.dart';
 import '../utils/wind_logger.dart';
 
 /// Signature for building a custom trigger widget for [WSelect].
@@ -255,6 +256,12 @@ class _WSelectState<T> extends State<WSelect<T>> {
   bool _isOpen = false;
   bool _isHovering = false;
   bool _openUpward = false;
+
+  /// The theme's `primary` swatch, used for the raw [Icon] colors that cannot
+  /// take a className. `primary` is always present in the resolved color map
+  /// (Wind seeds it into the default theme), so the brand color drives these
+  /// icons the same way `bg-primary`/`text-primary` drive the surrounding text.
+  MaterialColor get _primaryColor => context.windColors['primary']!;
 
   /// Shared [TapRegion] group for the trigger and the open menu, so re-tapping
   /// the trigger toggles it closed (the tap is inside the group) rather than
@@ -699,12 +706,16 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   Widget _buildDefaultChip(SelectOption<T> option) {
     return WDiv(
-      className: 'flex items-center gap-1 bg-blue-100 rounded px-2 py-0.5',
+      className: 'flex items-center gap-1 bg-primary-100 rounded px-2 py-0.5',
       children: [
-        WText(option.label, className: 'text-blue-800 text-sm'),
+        WText(option.label, className: 'text-primary-800 text-sm'),
         GestureDetector(
           onTap: () => _removeValue(option.value),
-          child: Icon(Icons.close, size: 14, color: Colors.blue.shade700),
+          child: Icon(
+            Icons.close,
+            size: 14,
+            color: _primaryColor.shade700,
+          ),
         ),
       ],
     );
@@ -859,10 +870,14 @@ class _WSelectState<T> extends State<WSelect<T>> {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           else
-            Icon(Icons.add, size: 16, color: Colors.blue.shade400),
+            Icon(
+              Icons.add,
+              size: 16,
+              color: _primaryColor.shade400,
+            ),
           WText(
             'Create "$_searchQuery"',
-            className: 'text-blue-500 dark:text-blue-400 font-medium',
+            className: 'text-primary-500 dark:text-primary-400 font-medium',
           ),
         ],
       ),
@@ -911,14 +926,14 @@ class _WSelectState<T> extends State<WSelect<T>> {
     }
 
     final String bgClass = isSelected
-        ? 'bg-blue-50 dark:bg-blue-900/30'
+        ? 'bg-primary-50 dark:bg-primary-900/30'
         : isHovered
             ? 'bg-gray-100 dark:bg-slate-700'
             : 'bg-transparent';
     final String textColorClass = option.disabled
         ? 'text-gray-400 dark:text-gray-500'
         : isSelected
-            ? 'text-blue-700 dark:text-blue-300 font-medium'
+            ? 'text-primary-700 dark:text-primary-300 font-medium'
             : 'text-gray-800 dark:text-gray-200';
 
     return WindAnchorStateProvider(
@@ -942,8 +957,9 @@ class _WSelectState<T> extends State<WSelect<T>> {
                 Icon(
                   isSelected ? Icons.check_box : Icons.check_box_outline_blank,
                   size: 18,
-                  color:
-                      isSelected ? Colors.blue.shade600 : Colors.grey.shade400,
+                  color: isSelected
+                      ? _primaryColor.shade600
+                      : Colors.grey.shade400,
                 ),
               if (option.icon != null) option.icon!,
               WDiv(
@@ -951,7 +967,11 @@ class _WSelectState<T> extends State<WSelect<T>> {
                 child: WText(option.label, className: textColorClass),
               ),
               if (!widget.isMulti && isSelected)
-                Icon(Icons.check, size: 18, color: Colors.blue.shade600),
+                Icon(
+                  Icons.check,
+                  size: 18,
+                  color: _primaryColor.shade600,
+                ),
             ],
           ),
         ),
