@@ -304,16 +304,35 @@ class WindParser {
     final resolvedClasses = resolveClasses(classes, windContext);
 
     for (final cls in resolvedClasses) {
+      bool claimed = false;
       for (final entry in _parserMap.entries) {
         final checkClass = cls.contains(':') ? cls.split(':').last : cls;
         if (entry.value.canParse(checkClass)) {
           map.putIfAbsent(entry.key, () => []).add(cls);
+          claimed = true;
           break;
         }
+      }
+
+      // An unclaimed class is still dropped (no parser owns it), but the
+      // developer is told once per unique token so a typo does not silently
+      // no-op forever.
+      if (!claimed && kDebugMode) {
+        _warnUnknownToken(cls);
       }
     }
 
     return map;
+  }
+
+  /// Emits a debug-only warning for a className no parser recognizes,
+  /// deduped per unique token this session.
+  ///
+  /// The token is still dropped from output; this only surfaces the drop.
+  static void _warnUnknownToken(String className) {
+    if (_warnedAliases.add('unknown:$className')) {
+      debugPrint("Wind: unknown className '$className' was ignored.");
+    }
   }
 
   /// Resolves prefixed classes based on the current [WindContext].

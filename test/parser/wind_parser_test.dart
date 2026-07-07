@@ -96,6 +96,46 @@ void main() {
         "background": ["bg-red-500", "bg-blue-500"],
       });
     });
+
+    test('drops a className no parser recognizes', () {
+      final className = "bg-red-500 not-a-real-token";
+      final context = createTestContext();
+      final result = WindParser.findAndGroupClasses(className, context);
+      expect(result, {
+        "background": ["bg-red-500"],
+      });
+      expect(
+        result.values.expand((classes) => classes),
+        isNot(contains('not-a-real-token')),
+      );
+    });
+  });
+
+  group('WindParser unknown-token debug diagnostics', () {
+    setUp(WindParser.clearCache);
+
+    test('warns exactly once per unique unknown token this session', () {
+      final logs = <String>[];
+      final original = debugPrint;
+      debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+
+      try {
+        final context = createTestContext();
+        WindParser.findAndGroupClasses(
+          'bg-red-500 not-a-real-token',
+          context,
+        );
+        // Re-parsing the same unknown token must not print a second time.
+        WindParser.findAndGroupClasses('not-a-real-token', context);
+      } finally {
+        debugPrint = original;
+      }
+
+      expect(
+        logs.where((l) => l.contains("'not-a-real-token'")),
+        hasLength(1),
+      );
+    });
   });
 
   group('WindParser.resolveClasses', () {
