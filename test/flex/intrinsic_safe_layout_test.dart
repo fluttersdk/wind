@@ -113,8 +113,7 @@ void main() {
     });
   });
 
-  group('(a) fractional basis degrades gracefully on an unbounded main axis',
-      () {
+  group('fractional basis degrades gracefully on an unbounded main axis', () {
     testWidgets('basis-1/2 in an unbounded-width row passes through (no crash)',
         (tester) async {
       await tester.pumpWidget(

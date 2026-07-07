@@ -543,9 +543,10 @@ class WDiv extends StatelessWidget {
 
     // `basis-*` resolves a fraction/fixed size against the flex's own bounded
     // main extent. Flex hands non-flex children an unbounded main-axis
-    // constraint, so a fractional box cannot self-size — we measure the extent
-    // with a LayoutBuilder around the whole flex and pass it down. Only taken
-    // when a child actually carries `basis-*`, so the common case is unwrapped.
+    // constraint, so a fractional box cannot self-size; the flex publishes its
+    // own extent to the box at layout time (see WindMainExtentProvider below),
+    // with no LayoutBuilder. Only taken when a child actually carries `basis-*`,
+    // so the common case is unwrapped.
     final bool hasBasisChild = _anyChildHasBasis(gappedChildren);
     if (hasBasisChild) {
       // Resolve `basis-*` intrinsic-safely: fixed `basis-[Npx]` becomes a
