@@ -98,6 +98,12 @@ void main() {
     });
 
     test('drops a className no parser recognizes', () {
+      // The unclaimed token emits the one-time kDebugMode hint; silence it so
+      // the suite output stays quiet (kDebugMode is true under flutter test).
+      final original = debugPrint;
+      addTearDown(() => debugPrint = original);
+      debugPrint = (message, {wrapWidth}) {};
+
       final className = "bg-red-500 not-a-real-token";
       final context = createTestContext();
       final result = WindParser.findAndGroupClasses(className, context);
