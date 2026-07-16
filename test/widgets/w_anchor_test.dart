@@ -208,6 +208,40 @@ void main() {
         expect(tapped, isTrue);
       });
 
+      testWidgets(
+          'onTap fires when tapping a transparent region of the anchor',
+          (tester) async {
+        // A settings-row-style anchor: the interactive content (a label) sits
+        // on the left, leaving the centre/right transparent. With the
+        // GestureDetector defaulting to deferToChild, a tap on the transparent
+        // centre missed the gesture entirely, so a real user tapping the blank
+        // part of a row, and every centre-of-element tap from a driver
+        // (dusk / Playwright), silently did nothing. The whole anchor bounds
+        // must be tappable.
+        bool tapped = false;
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onTap: () => tapped = true,
+              child: const SizedBox(
+                width: 300,
+                height: 60,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Dark'),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // Tap the centre of the anchor: a transparent region with no opaque
+        // child under it (the label is pinned to the far left).
+        await tester.tapAt(tester.getCenter(find.byType(WAnchor)));
+        await tester.pump();
+        expect(tapped, isTrue);
+      });
+
       testWidgets('onLongPress callback fires', (tester) async {
         bool pressed = false;
         await tester.pumpWidget(
