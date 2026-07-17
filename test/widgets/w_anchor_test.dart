@@ -208,8 +208,7 @@ void main() {
         expect(tapped, isTrue);
       });
 
-      testWidgets(
-          'onTap fires when tapping a transparent region of the anchor',
+      testWidgets('onTap fires when tapping a transparent region of the anchor',
           (tester) async {
         // A settings-row-style anchor: the interactive content (a label) sits
         // on the left, leaving the centre/right transparent. With the
