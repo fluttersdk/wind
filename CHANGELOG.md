@@ -10,7 +10,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- **`WAnchor` now hit-tests its whole bounds via `HitTestBehavior.translucent`.** The inner `GestureDetector` used the default `HitTestBehavior.deferToChild`, so it only fired when a painted child sat under the exact tap point. An anchor wrapping transparent content (a settings row, a checkbox row, a link with padding) ignored taps that landed on its empty regions, including the element centre that automated drivers and centred pointer events target. It now behaves like `WInput`/`WPopover`, which already use whole-box hit-testing, so the full anchor rectangle is tappable. (`lib/src/widgets/w_anchor.dart`; covered by `test/widgets/w_anchor_test.dart`)
+- `WAnchor` now hit-tests its whole bounds via `HitTestBehavior.translucent`. The inner `GestureDetector` used the default `HitTestBehavior.deferToChild`, so it only fired when a painted child sat under the exact tap point. An anchor wrapping transparent content (a settings row, a checkbox row, a link with padding) ignored taps that landed on its empty regions, including the element centre that automated drivers and centred pointer events target. It now behaves like `WInput`/`WPopover`, which already use whole-box hit-testing, so the full anchor rectangle is tappable. (`lib/src/widgets/w_anchor.dart`; covered by `test/widgets/w_anchor_test.dart`)
 
 ## [1.2.0] - 2026-07-08
 
