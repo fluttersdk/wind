@@ -198,6 +198,16 @@ class _WAnchorState extends State<WAnchor> {
     // Only wrap with GestureDetector if there are actual gesture callbacks
     if (hasGestures) {
       innerChild = GestureDetector(
+        // Translucent so the whole anchor bounds are tappable, not only the
+        // opaque descendants. The GestureDetector defaults to
+        // `HitTestBehavior.deferToChild`, which only receives a pointer when a
+        // painted child sits under it; an anchor wrapping transparent content
+        // (a settings row with text on one side, a link, an icon row) then
+        // ignored taps that landed on its empty regions. Real users tapping the
+        // blank part of a row, and every centre-of-element tap from a driver
+        // (dusk / Playwright), silently did nothing. Translucent matches the
+        // whole-box tap target WInput and WPopover already use.
+        behavior: HitTestBehavior.translucent,
         onTap: widget.isDisabled ? null : widget.onTap,
         onLongPress: widget.isDisabled ? null : widget.onLongPress,
         onDoubleTap: widget.isDisabled ? null : widget.onDoubleTap,
