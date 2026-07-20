@@ -425,5 +425,19 @@ void main() {
         );
       });
     });
+
+    group('unknown theme gap tokens', () {
+      test('drops gap-<unknown-token> silently instead of throwing', () {
+        final classes = ['gap-blue', 'gap-x-primary', 'gap-y-foo'];
+
+        expect(
+          () => parser.parse(WindStyle(), classes, context),
+          returnsNormally,
+        );
+        final styles = parser.parse(WindStyle(), classes, context);
+        expect(styles.gapX, isNull);
+        expect(styles.gapY, isNull);
+      });
+    });
   });
 }

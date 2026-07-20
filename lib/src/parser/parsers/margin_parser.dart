@@ -96,8 +96,9 @@ class MarginParser implements WindParserInterface {
         // Skip 'auto' value - it's handled by mx-auto
         if (valueKey == 'auto') continue;
 
-        // Call the theme's `getSpacing` method
-        value = theme.getSpacing(valueKey);
+        // Use `tryGetSpacing` so an unknown token (e.g. `m-foo`) is dropped
+        // by the null-guard below rather than throwing at build.
+        value = theme.tryGetSpacing(valueKey);
       }
 
       if (value == null || root == null) continue;

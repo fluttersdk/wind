@@ -129,5 +129,18 @@ void main() {
         expect(parser.canParse(''), isFalse);
       });
     });
+
+    group('unknown theme tokens', () {
+      test('drops p-<unknown-token> silently instead of throwing', () {
+        final styles = WindStyle();
+        final classes = ['p-primary', 'mx-foo', 'py-bar'];
+
+        expect(
+          () => parser.parse(styles, classes, context),
+          returnsNormally,
+        );
+        expect(parser.parse(styles, classes, context).padding, isNull);
+      });
+    });
   });
 }

@@ -263,6 +263,22 @@ void main() {
           expect(result.positionRight, 8.0);
         });
       });
+
+      group('unknown theme tokens', () {
+        test('drops top-<unknown-token> silently instead of throwing', () {
+          final styles = WindStyle();
+          final classes = ['top-abc', 'left-foo', 'inset-x-bar'];
+
+          expect(
+            () => parser.parse(styles, classes, context),
+            returnsNormally,
+          );
+          final result = parser.parse(styles, classes, context);
+          expect(result.positionTop, isNull);
+          expect(result.positionLeft, isNull);
+          expect(result.positionRight, isNull);
+        });
+      });
     });
   });
 }

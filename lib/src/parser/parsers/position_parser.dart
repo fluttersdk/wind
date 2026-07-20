@@ -97,7 +97,9 @@ class PositionParser implements WindParserInterface {
         if (themeMatch != null) {
           root = themeMatch.namedGroup('root')!;
           final valueKey = themeMatch.namedGroup('value')!;
-          value = theme.getSpacing(valueKey);
+          // Use `tryGetSpacing` so an unknown token (e.g. `top-abc`) is
+          // dropped by the null-guard below rather than throwing at build.
+          value = theme.tryGetSpacing(valueKey);
         }
       }
 

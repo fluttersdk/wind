@@ -82,8 +82,9 @@ class PaddingParser implements WindParserInterface {
         root = match.namedGroup('root')!;
         final valueKey = match.namedGroup('value')!; // "4", "1/2"
 
-        // Call the theme's `getSpacing` method
-        value = theme.getSpacing(valueKey);
+        // Use `tryGetSpacing` so an unknown token (e.g. `p-primary`) is
+        // dropped by the null-guard below rather than throwing at build.
+        value = theme.tryGetSpacing(valueKey);
       }
 
       if (value == null || root == null) continue;
