@@ -11,6 +11,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 ### Fixed
 
 - `WAnchor` now hit-tests its whole bounds via `HitTestBehavior.translucent`. The inner `GestureDetector` used the default `HitTestBehavior.deferToChild`, so it only fired when a painted child sat under the exact tap point. An anchor wrapping transparent content (a settings row, a checkbox row, a link with padding) ignored taps that landed on its empty regions, including the element centre that automated drivers and centred pointer events target. It now behaves like `WInput`/`WPopover`, which already use whole-box hit-testing, so the full anchor rectangle is tappable. (`lib/src/widgets/w_anchor.dart`; covered by `test/widgets/w_anchor_test.dart`)
+- `WPopover` no longer flickers open-then-closed on the first trigger tap on web, and its menu items now respond on the first open. A leftover focus-loss auto-close (`_onFocusChange`) dismissed the popover roughly 150ms after the opening click, when web transiently blurs the trigger, so it closed on the same gesture that opened it (and unmounted the overlay before a menu item's tap could resolve). The auto-close is removed; dismissal is now driven solely by an outside tap and programmatic `close`, matching the same fix already applied to `WSelect`. (`lib/src/widgets/w_popover.dart`)
 
 ## [1.2.0] - 2026-07-08
 

@@ -262,6 +262,14 @@ class WPopover extends StatefulWidget {
 class _WPopoverState extends State<WPopover> {
   final LayerLink _layerLink = LayerLink();
   final OverlayPortalController _overlayController = OverlayPortalController();
+
+  /// Focus node for the trigger. Deliberately NOT wired to a focus-loss
+  /// auto-close: on web the trigger transiently loses focus ~150ms after the
+  /// opening click, so a focus-loss close dismissed the popover on the same
+  /// gesture that opened it (and unmounted the overlay before a menu item's tap
+  /// could resolve). Dismissal is driven solely by an outside tap
+  /// ([_handleTapOutside]) and programmatic [close], mirroring the same fix
+  /// already applied to `WSelect`.
   final FocusNode _focusNode = FocusNode();
   final GlobalKey _triggerKey = GlobalKey();
 
@@ -432,7 +440,6 @@ class _WPopoverState extends State<WPopover> {
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(_onFocusChange);
     widget.controller?.addListener(_handleControllerChange);
   }
 
@@ -447,7 +454,6 @@ class _WPopoverState extends State<WPopover> {
 
   @override
   void dispose() {
-    _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     widget.controller?.removeListener(_handleControllerChange);
     super.dispose();
@@ -461,12 +467,6 @@ class _WPopoverState extends State<WPopover> {
       } else {
         close();
       }
-    }
-  }
-
-  void _onFocusChange() {
-    if (!_focusNode.hasFocus && _isOpen) {
-      close();
     }
   }
 
