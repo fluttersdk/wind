@@ -323,7 +323,9 @@ class FlexboxGridParser implements WindParserInterface {
           final match = _themeGapRegex.firstMatch(className);
           if (match != null) {
             root = match.namedGroup('root')!;
-            value = theme.getSpacing(match.namedGroup('value')!);
+            // Use `tryGetSpacing` so an unknown token (e.g. `gap-x-blue`)
+            // is dropped by the null-guard below rather than throwing.
+            value = theme.tryGetSpacing(match.namedGroup('value')!);
           }
         }
 

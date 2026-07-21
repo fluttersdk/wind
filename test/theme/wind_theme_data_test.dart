@@ -154,6 +154,22 @@ void main() {
       // Test known spacing fraction
       expect(theme.getSpacing('full'), double.infinity);
     });
+
+    test('tryGetSpacing matches getSpacing for known tokens', () {
+      final theme = WindThemeData();
+
+      expect(theme.tryGetSpacing('4'), theme.getSpacing('4'));
+      expect(theme.tryGetSpacing('2.5'), theme.getSpacing('2.5'));
+      expect(theme.tryGetSpacing('full'), double.infinity);
+    });
+
+    test('tryGetSpacing returns null for an unknown token', () {
+      final theme = WindThemeData();
+
+      expect(theme.tryGetSpacing('primary'), isNull);
+      expect(theme.tryGetSpacing('foo'), isNull);
+      expect(theme.tryGetSpacing('abc'), isNull);
+    });
   });
 
   group('WindThemeData value equality', () {

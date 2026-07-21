@@ -140,5 +140,18 @@ void main() {
         expect(parser.canParse(''), isFalse);
       });
     });
+
+    group('unknown theme tokens', () {
+      test('drops m-<unknown-token> silently instead of throwing', () {
+        final styles = WindStyle();
+        final classes = ['m-primary', 'mx-foo', 'my-bar'];
+
+        expect(
+          () => parser.parse(styles, classes, context),
+          returnsNormally,
+        );
+        expect(parser.parse(styles, classes, context).margin, isNull);
+      });
+    });
   });
 }
