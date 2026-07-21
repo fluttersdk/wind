@@ -8,6 +8,8 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-07-21
+
 ### Fixed
 
 - Unknown theme-spacing tokens (`p-primary`, `m-foo`, `top-abc`, `gap-x-blue`, ...) now silently drop instead of throwing `ArgumentError: Invalid spacing multiplier: <token>` inside `build()`, matching the "unknown className is dropped with a debug warning" contract other parsers already follow. Adds `WindThemeData.tryGetSpacing(String)`; the padding, margin, position, and flex-gap parsers now use it (sizing already pre-validated with `double.tryParse`). `getSpacing` is unchanged for backward compatibility. (`lib/src/theme/wind_theme_data.dart`, `lib/src/parser/parsers/padding_parser.dart`, `lib/src/parser/parsers/margin_parser.dart`, `lib/src/parser/parsers/position_parser.dart`, `lib/src/parser/parsers/flexbox_grid_parser.dart`)
@@ -190,7 +192,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.2.1...HEAD
+[1.2.1]: https://github.com/fluttersdk/wind/releases/tag/1.2.1
 [1.2.0]: https://github.com/fluttersdk/wind/releases/tag/1.2.0
 [1.1.2]: https://github.com/fluttersdk/wind/releases/tag/1.1.2
 [1.1.1]: https://github.com/fluttersdk/wind/releases/tag/1.1.1
