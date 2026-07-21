@@ -303,27 +303,17 @@ class WindThemeData {
   /// - `getSpacing('md')` returns the spacing for the 'md' container.
   /// - `getSpacing('full')` returns `double.infinity`.
   double getSpacing(String multiplier) {
-    // Handle special 'full' case
-    if (multiplier == 'full') {
-      return double.infinity;
+    final spacing = tryGetSpacing(multiplier);
+    if (spacing == null) {
+      throw ArgumentError('Invalid spacing multiplier: $multiplier');
     }
-
-    if (containers.containsKey(multiplier)) {
-      return containers[multiplier]!.toDouble() * baseSpacingUnit;
-    } else {
-      final value = double.tryParse(multiplier);
-      if (value != null) {
-        return value * baseSpacingUnit;
-      } else {
-        throw ArgumentError('Invalid spacing multiplier: $multiplier');
-      }
-    }
+    return spacing;
   }
 
   /// Same as [getSpacing] but returns `null` for an unrecognized [multiplier]
   /// instead of throwing.
   ///
-  /// Parsers should prefer this so an unknown token (e.g. `p-primary` — a
+  /// Parsers should prefer this so an unknown token (e.g. `p-primary`, a
   /// color-name typo the padding parser's regex still admits) is silently
   /// dropped in line with the "unknown className is dropped with a debug
   /// warning" contract, rather than surfacing as an `ArgumentError` inside
