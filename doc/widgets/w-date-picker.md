@@ -1,6 +1,6 @@
 # WDatePicker
 
-A utility-first date picker component built on [WPopover](./w-popover.md) with support for single date selection, date range selection, min/max constraints, and custom display formatting.
+A utility-first date picker component built on [WPopover](./w-popover.md) with support for single date selection, date range selection, date-with-time selection, min/max constraints, and custom display formatting.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -70,6 +70,9 @@ const WDatePicker({
   bool disabled = false,
   Set<String> states = const {},
   DateDisplayFormat? displayFormat,
+  int minuteStep = 5,
+  String timeLabel = 'Time',
+  String doneLabel = 'Done',
 })
 ```
 
@@ -77,7 +80,7 @@ const WDatePicker({
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `mode` | `WDatePickerMode` | `single` | Selection mode: `single` or `range` |
+| `mode` | `WDatePickerMode` | `single` | Selection mode: `single`, `range` or `dateTime` |
 | `value` | `DateTime?` | `null` | Currently selected date (single mode) |
 | `range` | `DateRange?` | `null` | Currently selected range (range mode) |
 | `onChanged` | `ValueChanged<DateTime>?` | `null` | Callback fired on date selection (single mode) |
@@ -89,19 +92,29 @@ const WDatePicker({
 | `disabled` | `bool` | `false` | Prevents interaction, shows forbidden cursor |
 | `states` | `Set<String>` | `const {}` | Custom states for dynamic styling |
 | `displayFormat` | `DateDisplayFormat?` | `null` | Custom function to format dates for display |
+| `minuteStep` | `int` | `5` | Minutes each step control moves (`dateTime` mode only) |
+| `timeLabel` | `String` | `'Time'` | Label above the time row (`dateTime` mode only) |
+| `doneLabel` | `String` | `'Done'` | Confirm control text that closes the popover (`dateTime` mode only) |
 
 ## Types
 
 ### WDatePickerMode
 
-Determines if the picker operates in single date or date range selection mode.
+Determines whether the picker selects a single date, a date range, or a single
+date carrying a time of day.
 
 ```dart
 enum WDatePickerMode {
-  single,  // Pick a single date
-  range,   // Pick a start and end date
+  single,    // Pick a single date (time struck to midnight)
+  range,     // Pick a start and end date
+  dateTime,  // Pick a single date AND a time of day
 }
 ```
+
+`single` and `range` normalize every value to midnight. `dateTime` is the only
+mode that preserves an hour and a minute, so it is the one to use when the value
+is an instant rather than a calendar day. It adds a stepped time row below the
+calendar and keeps the popover open until the confirm control is pressed.
 
 ### DateRange
 
@@ -170,7 +183,7 @@ WDatePicker(
 ```
 
 > [!NOTE]
-> Constraints are compared at day-level granularity. Time components are stripped before comparison.
+> In `single` and `range` mode, constraints are compared at day-level granularity and time components are stripped before comparison. In `dateTime` mode a day cell stays selectable whenever ANY instant in it is legal, and the composed instant is then pulled back inside the window, so the emitted value is always the same legal instant the trigger displays.
 
 ## Custom Display Format
 

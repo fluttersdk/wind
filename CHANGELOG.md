@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- **`WDatePickerMode.dateTime`: the picker can now capture a time of day, not just a date.** Every previous mode ran its selection through `_normalizeToDay`, so the emitted value was always midnight and no input anywhere in the ecosystem could express "10 Aug 2026, 14:30"; a consumer needing a scheduled window had to invent its own control. The new mode composes the tapped day with a time row and emits a plain local `DateTime` carrying the hour and minute (no timezone conversion: `DateTime` cannot hold an arbitrary offset, so a value crossing the wire is the caller's `toUtc()` to make). The time row is authored in Wind markup, two 24-hour spinners plus a confirm control built from `WDiv` / `WText` / `WIcon` and className tokens with their `dark:` pairs, NOT a Material `showTimePicker` dialog; it exposes a labelled Semantics container and per-button Semantics, honors `minDate`/`maxDate` on the full instant (a step that would leave the window renders disabled, and a day tap that would land outside it is pulled to the bound), and never wraps 23:00 up to 00:00, which would move the instant a day backwards. New props: `minuteStep` (default 5), `timeLabel`, `doneLabel`, forwarded by `WFormDatePicker`. `single` and `range` behavior, the default mode, and the emitted midnight values are unchanged. (`lib/src/widgets/w_date_picker.dart`, `lib/src/widgets/w_form_date_picker.dart`)
+
 ## [1.2.1] - 2026-07-21
 
 ### Fixed

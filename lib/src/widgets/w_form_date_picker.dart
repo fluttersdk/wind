@@ -22,6 +22,10 @@ import 'w_text.dart';
 ///   onChanged: (date) => print('Selected: $date'),
 /// )
 /// ```
+///
+/// With `mode: WDatePickerMode.dateTime` the field's value is a full [DateTime]
+/// carrying the picked hour and minute, so a validator can compare two window
+/// bounds. [minuteStep], [timeLabel] and [doneLabel] configure the time row.
 class WFormDatePicker extends FormField<DateTime> {
   /// Creates a Wind-styled form date picker.
   WFormDatePicker({
@@ -43,6 +47,9 @@ class WFormDatePicker extends FormField<DateTime> {
     this.placeholder,
     this.states,
     this.displayFormat,
+    this.minuteStep = 5,
+    this.timeLabel = 'Time',
+    this.doneLabel = 'Done',
     // Form wrapper params
     this.label,
     this.labelClassName =
@@ -66,6 +73,9 @@ class WFormDatePicker extends FormField<DateTime> {
               enabled: enabled,
               states: states,
               displayFormat: displayFormat,
+              minuteStep: minuteStep,
+              timeLabel: timeLabel,
+              doneLabel: doneLabel,
               label: label,
               labelClassName: labelClassName,
               showError: showError,
@@ -76,7 +86,7 @@ class WFormDatePicker extends FormField<DateTime> {
           },
         );
 
-  /// Selection mode: single date or date range.
+  /// Selection mode: single date, date range, or date plus time of day.
   final WDatePickerMode mode;
 
   /// The initially selected date range (range mode).
@@ -105,6 +115,16 @@ class WFormDatePicker extends FormField<DateTime> {
 
   /// Custom display format function.
   final DateDisplayFormat? displayFormat;
+
+  /// Minutes added or removed per minute step ([WDatePickerMode.dateTime]).
+  final int minuteStep;
+
+  /// Label of the time row ([WDatePickerMode.dateTime]).
+  final String timeLabel;
+
+  /// Label of the control that confirms the picked instant and closes the
+  /// popover ([WDatePickerMode.dateTime]).
+  final String doneLabel;
 
   /// Optional label text displayed above the date picker.
   final String? label;
@@ -139,6 +159,9 @@ class _WFormDatePickerContent extends StatefulWidget {
     required this.enabled,
     this.states,
     this.displayFormat,
+    required this.minuteStep,
+    required this.timeLabel,
+    required this.doneLabel,
     this.label,
     required this.labelClassName,
     required this.showError,
@@ -159,6 +182,9 @@ class _WFormDatePickerContent extends StatefulWidget {
   final bool enabled;
   final Set<String>? states;
   final DateDisplayFormat? displayFormat;
+  final int minuteStep;
+  final String timeLabel;
+  final String doneLabel;
   final String? label;
   final String labelClassName;
   final bool showError;
@@ -227,6 +253,9 @@ class _WFormDatePickerContentState extends State<_WFormDatePickerContent> {
       disabled: !widget.enabled,
       states: effectiveStates,
       displayFormat: widget.displayFormat,
+      minuteStep: widget.minuteStep,
+      timeLabel: widget.timeLabel,
+      doneLabel: widget.doneLabel,
     );
 
     // Determine bottom text: error takes priority over hint

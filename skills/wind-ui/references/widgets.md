@@ -950,7 +950,7 @@ enum InputType { text, password, email, number, multiline }
 ### `WDatePickerMode` enum
 
 ```dart
-enum WDatePickerMode { single, range }
+enum WDatePickerMode { single, range, dateTime }
 ```
 
 ### `PopoverAlignment` enum

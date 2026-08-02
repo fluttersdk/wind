@@ -62,7 +62,7 @@ if (kDebugMode) Wind.installDebugResolver();
 - [WCheckbox](https://fluttersdk.com/wind/widgets/w-checkbox.md): Checkbox or switch with `className`.
 - [WSwitch](https://fluttersdk.com/wind/widgets/w-switch.md): Controlled toggle switch; pushes the `checked:` state prefix, thumb positioned via `justify-*` on the track.
 - [WRadio](https://fluttersdk.com/wind/widgets/w-radio.md): Controlled radio button; drives the `selected:` state prefix when `value == groupValue`.
-- [WDatePicker](https://fluttersdk.com/wind/widgets/w-date-picker.md): Single-date and date-range picker.
+- [WDatePicker](https://fluttersdk.com/wind/widgets/w-date-picker.md): Single-date, date-range and date-with-time picker.
 - [WFormInput](https://fluttersdk.com/wind/widgets/w-form-input.md): Form-bound `WInput` wrapper with validator.
 - [WFormSelect](https://fluttersdk.com/wind/widgets/w-form-select.md): Form-bound `WSelect` wrapper with validator.
 - [WFormMultiSelect](https://fluttersdk.com/wind/widgets/w-form-multiselect.md): Multi-select variant of `WFormSelect`.

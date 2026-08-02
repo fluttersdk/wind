@@ -107,7 +107,7 @@ WFormDatePicker({
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `mode` | `WDatePickerMode` | `single` | Selection mode: `single` or `range` |
+| `mode` | `WDatePickerMode` | `single` | Selection mode: `single`, `range` or `dateTime` |
 | `initialRange` | `DateRange?` | `null` | Initial date range (range mode) |
 | `onChanged` | `ValueChanged<DateTime>?` | `null` | Called on date selection (single mode) |
 | `onRangeChanged` | `ValueChanged<DateRange>?` | `null` | Called on range selection (range mode) |
