@@ -101,7 +101,7 @@ WFormDatePicker({
 | `onSaved` | `FormFieldSetter<DateTime>?` | `null` | Called when form is saved |
 | `autovalidateMode` | `AutovalidateMode?` | `null` | When to auto-validate |
 | `enabled` | `bool` | `true` | Whether the picker is interactive |
-| `initialValue` | `DateTime?` | `null` | Initial selected date (single mode) |
+| `initialValue` | `DateTime?` | `null` | Initial selected instant (`single` and `dateTime` modes; carries the time of day in `dateTime`). Seeds the field's state on first build only, as `FormField` does: changing it later does not move an already-picked value |
 
 ### Date Picker Props
 
@@ -109,7 +109,7 @@ WFormDatePicker({
 |:-----|:-----|:--------|:------------|
 | `mode` | `WDatePickerMode` | `single` | Selection mode: `single`, `range` or `dateTime` |
 | `initialRange` | `DateRange?` | `null` | Initial date range (range mode) |
-| `onChanged` | `ValueChanged<DateTime>?` | `null` | Called on date selection (single mode) |
+| `onChanged` | `ValueChanged<DateTime>?` | `null` | Called on selection (`single` and `dateTime` modes) |
 | `onRangeChanged` | `ValueChanged<DateRange>?` | `null` | Called on range selection (range mode) |
 | `minDate` | `DateTime?` | `null` | Earliest selectable date |
 | `maxDate` | `DateTime?` | `null` | Latest selectable date |
@@ -117,6 +117,9 @@ WFormDatePicker({
 | `placeholder` | `String?` | `null` | Placeholder text (defaults to `'Select date'`) |
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling |
 | `displayFormat` | `DateDisplayFormat?` | `null` | Custom date display format function |
+| `minuteStep` | `int` | `5` | Minutes each step control moves, forwarded to the picker (`dateTime` mode only) |
+| `timeLabel` | `String` | `'Time'` | Label above the time row, forwarded to the picker (`dateTime` mode only) |
+| `doneLabel` | `String` | `'Done'` | Confirm control text that closes the popover, forwarded to the picker (`dateTime` mode only) |
 
 ### Layout Props
 

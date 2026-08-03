@@ -81,9 +81,9 @@ const WDatePicker({
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
 | `mode` | `WDatePickerMode` | `single` | Selection mode: `single`, `range` or `dateTime` |
-| `value` | `DateTime?` | `null` | Currently selected date (single mode) |
+| `value` | `DateTime?` | `null` | Currently selected instant (`single` and `dateTime` modes; carries the time of day in `dateTime`) |
 | `range` | `DateRange?` | `null` | Currently selected range (range mode) |
-| `onChanged` | `ValueChanged<DateTime>?` | `null` | Callback fired on date selection (single mode) |
+| `onChanged` | `ValueChanged<DateTime>?` | `null` | Callback fired on selection (`single` and `dateTime` modes; in `dateTime` it fires once the confirm control closes the popover) |
 | `onRangeChanged` | `ValueChanged<DateRange>?` | `null` | Callback fired on range selection (range mode) |
 | `minDate` | `DateTime?` | `null` | Earliest selectable date |
 | `maxDate` | `DateTime?` | `null` | Latest selectable date |
