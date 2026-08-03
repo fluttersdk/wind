@@ -27,7 +27,10 @@ Use `windTheme` to interact with the theme controller, typically for toggling be
 context.windTheme.toggleTheme();
 
 // Set a specific brightness
-context.windTheme.setBrightness(Brightness.dark);
+context.windTheme.updateTheme(brightness: Brightness.dark);
+
+// Hand brightness back to the OS after a manual override
+context.windTheme.resetToSystem();
 ```
 
 ### Theme Data

@@ -1,4 +1,4 @@
-# Wind 1.2: WDynamic (server-driven UI)
+# Wind 1.3: WDynamic (server-driven UI)
 
 JSON node tree → Wind widget tree. Reach for this file when rendering UI from a CMS, A/B framework, remote-config service, or any source where the widget shape is decided at runtime.
 
@@ -58,6 +58,8 @@ The default whitelist covers 13 Wind widgets and 16 Flutter core widgets.
 **Flutter core widgets** (escape hatches for layout primitives that Wind does not wrap):
 
 `Column`, `Row`, `Center`, `SizedBox`, `Expanded`, `Container`, `Wrap`, `Stack`, `Positioned`, `Padding`, `Align`, `Opacity`, `AspectRatio`, `FittedBox`, `ClipRRect`, `Spacer`
+
+**Not on the whitelist:** `WBadge`, `WCard`, `WSwitch`, `WRadio`, `WTabs` (the five widgets added in 1.2.0), plus the `WForm*` family, `WBreakpoint`, `WDynamic` itself, and `WKeyboardActions`. A JSON node naming one of them is treated as an unknown type and renders the error box, so do not reach for them in a payload. Register a custom builder (§7) when a server-driven tree genuinely needs one, for example `builders: {'WCard': (props, children) => WCard(className: props['className'], child: children.first)}`.
 
 Extension via `builders:` constructor param adds new types (§7); these bypass the whitelist entirely.
 

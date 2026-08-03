@@ -65,7 +65,7 @@ if (kDebugMode) Wind.installDebugResolver();
 - [WDatePicker](https://fluttersdk.com/wind/widgets/w-date-picker.md): Single-date, date-range and date-with-time picker.
 - [WFormInput](https://fluttersdk.com/wind/widgets/w-form-input.md): Form-bound `WInput` wrapper with validator.
 - [WFormSelect](https://fluttersdk.com/wind/widgets/w-form-select.md): Form-bound `WSelect` wrapper with validator.
-- [WFormMultiSelect](https://fluttersdk.com/wind/widgets/w-form-multiselect.md): Multi-select variant of `WFormSelect`.
+- [WFormMultiSelect](https://fluttersdk.com/wind/widgets/w-form-select.md): Multi-select variant of `WFormSelect`, documented in the same page.
 - [WFormCheckbox](https://fluttersdk.com/wind/widgets/w-form-checkbox.md): Form-bound `WCheckbox` wrapper.
 - [WFormDatePicker](https://fluttersdk.com/wind/widgets/w-form-date-picker.md): Form-bound `WDatePicker` wrapper.
 
