@@ -338,5 +338,40 @@ void main() {
         expect(picker.disabled, isTrue);
       });
     });
+
+    group('dateTime mode forwarding', () {
+      testWidgets('forwards the three time-row props to WDatePicker', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Form(
+              child: WFormDatePicker(
+                mode: WDatePickerMode.dateTime,
+                minuteStep: 15,
+                timeLabel: 'Saat',
+                doneLabel: 'Tamam',
+              ),
+            ),
+          ),
+        );
+
+        final picker = tester.widget<WDatePicker>(find.byType(WDatePicker));
+        expect(picker.mode, WDatePickerMode.dateTime);
+        expect(picker.minuteStep, 15);
+        expect(picker.timeLabel, 'Saat');
+        expect(picker.doneLabel, 'Tamam');
+      });
+
+      test('rejects a minuteStep outside 1..59 at construction', () {
+        // Mirrors WDatePicker's own assert. Without it the failure surfaces from
+        // inside build(), naming WDatePicker rather than the widget the caller
+        // actually wrote, and in a release build it is stripped entirely: a
+        // minuteStep of 0 would leave the time controls unable to move.
+        expect(() => WFormDatePicker(minuteStep: 0), throwsAssertionError);
+        expect(() => WFormDatePicker(minuteStep: 60), throwsAssertionError);
+        expect(() => WFormDatePicker(minuteStep: 59), returnsNormally);
+      });
+    });
   });
 }

@@ -430,7 +430,7 @@ Behavior:
 
 ### `WDatePicker`
 
-Calendar popover with single OR range mode.
+Calendar popover with single, range, OR date-plus-time mode.
 
 ```dart
 const WDatePicker({
@@ -450,12 +450,18 @@ const WDatePicker({
   String? placeholder,
   Set<String>? states,
   DateDisplayFormat? displayFormat,  // custom formatter callback
+  // dateTime mode only:
+  int minuteStep = 5,                // asserted 0 < minuteStep < 60
+  String timeLabel = 'Time',
+  String doneLabel = 'Done',
 })
 ```
 
 Behavior:
 - Wraps a `WPopover` (auto-flip handled by popover).
 - Single mode closes after selection. Range mode requires two clicks; auto-swaps if end < start.
+- `dateTime` mode uses `value` / `onChanged` like single mode, but emits the picked day composed with an hour and minute instead of midnight. It stays open after a day tap: a time row (two 24-hour spinners plus a confirm control labelled by `doneLabel`) closes it. `minDate` / `maxDate` apply to the full instant, so a step leaving the window renders disabled and a day tap landing outside it is pulled to the bound; 23:00 never wraps to 00:00.
+- The emitted `DateTime` is local and carries no offset (`DateTime` cannot hold an arbitrary one), so a value crossing the wire is the caller's `toUtc()` to make.
 - Calendar grid: 42 cells (6 weeks starting Monday); current month + adjacent days; state styling for selected / today / inactive / hover preview.
 - `displayFormat: (DateTime) => String` overrides the default "Jan 15, 2025" pattern.
 
@@ -598,6 +604,8 @@ Layout: checkbox + label side-by-side (8 px gap) in a row; error/hint rendered b
 
 ### `WFormDatePicker extends FormField<DateTime>`
 
+In `dateTime` mode the field's value is a full `DateTime` carrying the picked hour and minute, so a validator can compare two window bounds. `initialValue` seeds the field on first build only, as `FormField` does.
+
 Range mode gotcha: stores only `range.start` in `FormFieldState<DateTime>`. Validators can only inspect the start date. For range completeness validation, reach for the internal state separately.
 
 ```dart
@@ -629,6 +637,10 @@ const WFormDatePicker({
   String? placeholder,
   Set<String>? states,
   DateDisplayFormat? displayFormat,
+  // dateTime mode only (forwarded to WDatePicker):
+  int minuteStep = 5,
+  String timeLabel = 'Time',
+  String doneLabel = 'Done',
 })
 ```
 

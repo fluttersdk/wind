@@ -25,7 +25,15 @@ import 'w_text.dart';
 ///
 /// With `mode: WDatePickerMode.dateTime` the field's value is a full [DateTime]
 /// carrying the picked hour and minute, so a validator can compare two window
-/// bounds. [minuteStep], [timeLabel] and [doneLabel] configure the time row.
+/// bounds. Three props configure the time row and are forwarded to
+/// [WDatePicker] unchanged: [minuteStep] is how many minutes each step control
+/// moves (asserted between 1 and 59, mirroring [WDatePicker] so a bad value
+/// names the widget the caller wrote), [timeLabel] labels the row, and
+/// [doneLabel] is the text of the confirm control that commits the time and
+/// closes the popover.
+///
+/// [initialValue] seeds the field on first build only, the way [FormField]
+/// does; changing it later does not move an already-picked value.
 class WFormDatePicker extends FormField<DateTime> {
   /// Creates a Wind-styled form date picker.
   WFormDatePicker({
@@ -58,7 +66,9 @@ class WFormDatePicker extends FormField<DateTime> {
     this.errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
     this.hint,
     this.hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
-  }) : super(
+  })  : assert(minuteStep > 0 && minuteStep < 60,
+            'WFormDatePicker: minuteStep must be between 1 and 59.'),
+        super(
           builder: (FormFieldState<DateTime> state) {
             return _WFormDatePickerContent(
               state: state,
