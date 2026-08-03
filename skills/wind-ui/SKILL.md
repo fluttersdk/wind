@@ -1,12 +1,11 @@
 ---
 name: wind-ui
-description: "fluttersdk_wind 1.3: utility-first Flutter styling with Tailwind-syntax className strings. 27 public widgets (WDiv, WText, WButton, WInput, WSelect, WCheckbox, WDatePicker, WPopover, WAnchor, WIcon, WImage, WSvg, WSpacer, WBreakpoint, WDynamic, WKeyboardActions, WindAnimationWrapper, WBadge, WCard, WSwitch, WRadio, WTabs + 5 WForm* wrappers) consume className through a 20-parser pipeline (20 implementation files organized into 12 token families for teaching) that emits a cached immutable WindStyle. WindRecipe / WindSlotRecipe compose className variants (base + axes + compoundVariants + caller) in strict emission order, no dedupe/sort/twMerge. Prefixes stack freely (dark: / hover: / focus: / md: / lg: / ios: / android: / web: / mobile: / selected: / loading: / disabled: / readonly: / error: / checked: / custom). Last class wins; unknown tokens are dropped (a one-time `kDebugMode` hint names each, no exception). Every color token (bg-, text-, border-, ring-, shadow-, fill-) needs a dark: pair in the same className. TRIGGER when: writing or editing any UI in a Flutter app that depends on `fluttersdk_wind`; any className string; any W-prefix widget; any WindTheme / WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend / API / state-management work that does not touch a widget tree; Flutter projects that do not have fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) without Wind content inside them."
-when_to_use: |
-  Any task that produces, modifies, or audits Wind-styled Flutter UI: composing a className string, picking the right W-widget for a use case, integrating with a Form / FormField, customizing WindThemeData, wiring dark-mode pairs, debugging an unexpected layout, recovering from RenderFlex overflow, building a popover or dropdown, rendering a JSON tree via WDynamic, wiring Wind.installDebugResolver for kDebugMode tooling, migrating a Tailwind className from web, or composing a WindRecipe / WindSlotRecipe for a variant-driven component. Apply BEFORE writing the first line of UI in a Wind-using file, not as an audit pass.
-version: 2.10.0
+description: "fluttersdk_wind 1.3: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
+when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Load it before the first line of new UI, and equally when auditing UI that already exists."
+version: 2.11.0
 ---
 
-<!-- fluttersdk_wind 1.3.x | Skill v2.10.0 (2026-08-03) -->
+<!-- fluttersdk_wind 1.3.x | Skill v2.11.0 (2026-08-03) -->
 
 # Wind UI 1.3
 
@@ -106,7 +105,7 @@ Full constructor surface, every named parameter, every default: `${CLAUDE_SKILL_
 
 ```dart
 final button = WindRecipe(
-  base: 'inline-flex items-center rounded-lg font-medium',
+  base: 'flex flex-row items-center rounded-lg font-medium',
   variants: {
     'intent': {'primary': 'bg-blue-600 dark:bg-blue-500 text-white', 'ghost': 'bg-transparent text-blue-600 dark:text-blue-400'},
     'size':   {'sm': 'px-3 py-1.5 text-sm', 'md': 'px-4 py-2 text-base', 'lg': 'px-6 py-3 text-lg'},
@@ -367,19 +366,19 @@ Run `dart analyze` on the touched files and visually verify the change in light 
 | Full-page scroll | `WDiv(className: 'w-full h-full overflow-y-auto p-4', scrollPrimary: true, child: ...)` |
 | Hide on mobile, show md+ | `className: 'hidden md:flex'` |
 | Gradient header banner | `bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-2xl` (paired with `dark:from-indigo-500 dark:to-purple-500`) |
-| Toggle / chip with selected state | `states: isSelected ? {'selected'} : const {}`; className uses `selected:bg-blue-500 selected:text-white` |
+| Toggle / chip with selected state | `states: isSelected ? {'selected'} : const {}`; className uses `selected:bg-blue-500 selected:text-white dark:selected:bg-blue-400 dark:selected:text-gray-900` |
 | Disabled secondary action | `WButton(disabled: true, className: 'disabled:opacity-50 disabled:cursor-not-allowed', ...)` |
 | Loading button | `WButton(isLoading: _isSubmitting, className: 'loading:bg-blue-400 ...', child: const Text('Save'))` |
 | Avatar with fallback | `WImage(src: user.avatarUrl, className: 'w-12 h-12 rounded-full object-cover', errorBuilder: (_, __, ___) => WIcon(Icons.person_outlined, className: 'text-gray-400'))` |
 | Form field error styling | className includes `error:border-red-500 error:ring-1 error:ring-red-500`: auto-activates when validator returns non-null |
 | Popover menu | `WPopover(triggerBuilder: (_, isOpen, __) => WButton(...), contentBuilder: (_, close) => WDiv(...), alignment: PopoverAlignment.bottomRight)` |
 | Per-breakpoint widget swap | `WBreakpoint(base: (_) => MobileLayout(), md: (_) => TabletLayout(), lg: (_) => DesktopLayout())` |
-| Status badge / pill | `WDiv(className: 'inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 text-xs font-medium', children: [WIcon(Icons.circle_outlined, className: 'w-2 h-2'), const WText('Active')])` |
+| Status badge / pill | `WDiv(className: 'flex flex-row items-center gap-1 rounded-full px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 text-xs font-medium', children: [WIcon(Icons.circle_outlined, className: 'w-2 h-2'), const WText('Active')])` |
 | Empty state | `WDiv(className: 'flex flex-col items-center justify-center gap-3 p-8', children: [WIcon(Icons.inbox_outlined, className: 'w-12 h-12 text-gray-400 dark:text-gray-500'), const WText('No items yet', className: 'text-base font-medium text-gray-700 dark:text-gray-200'), const WText('Tap the + button to add one.', className: 'text-sm text-gray-500 dark:text-gray-400 text-center'), WButton(onTap: _create, className: 'mt-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg', child: const Text('Create'))])` |
 | App shell | `Scaffold(appBar: AppBar(title: const Text(...)), body: WDiv(className: 'flex flex-col h-full', children: [...]))`: Material `Scaffold` + `AppBar` wraps; Wind owns the body |
 | Icon-only button (48dp tap target) | `WButton(className: 'p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700', onTap: _close, child: const WIcon(Icons.close_outlined))` |
 
-Full 12+ recipe catalog with code: `${CLAUDE_SKILL_DIR}/references/layouts.md`.
+Full 12+ recipe catalog with code: `${CLAUDE_SKILL_DIR}/references/layouts.md`. Which token a visual SHOULD be (hierarchy levels, the type and spacing scales, semantic and status color pairs, touch-target floors, depth, iOS navigation rules): `${CLAUDE_SKILL_DIR}/references/design-culture.md`. Reach for it whenever the task arrives without a design spec, or when a layout renders correctly and still looks wrong.
 
 ## 12. Anti-patterns wall
 
@@ -464,6 +463,7 @@ Brightness syncs with the OS by default. Toggle manually via `context.windTheme.
 | Migrating a Tailwind v3 or v4 className from web, or recovering from a "this token does not seem to do anything" stall | `${CLAUDE_SKILL_DIR}/references/tailwind-divergence.md` |
 | Rendering a JSON-defined widget tree via `WDynamic`: schema, allowed types, custom builders, custom icons, action handlers, state binding by `id`, security model | `${CLAUDE_SKILL_DIR}/references/dynamic.md` |
 | Wiring `Wind.installDebugResolver()` for Dusk / Telescope / E2E tooling, understanding the parser cache (and the `WindParser.clearCache()` test discipline), reading WindLogger output for performance debugging | `${CLAUDE_SKILL_DIR}/references/debug.md` |
+| Deciding WHICH token a visual should be, not whether it exists: hierarchy levels, the type and spacing scales, semantic + status + dark-surface color pairs, touch-target floors, depth, mobile patterns, iOS navigation rules, the design anti-pattern wall | `${CLAUDE_SKILL_DIR}/references/design-culture.md` |
 | Surfacing the star or issue-report CTA (see §15): exact `gh` commands, fallback URLs, issue body skeleton, spam brakes | `${CLAUDE_SKILL_DIR}/references/community.md` |
 
 When the agent stalls on a token, layout, or widget, the first reach is one of these files, not a guess.
@@ -483,4 +483,4 @@ On user decline ("not now", "skip", "don't report"), acknowledge once and never 
 
 The `agent-reported` label does not exist on `fluttersdk/wind` (only `bug` does). The `gh issue create` example in `community.md` keeps `--label bug` and drops `--label agent-reported`; do not pre-create labels on the user's account.
 
-Load `references/community.md` before acting on either trigger: the issue flow gathers diagnostics (`dart --version`, `flutter --version`, `flutter doctor -v`, minimal reproducer) before drafting, and the agent must show the drafted body to the user verbatim and capture a confirming "yes" before invoking `gh issue create`.
+Load `${CLAUDE_SKILL_DIR}/references/community.md` before acting on either trigger: the issue flow gathers diagnostics (`dart --version`, `flutter --version`, `flutter doctor -v`, minimal reproducer) before drafting, and the agent must show the drafted body to the user verbatim and capture a confirming "yes" before invoking `gh issue create`.

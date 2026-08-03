@@ -1,12 +1,15 @@
-# Auto-sync FlutterSDK AI registry on wind-ui skill changes.
+# Auto-sync the FlutterSDK AI registry when a wind release is published.
 #
-# Fires repository_dispatch at fluttersdk/ai when skills/wind-ui/** or
-# pubspec.yaml changes on master, on tag push, or on manual dispatch.
-# The registry's sync.yml receives the event, pulls this subtree, bumps
-# the version triplet, and pushes back to main.
+# Fires repository_dispatch at fluttersdk/ai on a published GitHub release, or
+# on a manual run. The registry's sync.yml receives the event, pulls the
+# skills/wind-ui/ subtree, bumps the version triplet, and pushes to main.
 #
-# develop is intentionally not a trigger source — only stable master
-# pushes propagate to the public registry.
+# Deliberately NOT on every push. A skill edit that lands on master between
+# releases waits for the release that carries it, so the registry version
+# tracks published packages instead of counting commits: under the old push
+# trigger the registry reached v1.3.75, most of those re-publishing the same
+# skill content. Reach for the manual run when a skill fix has to arrive
+# before the next release.
 #
 # Auth: uses the fluttersdk-registry GitHub App (1-hour mint-on-demand
 # tokens). Requires REGISTRY_BOT_APP_ID + REGISTRY_BOT_PRIVATE_KEY
@@ -15,11 +18,6 @@
 name: Dispatch skill update to registry
 
 on:
-    push:
-        branches: [master]
-        paths:
-            - "skills/wind-ui/**"
-            - "pubspec.yaml"
     release:
         types: [published]
     workflow_dispatch:

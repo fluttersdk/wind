@@ -1,4 +1,4 @@
-# Wind 1.2: Theme, dark mode, responsive, platform
+# Wind 1.3: Theme, dark mode, responsive, platform
 
 Customizing `WindThemeData`, brightness control, breakpoint scale, platform prefixes. Reach for this file when adding custom colors, overriding the spacing scale, wiring a dark-mode toggle, defining a custom breakpoint, or recovering from the OverlayEntry context caveat.
 
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-Defaults applied automatically: 22 color families, 5 responsive breakpoints (640 / 768 / 1024 / 1280 / 1536 px), spacing unit 4 px, font families (sans / serif / mono), 11-step shade scale (50-950), brightness syncs with OS. `WindTheme` MUST be above `MaterialApp` in Dart-level nesting via the `builder:` callback (the runtime tree inverts this).
+Defaults applied automatically: 23 color families (22 Tailwind swatches plus the seeded `primary`), 5 responsive breakpoints (640 / 768 / 1024 / 1280 / 1536 px), spacing unit 4 px, font families (sans / serif / mono), 11-step shade scale (50-950), brightness syncs with OS. `WindTheme` MUST be above `MaterialApp` in Dart-level nesting via the `builder:` callback (the runtime tree inverts this).
 
 ---
 
@@ -67,7 +67,7 @@ Defaults applied automatically: 22 color families, 5 responsive breakpoints (640
 ```dart
 WindThemeData({
   Brightness brightness = Brightness.light,
-  Map<String, MaterialColor>? colors,              // merged with default 22-family palette
+  Map<String, MaterialColor>? colors,              // merged with default 23-family palette
   Map<String, int>? screens,                       // breakpoint name → px
   Map<String, int>? containers,                    // max-w-* size → px (13 named sizes)
   Map<String, double>? fontSizes,                  // text-* size key → px (defaults xs through 6xl)

@@ -1,4 +1,4 @@
-# Wind 1.2: Token catalog
+# Wind 1.3: Token catalog
 
 Exhaustive per-parser token reference. Reach for this file when verifying a className token exists, picking the right family, looking up an arbitrary-value pattern, or auditing className for unsupported syntax.
 
@@ -182,11 +182,13 @@ Color tokens always need a `dark:` peer.
 | `via-{family}-{shade}` etc. | Gradient mid color |
 | `to-{family}-{shade}` etc. | Gradient end color |
 
-Default color families: `slate`, `gray`, `zinc`, `neutral`, `stone`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`. Plus `white`, `black`, `transparent`.
+Default color families (23): `primary`, `slate`, `gray`, `zinc`, `neutral`, `stone`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`. Plus `white`, `black`, `transparent`.
 
 Default shade scale: `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `950` (11 steps).
 
-Custom families via `WindThemeData.colors`: `{'primary': MaterialColor(...)}` makes `bg-primary-500` available.
+`primary` is seeded (aliased 1:1 to the `blue` swatch), so `bg-primary`, `text-primary`, and `border-primary` resolve with no registration. It is also the token the interactive widgets (`WSelect`, `WCheckbox`, `WRadio`, `WDatePicker`) route their selection colors through, so overriding it in `WindThemeData.colors: {'primary': <brand swatch>}` rebrands them in one place.
+
+Custom families via `WindThemeData.colors`: `{'brand': MaterialColor(...)}` makes `bg-brand-500` available.
 
 ---
 
@@ -554,3 +556,15 @@ If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it 
 - `bg-opacity-N` / `text-opacity-N` / `border-opacity-N` (v3 legacy; use `/N` slash modifier)
 
 When a token from this list appears in a className, no error fires; it is dropped, the build continues, and missing styling is the only signal. Audit by hand.
+
+### Recognised as deliberate no-ops (no debug hint)
+
+Everything above is dropped AND, when no parser claims its family, named by the one-time `kDebugMode` hint. The tokens below are dropped too, but the parser knows them and stays silent: they exist in Tailwind muscle memory or in Wind's own widget docstrings, so warning about them would train the agent to ignore the hint.
+
+- `transition` / `transition-all` / `transition-colors` / `transition-transform` / `transition-opacity` / `transition-shadow` / `transition-none`
+- `antialiased` / `subpixel-antialiased` (font smoothing has no Flutter equivalent)
+- `sr-only` / `not-sr-only` (use `Semantics` / `ExcludeSemantics` instead)
+- `normal-nums`, `ordinal`, `slashed-zero`, `lining-nums`, `oldstyle-nums`, `proportional-nums`, `tabular-nums`, `diagonal-fractions`, `stacked-fractions` (font-variant-numeric)
+- `inline` / `inline-flex` / `inline-block` (inline display has no layout meaning in Flutter; `WBadge` emits `inline-flex` in its default className)
+
+One family is silent for the opposite reason: `object-cover`, `object-contain`, `object-fill`, `object-none`, and `object-scale-down` never reach `WindStyle`, but `WImage` reads them straight off the className, so they DO change rendering (`object-cover` is the default). Write them on `WImage` and nowhere else.
