@@ -23,15 +23,21 @@ These extensions provide direct access to the `WindTheme` configuration and its 
 Use `windTheme` to interact with the theme controller, typically for toggling between light and dark modes.
 
 ```dart
-// Toggle the current theme
+// Flip light <-> dark and take over from the OS
 context.windTheme.toggleTheme();
 
-// Set a specific brightness
-context.windTheme.updateTheme(brightness: Brightness.dark);
+// Pin a specific brightness as a user preference
+final controller = context.windTheme;
+controller.setTheme(
+  controller.data.copyWith(brightness: Brightness.dark, syncWithSystem: false),
+);
 
 // Hand brightness back to the OS after a manual override
 context.windTheme.resetToSystem();
 ```
+
+> [!NOTE]
+> `toggleTheme()` sets `syncWithSystem: false` for you, which is what makes it a real user preference. `updateTheme(brightness: ...)` does not: it is the partial-update call the framework's own `didChangePlatformBrightness` listener uses, so while `syncWithSystem` is `true` the next OS brightness change overwrites whatever you set. Pin the preference through `setTheme` with `syncWithSystem: false`, as above, and use `resetToSystem()` to give control back.
 
 ### Theme Data
 Access the raw `WindThemeData` or specific properties like colors and brightness.
