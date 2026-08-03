@@ -102,16 +102,24 @@ class WFormDatePicker extends FormField<DateTime> {
   /// The initially selected date range (range mode).
   final DateRange? initialRange;
 
-  /// Called when a date is selected (single mode).
+  /// Called when a date is selected ([WDatePickerMode.single] and
+  /// [WDatePickerMode.dateTime]).
+  ///
+  /// It runs after the field's own `didChange`, so the form state already
+  /// holds the value. In `dateTime` mode it fires on every day tap and every
+  /// time step, each with the full composed instant.
   final ValueChanged<DateTime>? onChanged;
 
   /// Called when a date range is selected (range mode).
   final ValueChanged<DateRange>? onRangeChanged;
 
-  /// Minimum selectable date.
+  /// Earliest selectable date, forwarded to [WDatePicker.minDate].
   final DateTime? minDate;
 
-  /// Maximum selectable date.
+  /// Latest selectable date, forwarded to [WDatePicker.maxDate].
+  ///
+  /// In [WDatePickerMode.dateTime] a bare-day bound is the instant at
+  /// midnight; see [WDatePicker.maxDate] for what that means for the last day.
   final DateTime? maxDate;
 
   /// Wind utility classes for the trigger container.
@@ -127,6 +135,10 @@ class WFormDatePicker extends FormField<DateTime> {
   final DateDisplayFormat? displayFormat;
 
   /// Minutes added or removed per minute step ([WDatePickerMode.dateTime]).
+  ///
+  /// Asserted between 1 and 59 here as well as on [WDatePicker], so a bad
+  /// value names the widget the caller wrote. See [WDatePicker.minuteStep] for
+  /// the release-build clamp.
   final int minuteStep;
 
   /// Label of the time row ([WDatePickerMode.dateTime]).

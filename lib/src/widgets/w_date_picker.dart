@@ -119,22 +119,43 @@ class WDatePicker extends StatefulWidget {
   /// Selection mode: single date, date range, or date plus time of day.
   final WDatePickerMode mode;
 
-  /// The currently selected date (single mode).
+  /// The currently selected instant ([WDatePickerMode.single] and
+  /// [WDatePickerMode.dateTime]).
+  ///
+  /// `single` holds a midnight date; `dateTime` carries the picked hour and
+  /// minute too, and owns the time row, so feed every emitted value back here.
   final DateTime? value;
 
   /// The currently selected date range (range mode).
   final DateRange? range;
 
-  /// Called when a date is selected (single mode).
+  /// Called when a date is selected ([WDatePickerMode.single] and
+  /// [WDatePickerMode.dateTime]).
+  ///
+  /// `single` fires once, on the day tap that closes the popover. `dateTime`
+  /// fires on every day tap AND every time step, each with the full composed
+  /// instant; the confirm control only closes the popover.
   final ValueChanged<DateTime>? onChanged;
 
   /// Called when a date range is selected (range mode).
   final ValueChanged<DateRange>? onRangeChanged;
 
-  /// Minimum selectable date.
+  /// Earliest selectable date.
+  ///
+  /// Day cells are compared at day granularity in every mode. In
+  /// [WDatePickerMode.dateTime] the composed instant is additionally clamped
+  /// to this bound, so a bound carrying a time of day is honoured to the
+  /// minute.
   final DateTime? minDate;
 
-  /// Maximum selectable date.
+  /// Latest selectable date.
+  ///
+  /// The [minDate] granularity note applies, with one consequence worth
+  /// spelling out: a bound written as a bare day (`DateTime(2026, 8, 31)`) IS
+  /// the instant Aug 31 00:00, so in [WDatePickerMode.dateTime] the last day
+  /// admits only midnight and its step controls render disabled. Pass an
+  /// explicit end-of-day (`DateTime(2026, 8, 31, 23, 59)`) to open the whole
+  /// day.
   final DateTime? maxDate;
 
   /// Wind utility classes for the trigger container.
@@ -156,6 +177,10 @@ class WDatePicker extends StatefulWidget {
   final DateDisplayFormat? displayFormat;
 
   /// Minutes added or removed per minute step ([WDatePickerMode.dateTime]).
+  ///
+  /// Asserted between 1 and 59. A release build, where the assert is stripped,
+  /// clamps an out-of-range value into that box rather than leaving the
+  /// spinners inert.
   final int minuteStep;
 
   /// Label of the time row ([WDatePickerMode.dateTime]).
@@ -259,10 +284,26 @@ class _WDatePickerState extends State<WDatePicker> {
         _minute = widget.value!.minute;
       }
     }
+    // A form reset drops the value back to null. Leaving the last picked time
+    // in the row would advertise a time the picker no longer holds, so it goes
+    // back to the wall-clock seed a never-touched picker starts from.
+    if (widget.value == null && oldWidget.value != null) {
+      _initTime();
+    }
     if (widget.range != oldWidget.range && widget.range != null) {
       _focusedMonth = _normalizeToMonth(widget.range!.start);
     }
   }
+
+  /// The minute step actually applied by the spinners.
+  ///
+  /// [WDatePicker.minuteStep] is asserted at construction, but asserts are
+  /// stripped from a release build, and a step computed at runtime (a remote
+  /// config value, a user preference) can still arrive out of range there.
+  /// A step of 0 would make every minute increment a no-op and one of 60 or
+  /// more would leave the 0-59 box on the first press, so both would leave the
+  /// spinners silently inert. Clamping at the point of use keeps them moving.
+  int get _minuteStep => widget.minuteStep.clamp(1, 59);
 
   /// Normalizes a date to midnight (removes time component).
   DateTime _normalizeToDay(DateTime date) {
@@ -680,10 +721,10 @@ class _WDatePickerState extends State<WDatePicker> {
               _buildTimeSpinner(
                 unit: 'minute',
                 value: _minute,
-                onIncrement: () => _stepTime(minutes: widget.minuteStep),
-                onDecrement: () => _stepTime(minutes: -widget.minuteStep),
-                canIncrement: _steppedTime(minutes: widget.minuteStep) != null,
-                canDecrement: _steppedTime(minutes: -widget.minuteStep) != null,
+                onIncrement: () => _stepTime(minutes: _minuteStep),
+                onDecrement: () => _stepTime(minutes: -_minuteStep),
+                canIncrement: _steppedTime(minutes: _minuteStep) != null,
+                canDecrement: _steppedTime(minutes: -_minuteStep) != null,
               ),
               _buildDoneControl(),
             ],
@@ -742,6 +783,11 @@ class _WDatePickerState extends State<WDatePicker> {
       button: true,
       enabled: enabled,
       label: semanticLabel,
+      // The node declares the button role, so it also has to carry the action:
+      // the GestureDetector below is not this node's semantics owner, which
+      // would leave a screen reader (or an automation driver) with a control it
+      // can name but not activate.
+      onTap: enabled ? onTap : null,
       child: MouseRegion(
         cursor:
             enabled ? SystemMouseCursors.click : SystemMouseCursors.forbidden,
@@ -771,6 +817,7 @@ class _WDatePickerState extends State<WDatePicker> {
     return Semantics(
       button: true,
       label: widget.doneLabel,
+      onTap: _closePopover,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
