@@ -1,3 +1,5 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -17,6 +19,32 @@ Widget wrapWithTheme(Widget child) {
       ),
     ),
   );
+}
+
+/// A [testWidgets] that runs with the semantics tree enabled.
+///
+/// `find.bySemanticsLabel` refuses to run without it, and the handle has to be
+/// released inside the test body: flutter_test verifies handle disposal in
+/// `_endOfTestVerifications`, which runs BEFORE both `tearDown` and
+/// `addTearDown`, so either of those reports a leaked handle on every test.
+/// The `finally` keeps a failing expectation from masking itself with that
+/// leak report.
+void testWidgetsWithSemantics(String description, WidgetTesterCallback body) {
+  testWidgets(description, (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    try {
+      await body(tester);
+    } finally {
+      handle.dispose();
+    }
+  });
+}
+
+/// The 24-hour clock the `dateTime` time row renders for an instant.
+String _formatClock(DateTime instant) {
+  final String hour = instant.hour.toString().padLeft(2, '0');
+  final String minute = instant.minute.toString().padLeft(2, '0');
+  return '$hour:$minute';
 }
 
 void main() {
@@ -286,10 +314,11 @@ void main() {
         expect(find.text('Jan 10, 2025 - Jan 15, 2025'), findsOneWidget);
       });
 
-      test('WDatePickerMode exposes single and range values', () {
-        expect(WDatePickerMode.values, hasLength(2));
+      test('WDatePickerMode exposes single, range and dateTime values', () {
+        expect(WDatePickerMode.values, hasLength(3));
         expect(WDatePickerMode.values, contains(WDatePickerMode.single));
         expect(WDatePickerMode.values, contains(WDatePickerMode.range));
+        expect(WDatePickerMode.values, contains(WDatePickerMode.dateTime));
       });
     });
 
@@ -670,6 +699,497 @@ void main() {
         );
         expect(node.flagsCollection.isTextField, isTrue);
         expect(node.value, contains(testDate.toIso8601String()));
+      });
+    });
+
+    // -----------------------------------------------------------------------
+    // WDatePickerMode.dateTime
+    //
+    // The only mode that survives `_normalizeToDay`: it emits a full DateTime
+    // carrying an hour and a minute. `single` and `range` must keep striking
+    // the time to midnight, which the regression test at the end of this group
+    // pins.
+    // -----------------------------------------------------------------------
+    group('DateTime Mode', () {
+      setUp(() {
+        WindParser.clearCache();
+      });
+
+      /// Aug 10, 2026 at 14:30. Aug 1, 2026 is a Saturday, so the Monday-first
+      /// grid leads with Jul 27-31 and trails with Sep 1-6: no day number in
+      /// the calendar collides with a second cell.
+      final DateTime testDateTime = DateTime(2026, 8, 10, 14, 30);
+
+      /// Pumps a controlled `dateTime` picker that feeds every emitted value
+      /// back through `value`, the way the documented contract requires.
+      Future<void> pumpControlled(
+        WidgetTester tester, {
+        required void Function(DateTime) onChanged,
+        DateTime? initialValue,
+        DateTime? minDate,
+        DateTime? maxDate,
+        int? minuteStep,
+      }) async {
+        DateTime? current = initialValue;
+
+        await tester.pumpWidget(wrapWithTheme(
+          StatefulBuilder(
+            builder: (context, setState) {
+              return WDatePicker(
+                mode: WDatePickerMode.dateTime,
+                value: current,
+                minDate: minDate,
+                maxDate: maxDate,
+                minuteStep: minuteStep ?? 5,
+                onChanged: (value) {
+                  onChanged(value);
+                  setState(() => current = value);
+                },
+              );
+            },
+          ),
+        ));
+      }
+
+      testWidgets('selecting a day emits a DateTime keeping hour and minute',
+          (tester) async {
+        DateTime? selected;
+
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('12'));
+        await tester.pumpAndSettle();
+
+        expect(selected, isNotNull);
+        expect(selected!.year, 2026);
+        expect(selected!.month, 8);
+        expect(selected!.day, 12);
+        expect(selected!.hour, 14);
+        expect(selected!.minute, 30);
+      });
+
+      testWidgets('trigger renders the date with its 24-hour time',
+          (tester) async {
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (_) {},
+        );
+
+        expect(find.text('Aug 10, 2026 14:30'), findsOneWidget);
+      });
+
+      testWidgetsWithSemantics(
+          'stepping the minute up emits the stepped instant', (tester) async {
+        DateTime? selected;
+
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.bySemanticsLabel('Increase minute'));
+        await tester.pumpAndSettle();
+
+        expect(selected, isNotNull);
+        expect(selected!.hour, 14);
+        expect(selected!.minute, 35);
+        expect(selected!.day, 10);
+      });
+
+      testWidgetsWithSemantics(
+          'stepping the hour down emits the stepped instant', (tester) async {
+        DateTime? selected;
+
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.bySemanticsLabel('Decrease hour'));
+        await tester.pumpAndSettle();
+
+        expect(selected, isNotNull);
+        expect(selected!.hour, 13);
+        expect(selected!.minute, 30);
+      });
+
+      testWidgetsWithSemantics('steps the hour up and the minute down',
+          (tester) async {
+        DateTime? selected;
+
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.bySemanticsLabel('Increase hour'));
+        await tester.pumpAndSettle();
+
+        expect(selected!.hour, 15);
+        expect(selected!.minute, 30);
+
+        await tester.tap(find.bySemanticsLabel('Decrease minute'));
+        await tester.pumpAndSettle();
+
+        expect(selected!.hour, 15);
+        expect(selected!.minute, 25);
+      });
+
+      testWidgetsWithSemantics('honors a custom minuteStep', (tester) async {
+        DateTime? selected;
+
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          minuteStep: 15,
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.bySemanticsLabel('Increase minute'));
+        await tester.pumpAndSettle();
+
+        expect(selected!.minute, 45);
+      });
+
+      testWidgetsWithSemantics('refuses a step that would leave the max window',
+          (tester) async {
+        DateTime? selected;
+
+        // The window ends exactly on the current instant, so stepping up is
+        // out of bounds and the control must be inert.
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          maxDate: testDateTime,
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.bySemanticsLabel('Increase minute'),
+          warnIfMissed: false,
+        );
+        await tester.pumpAndSettle();
+
+        expect(selected, isNull);
+      });
+
+      testWidgets('clamps a day tap that lands before minDate', (tester) async {
+        DateTime? selected;
+
+        // Aug 10 14:30 is the earliest legal instant; tapping its own day with
+        // a pending 09:00 would land before it, so the emitted value is pulled
+        // up to the bound rather than dropped.
+        await pumpControlled(
+          tester,
+          initialValue: DateTime(2026, 8, 12, 9, 0),
+          minDate: testDateTime,
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('10'));
+        await tester.pumpAndSettle();
+
+        expect(selected, testDateTime);
+      });
+
+      testWidgetsWithSemantics(
+          'stepping the time before a date is picked emits nothing',
+          (tester) async {
+        DateTime? selected;
+
+        await pumpControlled(tester, onChanged: (value) => selected = value);
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.bySemanticsLabel('Increase hour'));
+        await tester.pumpAndSettle();
+
+        expect(selected, isNull);
+      });
+
+      testWidgets('keeps the popover open on a day tap and closes on done',
+          (tester) async {
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (_) {},
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('12'));
+        await tester.pumpAndSettle();
+
+        // The time row is still reachable, unlike single mode which closes.
+        expect(find.text('August 2026'), findsOneWidget);
+
+        await tester.tap(find.text('Done'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('August 2026'), findsNothing);
+      });
+
+      testWidgetsWithSemantics(
+          'exposes the time row as a labelled Semantics node', (tester) async {
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (_) {},
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        // Two widgets carry the label: the row container, whose Semantics value
+        // is the clock, and the visible WText inside it. The container comes
+        // first in tree order.
+        final SemanticsNode timeRow = tester.getSemantics(
+          find.bySemanticsLabel('Time').first,
+        );
+        expect(timeRow.value, '14:30');
+        expect(find.bySemanticsLabel('Increase hour'), findsOneWidget);
+        expect(find.bySemanticsLabel('Decrease minute'), findsOneWidget);
+      });
+
+      testWidgetsWithSemantics('the row readout follows the stepped time',
+          (tester) async {
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (_) {},
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        String clock() =>
+            tester.getSemantics(find.bySemanticsLabel('Time').first).value;
+
+        expect(clock(), '14:30');
+
+        await tester.tap(find.bySemanticsLabel('Increase hour'));
+        await tester.pumpAndSettle();
+
+        // The row lives in an OverlayPortal, so this also pins that the open
+        // popover rebuilds with the state rather than freezing at open time.
+        expect(clock(), '15:30');
+      });
+
+      testWidgetsWithSemantics(
+          're-seeds the time row when the value is cleared', (tester) async {
+        // A form reset drops `value` back to null. Leaving the last picked time
+        // in the row would show a time the picker no longer holds, so the row
+        // falls back to the wall clock, exactly as a never-touched picker does.
+        DateTime? current = testDateTime;
+        late StateSetter setOuter;
+
+        await tester.pumpWidget(wrapWithTheme(
+          StatefulBuilder(
+            builder: (context, setState) {
+              setOuter = setState;
+              return WDatePicker(
+                mode: WDatePickerMode.dateTime,
+                value: current,
+                onChanged: (value) => setState(() => current = value),
+              );
+            },
+          ),
+        ));
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        String clock() =>
+            tester.getSemantics(find.bySemanticsLabel('Time').first).value;
+
+        expect(clock(), '14:30');
+
+        // Bracketing the reset absorbs a minute rolling over mid-test.
+        final DateTime before = DateTime.now();
+        setOuter(() => current = null);
+        await tester.pumpAndSettle();
+        final DateTime after = DateTime.now();
+
+        expect(clock(), anyOf(_formatClock(before), _formatClock(after)));
+      });
+
+      testWidgetsWithSemantics(
+          'exposes a tap action on the step and confirm controls',
+          (tester) async {
+        // `Semantics(button: true)` declares the role; without an action of its
+        // own the node has nothing for a screen reader or an automation driver
+        // to invoke, and the GestureDetector below it is not the owner.
+        DateTime? selected;
+
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        // `performAction` refuses a node that does not carry the action, so
+        // each call is itself the assertion that the role is activatable.
+        tester.semantics.performAction(
+          find.semantics.byLabel('Increase minute'),
+          SemanticsAction.tap,
+        );
+        await tester.pumpAndSettle();
+
+        expect(selected!.minute, 35);
+
+        // The confirm control's visible WText carries the label too; the
+        // button node wrapping it comes first in tree order.
+        tester.semantics.performAction(
+          find.semantics.byLabel('Done').first,
+          SemanticsAction.tap,
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('August 2026'), findsNothing);
+      });
+
+      testWidgetsWithSemantics(
+          'withholds the tap action from a disabled step control',
+          (tester) async {
+        // The window ends on the current instant, so stepping up is illegal and
+        // the control must be inert to assistive technology too, not just to a
+        // pointer.
+        await pumpControlled(
+          tester,
+          initialValue: testDateTime,
+          maxDate: testDateTime,
+          onChanged: (_) {},
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        final SemanticsData increase = tester
+            .getSemantics(find.bySemanticsLabel('Increase minute'))
+            .getSemanticsData();
+
+        expect(increase.hasAction(SemanticsAction.tap), isFalse);
+        expect(increase.flagsCollection.isEnabled, Tristate.isFalse);
+      });
+
+      testWidgets('caps the last day at midnight when maxDate carries no time',
+          (tester) async {
+        // A day-granularity bound is still an instant: `DateTime(2026, 8, 31)`
+        // means Aug 31 00:00, so the pending 14:30 is pulled back to it. The
+        // documented shape of a bound that should admit the whole last day is
+        // an explicit end-of-day instant.
+        DateTime? selected;
+
+        await pumpControlled(
+          tester,
+          initialValue: DateTime(2026, 8, 30, 14, 30),
+          maxDate: DateTime(2026, 8, 31),
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        // Jul 31 leads the Monday-first grid, so the August cell is the second.
+        await tester.tap(find.text('31').last);
+        await tester.pumpAndSettle();
+
+        expect(selected, DateTime(2026, 8, 31));
+      });
+
+      testWidgets('admits the whole last day for an end-of-day maxDate',
+          (tester) async {
+        DateTime? selected;
+
+        await pumpControlled(
+          tester,
+          initialValue: DateTime(2026, 8, 30, 14, 30),
+          maxDate: DateTime(2026, 8, 31, 23, 59),
+          onChanged: (value) => selected = value,
+        );
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('31').last);
+        await tester.pumpAndSettle();
+
+        expect(selected, DateTime(2026, 8, 31, 14, 30));
+      });
+
+      testWidgets('renders custom time and done labels', (tester) async {
+        await tester.pumpWidget(wrapWithTheme(
+          WDatePicker(
+            mode: WDatePickerMode.dateTime,
+            value: testDateTime,
+            timeLabel: 'Saat',
+            doneLabel: 'Tamam',
+          ),
+        ));
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Saat'), findsOneWidget);
+        expect(find.text('Tamam'), findsOneWidget);
+      });
+
+      testWidgets('single mode still strikes the time to midnight',
+          (tester) async {
+        // The byte-identical guarantee for the pre-existing modes: a value
+        // carrying 14:30 must still emit midnight in `single` mode.
+        DateTime? selected;
+
+        await tester.pumpWidget(wrapWithTheme(
+          WDatePicker(
+            value: testDateTime,
+            onChanged: (value) => selected = value,
+          ),
+        ));
+
+        await tester.tap(find.byType(WDatePicker));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('12'));
+        await tester.pumpAndSettle();
+
+        expect(selected, DateTime(2026, 8, 12));
+        expect(selected!.hour, 0);
+        expect(selected!.minute, 0);
       });
     });
   });

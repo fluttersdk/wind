@@ -1,12 +1,13 @@
 # WDatePicker
 
-A utility-first date picker component built on [WPopover](./w-popover.md) with support for single date selection, date range selection, min/max constraints, and custom display formatting.
+A utility-first date picker component built on [WPopover](./w-popover.md) with support for single date selection, date range selection, date-with-time selection, min/max constraints, and custom display formatting.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
 - [Props](#props)
 - [Types](#types)
 - [Date Range Selection](#date-range-selection)
+- [Date + Time Selection](#date--time-selection)
 - [Min/Max Constraints](#minmax-constraints)
 - [Custom Display Format](#custom-display-format)
 - [Event Handling](#event-handling)
@@ -70,6 +71,9 @@ const WDatePicker({
   bool disabled = false,
   Set<String> states = const {},
   DateDisplayFormat? displayFormat,
+  int minuteStep = 5,
+  String timeLabel = 'Time',
+  String doneLabel = 'Done',
 })
 ```
 
@@ -77,31 +81,41 @@ const WDatePicker({
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `mode` | `WDatePickerMode` | `single` | Selection mode: `single` or `range` |
-| `value` | `DateTime?` | `null` | Currently selected date (single mode) |
+| `mode` | `WDatePickerMode` | `single` | Selection mode: `single`, `range` or `dateTime` |
+| `value` | `DateTime?` | `null` | Currently selected instant (`single` and `dateTime` modes; carries the time of day in `dateTime`) |
 | `range` | `DateRange?` | `null` | Currently selected range (range mode) |
-| `onChanged` | `ValueChanged<DateTime>?` | `null` | Callback fired on date selection (single mode) |
+| `onChanged` | `ValueChanged<DateTime>?` | `null` | Callback fired on selection (`single` and `dateTime` modes; in `dateTime` it fires once the confirm control closes the popover) |
 | `onRangeChanged` | `ValueChanged<DateRange>?` | `null` | Callback fired on range selection (range mode) |
-| `minDate` | `DateTime?` | `null` | Earliest selectable date |
-| `maxDate` | `DateTime?` | `null` | Latest selectable date |
+| `minDate` | `DateTime?` | `null` | Earliest selectable date; day cells compare at day granularity, the composed instant is additionally clamped in `dateTime` mode |
+| `maxDate` | `DateTime?` | `null` | Latest selectable date; a bare-day bound is that day at `00:00`, so `dateTime` mode needs an explicit end-of-day to admit the whole last day |
 | `className` | `String?` | `null` | Wind utility classes for the trigger container |
 | `placeholder` | `String` | `'Select date'` | Text shown when no value is selected |
 | `disabled` | `bool` | `false` | Prevents interaction, shows forbidden cursor |
 | `states` | `Set<String>` | `const {}` | Custom states for dynamic styling |
 | `displayFormat` | `DateDisplayFormat?` | `null` | Custom function to format dates for display |
+| `minuteStep` | `int` | `5` | Minutes each step control moves (`dateTime` mode only) |
+| `timeLabel` | `String` | `'Time'` | Label above the time row (`dateTime` mode only) |
+| `doneLabel` | `String` | `'Done'` | Confirm control text that closes the popover (`dateTime` mode only) |
 
 ## Types
 
 ### WDatePickerMode
 
-Determines if the picker operates in single date or date range selection mode.
+Determines whether the picker selects a single date, a date range, or a single
+date carrying a time of day.
 
 ```dart
 enum WDatePickerMode {
-  single,  // Pick a single date
-  range,   // Pick a start and end date
+  single,    // Pick a single date (time struck to midnight)
+  range,     // Pick a start and end date
+  dateTime,  // Pick a single date AND a time of day
 }
 ```
+
+`single` and `range` normalize every value to midnight. `dateTime` is the only
+mode that preserves an hour and a minute, so it is the one to use when the value
+is an instant rather than a calendar day. It adds a stepped time row below the
+calendar and keeps the popover open until the confirm control is pressed.
 
 ### DateRange
 
@@ -154,6 +168,37 @@ How range selection works:
 
 The trigger display text updates throughout: `"Jan 15, 2025 - ..."` while in progress, then `"Jan 15, 2025 - Jan 20, 2025"` when complete.
 
+## Date + Time Selection
+
+Setting `mode: WDatePickerMode.dateTime` keeps the time of day. The tapped day is composed with a stepped time row and emitted as a single local `DateTime`, where `single` and `range` strike everything to midnight.
+
+<x-preview path="widgets/date_picker_datetime" size="md" source="example/lib/pages/widgets/date_picker_datetime.dart"></x-preview>
+
+```dart
+DateTime? _startsAt;
+
+WDatePicker(
+  mode: WDatePickerMode.dateTime,
+  value: _startsAt,
+  onChanged: (value) => setState(() => _startsAt = value),
+  minuteStep: 15,
+  placeholder: 'Schedule the deploy',
+  className: 'w-full p-3 border rounded-lg',
+)
+```
+
+How the mode differs from `single`:
+
+1. **The popover stays open on a day tap.** The time row below the calendar is the second half of the selection, so the confirm control (`doneLabel`) is what closes it.
+2. **`onChanged` fires on every change**, both the day tap and each time step, always with the full composed instant. Closing the popover commits nothing new.
+3. **The mode is controlled.** Feed each emitted value back through `value` or the calendar highlight, the time row, and the bounds will drift apart from what the user sees.
+4. **The time row is Wind markup**, two 24-hour spinners plus the confirm control built from `WDiv` / `WText` / `WIcon`. It is not a Material `showTimePicker` dialog, so it themes with the rest of the picker.
+
+The spinners never wrap: stepping up from 23:00 would move the instant a full day backwards while the calendar kept showing the same day, so an edge step renders disabled instead. `minuteStep` sets how far one press of the minute spinner moves (default `5`).
+
+> [!NOTE]
+> The emitted `DateTime` is local and carries no offset. Dart's `DateTime` cannot hold an arbitrary one ([dart-lang/sdk#54993](https://github.com/dart-lang/sdk/issues/54993)), so a value crossing a network boundary is the caller's `toUtc()` to make.
+
 ## Min/Max Constraints
 
 Use `minDate` and `maxDate` to restrict which dates are selectable. Dates outside the range appear dimmed and don't respond to clicks.
@@ -170,7 +215,23 @@ WDatePicker(
 ```
 
 > [!NOTE]
-> Constraints are compared at day-level granularity. Time components are stripped before comparison.
+> In `single` and `range` mode, constraints are compared at day-level granularity and time components are stripped before comparison. In `dateTime` mode a day cell stays selectable whenever ANY instant in it is legal, and the composed instant is then pulled back inside the window, so the emitted value is always the same legal instant the trigger displays.
+
+### Bounds in `dateTime` mode
+
+Because the bound is compared as a full instant, a `maxDate` written as a bare day is that day at midnight, and the last day then admits only `00:00`: every time you pick on it collapses back to midnight and its step controls render disabled. Spell out the end of the day when you mean the whole day.
+
+```dart
+WDatePicker(
+  mode: WDatePickerMode.dateTime,
+  value: _startsAt,
+  onChanged: (value) => setState(() => _startsAt = value),
+  minDate: DateTime.now(),
+  // Not DateTime(2026, 8, 31), which caps the last day at 00:00.
+  maxDate: DateTime(2026, 8, 31, 23, 59),
+  className: 'p-3 border rounded-lg',
+)
+```
 
 ## Custom Display Format
 
@@ -219,6 +280,23 @@ WDatePicker(
   },
 )
 ```
+
+### DateTime Mode
+
+`onChanged` reuses the single-mode callback but fires on every change, the day tap and each time step alike, always carrying the full composed instant:
+
+```dart
+WDatePicker(
+  mode: WDatePickerMode.dateTime,
+  value: _startsAt,
+  onChanged: (value) {
+    // Fires again on every hour / minute step, not only on the day tap.
+    setState(() => _startsAt = value);
+  },
+)
+```
+
+Treat it as a live value rather than a commit signal. The confirm control only closes the popover; if you need a "the user finished" moment, act on the value you already hold once the popover closes.
 
 ## State Variants
 

@@ -7,6 +7,7 @@ A form-integrated date picker that wraps [WDatePicker](./w-date-picker.md) with 
 - [Props](#props)
 - [Form Validation](#form-validation)
 - [Range Mode in Forms](#range-mode-in-forms)
+- [Date + Time in Forms](#date--time-in-forms)
 - [Event Handling](#event-handling)
 - [State Variants](#state-variants)
 - [Styling Examples](#styling-examples)
@@ -81,6 +82,10 @@ WFormDatePicker({
   String? placeholder,
   Set<String>? states,
   DateDisplayFormat? displayFormat,
+  // dateTime mode params, forwarded to WDatePicker
+  int minuteStep = 5,
+  String timeLabel = 'Time',
+  String doneLabel = 'Done',
   // Form wrapper params
   String? label,
   String labelClassName = 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
@@ -101,15 +106,15 @@ WFormDatePicker({
 | `onSaved` | `FormFieldSetter<DateTime>?` | `null` | Called when form is saved |
 | `autovalidateMode` | `AutovalidateMode?` | `null` | When to auto-validate |
 | `enabled` | `bool` | `true` | Whether the picker is interactive |
-| `initialValue` | `DateTime?` | `null` | Initial selected date (single mode) |
+| `initialValue` | `DateTime?` | `null` | Initial selected instant (`single` and `dateTime` modes; carries the time of day in `dateTime`). Seeds the field's state on first build only, as `FormField` does: changing it later does not move an already-picked value |
 
 ### Date Picker Props
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `mode` | `WDatePickerMode` | `single` | Selection mode: `single` or `range` |
+| `mode` | `WDatePickerMode` | `single` | Selection mode: `single`, `range` or `dateTime` |
 | `initialRange` | `DateRange?` | `null` | Initial date range (range mode) |
-| `onChanged` | `ValueChanged<DateTime>?` | `null` | Called on date selection (single mode) |
+| `onChanged` | `ValueChanged<DateTime>?` | `null` | Called on selection (`single` and `dateTime` modes) |
 | `onRangeChanged` | `ValueChanged<DateRange>?` | `null` | Called on range selection (range mode) |
 | `minDate` | `DateTime?` | `null` | Earliest selectable date |
 | `maxDate` | `DateTime?` | `null` | Latest selectable date |
@@ -117,6 +122,9 @@ WFormDatePicker({
 | `placeholder` | `String?` | `null` | Placeholder text (defaults to `'Select date'`) |
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling |
 | `displayFormat` | `DateDisplayFormat?` | `null` | Custom date display format function |
+| `minuteStep` | `int` | `5` | Minutes each step control moves, forwarded to the picker (`dateTime` mode only) |
+| `timeLabel` | `String` | `'Time'` | Label above the time row, forwarded to the picker (`dateTime` mode only) |
+| `doneLabel` | `String` | `'Done'` | Confirm control text that closes the popover, forwarded to the picker (`dateTime` mode only) |
 
 ### Layout Props
 
@@ -198,6 +206,33 @@ WFormDatePicker(
 
 > [!NOTE]
 > The `validator` receives the range's start `DateTime`, not a `DateRange` object. For more complex range validation (e.g., minimum stay duration), use the `onRangeChanged` callback to manage validation externally.
+
+## Date + Time in Forms
+
+With `mode: WDatePickerMode.dateTime` the field holds a full `DateTime` carrying the picked hour and minute, so a validator can compare times of day rather than just checking for null. `minuteStep`, `timeLabel`, and `doneLabel` are forwarded to [WDatePicker](./w-date-picker.md#date--time-selection) unchanged.
+
+<x-preview path="widgets/date_picker_datetime" size="md" source="example/lib/pages/widgets/date_picker_datetime.dart"></x-preview>
+
+```dart
+WFormDatePicker(
+  mode: WDatePickerMode.dateTime,
+  label: 'Call with the customer',
+  hint: 'Office hours run 09:00 to 18:00',
+  minuteStep: 15,
+  doneLabel: 'Confirm',
+  className: 'p-3 border rounded-lg error:border-red-500',
+  autovalidateMode: AutovalidateMode.onUserInteraction,
+  validator: (value) {
+    if (value == null) return 'Pick a date and a time';
+    if (value.hour < 9 || value.hour >= 18) {
+      return 'Office hours run 09:00 to 18:00';
+    }
+    return null;
+  },
+)
+```
+
+Two behaviors carry over from the raw widget. The field revalidates on every time step, not only on the day tap, because `onChanged` fires on each one; and `initialValue` seeds the field on first build only, the way `FormField` does, so changing it later does not move an already-picked value.
 
 ## Event Handling
 

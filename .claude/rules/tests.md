@@ -91,6 +91,7 @@ testWidgets('iOS-only behavior', (tester) async {
 - `FocusNode` / `TextEditingController` / `AnimationController`: capture, dispose via `addTearDown(controller.dispose)`. Multiple disposals stack; do not consolidate.
 - `tester.createGesture(kind: PointerDeviceKind.mouse)`: pair with `addTearDown(gesture.removePointer)`.
 - `tester.view.physicalSize`: pair with `addTearDown(() { tester.view.resetPhysicalSize(); tester.view.resetDevicePixelRatio(); })`.
+- `tester.ensureSemantics()` is the exception to the rule above: its `SemanticsHandle` must be disposed INSIDE the test body. flutter_test checks it in `_endOfTestVerifications`, which runs before both `tearDown` and `addTearDown`, so either one fails every test with "A SemanticsHandle was active at the end of the test". Wrap the body in a `try` / `finally` (see `testWidgetsWithSemantics` in `test/widgets/w_date_picker_test.dart`) so a failing expectation is not masked by a leak report. Dropping `ensureSemantics()` is not an escape: `find.bySemanticsLabel` throws without it.
 
 ## Group structure
 

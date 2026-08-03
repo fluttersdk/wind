@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import 'w_div.dart';
+import 'w_icon.dart';
 import 'w_popover.dart';
 import 'w_text.dart';
 
@@ -13,6 +14,12 @@ enum WDatePickerMode {
 
   /// Date range selection (start and end dates).
   range,
+
+  /// Single date plus a time of day, emitted as a full [DateTime].
+  ///
+  /// The only mode that preserves a time component: [single] and [range]
+  /// strike every emitted value back to midnight.
+  dateTime,
 }
 
 /// Represents a date range with start and end dates.
@@ -61,6 +68,7 @@ typedef DateDisplayFormat = String Function(DateTime date);
 /// ### Features:
 /// - **Single Date Selection:** Pick a single date
 /// - **Date Range Selection:** Pick start and end dates with hover preview
+/// - **Date + Time Selection:** Pick a date and a time of day in one value
 /// - **Min/Max Constraints:** Limit selectable date range
 /// - **Styling:** Full Wind className support for trigger and calendar
 /// - **Popover Integration:** Uses WPopover for overlay positioning
@@ -87,26 +95,67 @@ typedef DateDisplayFormat = String Function(DateTime date);
 ///   placeholder: 'Select date range',
 /// )
 /// ```
+///
+/// ### Date + Time Example:
+///
+/// ```dart
+/// WDatePicker(
+///   mode: WDatePickerMode.dateTime,
+///   value: _startsAt,
+///   onChanged: (value) => setState(() => _startsAt = value),
+///   minuteStep: 15,
+///   className: 'w-full p-3 border rounded-lg',
+///   placeholder: 'Select start',
+/// )
+/// ```
+///
+/// `dateTime` mode emits a plain local [DateTime] carrying the picked hour and
+/// minute; every other mode emits midnight. The mode is controlled: feed each
+/// emitted value back through [value] so the calendar highlight, the time row,
+/// and the min/max window all follow it. The widget performs NO timezone
+/// conversion, so a value crossing a network boundary is the caller's
+/// `toUtc()` to make (Dart's [DateTime] cannot carry an arbitrary offset).
 class WDatePicker extends StatefulWidget {
-  /// Selection mode: single date or date range.
+  /// Selection mode: single date, date range, or date plus time of day.
   final WDatePickerMode mode;
 
-  /// The currently selected date (single mode).
+  /// The currently selected instant ([WDatePickerMode.single] and
+  /// [WDatePickerMode.dateTime]).
+  ///
+  /// `single` holds a midnight date; `dateTime` carries the picked hour and
+  /// minute too, and owns the time row, so feed every emitted value back here.
   final DateTime? value;
 
   /// The currently selected date range (range mode).
   final DateRange? range;
 
-  /// Called when a date is selected (single mode).
+  /// Called when a date is selected ([WDatePickerMode.single] and
+  /// [WDatePickerMode.dateTime]).
+  ///
+  /// `single` fires once, on the day tap that closes the popover. `dateTime`
+  /// fires on every day tap AND every time step, each with the full composed
+  /// instant; the confirm control only closes the popover.
   final ValueChanged<DateTime>? onChanged;
 
   /// Called when a date range is selected (range mode).
   final ValueChanged<DateRange>? onRangeChanged;
 
-  /// Minimum selectable date.
+  /// Earliest selectable date.
+  ///
+  /// Day cells are compared at day granularity in every mode. In
+  /// [WDatePickerMode.dateTime] the composed instant is additionally clamped
+  /// to this bound, so a bound carrying a time of day is honoured to the
+  /// minute.
   final DateTime? minDate;
 
-  /// Maximum selectable date.
+  /// Latest selectable date.
+  ///
+  /// The [minDate] granularity note applies, with one consequence worth
+  /// spelling out: a bound written as a bare day (`DateTime(2026, 8, 31)`) IS
+  /// the instant Aug 31 00:00, so in [WDatePickerMode.dateTime] the last day
+  /// admits only midnight and its step controls render disabled. Pass an
+  /// explicit end-of-day (`DateTime(2026, 8, 31, 23, 59)`) to open the whole
+  /// day.
   final DateTime? maxDate;
 
   /// Wind utility classes for the trigger container.
@@ -123,8 +172,23 @@ class WDatePicker extends StatefulWidget {
 
   /// Custom display format function.
   ///
-  /// If not provided, dates are formatted as "MMM d, yyyy" (e.g., "Jan 15, 2025").
+  /// If not provided, dates are formatted as "MMM d, yyyy" (e.g., "Jan 15, 2025"),
+  /// and [WDatePickerMode.dateTime] appends a 24-hour time ("Jan 15, 2025 14:30").
   final DateDisplayFormat? displayFormat;
+
+  /// Minutes added or removed per minute step ([WDatePickerMode.dateTime]).
+  ///
+  /// Asserted between 1 and 59. A release build, where the assert is stripped,
+  /// clamps an out-of-range value into that box rather than leaving the
+  /// spinners inert.
+  final int minuteStep;
+
+  /// Label of the time row ([WDatePickerMode.dateTime]).
+  final String timeLabel;
+
+  /// Label of the control that confirms the picked instant and closes the
+  /// popover ([WDatePickerMode.dateTime]).
+  final String doneLabel;
 
   /// Creates a new [WDatePicker] instance.
   const WDatePicker({
@@ -141,17 +205,33 @@ class WDatePicker extends StatefulWidget {
     this.disabled = false,
     this.states = const {},
     this.displayFormat,
-  });
+    this.minuteStep = 5,
+    this.timeLabel = 'Time',
+    this.doneLabel = 'Done',
+  }) : assert(minuteStep > 0 && minuteStep < 60,
+            'WDatePicker: minuteStep must be between 1 and 59.');
 
   @override
   State<WDatePicker> createState() => _WDatePickerState();
 }
 
 class _WDatePickerState extends State<WDatePicker> {
+  /// Popover height budget for the calendar alone.
+  static const double _calendarMaxHeight = 400;
+
+  /// Popover height budget with the time row below the calendar.
+  static const double _dateTimeMaxHeight = 500;
+
   final PopoverController _popoverController = PopoverController();
 
   /// The currently focused month for calendar display.
   late DateTime _focusedMonth;
+
+  /// The pending hour (0-23) of the time row.
+  late int _hour;
+
+  /// The pending minute (0-59) of the time row.
+  late int _minute;
 
   /// The currently hovered date (for range preview).
   DateTime? _hoveredDate;
@@ -169,10 +249,11 @@ class _WDatePickerState extends State<WDatePicker> {
   void initState() {
     super.initState();
     _initFocusedMonth();
+    _initTime();
   }
 
   void _initFocusedMonth() {
-    if (widget.mode == WDatePickerMode.single && widget.value != null) {
+    if (widget.mode != WDatePickerMode.range && widget.value != null) {
       _focusedMonth = _normalizeToMonth(widget.value!);
     } else if (widget.mode == WDatePickerMode.range && widget.range != null) {
       _focusedMonth = _normalizeToMonth(widget.range!.start);
@@ -181,17 +262,48 @@ class _WDatePickerState extends State<WDatePicker> {
     }
   }
 
+  /// Seeds the time row from the current value, falling back to the wall clock
+  /// so an empty `dateTime` picker opens on a plausible time instead of
+  /// midnight.
+  void _initTime() {
+    final DateTime seed = widget.value ?? DateTime.now();
+    _hour = seed.hour;
+    _minute = seed.minute;
+  }
+
   @override
   void didUpdateWidget(WDatePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Update focused month if value changed externally
     if (widget.value != oldWidget.value && widget.value != null) {
       _focusedMonth = _normalizeToMonth(widget.value!);
+      // `dateTime` mode is controlled, so an externally supplied instant owns
+      // the time row too.
+      if (widget.mode == WDatePickerMode.dateTime) {
+        _hour = widget.value!.hour;
+        _minute = widget.value!.minute;
+      }
+    }
+    // A form reset drops the value back to null. Leaving the last picked time
+    // in the row would advertise a time the picker no longer holds, so it goes
+    // back to the wall-clock seed a never-touched picker starts from.
+    if (widget.value == null && oldWidget.value != null) {
+      _initTime();
     }
     if (widget.range != oldWidget.range && widget.range != null) {
       _focusedMonth = _normalizeToMonth(widget.range!.start);
     }
   }
+
+  /// The minute step actually applied by the spinners.
+  ///
+  /// [WDatePicker.minuteStep] is asserted at construction, but asserts are
+  /// stripped from a release build, and a step computed at runtime (a remote
+  /// config value, a user preference) can still arrive out of range there.
+  /// A step of 0 would make every minute increment a no-op and one of 60 or
+  /// more would leave the 0-59 box on the first press, so both would leave the
+  /// spinners silently inert. Clamping at the point of use keeps them moving.
+  int get _minuteStep => widget.minuteStep.clamp(1, 59);
 
   /// Normalizes a date to midnight (removes time component).
   DateTime _normalizeToDay(DateTime date) {
@@ -230,13 +342,16 @@ class _WDatePickerState extends State<WDatePicker> {
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
+  /// Default time format: "14:30" (24-hour, zero padded).
+  String _defaultFormatTime(int hour, int minute) {
+    return '${_twoDigits(hour)}:${_twoDigits(minute)}';
+  }
+
+  String _twoDigits(int value) => value.toString().padLeft(2, '0');
+
   /// Formats the display text for the trigger.
   String _getDisplayText() {
-    if (widget.mode == WDatePickerMode.single) {
-      return widget.value != null
-          ? _formatDate(widget.value!)
-          : widget.placeholder;
-    } else {
+    if (widget.mode == WDatePickerMode.range) {
       if (widget.range == null) {
         return widget.placeholder;
       }
@@ -247,6 +362,18 @@ class _WDatePickerState extends State<WDatePicker> {
       final end = _formatDate(widget.range!.end!);
       return '$start - $end';
     }
+
+    if (widget.value == null) {
+      return widget.placeholder;
+    }
+    // A custom displayFormat receives the full DateTime, so it already owns the
+    // time; only the default format needs the appended clock.
+    if (widget.mode == WDatePickerMode.dateTime &&
+        widget.displayFormat == null) {
+      final time = _defaultFormatTime(widget.value!.hour, widget.value!.minute);
+      return '${_defaultFormatDate(widget.value!)} $time';
+    }
+    return _formatDate(widget.value!);
   }
 
   /// Whether a date is selectable (within min/max constraints).
@@ -263,9 +390,88 @@ class _WDatePickerState extends State<WDatePicker> {
     return true;
   }
 
+  /// Composes a picked day with the pending time.
+  ///
+  /// This is the one selection path that never runs through [_normalizeToDay],
+  /// which is exactly why `dateTime` mode can carry an hour and a minute.
+  DateTime _composeDateTime(DateTime day) {
+    return _clampToWindow(
+      DateTime(day.year, day.month, day.day, _hour, _minute),
+    );
+  }
+
+  /// Pulls an instant back inside the min/max window.
+  ///
+  /// A day cell is enabled whenever ANY instant in it is legal, so composing it
+  /// with the pending time can land outside the window. Clamping keeps the tap
+  /// honest (the emitted value is the same legal instant the trigger then
+  /// displays) instead of dropping it silently; the bound always sits on the
+  /// tapped day, because a day fully outside the window is not selectable.
+  DateTime _clampToWindow(DateTime instant) {
+    if (widget.minDate != null && instant.isBefore(widget.minDate!)) {
+      return widget.minDate!;
+    }
+    if (widget.maxDate != null && instant.isAfter(widget.maxDate!)) {
+      return widget.maxDate!;
+    }
+    return instant;
+  }
+
+  /// The pending time moved by [hours] / [minutes], or `null` when the step
+  /// would leave the 0-23 / 0-59 box or the min/max window.
+  ///
+  /// It deliberately does not wrap: rolling 23:00 up to 00:00 would move the
+  /// emitted instant a full day BACKWARDS while the calendar kept showing the
+  /// same day. A step at the edge reads as disabled instead.
+  ({int hour, int minute})? _steppedTime({int hours = 0, int minutes = 0}) {
+    final int hour = _hour + hours;
+    final int minute = _minute + minutes;
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+
+    final DateTime? current = widget.value;
+    if (current != null) {
+      final candidate = DateTime(
+        current.year,
+        current.month,
+        current.day,
+        hour,
+        minute,
+      );
+      if (_clampToWindow(candidate) != candidate) return null;
+    }
+
+    return (hour: hour, minute: minute);
+  }
+
+  /// Applies a time step and re-emits the composed instant.
+  ///
+  /// With no date picked yet the step only moves the pending time: there is no
+  /// day to compose against, so emitting a value would mean inventing one.
+  void _stepTime({int hours = 0, int minutes = 0}) {
+    final stepped = _steppedTime(hours: hours, minutes: minutes);
+    if (stepped == null) return;
+
+    setState(() {
+      _hour = stepped.hour;
+      _minute = stepped.minute;
+    });
+
+    final DateTime? current = widget.value;
+    if (current != null) {
+      widget.onChanged?.call(_composeDateTime(current));
+    }
+  }
+
   /// Handles date selection.
   void _onDateSelected(DateTime date) {
     if (!_isDateSelectable(date)) return;
+
+    if (widget.mode == WDatePickerMode.dateTime) {
+      // Keep the popover open: the time row below the calendar is the second
+      // half of the selection.
+      widget.onChanged?.call(_composeDateTime(date));
+      return;
+    }
 
     final normalized = _normalizeToDay(date);
 
@@ -376,7 +582,9 @@ class _WDatePickerState extends State<WDatePicker> {
       controller: _popoverController,
       // WPopover handles autoFlip automatically - /no manual direction needed
       alignment: PopoverAlignment.bottomLeft,
-      maxHeight: 400,
+      maxHeight: widget.mode == WDatePickerMode.dateTime
+          ? _dateTimeMaxHeight
+          : _calendarMaxHeight,
       disabled: widget.disabled,
       className:
           'w-[320px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4',
@@ -444,7 +652,7 @@ class _WDatePickerState extends State<WDatePicker> {
             _CalendarGrid(
               focusedMonth: _focusedMonth,
               selectedDate:
-                  widget.mode == WDatePickerMode.single ? widget.value : null,
+                  widget.mode == WDatePickerMode.range ? null : widget.value,
               selectedRange:
                   widget.mode == WDatePickerMode.range ? widget.range : null,
               rangeStart: _rangeStart,
@@ -459,17 +667,178 @@ class _WDatePickerState extends State<WDatePicker> {
                 }
               },
             ),
+            if (widget.mode == WDatePickerMode.dateTime) _buildTimeRow(),
           ],
         );
       },
     );
   }
 
+  /// Builds the Wind-styled time row shown below the calendar in `dateTime`
+  /// mode: two 24-hour spinners plus the confirm control. Every visual is a
+  /// Wind primitive driven by className tokens, so the row themes with the rest
+  /// of the picker; wind ships no Material time dialog and deliberately does
+  /// not call `showTimePicker`.
+  Widget _buildTimeRow() {
+    return Semantics(
+      container: true,
+      // The spinners and the confirm control are their own nodes; without this
+      // their labels would be absorbed into the row's label.
+      explicitChildNodes: true,
+      label: widget.timeLabel,
+      value: _defaultFormatTime(_hour, _minute),
+      child: WDiv(
+        className: '''
+          flex flex-row items-center justify-between
+          mt-3 pt-3
+          border-t border-gray-200 dark:border-gray-700
+        ''',
+        children: [
+          WText(
+            widget.timeLabel,
+            className: 'text-sm font-medium text-gray-700 dark:text-gray-300',
+          ),
+          // `shrink-0` keeps the spinners at their intrinsic width: a `flex-row`
+          // hands every plain child an equal Flexible share, which is half the
+          // 320px popover and too narrow for two spinners plus the confirm
+          // control.
+          WDiv(
+            className: 'flex flex-row items-center gap-2 shrink-0',
+            children: [
+              _buildTimeSpinner(
+                unit: 'hour',
+                value: _hour,
+                onIncrement: () => _stepTime(hours: 1),
+                onDecrement: () => _stepTime(hours: -1),
+                canIncrement: _steppedTime(hours: 1) != null,
+                canDecrement: _steppedTime(hours: -1) != null,
+              ),
+              WText(
+                ':',
+                className:
+                    'text-sm font-semibold text-gray-800 dark:text-gray-100',
+              ),
+              _buildTimeSpinner(
+                unit: 'minute',
+                value: _minute,
+                onIncrement: () => _stepTime(minutes: _minuteStep),
+                onDecrement: () => _stepTime(minutes: -_minuteStep),
+                canIncrement: _steppedTime(minutes: _minuteStep) != null,
+                canDecrement: _steppedTime(minutes: -_minuteStep) != null,
+              ),
+              _buildDoneControl(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds one up / readout / down spinner column for a time unit.
+  Widget _buildTimeSpinner({
+    required String unit,
+    required int value,
+    required VoidCallback onIncrement,
+    required VoidCallback onDecrement,
+    required bool canIncrement,
+    required bool canDecrement,
+  }) {
+    return WDiv(
+      className: 'flex flex-col items-center',
+      children: [
+        _buildStepControl(
+          icon: Icons.keyboard_arrow_up,
+          semanticLabel: 'Increase $unit',
+          enabled: canIncrement,
+          onTap: onIncrement,
+        ),
+        WDiv(
+          className: 'w-8 flex flex-row justify-center',
+          child: WText(
+            _twoDigits(value),
+            className:
+                'text-sm font-semibold text-gray-800 dark:text-gray-100 tabular-nums',
+          ),
+        ),
+        _buildStepControl(
+          icon: Icons.keyboard_arrow_down,
+          semanticLabel: 'Decrease $unit',
+          enabled: canDecrement,
+          onTap: onDecrement,
+        ),
+      ],
+    );
+  }
+
+  /// Builds a single step control. A step that would leave the 0-23 / 0-59 box
+  /// or the min/max window renders greyed out and carries no tap callback, the
+  /// same treatment an out-of-window day cell gets.
+  Widget _buildStepControl({
+    required IconData icon,
+    required String semanticLabel,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: semanticLabel,
+      // The node declares the button role, so it also has to carry the action:
+      // the GestureDetector below is not this node's semantics owner, which
+      // would leave a screen reader (or an automation driver) with a control it
+      // can name but not activate.
+      onTap: enabled ? onTap : null,
+      child: MouseRegion(
+        cursor:
+            enabled ? SystemMouseCursors.click : SystemMouseCursors.forbidden,
+        child: GestureDetector(
+          onTap: enabled ? onTap : null,
+          child: WDiv(
+            className: enabled
+                ? 'p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700'
+                : 'p-1 rounded',
+            child: WIcon(
+              icon,
+              className: enabled
+                  ? 'text-lg text-gray-700 dark:text-gray-200'
+                  : 'text-lg text-gray-300 dark:text-gray-600',
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Builds the control that confirms the composed instant and closes the
+  /// popover. `dateTime` mode keeps the popover open on a day tap, so it needs
+  /// an explicit dismissal; every change is already emitted through
+  /// [WDatePicker.onChanged], so closing commits nothing new.
+  Widget _buildDoneControl() {
+    return Semantics(
+      button: true,
+      label: widget.doneLabel,
+      onTap: _closePopover,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: _closePopover,
+          child: WDiv(
+            className: 'px-3 py-1 rounded-lg bg-primary',
+            child: WText(
+              widget.doneLabel,
+              className: 'text-xs font-medium text-white',
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   bool get _hasValue {
-    if (widget.mode == WDatePickerMode.single) {
-      return widget.value != null;
+    if (widget.mode == WDatePickerMode.range) {
+      return widget.range != null;
     }
-    return widget.range != null;
+    return widget.value != null;
   }
 }
 

@@ -183,6 +183,7 @@ import 'pages/typography/whitespace_preview.dart';
 import 'pages/widgets/w_breakpoint.dart';
 import 'pages/widgets/w_date_picker.dart';
 import 'pages/widgets/date_picker_basic.dart';
+import 'pages/widgets/date_picker_datetime.dart';
 import 'pages/widgets/date_picker_range.dart';
 import 'pages/widgets/date_picker_styled.dart';
 import 'pages/widgets/w_dynamic_basic.dart';
@@ -414,6 +415,7 @@ final Map<String, Widget> appRoutes = {
   '/widgets/w_breakpoint': const WBreakpointExamplePage(),
   '/widgets/w_date_picker': const WDatePickerExamplePage(),
   '/widgets/date_picker_basic': const DatePickerBasicExamplePage(),
+  '/widgets/date_picker_datetime': const DatePickerDatetimeExamplePage(),
   '/widgets/date_picker_range': const DatePickerRangeExamplePage(),
   '/widgets/date_picker_styled': const DatePickerStyledExamplePage(),
   '/widgets/w_dynamic_basic': WDynamicBasicExamplePage(),
