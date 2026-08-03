@@ -1,7 +1,7 @@
 ---
 name: wind-ui
 description: "fluttersdk_wind 1.3: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
-when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Apply before the first line of UI in a Wind file, not as an audit pass."
+when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Load it before the first line of new UI, and equally when auditing UI that already exists."
 version: 2.11.0
 ---
 
@@ -105,7 +105,7 @@ Full constructor surface, every named parameter, every default: `${CLAUDE_SKILL_
 
 ```dart
 final button = WindRecipe(
-  base: 'inline-flex items-center rounded-lg font-medium',
+  base: 'flex flex-row items-center rounded-lg font-medium',
   variants: {
     'intent': {'primary': 'bg-blue-600 dark:bg-blue-500 text-white', 'ghost': 'bg-transparent text-blue-600 dark:text-blue-400'},
     'size':   {'sm': 'px-3 py-1.5 text-sm', 'md': 'px-4 py-2 text-base', 'lg': 'px-6 py-3 text-lg'},
@@ -366,14 +366,14 @@ Run `dart analyze` on the touched files and visually verify the change in light 
 | Full-page scroll | `WDiv(className: 'w-full h-full overflow-y-auto p-4', scrollPrimary: true, child: ...)` |
 | Hide on mobile, show md+ | `className: 'hidden md:flex'` |
 | Gradient header banner | `bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-2xl` (paired with `dark:from-indigo-500 dark:to-purple-500`) |
-| Toggle / chip with selected state | `states: isSelected ? {'selected'} : const {}`; className uses `selected:bg-blue-500 selected:text-white` |
+| Toggle / chip with selected state | `states: isSelected ? {'selected'} : const {}`; className uses `selected:bg-blue-500 selected:text-white dark:selected:bg-blue-400 dark:selected:text-gray-900` |
 | Disabled secondary action | `WButton(disabled: true, className: 'disabled:opacity-50 disabled:cursor-not-allowed', ...)` |
 | Loading button | `WButton(isLoading: _isSubmitting, className: 'loading:bg-blue-400 ...', child: const Text('Save'))` |
 | Avatar with fallback | `WImage(src: user.avatarUrl, className: 'w-12 h-12 rounded-full object-cover', errorBuilder: (_, __, ___) => WIcon(Icons.person_outlined, className: 'text-gray-400'))` |
 | Form field error styling | className includes `error:border-red-500 error:ring-1 error:ring-red-500`: auto-activates when validator returns non-null |
 | Popover menu | `WPopover(triggerBuilder: (_, isOpen, __) => WButton(...), contentBuilder: (_, close) => WDiv(...), alignment: PopoverAlignment.bottomRight)` |
 | Per-breakpoint widget swap | `WBreakpoint(base: (_) => MobileLayout(), md: (_) => TabletLayout(), lg: (_) => DesktopLayout())` |
-| Status badge / pill | `WDiv(className: 'inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 text-xs font-medium', children: [WIcon(Icons.circle_outlined, className: 'w-2 h-2'), const WText('Active')])` |
+| Status badge / pill | `WDiv(className: 'flex flex-row items-center gap-1 rounded-full px-2 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 text-xs font-medium', children: [WIcon(Icons.circle_outlined, className: 'w-2 h-2'), const WText('Active')])` |
 | Empty state | `WDiv(className: 'flex flex-col items-center justify-center gap-3 p-8', children: [WIcon(Icons.inbox_outlined, className: 'w-12 h-12 text-gray-400 dark:text-gray-500'), const WText('No items yet', className: 'text-base font-medium text-gray-700 dark:text-gray-200'), const WText('Tap the + button to add one.', className: 'text-sm text-gray-500 dark:text-gray-400 text-center'), WButton(onTap: _create, className: 'mt-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg', child: const Text('Create'))])` |
 | App shell | `Scaffold(appBar: AppBar(title: const Text(...)), body: WDiv(className: 'flex flex-col h-full', children: [...]))`: Material `Scaffold` + `AppBar` wraps; Wind owns the body |
 | Icon-only button (48dp tap target) | `WButton(className: 'p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700', onTap: _close, child: const WIcon(Icons.close_outlined))` |

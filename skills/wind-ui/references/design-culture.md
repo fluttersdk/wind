@@ -105,7 +105,7 @@ Mapped from the iOS system palette:
 | Primary | systemBlue #007AFF / #0A84FF | `bg-primary`, `text-primary` |
 | Success | systemGreen #34C759 / #30D158 | `bg-green-500`, `text-green-600` |
 | Error | systemRed #FF3B30 / #FF453A | `bg-red-500`, `text-red-600` |
-| Warning | systemOrange #FF9500 / #FF9F0A | `bg-yellow-500`, `text-yellow-600` |
+| Warning | systemOrange #FF9500 / #FF9F0A | `bg-yellow-500`, `text-yellow-600` (this file's warning tone; reach for `bg-orange-500` when you want the literal iOS hue) |
 | Premium | systemPurple #AF52DE / #BF5AF2 | `bg-purple-500`, `text-purple-600` |
 | Info | systemTeal #5AC8FA / #64D2FF | `bg-blue-500`, `text-blue-600` |
 
