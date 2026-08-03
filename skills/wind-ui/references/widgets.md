@@ -451,7 +451,7 @@ const WDatePicker({
   Set<String>? states,
   DateDisplayFormat? displayFormat,  // custom formatter callback
   // dateTime mode only:
-  int minuteStep = 5,                // asserted 0 < minuteStep < 60
+  int minuteStep = 5,                // asserted 1..59, clamped in release
   String timeLabel = 'Time',
   String doneLabel = 'Done',
 })
@@ -460,7 +460,9 @@ const WDatePicker({
 Behavior:
 - Wraps a `WPopover` (auto-flip handled by popover).
 - Single mode closes after selection. Range mode requires two clicks; auto-swaps if end < start.
-- `dateTime` mode uses `value` / `onChanged` like single mode, but emits the picked day composed with an hour and minute instead of midnight. It stays open after a day tap: a time row (two 24-hour spinners plus a confirm control labelled by `doneLabel`) closes it. `minDate` / `maxDate` apply to the full instant, so a step leaving the window renders disabled and a day tap landing outside it is pulled to the bound; 23:00 never wraps to 00:00.
+- `dateTime` mode uses `value` / `onChanged` like single mode, but emits the picked day composed with an hour and minute instead of midnight. It stays open after a day tap: a time row (two 24-hour spinners plus a confirm control labelled by `doneLabel`) closes it. `onChanged` fires on every day tap AND every time step, so treat it as a live value, not a commit signal. `minDate` / `maxDate` apply to the full instant, so a step leaving the window renders disabled and a day tap landing outside it is pulled to the bound; 23:00 never wraps to 00:00.
+- Bounds gotcha in `dateTime` mode: a bare-day `maxDate` (`DateTime(2026, 8, 31)`) IS Aug 31 00:00, so the last day admits only midnight and its step controls render disabled. Pass an explicit end-of-day (`DateTime(2026, 8, 31, 23, 59)`) to open the whole day. `minDate` has no equivalent trap, a bare day opens at 00:00.
+- The mode is controlled: feed each emitted value back through `value`. Setting `value` back to `null` (a form reset) also re-seeds the time row from the wall clock.
 - The emitted `DateTime` is local and carries no offset (`DateTime` cannot hold an arbitrary one), so a value crossing the wire is the caller's `toUtc()` to make.
 - Calendar grid: 42 cells (6 weeks starting Monday); current month + adjacent days; state styling for selected / today / inactive / hover preview.
 - `displayFormat: (DateTime) => String` overrides the default "Jan 15, 2025" pattern.
