@@ -23,7 +23,7 @@ class _DatePickerDatetimeExamplePageState
     w-full p-3 rounded-lg
     bg-white dark:bg-slate-800
     border border-slate-300 dark:border-slate-600
-    hover:border-rose-500
+    hover:border-rose-500 dark:hover:border-rose-400
   ''';
 
   static const _readoutCls = '''
