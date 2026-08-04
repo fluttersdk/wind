@@ -33,13 +33,17 @@ import re
 import sys
 from pathlib import Path
 from typing import Iterator, NamedTuple
+from urllib.parse import unquote, urlsplit
 
-# The docs site serves this repository under /wind, and the demo gallery routes
-# live in the example app. Both are wind-specific by design; a sibling package
-# copying this script changes these three constants and nothing else.
+# The docs site serves this repository under /wind, the demo gallery routes live
+# in the example app, and every preview source sits under one directory. All of
+# it is wind-specific by design; a sibling package copying this script changes
+# these constants and nothing else.
 PACKAGE_SLUG = 'wind'
-SITE_DOC_PREFIX = f'https://fluttersdk.com/{PACKAGE_SLUG}/'
+SITE_ORIGIN = 'https://fluttersdk.com'
+DOC_URL_PREFIX = f'/{PACKAGE_SLUG}/'
 ROUTES_FILE = Path('example/lib/routes.dart')
+PREVIEW_SOURCE_ROOT = Path('example/lib/pages')
 
 DOC_ROOT = Path('doc')
 
@@ -63,7 +67,7 @@ INLINE_LINK = re.compile(r'\]\(\s*([^)\s]+)')
 REFERENCE_LINK = re.compile(r'^\[[^\]]+\]:\s*(\S+)')
 PREVIEW_TAG = re.compile(r'<x-preview\b[^>]*>')
 ATTRIBUTE = re.compile(r'(\w+)="([^"]*)"')
-SITE_URL = re.compile(r'https://fluttersdk\.com/[^\s)>"\']+')
+SITE_URL = re.compile(re.escape(SITE_ORIGIN) + r'/[^\s)>"\']+')
 
 
 class Issue(NamedTuple):
@@ -160,11 +164,20 @@ def site_url_to_doc(url: str) -> Path | None:
     Only `.md` URLs are mapped. An extensionless URL such as `/wind/layout` may
     be a section landing page the site generates without a backing file, so it
     is out of scope here.
+
+    The `.md` test runs against the parsed path rather than the whole URL, so a
+    link carrying a fragment or a query (`page.md#section`, `page.md?x=1`) is
+    still validated instead of slipping through.
     """
-    if not url.startswith(SITE_DOC_PREFIX) or not url.endswith('.md'):
+    parts = urlsplit(url)
+    if f'{parts.scheme}://{parts.netloc}' != SITE_ORIGIN:
         return None
 
-    segments = url[len(SITE_DOC_PREFIX):].split('/')
+    path = unquote(parts.path)
+    if not path.startswith(DOC_URL_PREFIX) or not path.endswith('.md'):
+        return None
+
+    segments = path[len(DOC_URL_PREFIX):].split('/')
     if segments and VERSION_SEGMENT.match(segments[0]):
         segments = segments[1:]
 
@@ -224,10 +237,17 @@ def check_links(path: Path, body: str, fragments: dict[Path, set[str]]) -> list[
             issues.append(Issue(path, number, f'link target {route} does not exist'))
             continue
 
-        # Only doc/ is synced to the site, so a link escaping the repository
-        # resolves for a GitHub reader and dead-ends for everyone else.
-        if not resolved.is_relative_to(Path.cwd()):
-            issues.append(Issue(path, number, f'link target {route} escapes the repository'))
+        # Only doc/ is synced, so the boundary depends on where the link starts.
+        # A doc page linking out of doc/ resolves for a GitHub reader and 404s on
+        # the site, where that target was never published. README and llms.txt
+        # are read on GitHub, so for them the repository is the boundary.
+        if path.is_relative_to(DOC_ROOT):
+            boundary, label = DOC_ROOT.resolve(), f'{DOC_ROOT}/, which is the only directory the site publishes'
+        else:
+            boundary, label = Path.cwd(), 'the repository'
+
+        if not resolved.is_relative_to(boundary):
+            issues.append(Issue(path, number, f'link target {route} escapes {label}'))
             continue
 
         relative = resolved.relative_to(Path.cwd())
@@ -252,23 +272,25 @@ def check_anchor_reachability(path: Path, body: str) -> list[Issue]:
 
 
 def check_previews(path: Path, body: str, routes: set[str]) -> list[Issue]:
-    """Validate both halves of every `<x-preview>` tag.
+    """Validate both halves of every `<x-preview>` tag, and that they agree.
 
     `source` becomes a GitHub blob link, `path` becomes the demo iframe URL.
     The site renders a broken link and an empty iframe respectively, without
-    logging anything, so both are checked here.
+    logging anything, so both are checked here. They also have to describe the
+    same example: a tag whose halves drift shows one file's code next to another
+    file's demo, and every check passes while the page misleads the reader.
     """
     issues: list[Issue] = []
 
     for number, line in enumerate(body.splitlines(), 1):
         for tag in PREVIEW_TAG.findall(line):
             attributes = dict(ATTRIBUTE.findall(tag))
-
             source = attributes.get('source')
+
             if source is None:
                 issues.append(Issue(path, number, 'x-preview has no source attribute'))
-            elif not Path(source).is_file():
-                issues.append(Issue(path, number, f'x-preview source {source} does not exist'))
+            else:
+                issues += check_preview_source(path, number, source)
 
             if 'src' in attributes:
                 continue
@@ -278,13 +300,38 @@ def check_previews(path: Path, body: str, routes: set[str]) -> list[Issue]:
                 issues.append(Issue(path, number, 'x-preview has neither a path nor a src attribute'))
                 continue
 
-            route = '/' + preview_path.strip('/')
-            if route not in routes:
+            normalized = preview_path.strip('/')
+            if f'/{normalized}' not in routes:
                 issues.append(
                     Issue(path, number, f'x-preview path {preview_path} is not a route in {ROUTES_FILE}'),
                 )
 
+            # An empty path is the demo's `/` route, which serves the installation
+            # example, so it is the one pair that cannot line up by name.
+            expected = PREVIEW_SOURCE_ROOT / f'{normalized}.dart'
+            if normalized and source is not None and Path(source) != expected:
+                issues.append(
+                    Issue(path, number, f'x-preview path {preview_path} does not match its source; expected {expected}'),
+                )
+
     return issues
+
+
+def check_preview_source(path: Path, number: int, source: str) -> list[Issue]:
+    """Require a preview source to be an existing file under the pages directory.
+
+    Containment is checked before existence: an absolute path or one climbing out
+    with `..` can name a real file and still be wrong, because the site turns the
+    value into a GitHub blob URL inside this repository.
+    """
+    candidate = Path(source)
+    if candidate.is_absolute() or not (Path.cwd() / candidate).resolve().is_relative_to(PREVIEW_SOURCE_ROOT.resolve()):
+        return [Issue(path, number, f'x-preview source {source} is outside {PREVIEW_SOURCE_ROOT}/')]
+
+    if not candidate.is_file():
+        return [Issue(path, number, f'x-preview source {source} does not exist')]
+
+    return []
 
 
 def check_site_urls(path: Path, body: str) -> list[Issue]:

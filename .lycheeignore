@@ -23,7 +23,7 @@
 
 # npmjs.com answers 403 to non-browser user agents. @fluttersdk/mcp is published
 # and resolvable through registry.npmjs.org; only the web page blocks bots.
-^https://www\.npmjs\.com/package/
+^https://www\.npmjs\.com/package/@fluttersdk/mcp(?:[/?#]|$)
 
 # Placeholder hosts inside example code. Fenced blocks are already skipped by
 # lychee's markdown extractor, so this only catches samples written inline.
