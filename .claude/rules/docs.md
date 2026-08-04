@@ -68,6 +68,7 @@ Place `<a name="section-name"></a>` immediately BEFORE every `##` heading. ToC l
 - `source` is the FULL path from the repo root.
 - `size`: `sm` (compact), `md` (standard), `lg` (full-width).
 - Every x-preview MUST point to a real `example/lib/pages/` file. If you add an x-preview, add or extend the example page in the same change.
+- `path` MUST also be registered in `example/lib/routes.dart`: the docs site builds the iframe URL as preview base + `path`, so an unregistered route renders an empty frame. An empty `path=""` is valid and targets the demo's `/` route.
 
 ## Props table format
 
@@ -110,6 +111,12 @@ WFoo({
 ## Preservation rule
 
 When editing an existing doc file, do NOT restructure sections that haven't changed. Preserve the existing format. New sections match the style of adjacent sections in the same file.
+
+## Verifying a doc change
+
+`python3 tool/check-docs.py` is the gate (`docs-link-check.yml` runs it per PR). It validates page structure, relative `.md` targets, in-page and cross-page fragments, ToC-reachable anchors, both halves of every x-preview, and absolute `fluttersdk.com/wind/....md` URLs. Run it before reporting doc work done; it needs no network and no Flutter toolchain.
+
+Fragments resolve against explicit `<a name>` anchors OR heading slugs, using the slug rule GitHub and the docs site share: punctuation drops, and each surviving space becomes one hyphen without collapsing runs (`## Date + Time Selection` yields `#date--time-selection`).
 
 ## What never goes in `doc/`
 
