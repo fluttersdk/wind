@@ -133,4 +133,4 @@ WText('Tahiti Color', className: 'text-tahiti-900')
 ## Related Documentation
 
 - [Background Color](../styling/background-color.md)
-- [Text Decoration Color](text-decoration-color.md)
+- [Text Decoration](./text-decoration.md#decoration-color)

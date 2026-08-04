@@ -137,7 +137,7 @@ The hint fires once per unique token per session (deduped like the alias shadow 
 > [!NOTE]
 > The warning targets genuine typos. Valid Wind tokens that a widget consumes outside the parser map are exempt and never warn: the `object-*` fit family (read by `WImage`), the `inline-flex` / `inline-block` / `inline` display keywords (emitted by `WBadge`, inert in Flutter), and deliberately inert compatibility tokens (`transition` / `transition-colors`, `antialiased`, `sr-only`, and the `*-nums` font-variant family such as `tabular-nums`).
 
-If a token you expect to work triggers the warning, check the [Token catalog](https://fluttersdk.com/wind/layout/index.md) for the canonical spelling. A common case is a CSS name that Wind aliases: `flex-wrap` prints the hint and points you at the canonical `wrap`.
+If a token you expect to work triggers the warning, check the [Token catalog](https://fluttersdk.com/wind/layout) for the canonical spelling. A common case is a CSS name that Wind aliases: `flex-wrap` prints the hint and points you at the canonical `wrap`.
 
 <a name="external-tooling-integration"></a>
 ## External Tooling Integration
