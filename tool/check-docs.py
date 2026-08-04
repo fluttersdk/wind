@@ -260,14 +260,25 @@ def check_links(path: Path, body: str, fragments: dict[Path, set[str]]) -> list[
 
 
 def check_anchor_reachability(path: Path, body: str) -> list[Issue]:
-    """Require every explicit anchor to be reachable from the page's own ToC."""
-    linked = {target[1:] for _, target in iter_links(body) if target.startswith('#')}
+    """Require every explicit anchor to be listed in the page's Table of Contents.
+
+    The ToC is the region above the first section anchor, which covers both page
+    shapes under `doc/`: ten pages carry an explicit `## Table of Contents`
+    heading, the rest open with a bare bullet list under the lead paragraph.
+
+    Scoping the check to that region is the point. Counting fragment links from
+    the whole page would let a prose reference deeper in the body mark an anchor
+    reachable and hide the missing ToC entry, which is the drift this catches.
+    """
+    lines = body.splitlines()
+    first_anchor = next((index for index, line in enumerate(lines) if ANCHOR.search(line)), len(lines))
+    listed = {target[1:] for _, target in iter_links('\n'.join(lines[:first_anchor])) if target.startswith('#')}
 
     return [
-        Issue(path, number, f'anchor #{name} is not linked from the Table of Contents')
-        for number, line in enumerate(body.splitlines(), 1)
+        Issue(path, number, f'anchor #{name} is not listed in the Table of Contents')
+        for number, line in enumerate(lines, 1)
         for name in ANCHOR.findall(line)
-        if name not in linked
+        if name not in listed
     ]
 
 
