@@ -14,8 +14,8 @@ Flutter toolchain, so it runs identically in CI and on a developer machine:
 
 Surfaces checked:
 
-1. Page structure: exactly one H1, and it comes first (the site reads the page
-   title from it).
+1. Page structure: exactly one H1, and it is the page's opening line, which is
+   the file shape `.claude/rules/docs.md` documents.
 2. Relative `.md` links resolve to a file that exists.
 3. Fragments (`#section`, both same-file and cross-file) resolve to an explicit
    `<a name>` anchor or a heading slug in the target page.
@@ -171,21 +171,32 @@ def site_url_to_doc(url: str) -> Path | None:
     return DOC_ROOT.joinpath(*segments) if segments else None
 
 
-def check_structure(path: Path, body: str) -> list[Issue]:
-    """Require exactly one H1, before any other heading."""
-    headings = [
-        (number, len(match.group(1)))
+def check_structure(path: Path, raw: str, body: str) -> list[Issue]:
+    """Require the page to open with its H1, and to carry exactly one.
+
+    The opening line is measured against the raw text, so anything ahead of the
+    title counts as a violation, a lead paragraph and a code fence alike. The H1
+    count runs over the code-blanked body instead, so an illustrative `# Title`
+    inside a fenced sample is not mistaken for a second title.
+
+    `DocsScaffolder` reads the page title from the first H1 wherever it sits, so
+    this is the file shape in `.claude/rules/docs.md` talking, not a site
+    requirement: the title is the first line, and the lead paragraph follows it.
+    """
+    titles = [
+        number
         for number, line in enumerate(body.splitlines(), 1)
-        if (match := HEADING.match(line))
+        if (match := HEADING.match(line)) and len(match.group(1)) == 1
     ]
-    titles = [number for number, level in headings if level == 1]
 
     if not titles:
         return [Issue(path, 1, 'no H1 title; the docs site derives the page title from the first H1')]
 
     issues = [Issue(path, number, 'second H1 on the page; doc pages carry exactly one') for number in titles[1:]]
-    if headings[0][1] != 1:
-        issues.append(Issue(path, headings[0][0], 'a heading precedes the H1 title'))
+
+    opening = next((number for number, line in enumerate(raw.splitlines(), 1) if line.strip()), 1)
+    if titles[0] != opening:
+        issues.append(Issue(path, opening, 'page does not open with its H1 title'))
 
     return issues
 
@@ -312,8 +323,9 @@ def main() -> int:
 
     # 3. The doc-only surfaces: title shape, anchor reachability, previews.
     for path in doc_pages:
-        body = blank_code(path.read_text(encoding='utf-8'))
-        issues += check_structure(path, body)
+        raw = path.read_text(encoding='utf-8')
+        body = blank_code(raw)
+        issues += check_structure(path, raw, body)
         issues += check_anchor_reachability(path, body)
         issues += check_previews(path, body, routes)
 

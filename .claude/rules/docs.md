@@ -49,7 +49,7 @@ WFoo(
 
 ## Heading hierarchy
 
-- `#` (single) — page title (widget or concept name). Exactly one per file.
+- `#` (single) — page title (widget or concept name). Exactly one per file, and it is the file's first line: nothing precedes it, not a lead paragraph and not a code fence.
 - `##` — main sections (Basic Usage, Props, Styling Examples, Related Documentation, etc.).
 - `###` — subsections within a section.
 - Never skip levels.

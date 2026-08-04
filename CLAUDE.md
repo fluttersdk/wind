@@ -30,7 +30,7 @@ When source under `lib/` changes, the agent updates each of these in the same ch
 - New or changed widget / parser / token / theme field: locate the matching file under `doc/widgets/`, `doc/layout/`, `doc/styling/`, etc. Format details live in `.claude/rules/docs.md`.
 - New widget: create `doc/widgets/<w-name>.md` mirroring the format of the nearest neighbor file (one `#` title, ToC, `<x-preview>` tag, Props table with `Required`/default/description columns, Constructor signature, Styling Examples, Related Documentation).
 - Removed surface: delete the doc file or mark deprecated; never leave a stale doc pointing at a removed API.
-- Acceptance: `python3 tool/check-docs.py` exits 0. It enforces the whole doc contract: one H1 per page, relative `.md` targets, fragments, ToC-reachable anchors, `<x-preview source>` matching a real `example/lib/pages/` file (sync surface #2 below), and `<x-preview path>` matching a route registered in `example/lib/routes.dart`.
+- Acceptance: `python3 tool/check-docs.py` exits 0. It enforces the whole doc contract: one H1 per page and it is the opening line, relative `.md` targets, fragments, ToC-reachable anchors, `<x-preview source>` matching a real `example/lib/pages/` file (sync surface #2 below), and `<x-preview path>` matching a route registered in `example/lib/routes.dart`.
 
 **2. `example/lib/pages/`** — the demo gallery (consumed by `fluttersdk.com` via per-page iframes; see `example/CLAUDE.md`).
 
