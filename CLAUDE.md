@@ -30,12 +30,12 @@ When source under `lib/` changes, the agent updates each of these in the same ch
 - New or changed widget / parser / token / theme field: locate the matching file under `doc/widgets/`, `doc/layout/`, `doc/styling/`, etc. Format details live in `.claude/rules/docs.md`.
 - New widget: create `doc/widgets/<w-name>.md` mirroring the format of the nearest neighbor file (one `#` title, ToC, `<x-preview>` tag, Props table with `Required`/default/description columns, Constructor signature, Styling Examples, Related Documentation).
 - Removed surface: delete the doc file or mark deprecated; never leave a stale doc pointing at a removed API.
-- Acceptance: the doc file's `<x-preview source="...">` path matches a real `example/lib/pages/` file (sync surface #2 below).
+- Acceptance: `python3 tool/check-docs.py` exits 0. It enforces the whole doc contract: one H1 per page and it is the opening line, relative `.md` targets, fragments, ToC-reachable anchors, `<x-preview source>` matching a real `example/lib/pages/` file (sync surface #2 below), and `<x-preview path>` matching a route registered in `example/lib/routes.dart`.
 
 **2. `example/lib/pages/`** — the demo gallery (consumed by `fluttersdk.com` via per-page iframes; see `example/CLAUDE.md`).
 
 - New widget / token / pattern: add `example/lib/pages/<category>/<feature>_basic.dart` (or extend an existing demo). Page shape rules live in `.claude/rules/example-pages.md`.
-- `<x-preview source="..." path="...">` in any `doc/` file points to a real example page. If you add a doc x-preview, you add or extend the example page. If you delete an example page, you remove the doc x-preview.
+- `<x-preview source="..." path="...">` in any `doc/` file points to a real example page. If you add a doc x-preview, you add or extend the example page. If you delete an example page, you remove the doc x-preview. `path` also needs its route in `example/lib/routes.dart`: the docs site builds the iframe URL from the preview base plus that path, so an unregistered route renders an empty frame with no error anywhere.
 - Acceptance: `cd example && flutter run -d chrome` boots without errors; new pages render with realistic content (no Lorem ipsum); every color token carries its `dark:` pair.
 
 **3. `skills/wind-ui/`** — the LLM-facing skill (source-of-truth lives here).
@@ -69,6 +69,7 @@ Standard Flutter package commands (`flutter test`, `dart analyze`, `dart format 
 | Command | Purpose |
 |---------|---------|
 | `./tool/coverage.sh 90` | Run tests with coverage + enforce 90% line threshold (the CI gate). Plain `./tool/coverage.sh` just reports. |
+| `python3 tool/check-docs.py` | Docs link + `<x-preview>` gate (the `docs-link-check.yml` CI gate). Offline, no Flutter toolchain. |
 | `cd example && flutter run -d chrome` | Demo app (`example/lib/main.dart`) |
 
 `.claude/settings.json` PostToolUse hooks auto-run `dart format` and `dart analyze` after every `.dart` edit. CI runs `flutter analyze` + `dart format --set-exit-if-changed` + `./tool/coverage.sh 90` on push.

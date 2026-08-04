@@ -10,6 +10,7 @@ Utilities for controlling how text behaves when it overflows its container.
 - [Responsive Design](#responsive-design)
 - [Dark Mode](#dark-mode)
 - [Arbitrary Values](#arbitrary-values)
+- [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
 <x-preview path="typography/text_overflow" size="md" source="example/lib/pages/typography/text_overflow.dart"></x-preview>

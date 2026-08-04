@@ -1,0 +1,32 @@
+# .lycheeignore
+#
+# URL patterns lychee skips when checking links in doc/, llms.txt and *.md.
+# Every line is a REGULAR EXPRESSION, not a glob: lychee reads this file and
+# appends each line straight into --exclude.
+#
+# Add a host here only when it is auth-walled, rate-limited, or a placeholder in
+# a code sample. Real rot belongs in the report, not in this file.
+# Full docs: https://lychee.cli.rs/usage/ignoring/
+
+# GitHub auth wall: the linked repositories are public, but the login redirect
+# answers with a 404 to an unauthenticated CI runner.
+^https://github\.com/login
+
+# GitHub serves /stargazers as a 404 to unauthenticated clients. The page is
+# real, it just needs a session, so this is GitHub behavior and not link rot.
+^https://github\.com/fluttersdk/[a-z_]+/stargazers
+
+# The MCP server speaks JSON-RPC over POST: a GET (what lychee sends) is
+# answered with 405 Method Not Allowed, while POST returns 200. Reachability is
+# already proven by that 405, so checking it adds nothing.
+^https://mcp\.fluttersdk\.com
+
+# npmjs.com answers 403 to non-browser user agents. @fluttersdk/mcp is published
+# and resolvable through registry.npmjs.org; only the web page blocks bots.
+^https://www\.npmjs\.com/package/@fluttersdk/mcp(?:[/?#]|$)
+
+# Placeholder hosts inside example code. Fenced blocks are already skipped by
+# lychee's markdown extractor, so this only catches samples written inline.
+^https?://([a-z0-9-]+\.)*example\.com
+^https?://localhost
+^https?://127\.0\.0\.1

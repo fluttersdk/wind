@@ -94,15 +94,15 @@ if (kDebugMode) Wind.installDebugResolver();
 
 ## Utility families
 
-- [Layout](https://fluttersdk.com/wind/layout/index.md): flex, grid, position, overflow, aspect-ratio, z-index, order.
+- [Layout](https://fluttersdk.com/wind/layout): flex, grid, position, overflow, aspect-ratio, z-index, order.
 - [Sizing](https://fluttersdk.com/wind/layout/sizing.md): `w-*`, `h-*`, `size-*` (width + height shorthand), `min-*`, `max-*`, arbitrary `w-[200px]`.
 - [Spacing](https://fluttersdk.com/wind/layout/spacing.md): padding (`p-*`, `px-*`, `pt-*`), margin (`m-*`, `-mt-*`), gap (`gap-*`, `space-x-*`).
-- [Typography](https://fluttersdk.com/wind/typography/index.md): `text-*` (size + color + alignment overload), `font-*`, `leading-*`, `tracking-*`, `truncate`.
+- [Typography](https://fluttersdk.com/wind/typography): `text-*` (size + color + alignment overload), `font-*`, `leading-*`, `tracking-*`, `truncate`.
 - [Backgrounds](https://fluttersdk.com/wind/styling/background-color.md): `bg-*`, gradients, images.
-- [Borders & ring](https://fluttersdk.com/wind/borders/index.md): `border-*`, `rounded-*`, `ring-*`, `divide-*` (not implemented).
+- [Borders & ring](https://fluttersdk.com/wind/borders): `border-*`, `rounded-*`, `ring-*`, `divide-*` (not implemented).
 - [Shadows](https://fluttersdk.com/wind/styling/shadow.md): `shadow`, `shadow-md`, colored shadows (`shadow-blue-500/20`).
 - [Opacity](https://fluttersdk.com/wind/styling/opacity.md): `opacity-*` + opacity modifiers (`bg-red-500/50`).
-- [Transitions & animations](https://fluttersdk.com/wind/interactivity/index.md): `duration-*`, `ease-*`, `animate-spin` / `pulse` / `bounce` / `ping`.
+- [Transitions & animations](https://fluttersdk.com/wind/interactivity): `duration-*`, `ease-*`, `animate-spin` / `pulse` / `bounce` / `ping`.
 - [Cursor](https://fluttersdk.com/wind/interactivity/cursor.md): `cursor-pointer`, `cursor-not-allowed`, `cursor-text`, grab / zoom / resize families mapped to `SystemMouseCursors` via `MouseRegion`.
 
 ## Utility helpers (Dart APIs)
