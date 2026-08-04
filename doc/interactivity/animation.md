@@ -15,7 +15,6 @@ Utilities for animating elements with CSS-like animation classes. Whether you're
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<a name="preview"></a>
 <x-preview path="interactivity/animation_basic" size="md" source="example/lib/pages/interactivity/animation_basic.dart"></x-preview>
 
 ```dart

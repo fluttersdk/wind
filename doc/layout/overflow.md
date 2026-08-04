@@ -5,6 +5,7 @@ Utilities for controlling how an element handles content that is too large for t
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
 - [Variants](#variants)
+- [Fill on Desktop, Scroll on Narrow](#min-width-scroll)
 - [Responsive Design](#responsive-design)
 - [Dark Mode](#dark-mode)
 - [Arbitrary Values](#arbitrary-values)
