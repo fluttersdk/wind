@@ -20,7 +20,15 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Auto-approve + auto-merge GH Actions minor + patch
+      # Arming auto-merge is the whole job. The approval stays human on purpose:
+      # this repo pins every action by SHA and runs zizmor plus scorecard over
+      # the result, so a person checking the new SHA against its upstream tag is
+      # the point of the exercise, not paperwork in front of it. GITHUB_TOKEN
+      # could not approve anyway. "Allow GitHub Actions to create and approve
+      # pull requests" is off, so the old approve step failed on every single
+      # bump with "GitHub Actions is not permitted to approve pull requests",
+      # and a check that is always red teaches you to stop reading red checks.
+      - name: Arm auto-merge for GH Actions minor + patch
         if: |
           steps.metadata.outputs.package-ecosystem == 'github_actions' &&
           (steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
@@ -28,6 +36,4 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --auto --squash "$PR_URL"
+        run: gh pr merge --auto --squash "$PR_URL"
