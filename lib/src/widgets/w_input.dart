@@ -139,9 +139,14 @@ class WInput extends StatefulWidget {
 
   /// The action button on the keyboard (e.g., done, next, search, send).
   ///
+  /// Defaults to `done` on a single-line field and `newline` on a multiline one.
+  ///
   /// Common values:
-  /// - `TextInputAction.done` - Shows "Done" button
-  /// - `TextInputAction.next` - Shows "Next" button (moves to next field)
+  /// - `TextInputAction.done` - Shows "Done" button (dismisses the keyboard)
+  /// - `TextInputAction.next` - Shows "Next" button. Flutter moves focus to the
+  ///   next FOCUSABLE widget, which on a real form is often a button rather than
+  ///   a field, so pass this only where the following focusable IS the next
+  ///   input.
   /// - `TextInputAction.search` - Shows "Search" button
   /// - `TextInputAction.send` - Shows "Send" button
   /// - `TextInputAction.go` - Shows "Go" button
@@ -522,10 +527,23 @@ class _WInputState extends State<WInput>
       obscureText: obscureText,
       readOnly: widget.readOnly || !widget.enabled,
       autofocus: widget.autofocus,
+      // A single-line field defaults to `done`, so Return closes the keyboard.
+      //
+      // It used to default to `next`, and Flutter's own handling of `next` is
+      // `focusNode.nextFocus()`: the next FOCUSABLE widget, not the next text
+      // field. On a real form that order runs through buttons, colour swatches
+      // and switches, so the same Return key closed the keyboard on one field
+      // (the next focusable was a button) and jumped to a textarea on the next
+      // one (the next focusable happened to be editable). A key labelled Next
+      // that lands on a colour swatch is worse than one labelled Done.
+      //
+      // A form that wants field-to-field advance still asks for it explicitly
+      // through [textInputAction], which is the only place that intent can be
+      // stated correctly: only the form knows its own field order.
       textInputAction: widget.textInputAction ??
           (widget.type == InputType.multiline
               ? TextInputAction.newline
-              : TextInputAction.next),
+              : TextInputAction.done),
       textCapitalization: widget.textCapitalization,
       autocorrect: widget.autocorrect,
       enableSuggestions: widget.enableSuggestions,
