@@ -662,8 +662,21 @@ class WDiv extends StatelessWidget {
       // For Row with space distribution OR overflow-hidden, wrap children with Flexible
       // This mimics CSS flex-shrink: 1 default behavior. Inside a horizontally
       // scrollable row, `Flexible` is also invalid, skip it too.
+      // A child that claims a GROW share (`flex-1`, `grow`, `flex-auto`, or a
+      // raw Expanded/Flexible) absorbs the free space, and in CSS its siblings
+      // then keep their content width: `flex: 0 1 auto` shrinks on overflow but
+      // never takes a share. Wrapping those siblings in `Flexible` hands each an
+      // EQUAL share instead, so a two-child `justify-between` row divided its
+      // width 50/50 and the child that asked for the space was capped at half
+      // the row: a 24pt icon column reserved 185pt of a 402pt header and the
+      // title column beside it measured ZERO. There is also nothing left for
+      // space distribution to distribute once a child grows, so the wrap here is
+      // only ever about shrinking, which `overflow-hidden` still asks for
+      // explicitly and keeps.
+      final bool hasGrowingChild = basisChildren.any(_claimsGrowShare);
       final needsFlexible =
-          (needsSpaceDistribution || hasOverflowClip) && !isMainAxisScrollable;
+          ((needsSpaceDistribution && !hasGrowingChild) || hasOverflowClip) &&
+              !isMainAxisScrollable;
       // A Row hands non-flex children an UNBOUNDED main-axis constraint, so a
       // direct child carrying `w-full` (-> SizedBox(width: infinity)) asserts
       // "RenderBox was not laid out". Treat a bare `w-full` child as flex-1:
@@ -963,6 +976,32 @@ class WDiv extends StatelessWidget {
   /// `hover:flex-1` are caught too. `grow-0`, `shrink-0`, and `flex-none` are
   /// deliberately NOT self-wrapping (they keep intrinsic main size without a
   /// `Flexible`), so they are absent here.
+  /// Whether [child] takes a share of the row's free space.
+  ///
+  /// Narrower than [_selfWrapsInFlex]: the shrink-only tokens (`shrink`,
+  /// `flex-shrink`, `flex-initial` = CSS `flex: 0 1 auto`) self-wrap in a
+  /// `Flexible` to shrink on overflow but never grow, so they leave the free
+  /// space to a sibling. `flex-auto` (CSS `flex: 1 1 auto`) does grow and counts.
+  static bool _claimsGrowShare(Widget child) {
+    if (child is Expanded || child is Flexible) return true;
+
+    final String? className = _extractChildClassName(child);
+    if (className == null || className.isEmpty) return false;
+
+    for (final raw in className.split(' ')) {
+      if (raw.isEmpty) continue;
+      final token = raw.contains(':') ? raw.split(':').last : raw;
+      if (token == 'grow' ||
+          token == 'flex-grow' ||
+          token == 'flex-auto' ||
+          _numericFlexRegex.hasMatch(token)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   static bool _selfWrapsInFlex(String? className) {
     if (className == null || className.isEmpty) return false;
     for (final raw in className.split(' ')) {
