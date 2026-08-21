@@ -228,7 +228,7 @@ Apply via `ColorFilter.mode(color, BlendMode.srcIn)`. The `preserve-colors` toke
 
 ### `WAnchor`
 
-Low-level state propagator. Tracks hover and focus; provides `WindAnchorStateProvider` to descendants. Emits `Semantics(button: true)` for accessibility / E2E **when it carries a gesture**; a gestureless anchor (what `WDiv` auto-wraps into for `hover:` / `focus:` / `active:`) publishes no node of its own, so a hoverable card announces as its content instead of as a button with no tap action behind it.
+Low-level state propagator. Tracks hover and focus; provides `WindAnchorStateProvider` to descendants. Emits `Semantics(button: true)` for accessibility / E2E **when it carries a gesture, or when `semanticLabel` is set**. A gestureless, unlabelled anchor (what `WDiv` auto-wraps into for `hover:` / `focus:` / `active:`) publishes no node of its own, so a hoverable card announces as its content instead of as a button with no tap action behind it. An explicit `semanticLabel` always publishes the node, which is how a DISABLED control still reports that it exists and is unavailable; set it on a control, never on decoration.
 
 ```dart
 const WAnchor({
@@ -245,7 +245,13 @@ const WAnchor({
 ```
 
 Structure (outermost → innermost):
-`MergeSemantics` → `Semantics(button: true, enabled: !isDisabled)` (both present only when a gesture callback is non-null) → `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvider` (broadcasts hover/focus/disabled state) → `Focus(canRequestFocus: !isDisabled)` → optional `GestureDetector` (only if any callback is non-null) → `child`.
+Three accessibility paths, checked in this order:
+
+1. `semanticLabel != null`: `Semantics(button: true, enabled: !isDisabled, label: semanticLabel, onTap/onLongPress lifted, excludeSemantics: true)` → the rest below. The label replaces the child subtree rather than concatenating with it, and the node is published whether or not a gesture exists.
+2. No label and no gesture: no node of its own.
+3. No label, with a gesture: `MergeSemantics` → `Semantics(button: true, enabled: !isDisabled)` → the rest below.
+
+The rest, in all three: `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvider` (broadcasts hover/focus/disabled state) → `Focus(canRequestFocus: !isDisabled)` → optional `GestureDetector` (only if any callback is non-null) → `child`.
 
 State tracking:
 - Hover: `MouseRegion.onEnter` / `onExit` set `_isHovering`; calls `setState` only on change.

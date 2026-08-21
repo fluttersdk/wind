@@ -706,6 +706,34 @@ void main() {
         handle.dispose();
       });
 
+      testWidgets('an explicit semanticLabel publishes the node either way',
+          (tester) async {
+        // The documented exception to the rule above, and the reason the guard
+        // is not extended to cover it: the label branch is checked FIRST, so a
+        // labelled anchor is announced as a button with or without a gesture.
+        // That is what lets a DISABLED control report that it exists and is
+        // unavailable, which the disabled test below pins from the other side.
+        // Setting the label is therefore a statement that this is a control.
+        final SemanticsHandle handle = tester.ensureSemantics();
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WAnchor(
+              semanticLabel: 'Close',
+              child: Icon(Icons.close),
+            ),
+          ),
+        );
+
+        final List<SemanticsNode> buttons = _buttonNodes(tester);
+        expect(buttons, hasLength(1));
+        final SemanticsData data = buttons.single.getSemanticsData();
+        expect(data.label, 'Close');
+        // Named, but honest about having nothing to activate.
+        expect(data.hasAction(SemanticsAction.tap), isFalse);
+        handle.dispose();
+      });
+
       testWidgets(
           'a tappable anchor around a hover: WDiv still announces once, named',
           (tester) async {

@@ -179,13 +179,18 @@ WindTheme(
 
 A `WAnchor` that carries a gesture (`onTap`, `onLongPress` or `onDoubleTap`) publishes one `Semantics(button: true)` node, and `MergeSemantics` folds the child's text into it so the control gets its name from what it renders. Pass `semanticLabel` when the child has no readable text, such as an icon-only anchor; that label replaces the child subtree rather than concatenating with it.
 
-A `WAnchor` with no gesture publishes nothing of its own. It is the state propagator in that mode, which is how `WDiv` uses it to serve `hover:`, `focus:` and `active:` classes, and a decorative surface must not announce itself as a button with no action behind it.
+A `WAnchor` with no gesture **and no `semanticLabel`** publishes nothing of its own. It is the state propagator in that mode, which is how `WDiv` uses it to serve `hover:`, `focus:` and `active:` classes (the auto-wrap never passes a label), and a decorative surface must not announce itself as a button with no action behind it.
+
+`semanticLabel` is the exception, and deliberately so: setting it always publishes the named button node, gestures or not. It is how a DISABLED control still tells assistive technology that a control is there and currently unavailable, which is information the user needs. That makes the label a statement of intent rather than a formatting choice: set it on a control, never on decoration.
 
 ```dart
 // One button node named "Save".
 WAnchor(onTap: save, child: const WText('Save'))
 
-// No button node: hover styling only.
+// One button node named "Save", announced disabled, with no tap action.
+const WAnchor(isDisabled: true, semanticLabel: 'Save', child: WText('Save'))
+
+// No node at all: hover styling only.
 const WAnchor(child: WDiv(className: 'hover:bg-slate-100', child: WText('Card')))
 ```
 
