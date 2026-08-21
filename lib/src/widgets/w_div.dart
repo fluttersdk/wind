@@ -1020,6 +1020,22 @@ class WDiv extends StatelessWidget {
   /// that child into an `Expanded`. Leaving it out would starve it at half the
   /// row while `flex-1` took the whole remainder, and the two are documented as
   /// equivalent on a row child.
+  ///
+  /// Unlike [_selfWrapsInFlex] this scan is NOT prefix-agnostic, and the
+  /// asymmetry is the point. There a false positive is the safe direction: it
+  /// only skips a wrap, while a false negative double-wraps and throws
+  /// "Incorrect use of ParentDataWidget". Here the answer governs the WHOLE
+  /// row, so counting an inactive `hover:flex-1` or `md:flex-1` would strip the
+  /// shrink wrap off every sibling at a breakpoint where nothing actually
+  /// grows: measured in a 100pt row, a text sibling went from a 50pt share to
+  /// 80pt because a hover variant that was not active had spoken for the row.
+  /// A prefixed token is conditional and cannot be resolved from the class
+  /// string alone, so it does not claim, exactly as [_hasBareFullWidth]
+  /// deliberately ignores `md:w-full`. The cost is that a prefixed grow token
+  /// keeps the old equal-share split while its variant IS active; that is the
+  /// pre-existing behaviour rather than a new regression, and the conservative
+  /// direction when the alternative is removing shrink protection from
+  /// siblings that never asked for it.
   static bool _claimsGrowShare(Widget child) {
     if (child is Expanded || child is Flexible) return true;
 
@@ -1030,9 +1046,8 @@ class WDiv extends StatelessWidget {
       return true;
     }
 
-    for (final raw in className.split(RegExp(r'\s+'))) {
-      if (raw.isEmpty) continue;
-      final token = raw.contains(':') ? raw.split(':').last : raw;
+    for (final token in className.split(RegExp(r'\s+'))) {
+      if (token.isEmpty || token.contains(':')) continue;
       if (token == 'grow' ||
           token == 'flex-grow' ||
           token == 'flex-auto' ||
