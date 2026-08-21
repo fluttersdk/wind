@@ -69,6 +69,8 @@ class _MyFormState extends State<MyForm> {
 }
 ```
 
+> **The toolbar is hosted in the ROOT `Overlay`, not the nearest one.** It positions itself in screen terms (`bottom: viewInsets.bottom`, so it sits on top of the keyboard), and a nested `Overlay` is measured in its own box rather than the screen's. An app whose page host owns an `Overlay` inside a scroll view gives that overlay the height of the scrolled content, so a nearest-overlay toolbar would render hundreds of points below the viewport: present in the widget tree, absent from the screen. You need no `Overlay` of your own for this to work; `MaterialApp` and `CupertinoApp` both provide the root one.
+
 <a name="constructor"></a>
 ## Constructor
 

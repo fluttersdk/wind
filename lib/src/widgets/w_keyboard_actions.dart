@@ -8,7 +8,9 @@ import 'w_keyboard_platform.dart';
 /// A Wind-styled wrapper that adds keyboard actions (Done button, navigation)
 /// to input fields, especially for iOS numeric keyboards.
 ///
-/// The widget renders an above-keyboard toolbar in the app's `Overlay` while
+/// The widget renders an above-keyboard toolbar in the app's ROOT `Overlay`
+/// (the toolbar is positioned in screen terms, so a nested overlay measured in
+/// its own box would place it off-screen) while
 /// any of its `focusNodes` holds focus, providing:
 /// - Done button for dismissing numeric keyboards on iOS
 /// - Up/Down navigation between multiple input fields
