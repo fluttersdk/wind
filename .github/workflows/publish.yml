@@ -100,3 +100,38 @@ jobs:
             --notes "$NOTES" \
             --verify-tag \
             $PRERELEASE
+
+  # Called here rather than triggered by `release: [published]`, which is what
+  # dispatch-to-registry.yml used to declare. The release above is created with
+  # `GH_TOKEN: ${{ github.token }}`, and GitHub does not start workflow runs
+  # from events raised by GITHUB_TOKEN, so that trigger could never fire and
+  # never did: the 1.4.0 skill reached the registry only because it was
+  # dispatched by hand. Sequencing it after github-release also keeps the
+  # registry version tracking packages pub.dev actually accepted.
+  registry:
+    name: Sync skill to registry
+    needs: github-release
+    # Stable releases only. The tag filter above is `[0-9]+.[0-9]+.[0-9]+*`, so
+    # `1.5.0-beta.1` matches it and this repo has shipped `1.0.0-alpha.*` tags
+    # before. The reason to skip is distribution, not a malformed version: the
+    # registry's `sync.yml` validates the upstream version as
+    # `^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]+)?$` (a prerelease is explicitly
+    # allowed) and derives its own version by bumping its own manifest's patch
+    # number, so the string we send only reaches its release notes. What a sync
+    # does do is rsync `skills/wind-ui/` onto the registry's `main`, which is
+    # what `npx skills add fluttersdk/ai` serves. A beta tag would therefore
+    # hand beta skill content to every consumer, which is what a beta is meant
+    # not to do.
+    #
+    # A branch name carrying a dash cannot be caught by this: on a
+    # `workflow_dispatch` the `github-release` job is skipped by its own tag
+    # guard, and a dependant of a skipped job is skipped too, so `registry` only
+    # ever evaluates this on a tag push.
+    if: ${{ !contains(github.ref_name, '-') }}
+    uses: ./.github/workflows/dispatch-to-registry.yml
+    # Named rather than `secrets: inherit`: the called workflow needs exactly
+    # these two, and this repo pins every action by SHA and runs zizmor over
+    # the result, so handing it the whole secret store would be out of step.
+    secrets:
+      REGISTRY_BOT_APP_ID: ${{ secrets.REGISTRY_BOT_APP_ID }}
+      REGISTRY_BOT_PRIVATE_KEY: ${{ secrets.REGISTRY_BOT_PRIVATE_KEY }}
