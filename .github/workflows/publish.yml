@@ -111,6 +111,19 @@ jobs:
   registry:
     name: Sync skill to registry
     needs: github-release
+    # Stable releases only. The tag filter above is `[0-9]+.[0-9]+.[0-9]+*`, so
+    # `1.5.0-beta.1` matches it, and the extractor in the called workflow strips
+    # a `+build` suffix but not a `-beta.1` one: the registry would receive
+    # "1.5.0-beta.1" for a step whose job is to bump a version triplet. This repo
+    # has shipped `1.0.0-alpha.*` tags before, and until this PR the registry
+    # path could never execute at all, so this is the first release where it
+    # could happen.
+    #
+    # A branch name carrying a dash cannot be caught by this: on a
+    # `workflow_dispatch` the `github-release` job is skipped by its own tag
+    # guard, and a dependant of a skipped job is skipped too, so `registry` only
+    # ever evaluates this on a tag push.
+    if: ${{ !contains(github.ref_name, '-') }}
     uses: ./.github/workflows/dispatch-to-registry.yml
     # Named rather than `secrets: inherit`: the called workflow needs exactly
     # these two, and this repo pins every action by SHA and runs zizmor over

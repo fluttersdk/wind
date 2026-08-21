@@ -45,6 +45,12 @@ jobs:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
               with:
                   fetch-depth: 1
+                  # Every other checkout in this repo sets it, and zizmor's
+                  # `artipacked` audit is on by default. This job only reads
+                  # `pubspec.yaml`, so leaving the token in `.git/config` buys
+                  # nothing and this workflow now runs inside the release
+                  # pipeline.
+                  persist-credentials: false
 
             - name: Extract version
               id: ver
