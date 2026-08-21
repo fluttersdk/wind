@@ -6,6 +6,12 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **A multi-line `className` hid its flex tokens from the row and column composers, and this project's own style guide is what put them there.** `.claude/rules/widgets.md` and `SKILL.md` both instruct a className covering 3+ concerns to be a triple-quoted string with one concern per line, so `flex-1` at the end of a line arrives at the composition helpers as `flex-1\n`. Three of them split on a single space and therefore never matched it. Two consequences, both reproduced: a `flex-1` child of an `overflow-hidden` row got wrapped a second time and threw `Incorrect use of ParentDataWidget` (`_selfWrapsInFlex`), and a `w-24 shrink-0` child in a crowded row shrank to its 50pt flex share instead of holding 96pt (`_hasShrinkZero`). The third site, `_hasExplicitCrossWidth`, is corrected for consistency with its own documented "in ANY state or breakpoint variant" intent, but no observable failure could be produced for it: a stretched column child still renders at the width it asked for, so the miss costs a redundant wrapper rather than a wrong layout. All five token scans in `WDiv` now share one hoisted `_whitespaceRegex`, which also stops the two that already split on whitespace from allocating a fresh `RegExp` on every pass through the composition path. (`lib/src/widgets/w_div.dart`, `test/widgets/w_div/multiline_classname_test.dart`)
+
 ## [1.4.0] - 2026-08-21
 
 ### Added
