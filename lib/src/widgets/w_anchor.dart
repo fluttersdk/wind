@@ -259,8 +259,39 @@ class _WAnchorState extends State<WAnchor> {
       );
     }
 
-    // 2. No explicit label: keep the MergeSemantics path so the descendant
-    //    Text/WText nodes collapse into this node and supply the name.
+    // 2. No gestures and no explicit label: publish nothing of our own and let
+    //    the child's descendants speak for themselves.
+    //
+    //    `WDiv` auto-wraps itself in a gestureless `WAnchor` whenever its
+    //    className carries `hover:`, `focus:` or `active:`, purely to get the
+    //    hover and focus state this widget tracks (see `w_div.dart`'s
+    //    `isInteractive` branch). Announcing that as a button made a claim the
+    //    widget cannot keep: `WDiv(className: 'hover:bg-slate-100', child:
+    //    WText('Latency'))` published a button node labelled "Latency" whose
+    //    action set was `focus` alone, with no `tap`, so a screen reader offered
+    //    a control that does nothing when activated. The real tap surface still
+    //    reaches this method with its gestures and keeps its single button node.
+    //
+    //    Note for anyone re-measuring: the nesting `WAnchor(onTap:) >
+    //    WDiv(hover:...)` did NOT announce twice, though it did put two button
+    //    nodes in the widget tree. The inner one carried `isMergedIntoParent`,
+    //    so it was folded into the real tap surface and never sent to the
+    //    platform. Count platform nodes, not tree nodes.
+    //
+    //    `MergeSemantics` goes with the role, and the measurement is why. Keeping
+    //    it made a gestureless wrapper ABSORB a descendant control's role and
+    //    actions: a locked region tile in a consumer app, whose own anchor has no
+    //    gesture, swallowed the display-only `WCheckbox` inside it and published
+    //    itself as "US West, button" with the checkbox's tap. That is the same
+    //    bogus claim in a new place. A styling-only wrapper publishes nothing and
+    //    lets each descendant speak for itself.
+    if (!hasGestures) {
+      return result;
+    }
+
+    // 3. Gestures, no explicit label: keep the MergeSemantics path so the
+    //    descendant Text/WText nodes collapse into this node and supply the
+    //    name.
     return MergeSemantics(
       child: Semantics(
         button: true,

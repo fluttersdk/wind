@@ -666,6 +666,132 @@ void main() {
         final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
         expect(node.flagsCollection.isButton, isTrue);
       });
+
+      testWidgets('a hoverable WDiv keeps its name and drops the button role',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+
+        // `WDiv` auto-wraps itself in a gestureless `WAnchor` whenever its
+        // className carries `hover:`, purely to track the hover state. That
+        // used to publish a button node with `focus` as its only action, so a
+        // decorative card was offered as a control that cannot be activated.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDiv(
+              className: 'px-4 py-3 rounded-lg hover:bg-slate-100',
+              child: WText('Latency'),
+            ),
+          ),
+        );
+
+        expect(_buttonNodes(tester), isEmpty);
+        // The content still announces; only the false role is gone.
+        expect(find.text('Latency'), findsOneWidget);
+        handle.dispose();
+      });
+
+      testWidgets('a gestureless anchor is not announced as a button',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WAnchor(
+              child: WText('Decoration'),
+            ),
+          ),
+        );
+
+        expect(_buttonNodes(tester), isEmpty);
+        handle.dispose();
+      });
+
+      testWidgets('an explicit semanticLabel publishes the node either way',
+          (tester) async {
+        // The documented exception to the rule above, and the reason the guard
+        // is not extended to cover it: the label branch is checked FIRST, so a
+        // labelled anchor is announced as a button with or without a gesture.
+        // That is what lets a DISABLED control report that it exists and is
+        // unavailable, which the disabled test below pins from the other side.
+        // Setting the label is therefore a statement that this is a control.
+        final SemanticsHandle handle = tester.ensureSemantics();
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WAnchor(
+              semanticLabel: 'Close',
+              child: Icon(Icons.close),
+            ),
+          ),
+        );
+
+        final List<SemanticsNode> buttons = _buttonNodes(tester);
+        expect(buttons, hasLength(1));
+        final SemanticsData data = buttons.single.getSemanticsData();
+        expect(data.label, 'Close');
+        // Named, but honest about having nothing to activate.
+        expect(data.hasAction(SemanticsAction.tap), isFalse);
+        handle.dispose();
+      });
+
+      testWidgets(
+          'a tappable anchor around a hover: WDiv still announces once, named',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+
+        // A regression guard, not a reproducer: this shape published one
+        // platform node before the change too, because the inner gestureless
+        // anchor's node was `isMergedIntoParent` and folded into the real tap
+        // surface. It is here so the early return cannot take the name or the
+        // tap action with it.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              onTap: () {},
+              child: const WDiv(
+                className: 'px-4 py-3 rounded-lg hover:bg-slate-100',
+                child: WText('Monitors'),
+              ),
+            ),
+          ),
+        );
+
+        final List<SemanticsNode> buttons = _buttonNodes(tester);
+        expect(buttons, hasLength(1));
+        // The merged data, not `node.label`: a merging node's own label stays
+        // empty and the absorbed descendants supply the name.
+        final SemanticsData data = buttons.single.getSemanticsData();
+        expect(data.label, contains('Monitors'));
+        expect(data.hasAction(SemanticsAction.tap), isTrue);
+        handle.dispose();
+      });
     });
   });
+}
+
+/// Every button node the platform would actually receive.
+///
+/// Two filters matter. `tester.getSemantics` resolves the node for one widget,
+/// so the walk covers the whole tree; and a node with `isMergedIntoParent` is
+/// folded into its parent's data and never sent to assistive technology, so
+/// counting one reports a duplicate that does not exist. Getting that second
+/// filter wrong is what made an earlier reading of this bug claim a double
+/// announcement.
+List<SemanticsNode> _buttonNodes(WidgetTester tester) {
+  final List<SemanticsNode> found = <SemanticsNode>[];
+
+  void walk(SemanticsNode node) {
+    if (!node.isMergedIntoParent &&
+        node.getSemanticsData().flagsCollection.isButton) {
+      found.add(node);
+    }
+    node.visitChildren((SemanticsNode child) {
+      walk(child);
+      return true;
+    });
+  }
+
+  walk(tester.getSemantics(find.byType(MaterialApp)));
+
+  return found;
 }
