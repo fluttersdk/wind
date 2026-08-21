@@ -104,7 +104,7 @@ Precedence: inline `backgroundColor` wins over any `bg-*` / `dark:bg-*` resolved
 `WDiv` dynamically switches its internal structure based on the `display` utility classes provided in `className`.
 
 - **Block (Default)**: Standard vertical stack or single child wrapper. If `children` is used without `flex` or `grid`, it defaults to a `Column`.
-- **Flex**: Enabled via `flex`. Supports `flex-row`, `flex-col`, `gap-*`, `items-*`, `justify-*`. It mimics CSS Flexbox behavior, including automatic `Flexible` wrapping for children in rows.
+- **Flex**: Enabled via `flex`. Supports `flex-row`, `flex-col`, `gap-*`, `items-*`, `justify-*`. It mimics CSS Flexbox behavior, including automatic `Flexible` wrapping for row children so they can shrink. That wrap is skipped when a child claims a grow share (`flex-1`, `grow`, `flex-auto`, a bare `w-full`, or a raw `Expanded`/`Flexible`), so the growing child keeps the free space and its siblings stay at their content width. See [Flexbox](../layout/flexbox.md#flex-grow--shrink).
 - **Grid**: Enabled via `grid`. Uses a combination of `Wrap` and `LayoutBuilder` to achieve Tailwind-like grid behavior (`grid-cols-*`) with intrinsic item heights.
 - **Wrap**: Enabled via `wrap`. Elements wrap to the next line when space is insufficient, similar to `flex-wrap` in CSS.
 - **Hidden**: Enabled via `hidden`. The widget short-circuits to `SizedBox.shrink()` to save resources.

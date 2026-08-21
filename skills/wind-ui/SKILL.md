@@ -2,10 +2,10 @@
 name: wind-ui
 description: "fluttersdk_wind 1.3: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
 when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Load it before the first line of new UI, and equally when auditing UI that already exists."
-version: 2.11.0
+version: 2.12.0
 ---
 
-<!-- fluttersdk_wind 1.3.x | Skill v2.11.0 (2026-08-03) -->
+<!-- fluttersdk_wind 1.3.x | Skill v2.12.0 (2026-08-21) -->
 
 # Wind UI 1.3
 
@@ -219,6 +219,7 @@ Wind hides most boilerplate but never changes Flutter's "constraints down, sizes
 | Rule | Wrong | Right |
 |---|---|---|
 | **Row children: prefer `flex-1`** (a bare `w-full` now also works, treated as `flex-1`) | n/a | `WDiv(className: 'flex flex-row', children: [WDiv(className: 'flex-1', ...)])` |
+| **A grow claim turns off `justify-*`'s shrink wrap** (so `flex-1` keeps the whole remainder, siblings stay at content width; `overflow-hidden` still wraps) | expecting `justify-between` to split the row evenly between a `flex-1` child and a 24 dp icon | `WDiv(className: 'flex flex-row justify-between', children: [WDiv(className: 'flex-1', ...), WIcon(...)])` |
 | **Scrollable children use `flex-1`, not `h-full`** | `WDiv(className: 'flex flex-col', children: [WDiv(className: 'overflow-y-auto h-full', ...)])` → unbounded height | `WDiv(className: 'flex flex-col h-full', children: [WDiv(className: 'flex-1 overflow-y-auto', scrollPrimary: true, ...)])` |
 | **`absolute` requires `relative` parent** | `WDiv(className: 'flex', children: [..., WDiv(className: 'absolute top-0 right-0')])` does not position correctly | `WDiv(className: 'relative flex', children: [..., WDiv(className: 'absolute top-0 right-0')])` |
 | **`truncate` requires bounded width** | `WText('long...', className: 'truncate')` inside a Row | wrap in `WDiv(className: 'flex-1', child: WText(..., className: 'truncate'))` |

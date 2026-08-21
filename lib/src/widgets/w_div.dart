@@ -662,8 +662,21 @@ class WDiv extends StatelessWidget {
       // For Row with space distribution OR overflow-hidden, wrap children with Flexible
       // This mimics CSS flex-shrink: 1 default behavior. Inside a horizontally
       // scrollable row, `Flexible` is also invalid, skip it too.
+      // A child that claims a GROW share (`flex-1`, `grow`, `flex-auto`, or a
+      // raw Expanded/Flexible) absorbs the free space, and in CSS its siblings
+      // then keep their content width: `flex: 0 1 auto` shrinks on overflow but
+      // never takes a share. Wrapping those siblings in `Flexible` hands each an
+      // EQUAL share instead, so a two-child `justify-between` row divided its
+      // width 50/50 and the child that asked for the space was capped at half
+      // the row: a 24pt icon column reserved 185pt of a 402pt header and the
+      // title column beside it measured ZERO. There is also nothing left for
+      // space distribution to distribute once a child grows, so the wrap here is
+      // only ever about shrinking, which `overflow-hidden` still asks for
+      // explicitly and keeps.
+      final bool hasGrowingChild = basisChildren.any(_claimsGrowShare);
       final needsFlexible =
-          (needsSpaceDistribution || hasOverflowClip) && !isMainAxisScrollable;
+          ((needsSpaceDistribution && !hasGrowingChild) || hasOverflowClip) &&
+              !isMainAxisScrollable;
       // A Row hands non-flex children an UNBOUNDED main-axis constraint, so a
       // direct child carrying `w-full` (-> SizedBox(width: infinity)) asserts
       // "RenderBox was not laid out". Treat a bare `w-full` child as flex-1:
@@ -993,6 +1006,56 @@ class WDiv extends StatelessWidget {
     for (final raw in className.split(RegExp(r'\s+'))) {
       if (raw == 'w-full') return true;
     }
+    return false;
+  }
+
+  /// Whether [child] takes a share of the row's free space.
+  ///
+  /// Narrower than [_selfWrapsInFlex]: the shrink-only tokens (`shrink`,
+  /// `flex-shrink`, `flex-initial` = CSS `flex: 0 1 auto`) self-wrap in a
+  /// `Flexible` to shrink on overflow but never grow, so they leave the free
+  /// space to a sibling. `flex-auto` (CSS `flex: 1 1 auto`) does grow and counts.
+  ///
+  /// A bare `w-full` counts too, because the Row composer above turns exactly
+  /// that child into an `Expanded`. Leaving it out would starve it at half the
+  /// row while `flex-1` took the whole remainder, and the two are documented as
+  /// equivalent on a row child.
+  ///
+  /// Unlike [_selfWrapsInFlex] this scan is NOT prefix-agnostic, and the
+  /// asymmetry is the point. There a false positive is the safe direction: it
+  /// only skips a wrap, while a false negative double-wraps and throws
+  /// "Incorrect use of ParentDataWidget". Here the answer governs the WHOLE
+  /// row, so counting an inactive `hover:flex-1` or `md:flex-1` would strip the
+  /// shrink wrap off every sibling at a breakpoint where nothing actually
+  /// grows: measured in a 100pt row, a text sibling went from a 50pt share to
+  /// 80pt because a hover variant that was not active had spoken for the row.
+  /// A prefixed token is conditional and cannot be resolved from the class
+  /// string alone, so it does not claim, exactly as [_hasBareFullWidth]
+  /// deliberately ignores `md:w-full`. The cost is that a prefixed grow token
+  /// keeps the old equal-share split while its variant IS active; that is the
+  /// pre-existing behaviour rather than a new regression, and the conservative
+  /// direction when the alternative is removing shrink protection from
+  /// siblings that never asked for it.
+  static bool _claimsGrowShare(Widget child) {
+    if (child is Expanded || child is Flexible) return true;
+
+    final String? className = _extractChildClassName(child);
+    if (className == null || className.isEmpty) return false;
+
+    if (_hasBareFullWidth(className) && !_selfWrapsInFlex(className)) {
+      return true;
+    }
+
+    for (final token in className.split(RegExp(r'\s+'))) {
+      if (token.isEmpty || token.contains(':')) continue;
+      if (token == 'grow' ||
+          token == 'flex-grow' ||
+          token == 'flex-auto' ||
+          _numericFlexRegex.hasMatch(token)) {
+        return true;
+      }
+    }
+
     return false;
   }
 
