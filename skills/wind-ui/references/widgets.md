@@ -228,7 +228,7 @@ Apply via `ColorFilter.mode(color, BlendMode.srcIn)`. The `preserve-colors` toke
 
 ### `WAnchor`
 
-Low-level state propagator. Tracks hover and focus; provides `WindAnchorStateProvider` to descendants. Emits `Semantics(button: true)` for accessibility / E2E.
+Low-level state propagator. Tracks hover and focus; provides `WindAnchorStateProvider` to descendants. Emits `Semantics(button: true)` for accessibility / E2E **when it carries a gesture**; a gestureless anchor (what `WDiv` auto-wraps into for `hover:` / `focus:` / `active:`) publishes no node of its own, so a hoverable card announces as its content instead of as a button with no tap action behind it.
 
 ```dart
 const WAnchor({
@@ -245,7 +245,7 @@ const WAnchor({
 ```
 
 Structure (outermost → innermost):
-`MergeSemantics` → `Semantics(button: true, enabled: !isDisabled)` → `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvider` (broadcasts hover/focus/disabled state) → `Focus(canRequestFocus: !isDisabled)` → optional `GestureDetector` (only if any callback is non-null) → `child`.
+`MergeSemantics` → `Semantics(button: true, enabled: !isDisabled)` (both present only when a gesture callback is non-null) → `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvider` (broadcasts hover/focus/disabled state) → `Focus(canRequestFocus: !isDisabled)` → optional `GestureDetector` (only if any callback is non-null) → `child`.
 
 State tracking:
 - Hover: `MouseRegion.onEnter` / `onExit` set `_isHovering`; calls `setState` only on change.

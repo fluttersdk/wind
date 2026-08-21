@@ -2,10 +2,10 @@
 name: wind-ui
 description: "fluttersdk_wind 1.4: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
 when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Load it before the first line of new UI, and equally when auditing UI that already exists."
-version: 2.12.0
+version: 2.12.1
 ---
 
-<!-- fluttersdk_wind 1.4.x | Skill v2.12.0 (2026-08-21) -->
+<!-- fluttersdk_wind 1.4.x | Skill v2.12.1 (2026-08-21) -->
 
 # Wind UI 1.3
 
@@ -78,7 +78,7 @@ The headline 25 (table below) are the ones an agent reaches for daily. Two more 
 | `WIcon` | Display | `icon: IconData` | Material icons; use `Icons.*_outlined` variants by convention. Reads `text-*` for size AND color (overloaded). Inherits from `DefaultTextStyle` when className is absent. Inline color prop: `foregroundColor`. |
 | `WImage` | Display | none (requires `src` or `image`) | Network (URL) or asset (prefix `asset://path`) or `ImageProvider`. `object-cover` default. |
 | `WSvg` / `WSvg.string` | Display | `src` / `svg` | Vector graphics. `fill-*` / `stroke-*` for color. `preserve-colors` token disables tint for multi-color SVGs (QR codes, logos). |
-| `WAnchor` | Interactive | `child: Widget` | Low-level gesture + focus + hover propagator. Emits `Semantics(button: true)`. |
+| `WAnchor` | Interactive | `child: Widget` | Low-level gesture + focus + hover propagator. Emits `Semantics(button: true)` only when it carries a gesture. |
 | `WButton` | Interactive | `child: Widget` | Wraps `WAnchor` + `WDiv` + built-in spinner. `isLoading: true` injects `loading:` state. `disabled: true` injects `disabled:` state and blocks taps. |
 | `WPopover` | Overlay | none (requires builders) | `OverlayPortal`-based; `triggerBuilder(ctx, isOpen, isHovering)` + `contentBuilder(ctx, close)` + optional `PopoverController`. Auto-flips alignment when bottom space is insufficient. |
 | `WInput` | Form (raw) | none | Material-free text input (EditableText core); works under Material, Cupertino, custom, or bare WidgetsApp (no Material ancestor required). `value` + `onChanged` for controlled binding, or `controller` for imperative needs; passing both throws `AssertionError` in debug. `InputType` enum: `text` / `password` / `email` / `number` / `multiline` (`number` restricts to a signed decimal on every platform incl. web; pass `inputFormatters` to override). `readOnly: true` activates a `readonly:` state like `enabled: false` activates `disabled:`. Native text selection: mouse-drag selects a substring, double-click/double-tap selects a word, tapping the box moves the cursor; selection handles are Cupertino-style on all platforms (keeps WInput cupertino-only, no `material.dart` import). An `Overlay` ancestor is required for interactive selection; without one, typing and focus still work but all interactive selection (drag-select, double-tap, long-press, handles, and toolbar) is suppressed. Emits exactly one typeable textbox semantics node carrying `semanticLabel ?? placeholder`; password reports obscured. |

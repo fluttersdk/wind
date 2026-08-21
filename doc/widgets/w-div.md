@@ -114,6 +114,8 @@ Precedence: inline `backgroundColor` wins over any `bg-*` / `dark:bg-*` resolved
 
 `WDiv` automatically becomes interactive when state-based prefixes like `hover:`, `focus:`, or `active:` are used in the `className`. Under the hood, it wraps the content in a `WAnchor` to detect gestures and focus.
 
+That wrap is styling only: the auto-wrapped `WAnchor` carries no gesture, so it publishes no `button` node to assistive technology. A `WDiv` with `hover:bg-slate-100` styles on hover and still announces as whatever its content is, rather than as a control that does nothing when activated.
+
 For direct gesture support (taps, long presses) or to create semantic buttons, use [WAnchor](w-anchor.md) or [WButton](w-button.md).
 
 <a name="state-variants"></a>

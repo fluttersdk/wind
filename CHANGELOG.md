@@ -6,6 +6,12 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **Every hoverable `WDiv` announced itself as a button that cannot be pressed.** `WDiv` auto-wraps into a `WAnchor` whenever its className carries `hover:`, `focus:` or `active:`, purely to get the state this widget tracks, and `WAnchor` published `Semantics(button: true)` unconditionally: with no gesture behind it. So a decorative card styled `hover:bg-slate-100` reached assistive technology as a control. Measured on `WDiv(className: 'px-4 py-3 hover:bg-slate-100', child: WText('Latency'))`: one button node labelled `Latency` whose action set was `focus` alone, with no `tap`. A screen reader offers it as a button, the user activates it, and nothing happens, because there is no gesture in the tree to run. A gestureless `WAnchor` now publishes no semantics node of its own and lets its descendants speak, which is what a state propagator should do: the same card keeps its `Latency` label and loses the role. An anchor with `onTap`, `onLongPress` or `onDoubleTap` is unchanged, so `WButton` and every real control keep their single named button node with its tap action, and an explicit `semanticLabel` still wins for the icon-only case that has no child text to merge. One claim to retire with this: the nesting `WAnchor(onTap:) > WDiv(hover:...)` did NOT announce twice, though it published two button nodes in the widget tree. The inner one carried `isMergedIntoParent`, so Flutter folded it into the real tap surface and never sent it to the platform. A reading that counts raw tree nodes rather than platform nodes will report a duplicate announcement that no screen reader ever made. (`lib/src/widgets/w_anchor.dart`, `doc/widgets/w-anchor.md`, `doc/widgets/w-div.md`, `skills/wind-ui/SKILL.md`, `skills/wind-ui/references/widgets.md`)
+
 ## [1.4.0] - 2026-08-21
 
 ### Added

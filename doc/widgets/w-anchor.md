@@ -175,6 +175,20 @@ WindTheme(
 )
 ```
 
+## Accessibility
+
+A `WAnchor` that carries a gesture (`onTap`, `onLongPress` or `onDoubleTap`) publishes one `Semantics(button: true)` node, and `MergeSemantics` folds the child's text into it so the control gets its name from what it renders. Pass `semanticLabel` when the child has no readable text, such as an icon-only anchor; that label replaces the child subtree rather than concatenating with it.
+
+A `WAnchor` with no gesture publishes nothing of its own. It is the state propagator in that mode, which is how `WDiv` uses it to serve `hover:`, `focus:` and `active:` classes, and a decorative surface must not announce itself as a button with no action behind it.
+
+```dart
+// One button node named "Save".
+WAnchor(onTap: save, child: const WText('Save'))
+
+// No button node: hover styling only.
+const WAnchor(child: WDiv(className: 'hover:bg-slate-100', child: WText('Card')))
+```
+
 ## Related Documentation
 
 - [WButton](./w-button.md) - High-level button widget built on WAnchor.
