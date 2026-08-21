@@ -112,12 +112,16 @@ jobs:
     name: Sync skill to registry
     needs: github-release
     # Stable releases only. The tag filter above is `[0-9]+.[0-9]+.[0-9]+*`, so
-    # `1.5.0-beta.1` matches it, and the extractor in the called workflow strips
-    # a `+build` suffix but not a `-beta.1` one: the registry would receive
-    # "1.5.0-beta.1" for a step whose job is to bump a version triplet. This repo
-    # has shipped `1.0.0-alpha.*` tags before, and until this PR the registry
-    # path could never execute at all, so this is the first release where it
-    # could happen.
+    # `1.5.0-beta.1` matches it and this repo has shipped `1.0.0-alpha.*` tags
+    # before. The reason to skip is distribution, not a malformed version: the
+    # registry's `sync.yml` validates the upstream version as
+    # `^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]+)?$` (a prerelease is explicitly
+    # allowed) and derives its own version by bumping its own manifest's patch
+    # number, so the string we send only reaches its release notes. What a sync
+    # does do is rsync `skills/wind-ui/` onto the registry's `main`, which is
+    # what `npx skills add fluttersdk/ai` serves. A beta tag would therefore
+    # hand beta skill content to every consumer, which is what a beta is meant
+    # not to do.
     #
     # A branch name carrying a dash cannot be caught by this: on a
     # `workflow_dispatch` the `github-release` job is skipped by its own tag
