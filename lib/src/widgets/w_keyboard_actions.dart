@@ -8,7 +8,9 @@ import 'w_keyboard_platform.dart';
 /// A Wind-styled wrapper that adds keyboard actions (Done button, navigation)
 /// to input fields, especially for iOS numeric keyboards.
 ///
-/// The widget renders an above-keyboard toolbar in the app's `Overlay` while
+/// The widget renders an above-keyboard toolbar in the app's ROOT `Overlay`
+/// (the toolbar is positioned in screen terms, so a nested overlay measured in
+/// its own box would place it off-screen) while
 /// any of its `focusNodes` holds focus, providing:
 /// - Done button for dismissing numeric keyboards on iOS
 /// - Up/Down navigation between multiple input fields
@@ -210,7 +212,14 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
   void _insertOrUpdateOverlay() {
     if (_overlayEntry == null) {
       _overlayEntry = OverlayEntry(builder: _buildToolbar);
-      Overlay.of(context).insert(_overlayEntry!);
+      // The ROOT overlay, never the nearest one. The toolbar is positioned in
+      // SCREEN terms (`bottom: viewInsets.bottom`, so it sits on the keyboard),
+      // and a nested overlay is measured in its own box: an app whose page host
+      // owns an overlay inside a scroll view is 2146pt tall, so `bottom: 335`
+      // there put the toolbar 335pt from the bottom of the CONTENT, roughly
+      // 1300pt below the viewport. It was inserted, it was in the semantics
+      // tree, and it was nowhere on the screen.
+      Overlay.of(context, rootOverlay: true).insert(_overlayEntry!);
       // 1. Start a per-frame platform guard while the toolbar is active.
       //    The guard fires in the transient-callbacks phase (before build), so
       //    `_overlayEntry.remove()` triggers the Overlay's internal rebuild in

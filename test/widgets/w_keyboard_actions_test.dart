@@ -401,4 +401,63 @@ void main() {
       }
     });
   });
+
+  group('WKeyboardActions overlay host', () {
+    testWidgets('the toolbar lands on the screen even under a nested overlay',
+        (tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        // An app whose page host owns an Overlay INSIDE a scroll view is the
+        // shape this failed on. The nested overlay is as tall as the scrolled
+        // content, and the toolbar positions itself in screen terms
+        // (`bottom: viewInsets.bottom`), so hosting it there put it hundreds of
+        // points below the viewport: present in the tree, absent from the
+        // screen.
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: Scaffold(
+                body: SingleChildScrollView(
+                  child: SizedBox(
+                    height: 2400,
+                    child: Overlay(
+                      initialEntries: [
+                        OverlayEntry(
+                          builder: (_) => WKeyboardActions(
+                            focusNodes: [focusNode],
+                            child: TextField(focusNode: focusNode),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        focusNode.requestFocus();
+        await tester.pump(const Duration(milliseconds: 16));
+
+        final Finder toolbar = find.byType(TextButton);
+        expect(toolbar, findsOneWidget);
+
+        final double screenHeight =
+            tester.view.physicalSize.height / tester.view.devicePixelRatio;
+        expect(
+          tester.getRect(toolbar).bottom,
+          lessThanOrEqualTo(screenHeight),
+          reason: 'a toolbar below the viewport is a toolbar the user cannot '
+              'reach, however present it is in the tree',
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+  });
 }
