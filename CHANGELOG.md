@@ -6,7 +6,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
-## [Unreleased]
+## [1.4.0] - 2026-08-21
 
 ### Added
 
@@ -40,6 +40,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - `doc/utilities/context-extensions.md` demonstrated `context.windTheme.setBrightness(Brightness.dark)`, a method `WindThemeController` has never exposed, so a reader following the page hit a compile error. Replaced with the two calls that actually pin a preference: `toggleTheme()` (which sets `syncWithSystem: false` itself) and `setTheme(data.copyWith(brightness: ..., syncWithSystem: false))`, plus `resetToSystem()` to hand control back. A bare `updateTheme(brightness: ...)` is the partial-update call the framework's own `didChangePlatformBrightness` listener makes, so with `syncWithSystem` still true the next OS change overwrites it. (`doc/utilities/context-extensions.md`)
 - `llms.txt` pointed `WFormMultiSelect` at `widgets/w-form-multiselect.md`, which does not exist; the widget is documented inside `w-form-select.md`. (`llms.txt`)
 - The README acceptance criterion in `CLAUDE.md` still named the pre-1.2.0 roster (22 widgets, 19 parsers), which is what a future session would have synced the README back to. It now matches the shipped surface (27 widgets, 20 parsers, 24 theme fields). (`CLAUDE.md`)
+- Release surfaces moved to the 1.4 line in one pass: `pubspec.yaml`, `example/pubspec.yaml`, the `dartdoc_options.yaml` source-link tag (which pins generated dartdoc line links to the release tag, so a stale value points readers at the previous release's line numbers), the `llms.txt` version string, and the nine `skills/wind-ui/references/*.md` H1s plus the SKILL.md description and version marker. The skill titles are the ones that rot quietly: they lagged a release twice already, at 1.2.0 and again at 1.3.0. (`pubspec.yaml`, `example/pubspec.yaml`, `dartdoc_options.yaml`, `llms.txt`, `skills/wind-ui/`)
 
 ## [1.3.0] - 2026-08-03
 
@@ -243,7 +244,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/fluttersdk/wind/releases/tag/1.4.0
 [1.3.0]: https://github.com/fluttersdk/wind/releases/tag/1.3.0
 [1.2.1]: https://github.com/fluttersdk/wind/releases/tag/1.2.1
 [1.2.0]: https://github.com/fluttersdk/wind/releases/tag/1.2.0
