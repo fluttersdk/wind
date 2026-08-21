@@ -787,7 +787,7 @@ class WDiv extends StatelessWidget {
   /// tokens and prefixed variants like `md:shrink-0` / `md:flex-none`.
   static bool _hasShrinkZero(String? className) {
     if (className == null || className.isEmpty) return false;
-    for (final token in className.split(' ')) {
+    for (final token in className.split(_whitespaceRegex)) {
       if (token == 'shrink-0' ||
           token.endsWith(':shrink-0') ||
           token == 'flex-none' ||
@@ -879,7 +879,7 @@ class WDiv extends StatelessWidget {
   /// stretch wrap (a parse without those states active would miss them).
   static bool _hasExplicitCrossWidth(String? className) {
     if (className == null || className.isEmpty) return false;
-    for (final raw in className.split(' ')) {
+    for (final raw in className.split(_whitespaceRegex)) {
       if (raw.isEmpty) continue;
       final token = raw.contains(':') ? raw.split(':').last : raw;
       if (token.startsWith('w-') ||
@@ -966,6 +966,15 @@ class WDiv extends StatelessWidget {
   /// has been stripped.
   static final RegExp _numericFlexRegex = RegExp(r'^flex-[0-9]+$');
 
+  /// Splits a raw `className` into tokens.
+  ///
+  /// Any whitespace, not a single space: this project writes a className with
+  /// 3+ concerns as a triple-quoted string with one concern per line (see
+  /// `.claude/rules/widgets.md`), so a token that ends a line arrives as
+  /// `flex-1\n` and a single-space split never matches it. Hoisted to a field
+  /// because every caller runs inside the row/column composition path.
+  static final RegExp _whitespaceRegex = RegExp(r'\s+');
+
   /// Whether a child's className makes it self-wrap in `Expanded`/`Flexible`
   /// (i.e. sets `styles.flex` or `styles.flexFit`, see the composition pipeline
   /// at the bottom of `_buildCompositionPipeline`). Such a child must never be
@@ -978,7 +987,7 @@ class WDiv extends StatelessWidget {
   /// `Flexible`), so they are absent here.
   static bool _selfWrapsInFlex(String? className) {
     if (className == null || className.isEmpty) return false;
-    for (final raw in className.split(' ')) {
+    for (final raw in className.split(_whitespaceRegex)) {
       if (raw.isEmpty) continue;
       final token = raw.contains(':') ? raw.split(':').last : raw;
       if (token == 'grow' ||
@@ -1003,7 +1012,7 @@ class WDiv extends StatelessWidget {
   /// responsive intent at breakpoints where it does not apply.
   static bool _hasBareFullWidth(String? className) {
     if (className == null || className.isEmpty) return false;
-    for (final raw in className.split(RegExp(r'\s+'))) {
+    for (final raw in className.split(_whitespaceRegex)) {
       if (raw == 'w-full') return true;
     }
     return false;
@@ -1046,7 +1055,7 @@ class WDiv extends StatelessWidget {
       return true;
     }
 
-    for (final token in className.split(RegExp(r'\s+'))) {
+    for (final token in className.split(_whitespaceRegex)) {
       if (token.isEmpty || token.contains(':')) continue;
       if (token == 'grow' ||
           token == 'flex-grow' ||
