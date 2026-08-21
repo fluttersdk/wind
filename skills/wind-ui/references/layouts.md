@@ -22,13 +22,15 @@
 
 Every `RenderBox` receives a `BoxConstraints` (`minWidth`, `maxWidth`, `minHeight`, `maxHeight`) from its parent, lays out each child with derived constraints, then picks a `Size` that satisfies its own incoming constraints. The parent alone decides where in space each child goes.
 
-Two consequences drive almost every Wind layout footgun:
+Four consequences drive almost every Wind layout footgun:
 
 1. **`Row` and `Column` pass UNBOUNDED constraints to non-flex children in step 1.** A child that responds with `double.infinity` (e.g. `h-full` inside a Column inside a scroll) blows up the parent's bounded layout. `flex-1` is the canonical fix because it moves the child to step 2 (bounded share of remaining space). (A bare `w-full` on a direct Row child is auto-handled: Wind wraps it in `Expanded` so it behaves as `flex-1` instead of asserting; prefer `flex-1` for clarity.)
 
 2. **Scrollables remove the max on their axis.** A `SingleChildScrollView` (Wind's `overflow-y-auto`) passes `maxHeight: double.infinity` to its child. A child that asserts on finite height (`Column` with `Expanded` children) throws "Vertical viewport was given unbounded height".
 
 3. **`flex flex-col` stretches `WDiv`, `WAnchor` (any child), and `WButton` children to the column width by default.** With NO explicit `items-*` token, each such child that does not control its own width is wrapped in `SizedBox(width: double.infinity)`, mirroring CSS `align-items: stretch`. For `WAnchor`: when the anchor wraps a `WDiv`, the inner `WDiv`'s className decides; when it wraps a `WText` or raw widget, it always stretches. Left untouched: children with an explicit width (`w-*` / `min-w-*` / `max-w-*` / `w-full`, in any state/breakpoint variant), children that self-wrap in `Expanded`/`Flexible` (`grow`, `flex-grow`, `flex-auto`, `flex-initial`, `shrink`, `flex-shrink`, `flex-N`), absolute children, bare `WText` leaves, and raw Flutter widgets. `shrink-0` / `flex-none` children still stretch on the cross axis: `flex-shrink` is main-axis only, matching CSS. Add any `items-*` token (e.g. `items-start`) to disable the stretch and let children size to content. This is column-only; rows are never auto-stretched on the cross axis.
+
+4. **`justify-*` on a row wraps every child in a `Flexible` so it can shrink, UNLESS a child claims a grow share.** Flutter splits free space equally between flex children, so the shrink wrap also hands a share to a sibling that never asked for one: a `justify-between` row holding a `flex-1` title next to a 24 px icon split 400 px down the middle and rendered the title at 200 px. A grow claim (`flex-1`, `flex-{n}`, `grow`, `flex-grow`, `flex-auto`, a bare `w-full`, or a raw `Expanded` / `Flexible`) therefore turns the wrap off for the whole row: the growing child takes the remainder, its siblings keep their content width, and that matches CSS `justify-content: space-between`. `overflow-hidden` keeps the wrap unconditionally (it asks for shrinking on purpose), `shrink` / `flex-shrink` / `flex-initial` are not a grow claim, and neither is a PREFIXED grow token: `hover:flex-1` and `md:grow` are conditional, so they never speak for the row. Reach for an unprefixed `flex-1` when you want the child to own the remainder.
 
 Memorize these and the rest follows.
 

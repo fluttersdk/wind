@@ -219,6 +219,7 @@ Wind hides most boilerplate but never changes Flutter's "constraints down, sizes
 | Rule | Wrong | Right |
 |---|---|---|
 | **Row children: prefer `flex-1`** (a bare `w-full` now also works, treated as `flex-1`) | n/a | `WDiv(className: 'flex flex-row', children: [WDiv(className: 'flex-1', ...)])` |
+| **A grow claim turns off `justify-*`'s shrink wrap** (so `flex-1` keeps the whole remainder, siblings stay at content width; `overflow-hidden` still wraps) | expecting `justify-between` to split the row evenly between a `flex-1` child and a 24 dp icon | `WDiv(className: 'flex flex-row justify-between', children: [WDiv(className: 'flex-1', ...), WIcon(...)])` |
 | **Scrollable children use `flex-1`, not `h-full`** | `WDiv(className: 'flex flex-col', children: [WDiv(className: 'overflow-y-auto h-full', ...)])` → unbounded height | `WDiv(className: 'flex flex-col h-full', children: [WDiv(className: 'flex-1 overflow-y-auto', scrollPrimary: true, ...)])` |
 | **`absolute` requires `relative` parent** | `WDiv(className: 'flex', children: [..., WDiv(className: 'absolute top-0 right-0')])` does not position correctly | `WDiv(className: 'relative flex', children: [..., WDiv(className: 'absolute top-0 right-0')])` |
 | **`truncate` requires bounded width** | `WText('long...', className: 'truncate')` inside a Row | wrap in `WDiv(className: 'flex-1', child: WText(..., className: 'truncate'))` |

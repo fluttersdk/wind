@@ -190,6 +190,8 @@ WDiv(
 )
 ```
 
+> **A child that grows turns the automatic `Flexible` wrap off.** Space distribution wraps each row child in a `Flexible` so it can shrink, mirroring the CSS `flex: 0 1 auto` default. Flutter shares free space equally between flex children, though, so that wrap also hands a share to a sibling that never asked for one: a `justify-between` row holding a `flex-1` title and a 24 px icon split 400 px down the middle, and the title rendered at 200 px with 176 px sitting blank beside the icon. So when any child claims a grow share (`flex-1`, `flex-{n}`, `grow`, `flex-grow`, `flex-auto`, a bare `w-full`, or a raw `Expanded` / `Flexible`), the wrap is skipped and the growing child takes the whole remainder while its siblings keep their content width, which is what CSS `justify-content: space-between` does. There is nothing left to distribute once a child grows, so the wrap was only ever about shrinking. Three exceptions: `overflow-hidden` keeps the wrap unconditionally because that token asks for shrinking on purpose, the shrink-only tokens (`shrink`, `flex-shrink`, `flex-initial`) are not a grow claim, and a PREFIXED grow token (`hover:flex-1`, `md:grow`) is not one either. A prefixed token is conditional, and the row cannot tell from the class string whether the variant is active, so treating it as a claim would strip the shrink wrap off every sibling at a breakpoint where nothing grows. Use an unprefixed `flex-1` when you want the child to own the remainder.
+
 <a name="align-items"></a>
 ## Align Items
 
