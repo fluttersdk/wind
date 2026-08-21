@@ -976,32 +976,6 @@ class WDiv extends StatelessWidget {
   /// `hover:flex-1` are caught too. `grow-0`, `shrink-0`, and `flex-none` are
   /// deliberately NOT self-wrapping (they keep intrinsic main size without a
   /// `Flexible`), so they are absent here.
-  /// Whether [child] takes a share of the row's free space.
-  ///
-  /// Narrower than [_selfWrapsInFlex]: the shrink-only tokens (`shrink`,
-  /// `flex-shrink`, `flex-initial` = CSS `flex: 0 1 auto`) self-wrap in a
-  /// `Flexible` to shrink on overflow but never grow, so they leave the free
-  /// space to a sibling. `flex-auto` (CSS `flex: 1 1 auto`) does grow and counts.
-  static bool _claimsGrowShare(Widget child) {
-    if (child is Expanded || child is Flexible) return true;
-
-    final String? className = _extractChildClassName(child);
-    if (className == null || className.isEmpty) return false;
-
-    for (final raw in className.split(' ')) {
-      if (raw.isEmpty) continue;
-      final token = raw.contains(':') ? raw.split(':').last : raw;
-      if (token == 'grow' ||
-          token == 'flex-grow' ||
-          token == 'flex-auto' ||
-          _numericFlexRegex.hasMatch(token)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   static bool _selfWrapsInFlex(String? className) {
     if (className == null || className.isEmpty) return false;
     for (final raw in className.split(' ')) {
@@ -1032,6 +1006,41 @@ class WDiv extends StatelessWidget {
     for (final raw in className.split(RegExp(r'\s+'))) {
       if (raw == 'w-full') return true;
     }
+    return false;
+  }
+
+  /// Whether [child] takes a share of the row's free space.
+  ///
+  /// Narrower than [_selfWrapsInFlex]: the shrink-only tokens (`shrink`,
+  /// `flex-shrink`, `flex-initial` = CSS `flex: 0 1 auto`) self-wrap in a
+  /// `Flexible` to shrink on overflow but never grow, so they leave the free
+  /// space to a sibling. `flex-auto` (CSS `flex: 1 1 auto`) does grow and counts.
+  ///
+  /// A bare `w-full` counts too, because the Row composer above turns exactly
+  /// that child into an `Expanded`. Leaving it out would starve it at half the
+  /// row while `flex-1` took the whole remainder, and the two are documented as
+  /// equivalent on a row child.
+  static bool _claimsGrowShare(Widget child) {
+    if (child is Expanded || child is Flexible) return true;
+
+    final String? className = _extractChildClassName(child);
+    if (className == null || className.isEmpty) return false;
+
+    if (_hasBareFullWidth(className) && !_selfWrapsInFlex(className)) {
+      return true;
+    }
+
+    for (final raw in className.split(RegExp(r'\s+'))) {
+      if (raw.isEmpty) continue;
+      final token = raw.contains(':') ? raw.split(':').last : raw;
+      if (token == 'grow' ||
+          token == 'flex-grow' ||
+          token == 'flex-auto' ||
+          _numericFlexRegex.hasMatch(token)) {
+        return true;
+      }
+    }
+
     return false;
   }
 

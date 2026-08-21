@@ -63,6 +63,37 @@ void main() {
   );
 
   testWidgets(
+    'justify-between gives a bare w-full child the whole free space',
+    (tester) async {
+      // The Row composer turns a bare `w-full` child into an `Expanded`, and
+      // `doc/layout/flexbox.md` documents it as filling the row "exactly like
+      // flex-1". Without w-full counted as a grow claim the two diverge here:
+      // the flex-1 case above measures 376 and this one measured 200.
+      await pumpAt(
+        tester,
+        400,
+        const WDiv(
+          className: 'flex flex-row items-center justify-between',
+          children: [
+            WDiv(
+              key: Key('grower'),
+              className: 'w-full',
+              child: SizedBox(height: 20),
+            ),
+            WDiv(
+              key: Key('icon'),
+              child: SizedBox(width: 24, height: 24),
+            ),
+          ],
+        ),
+      );
+
+      expect(tester.getSize(find.byKey(const Key('icon'))).width, 24);
+      expect(tester.getSize(find.byKey(const Key('grower'))).width, 400 - 24);
+    },
+  );
+
+  testWidgets(
     'justify-between still shrinks siblings when nobody claims flex',
     (tester) async {
       await pumpAt(
