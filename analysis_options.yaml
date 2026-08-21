@@ -1,1 +1,15 @@
+# Generated build output and the per-platform runner projects carry no
+# hand-written Dart worth analyzing. Written here by the Flutter tool's
+# `analysis_options.yaml` migrator, which re-applies it on every `pub get`, so
+# it stays committed: an uncommitted rewrite fails `dart pub publish --dry-run`
+# with "1 checked-in file is modified in git".
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 include: package:flutter_lints/flutter.yaml
