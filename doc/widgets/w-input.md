@@ -89,7 +89,7 @@ const WInput({
 | `enabled` | `bool` | `true` | Whether the input is interactive |
 | `readOnly` | `bool` | `false` | Whether the input is read-only |
 | `autofocus` | `bool` | `false` | Autofocus on mount |
-| `textInputAction` | `TextInputAction?` | `null` | Keyboard action (e.g., `.done`, `.next`) |
+| `textInputAction` | `TextInputAction?` | `null` | Keyboard action (e.g., `.done`, `.next`). When `null`, resolves to `.done` on a single-line field and `.newline` on a multiline one. |
 | `onSubmitted` | `ValueChanged<String>?` | `null` | Callback when action button is pressed |
 | `onTapOutside` | `TapRegionCallback?` | `null` | Callback when tapping outside (useful for blur) |
 | `maxLines` | `int?` | `null` | Max lines for multiline input |
@@ -141,6 +141,8 @@ WInput(
   onTapOutside: (_) => FocusScope.of(context).unfocus(),
 )
 ```
+
+> **The Return key closes the keyboard by default.** With no `textInputAction`, a single-line field resolves to `TextInputAction.done` and a multiline one to `.newline`. Passing `.next` is a deliberate opt-in, because Flutter implements it as `focusNode.nextFocus()`: the next FOCUSABLE widget, not the next text field. On a form whose traversal order runs through buttons, colour swatches and switches, the same Return key does two different things on one screen, dismissing the keyboard where the next focusable is a button and jumping past several fields where it happens to be editable. Reach for `.next` only where you know the following focusable IS the next input, which is a fact only the form itself has. For a toolbar that advances through a known field order instead, see [WKeyboardActions](./w-keyboard-actions.md).
 
 <a name="state-variants"></a>
 ## State Variants
