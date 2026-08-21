@@ -13,6 +13,7 @@ Building forms with validation. Use this file when picking between raw `W*` and 
 7. [TextEditingController vs FormField](#7-texteditingcontroller-vs-formfield)
 8. [WFormDatePicker range mode gotcha](#8-wformdatepicker-range-mode-gotcha)
 9. [Multi-step / wizard forms](#9-multi-step--wizard-forms)
+10. [The Return key and field-to-field advance](#10-the-return-key-and-field-to-field-advance)
 
 ---
 
@@ -342,6 +343,31 @@ The `forceErrorText` + `validator` pair both reflect the completeness check so t
 - On final submit, validate all keys: `_stepKeys.every((k) => k.currentState!.validate())`.
 
 For very long forms inside a `ListView.builder` (each row is a field), pass each field its own `controller` and listen on each; `Form` keys still work but the lazy rebuild means individual field state lifetimes are short. Controllers survive the rebuild.
+
+---
+
+## 10. The Return key and field-to-field advance
+
+`WInput` / `WFormInput` resolve `textInputAction` to `TextInputAction.done` on a single-line field and `.newline` on a multiline one when you pass nothing. So Return closes the keyboard by default.
+
+`.next` is an opt-in, and it is worth knowing what it actually does before reaching for it: Flutter implements `.next` as `focusNode.nextFocus()`, which moves to the next FOCUSABLE widget rather than the next text field. A real form's traversal order runs through buttons, colour swatches, switches and segmented controls, so one Return dismisses the keyboard (the next focusable was a button, nothing editable took focus) while the Return on the field below it jumps past three fields into a textarea. Same key, same screen, two behaviours.
+
+Pass `.next` only where you know the following focusable IS the next input, and pass it per field rather than blanket-applying it, because only the form knows its own order:
+
+```dart
+WFormInput(
+  label: 'Email',
+  type: InputType.email,
+  textInputAction: TextInputAction.next,     // the Password field is next in tree order
+),
+WFormInput(
+  label: 'Password',
+  type: InputType.password,
+  textInputAction: TextInputAction.done,     // last field: submit-shaped
+),
+```
+
+When the order is not a clean run of adjacent fields, do not try to fix it with `.next`. Reach for `WKeyboardActions` instead: it renders a toolbar above the keyboard whose Previous / Next buttons walk an explicit `focusNodes` list, so the advance order is data you control rather than a side effect of widget tree layout.
 
 ---
 

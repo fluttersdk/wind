@@ -450,10 +450,28 @@ void main() {
         expect(editableText.enableSuggestions, isFalse);
       });
 
-      testWidgets('default textInputAction is next for single line', (
+      testWidgets('default textInputAction is done for single line', (
         tester,
       ) async {
+        // `next` was the old default, and Flutter resolves it to the next
+        // FOCUSABLE widget rather than the next field: on a form whose order
+        // runs through buttons and colour swatches, one Return closed the
+        // keyboard and the next jumped into a textarea. A form that wants
+        // field-to-field advance passes `next` itself, because only the form
+        // knows its own order.
         await tester.pumpWidget(wrapWithTheme(const WInput()));
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.textInputAction, TextInputAction.done);
+      });
+
+      testWidgets('an explicit textInputAction still wins', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(textInputAction: TextInputAction.next),
+          ),
+        );
 
         final editableText =
             tester.widget<EditableText>(find.byType(EditableText));
