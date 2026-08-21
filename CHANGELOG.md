@@ -6,6 +6,12 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Quality
+
+- **The registry dispatch could never fire, so 1.4.0 shipped a skill the registry never received.** `dispatch-to-registry.yml` declared `release: [published]`, but the release is created inside `publish.yml`'s `github-release` job by `gh release create` running under `GH_TOKEN: ${{ github.token }}`, and GitHub does not start workflow runs from events raised by `GITHUB_TOKEN`. The trigger was added on 2026-08-03 and 1.4.0 was the first release after it, so it had exactly one chance and missed: the run history showed nothing since 2026-08-03, both entries there being `workflow_dispatch` and the retired `push` trigger. It reached `fluttersdk/ai` only because it was dispatched by hand. The cost of this failure mode is that it is silent, since the publish workflow goes green either way and the only symptom is end users installing a skill a version behind. `publish.yml` now calls the workflow directly with `needs: github-release`, which removes the cross-workflow event entirely and also guarantees the dispatch happens after pub.dev has accepted the release rather than in parallel with it. The dead `release` trigger is gone and `workflow_call` replaces it; `workflow_dispatch` stays as the manual escape hatch. Secrets are passed by name rather than `secrets: inherit`, since the called workflow needs exactly two and this repo pins every action by SHA and runs zizmor over the result. Second bug in the same file, fixed alongside: the version-extraction step tested the ref against `^v[0-9]+\.[0-9]+\.[0-9]+`, but this repo tags without the `v` prefix, so that branch could never match a real tag and always fell through to reading `pubspec.yaml`. The fallback happens to be correct on master after a release bump, which is why nothing surfaced it. (`.github/workflows/dispatch-to-registry.yml`, `.github/workflows/publish.yml`)
+
 ## [1.4.0] - 2026-08-21
 
 ### Added

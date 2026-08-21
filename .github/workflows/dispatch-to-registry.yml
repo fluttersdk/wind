@@ -1,8 +1,17 @@
 # Auto-sync the FlutterSDK AI registry when a wind release is published.
 #
-# Fires repository_dispatch at fluttersdk/ai on a published GitHub release, or
-# on a manual run. The registry's sync.yml receives the event, pulls the
-# skills/wind-ui/ subtree, bumps the version triplet, and pushes to main.
+# Fires repository_dispatch at fluttersdk/ai. The registry's sync.yml receives
+# the event, pulls the skills/wind-ui/ subtree, bumps the version triplet, and
+# pushes to main.
+#
+# Called by publish.yml after its github-release job, so the dispatch happens
+# only once pub.dev has actually accepted the release. It is NOT triggered by
+# `release: [published]`, which is what it used to declare: publish.yml creates
+# the release with `gh release create` under `GH_TOKEN: ${{ github.token }}`,
+# and GitHub does not start workflow runs from events raised by GITHUB_TOKEN.
+# That trigger could never fire, and did not fire once between the day it was
+# added (2026-08-03) and the 1.4.0 release, which shipped a skill the registry
+# never received until it was dispatched by hand.
 #
 # Deliberately NOT on every push. A skill edit that lands on master between
 # releases waits for the release that carries it, so the registry version
@@ -18,8 +27,12 @@
 name: Dispatch skill update to registry
 
 on:
-    release:
-        types: [published]
+    workflow_call:
+        secrets:
+            REGISTRY_BOT_APP_ID:
+                required: true
+            REGISTRY_BOT_PRIVATE_KEY:
+                required: true
     workflow_dispatch:
 
 permissions:
@@ -37,7 +50,11 @@ jobs:
               id: ver
               run: |
                   set -euo pipefail
-                  if [[ -n "${GITHUB_REF_NAME}" && "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+                  # `v?` because this repo tags WITHOUT the prefix: publish.yml
+                  # matches '[0-9]+.[0-9]+.[0-9]+*' and CLAUDE.md says
+                  # `git tag X.Y.Z`. The old `^v` test could never match a real
+                  # tag here, so this always fell through to pubspec.yaml.
+                  if [[ -n "${GITHUB_REF_NAME}" && "${GITHUB_REF_NAME}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+ ]]; then
                       VER="${GITHUB_REF_NAME#v}"
                   else
                       VER=$(grep -E '^version:' pubspec.yaml | head -1 | awk '{print $2}')

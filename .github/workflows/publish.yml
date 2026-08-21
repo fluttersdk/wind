@@ -100,3 +100,21 @@ jobs:
             --notes "$NOTES" \
             --verify-tag \
             $PRERELEASE
+
+  # Called here rather than triggered by `release: [published]`, which is what
+  # dispatch-to-registry.yml used to declare. The release above is created with
+  # `GH_TOKEN: ${{ github.token }}`, and GitHub does not start workflow runs
+  # from events raised by GITHUB_TOKEN, so that trigger could never fire and
+  # never did: the 1.4.0 skill reached the registry only because it was
+  # dispatched by hand. Sequencing it after github-release also keeps the
+  # registry version tracking packages pub.dev actually accepted.
+  registry:
+    name: Sync skill to registry
+    needs: github-release
+    uses: ./.github/workflows/dispatch-to-registry.yml
+    # Named rather than `secrets: inherit`: the called workflow needs exactly
+    # these two, and this repo pins every action by SHA and runs zizmor over
+    # the result, so handing it the whole secret store would be out of step.
+    secrets:
+      REGISTRY_BOT_APP_ID: ${{ secrets.REGISTRY_BOT_APP_ID }}
+      REGISTRY_BOT_PRIVATE_KEY: ${{ secrets.REGISTRY_BOT_PRIVATE_KEY }}
