@@ -244,6 +244,59 @@ void main() {
         );
         expect(node.flagsCollection.isChecked, CheckedState.isFalse);
       });
+
+      testWidgets('a null onChanged publishes no tap action', (tester) async {
+        // `onChanged: null` is how a caller renders a display-only checkbox: a
+        // read-only summary row, or a tile whose own tap drives the toggle. The
+        // anchor's callback was gated on `disabled` alone, so such a checkbox
+        // still installed `() => onChanged?.call(!value)`, which announces a
+        // pressable control whose activation runs a no-op. Measured in a
+        // consumer's region picker: a 16x16 nameless node with a tap action
+        // inside a tile that was doing the work itself.
+        await tester.pumpWidget(
+          wrapWithTheme(const WCheckbox(value: false)),
+        );
+        await tester.pump();
+
+        // The tap lives on the inner anchor's node, not on the outer
+        // `Semantics(container: true)` one that `getSemantics` resolves, so the
+        // question is whether ANY node in the checkbox's subtree offers it.
+        expect(_subtreeOffersTap(tester), isFalse);
+        // The state is still reported; only the false affordance is gone.
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WCheckbox),
+        );
+        expect(node.flagsCollection.isChecked, CheckedState.isFalse);
+      });
+
+      testWidgets('a non-null onChanged still publishes a tap action',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(WCheckbox(value: false, onChanged: (_) {})),
+        );
+        await tester.pump();
+
+        expect(_subtreeOffersTap(tester), isTrue);
+      });
     });
   });
+}
+
+/// Whether any node in the rendered checkbox's semantics subtree offers a tap.
+bool _subtreeOffersTap(WidgetTester tester) {
+  bool found = false;
+
+  void walk(SemanticsNode node) {
+    if (node.getSemanticsData().hasAction(SemanticsAction.tap)) {
+      found = true;
+    }
+    node.visitChildren((SemanticsNode child) {
+      walk(child);
+      return true;
+    });
+  }
+
+  walk(tester.getSemantics(find.byType(WCheckbox)));
+
+  return found;
 }

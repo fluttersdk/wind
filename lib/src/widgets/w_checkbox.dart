@@ -125,7 +125,16 @@ class WCheckbox extends StatelessWidget {
       // Flutter web accessibility tree.
       child: MergeSemantics(
         child: WAnchor(
-          onTap: disabled ? null : () => onChanged?.call(!value),
+          // Gated on `onChanged` as well as `disabled`. A caller passing
+          // `onChanged: null` is rendering a display-only checkbox (a read-only
+          // summary row, or a tile whose own tap drives the toggle), and
+          // installing `() => onChanged?.call(!value)` for it published a
+          // pressable control whose activation runs a no-op. Measured in a
+          // consumer's region picker: a 16x16 nameless node carrying a tap
+          // action, inside a tile that was already doing the work.
+          onTap: disabled || onChanged == null
+              ? null
+              : () => onChanged!.call(!value),
           isDisabled: disabled,
           states: activeStates,
           child: WDiv(

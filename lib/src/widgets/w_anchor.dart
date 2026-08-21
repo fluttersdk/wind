@@ -277,6 +277,14 @@ class _WAnchorState extends State<WAnchor> {
     //    nodes in the widget tree. The inner one carried `isMergedIntoParent`,
     //    so it was folded into the real tap surface and never sent to the
     //    platform. Count platform nodes, not tree nodes.
+    //
+    //    `MergeSemantics` goes with the role, and the measurement is why. Keeping
+    //    it made a gestureless wrapper ABSORB a descendant control's role and
+    //    actions: a locked region tile in a consumer app, whose own anchor has no
+    //    gesture, swallowed the display-only `WCheckbox` inside it and published
+    //    itself as "US West, button" with the checkbox's tap. That is the same
+    //    bogus claim in a new place. A styling-only wrapper publishes nothing and
+    //    lets each descendant speak for itself.
     if (!hasGestures) {
       return result;
     }
