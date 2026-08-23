@@ -1,4 +1,4 @@
-import 'dart:ui' show CheckedState;
+import 'dart:ui' show CheckedState, Tristate;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -128,6 +128,33 @@ void main() {
 
         expect(newValue, isNull);
       });
+
+      testWidgets(
+        'a null onChanged makes the checkbox non-interactive (no gesture, '
+        'disabled state)',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WCheckbox(
+                value: false,
+                onChanged: null,
+                className: 'w-5 h-5 border disabled:opacity-50',
+              ),
+            ),
+          );
+          await tester.pump();
+
+          // No gesture handler is attached when onChanged is null.
+          final anchor = tester.widget<WAnchor>(find.byType(WAnchor));
+          expect(anchor.onTap, isNull);
+          expect(anchor.isDisabled, isTrue);
+
+          // The disabled: prefix activates on the box WDiv, which is what
+          // WRadio and WSwitch already do for the same input.
+          final wDiv = tester.widget<WDiv>(find.byType(WDiv));
+          expect(wDiv.states, contains('disabled'));
+        },
+      );
     });
 
     group('State Styling', () {
@@ -277,6 +304,33 @@ void main() {
         await tester.pump();
 
         expect(_subtreeOffersTap(tester), isTrue);
+      });
+
+      testWidgets('reports not-enabled when onChanged is null', (tester) async {
+        // A control with no callback is unavailable, and assistive technology
+        // needs to hear that rather than reading it as an enabled checkbox
+        // that happens to do nothing.
+        await tester.pumpWidget(
+          wrapWithTheme(const WCheckbox(value: false)),
+        );
+        await tester.pump();
+
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WCheckbox),
+        );
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
+      });
+
+      testWidgets('reports enabled when onChanged is non-null', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(WCheckbox(value: false, onChanged: (_) {})),
+        );
+        await tester.pump();
+
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WCheckbox),
+        );
+        expect(node.flagsCollection.isEnabled, Tristate.isTrue);
       });
     });
   });

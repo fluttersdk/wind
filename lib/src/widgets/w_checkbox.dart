@@ -32,6 +32,12 @@ class WCheckbox extends StatelessWidget {
   final bool value;
 
   /// Called when the checkbox value changes.
+  ///
+  /// Null makes the checkbox non-interactive, exactly like `disabled: true`:
+  /// no gesture is attached, the `disabled:` prefix activates, and semantics
+  /// report the control as not enabled. The `checked` state is still reported,
+  /// so a display-only checkbox keeps telling assistive technology whether it
+  /// is ticked.
   final ValueChanged<bool>? onChanged;
 
   /// Utility classes for styling.
@@ -85,10 +91,17 @@ class WCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A null onChanged means the checkbox is non-interactive: treat it exactly
+    // like disabled == true so the disabled: prefix activates, no gesture is
+    // attached, and Semantics reports the control as not enabled. WRadio and
+    // WSwitch derive it the same way; a display-only checkbox reporting itself
+    // as enabled was the odd one out of the three.
+    final bool isDisabled = disabled || onChanged == null;
+
     // Build states set: merge built-in states with custom states
     final Set<String> activeStates = {
       if (value) 'checked',
-      if (disabled) 'disabled',
+      if (isDisabled) 'disabled',
       ...?states, // Merge custom states
     };
 
@@ -119,23 +132,21 @@ class WCheckbox extends StatelessWidget {
     return Semantics(
       container: true,
       checked: value,
-      enabled: !disabled,
+      enabled: !isDisabled,
       // The presence of `checked` plus the standard interpretation of a
       // tickable container surfaces this node as `role=checkbox` in the
       // Flutter web accessibility tree.
       child: MergeSemantics(
         child: WAnchor(
-          // Gated on `onChanged` as well as `disabled`. A caller passing
-          // `onChanged: null` is rendering a display-only checkbox (a read-only
-          // summary row, or a tile whose own tap drives the toggle), and
-          // installing `() => onChanged?.call(!value)` for it published a
-          // pressable control whose activation runs a no-op. Measured in a
-          // consumer's region picker: a 16x16 nameless node carrying a tap
-          // action, inside a tile that was already doing the work.
-          onTap: disabled || onChanged == null
-              ? null
-              : () => onChanged!.call(!value),
-          isDisabled: disabled,
+          // A caller passing `onChanged: null` is rendering a display-only
+          // checkbox (a read-only summary row, or a tile whose own tap drives
+          // the toggle), and installing `() => onChanged?.call(!value)` for it
+          // published a pressable control whose activation runs a no-op.
+          // Measured in a consumer's region picker: a 16x16 nameless node
+          // carrying a tap action, inside a tile that was already doing the
+          // work.
+          onTap: isDisabled ? null : () => onChanged!.call(!value),
+          isDisabled: isDisabled,
           states: activeStates,
           child: WDiv(
             className:
