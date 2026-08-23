@@ -157,7 +157,7 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                       w-6 h-6 rounded-md
                       border-2 border-slate-300 dark:border-slate-600
                       checked:bg-emerald-500 dark:checked:bg-emerald-400
-                  checked:border-transparent
+                      checked:border-transparent
                       disabled:opacity-60
                     ''',
                   ),
@@ -176,7 +176,7 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                       w-6 h-6 rounded-md
                       border-2 border-slate-300 dark:border-slate-600
                       checked:bg-emerald-500 dark:checked:bg-emerald-400
-                  checked:border-transparent
+                      checked:border-transparent
                       disabled:opacity-60
                     ''',
                   ),
