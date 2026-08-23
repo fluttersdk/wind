@@ -13,6 +13,10 @@ Widget wrapWithTheme(Widget child) {
 }
 
 void main() {
+  setUp(() {
+    WindParser.clearCache();
+  });
+
   group('WDynamic Widget Tests', () {
     group('Self-Owned State', () {
       testWidgets(
