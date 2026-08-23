@@ -7,6 +7,7 @@ A utility-first checkbox component that translates Tailwind-style classes into a
 - [Props](#props)
 - [Layout Modes](#layout-modes)
 - [Event Handling](#event-handling)
+- [Accessibility](#accessibility)
 - [State Variants](#state-variants)
 - [Styling Examples](#styling-examples)
 - [All Supported Classes](#all-supported-classes)
@@ -55,7 +56,7 @@ const WCheckbox({
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
 | `value` | `bool` | - | Whether the checkbox is currently checked. |
-| `onChanged` | `ValueChanged<bool>?` | `null` | Callback triggered when the checkbox state is toggled. |
+| `onChanged` | `ValueChanged<bool>?` | `null` | Callback triggered when the checkbox state is toggled. `null` makes the checkbox display-only, exactly like `disabled: true`. See [Accessibility](#accessibility). |
 | `className` | `String?` | `null` | Wind utility classes for the checkbox container (dimensions, border, background). |
 | `iconClassName` | `String?` | `null` | Utility classes applied to the check icon (e.g., `'text-white text-xs'`). |
 | `disabled` | `bool` | `false` | When true, prevents interaction and applies the `disabled:` prefix styles. |
@@ -93,6 +94,51 @@ WCheckbox(
   },
 )
 ```
+
+Leaving `onChanged` null is how you render a display-only checkbox, such as a read-only summary row or a tile whose own tap drives the toggle.
+
+## Accessibility
+
+`WCheckbox` publishes one semantics node carrying the `checked` state, so `getByRole('checkbox')` resolves and a screen reader announces whether the box is ticked. The widget renders its check glyph as the only child, so it has no name of its own, and a `WText` sitting beside it in a row is a visible label rather than a semantic one: the two stay separate nodes. Wrap the pair in `MergeSemantics` to publish a single node carrying both the text and the checked state.
+
+```dart
+// One node, named "Accept terms", reporting checked.
+MergeSemantics(
+  child: WDiv(
+    className: 'flex flex-row items-center gap-3',
+    children: [
+      WCheckbox(
+        value: accepted,
+        onChanged: (val) => setState(() => accepted = val),
+        className: 'w-5 h-5 rounded border',
+      ),
+      const WText(
+        'Accept terms',
+        className: 'text-slate-900 dark:text-white',
+      ),
+    ],
+  ),
+)
+```
+
+A null `onChanged` is read exactly like `disabled: true`. There is no callback to run, so the checkbox attaches no gesture, publishes no tap action, reports itself as not enabled, and activates the `disabled:` prefix. That last part is visible: a display-only checkbox styled `disabled:opacity-50` renders dimmed.
+
+```dart
+// Interactive: tappable, announced as enabled.
+WCheckbox(
+  value: isChecked,
+  onChanged: (val) => setState(() => isChecked = val),
+  className: 'w-5 h-5 rounded border',
+)
+
+// Display-only: no tap action, announced as unavailable, disabled: styles apply.
+const WCheckbox(
+  value: true,
+  className: 'w-5 h-5 rounded border disabled:opacity-50',
+)
+```
+
+[WRadio](./w-radio.md) and [WSwitch](./w-switch.md) read a null callback the same way, so the three controls behave alike.
 
 ## State Variants
 

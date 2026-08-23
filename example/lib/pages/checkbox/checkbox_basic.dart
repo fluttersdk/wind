@@ -37,7 +37,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-6 h-6 rounded-md
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-600 checked:border-transparent
+                  checked:bg-emerald-600 dark:checked:bg-emerald-500
+                  checked:border-transparent
                   hover:border-emerald-500 duration-150
                 ''',
               ),
@@ -61,7 +62,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-4 h-4 rounded-sm
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-500 checked:border-transparent
+                  checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                 ''',
               ),
               WCheckbox(
@@ -70,7 +72,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-6 h-6 rounded-md
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-500 checked:border-transparent
+                  checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                 ''',
               ),
               WCheckbox(
@@ -79,7 +82,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-8 h-8 rounded-full
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-500 checked:border-transparent
+                  checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                 ''',
               ),
             ],
@@ -99,7 +103,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-8 h-8 rounded-md
                   border-2 border-red-300 dark:border-red-700
-                  checked:bg-red-500 checked:border-transparent
+                  checked:bg-red-500 dark:checked:bg-red-400
+                  checked:border-transparent
                 ''',
                 iconClassName: 'text-white text-base',
               ),
@@ -124,13 +129,62 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-6 h-6 rounded-md
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-500 checked:border-transparent
+                  checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                   disabled:opacity-60
                 ''',
               ),
               WText(
                 'Disabled (checked)',
                 className: 'text-slate-500 dark:text-slate-400',
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Display-only',
+          description:
+              'Leaving onChanged null reads exactly like disabled: true. No tap, nothing announced as pressable, and the disabled: prefix activates.',
+          child: WDiv(
+            className: 'flex flex-col gap-3',
+            children: [
+              WDiv(
+                className: 'flex flex-row items-center gap-3',
+                children: [
+                  const WCheckbox(
+                    value: true,
+                    className: '''
+                      w-6 h-6 rounded-md
+                      border-2 border-slate-300 dark:border-slate-600
+                      checked:bg-emerald-500 dark:checked:bg-emerald-400
+                      checked:border-transparent
+                      disabled:opacity-60
+                    ''',
+                  ),
+                  WText(
+                    'Two-factor authentication enabled',
+                    className: 'text-slate-500 dark:text-slate-400',
+                  ),
+                ],
+              ),
+              WDiv(
+                className: 'flex flex-row items-center gap-3',
+                children: [
+                  const WCheckbox(
+                    value: false,
+                    className: '''
+                      w-6 h-6 rounded-md
+                      border-2 border-slate-300 dark:border-slate-600
+                      checked:bg-emerald-500 dark:checked:bg-emerald-400
+                      checked:border-transparent
+                      disabled:opacity-60
+                    ''',
+                  ),
+                  WText(
+                    'Recovery codes downloaded',
+                    className: 'text-slate-500 dark:text-slate-400',
+                  ),
+                ],
               ),
             ],
           ),

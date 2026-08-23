@@ -34,6 +34,7 @@ No sub-barrels (`lib/dusk_integration.dart` and similar were removed in 1.0 alph
 - **`child` XOR `children`**: for widgets that accept both, the assertion fires at construction. Pass exactly one.
 - **Outlined icon convention**: when using `Icons.*`, prefer the `_outlined` variant. `Icons.settings_outlined`, not `Icons.settings`.
 - **`semanticLabel` for icon-only controls**: `WButton` / `WAnchor` accept `semanticLabel: String?`. An icon-only button (no text child) is nameless to screen readers and Playwright `getByRole('button', { name })` without it; always set it when the child carries no readable text. When set, the child subtree is excluded from semantics, so the label overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already exposes readable text. The label must NOT contain the word "button"; the role appends it (`'Close button'` becomes "Close button button").
+- **A null `onChanged` means non-interactive**: `WCheckbox`, `WRadio` and `WSwitch` read a null callback exactly like `disabled: true`. No gesture is attached, no tap action reaches assistive technology, semantics report the control as not enabled, and the `disabled:` prefix activates, so a display-only control styled `disabled:opacity-50` renders dimmed. The `checked` / `selected` state is still reported, which is what keeps a read-only control readable. Use it for a summary row, or for a tile whose own tap drives the toggle.
 - **Inline color escape hatches**:
   - `WDiv(backgroundColor: Color)` overrides any `bg-*` / `dark:bg-*`.
   - `WText(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
@@ -373,7 +374,7 @@ const WCheckbox({
 })
 ```
 
-State injection: `checked` (when `value: true`) + `disabled` + custom states.
+State injection: `checked` (when `value: true`) + `disabled` (from `disabled: true` OR a null `onChanged`, see section 1) + custom states.
 
 Default className (appended to user className):
 ```
@@ -382,6 +383,8 @@ checked:bg-blue-500 error:border-red-500 checked:bg-primary checked:border-trans
 ```
 
 Uses `checked:bg-primary` which requires a `primary` color family in `WindThemeData.colors`.
+
+No `semanticLabel` prop: the widget publishes one node carrying the `checked` state and no name, since the check glyph is its only child. A sibling `WText` is a visible label, not a semantic one. Wrap the pair in `MergeSemantics` for a single named node: `MergeSemantics(child: WDiv(className: 'flex flex-row items-center gap-3', children: [WCheckbox(...), WText('Accept terms')]))`.
 
 ### `WSelect<T>`
 
