@@ -239,6 +239,8 @@ Widgets with an `id` prop automatically register their values in a shared state 
 - `WSelect` - Tracks selected value
 - `WDatePicker` - Tracks DateTime value
 
+The `id` is all that is required. A widget carrying one writes every change into the store by itself, so `onChange` is needed only when a change must also dispatch an action. When both are present the store is written first and the action receives the new value in its args as `_value`. A widget with neither an `id` nor an `onChange` has nowhere to put a value, so it stays display-only.
+
 **Accessing state from actions:**
 
 ```dart
