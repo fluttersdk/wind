@@ -37,7 +37,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-6 h-6 rounded-md
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-600 checked:border-transparent
+                  checked:bg-emerald-600 dark:checked:bg-emerald-500
+                  checked:border-transparent
                   hover:border-emerald-500 duration-150
                 ''',
               ),
@@ -61,7 +62,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-4 h-4 rounded-sm
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-500 checked:border-transparent
+                  checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                 ''',
               ),
               WCheckbox(
@@ -70,7 +72,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-6 h-6 rounded-md
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-500 checked:border-transparent
+                  checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                 ''',
               ),
               WCheckbox(
@@ -79,7 +82,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-8 h-8 rounded-full
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-500 checked:border-transparent
+                  checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                 ''',
               ),
             ],
@@ -99,7 +103,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-8 h-8 rounded-md
                   border-2 border-red-300 dark:border-red-700
-                  checked:bg-red-500 checked:border-transparent
+                  checked:bg-red-500 dark:checked:bg-red-400
+                  checked:border-transparent
                 ''',
                 iconClassName: 'text-white text-base',
               ),
@@ -124,7 +129,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                 className: '''
                   w-6 h-6 rounded-md
                   border-2 border-slate-300 dark:border-slate-600
-                  checked:bg-emerald-500 checked:border-transparent
+                  checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                   disabled:opacity-60
                 ''',
               ),
@@ -150,7 +156,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                     className: '''
                       w-6 h-6 rounded-md
                       border-2 border-slate-300 dark:border-slate-600
-                      checked:bg-emerald-500 checked:border-transparent
+                      checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                       disabled:opacity-60
                     ''',
                   ),
@@ -168,7 +175,8 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
                     className: '''
                       w-6 h-6 rounded-md
                       border-2 border-slate-300 dark:border-slate-600
-                      checked:bg-emerald-500 checked:border-transparent
+                      checked:bg-emerald-500 dark:checked:bg-emerald-400
+                  checked:border-transparent
                       disabled:opacity-60
                     ''',
                   ),
