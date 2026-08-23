@@ -34,6 +34,67 @@ void main() {
       );
     });
 
+    group('Documented form-state example', () {
+      testWidgets(
+        'an id-bound input with no onChange reaches an action that reads state',
+        (tester) async {
+          // This is the worked example printed in
+          // doc/core-concepts/dynamic-rendering.md and demoed on the gallery's
+          // Form State Management section: an input carrying only an `id`, and
+          // a button whose action reads that id. It could not work while the
+          // state write lived inside the parsed onChange callback, so the
+          // greeting always read "Hello, Guest!".
+          String? greeting;
+
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WDynamic(
+                json: const {
+                  'type': 'WDiv',
+                  'props': {'className': 'flex flex-col gap-3'},
+                  'children': [
+                    {
+                      'type': 'WInput',
+                      'props': {
+                        'id': 'username',
+                        'placeholder': 'Type your name',
+                      },
+                    },
+                    {
+                      'type': 'WButton',
+                      'props': {
+                        'onTap': {'action': 'greet'},
+                      },
+                      'children': [
+                        {
+                          'type': 'WText',
+                          'props': {'text': 'Greet me'},
+                        },
+                      ],
+                    },
+                  ],
+                },
+                actions: {
+                  'greet': (args, state) {
+                    final name = (state.get('username') as String?) ?? 'Guest';
+                    greeting = 'Hello, $name!';
+                  },
+                },
+              ),
+            ),
+          );
+
+          await tester.enterText(find.byType(EditableText), 'Anilcan');
+          await tester.pump();
+
+          await tester.tap(find.text('Greet me'));
+          await tester.pump();
+
+          expect(greeting, 'Hello, Anilcan!');
+        },
+      );
+    });
+
     group('External Controller State', () {
       testWidgets(
         'uses controller state and does not reset pre-populated values',

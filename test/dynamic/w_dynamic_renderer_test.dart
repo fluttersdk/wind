@@ -373,6 +373,99 @@ void main() {
         expect(capturedValue, true);
       });
 
+      // The documented contract is that `props.id` alone binds a widget to
+      // WDynamicState: "Widgets with an id prop automatically bind" in this
+      // renderer's class doc, and the same sentence in .claude/rules/dynamic.md.
+      // The write used to live only inside the parsed onChange callback, so a
+      // node carrying an id and no action was inert: WDatePicker honoured the
+      // contract, WInput / WCheckbox / WSelect did not.
+      testWidgets('WCheckbox with an id and no onChange writes state', (
+        tester,
+      ) async {
+        final json = {
+          'type': 'WCheckbox',
+          'props': {
+            'id': 'agree',
+            'checked': false,
+          },
+        };
+
+        await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
+
+        await tester.tap(find.byType(WCheckbox));
+        await tester.pump();
+
+        expect(state.get('agree'), true);
+      });
+
+      testWidgets('WInput with an id and no onChange writes state', (
+        tester,
+      ) async {
+        final json = {
+          'type': 'WInput',
+          'props': {
+            'id': 'email',
+            'value': '',
+            'placeholder': 'Enter email',
+          },
+        };
+
+        await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
+
+        await tester.enterText(find.byType(EditableText), 'a@example.com');
+        await tester.pump();
+
+        expect(state.get('email'), 'a@example.com');
+      });
+
+      testWidgets('WSelect with an id and no onChange writes state', (
+        tester,
+      ) async {
+        final json = {
+          'type': 'WSelect',
+          'props': {
+            'id': 'pick',
+            'placeholder': 'choose',
+            'options': [
+              {'value': 'a', 'label': 'Alpha'},
+              {'value': 'b', 'label': 'Bravo'},
+            ],
+          },
+        };
+
+        await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
+
+        // Selecting through the overlay needs the dropdown open; the binding
+        // itself is what this asserts, so invoke the callback the renderer
+        // handed the widget.
+        final WSelect select = tester.widget<WSelect>(
+          find.byWidgetPredicate((w) => w is WSelect),
+        );
+        expect(select.onChange, isNotNull);
+        select.onChange!('b');
+
+        expect(state.get('pick'), 'b');
+      });
+
+      testWidgets('a node with no id and no onChange gets no callback', (
+        tester,
+      ) async {
+        // The boundary: binding follows the id. Without one there is nothing to
+        // write to, so the control stays display-only rather than becoming
+        // interactive with nowhere to put the value.
+        final json = {
+          'type': 'WCheckbox',
+          'props': {'checked': true},
+        };
+
+        await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
+
+        expect(
+          tester.widget<WCheckbox>(find.byType(WCheckbox)).onChanged,
+          isNull,
+        );
+      });
+
       testWidgets('reads initial value from state', (tester) async {
         // Pre-populate state
         state.set('username', 'john_doe');

@@ -6,6 +6,12 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **A `WDynamic` node carrying an `id` and no `onChange` never wrote to state, so the form-state example in this project's own documentation could not work.** The class doc says "widgets with an `id` prop automatically bind to `WDynamicState`" and `.claude/rules/dynamic.md` repeats it, but the write lived inside the callback `parseValueAction` returns, and that returns `null` unless `props.onChange` is a Map carrying a String `action`. So the binding was a side effect of having an action rather than of having an id. Measured on the worked example printed in `doc/core-concepts/dynamic-rendering.md` and demoed on the gallery's Form State Management section, an input with `'id': 'username'` marked `// Auto-tracked` next to a button whose handler reads `state.get('username')`: typing a name and pressing the button has always answered `Hello, Guest!`. `WDatePicker` was the only one of the four that honoured the contract, because it calls `state.set(id, date)` directly instead of routing through the parsed action. `WInput`, `WCheckbox` and `WSelect` now resolve their callback through one `_valueBinding<T>` helper: the parsed action when the node carries a usable one (which already writes state first), a plain `state.set(id, value)` when it carries only an `id`, and null when it carries neither, so a node with nowhere to put a value stays display-only rather than becoming interactive. The three call sites are what earned the helper; `WDatePicker` keeps its direct write, since its `onChange` goes through `parseAction` and delivers no `_value`. (`lib/src/dynamic/w_dynamic_renderer.dart`, `doc/core-concepts/dynamic-rendering.md`, `skills/wind-ui/references/dynamic.md`)
+
 ## [1.4.1] - 2026-08-23
 
 ### Fixed
