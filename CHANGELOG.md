@@ -6,7 +6,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
-## [Unreleased]
+## [1.4.1] - 2026-08-23
 
 ### Fixed
 
@@ -27,6 +27,8 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 - **The registry sync now skips a prerelease tag, so a beta release does not hand beta skill content to every consumer.** `publish.yml`'s tag filter is `[0-9]+.[0-9]+.[0-9]+*`, so `1.5.0-beta.1` matches it and this repo has shipped `1.0.0-alpha.*` tags. The reason to skip is distribution rather than a malformed version: `fluttersdk/ai`'s `sync.yml` validates the upstream version as `^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]+)?$` (a prerelease is explicitly allowed) and derives its own version by bumping its own manifest's patch number, so the string sent only reaches its release notes. What a sync does do is rsync `skills/wind-ui/` onto the registry's `main`, which is what `npx skills add fluttersdk/ai` serves. A branch name containing a dash cannot trip the guard, because on a `workflow_dispatch` the `github-release` job is skipped by its own tag check and a dependant of a skipped job is skipped with it. (`.github/workflows/publish.yml`)
 
 - **The called workflow's checkout stops carrying a token it does not use.** It now sets `persist-credentials: false` like every other checkout here: the job only reads `pubspec.yaml`, zizmor's `artipacked` audit is on by default, and this change is what puts the workflow inside the release pipeline. (`.github/workflows/dispatch-to-registry.yml`)
+
+- **The skill's own title had been reading `Wind UI 1.3` since the 1.4.0 release, and the release checklist is why.** That checklist names three version spots in `skills/wind-ui/`: the nine `references/*.md` H1s, the SKILL.md `description` prefix, and the `<!-- fluttersdk_wind X.Y.x | Skill vN -->` marker. There is a fourth, SKILL.md's own H1 on line 10, and nothing pointed at it, so 1.4.0 moved the other three and left this one behind. It is the first line of the file an agent loads. Corrected here with the rest of the 1.4.1 surface pass (`pubspec.yaml`, `example/pubspec.yaml`, the `dartdoc_options.yaml` source-link tag, the `llms.txt` version string); the nine reference H1s and the marker already read `1.4` and need no change for a patch. (`skills/wind-ui/SKILL.md`, `pubspec.yaml`, `example/pubspec.yaml`, `dartdoc_options.yaml`, `llms.txt`)
 
 ## [1.4.0] - 2026-08-21
 
@@ -266,7 +268,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.4.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.4.1...HEAD
+[1.4.1]: https://github.com/fluttersdk/wind/releases/tag/1.4.1
 [1.4.0]: https://github.com/fluttersdk/wind/releases/tag/1.4.0
 [1.3.0]: https://github.com/fluttersdk/wind/releases/tag/1.3.0
 [1.2.1]: https://github.com/fluttersdk/wind/releases/tag/1.2.1
