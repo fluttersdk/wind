@@ -384,6 +384,8 @@ checked:bg-blue-500 error:border-red-500 checked:bg-primary checked:border-trans
 
 Uses `checked:bg-primary` which requires a `primary` color family in `WindThemeData.colors`.
 
+No `semanticLabel` prop: the widget publishes one node carrying the `checked` state and no name, since the check glyph is its only child. A sibling `WText` is a visible label, not a semantic one. Wrap the pair in `MergeSemantics` for a single named node: `MergeSemantics(child: WDiv(className: 'flex flex-row items-center gap-3', children: [WCheckbox(...), WText('Accept terms')]))`.
+
 ### `WSelect<T>`
 
 Dropdown with single OR multi-select, search, async search, tagging, pagination.

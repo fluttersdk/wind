@@ -321,6 +321,41 @@ void main() {
         expect(node.flagsCollection.isEnabled, Tristate.isFalse);
       });
 
+      testWidgets('MergeSemantics folds a sibling label into the checkbox node',
+          (tester) async {
+        // WCheckbox renders its check glyph as the only child, so it has no
+        // name of its own. This is the composition the doc recommends for a
+        // labelled checkbox: the label and the box become one node carrying
+        // both the text and the checked state.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            MergeSemantics(
+              child: WDiv(
+                className: 'flex flex-row items-center gap-3',
+                children: [
+                  WCheckbox(value: true, onChanged: (_) {}),
+                  const WText('Accept terms'),
+                ],
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        // `.first` is the wrapper above: WCheckbox carries a MergeSemantics of
+        // its own, so a bare byType finder matches two.
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(MergeSemantics).first,
+        );
+        expect(node.label, contains('Accept terms'));
+        // The checkbox's own node is merged INTO this one, so the flag lives in
+        // the merged data rather than on the wrapper's own flags.
+        expect(
+          node.getSemanticsData().flagsCollection.isChecked,
+          CheckedState.isTrue,
+        );
+      });
+
       testWidgets('reports enabled when onChanged is non-null', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(WCheckbox(value: false, onChanged: (_) {})),

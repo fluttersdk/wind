@@ -99,7 +99,27 @@ Leaving `onChanged` null is how you render a display-only checkbox, such as a re
 
 ## Accessibility
 
-`WCheckbox` publishes one semantics node carrying the `checked` state, so `getByRole('checkbox')` resolves and a screen reader announces whether the box is ticked. The widget renders its check glyph as the only child, so it has no name of its own: pair it with a label (a `Row` holding a `WText`) or wrap it in `Semantics(label: ...)` when a screen-reader name is required.
+`WCheckbox` publishes one semantics node carrying the `checked` state, so `getByRole('checkbox')` resolves and a screen reader announces whether the box is ticked. The widget renders its check glyph as the only child, so it has no name of its own, and a `WText` sitting beside it in a row is a visible label rather than a semantic one: the two stay separate nodes. Wrap the pair in `MergeSemantics` to publish a single node carrying both the text and the checked state.
+
+```dart
+// One node, named "Accept terms", reporting checked.
+MergeSemantics(
+  child: WDiv(
+    className: 'flex flex-row items-center gap-3',
+    children: [
+      WCheckbox(
+        value: accepted,
+        onChanged: (val) => setState(() => accepted = val),
+        className: 'w-5 h-5 rounded border',
+      ),
+      const WText(
+        'Accept terms',
+        className: 'text-slate-900 dark:text-white',
+      ),
+    ],
+  ),
+)
+```
 
 A null `onChanged` is read exactly like `disabled: true`. There is no callback to run, so the checkbox attaches no gesture, publishes no tap action, reports itself as not enabled, and activates the `disabled:` prefix. That last part is visible: a display-only checkbox styled `disabled:opacity-50` renders dimmed.
 

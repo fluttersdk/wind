@@ -123,12 +123,12 @@ class WCheckbox extends StatelessWidget {
     }
 
     // Accessibility: WCheckbox doesn't accept a child label parameter (its
-    // visual content is the check glyph only). Callers who want a labelled
-    // checkbox compose `Row(children: [WCheckbox(...), WText('label')])`
-    // externally. The Semantics wrap below surfaces the checked role + state
-    // so Playwright `getByRole('checkbox')` resolves; callers can pair with
-    // an explicit `Semantics(label: 'Accept terms', container: false, ...)`
-    // sibling if a screen-reader-friendly label is required.
+    // visual content is the check glyph only), so the Semantics wrap below
+    // surfaces the checked role + state (which is what makes Playwright
+    // `getByRole('checkbox')` resolve) and nothing else. A sibling WText in a
+    // row is a visible label, not a semantic one: the two stay separate nodes.
+    // Callers who want one named node wrap the pair in `MergeSemantics`, which
+    // folds this node into it and carries the label plus the checked state.
     return Semantics(
       container: true,
       checked: value,
