@@ -67,7 +67,11 @@ import '../../fluttersdk_wind.dart';
 /// - **WSelect**: Reads/writes selected option value from state
 /// - **WDatePicker**: Reads/writes DateTime value from state
 ///
-/// State updates trigger reactive rebuilds for all widgets observing the same state ID.
+/// A state write rebuilds the whole rendered tree, not a subscribed subset:
+/// [WDynamic] listens to `WDynamicState` and calls `setState`, so every
+/// `id`-bearing widget re-reads its value from the store. `addIdListener` is a
+/// separate host-facing watch on one `id`, used by `WDynamicController`, and it
+/// does not drive the render path.
 ///
 /// ## Action Integration
 ///
