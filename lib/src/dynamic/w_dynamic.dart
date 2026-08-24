@@ -99,10 +99,35 @@ class _WDynamicState extends State<WDynamic> {
       _state = WDynamicState();
       _ownsState = true;
     }
+
+    // The read half of the binding. Every value-bearing builder in the renderer
+    // reads `state.get(id)` to decide what to display, so without this listener
+    // a write never reached the screen: an `id`-bound WCheckbox wrote `true` on
+    // its first tap, kept rendering unchecked, and could not be unticked because
+    // the second tap sent `!false` again and `WDynamicState.set` early-returns on
+    // an unchanged value. WInput hid the defect by owning a TextEditingController.
+    _state.addListener(_onStateChanged);
+  }
+
+  /// Rebuild the tree when any `id` in the shared state changes.
+  ///
+  /// Cheap for WInput despite firing per keystroke: the value written to state
+  /// is the text the controller already holds, so `WInput.didUpdateWidget`'s
+  /// `widget.value != _controller.text` guard skips the sync and the cursor
+  /// stays put.
+  void _onStateChanged() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
+    // Removed before the ownership check: a state passed in through a controller
+    // outlives this widget, and a listener left on it would call setState after
+    // dispose.
+    _state.removeListener(_onStateChanged);
+
     if (_ownsState) {
       _state.dispose();
     }

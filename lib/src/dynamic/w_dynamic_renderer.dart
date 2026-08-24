@@ -67,7 +67,11 @@ import '../../fluttersdk_wind.dart';
 /// - **WSelect**: Reads/writes selected option value from state
 /// - **WDatePicker**: Reads/writes DateTime value from state
 ///
-/// State updates trigger reactive rebuilds for all widgets observing the same state ID.
+/// A state write rebuilds the whole rendered tree, not a subscribed subset:
+/// [WDynamic] listens to `WDynamicState` and calls `setState`, so every
+/// `id`-bearing widget re-reads its value from the store. `addIdListener` is a
+/// separate host-facing watch on one `id`, used by `WDynamicController`, and it
+/// does not drive the render path.
 ///
 /// ## Action Integration
 ///
@@ -370,11 +374,8 @@ class WDynamicRenderer {
         ? (state.get(id)?.toString() ?? initialValue)
         : initialValue;
 
-    // Parse onChange action
-    final onChanged = actionHandler.parseValueAction<String>(
-      props['onChange'],
-      stateId: id,
-    );
+    // Parse onChange action, falling back to the plain `id` state binding
+    final onChanged = _valueBinding<String>(props['onChange'], id);
 
     return WInput(
       value: value,
@@ -394,11 +395,8 @@ class WDynamicRenderer {
     final bool value =
         id != null && state.has(id) ? (state.get(id) == true) : initialValue;
 
-    // Parse onChange action
-    final onChanged = actionHandler.parseValueAction<bool>(
-      props['onChange'],
-      stateId: id,
-    );
+    // Parse onChange action, falling back to the plain `id` state binding
+    final onChanged = _valueBinding<bool>(props['onChange'], id);
 
     return WCheckbox(
       value: value,
@@ -444,11 +442,8 @@ class WDynamicRenderer {
     final dynamic value =
         id != null && state.has(id) ? state.get(id) : initialValue;
 
-    // Parse onChange action
-    final onChanged = actionHandler.parseValueAction<dynamic>(
-      props['onChange'],
-      stateId: id,
-    );
+    // Parse onChange action, falling back to the plain `id` state binding
+    final onChanged = _valueBinding<dynamic>(props['onChange'], id);
 
     return WSelect(
       value: value,
@@ -650,6 +645,32 @@ class WDynamicRenderer {
   // ============================================================
   // Parsing Utilities
   // ============================================================
+
+  /// The change callback for a value-bearing widget built from JSON.
+  ///
+  /// Returns the parsed action when the node carries a usable `onChange`, since
+  /// [WActionHandler.parseValueAction] already writes `id` state before it
+  /// dispatches. Falls back to a plain state write when the node carries only
+  /// an `id`, which is the binding this renderer's class doc promises for every
+  /// `id`-bearing widget and which used to happen only as a side effect of
+  /// having an action. Returns null when there is neither, so a node with
+  /// nowhere to put a value stays display-only.
+  ValueChanged<T>? _valueBinding<T>(dynamic actionProp, String? id) {
+    final ValueChanged<T>? action = actionHandler.parseValueAction<T>(
+      actionProp,
+      stateId: id,
+    );
+
+    if (action != null) {
+      return action;
+    }
+
+    if (id == null) {
+      return null;
+    }
+
+    return (T value) => state.set(id, value);
+  }
 
   Map<String, dynamic> _deepConvertMap(dynamic input) {
     if (input is! Map) return {};

@@ -13,6 +13,10 @@ Widget wrapWithTheme(Widget child) {
 }
 
 void main() {
+  setUp(() {
+    WindParser.clearCache();
+  });
+
   group('WDynamic Widget Tests', () {
     group('Self-Owned State', () {
       testWidgets(
@@ -30,6 +34,67 @@ void main() {
           );
 
           expect(find.text('hi'), findsOneWidget);
+        },
+      );
+    });
+
+    group('Documented form-state example', () {
+      testWidgets(
+        'an id-bound input with no onChange reaches an action that reads state',
+        (tester) async {
+          // This is the worked example printed in
+          // doc/core-concepts/dynamic-rendering.md and demoed on the gallery's
+          // Form State Management section: an input carrying only an `id`, and
+          // a button whose action reads that id. It could not work while the
+          // state write lived inside the parsed onChange callback, so the
+          // greeting always read "Hello, Guest!".
+          String? greeting;
+
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WDynamic(
+                json: const {
+                  'type': 'WDiv',
+                  'props': {'className': 'flex flex-col gap-3'},
+                  'children': [
+                    {
+                      'type': 'WInput',
+                      'props': {
+                        'id': 'username',
+                        'placeholder': 'Type your name',
+                      },
+                    },
+                    {
+                      'type': 'WButton',
+                      'props': {
+                        'onTap': {'action': 'greet'},
+                      },
+                      'children': [
+                        {
+                          'type': 'WText',
+                          'props': {'text': 'Greet me'},
+                        },
+                      ],
+                    },
+                  ],
+                },
+                actions: {
+                  'greet': (args, state) {
+                    final name = (state.get('username') as String?) ?? 'Guest';
+                    greeting = 'Hello, $name!';
+                  },
+                },
+              ),
+            ),
+          );
+
+          await tester.enterText(find.byType(EditableText), 'Anilcan');
+          await tester.pump();
+
+          await tester.tap(find.text('Greet me'));
+          await tester.pump();
+
+          expect(greeting, 'Hello, Anilcan!');
         },
       );
     });
@@ -58,6 +123,122 @@ void main() {
 
           // 2. Verify the controller's state was not replaced by a fresh one.
           expect(controller.state.get('key'), 'value');
+        },
+      );
+    });
+
+    group('Reactive rebuilds', () {
+      // THE REGRESSION the id binding opened. The WRITE half landed without the
+      // READ half: `WDynamicState.set` notified nobody in the render path, so an
+      // id-bound checkbox wrote `true` on its first tap and kept rendering
+      // unchecked. The second tap then sent `!false` = `true` again, which `set`
+      // drops as unchanged, so the box could never be unticked either. Before the
+      // binding existed the same node rendered DISABLED, which at least did not
+      // promise a toggle it could not deliver.
+      //
+      // WInput hid all of this by owning a TextEditingController.
+      testWidgets(
+        'an id-bound checkbox ticks on tap and unticks on the next one',
+        (tester) async {
+          final controller = WDynamicController();
+          addTearDown(controller.dispose);
+
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WDynamic(
+                json: const {
+                  'type': 'WCheckbox',
+                  'props': {'id': 'agree'},
+                },
+                controller: controller,
+              ),
+            ),
+          );
+
+          expect(
+            tester.widget<WCheckbox>(find.byType(WCheckbox)).value,
+            isFalse,
+          );
+
+          await tester.tap(find.byType(WCheckbox));
+          await tester.pump();
+
+          expect(controller.state.get('agree'), isTrue);
+          expect(
+            tester.widget<WCheckbox>(find.byType(WCheckbox)).value,
+            isTrue,
+          );
+
+          await tester.tap(find.byType(WCheckbox));
+          await tester.pump();
+
+          expect(controller.state.get('agree'), isFalse);
+          expect(
+            tester.widget<WCheckbox>(find.byType(WCheckbox)).value,
+            isFalse,
+          );
+        },
+      );
+
+      // The other direction: a host writing through the controller is the whole
+      // point of exposing one, and it reached the state without reaching the
+      // screen.
+      testWidgets(
+        'a write through the controller reaches the screen',
+        (tester) async {
+          final controller = WDynamicController();
+          addTearDown(controller.dispose);
+
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WDynamic(
+                json: const {
+                  'type': 'WCheckbox',
+                  'props': {'id': 'agree'},
+                },
+                controller: controller,
+              ),
+            ),
+          );
+
+          controller.setValue('agree', true);
+          await tester.pump();
+
+          expect(
+            tester.widget<WCheckbox>(find.byType(WCheckbox)).value,
+            isTrue,
+          );
+        },
+      );
+
+      // A borrowed state outlives the widget that read it, so the listener has to
+      // come off on dispose. The `mounted` guard inside the callback would keep a
+      // leaked listener from throwing, which is exactly why this asserts the
+      // subscription itself rather than the absence of an exception.
+      testWidgets(
+        'the listener comes off a state the widget only borrowed',
+        (tester) async {
+          final state = _ObservableDynamicState();
+          final controller = WDynamicController.fromState(state);
+          addTearDown(state.dispose);
+
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WDynamic(
+                json: const {
+                  'type': 'WCheckbox',
+                  'props': {'id': 'agree'},
+                },
+                controller: controller,
+              ),
+            ),
+          );
+
+          expect(state.isObserved, isTrue);
+
+          await tester.pumpWidget(wrapWithTheme(const SizedBox.shrink()));
+
+          expect(state.isObserved, isFalse);
         },
       );
     });
@@ -242,4 +423,13 @@ void main() {
       );
     });
   });
+}
+
+/// A [WDynamicState] that reports whether anything is currently subscribed.
+///
+/// `ChangeNotifier.hasListeners` is protected, so reading it needs a subclass.
+/// Without it the dispose test could only assert that nothing threw, which a
+/// leaked listener would satisfy too because the callback guards on `mounted`.
+class _ObservableDynamicState extends WDynamicState {
+  bool get isObserved => hasListeners;
 }

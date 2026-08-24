@@ -43,7 +43,9 @@ Untrusted JSON: pass `denyWidgets` for surfaces a remote source must not invoke 
 
 ## State binding (`id`-keyed widgets)
 
-`WInput`, `WCheckbox`, `WSelect`, `WDatePicker` with `props.id` read initial value from `state.get(id)` and write back on change. Reactive: same `id` from another widget triggers a rebuild via `WDynamicState`'s `addIdListener`.
+`WInput`, `WCheckbox`, `WSelect`, `WDatePicker` with `props.id` read initial value from `state.get(id)` and write back on change. The `id` alone binds; an `onChange` is optional.
+
+Reactive: `WDynamic` listens to `WDynamicState` (a `ChangeNotifier`) and rebuilds the whole rendered tree on any write, so a widget sharing an `id` re-reads it. `addIdListener` is the host-facing watch on a single `id` behind `WDynamicController.addListener`, not the render path. Both halves are load-bearing: the write without the rebuild left an `id`-bound `WCheckbox` writing `true` and rendering unchecked, unable to be unticked because `set` drops an unchanged value.
 
 External vs internal state ownership:
 - `WDynamic(controller: WDynamicController())` — `_ownsState = false`; the host owns disposal.

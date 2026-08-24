@@ -123,9 +123,11 @@ Widgets that maintain a value (WInput, WCheckbox, WSelect, WDatePicker) bind to 
 
 Binding flow:
 1. Widget mounts → reads `state.get(id)` for initial value.
-2. User interacts → widget's `onChange` callback fires.
-3. Wind injects the new value into the action args as `_value` (or uses `parseValueAction` to call `state.set(id, value)` automatically).
+2. User interacts → the widget calls `state.set(id, value)`. The `id` alone is enough; no `onChange` is required for the value to land in the store.
+3. When the node also carries an `onChange` action, it dispatches after that write, with the new value injected into its args as `_value`. `WDatePicker` is the exception: its action dispatches with no injected value, so its handler reads the date from `state.get(id)`.
 4. The state's `notifyListeners()` triggers a rebuild; widgets reading the same `id` reflect the new value.
+
+A node with neither an `id` nor an `onChange` has nowhere to put a value and gets no callback at all, which is how a display-only control is expressed in JSON.
 
 Programmatic mutation via controller:
 
