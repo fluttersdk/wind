@@ -170,7 +170,7 @@ void main() {
     );
 
     testWidgets(
-      'flex-row with overflow-hidden preserves SizedBox gaps',
+      'flex-row with overflow-hidden keeps the gap unshrunk',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -194,16 +194,24 @@ void main() {
 
         final row = tester.widget<Row>(find.byType(Row));
 
-        // With gap-4, we expect: [Flexible(WText), SizedBox(gap), Flexible(WText)]
-        // SizedBox should NOT be wrapped
-        final sizedBoxCount = row.children.whereType<SizedBox>().length;
-        expect(sizedBoxCount, 1, reason: 'Gap SizedBox should not be wrapped');
+        // The concern this case protects is that the gap must not shrink with
+        // the children under `overflow-hidden`. It used to be phrased as "the
+        // gap SizedBox is not wrapped in Flexible", which named the mechanism;
+        // `Flex.spacing` makes it structural, since spacing is subtracted
+        // before any flex child is sized and can never be shrunk. Both the
+        // spacing and the shrink wrapping are asserted so a regression on
+        // either side still goes red.
+        expect(row.spacing, 16.0, reason: 'the gap survives shrinking');
+        expect(
+          tester.getTopLeft(find.text('B')).dx -
+              tester.getTopRight(find.text('A')).dx,
+          16.0,
+        );
 
-        // And we should have 2 Flexible wrappers for the texts
         final flexibleCount = row.children
             .where((child) => child is Flexible && child is! Expanded)
             .length;
-        expect(flexibleCount, 2);
+        expect(flexibleCount, 2, reason: 'both texts still shrink');
       },
     );
 

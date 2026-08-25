@@ -210,7 +210,7 @@ void main() {
     expect(size, Size.zero);
   });
 
-  testWidgets('injects SizedBox gaps when gap-4 is used in flex', (
+  testWidgets('gap-4 puts 16 logical px between flex children', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -225,18 +225,20 @@ void main() {
       ),
     );
 
-    // Assert
-    // In a Row with 2 children and a gap, we expect 3 items total in the row's children list.
-    // [Text('A'), SizedBox(width: 16), Text('B')]
-    final rowFinder = find.byType(Row);
-    final Row rowWidget = tester.widget(rowFinder);
+    // Asserted as a DISTANCE rather than as a widget in the children list.
+    // The gap used to be an injected `SizedBox` child and is now
+    // `Flex.spacing`, and a test that names the mechanism goes red on a change
+    // that moves nothing on screen. What `gap-4` promises is 16 logical px
+    // between children; that is what is checked.
+    final Row rowWidget = tester.widget(find.byType(Row));
+    expect(rowWidget.children.length, 2, reason: 'the gap is not a child');
+    expect(rowWidget.spacing, 16.0);
 
-    expect(rowWidget.children.length, 3);
-
-    // The middle element should be a SizedBox with width 16
-    final gapWidget = rowWidget.children[1];
-    expect(gapWidget, isA<SizedBox>());
-    expect((gapWidget as SizedBox).width, 16.0);
+    expect(
+      tester.getTopLeft(find.text('B')).dx -
+          tester.getTopRight(find.text('A')).dx,
+      16.0,
+    );
   });
 
   testWidgets('w-full works inside scroll view (overflow-y-auto)', (

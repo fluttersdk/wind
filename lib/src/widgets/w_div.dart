@@ -374,7 +374,8 @@ class WDiv extends StatelessWidget {
         );
 
         if (isColumn) {
-          return WindFlexOverflowScope(
+          return _flexOverflowScope(
+            context: context,
             skipExpanded: singleIsMainAxisScrollable,
             child: Column(
               mainAxisAlignment:
@@ -387,7 +388,8 @@ class WDiv extends StatelessWidget {
             ),
           );
         } else {
-          return WindFlexOverflowScope(
+          return _flexOverflowScope(
+            context: context,
             skipExpanded: singleIsMainAxisScrollable,
             child: Row(
               mainAxisAlignment:
@@ -514,13 +516,24 @@ class WDiv extends StatelessWidget {
       context: context,
     );
 
-    // Inject gaps if necessary (SRP: delegated to helper)
-    final gappedChildren = _buildGappedChildren(
-      children: orderedChildren,
-      direction: direction,
-      gapX: styles.gapX,
-      gapY: styles.gapY,
-    );
+    // `gap-*` goes to the render layer through `Flex.spacing` wherever the two
+    // forms lay out identically, and falls back to injected `SizedBox`
+    // children for the two alignments that count them. See
+    // `_gapGoesToRenderLayer`.
+    final double gapOnMainAxis =
+        ((direction == Axis.horizontal) ? styles.gapX : styles.gapY) ?? 0;
+    final bool renderLayerGap =
+        gapOnMainAxis > 0 && _gapGoesToRenderLayer(styles.mainAxisAlignment);
+    final double flexSpacing = renderLayerGap ? gapOnMainAxis : 0;
+
+    final gappedChildren = renderLayerGap
+        ? orderedChildren
+        : _buildGappedChildren(
+            children: orderedChildren,
+            direction: direction,
+            gapX: styles.gapX,
+            gapY: styles.gapY,
+          );
 
     // Determine mainAxisSize:
     // - Column with h-full or min-h-full needs .max to fill height for centering
@@ -573,6 +586,7 @@ class WDiv extends StatelessWidget {
         styles: styles,
         isColumn: isColumn,
         basisChildren: resolvedChildren,
+        flexSpacing: flexSpacing,
         effectiveMainAxisSize: effectiveMainAxisSize,
         isMainAxisScrollable: isMainAxisScrollable,
         hasOverflowClip: hasOverflowClip,
@@ -594,6 +608,7 @@ class WDiv extends StatelessWidget {
       styles: styles,
       isColumn: isColumn,
       basisChildren: gappedChildren,
+      flexSpacing: flexSpacing,
       effectiveMainAxisSize: effectiveMainAxisSize,
       isMainAxisScrollable: isMainAxisScrollable,
       hasOverflowClip: hasOverflowClip,
@@ -610,6 +625,7 @@ class WDiv extends StatelessWidget {
     required WindStyle styles,
     required bool isColumn,
     required List<Widget> basisChildren,
+    required double flexSpacing,
     required MainAxisSize effectiveMainAxisSize,
     required bool isMainAxisScrollable,
     required bool hasOverflowClip,
@@ -644,7 +660,8 @@ class WDiv extends StatelessWidget {
             }).toList()
           : basisChildren;
 
-      return WindFlexOverflowScope(
+      return _flexOverflowScope(
+        context: context,
         skipExpanded: isMainAxisScrollable,
         child: Column(
           mainAxisAlignment:
@@ -661,6 +678,7 @@ class WDiv extends StatelessWidget {
           verticalDirection: styles.flexReverse
               ? VerticalDirection.up
               : VerticalDirection.down,
+          spacing: flexSpacing,
           children: columnChildren,
         ),
       );
@@ -750,7 +768,8 @@ class WDiv extends StatelessWidget {
             : TextDirection.rtl;
       }
 
-      return WindFlexOverflowScope(
+      return _flexOverflowScope(
+        context: context,
         skipExpanded: isMainAxisScrollable,
         child: Row(
           mainAxisAlignment:
@@ -760,6 +779,7 @@ class WDiv extends StatelessWidget {
           mainAxisSize: rowMainAxisSize,
           textBaseline: styles.textBaseline,
           textDirection: rowTextDirection,
+          spacing: flexSpacing,
           children: rowChildren,
         ),
       );
@@ -1869,7 +1889,35 @@ class WDiv extends StatelessWidget {
     return widgetToBuild ?? const SizedBox.shrink();
   }
 
+  /// Publishes [skipExpanded] only when it differs from the answer [context]
+  /// already gives.
+  ///
+  /// Both readers of this scope (`WDiv.build` and `WText.build`) ask for it as
+  /// `maybeOf(context)?.skipExpanded ?? false`, so a scope carrying the value
+  /// already in scope is indistinguishable from no scope at all, and buys an
+  /// Element and an inherited dependency per flex container for that.
+  /// Measured driving a real app: 729 of them across a four-route tour, 0.66
+  /// per `WDiv` built, on screens with no main-axis-scrollable flex anywhere.
+  ///
+  /// It is a comparison rather than a delete because the redundancy is
+  /// conditional. A `false` published under an ancestor `true` is a genuine
+  /// shadow: drop it and the ancestor's `true` leaks into a subtree that has
+  /// to read `false`.
+  Widget _flexOverflowScope({
+    required BuildContext context,
+    required bool skipExpanded,
+    required Widget child,
+  }) {
+    final bool inherited =
+        WindFlexOverflowScope.maybeOf(context)?.skipExpanded ?? false;
+    if (skipExpanded == inherited) return child;
+    return WindFlexOverflowScope(skipExpanded: skipExpanded, child: child);
+  }
+
   /// Helper to inject `SizedBox` gaps between list items.
+  ///
+  /// Only reached for the alignments [_gapGoesToRenderLayer] excludes; the
+  /// common case never builds these widgets at all.
   List<Widget> _buildGappedChildren({
     required List<Widget> children,
     required Axis direction,
@@ -1887,6 +1935,28 @@ class WDiv extends StatelessWidget {
           ? SizedBox(width: gap)
           : SizedBox(height: gap);
     });
+  }
+
+  /// Whether this flex can hand `gap-*` to `Flex.spacing` instead of injecting
+  /// a `SizedBox` between every pair of children.
+  ///
+  /// The injected boxes are real flex children, and `SizedBox` was the most
+  /// numerous wrapper measured against a real app: 1250 across a four-route
+  /// tour, 1.14 per `WDiv` built. `Flex.spacing` does the same job in the
+  /// render object, so the saving is one widget per gap.
+  ///
+  /// The two are NOT interchangeable under every alignment, which is why this
+  /// is a predicate rather than an unconditional swap. `spaceAround` and
+  /// `spaceEvenly` divide the free space by the number of children, so
+  /// counting the gap boxes as children moves the real ones: with three
+  /// children and two gaps the row distributes across five slots, not three.
+  /// `spaceBetween` agrees between the two forms (the extra slots cancel), and
+  /// start / end / center pack identically. Those keep the old path, and
+  /// `test/widgets/w_div/gap_spacing_equivalence_test.dart` pins the positions
+  /// under all six so the exclusion cannot rot into a silent layout shift.
+  static bool _gapGoesToRenderLayer(MainAxisAlignment? alignment) {
+    return alignment != MainAxisAlignment.spaceAround &&
+        alignment != MainAxisAlignment.spaceEvenly;
   }
 
   /// Helper to translate `MainAxisAlignment` to `WrapAlignment`.
