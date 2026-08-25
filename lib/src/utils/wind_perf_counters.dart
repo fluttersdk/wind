@@ -87,11 +87,15 @@ class WindPerfCounters {
 
   /// Zeroes every counter, leaving [enabled] alone.
   ///
+  /// Public, unlike the recorders: a measurement session opens by zeroing the
+  /// counters from another package (`magic_devtools` assigns dusk's
+  /// session-begin hook), so this is part of the cross-package contract rather
+  /// than wind's own bookkeeping.
+  ///
   /// `WindParser.clearCache()` calls this, so a hit rate is always reported
   /// against the cache it was measured on. Clearing the flag here would end a
   /// measurement session on the next theme change, which is not this method's
   /// decision to make.
-  @internal
   static void reset() {
     _cacheHits = 0;
     _cacheMisses = 0;
