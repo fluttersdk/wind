@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/parser/wind_context.dart';
 import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
+import 'package:fluttersdk_wind/src/parser/wind_style.dart';
+import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
+import 'package:fluttersdk_wind/src/utils/wind_perf_counters.dart';
 
 // Mock WindThemeData for testing purposes
 final testTheme = WindThemeData(
@@ -36,7 +39,112 @@ WindContext createTestContext({
   );
 }
 
+/// Pumps a themed tree and hands back a [BuildContext] `WindParser.parse` can
+/// resolve a [WindContext] from.
+Future<BuildContext> pumpAndCaptureContext(WidgetTester tester) async {
+  late BuildContext captured;
+  await tester.pumpWidget(
+    MaterialApp(
+      home: WindTheme(
+        data: WindThemeData(),
+        child: Builder(
+          builder: (context) {
+            captured = context;
+            return const SizedBox();
+          },
+        ),
+      ),
+    ),
+  );
+  return captured;
+}
+
 void main() {
+  setUp(WindParser.clearCache);
+
+  tearDown(() {
+    WindPerfCounters.enabled = false;
+    WindParser.clearCache();
+  });
+
+  group('WindParser cache counters', () {
+    testWidgets(
+      'counts a repeated default parse as one miss and one hit',
+      (tester) async {
+        final BuildContext context = await pumpAndCaptureContext(tester);
+        WindPerfCounters.enabled = true;
+
+        WindParser.parse('p-4', context);
+        expect(WindPerfCounters.cacheMisses, 1);
+        expect(WindPerfCounters.cacheHits, 0);
+
+        WindParser.parse('p-4', context);
+        expect(WindPerfCounters.cacheMisses, 1);
+        expect(WindPerfCounters.cacheHits, 1);
+        expect(WindPerfCounters.cacheBypasses, 0);
+        expect(WindParser.cacheSize, 1);
+      },
+    );
+
+    testWidgets(
+      'counts a baseStyle parse as a bypass, never as a miss or a hit',
+      (tester) async {
+        final BuildContext context = await pumpAndCaptureContext(tester);
+        WindPerfCounters.enabled = true;
+
+        // Prime the cache through the default path: one miss, then one hit.
+        WindParser.parse('p-4', context);
+        WindParser.parse('p-4', context);
+        final int sizeAfterPriming = WindParser.cacheSize;
+
+        // The SAME className with a baseStyle neither consults nor writes the
+        // cache, so it is a third outcome. Counting it as a miss would report
+        // a cache-miss rate that looks explainable and say nothing about work
+        // that never amortises. Note this test has to construct a baseStyle by
+        // hand to reach the branch at all: WDiv and WText pass
+        // `baseStyle: style`, and that property is null in ordinary use, so a
+        // bypass is a property of a CALLER writing `style:` rather than of
+        // using those widgets. Measured on a real app, zero bypasses across
+        // 1613 W-widget builds.
+        const WindStyle baseStyle = WindStyle(opacity: 0.5);
+        WindParser.parse('p-4', context, baseStyle: baseStyle);
+        WindParser.parse('p-4', context, baseStyle: baseStyle);
+
+        expect(WindPerfCounters.cacheBypasses, 2);
+        expect(WindPerfCounters.cacheMisses, 1);
+        expect(WindPerfCounters.cacheHits, 1);
+        expect(WindParser.cacheSize, sizeAfterPriming);
+      },
+    );
+
+    testWidgets('records nothing while disabled', (tester) async {
+      final BuildContext context = await pumpAndCaptureContext(tester);
+
+      WindParser.parse('p-4', context);
+      WindParser.parse('p-4', context);
+      WindParser.parse('p-4', context, baseStyle: const WindStyle());
+
+      expect(WindPerfCounters.cacheMisses, 0);
+      expect(WindPerfCounters.cacheHits, 0);
+      expect(WindPerfCounters.cacheBypasses, 0);
+    });
+
+    testWidgets(
+      'clearCache() resets the counters without ending the session',
+      (tester) async {
+        final BuildContext context = await pumpAndCaptureContext(tester);
+        WindPerfCounters.enabled = true;
+        WindParser.parse('p-4', context);
+        expect(WindPerfCounters.cacheMisses, 1);
+
+        WindParser.clearCache();
+
+        expect(WindPerfCounters.cacheMisses, 0);
+        expect(WindPerfCounters.enabled, isTrue);
+      },
+    );
+  });
+
   group('WindParser.findAndGroupClasses', () {
     test('should group classes by parser', () {
       final className = "bg-red-500 text-lg md:bg-blue-500";

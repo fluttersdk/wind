@@ -22,6 +22,7 @@ import 'parsers/ring_parser.dart';
 import 'parsers/svg_parser.dart';
 import 'parsers/animation_parser.dart';
 import 'parsers/cursor_parser.dart';
+import '../utils/wind_perf_counters.dart';
 import 'alias_expander.dart';
 import 'wind_context.dart';
 import 'wind_style.dart';
@@ -152,6 +153,12 @@ class WindParser {
   static void clearCache() {
     _styleCache.clear();
     _warnedAliases.clear();
+    // The counters describe this cache's behaviour, so they only mean anything
+    // against the cache they were measured on. Resetting here, rather than at
+    // each call site, is also what keeps the counters out of every existing
+    // test: the whole suite already calls clearCache() in setUp, and a count
+    // that outlived the clear would leak into the next test in the file.
+    WindPerfCounters.reset();
   }
 
   /// Number of entries currently held in the style cache.
@@ -219,6 +226,7 @@ class WindParser {
     // cache for subsequent default-flag callers. Bypass the cache entirely
     // when baseStyle is provided.
     if (baseStyle == null && _styleCache.containsKey(cacheKey)) {
+      WindPerfCounters.recordCacheHit();
       return _styleCache[cacheKey]!;
     }
 
@@ -290,8 +298,16 @@ class WindParser {
     // Only cache the default-flag result. When baseStyle is non-null, the
     // computed style is per-call and would pollute the cache for callers
     // using the default flow.
+    //
+    // This branch is also where the two non-hit outcomes part: a default-flag
+    // parse is a MISS (it fills the slot it just failed to find), while a
+    // baseStyle parse is a BYPASS that never looked at the cache at all and
+    // will pay the same cost on every rebuild.
     if (baseStyle == null) {
       _styleCache[cacheKey] = parsedStyle;
+      WindPerfCounters.recordCacheMiss();
+    } else {
+      WindPerfCounters.recordCacheBypass();
     }
     return parsedStyle;
   }
