@@ -1,4 +1,4 @@
-# Wind 1.4: Design culture
+# Wind 1.5: Design culture
 
 Taste, expressed as className tokens. Every other reference file answers "does this token exist and what does it do"; this one answers "which token should this be". Reach for it when the task is a screen or a component with no design spec attached, when a layout renders correctly and still looks wrong, or when a reviewer says "it works but it feels off".
 
