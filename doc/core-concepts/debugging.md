@@ -11,6 +11,7 @@
 - [Common Scenarios](#common-scenarios)
 - [Unknown className Warnings](#unknown-classname-warnings)
 - [External Tooling Integration](#external-tooling-integration)
+- [Aggregate Performance Counters](#aggregate-performance-counters)
 
 <a name="introduction"></a>
 ## Introduction
@@ -190,3 +191,50 @@ Fields whose value is null are omitted; the map only carries what the widget act
 ### Release-build safety
 
 `Wind.installDebugResolver()` is a no-op in release builds. The `kDebugMode` guard in user code further ensures dart2js / dart2native tree-shakes the entire branch on every platform. There is no production cost from leaving the call in place.
+
+<a name="aggregate-performance-counters"></a>
+## Aggregate Performance Counters
+
+`WindDebugResolver` answers per-`Element` questions, so it has nowhere to put a number that belongs to no single element: how often the style cache was hit, how many `WDiv`s were built. `WindPerfCounters` and a second contract, `WindPerfResolver`, cover exactly those.
+
+### The three cache outcomes, and why they are three
+
+`WindParser.parse` runs on every build of every W-widget, and its cache has three outcomes rather than the usual two:
+
+| Outcome | When | Cost |
+|---|---|---|
+| **Hit** | no `baseStyle`, and the key is present | a map lookup |
+| **Miss** | no `baseStyle`, key absent | parses once, then caches |
+| **Bypass** | a `baseStyle` was supplied | parses on every rebuild, never caches |
+
+A bypass never consults and never writes the cache, because the cache key is composed from the context and the className only. Folding it into "miss" would report a cache-miss rate that looks explainable while saying nothing about work that never amortises.
+
+Worth reading the call sites precisely: `WDiv` and `WText` both call the parser as `baseStyle: style`, and `style` is the widget's own nullable property. **A bypass is a property of a caller writing `style:`, not of using these widgets.** Driven against a real app, bypasses measured zero across 1613 W-widget builds while the hit rate stayed at 99% or better.
+
+### Turning them on
+
+Counting is off by default and every increment sits behind one static bool check, so a disabled counter costs a load and a branch that tree-shakes:
+
+```dart
+WindPerfCounters.enabled = true;
+// ... drive the interaction you want to measure ...
+print(WindPerfCounters.cacheHits);      // and cacheMisses, cacheBypasses
+print(WindPerfCounters.wDivBuilds);     // and wTextBuilds
+```
+
+`WindParser.clearCache()` resets the counters as well as the cache, so a hit rate is always reported against the cache it was measured on. That is also why a theme change mid-measurement zeroes them.
+
+### Reading them from outside
+
+`Wind.installPerfResolver()` publishes the totals through the diagnostics contracts package, the same bridge `installDebugResolver()` uses and a separate slot on the same registry. It is idempotent, `kDebugMode`-gated, and installing it costs nothing on its own since counting stays off until the flag is set:
+
+```dart
+if (kDebugMode) {
+  Wind.installDebugResolver();   // per-Element state
+  Wind.installPerfResolver();    // aggregate counters
+}
+```
+
+A tool then reads `WindDebugRegistry.currentPerf?.stats()` and gets exactly six `int` keys: `cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds`, `wTextBuilds`. The `null` when no resolver is registered is meaningful and worth passing through rather than flattening to zeros: it is what lets a caller tell "wind never installed one" from "the counters really are zero".
+
+`fluttersdk_dusk` reads this during a `dusk:perf_begin` / `dusk:perf_end` session.

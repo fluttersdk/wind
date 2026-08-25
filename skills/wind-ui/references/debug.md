@@ -1,6 +1,6 @@
 # Wind 1.4: Debug bridge, parser cache, logger
 
-Wiring `Wind.installDebugResolver()` for E2E tooling (Dusk, Telescope, Playwright), understanding the parser cache (and why tests need `WindParser.clearCache()`), and reading `WindLogger` output for performance / composition debugging.
+Wiring `Wind.installDebugResolver()` and `Wind.installPerfResolver()` for E2E tooling (Dusk, Telescope, Playwright), understanding the parser cache (and why tests need `WindParser.clearCache()`), and reading `WindLogger` output for performance / composition debugging.
 
 ## Contents
 
@@ -220,3 +220,19 @@ Discipline:
 For testing dark mode, pass `WindThemeData(brightness: Brightness.dark, syncWithSystem: false)` to `wrapWithTheme`. For testing breakpoints, set the viewport size to bracket each breakpoint.
 
 For E2E testing inside a running app (Dusk / Telescope / Playwright), `Wind.installDebugResolver()` exposes the 7-field snapshot per W-widget; consumers read via `WindDebugRegistry.current?.resolve(element)` without needing Wind as a direct dep.
+
+## Aggregate counters (`WindPerfCounters`)
+
+A per-`Element` resolver has nowhere to put a number that belongs to no element, so the counters get a second contract and a second registry slot.
+
+`WindPerfCounters.enabled` is `false` by default and every increment sits behind it, so a disabled counter is one static bool load. The parse path has THREE outcomes, not two:
+
+- **hit**: no `baseStyle`, key present.
+- **miss**: no `baseStyle`, key absent, parses and caches.
+- **bypass**: a `baseStyle` was supplied, so it parses on every rebuild and never caches.
+
+A bypass is a property of a caller writing `style:`, NOT of using `WDiv` / `WText`: both pass `baseStyle: style` and that property is null in ordinary use. Measured on a real app, bypasses were zero across 1613 W-widget builds at a 99%+ hit rate.
+
+`WindParser.clearCache()` resets the counters too, which is why a theme change mid-measurement zeroes them.
+
+`Wind.installPerfResolver()` publishes six `int` keys through `WindDebugRegistry.currentPerf?.stats()`: `cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds`, `wTextBuilds`. A `null` there means no resolver was installed, which is deliberately distinguishable from "the counters are zero".

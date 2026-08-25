@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Opt-in aggregate counters for Wind's hottest path.
 ///
 /// `WindParser.parse` runs on every build of every W-widget, so these counters
@@ -12,10 +14,14 @@
 /// - **Miss**: no `baseStyle`, key absent, so the style is parsed and cached.
 /// - **Bypass**: a `baseStyle` was supplied, so the parser never consults and
 ///   never writes the cache (the key does not include `baseStyle`; see
-///   `WindParser.parse`). `WDiv` and `WText` are the only callers that pass
-///   one, and they are the two most-used widgets in the framework, so folding
-///   bypasses into misses would hide the largest share of the parse work
-///   behind a cache-miss rate that looks explainable.
+///   `WindParser.parse`). A bypass is a property of a CALLER writing `style:`,
+///   not of using `WDiv` or `WText`: both pass `baseStyle: style`, and `style`
+///   is the widget's own nullable property, null in ordinary use, so those
+///   calls take the cached path. Driven against a real app, bypasses measured
+///   zero across 1613 W-widget builds. Counting them separately is what turned
+///   that from an argument into a number; folding them into misses would have
+///   left a cache-miss rate that looks explainable and says nothing about the
+///   work that never amortises.
 class WindPerfCounters {
   WindPerfCounters._();
 
@@ -45,30 +51,35 @@ class WindPerfCounters {
   static int get wTextBuilds => _wTextBuilds;
 
   /// Records a style served from the cache.
+  @internal
   static void recordCacheHit() {
     if (!enabled) return;
     _cacheHits++;
   }
 
   /// Records a style computed and written into the cache.
+  @internal
   static void recordCacheMiss() {
     if (!enabled) return;
     _cacheMisses++;
   }
 
   /// Records a style computed with the cache skipped entirely.
+  @internal
   static void recordCacheBypass() {
     if (!enabled) return;
     _cacheBypasses++;
   }
 
   /// Records one `WDiv` build.
+  @internal
   static void recordWDivBuild() {
     if (!enabled) return;
     _wDivBuilds++;
   }
 
   /// Records one `WText` build.
+  @internal
   static void recordWTextBuild() {
     if (!enabled) return;
     _wTextBuilds++;
@@ -80,6 +91,7 @@ class WindPerfCounters {
   /// against the cache it was measured on. Clearing the flag here would end a
   /// measurement session on the next theme change, which is not this method's
   /// decision to make.
+  @internal
   static void reset() {
     _cacheHits = 0;
     _cacheMisses = 0;

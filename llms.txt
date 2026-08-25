@@ -89,7 +89,7 @@ if (kDebugMode) Wind.installDebugResolver();
 - [Responsive design](https://fluttersdk.com/wind/core-concepts/responsive-design.md): breakpoint prefixes + `WBreakpoint` escape hatch.
 - [State management](https://fluttersdk.com/wind/core-concepts/state-management.md): `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, custom states.
 - [Dynamic rendering](https://fluttersdk.com/wind/core-concepts/dynamic-rendering.md): `WDynamic` JSON schema + security model.
-- [Debugging](https://fluttersdk.com/wind/core-concepts/debugging.md): `WindLogger`, `Wind.installDebugResolver()`, cache inspection, unknown-className debug hint.
+- [Debugging](https://fluttersdk.com/wind/core-concepts/debugging.md): `WindLogger`, `Wind.installDebugResolver()`, `Wind.installPerfResolver()` + `WindPerfCounters` (opt-in hit/miss/bypass and build counters), cache inspection, unknown-className debug hint.
 - [Recipes](https://fluttersdk.com/wind/styling/wind-recipe.md): `WindRecipe` / `WindSlotRecipe` variant composition (base + axes + compoundVariants + caller className) in strict emission order, no dedupe / sort / twMerge.
 
 ## Utility families
