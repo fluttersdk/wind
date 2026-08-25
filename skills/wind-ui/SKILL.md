@@ -7,7 +7,7 @@ version: 2.13.0
 
 <!-- fluttersdk_wind 1.4.x | Skill v2.13.0 (2026-08-25) -->
 
-# Wind UI 1.4
+# Wind UI 1.5
 
 Utility-first Flutter styling. Every visual decision lives in a `className: String?` parsed at build time into an immutable `WindStyle` and composed into a native Flutter widget tree. Tailwind syntax (`flex`, `p-4`, `dark:bg-gray-800`, `hover:shadow-lg`), Flutter physics.
 
