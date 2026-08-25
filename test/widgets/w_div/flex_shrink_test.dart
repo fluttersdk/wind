@@ -15,6 +15,8 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 ///
 /// For other cases, developers should use `overflow-hidden` explicitly.
 void main() {
+  setUp(WindParser.clearCache);
+
   group('WDiv Flex Shrink Behavior', () {
     testWidgets(
       'flex-row with overflow-hidden wraps children with Flexible',

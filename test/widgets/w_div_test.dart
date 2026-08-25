@@ -8,6 +8,10 @@ import 'package:fluttersdk_wind/src/theme/defaults/colors.dart'
     as default_colors;
 
 void main() {
+  // File-scope, because the per-group resets below do not cover every
+  // test here and the parser cache survives between them.
+  setUp(WindParser.clearCache);
+
   group('WDiv Composition Tests', () {
     testWidgets('renders Padding widget when p-4 is used', (tester) async {
       // Arrange

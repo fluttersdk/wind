@@ -28,6 +28,8 @@ Widget wrapWithTheme(Widget child) {
 /// shadow, and removing it would leak the ancestor's `true` into a subtree that
 /// must see `false`.
 void main() {
+  setUp(WindParser.clearCache);
+
   /// Every `WindFlexOverflowScope` element in the current tree.
   int scopeCount() => find.byType(WindFlexOverflowScope).evaluate().length;
 

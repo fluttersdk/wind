@@ -29,6 +29,11 @@ Widget wrapWithTheme(Widget child) {
 }
 
 void main() {
+  // The parser cache is static and survives between tests, so a neighbour
+  // priming it can make this file pass on logic that regressed. See
+  // `.claude/rules/tests.md`.
+  setUp(WindParser.clearCache);
+
   /// Left edge of each lettered box, in order.
   List<double> childLefts(WidgetTester tester) {
     return <String>['a', 'b', 'c']
@@ -97,21 +102,30 @@ void main() {
 
     testWidgets('justify-evenly keeps the distribution it has always had',
         (WidgetTester tester) async {
-      // The excluded case. With injected gaps the row has five children, so
-      // the even distribution counts the gaps too. Moving to Flex.spacing
-      // here would shift every child, so this alignment deliberately keeps
-      // the old path; the assertion exists to catch it if that changes.
+      // The excluded case. With injected gaps the row has FIVE children, so
+      // `spaceEvenly` divides the free space into six slots and the real
+      // children land 138.67 apart. Handing the gap to `Flex.spacing` would
+      // leave three children and four slots, putting them 118 apart.
+      //
+      // The distance is the assertion precisely because a symmetry check is
+      // not one: both mechanisms space children evenly, so `x1 - x0 == x2 -
+      // x1` holds either way and would pass on the regression it is supposed
+      // to catch.
       await pumpRow(tester, 'justify-evenly');
       final List<double> x = childLefts(tester);
-      expect(x[1] - x[0], closeTo(x[2] - x[1], 0.01));
-      expect(x[0] - 0.0, greaterThan(0.0));
+      expect(x[1] - x[0], closeTo(138.667, 0.01));
+      expect(x[2] - x[1], closeTo(138.667, 0.01));
     });
 
     testWidgets('justify-around keeps the distribution it has always had',
         (WidgetTester tester) async {
+      // Same exclusion, same reason: `spaceAround` gives each of the five
+      // children its own half-share on both sides, which lands the real ones
+      // 155.2 apart. A distance, not a symmetry check, for the reason above.
       await pumpRow(tester, 'justify-around');
       final List<double> x = childLefts(tester);
-      expect(x[1] - x[0], closeTo(x[2] - x[1], 0.01));
+      expect(x[1] - x[0], closeTo(155.2, 0.01));
+      expect(x[2] - x[1], closeTo(155.2, 0.01));
     });
 
     testWidgets('a column gap spaces on the vertical axis', (tester) async {
