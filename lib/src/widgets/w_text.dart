@@ -4,6 +4,7 @@ import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../state/wind_flex_overflow_scope.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **The Utility-First Text Component**
 ///
@@ -96,6 +97,10 @@ class WText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // WText has no _buildImpl indirection: build() resolves styles directly,
+    // so this is its equivalent of WDiv's counting site.
+    WindPerfCounters.recordWTextBuild();
+
     // 1. CALL THE "ORCHESTRATOR": Style Resolution final
     WindStyle styles = className != null
         ? WindParser.parse(

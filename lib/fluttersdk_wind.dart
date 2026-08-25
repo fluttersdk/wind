@@ -80,6 +80,7 @@ export 'src/theme/wind_theme_data.dart';
 export 'src/utils/color_utils.dart';
 export 'src/utils/wind_helpers.dart';
 export 'src/utils/wind_extensions.dart';
+export 'src/utils/wind_perf_counters.dart';
 export 'src/widgets/w_anchor.dart';
 export 'src/widgets/w_button.dart';
 export 'src/widgets/w_div.dart';

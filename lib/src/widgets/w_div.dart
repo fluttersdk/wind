@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import 'wind_animation_wrapper.dart';
 import '../state/wind_anchor_state_provider.dart';
 import '../state/wind_flex_overflow_scope.dart';
@@ -154,6 +155,11 @@ class WDiv extends StatelessWidget {
   }
 
   Widget _buildImpl(BuildContext context) {
+    // Counted here rather than in build(): the interactive path returns a
+    // WAnchor whose Builder calls this method, so this is the one place every
+    // WDiv style resolution passes through exactly once.
+    WindPerfCounters.recordWDivBuild();
+
     // 1. RESOLVE STYLES (The Logic Layer)
     // Fetch state from WindAnchorStateProvider (if present)
     final anchorState = WindAnchorStateProvider.of(context);
