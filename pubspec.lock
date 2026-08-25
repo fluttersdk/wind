@@ -89,7 +89,7 @@ packages:
       path: "../wind_diagnostics_contracts"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.1.0"
   http:
     dependency: transitive
     description:

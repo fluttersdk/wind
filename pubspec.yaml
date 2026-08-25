@@ -33,7 +33,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.0
-  fluttersdk_wind_diagnostics_contracts: ^1.0.0
+  fluttersdk_wind_diagnostics_contracts: ^1.1.0
 
 dev_dependencies:
   flutter_test:
