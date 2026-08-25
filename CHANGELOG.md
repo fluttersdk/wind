@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.5.0] - 2026-08-25
+
 ### Changed
 
 - **`gap-*` on a flex container goes to `Flex.spacing` instead of injecting a `SizedBox` between every pair of children.** Spacing lands in the render object, so the gap costs no widget. Measured driving a real app, `SizedBox` was the most numerous wrapper in it at 1.06 per `WDiv` built and is now 0.23. The swap is deliberately NOT applied under `justify-around` or `justify-evenly`, which divide free space by the number of children: there the injected gaps are load-bearing, and handing them to `spacing` would move every real child (measured 138.7px apart against 118px on a three-child row). Those two keep the old path, and `gap_spacing_equivalence_test.dart` pins child DISTANCES under all six alignments, since a symmetry check passes under both mechanisms and would prove nothing. (`lib/src/widgets/w_div.dart`)
@@ -288,7 +292,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.4.1...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.5.0...HEAD
+[1.5.0]: https://github.com/fluttersdk/wind/releases/tag/1.5.0
 [1.4.1]: https://github.com/fluttersdk/wind/releases/tag/1.4.1
 [1.4.0]: https://github.com/fluttersdk/wind/releases/tag/1.4.0
 [1.3.0]: https://github.com/fluttersdk/wind/releases/tag/1.3.0
