@@ -98,10 +98,14 @@ void main() {
         final int sizeAfterPriming = WindParser.cacheSize;
 
         // The SAME className with a baseStyle neither consults nor writes the
-        // cache, so it is a third outcome. Counting it as a miss would hide
-        // exactly what these counters exist to expose: WDiv and WText, the two
-        // most-used widgets in the framework, are the only callers that pass a
-        // baseStyle, so every one of their parses takes this branch.
+        // cache, so it is a third outcome. Counting it as a miss would report
+        // a cache-miss rate that looks explainable and say nothing about work
+        // that never amortises. Note this test has to construct a baseStyle by
+        // hand to reach the branch at all: WDiv and WText pass
+        // `baseStyle: style`, and that property is null in ordinary use, so a
+        // bypass is a property of a CALLER writing `style:` rather than of
+        // using those widgets. Measured on a real app, zero bypasses across
+        // 1613 W-widget builds.
         const WindStyle baseStyle = WindStyle(opacity: 0.5);
         WindParser.parse('p-4', context, baseStyle: baseStyle);
         WindParser.parse('p-4', context, baseStyle: baseStyle);

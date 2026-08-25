@@ -5,7 +5,7 @@ when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: compos
 version: 2.13.0
 ---
 
-<!-- fluttersdk_wind 1.4.x | Skill v2.12.3 (2026-08-23) -->
+<!-- fluttersdk_wind 1.4.x | Skill v2.13.0 (2026-08-25) -->
 
 # Wind UI 1.4
 
