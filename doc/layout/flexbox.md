@@ -65,7 +65,7 @@ WDiv(
 | `order-{n}` | `order: {n}` | Stable-sort children before layout |
 | `justify-{alignment}` | `justify-content: ...` | `MainAxisAlignment` |
 | `items-{alignment}` | `align-items: ...` | `CrossAxisAlignment` |
-| `gap-{n}` | `gap: {n}` | `SizedBox` (spacer) |
+| `gap-{n}` | `gap: {n}` | `Flex.spacing` (render layer, no widget); a `SizedBox` spacer under `justify-around` / `justify-evenly` only |
 | `flex-1` | `flex: 1` | `Expanded()` |
 | `shrink-0` | `flex-shrink: 0` | No wrapper: preserves intrinsic size |
 

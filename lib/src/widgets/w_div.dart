@@ -524,6 +524,10 @@ class WDiv extends StatelessWidget {
         ((direction == Axis.horizontal) ? styles.gapX : styles.gapY) ?? 0;
     final bool renderLayerGap =
         gapOnMainAxis > 0 && _gapGoesToRenderLayer(styles.mainAxisAlignment);
+    // No `children.isEmpty` guard, unlike `_buildGappedChildren`: that helper
+    // needs one because it would build a spacer list from nothing, while
+    // `Flex.spacing` only ever applies BETWEEN children. Measured on a 0- and a
+    // 1-child flex, with and without a gap: identical sizes, no exception.
     final double flexSpacing = renderLayerGap ? gapOnMainAxis : 0;
 
     final gappedChildren = renderLayerGap

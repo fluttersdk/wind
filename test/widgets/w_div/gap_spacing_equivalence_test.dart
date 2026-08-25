@@ -128,6 +128,40 @@ void main() {
       expect(x[2] - x[1], closeTo(155.2, 0.01));
     });
 
+    testWidgets('an excluded alignment keeps the old path on a COLUMN too',
+        (WidgetTester tester) async {
+      // The exclusion is expressed once, for both axes, but every other case
+      // here pumps a row. This is the vertical half: `SizedBox(height: gap)`
+      // rather than `SizedBox(width: gap)`, and nothing exercised it.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Center(
+            child: SizedBox(
+              height: 400,
+              child: WDiv(
+                className: 'flex flex-col h-full gap-4 justify-evenly',
+                children: const <Widget>[
+                  SizedBox(key: ValueKey<String>('a'), width: 10, height: 40),
+                  SizedBox(key: ValueKey<String>('b'), width: 10, height: 40),
+                  SizedBox(key: ValueKey<String>('c'), width: 10, height: 40),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      double topOf(String k) =>
+          tester.getTopLeft(find.byKey(ValueKey<String>(k))).dy;
+
+      // Same arithmetic as the row case, on the other axis: five children
+      // (three plus two gaps) share the free space, so the real ones sit
+      // 138.67 apart. Handing the gap to `Flex.spacing` would leave three
+      // children and put them 118 apart.
+      expect(topOf('b') - topOf('a'), closeTo(138.667, 0.01));
+      expect(topOf('c') - topOf('b'), closeTo(138.667, 0.01));
+    });
+
     testWidgets('a column gap spaces on the vertical axis', (tester) async {
       await tester.pumpWidget(
         wrapWithTheme(
