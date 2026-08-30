@@ -72,7 +72,9 @@ updates:
       - anilcancakir
     commit-message:
       prefix: chore(example-deps)
-      include: scope
+      # No `include: scope` here: Dependabot appends its own `(deps)` when that
+      # is set, and this prefix already carries a scope. The pair produced
+      # `chore(example-deps)(deps): ...` on the first bump.
     groups:
       example-minor-and-patch:
         patterns:
