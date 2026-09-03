@@ -56,5 +56,9 @@ pubspec_overrides.yaml
 
 # Worktrees Claude Code creates for parallel sessions and isolated subagents.
 # Only this subdirectory: the rest of `.claude/` is tracked, because the rules
-# under it are part of the repository.
+# under it are part of the repository.#
+# They sit inside the working tree rather than beside it, so `git clean -xdf` here
+# wipes a live worktree's contents while `.git/worktrees/<slug>` survives, leaving a
+# registration that needs `git worktree prune`. A worktree's `.git` is a file rather
+# than a directory, so git's nested-repo guard does not stop it.
 .claude/worktrees/
