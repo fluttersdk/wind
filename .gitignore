@@ -53,3 +53,8 @@ app.*.map.json
 
 # Local sibling-package path wiring (dev only)
 pubspec_overrides.yaml
+
+# Worktrees Claude Code creates for parallel sessions and isolated subagents.
+# Only this subdirectory: the rest of `.claude/` is tracked, because the rules
+# under it are part of the repository.
+.claude/worktrees/
