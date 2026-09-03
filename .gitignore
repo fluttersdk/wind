@@ -53,3 +53,14 @@ app.*.map.json
 
 # Local sibling-package path wiring (dev only)
 pubspec_overrides.yaml
+
+# Worktrees Claude Code creates for parallel sessions and isolated subagents.
+# Only this subdirectory: the rest of `.claude/` is tracked, because the rules
+# under it are part of the repository.
+#
+# They sit inside the working tree rather than beside it. `git clean -xdf` leaves them
+# alone: git's nested-repository guard resolves a gitfile too, so it reports "Skipping
+# repository .claude/worktrees/<slug>" and the contents survive. `git clean -xdff` does
+# not skip them, and wipes a live worktree while `.git/worktrees/<slug>` survives,
+# leaving a registration that `git worktree prune` then has to clear.
+.claude/worktrees/

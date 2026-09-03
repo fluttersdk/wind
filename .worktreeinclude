@@ -1,0 +1,21 @@
+# Gitignored files copied into every worktree Claude Code creates, for `--worktree`,
+# for `EnterWorktree`, and for a subagent with `isolation: worktree`.
+#
+# A worktree is a fresh checkout, so `pubspec_overrides.yaml` is absent from it, and
+# its absence fails silently rather than loudly: the siblings resolve from pub.dev
+# instead of the working trees beside this one, `flutter pub get` succeeds, and the
+# suite then passes against the PUBLISHED packages while the diff under review is of
+# the local ones. An unreleased sibling API is where that bites.
+#
+# `.gitignore` syntax, and only files that match AND are gitignored are copied, so a
+# tracked file can never be duplicated by this list.
+#
+# The paths inside `pubspec_overrides.yaml` have to be ABSOLUTE for this to work.
+# Worktrees live under `.claude/worktrees/<slug>`, so a relative `../magic` resolves
+# to `.claude/worktrees/magic`, which does not exist, and version solving fails on
+# the first path dependency.
+#
+# NOT processed when a WorktreeCreate hook replaces the default git logic; such a
+# hook has to copy these itself.
+
+pubspec_overrides.yaml
