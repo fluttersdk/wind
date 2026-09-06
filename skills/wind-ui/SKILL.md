@@ -406,6 +406,7 @@ Compact catalog of consistent footguns. Each entry: what's wrong, why, the corre
 | Putting `dark:` peers at the bottom of a long className | Hard to audit; missing pairs slip through | group beside the light variant on the same line |
 | `active:bg-blue-700` for press feedback | Not wired (Core Law §10); WAnchor tracks hover and focus only | track press in consumer state, pass via `states: {'pressed'}` if needed |
 | Inline `Padding(padding: EdgeInsets.all(16))` around a `WDiv` | Duplicates work | move the padding into the `WDiv` className as `p-4` |
+| Asserting `uppercase` output for Turkish in a bare `pumpWidget` | Casing reads the ambient locale, and with no `Localizations` ancestor it falls back to Dart's locale-independent rules, so the assertion measures the fallback | wrap the subtree in `Localizations(locale: Locale('tr'), delegates: [DefaultWidgetsLocalizations.delegate], ...)` |
 
 ## 13. Quick install
 
