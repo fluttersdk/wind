@@ -8,6 +8,19 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- `WText`'s `uppercase`, `lowercase` and `capitalize` utilities now follow the
+  ambient locale's casing rules. Dart's `String.toUpperCase()` is
+  locale-independent and maps `i` to `I`, but Turkish and Azerbaijani
+  distinguish a dotted from a dotless `i`: the uppercase of `i` is `İ` and the
+  uppercase of `ı` is `I`. A Turkish app therefore rendered `IZLEYICILER` and
+  `GÜVENLIK` for any heading carrying the utility, which are not words. The
+  locale is read through `Localizations.maybeLocaleOf`, so a widget pumped with
+  no `Localizations` ancestor keeps the previous behaviour rather than throwing.
+  Only this one site follows the locale; every other casing call in the package
+  normalises a class name or a wire token and stays locale-independent.
+
 ## [1.5.0] - 2026-08-25
 
 ### Changed
