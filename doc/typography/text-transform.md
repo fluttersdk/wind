@@ -4,6 +4,7 @@ Utilities for controlling the capitalization and wrapping of text.
 
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
+  - [Locale-aware casing](#locale-aware-casing)
 - [Whitespace & Wrapping](#whitespace--wrapping)
 - [Responsive Design](#responsive-design)
 - [Dark Mode](#dark-mode)
@@ -45,10 +46,34 @@ WDiv(
 
 | Class | Transform | Description |
 |:------|:----------|:------------|
-| `uppercase` | Uppercase | Converts all text to uppercase. |
-| `lowercase` | Lowercase | Converts all text to lowercase. |
-| `capitalize` | Capitalize | Capitalizes the first letter of each word. |
+| `uppercase` | Uppercase | Converts all text to uppercase, under the ambient locale's rules. |
+| `lowercase` | Lowercase | Converts all text to lowercase, under the ambient locale's rules. |
+| `capitalize` | Capitalize | Capitalizes the first letter of each word, under the ambient locale's rules. |
 | `normal-case` | None | Resets text transformation (useful for overrides). |
+
+<a name="locale-aware-casing"></a>
+### Locale-aware casing
+
+The three transforms above read the ambient locale through
+`Localizations.maybeLocaleOf` and cast accordingly. This matters for Turkish and
+Azerbaijani, which distinguish a dotted from a dotless `i`: the uppercase of `i`
+is `İ` and the uppercase of `ı` is `I`, where Dart's locale-independent
+`String.toUpperCase()` produces `I` for both.
+
+```dart
+// Under Locale('tr')
+WText('izleyiciler', className: 'uppercase')  // İZLEYİCİLER
+WText('kullanılan', className: 'uppercase')   // KULLANILAN
+
+// Under Locale('en')
+WText('monitors up', className: 'uppercase')  // MONITORS UP
+```
+
+**With no `Localizations` ancestor the transform falls back to
+locale-independent casing.** That is the case a consumer meets without noticing:
+a bare widget test, or any subtree pumped outside a `MaterialApp` / `WidgetsApp`,
+casts the Dart way. Wrap the subtree in `Localizations` when a test asserts
+Turkish casing.
 
 <a name="whitespace--wrapping"></a>
 ## Whitespace & Wrapping

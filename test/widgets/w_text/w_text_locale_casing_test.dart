@@ -16,6 +16,11 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 /// other `toUpperCase` / `toLowerCase` normalises a class name or a wire token
 /// and must stay locale-independent; the last group here pins that.
 void main() {
+  // The house setUp for this suite: 62 test files clear the parser cache, and
+  // `WindParser.clearCache`'s own comment says the whole suite does. These cases
+  // reuse classNames other files also parse.
+  setUp(WindParser.clearCache);
+
   // A bare `Localizations` rather than a `MaterialApp`: the Material delegate
   // ships no `tr` translations and warns the test to death about it, and this
   // widget reads nothing from it. Only the ambient LOCALE is under test.

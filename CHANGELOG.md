@@ -10,16 +10,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- `WText`'s `uppercase`, `lowercase` and `capitalize` utilities now follow the
-  ambient locale's casing rules. Dart's `String.toUpperCase()` is
-  locale-independent and maps `i` to `I`, but Turkish and Azerbaijani
-  distinguish a dotted from a dotless `i`: the uppercase of `i` is `İ` and the
-  uppercase of `ı` is `I`. A Turkish app therefore rendered `IZLEYICILER` and
-  `GÜVENLIK` for any heading carrying the utility, which are not words. The
-  locale is read through `Localizations.maybeLocaleOf`, so a widget pumped with
-  no `Localizations` ancestor keeps the previous behaviour rather than throwing.
-  Only this one site follows the locale; every other casing call in the package
-  normalises a class name or a wire token and stays locale-independent.
+- **`WText`'s `uppercase`, `lowercase` and `capitalize` cast under the ambient locale instead of Dart's locale-independent rules.** `String.toUpperCase()` maps `i` to `I`, but Turkish and Azerbaijani distinguish a dotted from a dotless `i`: the uppercase of `i` is `İ` and the uppercase of `ı` is `I`. Any heading carrying the utility therefore rendered `IZLEYICILER` and `GÜVENLIK` in a Turkish app, which are not words, and because the transform rides a CLASS NAME rather than a call site the defect followed the utility into every consumer package; a consumer could only fix the strings it passes in itself. Measured, only one mapping per direction is actually missing: `'izleyici'.toUpperCase()` is `IZLEYICI` while `'Kullanılan'.toUpperCase()` is already `KULLANILAN`, and going down `I` lowers to `i` where Turkish needs `ı` while `'İZLEYİCİ'.toLowerCase()` already gives a clean `izleyici`. The swap runs before the general cast in both directions, or the letter it looks for has already changed. The locale is read through `Localizations.maybeLocaleOf`, so a widget pumped with no `Localizations` ancestor (every bare widget test) keeps the previous behaviour rather than throwing. This is the only user-COPY casing site in the package; every other `toUpperCase` / `toLowerCase` normalises a class name or a wire token and stays locale-independent. (`lib/src/widgets/w_text.dart`, `doc/typography/text-transform.md`, `skills/wind-ui/`)
 
 ## [1.5.0] - 2026-08-25
 

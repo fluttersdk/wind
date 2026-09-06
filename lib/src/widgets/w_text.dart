@@ -325,9 +325,17 @@ class WText extends StatelessWidget {
     return widgetToBuild;
   }
 
-  /// The languages whose alphabet distinguishes a dotted from a dotless `i`,
-  /// and whose casing therefore cannot go through Dart's locale-independent
-  /// `String.toUpperCase` / `toLowerCase`.
+  /// The language codes whose usual alphabet distinguishes a dotted from a
+  /// dotless `i`, and whose casing therefore cannot go through Dart's
+  /// locale-independent `String.toUpperCase` / `toLowerCase`.
+  ///
+  /// Matched on `languageCode` alone, so Azerbaijani in Cyrillic script
+  /// (`az-Cyrl`, which has no dotless `i`) takes this path too. That is not a
+  /// defect and is why the set is not narrowed by `scriptCode`: Cyrillic text
+  /// contains no `i` or `ı` for the swaps to find, so the result is identical to
+  /// the locale-independent one. Only Latin-script loanwords inside otherwise
+  /// Cyrillic copy would differ, and a locale that mixes them is better served
+  /// by the Turkish mapping than by neither.
   static const Set<String> _dottedIlanguages = <String>{'tr', 'az'};
 
   /// Applies text transformations (uppercase, lowercase, capitalize) under the
@@ -364,9 +372,7 @@ class WText extends StatelessWidget {
           return text;
         }
         // Simple capitalization: first letter upper, rest as-is.
-        final String head = dottedI
-            ? _upperTr(text[0])
-            : text[0].toUpperCase();
+        final String head = dottedI ? _upperTr(text[0]) : text[0].toUpperCase();
 
         return head + text.substring(1);
       case WindTextTransform.none:
