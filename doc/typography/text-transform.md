@@ -27,10 +27,10 @@ WText('Long text that should not wrap...', className: 'whitespace-nowrap')
 <a name="basic-usage"></a>
 ## Basic Usage
 
-Use `uppercase` and `lowercase` to force text casing. `capitalize` raises the first letter of every whitespace-separated word and leaves the rest of the word as typed, so an acronym you passed in survives.
+Use `uppercase` and `lowercase` to force text casing. `capitalize` raises the first letter of every word and leaves the rest of the word as typed, so an acronym you passed in survives.
 
 > [!NOTE]
-> A word that opens with a digit or an underscore keeps its initial lowercase, so `4th of july` renders `4th Of July`. That is what browsers do with CSS `text-transform: capitalize`, because a digit belongs to the word rather than separating it.
+> A word runs through letters, digits, underscores and apostrophes; anything else opens a new one. So `well-known issue` renders `Well-Known Issue` and `read/write` renders `Read/Write`, while `l'orange` stays `L'orange` and `3rd party` stays `3rd Party`. That is what browsers do with CSS `text-transform: capitalize`.
 
 ```dart
 WDiv(

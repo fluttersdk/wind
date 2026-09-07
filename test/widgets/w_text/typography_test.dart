@@ -157,6 +157,27 @@ void main() {
           findsOneWidget,
         );
       });
+
+      testWidgets('opens a new word on a hyphen, a slash or a dot', (
+        tester,
+      ) async {
+        await pumpCapitalized(tester, 'well-known read/write u.s.a. builds');
+
+        expect(
+          find.text('Well-Known Read/Write U.S.A. Builds'),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('keeps a letter after an apostrophe as typed', (
+        tester,
+      ) async {
+        // The apostrophe continues the word in Chromium, which is what keeps
+        // `L'orange` from rendering as `L'Orange`.
+        await pumpCapitalized(tester, "l'orange soup, o'brien street");
+
+        expect(find.text("L'orange Soup, O'brien Street"), findsOneWidget);
+      });
     });
 
     testWidgets(
