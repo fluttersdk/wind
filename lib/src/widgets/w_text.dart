@@ -377,12 +377,19 @@ class WText extends StatelessWidget {
   /// The first letter of a whitespace-separated word.
   ///
   /// Group 1 is the boundary (the start of the string or the whitespace that
-  /// ended the previous word) and group 2 is whatever non-letters open the
-  /// word; both are re-emitted untouched, so the original spacing survives and
-  /// `"quoted"` capitalises its `q` rather than its quote mark. Group 3 is the
-  /// single letter the transform raises.
+  /// ended the previous word) and group 2 is the word-separating punctuation
+  /// that opens the word; both are re-emitted untouched, so the original
+  /// spacing survives and `"quoted"` capitalises its `q` rather than its quote
+  /// mark. Group 3 is the single letter the transform raises.
+  ///
+  /// Digits and connector punctuation are excluded from group 2 because they
+  /// belong to the word rather than separating it (UAX #29 Numeric and
+  /// ExtendNumLet), so a word that opens with one keeps its lowercase initial.
+  /// Measured in Chromium, which is the behaviour this token ports: `4th of
+  /// july` renders `4th Of July` and `_underscore lead` renders `_underscore
+  /// Lead`, while `"quoted words"` renders `"Quoted Words"`.
   static final RegExp _wordInitialPattern = RegExp(
-    r'(^|\s)(\P{L}*)(\p{L})',
+    r'(^|\s)([^\p{L}\p{N}\p{Pc}]*)(\p{L})',
     unicode: true,
   );
 
@@ -392,7 +399,8 @@ class WText extends StatelessWidget {
   /// unit rather than the string: `the HTTP client` becomes `The HTTP Client`,
   /// with the acronym the caller typed intact. A word is a run between
   /// whitespace, so an apostrophe does not open a new one (`don't`, not
-  /// `Don'T`).
+  /// `Don'T`), and a word opening with a digit keeps its initial lowercase
+  /// (`4th`, not `4Th`). See [_wordInitialPattern].
   ///
   /// [dottedI] routes each word initial through the Turkish mapping, so
   /// `izleyici ışıkları` capitalises to `İzleyici Işıkları` rather than

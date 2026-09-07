@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
 import 'package:fluttersdk_wind/src/widgets/w_text.dart';
 
 void main() {
+  // These tests pump className-styled widgets, and the parser cache outlives a
+  // test: a sibling priming it is what turns a regression into a pass.
+  setUp(WindParser.clearCache);
+
   group('WText Widget Tests', () {
     testWidgets('renders Text widget with correct data', (tester) async {
       const testText = 'Hello Wind';
@@ -137,6 +142,20 @@ void main() {
         await pumpCapitalized(tester, 'two  spaces\nand a newline');
 
         expect(find.text('Two  Spaces\nAnd A Newline'), findsOneWidget);
+      });
+
+      testWidgets('leaves a word that opens with a digit alone', (
+        tester,
+      ) async {
+        // Measured in Chromium: a digit or an underscore belongs to the word
+        // rather than separating it, so the letter behind it is not a word
+        // initial and stays lowercase.
+        await pumpCapitalized(tester, '4th of july and _underscore lead');
+
+        expect(
+          find.text('4th Of July And _underscore Lead'),
+          findsOneWidget,
+        );
       });
     });
 

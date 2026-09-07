@@ -29,6 +29,9 @@ WText('Long text that should not wrap...', className: 'whitespace-nowrap')
 
 Use `uppercase` and `lowercase` to force text casing. `capitalize` raises the first letter of every whitespace-separated word and leaves the rest of the word as typed, so an acronym you passed in survives.
 
+> [!NOTE]
+> A word that opens with a digit or an underscore keeps its initial lowercase, so `4th of july` renders `4th Of July`. That is what browsers do with CSS `text-transform: capitalize`, because a digit belongs to the word rather than separating it.
+
 ```dart
 WDiv(
   className: 'flex flex-col gap-4',
