@@ -6,6 +6,20 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **`h-full` no longer throws under an `IntrinsicHeight`.** It resolved through a `LayoutBuilder`, which cannot answer an intrinsic query, so any `IntrinsicHeight` / `IntrinsicWidth` above it asserted `LayoutBuilder does not support returning intrinsic dimensions`. The limitation was documented on five surfaces with an escape hatch ("use explicit `h-*` instead") rather than fixed. `h-full` is now the `WindFullHeightBox` render object, which answers intrinsics by forwarding to its child, so it renders under an `IntrinsicHeight`, in a `Table` cell and in an `items-stretch` grid cell, and matches the tallest sibling rather than reporting the screen height. `grid` is the one remaining `LayoutBuilder` path.
+
+### Changed
+
+- **`h-full` resolves at the render layer instead of through a `LayoutBuilder`.** The question it asks ("is the incoming height bounded") is only answerable during layout, and a `LayoutBuilder` was the widget-layer way to ask it; a `LayoutBuilder` also defers its whole subtree into a second layout pass. A consumer measured 1056 of them in one eight-scroll session against 258 widget builds, one per element carrying the class, re-run every frame. `WindFullHeightBox` reads `constraints` directly and needs neither. Behaviour is otherwise unchanged, pinned by twelve characterisation tests written against the old implementation first.
+
+### Known
+
+- **`h-full max-h-*` discards the cap when the parent bounds the height.** `max-h-*` arrives as a `ConstrainedBox` INSIDE the sizing wrapper, and `BoxConstraints.enforce` clamps an additional constraint into the incoming range: handed a tight 400 it computes `clamp(120, 400, 400)` and yields 400. The unbounded branch does honour the cap, so the same className means two different things depending on the parent. Pre-existing on 1.5.1 and unchanged here; the fix is a wrapping-order change (apply the cap outside the sizing box, so it narrows what the box then fills). Two skipped tests in `test/widgets/w_div/full_height_sizing_test.dart` carry the reproduction.
+
 ## [1.5.1] - 2026-09-07
 
 ### Fixed
