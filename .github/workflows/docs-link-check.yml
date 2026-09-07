@@ -75,11 +75,30 @@ jobs:
 
       # Every outbound URL in the reference, badges and pub.dev pages included.
       # .lycheeignore (regex, one pattern per line) is picked up automatically.
+      #
+      # --accept widens lychee's default 100..=103,200..=299 with 429 and the
+      # WHOLE 5xx range because this job hunts link ROT, and neither says a link
+      # is gone: they say the host is up and unhappy. 500..=504 would have
+      # covered the failure that prompted this and left the same class failing
+      # one door down, since Cloudflare's 520, 521, 524 and 530 sit outside it
+      # and are exactly an origin that did not answer. The 2026-09-07 run failed
+      # on three 504s from github.com, all of them this repo's own compare and
+      # tag pages, which render fine in a browser. Rate limiting is not the cause
+      # and a token is not the fix: lychee-action already defaults its `token`
+      # input to `${{ github.token }}` and exports it as GITHUB_TOKEN, and
+      # lychee already retries three times by default. 404 and 410 still fail
+      # the job, which is what rot actually looks like.
+      #
+      # No request cache here, deliberately. `actions/cache` declares
+      # `post-if: success()`, so the save is skipped on exactly the runs a
+      # retry would follow, and the whole pass costs under four seconds for 939
+      # links (run 34150081246), so there is nothing to buy back.
       - name: Check all links including external
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
           args: >-
             --no-progress
+            --accept '100..=103,200..=299,429,500..=599'
             'doc/**/*.md'
             '*.md'
             'llms.txt'
