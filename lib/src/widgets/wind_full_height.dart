@@ -156,10 +156,15 @@ class _RenderFullHeight extends RenderProxyBox {
     final (double minWidth, double maxWidth) = _widthRangeFor(constraints);
 
     final RenderBox? target = child;
+    // Unreachable from `WDiv`, which is the only construction site and always
+    // passes the accumulated tree, never null. Kept because a `RenderProxyBox`
+    // has to survive a null child, which is how `_RenderCrossStretch` treats it.
+    // coverage:ignore-start
     if (target == null) {
       size = constraints.constrain(Size(minWidth, height));
       return;
     }
+    // coverage:ignore-end
 
     target.layout(
       BoxConstraints(
@@ -197,7 +202,12 @@ class _RenderFullHeight extends RenderProxyBox {
     final (double minWidth, double maxWidth) = _widthRangeFor(constraints);
 
     final RenderBox? target = child;
-    if (target == null) return constraints.constrain(Size(minWidth, height));
+    // Unreachable from `WDiv`, as above.
+    // coverage:ignore-start
+    if (target == null) {
+      return constraints.constrain(Size(minWidth, height));
+    }
+    // coverage:ignore-end
 
     final Size childSize = target.getDryLayout(
       BoxConstraints(

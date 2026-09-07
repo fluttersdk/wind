@@ -16,6 +16,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 - **`h-full` resolves at the render layer instead of through a `LayoutBuilder`.** The question it asks ("is the incoming height bounded") is only answerable during layout, and a `LayoutBuilder` was the widget-layer way to ask it; a `LayoutBuilder` also defers its whole subtree into a second layout pass. A consumer measured 1056 of them in one eight-scroll session against 258 widget builds, one per element carrying the class, re-run every frame. `WindFullHeightBox` reads `constraints` directly and needs neither. Behaviour is otherwise unchanged, pinned by twelve characterisation tests written against the old implementation first.
 
+### Quality
+
+- Nineteen tests for `WindFullHeightBox` covering every branch it has: bounded and unbounded, with and without a width factor, `max-w-*` and `max-h-*`, the outer box's own reported size, in-place updates through all four setters (including a screen-size change, which is what a rotation is), a childless element, and the dry-layout contract agreeing with the size actually laid out. Line coverage 94.5% to 95.2%; the two null-child branches carry a block ignore with the reason, since `WDiv` is the only construction site and always passes a real subtree.
+
 ### Known
 
 - **`h-full max-h-*` discards the cap when the parent bounds the height.** `max-h-*` arrives as a `ConstrainedBox` INSIDE the sizing wrapper, and `BoxConstraints.enforce` clamps an additional constraint into the incoming range: handed a tight 400 it computes `clamp(120, 400, 400)` and yields 400. The unbounded branch does honour the cap, so the same className means two different things depending on the parent. Pre-existing on 1.5.1 and unchanged here; the fix is a wrapping-order change (apply the cap outside the sizing box, so it narrows what the box then fills). Two skipped tests in `test/widgets/w_div/full_height_sizing_test.dart` carry the reproduction.

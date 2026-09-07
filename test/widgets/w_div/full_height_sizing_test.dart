@@ -207,6 +207,120 @@ void main() {
       expect(tester.getSize(find.byType(_Probe)), const Size(150, 200));
     });
   });
+
+  group('h-full updates in place', () {
+    // `updateRenderObject` and the four setters. A `WDiv` that keeps its
+    // identity while its className changes must re-lay-out rather than keep the
+    // size it resolved the first time, and the same applies when the screen
+    // itself changes: `fallbackHeight` is read during build, so a rotation is
+    // an update rather than a rebuild from scratch.
+    testWidgets('a changed max-h-* re-resolves the height', (tester) async {
+      await pumpUnbounded(
+        tester,
+        const WDiv(className: 'h-full max-h-[120px]', child: _Probe()),
+      );
+      expect(tester.getSize(find.byType(_Probe)).height, 120);
+
+      await pumpUnbounded(
+        tester,
+        const WDiv(className: 'h-full max-h-[200px]', child: _Probe()),
+      );
+      expect(tester.getSize(find.byType(_Probe)).height, 200);
+    });
+
+    testWidgets('a changed width factor re-resolves the width', (tester) async {
+      await pumpBounded(
+        tester,
+        const WDiv(className: 'w-full h-full', child: _Probe()),
+      );
+      expect(tester.getSize(find.byType(_Probe)).width, 300);
+
+      await pumpBounded(
+        tester,
+        const WDiv(className: 'w-1/2 h-full', child: _Probe()),
+      );
+      expect(tester.getSize(find.byType(_Probe)).width, 150);
+    });
+
+    testWidgets('a changed max-w-* re-resolves the width', (tester) async {
+      await pumpBounded(
+        tester,
+        const WDiv(className: 'w-full h-full max-w-[200px]', child: _Probe()),
+      );
+      expect(tester.getSize(find.byType(_Probe)).width, 200);
+
+      await pumpBounded(
+        tester,
+        const WDiv(className: 'w-full h-full max-w-[100px]', child: _Probe()),
+      );
+      expect(tester.getSize(find.byType(_Probe)).width, 100);
+    });
+
+    testWidgets('a changed screen height re-resolves the fallback', (
+      tester,
+    ) async {
+      addTearDown(tester.view.reset);
+
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      await pumpUnbounded(
+          tester, const WDiv(className: 'h-full', child: _Probe()));
+      expect(tester.getSize(find.byType(_Probe)).height, 800);
+
+      tester.view.physicalSize = const Size(400, 500);
+      await pumpUnbounded(
+          tester, const WDiv(className: 'h-full', child: _Probe()));
+      expect(tester.getSize(find.byType(_Probe)).height, 500);
+    });
+  });
+
+  group('h-full with no child', () {
+    // A childless `WDiv` is a real shape (a divider, a rule, a spacer), and the
+    // box still has to report a size rather than reaching for a child that is
+    // not there.
+    testWidgets('still fills a bounded height', (tester) async {
+      await pumpBounded(tester, const WDiv(className: 'h-full w-[40px]'));
+
+      expect(tester.getSize(find.byType(WDiv)).height, 400);
+    });
+  });
+
+  group('h-full answers a dry layout', () {
+    // Asked directly, because the widget trees that route through
+    // `computeDryLayout` do so from inside their own layout and are awkward to
+    // build on purpose. The contract is what matters: a dry layout has to agree
+    // with the real one, or a parent that measures before laying out gets a
+    // different answer than the one it then renders.
+    testWidgets('and agrees with the size it then lays out', (tester) async {
+      await pumpBounded(
+        tester,
+        const WDiv(className: 'w-full h-full', child: _Probe()),
+      );
+
+      final RenderBox box = tester.renderObject<RenderBox>(
+        find.byType(WDiv),
+      );
+      const BoxConstraints incoming = BoxConstraints(
+        maxWidth: 300,
+        maxHeight: 400,
+      );
+
+      expect(box.getDryLayout(incoming), box.size);
+    });
+
+    testWidgets('with no child, and with an unbounded height', (tester) async {
+      await pumpUnbounded(tester, const WDiv(className: 'h-full w-[40px]'));
+
+      final RenderBox box = tester.renderObject<RenderBox>(
+        find.byType(WDiv),
+      );
+
+      expect(
+        box.getDryLayout(const BoxConstraints(maxWidth: 300)).height,
+        box.size.height,
+      );
+    });
+  });
 }
 
 /// A child that fills whatever it is given, so its measured size IS the box the
