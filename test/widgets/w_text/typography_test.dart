@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
 import 'package:fluttersdk_wind/src/widgets/w_text.dart';
 
 void main() {
+  // These tests pump className-styled widgets, and the parser cache outlives a
+  // test: a sibling priming it is what turns a regression into a pass.
+  setUp(WindParser.clearCache);
+
   group('WText Widget Tests', () {
     testWidgets('renders Text widget with correct data', (tester) async {
       const testText = 'Hello Wind';
@@ -101,18 +106,118 @@ void main() {
       expect(find.text(originalText), findsNothing);
     });
 
-    testWidgets('applies text transform (capitalize)', (tester) async {
-      const originalText = 'hello world';
-      await tester.pumpWidget(
-        MaterialApp(
-          home: WindTheme(
-            data: WindThemeData(),
-            child: const WText(originalText, className: 'capitalize'),
+    group('capitalize', () {
+      Future<void> pumpCapitalized(WidgetTester tester, String text) {
+        return tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: WText(text, className: 'capitalize'),
+            ),
           ),
-        ),
-      );
+        );
+      }
 
-      expect(find.text('Hello world'), findsOneWidget);
+      testWidgets('uppercases the first letter of every word', (tester) async {
+        await pumpCapitalized(tester, 'hello world');
+
+        expect(find.text('Hello World'), findsOneWidget);
+      });
+
+      testWidgets('leaves the rest of each word as typed', (tester) async {
+        // CSS `text-transform: capitalize` raises the word initial and touches
+        // nothing else, so an acronym the caller typed survives.
+        await pumpCapitalized(tester, 'the HTTP client');
+
+        expect(find.text('The HTTP Client'), findsOneWidget);
+      });
+
+      testWidgets('skips a word\'s leading punctuation', (tester) async {
+        await pumpCapitalized(tester, '"quoted words" (and parens)');
+
+        expect(find.text('"Quoted Words" (And Parens)'), findsOneWidget);
+      });
+
+      testWidgets('preserves the original whitespace', (tester) async {
+        await pumpCapitalized(tester, 'two  spaces\nand a newline');
+
+        expect(find.text('Two  Spaces\nAnd A Newline'), findsOneWidget);
+      });
+
+      testWidgets('leaves a word that opens with a digit alone', (
+        tester,
+      ) async {
+        // Measured in Chromium: a digit or an underscore belongs to the word
+        // rather than separating it, so the letter behind it is not a word
+        // initial and stays lowercase.
+        await pumpCapitalized(tester, '4th of july and _underscore lead');
+
+        expect(
+          find.text('4th Of July And _underscore Lead'),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('opens a new word on a hyphen, a slash or a dot', (
+        tester,
+      ) async {
+        await pumpCapitalized(tester, 'well-known read/write u.s.a. builds');
+
+        expect(
+          find.text('Well-Known Read/Write U.S.A. Builds'),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('does not split a decomposed letter mid-word', (
+        tester,
+      ) async {
+        // NFD, written as an escape so the source encoding cannot silently
+        // precompose it and pass the test for the wrong reason. macOS hands
+        // text back this way, and a combining mark continues the word in a
+        // browser, so the `v` behind it is not a word initial.
+        await pumpCapitalized(tester, 'nai\u0308ve approach');
+
+        expect(find.text('Nai\u0308ve Approach'), findsOneWidget);
+      });
+
+      testWidgets('does not split on an invisible format character', (
+        tester,
+      ) async {
+        // A soft hyphen is a line-break hint rather than a word boundary, so a
+        // browser renders this as `Cooperate Now`.
+        await pumpCapitalized(tester, 'co\u00ADoperate now');
+
+        expect(find.text('Co\u00ADoperate Now'), findsOneWidget);
+      });
+
+      testWidgets('still opens a word after a standalone format character', (
+        tester,
+      ) async {
+        // A right-to-left mark sitting after a space is not attached to the
+        // previous word, so it must not swallow the next word's capital.
+        await pumpCapitalized(tester, 'hello \u200Fworld');
+
+        expect(find.text('Hello \u200FWorld'), findsOneWidget);
+      });
+
+      testWidgets('breaks a word on a zero-width space', (tester) async {
+        // U+200B is the one format character browsers break on: Chromium
+        // renders this as `CoOperate Here`, while U+200D and U+00AD join.
+        await pumpCapitalized(tester, 'co\u200Boperate here');
+
+        expect(find.text('Co\u200BOperate Here'), findsOneWidget);
+      });
+
+      testWidgets('keeps a letter after an apostrophe as typed', (
+        tester,
+      ) async {
+        // The apostrophe continues the word in Chromium, which is what keeps
+        // `L'orange` from rendering as `L'Orange`.
+        await pumpCapitalized(tester, "l'orange soup, o'brien street");
+
+        expect(find.text("L'orange Soup, O'brien Street"), findsOneWidget);
+      });
     });
 
     testWidgets(

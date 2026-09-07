@@ -27,7 +27,10 @@ WText('Long text that should not wrap...', className: 'whitespace-nowrap')
 <a name="basic-usage"></a>
 ## Basic Usage
 
-Use `uppercase` and `lowercase` to force text casing. `capitalize` converts the first character of each word to uppercase.
+Use `uppercase` and `lowercase` to force text casing. `capitalize` raises the first letter of every word and leaves the rest of the word as typed, so an acronym you passed in survives.
+
+> [!NOTE]
+> A word runs through letters, digits, underscores, apostrophes and the marks that attach to them; anything else opens a new one. So `well-known issue` renders `Well-Known Issue` and `read/write` renders `Read/Write`, while `l'orange` stays `L'orange` and `3rd party` stays `3rd Party`. That is what browsers do with CSS `text-transform: capitalize`.
 
 ```dart
 WDiv(
@@ -36,6 +39,7 @@ WDiv(
     WText('uppercase text', className: 'uppercase'), // UPPERCASE TEXT
     WText('LOWERCASE TEXT', className: 'lowercase'), // lowercase text
     WText('capitalize this text', className: 'capitalize'), // Capitalize This Text
+    WText('the HTTP client', className: 'capitalize'), // The HTTP Client
     WText('Normal Case Text', className: 'normal-case'), // Normal Case Text
   ],
 )
@@ -48,7 +52,7 @@ WDiv(
 |:------|:----------|:------------|
 | `uppercase` | Uppercase | Converts all text to uppercase, under the ambient locale's rules. |
 | `lowercase` | Lowercase | Converts all text to lowercase, under the ambient locale's rules. |
-| `capitalize` | Capitalize | Capitalizes the first letter of each word, under the ambient locale's rules. |
+| `capitalize` | Capitalize | Raises the first letter of each word, under the ambient locale's rules. The rest of the word stays as typed. |
 | `normal-case` | None | Resets text transformation (useful for overrides). |
 
 <a name="locale-aware-casing"></a>
@@ -62,11 +66,12 @@ is `İ` and the uppercase of `ı` is `I`, where Dart's locale-independent
 
 ```dart
 // Under Locale('tr')
-WText('izleyiciler', className: 'uppercase')  // İZLEYİCİLER
-WText('kullanılan', className: 'uppercase')   // KULLANILAN
+WText('izleyiciler', className: 'uppercase')       // İZLEYİCİLER
+WText('kullanılan', className: 'uppercase')        // KULLANILAN
+WText('izleyici ışıkları', className: 'capitalize') // İzleyici Işıkları
 
 // Under Locale('en')
-WText('monitors up', className: 'uppercase')  // MONITORS UP
+WText('monitors up', className: 'uppercase')       // MONITORS UP
 ```
 
 **With no `Localizations` ancestor the transform falls back to

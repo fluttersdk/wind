@@ -39,15 +39,28 @@ class TextTransformExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
+          title: 'Locale-aware Casing',
+          description:
+              'Casing follows the ambient locale. The same source text under a Turkish locale keeps the dot on i and takes it off ı, which locale-independent casing gets wrong.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              _LocaleRow(locale: Locale('tr'), cls: 'uppercase'),
+              _LocaleRow(locale: Locale('en'), cls: 'uppercase'),
+              _LocaleRow(locale: Locale('tr'), cls: 'capitalize'),
+            ],
+          ),
+        ),
+        ExampleSection(
           title: 'Quick Reference',
           description:
-              'Four named transforms. capitalize uppercases the first letter of each word.',
+              'Four named transforms. capitalize raises the first letter of each word and leaves the rest as typed.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
               _RefRow(cls: 'uppercase', val: 'UPPERCASE'),
               _RefRow(cls: 'lowercase', val: 'lowercase'),
-              _RefRow(cls: 'capitalize', val: 'Title Case'),
+              _RefRow(cls: 'capitalize', val: 'Title Case (the HTTP Client)'),
               _RefRow(cls: 'normal-case', val: 'Mixed source (reset)'),
             ],
           ),
@@ -78,6 +91,41 @@ class _TransformRow extends StatelessWidget {
         WText(
           'The quick brown Fox',
           className: '$cls text-lg text-slate-900 dark:text-white',
+        ),
+      ],
+    );
+  }
+}
+
+/// One casing row rendered under an overridden locale.
+///
+/// `Localizations.override` reuses the gallery's own delegates and swaps only
+/// the locale, which is the single thing the transform reads.
+class _LocaleRow extends StatelessWidget {
+  final Locale locale;
+  final String cls;
+
+  const _LocaleRow({required this.locale, required this.cls});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: 'flex flex-row items-baseline gap-4',
+      children: [
+        WDiv(
+          className: 'w-32 shrink-0',
+          child: WText(
+            "$cls · ${locale.languageCode}",
+            className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
+          ),
+        ),
+        Localizations.override(
+          context: context,
+          locale: locale,
+          child: WText(
+            'izleyici ışıkları',
+            className: '$cls text-lg text-slate-900 dark:text-white',
+          ),
         ),
       ],
     );
