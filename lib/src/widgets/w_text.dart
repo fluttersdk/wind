@@ -208,6 +208,7 @@ class WText extends StatelessWidget {
 
     // B. Apply Text Transformation (uppercase, lowercase)
     final String transformedData = _applyTextTransform(
+      context,
       data,
       styles.textTransform,
     );
@@ -324,22 +325,79 @@ class WText extends StatelessWidget {
     return widgetToBuild;
   }
 
-  /// Applies text transformations (uppercase, lowercase, capitalize).
-  String _applyTextTransform(String text, WindTextTransform? transform) {
-    if (transform == null) return text;
+  /// The language codes whose usual alphabet distinguishes a dotted from a
+  /// dotless `i`, and whose casing therefore cannot go through Dart's
+  /// locale-independent `String.toUpperCase` / `toLowerCase`.
+  ///
+  /// Matched on `languageCode` alone, so Azerbaijani in Cyrillic script
+  /// (`az-Cyrl`, which has no dotless `i`) takes this path too. That is not a
+  /// defect and is why the set is not narrowed by `scriptCode`: Cyrillic text
+  /// contains no `i` or `ı` for the swaps to find, so the result is identical to
+  /// the locale-independent one. Only Latin-script loanwords inside otherwise
+  /// Cyrillic copy would differ, and a locale that mixes them is better served
+  /// by the Turkish mapping than by neither.
+  static const Set<String> _dottedIlanguages = <String>{'tr', 'az'};
+
+  /// Applies text transformations (uppercase, lowercase, capitalize) under the
+  /// AMBIENT locale's casing rules.
+  ///
+  /// `String.toUpperCase()` is locale-independent and maps `i` to `I`. In
+  /// Turkish and Azerbaijani the uppercase of `i` is `İ` and the uppercase of
+  /// `ı` is `I`, so `uppercase` on a Turkish heading produced `IZLEYICILER` and
+  /// `GÜVENLIK`, which are not words. This is user COPY rather than a wire
+  /// token, so it is the one casing site in this package that must follow the
+  /// locale; every other `toUpperCase` / `toLowerCase` here normalises a class
+  /// name or a key and must stay locale-independent.
+  ///
+  /// [Localizations.maybeLocaleOf] rather than `localeOf`, so a widget pumped
+  /// with no `Localizations` ancestor (which every bare widget test does) keeps
+  /// today's behaviour instead of throwing.
+  String _applyTextTransform(
+    BuildContext context,
+    String text,
+    WindTextTransform? transform,
+  ) {
+    if (transform == null || transform == WindTextTransform.none) return text;
+
+    final String? language = Localizations.maybeLocaleOf(context)?.languageCode;
+    final bool dottedI = _dottedIlanguages.contains(language);
+
     switch (transform) {
       case WindTextTransform.uppercase:
-        return text.toUpperCase();
+        return dottedI ? _upperTr(text) : text.toUpperCase();
       case WindTextTransform.lowercase:
-        return text.toLowerCase();
+        return dottedI ? _lowerTr(text) : text.toLowerCase();
       case WindTextTransform.capitalize:
         if (text.isEmpty) {
           return text;
         }
         // Simple capitalization: first letter upper, rest as-is.
-        return text[0].toUpperCase() + text.substring(1);
+        final String head = dottedI ? _upperTr(text[0]) : text[0].toUpperCase();
+
+        return head + text.substring(1);
       case WindTextTransform.none:
         return text;
     }
   }
+
+  /// Uppercases under Turkish rules.
+  ///
+  /// Measured, because only one of the two mappings is actually missing:
+  /// `'izleyici'.toUpperCase()` is `IZLEYICI` (wrong, the fix), while
+  /// `'Kullanılan'.toUpperCase()` is already `KULLANILAN` (right, so the `ı`
+  /// arm is belt-and-braces for a mixed string rather than a correction).
+  /// Every other Turkish letter (`ş`, `ğ`, `ö`, `ü`, `ç`) casts correctly on its
+  /// own, and `İ` survives the second pass unchanged.
+  static String _upperTr(String text) =>
+      text.replaceAll('i', 'İ').replaceAll('ı', 'I').toUpperCase();
+
+  /// Lowercases under Turkish rules.
+  ///
+  /// `I` is the mapping that is missing: Dart lowers it to `i` where Turkish
+  /// needs `ı`. The swap therefore has to run BEFORE `toLowerCase`, or the `I`
+  /// is already an `i` by the time it is looked for. `'İZLEYİCİ'.toLowerCase()`
+  /// is measured to give a clean `izleyici` with no combining dot, so that arm
+  /// is the belt-and-braces one here.
+  static String _lowerTr(String text) =>
+      text.replaceAll('I', 'ı').replaceAll('İ', 'i').toLowerCase();
 }
