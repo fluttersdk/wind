@@ -77,45 +77,62 @@ void main() {
       expect(tester.getSize(find.byType(_Probe)), const Size(300, 400));
     });
 
-    testWidgets('max-h-* clamps the fill', (tester) async {
-      // Skipped: this fails on master too, so it is a pre-existing defect
-      // rather than a regression from the render-layer rewrite, and fixing it
-      // is a different change from this one.
-      //
-      // `max-h-*` reaches the element as a `ConstrainedBox` applied INSIDE the
-      // sizing wrapper, and `BoxConstraints.enforce` clamps an additional
-      // constraint into the incoming range: handed a tight 400 it computes
-      // `clamp(120, 400, 400)` and yields 400, so the cap is discarded. The old
-      // `LayoutBuilder` had the same shape and the same result. The fix is to
-      // apply the cap OUTSIDE the sizing box so it narrows the constraints the
-      // box then fills, which is a wrapping-order change to `w_div.dart` rather
-      // than anything this class does.
-      //
-      // The asymmetry is what makes it a defect rather than a decision: the
-      // unbounded branch DOES honour `max-h-*` (see the case below), so the
-      // same className means two different things depending on the parent.
+    testWidgets('a TIGHT parent wins over max-h-*, which is correct', (
+      tester,
+    ) async {
+      // `pumpBounded` uses a `SizedBox(height: 400)`, a tight constraint: the
+      // parent is stating an exact size, and no className overrides that. The
+      // first version of this file asserted 120 here and called the 400 a
+      // defect; it is Flutter's constraint model working.
       await pumpBounded(
         tester,
         const WDiv(className: 'h-full max-h-[120px]', child: _Probe()),
       );
 
-      expect(tester.getSize(find.byType(_Probe)).height, 120);
-      // See the note above: pre-existing on master, and the fix is a
-      // wrapping-order change in `w_div.dart` rather than anything here.
-    }, skip: true);
+      expect(tester.getSize(find.byType(_Probe)).height, 400);
+    });
 
-    testWidgets('with w-full and max-h-* clamps only the height', (
+    testWidgets('a LOOSE parent honours max-h-*, which master did not', (
       tester,
     ) async {
-      await pumpBounded(
-        tester,
-        const WDiv(className: 'w-full h-full max-h-[120px]', child: _Probe()),
+      // The behaviour that actually changed. Master wrapped no `ConstrainedBox`
+      // on its bounded branch, so the cap was discarded outright: this rendered
+      // 400 there and renders 120 here. Verified as an A/B against master.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: ConstrainedBox(
+                constraints:
+                    const BoxConstraints(maxWidth: 300, maxHeight: 400),
+                child: const WDiv(
+                  className: 'h-full max-h-[120px]',
+                  child: _Probe(),
+                ),
+              ),
+            ),
+          ),
+        ),
       );
 
-      expect(tester.getSize(find.byType(_Probe)), const Size(300, 120));
-      // See the note above: pre-existing on master, and the fix is a
-      // wrapping-order change in `w_div.dart` rather than anything here.
-    }, skip: true);
+      expect(tester.getSize(find.byType(_Probe)).height, 120);
+    });
+
+    testWidgets('max-w-* applies after the width fraction', (tester) async {
+      // Also a fix. Master put its `ConstrainedBox` outside the
+      // `FractionallySizedBox`, and `BoxConstraints.enforce` clamps an
+      // additional constraint into the incoming range, so against the tight
+      // width the fraction had already produced the cap was discarded:
+      // `clamp(100, 150, 150)` is 150. Master renders 150, this renders 100.
+      await pumpBounded(
+        tester,
+        const WDiv(className: 'w-1/2 h-full max-w-[100px]', child: _Probe()),
+      );
+
+      expect(tester.getSize(find.byType(_Probe)).width, 100);
+    });
 
     testWidgets('a child is laid out against the filled height', (
       tester,
@@ -278,10 +295,17 @@ void main() {
     // A childless `WDiv` is a real shape (a divider, a rule, a spacer), and the
     // box still has to report a size rather than reaching for a child that is
     // not there.
-    testWidgets('still fills a bounded height', (tester) async {
-      await pumpBounded(tester, const WDiv(className: 'h-full w-[40px]'));
+    testWidgets('still resolves a height with nothing to lay out', (
+      tester,
+    ) async {
+      // No `w-[40px]`: any explicit width makes `WDiv` build a core structure,
+      // so the box gets a child and this stops testing the null branch. The
+      // first version carried one and covered nothing.
+      await pumpUnbounded(tester, const WDiv(className: 'h-full'));
 
-      expect(tester.getSize(find.byType(WDiv)).height, 400);
+      final double screen =
+          tester.view.physicalSize.height / tester.view.devicePixelRatio;
+      expect(tester.getSize(find.byType(WDiv)).height, screen);
     });
   });
 
@@ -309,7 +333,7 @@ void main() {
     });
 
     testWidgets('with no child, and with an unbounded height', (tester) async {
-      await pumpUnbounded(tester, const WDiv(className: 'h-full w-[40px]'));
+      await pumpUnbounded(tester, const WDiv(className: 'h-full'));
 
       final RenderBox box = tester.renderObject<RenderBox>(
         find.byType(WDiv),

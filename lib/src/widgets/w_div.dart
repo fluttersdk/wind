@@ -1637,11 +1637,14 @@ class WDiv extends StatelessWidget {
     // markNeedsLayout (e.g. textScaler change), it causes a debug assertion:
     //   _debugRelayoutBoundaryAlreadyMarkedNeedsLayout() is not true
     //
+    // No path below carries one any more: `h-full` is the `WindFullHeightBox`
+    // render object. `grid` is the last LayoutBuilder in the widget.
+    //
     // Strategy:
     //   - w-full: SizedBox(width: infinity), no LayoutBuilder needed
     //   - w-full + max-w-*: ConstrainedBox + SizedBox, no LayoutBuilder needed
     //   - w-1/2, w-1/3 etc: FractionallySizedBox, no LayoutBuilder needed
-    //   - h-full: LayoutBuilder only when vertical axis is unbounded
+    //   - h-full: WindFullHeightBox, a render object, on both axes
     if (styles.widthFactor != null || styles.heightFactor != null) {
       final innerChild = widgetToBuild;
 

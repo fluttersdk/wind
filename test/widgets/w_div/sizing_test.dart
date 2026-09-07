@@ -223,7 +223,7 @@ void main() {
           find.byType(WDiv),
           findsOneWidget,
           reason:
-              'h-full in unbounded parent requires LayoutBuilder to check constraints',
+              'h-full in an unbounded parent falls back to the screen height',
         );
       });
     });

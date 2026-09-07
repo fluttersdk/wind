@@ -32,10 +32,9 @@ class WindFullHeightBox extends SingleChildRenderObjectWidget {
 
   /// `1.0` for `w-full`, null to leave the width to the incoming constraints.
   ///
-  /// Only ever 1.0 today: every caller reaches this class through
-  /// `heightFactor == 1.0`, and a fractional width alongside it comes through
-  /// the same `w-full` flag. Kept nullable rather than a bool because the value
-  /// is what the arithmetic wants.
+  /// Any fraction, not just 1.0: `w-1/2 h-full` reaches this class with 0.5.
+  /// An earlier version of this doc claimed 1.0 was the only value, which the
+  /// suite contradicts.
   final double? widthFactor;
 
   /// `max-w-*`, or null when the class is absent.
@@ -114,10 +113,18 @@ class _RenderFullHeight extends RenderProxyBox {
   /// The height this box resolves to under [constraints].
   ///
   /// The bounded and unbounded cases differ only in where the number comes
-  /// from, and `max-h-*` clamps both. That last part is a behaviour change
-  /// rather than a port: the widget-layer version applied the clamp on the
-  /// unbounded branch and not on the bounded one, so `h-full max-h-[120px]`
-  /// inside a 400 pixel parent rendered 400 and inside a `Column` rendered 120.
+  /// from, and `max-h-*` clamps both. That is narrower than it sounds, and the
+  /// closing `constrainHeight` is why.
+  ///
+  /// Under a LOOSE bounded height the cap now applies where it used to be
+  /// discarded: the widget-layer version wrapped no `ConstrainedBox` on its
+  /// bounded branch at all, so `h-full max-h-[120px]` under a
+  /// `ConstrainedBox(maxHeight: 400)` rendered 400 and now renders 120.
+  ///
+  /// Under a TIGHT one it still yields the parent's height, and that is correct
+  /// rather than the same bug: a tight constraint is the parent stating an
+  /// exact size, and no className overrides it. `constrainHeight` is what keeps
+  /// this box honest about that.
   double _heightFor(BoxConstraints constraints) {
     final double available =
         constraints.hasBoundedHeight ? constraints.maxHeight : _fallbackHeight;
@@ -129,9 +136,16 @@ class _RenderFullHeight extends RenderProxyBox {
 
   /// The width constraints to hand the child.
   ///
-  /// Untouched unless `w-full` asked for the whole width, which is what the
+  /// Untouched unless a `w-*` fraction asked for a share, which is what the
   /// widget-layer `SizedBox(width: double.infinity)` and
-  /// `FractionallySizedBox(widthFactor: 1)` both did in their own branches.
+  /// `FractionallySizedBox(widthFactor: ...)` both did in their own branches.
+  ///
+  /// The cap applies AFTER the fraction, and that is a fix rather than a port.
+  /// The widget-layer version put its `ConstrainedBox` outside the
+  /// `FractionallySizedBox`, but `BoxConstraints.enforce` clamps an additional
+  /// constraint into the incoming range, so against the tight width the
+  /// fraction had already produced the cap was discarded: `w-1/2 h-full
+  /// max-w-[100px]` in a 300 pixel parent rendered 150 and now renders 100.
   (double, double) _widthRangeFor(BoxConstraints constraints) {
     double minWidth = constraints.minWidth;
     double maxWidth = constraints.maxWidth;
@@ -156,15 +170,12 @@ class _RenderFullHeight extends RenderProxyBox {
     final (double minWidth, double maxWidth) = _widthRangeFor(constraints);
 
     final RenderBox? target = child;
-    // Unreachable from `WDiv`, which is the only construction site and always
-    // passes the accumulated tree, never null. Kept because a `RenderProxyBox`
-    // has to survive a null child, which is how `_RenderCrossStretch` treats it.
-    // coverage:ignore-start
+    // Reachable: a childless `WDiv` (a rule, a divider, a spacer) carrying only
+    // `h-full` builds no core structure, so this box gets a null child.
     if (target == null) {
       size = constraints.constrain(Size(minWidth, height));
       return;
     }
-    // coverage:ignore-end
 
     target.layout(
       BoxConstraints(
@@ -202,12 +213,9 @@ class _RenderFullHeight extends RenderProxyBox {
     final (double minWidth, double maxWidth) = _widthRangeFor(constraints);
 
     final RenderBox? target = child;
-    // Unreachable from `WDiv`, as above.
-    // coverage:ignore-start
     if (target == null) {
       return constraints.constrain(Size(minWidth, height));
     }
-    // coverage:ignore-end
 
     final Size childSize = target.getDryLayout(
       BoxConstraints(
