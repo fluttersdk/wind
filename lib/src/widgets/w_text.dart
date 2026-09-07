@@ -378,17 +378,25 @@ class WText extends StatelessWidget {
   /// keeps the previous word going.
   ///
   /// The lookbehind class is what browsers do rather than what the spec reads
-  /// like, measured in Chromium over 23 strings. A letter, a digit, connector
+  /// like, measured in Chromium over 27 strings. A letter, a digit, connector
   /// punctuation and an apostrophe continue a word, so the letter behind one
   /// stays as typed: `3rd party` is `3rd Party`, `wind_ui` is `Wind_ui` and
   /// `l'orange` is `L'orange`. Everything else separates, so the quote in
   /// `"quoted words"` and the hyphen, slash, period and plus in `well-known`,
   /// `read/write`, `u.s.a.` and `a+b=c` all open a new word.
   ///
+  /// Combining marks and format characters continue a word too, and they are
+  /// the arm that has to be deliberate: a decomposed `naïve` is `n a i U+0308
+  /// v e`, so without `\p{M}` the `v` reads as a word initial and NFD text
+  /// capitalises mid-word (`NaïVe`). macOS hands back NFD and Flutter does not
+  /// normalise, so it takes no unusual input to hit. `\p{Cf}` is the same case
+  /// for an invisible character: `co` + U+00AD + `operate` renders `Cooperate`
+  /// in a browser, not `CoOperate`.
+  ///
   /// The match is the letter alone, so whitespace never enters the replacement
   /// and the original spacing survives untouched.
   static final RegExp _wordInitialPattern = RegExp(
-    r"(?<![\p{L}\p{N}\p{Pc}'’])\p{L}",
+    r"(?<![\p{L}\p{N}\p{Pc}\p{M}\p{Cf}'’])\p{L}",
     unicode: true,
   );
 

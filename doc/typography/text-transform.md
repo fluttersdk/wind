@@ -30,7 +30,7 @@ WText('Long text that should not wrap...', className: 'whitespace-nowrap')
 Use `uppercase` and `lowercase` to force text casing. `capitalize` raises the first letter of every word and leaves the rest of the word as typed, so an acronym you passed in survives.
 
 > [!NOTE]
-> A word runs through letters, digits, underscores and apostrophes; anything else opens a new one. So `well-known issue` renders `Well-Known Issue` and `read/write` renders `Read/Write`, while `l'orange` stays `L'orange` and `3rd party` stays `3rd Party`. That is what browsers do with CSS `text-transform: capitalize`.
+> A word runs through letters, digits, underscores, apostrophes and the marks that attach to them; anything else opens a new one. So `well-known issue` renders `Well-Known Issue` and `read/write` renders `Read/Write`, while `l'orange` stays `L'orange` and `3rd party` stays `3rd Party`. That is what browsers do with CSS `text-transform: capitalize`.
 
 ```dart
 WDiv(

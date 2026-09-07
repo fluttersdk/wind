@@ -169,6 +169,28 @@ void main() {
         );
       });
 
+      testWidgets('does not split a decomposed letter mid-word', (
+        tester,
+      ) async {
+        // NFD, written as an escape so the source encoding cannot silently
+        // precompose it and pass the test for the wrong reason. macOS hands
+        // text back this way, and a combining mark continues the word in a
+        // browser, so the `v` behind it is not a word initial.
+        await pumpCapitalized(tester, 'nai\u0308ve approach');
+
+        expect(find.text('Nai\u0308ve Approach'), findsOneWidget);
+      });
+
+      testWidgets('does not split on an invisible format character', (
+        tester,
+      ) async {
+        // A soft hyphen is a line-break hint rather than a word boundary, so a
+        // browser renders this as `Cooperate Now`.
+        await pumpCapitalized(tester, 'co\u00ADoperate now');
+
+        expect(find.text('Co\u00ADoperate Now'), findsOneWidget);
+      });
+
       testWidgets('keeps a letter after an apostrophe as typed', (
         tester,
       ) async {
