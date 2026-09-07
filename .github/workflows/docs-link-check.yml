@@ -73,13 +73,37 @@ jobs:
         with:
           persist-credentials: false
 
+      # A same-day re-run reuses the answers instead of asking every host again.
+      # The 1 day age is deliberately shorter than the weekly cadence, so each
+      # Monday pass still checks every URL for real and the cache only helps the
+      # manual retry after a transient failure.
+      - name: Restore lychee cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ github.sha }}
+          restore-keys: cache-lychee-
+
       # Every outbound URL in the reference, badges and pub.dev pages included.
       # .lycheeignore (regex, one pattern per line) is picked up automatically.
+      #
+      # --accept widens lychee's default 100..=103,200..=299 with 429 and the
+      # 5xx range because this job hunts link ROT, and neither says a link is
+      # gone: they say the host is up and unhappy. The 2026-09-07 run failed on
+      # three 504s from github.com, all of them this repo's own compare and tag
+      # pages, which render fine in a browser. Rate limiting is not the cause
+      # and a token is not the fix: lychee-action already defaults its `token`
+      # input to `${{ github.token }}` and exports it as GITHUB_TOKEN, and
+      # lychee already retries three times by default. 404 and 410 still fail
+      # the job, which is what rot actually looks like.
       - name: Check all links including external
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
           args: >-
             --no-progress
+            --cache
+            --max-cache-age 1d
+            --accept '100..=103,200..=299,429,500..=504'
             'doc/**/*.md'
             '*.md'
             'llms.txt'
