@@ -191,6 +191,24 @@ void main() {
         expect(find.text('Co\u00ADoperate Now'), findsOneWidget);
       });
 
+      testWidgets('still opens a word after a standalone format character', (
+        tester,
+      ) async {
+        // A right-to-left mark sitting after a space is not attached to the
+        // previous word, so it must not swallow the next word's capital.
+        await pumpCapitalized(tester, 'hello \u200Fworld');
+
+        expect(find.text('Hello \u200FWorld'), findsOneWidget);
+      });
+
+      testWidgets('breaks a word on a zero-width space', (tester) async {
+        // U+200B is the one format character browsers break on: Chromium
+        // renders this as `CoOperate Here`, while U+200D and U+00AD join.
+        await pumpCapitalized(tester, 'co\u200Boperate here');
+
+        expect(find.text('Co\u200BOperate Here'), findsOneWidget);
+      });
+
       testWidgets('keeps a letter after an apostrophe as typed', (
         tester,
       ) async {

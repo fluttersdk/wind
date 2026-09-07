@@ -377,26 +377,32 @@ class WText extends StatelessWidget {
   /// A letter that opens a word: any letter not preceded by a character that
   /// keeps the previous word going.
   ///
-  /// The lookbehind class is what browsers do rather than what the spec reads
-  /// like, measured in Chromium over 27 strings. A letter, a digit, connector
+  /// The class is what browsers do rather than what the spec reads like,
+  /// measured in Chromium over 32 strings. A letter, a digit, connector
   /// punctuation and an apostrophe continue a word, so the letter behind one
   /// stays as typed: `3rd party` is `3rd Party`, `wind_ui` is `Wind_ui` and
   /// `l'orange` is `L'orange`. Everything else separates, so the quote in
   /// `"quoted words"` and the hyphen, slash, period and plus in `well-known`,
   /// `read/write`, `u.s.a.` and `a+b=c` all open a new word.
   ///
-  /// Combining marks and format characters continue a word too, and they are
-  /// the arm that has to be deliberate: a decomposed `naïve` is `n a i U+0308
-  /// v e`, so without `\p{M}` the `v` reads as a word initial and NFD text
-  /// capitalises mid-word (`NaïVe`). macOS hands back NFD and Flutter does not
-  /// normalise, so it takes no unusual input to hit. `\p{Cf}` is the same case
-  /// for an invisible character: `co` + U+00AD + `operate` renders `Cooperate`
-  /// in a browser, not `CoOperate`.
+  /// The `[\p{M}\p{Cf}]*` run is what lets a combining mark or an invisible
+  /// format character ATTACH to the word in front of it. A decomposed `naive`
+  /// is `n a i U+0308 v e`, so without it the `v` reads as a word initial and
+  /// NFD text capitalises mid-word; macOS hands back NFD and Flutter does not
+  /// normalise, so it takes no unusual input to hit. The run sits INSIDE the
+  /// lookbehind and after a word character on purpose: an invisible character
+  /// standing on its own after a space must not swallow the next capital, and
+  /// `hello ` + U+200F + `world` is `Hello World` in a browser.
+  ///
+  /// U+200B is the one format character excluded from the run, because it is
+  /// the one browsers break a word on: `co` + U+200B + `operate` renders
+  /// `CoOperate`, while `a` + U+200D + `b` renders `Ab` and `co` + U+00AD +
+  /// `operate` renders `Cooperate`.
   ///
   /// The match is the letter alone, so whitespace never enters the replacement
   /// and the original spacing survives untouched.
   static final RegExp _wordInitialPattern = RegExp(
-    r"(?<![\p{L}\p{N}\p{Pc}\p{M}\p{Cf}'’])\p{L}",
+    r"(?<![\p{L}\p{N}\p{Pc}'\u2019](?:(?!\u200B)[\p{M}\p{Cf}])*)\p{L}",
     unicode: true,
   );
 
