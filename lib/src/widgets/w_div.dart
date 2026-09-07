@@ -625,7 +625,7 @@ class WDiv extends StatelessWidget {
   /// Builds the final `Row`/`Column` from `basis-*`-resolved children, applying
   /// the column smart cross-axis stretch or the row `Flexible` shrink wrap.
   /// Split out of [_buildFlexStructure] so it can run either directly or inside
-  /// the `basis-*` `LayoutBuilder`.
+  /// the `basis-*` extent provider.
   Widget _composeFlex({
     required WindStyle styles,
     required bool isColumn,
@@ -1281,9 +1281,11 @@ class WDiv extends StatelessWidget {
   /// cells so columns stay aligned.
   ///
   /// Because the row uses real layout rather than the intrinsic protocol, cells
-  /// whose content is a `flex flex-col`, or that use `h-full` / `basis-*` (all
-  /// of which carry a `LayoutBuilder`), stretch correctly instead of asserting
-  /// `LayoutBuilder does not support returning intrinsic dimensions` (#139).
+  /// whose content is a `flex flex-col`, or that use `h-full` / `basis-*`,
+  /// stretch correctly instead of asserting `LayoutBuilder does not support
+  /// returning intrinsic dimensions` (#139). None of those three carries a
+  /// `LayoutBuilder` any more, so they would survive the intrinsic protocol
+  /// too; real layout is still the cheaper path and is what this builds.
   Widget _buildStretchGrid(
     int cols,
     double gapX,
@@ -1313,9 +1315,9 @@ class WDiv extends StatelessWidget {
       }
       // WindEqualHeightRow measures each cell with a real (loose-height) layout
       // and re-lays it to at least the row max via a MIN height, instead of the
-      // intrinsic query IntrinsicHeight would run. A `flex flex-col` cell (which
-      // carries a LayoutBuilder) can then be stretched without the "LayoutBuilder
-      // does not support returning intrinsic dimensions" assert (#139), and the
+      // intrinsic query IntrinsicHeight would run. That kept a `flex flex-col`
+      // cell clear of the "LayoutBuilder does not support returning intrinsic
+      // dimensions" assert (#139) back when it carried one, and the
       // min (never tight) height leaves no residual RenderFlex overflow (#141).
       rows.add(WindEqualHeightRow(spacing: gapX, children: rowChildren));
     }
@@ -1719,8 +1721,9 @@ class WDiv extends StatelessWidget {
         }
       } else if (styles.widthFactor == null) {
         // Height-only fractional sizing (h-full, h-1/2, etc.)
-        // Vertical axis is often unbounded (ScrollView/Column), so we need
-        // LayoutBuilder only for h-full in unbounded contexts.
+        // The vertical axis is often unbounded (ScrollView/Column), which only
+        // `h-full` has to resolve against; a fraction of an unbounded height is
+        // meaningless, so `h-1/2` and friends stay a plain FractionallySizedBox.
         if (isFullHeight) {
           // h-full resolves at the render layer, no LayoutBuilder.
           //
@@ -1753,7 +1756,8 @@ class WDiv extends StatelessWidget {
         }
       } else {
         // Both width and height factors (e.g., w-full h-full, w-1/2 h-1/2)
-        // Use LayoutBuilder only when needed for unbounded axis
+        // `h-full` carries the width factor into the same render-layer box;
+        // everything else is a plain FractionallySizedBox on both axes.
         if (isFullHeight) {
           // Both axes, height full: the same render-layer box as the
           // height-only path, carrying the width factor too.
