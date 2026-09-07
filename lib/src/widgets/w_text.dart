@@ -368,16 +368,42 @@ class WText extends StatelessWidget {
       case WindTextTransform.lowercase:
         return dottedI ? _lowerTr(text) : text.toLowerCase();
       case WindTextTransform.capitalize:
-        if (text.isEmpty) {
-          return text;
-        }
-        // Simple capitalization: first letter upper, rest as-is.
-        final String head = dottedI ? _upperTr(text[0]) : text[0].toUpperCase();
-
-        return head + text.substring(1);
+        return _capitalizeWords(text, dottedI: dottedI);
       case WindTextTransform.none:
         return text;
     }
+  }
+
+  /// The first letter of a whitespace-separated word.
+  ///
+  /// Group 1 is the boundary (the start of the string or the whitespace that
+  /// ended the previous word) and group 2 is whatever non-letters open the
+  /// word; both are re-emitted untouched, so the original spacing survives and
+  /// `"quoted"` capitalises its `q` rather than its quote mark. Group 3 is the
+  /// single letter the transform raises.
+  static final RegExp _wordInitialPattern = RegExp(
+    r'(^|\s)(\P{L}*)(\p{L})',
+    unicode: true,
+  );
+
+  /// Uppercases the first letter of every word, leaving the rest as typed.
+  ///
+  /// This is what CSS `text-transform: capitalize` does, and the word is the
+  /// unit rather than the string: `the HTTP client` becomes `The HTTP Client`,
+  /// with the acronym the caller typed intact. A word is a run between
+  /// whitespace, so an apostrophe does not open a new one (`don't`, not
+  /// `Don'T`).
+  ///
+  /// [dottedI] routes each word initial through the Turkish mapping, so
+  /// `izleyici ışıkları` capitalises to `İzleyici Işıkları` rather than
+  /// `Izleyici Işıkları`.
+  static String _capitalizeWords(String text, {required bool dottedI}) {
+    return text.replaceAllMapped(_wordInitialPattern, (Match match) {
+      final String initial = match[3]!;
+
+      return '${match[1]}${match[2]}'
+          '${dottedI ? _upperTr(initial) : initial.toUpperCase()}';
+    });
   }
 
   /// Uppercases under Turkish rules.

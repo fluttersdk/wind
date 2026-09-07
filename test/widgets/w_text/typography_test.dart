@@ -101,18 +101,43 @@ void main() {
       expect(find.text(originalText), findsNothing);
     });
 
-    testWidgets('applies text transform (capitalize)', (tester) async {
-      const originalText = 'hello world';
-      await tester.pumpWidget(
-        MaterialApp(
-          home: WindTheme(
-            data: WindThemeData(),
-            child: const WText(originalText, className: 'capitalize'),
+    group('capitalize', () {
+      Future<void> pumpCapitalized(WidgetTester tester, String text) {
+        return tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: WText(text, className: 'capitalize'),
+            ),
           ),
-        ),
-      );
+        );
+      }
 
-      expect(find.text('Hello world'), findsOneWidget);
+      testWidgets('uppercases the first letter of every word', (tester) async {
+        await pumpCapitalized(tester, 'hello world');
+
+        expect(find.text('Hello World'), findsOneWidget);
+      });
+
+      testWidgets('leaves the rest of each word as typed', (tester) async {
+        // CSS `text-transform: capitalize` raises the word initial and touches
+        // nothing else, so an acronym the caller typed survives.
+        await pumpCapitalized(tester, 'the HTTP client');
+
+        expect(find.text('The HTTP Client'), findsOneWidget);
+      });
+
+      testWidgets('skips a word\'s leading punctuation', (tester) async {
+        await pumpCapitalized(tester, '"quoted words" (and parens)');
+
+        expect(find.text('"Quoted Words" (And Parens)'), findsOneWidget);
+      });
+
+      testWidgets('preserves the original whitespace', (tester) async {
+        await pumpCapitalized(tester, 'two  spaces\nand a newline');
+
+        expect(find.text('Two  Spaces\nAnd A Newline'), findsOneWidget);
+      });
     });
 
     testWidgets(

@@ -314,7 +314,7 @@ Order: covered in §2.
 
 **Decoration**: `underline` / `overline` / `line-through` / `no-underline`. Color: `decoration-{family}-{shade}` / `decoration-[#hex]`. Style: `decoration-solid` / `-double` / `-dotted` / `-dashed` / `-wavy`. Thickness: `decoration-N` / `decoration-[3px]`.
 
-**Transform**: `uppercase` / `lowercase` / `capitalize` / `normal-case`. Casing follows the AMBIENT LOCALE (`Localizations.maybeLocaleOf`), so Turkish and Azerbaijani get the dotted/dotless `i` right: under `Locale('tr')`, `uppercase` on `izleyiciler` is `İZLEYİCİLER` and on `kullanılan` is `KULLANILAN`. With NO `Localizations` ancestor (a bare widget test, or a subtree outside a `MaterialApp`) it falls back to Dart's locale-independent casing.
+**Transform**: `uppercase` / `lowercase` / `capitalize` / `normal-case`. `capitalize` raises the first letter of EVERY whitespace-separated word and leaves the rest as typed (`the HTTP client` -> `The HTTP Client`), matching CSS `text-transform: capitalize`; leading punctuation is skipped, so `"quoted words"` -> `"Quoted Words"`. Casing follows the AMBIENT LOCALE (`Localizations.maybeLocaleOf`), so Turkish and Azerbaijani get the dotted/dotless `i` right: under `Locale('tr')`, `uppercase` on `izleyiciler` is `İZLEYİCİLER` and on `kullanılan` is `KULLANILAN`. With NO `Localizations` ancestor (a bare widget test, or a subtree outside a `MaterialApp`) it falls back to Dart's locale-independent casing.
 
 **Tracking (letter-spacing)**: `tracking-tighter` (-2) / `-tight` (-1) / `-normal` (0) / `-wide` (1) / `-wider` (2) / `-widest` (4). Arbitrary `tracking-[0.5]`.
 

@@ -89,6 +89,19 @@ void main() {
 
       expect(find.text('İzleyici'), findsOneWidget);
     });
+
+    testWidgets('capitalize dots the leading i of every word', (tester) async {
+      // The word initial is raised per word, and each one goes through the
+      // Turkish mapping: `izleyici` needs the dot, `ışıkları` must not get one.
+      await tester.pumpWidget(
+        wrap(
+          const WText('izleyici ışıkları', className: 'capitalize'),
+          locale: const Locale('tr'),
+        ),
+      );
+
+      expect(find.text('İzleyici Işıkları'), findsOneWidget);
+    });
   });
 
   group('English', () {
