@@ -82,6 +82,7 @@ WDiv(
 | 📱 | **Responsive prefixes** | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` breakpoints, plus custom breakpoints via the theme. |
 | 🌙 | **First-class dark mode** | `dark:` prefix with runtime toggle and automatic system-brightness sync. Every color token carries its `dark:` pair in the same className. |
 | 🎯 | **State prefixes** | `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, and any custom state. Zero `MouseRegion`, zero `setState`, zero `_isHovered` booleans. |
+| ⌨️ | **Reachable without a pointer** | A `WAnchor` with an `onTap` is one traversal stop, and it activates on `Enter`, `Space`, the gamepad A button and the D-pad centre. The same binding serves a keyboard, a gamepad and a television remote. |
 | 🔌 | **Platform prefixes** | `ios:`, `android:`, `web:`, `mobile:` for conditional styling without a single `if`. Works on all 6 Flutter platforms. |
 | 🎭 | **Customizable theme** | 24 configurable `WindThemeData` fields. Override every token scale: colors, spacing, typography, shadows, breakpoints, animations. Defaults match Tailwind v3 / v4. Define `aliases` to create bare-token className shortcuts expanded before parsing. |
 | 📡 | **Server-driven UI** | `WDynamic` renders widget trees from JSON. Ship UI updates without ship-blocking releases. Whitelisted 13 Wind widgets + 16 Flutter core widgets. |
