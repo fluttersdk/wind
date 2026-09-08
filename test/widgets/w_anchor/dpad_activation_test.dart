@@ -265,6 +265,40 @@ void main() {
       expect(WindAnchorStateProvider.of(inner)?.isFocused, isTrue);
     });
 
+    testWidgets('the ring lights through an intermediate wrapper too', (
+      tester,
+    ) async {
+      // Any `hover:` or `active:` class on a div between the anchor and the
+      // ring-styled one creates a second gestureless wrapper, and a wrapper's
+      // own node never has primary focus (it cannot request focus at all). So
+      // the inherited signal has to pass THROUGH a wrapper, not stop at it:
+      // narrowing the inheritance to primary focus without chaining it left a
+      // div two wrappers deep dark, which is the case this whole change exists
+      // to fix.
+      await pump(
+        tester,
+        WAnchor(
+          onTap: () {},
+          child: const WDiv(
+            className: 'p-2 hover:bg-gray-100',
+            child: WDiv(
+              className: 'p-2 focus:ring-2 focus:ring-blue-500',
+              child: WText('Inner'),
+            ),
+          ),
+        ),
+      );
+
+      traversalStops(tester).single.requestFocus();
+      await tester.pump();
+
+      expect(
+        WindAnchorStateProvider.of(tester.element(find.text('Inner')))
+            ?.isFocused,
+        isTrue,
+      );
+    });
+
     testWidgets('a bare ring-styled div is still focusable on its own', (
       tester,
     ) async {

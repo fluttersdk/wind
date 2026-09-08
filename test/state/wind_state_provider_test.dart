@@ -155,11 +155,18 @@ void main() {
   });
   group('WindAnchorState value semantics', () {
     test('hasPrimaryFocus takes part in equality and in the hash', () {
-      // Both halves matter. `WindAnchorStateProvider.updateShouldNotify`
-      // compares two states with `!=`, so a field left out of `==` means a
-      // change to it never reaches the descendants that style on it. The hash
-      // goes with it: two states that are not equal must not collide, or a Set
-      // or Map keyed on them silently merges them.
+      // The `==` half is the load-bearing one.
+      // `WindAnchorStateProvider.updateShouldNotify` compares two states with
+      // `!=`, so a field left out of `==` means a change to it never reaches
+      // the descendants that style on it.
+      //
+      // The hash assertion pins something narrower than it may look: that
+      // `hasPrimaryFocus` reaches `hashCode` at all, since omitting it would
+      // make exactly these two states hash equal. It does NOT say unequal
+      // states never collide, and this `hashCode` cannot promise that: it XORs
+      // four booleans, so any two states that differ by a permutation of their
+      // true values hash the same. `==` is what keeps them apart; the hash only
+      // decides how well they spread across buckets.
       const WindAnchorState within = WindAnchorState(
         isHovering: false,
         isFocused: true,

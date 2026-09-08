@@ -246,10 +246,21 @@ class _WAnchorState extends State<WAnchor> {
     final WindAnchorState? inherited =
         hasGestures ? null : WindAnchorStateProvider.of(context);
 
+    // `hasPrimaryFocus` is republished with the inherited value ORed in, so the
+    // signal passes THROUGH a wrapper rather than stopping at it. A wrapper's
+    // own node never holds primary focus (it cannot request focus at all), so
+    // publishing only `_hasPrimaryFocus` killed the chain after one hop and a
+    // ring two wrappers deep stayed dark. Any `hover:` or `active:` class on an
+    // intermediate div is enough to create that second wrapper.
+    //
+    // Chaining does not reopen the sibling leak, because what chains is the
+    // ancestor's PRIMARY focus: a wrapper only ever inherits from a wrapper
+    // that is itself decoration of the primary-focused node.
     final currentState = WindAnchorState(
       isHovering: _isHovering,
       isFocused: _isFocused || (inherited?.hasPrimaryFocus ?? false),
-      hasPrimaryFocus: _hasPrimaryFocus,
+      hasPrimaryFocus:
+          _hasPrimaryFocus || (inherited?.hasPrimaryFocus ?? false),
       isDisabled: widget.isDisabled || (inherited?.isDisabled ?? false),
       customStates: widget.states,
     );

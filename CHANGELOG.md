@@ -19,7 +19,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ### Added
 
-- **`WindAnchorState.hasPrimaryFocus`**, separating "this element is the focus" from "this element contains the focus". `isFocused` has always been the second of those, because it comes from `FocusNode.hasFocus`, which is true for an ancestor of the real holder. The distinction is what a styling wrapper has to inherit: a tappable card containing a text field reports focus-within while the user types, so a wrapper inheriting `isFocused` lit its ring while sitting beside the field rather than around it. Defaults to `false`, so nothing that constructs the state by hand has to change.
+- **`WindAnchorState.hasPrimaryFocus`**, separating "this element is the focus" from "this element contains the focus". A gestureless wrapper republishes it with the inherited value ORed in, so the signal chains through nesting: a wrapper's own node never holds primary focus, so stopping at it left a ring two wrappers deep dark, and any `hover:` or `active:` class on an intermediate div creates that second wrapper. `isFocused` has always been the second of those, because it comes from `FocusNode.hasFocus`, which is true for an ancestor of the real holder. The distinction is what a styling wrapper has to inherit: a tappable card containing a text field reports focus-within while the user types, so a wrapper inheriting `isFocused` lit its ring while sitting beside the field rather than around it. Defaults to `false`, so nothing that constructs the state by hand has to change.
 
 ## [1.5.2] - 2026-09-08
 
