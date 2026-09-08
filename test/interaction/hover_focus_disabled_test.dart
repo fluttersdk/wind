@@ -101,12 +101,21 @@ void main() {
         const Color(0xFFFFFFFF),
       );
 
-      // Request focus on the Focus node WAnchor installs around its child.
-      final focusFinder = find
+      // Focus the node a keyboard or a remote would actually reach, which is
+      // the outermost one: the anchor carrying `onTap`.
+      //
+      // This used to take `.first`, the NEAREST ancestor, which is the
+      // gestureless anchor `WDiv` wraps itself in for its own `focus:` classes.
+      // Focusing that one proved the decoration could style itself while the
+      // control the user tabs to stayed unstyled, which is the shape this
+      // change removes: the styled node is no longer independently focusable,
+      // so `requestFocus` on it now does nothing at all.
+      final Iterable<FocusNode> nodes = find
           .ancestor(of: find.text('Focus me'), matching: find.byType(Focus))
-          .first;
-      final focusWidget = tester.widget<Focus>(focusFinder);
-      focusWidget.focusNode!.requestFocus();
+          .evaluate()
+          .map((Element e) => (e.widget as Focus).focusNode)
+          .whereType<FocusNode>();
+      nodes.firstWhere((FocusNode n) => n.canRequestFocus).requestFocus();
       await tester.pumpAndSettle();
 
       expect(

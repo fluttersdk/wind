@@ -116,6 +116,36 @@ class _WAnchorState extends State<WAnchor> {
   bool _isFocused = false;
   final FocusNode _focusNode = FocusNode();
 
+  /// The keyboard and remote-control half of [WAnchor.onTap].
+  ///
+  /// `WidgetsApp` binds `enter`, `numpadEnter`, `space`, `gameButtonA` and
+  /// `select` to [ActivateIntent], and `select` is the D-pad centre key on
+  /// Android TV, so answering the intent answers every one of those keys at
+  /// once. Nothing here reads a [LogicalKeyboardKey]: a `WAnchor` that matched
+  /// keys itself would have to be taught each new one, and would diverge from
+  /// whatever the platform decides activation means.
+  ///
+  /// Built once and reused, which is what [ButtonStyleButton] does through
+  /// `InkWell` (`material/ink_well.dart`). A map rebuilt every frame gives
+  /// `Actions` a new [Action] instance each time and defeats its own caching.
+  late final Map<Type, Action<Intent>> _actions = <Type, Action<Intent>>{
+    ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: _activate),
+    ButtonActivateIntent:
+        CallbackAction<ButtonActivateIntent>(onInvoke: _activate),
+  };
+
+  /// Runs the primary action, which is [WAnchor.onTap] and only that.
+  ///
+  /// `onLongPress` and `onDoubleTap` get no binding. [ActivateIntent] means
+  /// "the primary action" and there is no second key for a secondary one;
+  /// inventing one would diverge from every button Flutter ships.
+  Object? _activate(Intent intent) {
+    if (widget.isDisabled) return null;
+    widget.onTap?.call();
+
+    return null;
+  }
+
   /// Initializes the state and adds a listener to the `FocusNode` to track focus changes.
   @override
   void initState() {
@@ -177,26 +207,52 @@ class _WAnchorState extends State<WAnchor> {
   /// `GestureDetector` for tap events, disabling them if `widget.isDisabled` is true.
   @override
   Widget build(BuildContext context) {
-    final currentState = WindAnchorState(
-      isHovering: _isHovering,
-      isFocused: _isFocused,
-      isDisabled: widget.isDisabled,
-      customStates: widget.states,
-    );
-
     final hasGestures = widget.onTap != null ||
         widget.onLongPress != null ||
         widget.onDoubleTap != null;
 
-    // Focus is always present, needed for focus: class prefix to work
+    // A gestureless anchor is a styling wrapper, so it inherits the interaction
+    // it cannot originate rather than competing for it.
+    //
+    // `WDiv` auto-wraps itself in one of these whenever its className carries
+    // `hover:`, `focus:` or `active:` (see `w_div.dart`'s `isInteractive`
+    // branch), and `WDiv` reads its state from the NEAREST provider. So before
+    // this inheritance, the wrapper published `isFocused: false` over a focused
+    // ancestor and `isDisabled: false` over a disabled one, and the element
+    // carrying `focus:ring-2` was the one element that could not see the focus.
+    //
+    // Hover is deliberately NOT inherited. Focus has one holder in the whole
+    // tree, so a descendant asking "is this focused" and a tappable ancestor
+    // holding focus are the same question. Hover is a pointer position, and two
+    // siblings inside one anchor legitimately highlight independently.
+    final WindAnchorState? inherited =
+        hasGestures ? null : WindAnchorStateProvider.of(context);
+
+    final currentState = WindAnchorState(
+      isHovering: _isHovering,
+      isFocused: _isFocused || (inherited?.isFocused ?? false),
+      isDisabled: widget.isDisabled || (inherited?.isDisabled ?? false),
+      customStates: widget.states,
+    );
+
+    // Focus is always present, needed for focus: class prefix to work.
+    //
+    // A gestureless wrapper keeps the node but stops competing for it. It is
+    // not a traversal stop, because one control has to cost one press of the
+    // remote: before this, `WAnchor(onTap:) > WDiv('focus:ring-2')` cost two,
+    // and the ring was on the second one while the gesture was on the first.
+    // The node itself stays, because `FocusNode.hasFocus` covers descendants
+    // and that is what draws the ring around a `WInput` inside a styled div.
     Widget innerChild = Focus(
       focusNode: _focusNode,
-      canRequestFocus: !widget.isDisabled,
+      canRequestFocus: !widget.isDisabled && (hasGestures || inherited == null),
       child: widget.child,
     );
 
     // Only wrap with GestureDetector if there are actual gesture callbacks
     if (hasGestures) {
+      innerChild = Actions(actions: _actions, child: innerChild);
+
       innerChild = GestureDetector(
         // Translucent so the whole anchor bounds are tappable, not only the
         // opaque descendants. The GestureDetector defaults to
