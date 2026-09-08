@@ -101,12 +101,18 @@ void main() {
         ),
       );
 
-      expect(find.byType(FractionallySizedBox), findsOneWidget);
-      final FractionallySizedBox box = tester.widget(
-        find.byType(FractionallySizedBox),
-      );
-      expect(box.widthFactor, 0.5);
-      expect(box.heightFactor, 1.0);
+      // Asserted on the resulting SIZE rather than on the widget that
+      // produced it. The previous version looked for a `FractionallySizedBox`
+      // carrying the two factors, which pinned one composition rather than the
+      // behaviour: `h-full` now resolves through `WindFullHeightBox` and the
+      // element sizes identically. A white-box assertion here fails on a change
+      // that a user cannot see, and passes on one they can.
+      final Size size = tester.getSize(find.text('Test'));
+      final Size screen =
+          tester.view.physicalSize / tester.view.devicePixelRatio;
+
+      expect(size.width, screen.width / 2);
+      expect(size.height, screen.height);
     });
 
     group('Sizing Optimization Tests', () {
@@ -200,12 +206,24 @@ void main() {
           ),
         );
 
-        final wDivFinder = find.byType(WDiv);
+        // The height it RESOLVED TO, not the widget it used to get there.
+        // This asserted a `LayoutBuilder` descendant, which is the thing the
+        // render-layer rewrite removed on purpose: `h-full` in an unbounded
+        // column still falls back to the screen height, and that fallback is
+        // the behaviour worth pinning.
+        final double screenHeight =
+            tester.view.physicalSize.height / tester.view.devicePixelRatio;
+        expect(tester.getSize(find.text('Test')).height, screenHeight);
+
+        // Deliberately no assertion about WHICH widget produced that height.
+        // The old one named `LayoutBuilder`, and naming its replacement would
+        // repeat the mistake: the next rewrite would fail this test without
+        // changing anything a user can observe.
         expect(
-          find.descendant(of: wDivFinder, matching: find.byType(LayoutBuilder)),
+          find.byType(WDiv),
           findsOneWidget,
           reason:
-              'h-full in unbounded parent requires LayoutBuilder to check constraints',
+              'h-full in an unbounded parent falls back to the screen height',
         );
       });
     });

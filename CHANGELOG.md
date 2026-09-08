@@ -6,6 +6,21 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **`max-h-*` and `max-w-*` now apply to an `h-full` element.** Both were discarded, by the same mechanism in two places: the cap arrived as a `ConstrainedBox` whose additional constraint `BoxConstraints.enforce` clamps into the incoming range, and the incoming range was already tight. `h-full max-h-[120px]` under a `ConstrainedBox(maxHeight: 400)` rendered 400 and now renders 120; `w-1/2 h-full max-w-[100px]` in a 300 pixel parent rendered 150 and now renders 100. A TIGHT parent still wins over `max-h-*`, which is correct rather than the same bug: a tight constraint is the parent stating an exact size.
+- **`h-full` no longer throws under an `IntrinsicHeight`.** It resolved through a `LayoutBuilder`, which cannot answer an intrinsic query, so any `IntrinsicHeight` / `IntrinsicWidth` above it asserted `LayoutBuilder does not support returning intrinsic dimensions`. The limitation was documented on five surfaces with an escape hatch ("use explicit `h-*` instead") rather than fixed. `h-full` is now the `WindFullHeightBox` render object, which answers intrinsics by forwarding to its child, so it renders under an `IntrinsicHeight`, in a `Table` cell and in an `items-stretch` grid cell, and matches the tallest sibling rather than reporting the screen height. `grid` is the one remaining `LayoutBuilder` path.
+
+### Changed
+
+- **`h-full` resolves at the render layer instead of through a `LayoutBuilder`.** The question it asks ("is the incoming height bounded") is only answerable during layout, and a `LayoutBuilder` was the widget-layer way to ask it; a `LayoutBuilder` also defers its whole subtree into a second layout pass. A consumer measured 1056 of them in one eight-scroll session against 258 widget builds, one per element carrying the class, re-run every frame. `WindFullHeightBox` reads `constraints` directly and needs neither. Behaviour is otherwise unchanged, pinned by twelve characterisation tests written against the old implementation first.
+
+### Quality
+
+- Twenty tests for `WindFullHeightBox`, none skipped, covering: bounded and unbounded, with and without a width factor, `max-w-*` and `max-h-*`, the outer box's own reported size, in-place updates through all four setters (including a screen-size change, which is what a rotation is), a childless element, and the dry-layout contract agreeing with the size actually laid out. Line coverage 94.5% to 95.2%. Every line of the new file is covered, including both null-child branches: a childless `WDiv` carrying only `h-full` builds no core structure and reaches the box with a null child, so an earlier `coverage:ignore` on those lines rested on a false premise.
+
 ## [1.5.1] - 2026-09-07
 
 ### Fixed

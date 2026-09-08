@@ -5,18 +5,20 @@ import 'package:flutter/widgets.dart';
 /// REAL two-pass layout rather than the intrinsic-sizing protocol.
 ///
 /// This is the intrinsic-free replacement for `IntrinsicHeight` + a
-/// `Row(crossAxisAlignment: stretch)` in the grid `items-stretch` path. Wind
-/// cell content frequently contains a `LayoutBuilder` (flex cross-axis stretch,
-/// `h-full`, `basis-*`), and `LayoutBuilder` cannot answer intrinsic or
-/// dry-layout queries, so `IntrinsicHeight` asserts `LayoutBuilder does not
-/// support returning intrinsic dimensions` the moment it has to stretch an
-/// unequal cell (issue #139). This widget instead lays each child out for real
-/// with a loose height to measure it, then lays it out again to the row's max
-/// height via a MIN constraint (never a tight one). Real layout is exactly what
-/// `LayoutBuilder` supports, so a `flex flex-col` cell stretches without
-/// asserting; and because a cell is never forced BELOW its own content height, a
-/// stretched cell leaves no residual `RenderFlex overflowed` warning the way a
-/// tight re-lay could on fractional (sub-pixel) content (issue #141).
+/// `Row(crossAxisAlignment: stretch)` in the grid `items-stretch` path.
+/// `IntrinsicHeight` measures through the intrinsic protocol, which a
+/// `LayoutBuilder` cannot answer, so it asserts `LayoutBuilder does not support
+/// returning intrinsic dimensions` the moment it has to stretch a cell carrying
+/// one (issue #139). Flex cross-axis stretch, `h-full` and `basis-*` each did
+/// when that was filed and are render objects now, but a nested `grid` still
+/// does, and a cell subtree is arbitrary caller content either way. This widget
+/// instead lays each child out for real with a loose height to measure it, then
+/// lays it out again to the row's max height via a MIN constraint (never a tight
+/// one). Real layout is exactly what `LayoutBuilder` supports, so a `flex
+/// flex-col` cell stretches without asserting; and because a cell is never
+/// forced BELOW its own content height, a stretched cell leaves no residual
+/// `RenderFlex overflowed` warning the way a tight re-lay could on fractional
+/// (sub-pixel) content (issue #141).
 ///
 /// Every child is given an equal share of the incoming width (`(maxWidth -
 /// spacing * (n - 1)) / n`), matching the grid's fixed column count, so callers

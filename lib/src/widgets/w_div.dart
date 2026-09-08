@@ -5,6 +5,7 @@ import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
 import '../utils/wind_perf_counters.dart';
 import 'wind_animation_wrapper.dart';
+import 'wind_full_height.dart';
 import '../state/wind_anchor_state_provider.dart';
 import '../state/wind_flex_overflow_scope.dart';
 import '../state/wind_min_width_scroll_scope.dart';
@@ -624,7 +625,7 @@ class WDiv extends StatelessWidget {
   /// Builds the final `Row`/`Column` from `basis-*`-resolved children, applying
   /// the column smart cross-axis stretch or the row `Flexible` shrink wrap.
   /// Split out of [_buildFlexStructure] so it can run either directly or inside
-  /// the `basis-*` `LayoutBuilder`.
+  /// the `basis-*` extent provider.
   Widget _composeFlex({
     required WindStyle styles,
     required bool isColumn,
@@ -850,7 +851,7 @@ class WDiv extends StatelessWidget {
   }
 
   /// Whether any direct flex child carries a `basis-*` token. Cheap pre-check
-  /// (substring) so the common no-basis case skips the LayoutBuilder wrap.
+  /// (substring) so the common no-basis case skips the extent-provider wrap.
   static bool _anyChildHasBasis(List<Widget> children) {
     for (final child in children) {
       final className = _extractChildClassName(child);
@@ -1280,9 +1281,11 @@ class WDiv extends StatelessWidget {
   /// cells so columns stay aligned.
   ///
   /// Because the row uses real layout rather than the intrinsic protocol, cells
-  /// whose content is a `flex flex-col`, or that use `h-full` / `basis-*` (all
-  /// of which carry a `LayoutBuilder`), stretch correctly instead of asserting
-  /// `LayoutBuilder does not support returning intrinsic dimensions` (#139).
+  /// whose content is a `flex flex-col`, or that use `h-full` / `basis-*`,
+  /// stretch correctly instead of asserting `LayoutBuilder does not support
+  /// returning intrinsic dimensions` (#139). None of those three carries a
+  /// `LayoutBuilder` any more, so they would survive the intrinsic protocol
+  /// too; real layout is still the cheaper path and is what this builds.
   Widget _buildStretchGrid(
     int cols,
     double gapX,
@@ -1312,9 +1315,9 @@ class WDiv extends StatelessWidget {
       }
       // WindEqualHeightRow measures each cell with a real (loose-height) layout
       // and re-lays it to at least the row max via a MIN height, instead of the
-      // intrinsic query IntrinsicHeight would run. A `flex flex-col` cell (which
-      // carries a LayoutBuilder) can then be stretched without the "LayoutBuilder
-      // does not support returning intrinsic dimensions" assert (#139), and the
+      // intrinsic query IntrinsicHeight would run. That kept a `flex flex-col`
+      // cell clear of the "LayoutBuilder does not support returning intrinsic
+      // dimensions" assert (#139) back when it carried one, and the
       // min (never tight) height leaves no residual RenderFlex overflow (#141).
       rows.add(WindEqualHeightRow(spacing: gapX, children: rowChildren));
     }
@@ -1636,11 +1639,14 @@ class WDiv extends StatelessWidget {
     // markNeedsLayout (e.g. textScaler change), it causes a debug assertion:
     //   _debugRelayoutBoundaryAlreadyMarkedNeedsLayout() is not true
     //
+    // No path below carries one any more: `h-full` is the `WindFullHeightBox`
+    // render object. `grid` is the last LayoutBuilder in the widget.
+    //
     // Strategy:
     //   - w-full: SizedBox(width: infinity), no LayoutBuilder needed
     //   - w-full + max-w-*: ConstrainedBox + SizedBox, no LayoutBuilder needed
     //   - w-1/2, w-1/3 etc: FractionallySizedBox, no LayoutBuilder needed
-    //   - h-full: LayoutBuilder only when vertical axis is unbounded
+    //   - h-full: WindFullHeightBox, a render object, on both axes
     if (styles.widthFactor != null || styles.heightFactor != null) {
       final innerChild = widgetToBuild;
 
@@ -1715,34 +1721,22 @@ class WDiv extends StatelessWidget {
         }
       } else if (styles.widthFactor == null) {
         // Height-only fractional sizing (h-full, h-1/2, etc.)
-        // Vertical axis is often unbounded (ScrollView/Column), so we need
-        // LayoutBuilder only for h-full in unbounded contexts.
+        // The vertical axis is often unbounded (ScrollView/Column), which only
+        // `h-full` has to resolve against; a fraction of an unbounded height is
+        // meaningless, so `h-1/2` and friends stay a plain FractionallySizedBox.
         if (isFullHeight) {
-          // h-full needs LayoutBuilder to handle unbounded vertical axis
-          widgetToBuild = LayoutBuilder(
-            builder: (context, constraints) {
-              if (!constraints.hasBoundedHeight) {
-                final screenHeight = MediaQuery.of(context).size.height;
-                Widget result = SizedBox(
-                  height: screenHeight,
-                  child: innerChild,
-                );
-                if (hasMaxHeightConstraint) {
-                  result = ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: styles.constraints!.maxHeight,
-                    ),
-                    child: result,
-                  );
-                }
-                return result;
-              }
-              // Bounded context: use FractionallySizedBox
-              return FractionallySizedBox(
-                heightFactor: 1.0,
-                child: innerChild,
-              );
-            },
+          // h-full resolves at the render layer, no LayoutBuilder.
+          //
+          // The question is only answerable during layout ("is the incoming
+          // height bounded"), and asking it with a LayoutBuilder defers this
+          // whole subtree into a second layout pass. A consumer measured 1056
+          // of them in one eight-scroll session against 258 widget builds.
+          logger.wrapWith("WindFullHeightBox", "h-full");
+          widgetToBuild = WindFullHeightBox(
+            fallbackHeight: MediaQuery.of(context).size.height,
+            maxHeight:
+                hasMaxHeightConstraint ? styles.constraints!.maxHeight : null,
+            child: innerChild,
           );
         } else {
           // h-1/2, h-1/3, etc: FractionallySizedBox (no LayoutBuilder)
@@ -1762,49 +1756,20 @@ class WDiv extends StatelessWidget {
         }
       } else {
         // Both width and height factors (e.g., w-full h-full, w-1/2 h-1/2)
-        // Use LayoutBuilder only when needed for unbounded axis
-        final bool needsLayoutBuilder = isFullHeight; // h-full may be unbounded
-        if (needsLayoutBuilder) {
-          widgetToBuild = LayoutBuilder(
-            builder: (context, constraints) {
-              final bool heightUnbounded = !constraints.hasBoundedHeight;
-              final double? effectiveHeight = heightUnbounded
-                  ? MediaQuery.of(context).size.height *
-                      (styles.heightFactor ?? 1.0)
-                  : null;
-
-              Widget result;
-              if (effectiveHeight != null) {
-                // Unbounded height: use calculated size
-                result = SizedBox(
-                  width: isFullWidth ? double.infinity : null,
-                  height: effectiveHeight,
-                  child: innerChild,
-                );
-              } else {
-                // Bounded context: FractionallySizedBox handles both axes
-                result = FractionallySizedBox(
-                  widthFactor: styles.widthFactor,
-                  heightFactor: styles.heightFactor,
-                  child: innerChild,
-                );
-              }
-
-              if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
-                result = ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: hasMaxWidthConstraint
-                        ? styles.constraints!.maxWidth
-                        : double.infinity,
-                    maxHeight: hasMaxHeightConstraint
-                        ? styles.constraints!.maxHeight
-                        : double.infinity,
-                  ),
-                  child: result,
-                );
-              }
-              return result;
-            },
+        // `h-full` carries the width factor into the same render-layer box;
+        // everything else is a plain FractionallySizedBox on both axes.
+        if (isFullHeight) {
+          // Both axes, height full: the same render-layer box as the
+          // height-only path, carrying the width factor too.
+          logger.wrapWith("WindFullHeightBox", "w+h-full");
+          widgetToBuild = WindFullHeightBox(
+            fallbackHeight: MediaQuery.of(context).size.height,
+            widthFactor: styles.widthFactor,
+            maxWidth:
+                hasMaxWidthConstraint ? styles.constraints!.maxWidth : null,
+            maxHeight:
+                hasMaxHeightConstraint ? styles.constraints!.maxHeight : null,
+            child: innerChild,
           );
         } else {
           // Both fractional, neither h-full: FractionallySizedBox handles it

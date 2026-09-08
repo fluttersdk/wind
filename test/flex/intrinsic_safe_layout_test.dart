@@ -363,4 +363,76 @@ void main() {
       expect(error.toString(), contains('flex-1'));
     });
   });
+
+  group('(e) h-full is intrinsic-safe', () {
+    // It was not, and the limitation was documented rather than fixed: `h-full`
+    // resolved through a `LayoutBuilder`, which cannot answer an intrinsic
+    // query, so any `IntrinsicHeight` above it threw. `SKILL.md`, three
+    // reference pages and `doc/layout/sizing.md` all carried the caveat and the
+    // escape hatch ("use explicit h-* instead").
+    //
+    // `h-full` is a render object now (`WindFullHeightBox`), and a render
+    // object answers intrinsics. Verified as an A/B against master, which
+    // throws `LayoutBuilder does not support returning intrinsic dimensions` on
+    // exactly this tree.
+    testWidgets('h-full under an IntrinsicHeight no longer throws', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Column(
+              children: <Widget>[
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: const <Widget>[
+                      SizedBox(width: 80, height: 60),
+                      WDiv(className: 'h-full w-[40px] bg-red-500'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('and it matches the tallest sibling rather than collapsing', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Column(
+              children: <Widget>[
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: const <Widget>[
+                      SizedBox(width: 80, height: 60),
+                      WDiv(
+                        className: 'h-full w-[40px]',
+                        child: SizedBox.expand(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // The 60 pixel sibling sets the row height; `h-full` fills it. Asserting
+      // the number rather than just the absence of a throw, because a box that
+      // silently collapsed to zero would also not throw.
+      expect(tester.getSize(find.byType(SizedBox).last).height, 60);
+    });
+  });
 }
