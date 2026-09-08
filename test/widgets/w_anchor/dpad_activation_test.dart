@@ -369,6 +369,72 @@ void main() {
       expect(WindAnchorStateProvider.of(inner)?.isFocused, isTrue);
     });
 
+    testWidgets('focus moving off the card and into its field is seen', (
+      tester,
+    ) async {
+      // The transition where `hasFocus` does not move and `hasPrimaryFocus`
+      // does. The anchor reports focus-within for both halves of this, so a
+      // listener watching only `hasFocus` sees nothing happen and the ring
+      // stays lit on a card the user has already tabbed out of.
+      await pump(
+        tester,
+        WAnchor(
+          onTap: () {},
+          child: const WDiv(
+            className: 'flex flex-col',
+            children: <Widget>[
+              WDiv(
+                className: 'p-2 focus:ring-2 focus:ring-blue-500',
+                child: WText('Card'),
+              ),
+              WInput(placeholder: 'Search'),
+            ],
+          ),
+        ),
+      );
+
+      // Targeted rather than taken from `traversalStops`: a `WInput` brings
+      // several `Focus` widgets of its own, so position in that list says
+      // nothing about which node belongs to the anchor.
+      final FocusNode card = tester
+          .widget<Focus>(
+            find
+                .descendant(
+                  of: find.byType(WAnchor).first,
+                  matching: find.byType(Focus),
+                )
+                .first,
+          )
+          .focusNode!;
+      final FocusNode field =
+          tester.widget<EditableText>(find.byType(EditableText)).focusNode;
+
+      // Re-resolved on each read rather than captured once. An element held
+      // across a rebuild answers from the frame it was captured in, which made
+      // the second read below report the first read's value.
+      bool decorationIsFocused() => WindAnchorStateProvider.of(
+            tester.element(find.text('Card')),
+          )!
+              .isFocused;
+
+      card.requestFocus();
+      await tester.pump();
+      expect(decorationIsFocused(), isTrue);
+
+      // Into the field. The anchor keeps focus-WITHIN and loses primary focus.
+      //
+      // Two pumps: `FocusManager` applies focus changes at the end of a frame
+      // and notifies then, so the `setState` that notification triggers needs
+      // the frame after it to reach the tree.
+      field.requestFocus();
+      await tester.pump();
+      await tester.pump();
+
+      expect(card.hasFocus, isTrue, reason: 'focus-within is unchanged');
+      expect(card.hasPrimaryFocus, isFalse);
+      expect(decorationIsFocused(), isFalse);
+    });
+
     testWidgets('nested hover stays local to the div that is hovered', (
       tester,
     ) async {
