@@ -9,7 +9,8 @@ import 'package:flutter/foundation.dart';
 /// - **isHovering:** True when mouse is over the widget.
 /// - **isFocused:** True when the widget, or anything inside it, has keyboard
 ///   focus.
-/// - **hasPrimaryFocus:** True only when the widget ITSELF is the focus.
+/// - **hasPrimaryFocus:** True when the widget, or the control it decorates,
+///   is the focus. Never true merely because something inside it is.
 /// - **isDisabled:** True when interactions are blocked.
 /// - **customStates:** Set of user-defined states like `selected` or `loading`.
 ///
@@ -27,12 +28,19 @@ class WindAnchorState {
   /// wrong one for asking "is this element the focus".
   final bool isFocused;
 
-  /// Whether this widget itself is the focus, rather than merely containing it.
+  /// Whether this widget, or the control it decorates, is the focus.
   ///
-  /// The distinction is load-bearing for a styling wrapper that inherits its
-  /// state: a tappable card holding a text field reports [isFocused] while the
-  /// user types, so a wrapper inheriting that lit up as a sibling of the field
-  /// the user was actually in.
+  /// Not the same as "this exact node holds focus", and the difference is
+  /// deliberate. A gestureless [WAnchor] cannot request focus at all, so a
+  /// styling wrapper reports the primary focus of the anchor it decorates,
+  /// passing the signal on to any wrapper nested inside it. Without that a ring
+  /// two wrappers deep stayed dark, and one `hover:` class on a div in between
+  /// is enough to create the second wrapper.
+  ///
+  /// What it is never true for is containment. A tappable card holding a text
+  /// field reports [isFocused] the whole time the user types, because that is
+  /// focus-within; this stays false, which is what keeps a wrapper sitting
+  /// BESIDE the field from lighting up with it.
   final bool hasPrimaryFocus;
 
   /// Whether the widget is disabled and ignoring interactions.
