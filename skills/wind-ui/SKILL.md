@@ -5,7 +5,7 @@ when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: compos
 version: 2.14.0
 ---
 
-<!-- fluttersdk_wind 1.5.x | Skill v2.14.0 (2026-09-08) -->
+<!-- fluttersdk_wind 1.5.x | Skill v2.15.0 (2026-09-08) -->
 
 # Wind UI 1.5
 
@@ -62,6 +62,8 @@ These hold for every line of Wind code. Apply each as a hard constraint, not a s
 9. **Wind composes with Flutter, not against it.** `Scaffold`, `AppBar`, `Dialog`, `BottomSheet`, `Drawer`, `SnackBar`, `Navigator`, `Hero`, `FutureBuilder`, `StreamBuilder`, `ValueListenableBuilder` remain canonical. `ListView` / `GridView.builder` / `CustomScrollView` are the right choice for virtualised lists; `WDiv` with `grid-cols-N` produces a static `Wrap` (or, with `items-stretch`, equal-height rows), not a virtualised grid. See [Wind ≠ Flutter rules of thumb](#9-wind--flutter-rules-of-thumb).
 
 10. **`active:` prefix is reserved but not wired.** `WAnchor` tracks hover and focus only; there is no onTapDown/onTapUp tracking. Don't rely on `active:bg-blue-700` for press feedback. Use a transient state in the consumer's controller and `states: {'pressed'}` if you genuinely need press feedback today.
+
+11. **A gesture on `WAnchor` is reachable by keyboard and remote, and a gestureless one is not a stop.** `onTap` runs on `ActivateIntent`, which covers `Enter`, `Space`, the gamepad A button and `select` (the D-pad centre on Android TV, the click on the Apple TV remote). Only an anchor carrying a gesture is a traversal stop: the gestureless `WAnchor` that `WDiv` wraps itself in for `hover:` / `focus:` / `active:` inherits `focus` and `disabled` from the nearest anchor above it rather than claiming a second stop of its own, so `WAnchor(onTap:) > WDiv('focus:ring-2')` is one control the user tabs to once and the ring lands on the thing they activate. `hover` stays local, because two siblings inside one anchor legitimately highlight independently. Wind ships no traversal policy; directional movement is Flutter's default, and `FocusTraversalGroup` is the consumer's tool for region memory and edge behaviour.
 
 ## 2. The 27 public widgets (+ WindRecipe) at a glance
 
@@ -405,6 +407,8 @@ Compact catalog of consistent footguns. Each entry: what's wrong, why, the corre
 | `WText` with `truncate` inside Row without bounded width | Overflow | wrap in `WDiv(className: 'flex-1')` |
 | Putting `dark:` peers at the bottom of a long className | Hard to audit; missing pairs slip through | group beside the light variant on the same line |
 | `active:bg-blue-700` for press feedback | Not wired (Core Law §10); WAnchor tracks hover and focus only | track press in consumer state, pass via `states: {'pressed'}` if needed |
+| Adding a `Focus` or `Shortcuts` wrapper to make a `WAnchor` keyboard-reachable | Already wired (Core Law §11); `onTap` answers `ActivateIntent` | pass `onTap` and let `Enter` / `Space` / D-pad `select` reach it |
+| Expecting `focus:ring-*` on a `WDiv` inside a tappable `WAnchor` to need its own focus node | The gestureless wrapper inherits focus from the anchor (Core Law §11) | style the div, put the gesture on the anchor, leave the nodes alone |
 | Inline `Padding(padding: EdgeInsets.all(16))` around a `WDiv` | Duplicates work | move the padding into the `WDiv` className as `p-4` |
 | Asserting `uppercase` output for Turkish in a bare `pumpWidget` | Casing reads the ambient locale, and with no `Localizations` ancestor it falls back to Dart's locale-independent rules, so the assertion measures the fallback | wrap the subtree in `Localizations(locale: Locale('tr'), delegates: [DefaultWidgetsLocalizations.delegate], ...)` |
 

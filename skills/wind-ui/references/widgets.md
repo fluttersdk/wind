@@ -252,12 +252,17 @@ Three accessibility paths, checked in this order:
 2. No label and no gesture: no node of its own.
 3. No label, with a gesture: `MergeSemantics` → `Semantics(button: true, enabled: !isDisabled)` → the rest below.
 
-The rest, in all three: `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvider` (broadcasts hover/focus/disabled state) → `Focus(canRequestFocus: !isDisabled)` → optional `GestureDetector` (only if any callback is non-null) → `child`.
+The rest, in all three: `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvider` (broadcasts hover/focus/disabled state) → optional `GestureDetector` and `Actions` (both only if any callback is non-null) → `Focus` → `child`.
 
 State tracking:
 - Hover: `MouseRegion.onEnter` / `onExit` set `_isHovering`; calls `setState` only on change.
 - Focus: `FocusNode` listener reads `hasFocus` and calls `setState` on change.
 - Press tracking does NOT exist. `active:` prefix is reserved but not wired; `WAnchor` does not detect press duration via `onTapDown` / `onTapUp` today.
+
+Keyboard and remote activation:
+- With a gesture, `Actions` maps `ActivateIntent` and `ButtonActivateIntent` to `onTap`. `WidgetsApp` raises those for `Enter`, `Space`, numpad `Enter`, gamepad A and `select` (the Android TV D-pad centre, the Apple TV remote click), so `WAnchor` binds no key itself and inherits whatever the platform adds. Only `onTap` is bound: `ActivateIntent` is the primary action and there is no second key for `onLongPress` / `onDoubleTap`.
+- `canRequestFocus: !isDisabled && (hasGestures || no ancestor anchor state)`. A gestureless `WAnchor` under another anchor is a styling wrapper, not a traversal stop, so one control costs one press of the remote. Standalone (nothing to inherit from) it keeps its node, because that is how a consumer styles a custom control.
+- A gestureless wrapper inherits `isFocused` and `isDisabled` from the nearest `WindAnchorStateProvider`, which is what makes `WAnchor(onTap:) > WDiv('focus:ring-2')` draw the ring on the node the user activates. `isHovering` is NOT inherited: hover is a pointer position and sibling divs inside one anchor highlight independently.
 
 ### `WButton`
 
