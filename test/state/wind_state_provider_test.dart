@@ -153,4 +153,47 @@ void main() {
     expect(longPressed, isFalse);
     expect(doubleTapped, isFalse);
   });
+  group('WindAnchorState value semantics', () {
+    test('hasPrimaryFocus takes part in equality and in the hash', () {
+      // The `==` half is the load-bearing one.
+      // `WindAnchorStateProvider.updateShouldNotify` compares two states with
+      // `!=`, so a field left out of `==` means a change to it never reaches
+      // the descendants that style on it.
+      //
+      // The hash assertion pins something narrower than it may look: that
+      // `hasPrimaryFocus` reaches `hashCode` at all, since omitting it would
+      // make exactly these two states hash equal. It does NOT say unequal
+      // states never collide, and this `hashCode` cannot promise that: it XORs
+      // four booleans, so any two states that differ by a permutation of their
+      // true values hash the same. `==` is what keeps them apart; the hash only
+      // decides how well they spread across buckets.
+      const WindAnchorState within = WindAnchorState(
+        isHovering: false,
+        isFocused: true,
+        isDisabled: false,
+      );
+      const WindAnchorState primary = WindAnchorState(
+        isHovering: false,
+        isFocused: true,
+        hasPrimaryFocus: true,
+        isDisabled: false,
+      );
+
+      expect(within, isNot(primary));
+      expect(within.hashCode, isNot(primary.hashCode));
+      expect(<WindAnchorState>{within, primary}.length, 2);
+    });
+
+    test('and defaults to false, so existing callers are unaffected', () {
+      expect(WindAnchorState.none.hasPrimaryFocus, isFalse);
+      expect(
+        const WindAnchorState(
+          isHovering: false,
+          isFocused: false,
+          isDisabled: false,
+        ).hasPrimaryFocus,
+        isFalse,
+      );
+    });
+  });
 }

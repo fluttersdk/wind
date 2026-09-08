@@ -7,7 +7,10 @@ import 'package:flutter/foundation.dart';
 ///
 /// ### Properties:
 /// - **isHovering:** True when mouse is over the widget.
-/// - **isFocused:** True when the widget has keyboard focus.
+/// - **isFocused:** True when the widget, or anything inside it, has keyboard
+///   focus.
+/// - **hasPrimaryFocus:** True when the widget, or the control it decorates,
+///   is the focus. Never true merely because something inside it is.
 /// - **isDisabled:** True when interactions are blocked.
 /// - **customStates:** Set of user-defined states like `selected` or `loading`.
 ///
@@ -17,8 +20,28 @@ class WindAnchorState {
   /// Whether the mouse pointer is hovering over the widget.
   final bool isHovering;
 
-  /// Whether the widget has keyboard focus.
+  /// Whether the widget, or anything inside it, has keyboard focus.
+  ///
+  /// This is focus-WITHIN, because it comes from `FocusNode.hasFocus`, which is
+  /// true for an ancestor of the node that actually holds focus. That is the
+  /// right signal for a ring drawn around a text field's container, and the
+  /// wrong one for asking "is this element the focus".
   final bool isFocused;
+
+  /// Whether this widget, or the control it decorates, is the focus.
+  ///
+  /// Not the same as "this exact node holds focus", and the difference is
+  /// deliberate. A gestureless [WAnchor] cannot request focus at all, so a
+  /// styling wrapper reports the primary focus of the anchor it decorates,
+  /// passing the signal on to any wrapper nested inside it. Without that a ring
+  /// two wrappers deep stayed dark, and one `hover:` class on a div in between
+  /// is enough to create the second wrapper.
+  ///
+  /// What it is never true for is containment. A tappable card holding a text
+  /// field reports [isFocused] the whole time the user types, because that is
+  /// focus-within; this stays false, which is what keeps a wrapper sitting
+  /// BESIDE the field from lighting up with it.
+  final bool hasPrimaryFocus;
 
   /// Whether the widget is disabled and ignoring interactions.
   final bool isDisabled;
@@ -38,6 +61,7 @@ class WindAnchorState {
     required this.isHovering,
     required this.isFocused,
     required this.isDisabled,
+    this.hasPrimaryFocus = false,
     this.customStates,
   });
 
@@ -58,6 +82,7 @@ class WindAnchorState {
     return other is WindAnchorState &&
         other.isHovering == isHovering &&
         other.isFocused == isFocused &&
+        other.hasPrimaryFocus == hasPrimaryFocus &&
         other.isDisabled == isDisabled &&
         setEquals(other.customStates, customStates);
   }
@@ -67,6 +92,7 @@ class WindAnchorState {
   int get hashCode =>
       isHovering.hashCode ^
       isFocused.hashCode ^
+      hasPrimaryFocus.hashCode ^
       isDisabled.hashCode ^
       (customStates == null ? 0 : Object.hashAllUnordered(customStates!));
 }

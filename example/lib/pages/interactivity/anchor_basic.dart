@@ -105,6 +105,27 @@ class AnchorBasicExamplePage extends StatelessWidget {
             ),
           ),
         ),
+        ExampleSection(
+          title: 'Keyboard and Remote',
+          description:
+              'Tab to this button and press Enter or Space. The same binding is the D-pad centre on Android TV. It is one stop, not two: the ring is styled on the inner WDiv and the gesture lives on the anchor.',
+          child: WAnchor(
+            onTap: () {},
+            semanticLabel: 'Play',
+            child: WDiv(
+              className: '''
+                px-4 py-2 rounded-lg duration-200
+                bg-violet-600 dark:bg-violet-500
+                hover:bg-violet-700 dark:hover:bg-violet-400
+                focus:ring-2 focus:ring-violet-400 dark:focus:ring-violet-300
+              ''',
+              child: const WText(
+                'Play',
+                className: 'text-white font-medium',
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
