@@ -116,6 +116,8 @@ Precedence: inline `backgroundColor` wins over any `bg-*` / `dark:bg-*` resolved
 
 That wrap is styling only: the auto-wrapped `WAnchor` carries no gesture, so it publishes no `button` node to assistive technology. A `WDiv` with `hover:bg-slate-100` styles on hover and still announces as whatever its content is, rather than as a control that does nothing when activated.
 
+It is not a keyboard or remote stop either. Inside a tappable `WAnchor` the wrapper inherits that anchor's `focus` and `disabled` rather than claiming a stop of its own, so the control is reached once and the ring is drawn on the element the user activates. Standing alone, with no anchor above it, the `WDiv` keeps its own focus node and stays reachable. `hover` is never inherited, so sibling divs inside one anchor still highlight independently. See [WAnchor](./w-anchor.md#keyboard-and-remote-control).
+
 For direct gesture support (taps, long presses) or to create semantic buttons, use [WAnchor](w-anchor.md) or [WButton](w-button.md).
 
 <a name="state-variants"></a>

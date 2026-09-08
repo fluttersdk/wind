@@ -7,6 +7,7 @@ The foundational state wrapper that detects user gestures (Hover, Focus, Press) 
 - [Props](#props)
 - [Layout Modes](#layout-modes)
 - [Event Handling](#event-handling)
+- [Keyboard and Remote Control](#keyboard-and-remote-control)
 - [State Variants](#state-variants)
 - [Styling Examples](#styling-examples)
 - [All Supported Classes](#all-supported-classes)
@@ -108,6 +109,45 @@ WAnchor(
 )
 ```
 
+## Keyboard and Remote Control
+
+A focused `WAnchor` runs its `onTap` when the user presses the activation key. `WAnchor` binds no key of its own: it answers `ActivateIntent`, which `WidgetsApp` already raises for `Enter`, `Space`, the numeric keypad `Enter`, the gamepad A button and `select`. `select` is the D-pad centre on Android TV and the click on the Apple TV remote, so one binding covers a keyboard, a gamepad and a remote, and a key the platform adds later arrives for free.
+
+```dart
+// Reachable by Tab, activated by Enter, Space or the D-pad centre.
+WAnchor(onTap: play, child: const WText('Play'))
+```
+
+Only `onTap` is bound. `ActivateIntent` means the primary action and there is no second key for a secondary one, so `onLongPress` and `onDoubleTap` stay pointer-only, exactly as they are on Flutter's own buttons.
+
+### One control is one stop
+
+A control has to cost one press of the remote, so only an anchor that carries a gesture is a traversal stop. A gestureless `WAnchor` is a styling wrapper, and it inherits `focus` and `disabled` from the nearest anchor above it instead of publishing its own.
+
+This matters because `WDiv` wraps itself in a gestureless `WAnchor` whenever its className carries `hover:`, `focus:` or `active:`. Without the inheritance, the element carrying `focus:ring-2` would be the one element that could not see the focus:
+
+```dart
+// One stop. Tab lands on the anchor, the ring is drawn on the div, and
+// Enter fires onTap.
+WAnchor(
+  onTap: clear,
+  child: const WDiv(
+    className: 'p-2 rounded-full focus:ring-2 focus:ring-blue-500',
+    child: WIcon(Icons.close),
+  ),
+)
+```
+
+Two shapes are unaffected. A `WDiv` carrying `focus:` with no anchor above it keeps its own focus node, because that is how a consumer styles a custom control. And a focusable descendant still lights the wrapper's ring: `FocusNode.hasFocus` covers descendants, so a `WInput` inside a ring-styled `WDiv` draws the ring around the field the user is typing in.
+
+`hover` is deliberately not inherited. Focus has one holder in the whole tree, so a descendant asking "is this focused" and a tappable ancestor holding focus are the same question. Hover is a pointer position, and two siblings inside one anchor legitimately highlight independently.
+
+### What is not here
+
+Wind ships no `FocusTraversalPolicy`. Directional movement is Flutter's default `DirectionalFocusTraversalPolicyMixin`, which scopes left and right to the enclosing horizontal `Scrollable` and up and down to the vertical one, so a stack of horizontal rails behaves reasonably without configuration. Focus memory per region, edge behaviour (wrap, stop or leave) and ordering beyond geometry are a consumer concern today; reach for `FocusTraversalGroup` with your own policy.
+
+One upstream limit is worth knowing before it is diagnosed as a Wind bug: directional traversal cannot reach a list item that has not been built, so focus stops at the edge of a lazy list's cache extent ([flutter/flutter#91741](https://github.com/flutter/flutter/issues/91741)), and it can land on a cached item that is scrolled out of sight ([flutter/flutter#91795](https://github.com/flutter/flutter/issues/91795)).
+
 ## State Variants
 
 `WAnchor` enables several state prefixes for all Wind widgets in its subtree. This allows you to define complex interactive styles easily.
@@ -160,6 +200,7 @@ While `WAnchor` does not take a `className`, it facilitates the use of these sta
 | Interaction | `hover:`, `focus:`, `disabled:` |
 | Custom States | Any value passed to the `states` prop (e.g., `active:`, `error:`) |
 | Gestures | Enables `onTap`, `onLongPress`, `onDoubleTap` |
+| Keys | `onTap` also runs on `ActivateIntent` (`Enter`, `Space`, gamepad A, D-pad `select`) |
 
 ## Customizing Theme
 
