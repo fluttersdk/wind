@@ -114,6 +114,7 @@ class WAnchor extends StatefulWidget {
 class _WAnchorState extends State<WAnchor> {
   bool _isHovering = false;
   bool _isFocused = false;
+  bool _hasPrimaryFocus = false;
   final FocusNode _focusNode = FocusNode();
 
   /// The keyboard and remote-control half of [WAnchor.onTap].
@@ -139,9 +140,13 @@ class _WAnchorState extends State<WAnchor> {
   /// `onLongPress` and `onDoubleTap` get no binding. [ActivateIntent] means
   /// "the primary action" and there is no second key for a secondary one;
   /// inventing one would diverge from every button Flutter ships.
+  ///
+  /// No disabled check here, and its absence is deliberate: the map is not
+  /// installed at all unless there is an enabled `onTap`. An early return would
+  /// have looked equivalent and is not, because the action would still report
+  /// itself enabled and the key would stop here instead of travelling on.
   Object? _activate(Intent intent) {
-    if (widget.isDisabled) return null;
-    widget.onTap?.call();
+    widget.onTap!.call();
 
     return null;
   }
@@ -175,9 +180,16 @@ class _WAnchorState extends State<WAnchor> {
   /// which triggers a rebuild to propagate the new state.
   void _onFocusChange() {
     if (widget.isDisabled) return;
-    if (_focusNode.hasFocus != _isFocused) {
+
+    // Two signals, not one. `hasFocus` is focus-WITHIN and is what draws a ring
+    // around a text field's container; `hasPrimaryFocus` is this node itself
+    // and is the only one a styling wrapper may inherit. Conflating them lit
+    // the ring on a sibling of the field the user was typing in.
+    if (_focusNode.hasFocus != _isFocused ||
+        _focusNode.hasPrimaryFocus != _hasPrimaryFocus) {
       setState(() {
         _isFocused = _focusNode.hasFocus;
+        _hasPrimaryFocus = _focusNode.hasPrimaryFocus;
       });
     }
   }
@@ -221,16 +233,23 @@ class _WAnchorState extends State<WAnchor> {
     // ancestor and `isDisabled: false` over a disabled one, and the element
     // carrying `focus:ring-2` was the one element that could not see the focus.
     //
-    // Hover is deliberately NOT inherited. Focus has one holder in the whole
-    // tree, so a descendant asking "is this focused" and a tappable ancestor
-    // holding focus are the same question. Hover is a pointer position, and two
-    // siblings inside one anchor legitimately highlight independently.
+    // Only the ancestor's PRIMARY focus is inherited, never its focus-within.
+    // A tappable card containing a text field reports focus-within while the
+    // user types, so inheriting that lit the ring on every styling wrapper
+    // under the card, including one sitting beside the field. The wrapper's own
+    // `_isFocused` already covers the case that matters in the other direction:
+    // a ring-styled div CONTAINING the focused input lights through its own
+    // node, because `hasFocus` covers descendants.
+    //
+    // Hover is not inherited at all. It is a pointer position, and two siblings
+    // inside one anchor legitimately highlight independently.
     final WindAnchorState? inherited =
         hasGestures ? null : WindAnchorStateProvider.of(context);
 
     final currentState = WindAnchorState(
       isHovering: _isHovering,
-      isFocused: _isFocused || (inherited?.isFocused ?? false),
+      isFocused: _isFocused || (inherited?.hasPrimaryFocus ?? false),
+      hasPrimaryFocus: _hasPrimaryFocus,
       isDisabled: widget.isDisabled || (inherited?.isDisabled ?? false),
       customStates: widget.states,
     );
@@ -249,10 +268,22 @@ class _WAnchorState extends State<WAnchor> {
       child: widget.child,
     );
 
+    // The action map goes on only where there is a primary action to run, and
+    // that is narrower than `hasGestures` on purpose.
+    //
+    // A `CallbackAction` is always enabled, and `ShortcutManager` reports a key
+    // HANDLED for any enabled action whether or not the callback did anything.
+    // So an anchor carrying only `onLongPress`, or one that is disabled, used to
+    // swallow the activation key belonging to the tappable row around it. On
+    // web it swallowed a scroll too: `Space` maps to
+    // `PrioritizedIntents([ActivateIntent, ScrollIntent])`, and an
+    // always-enabled action wins that race.
+    if (widget.onTap != null && !widget.isDisabled) {
+      innerChild = Actions(actions: _actions, child: innerChild);
+    }
+
     // Only wrap with GestureDetector if there are actual gesture callbacks
     if (hasGestures) {
-      innerChild = Actions(actions: _actions, child: innerChild);
-
       innerChild = GestureDetector(
         // Translucent so the whole anchor bounds are tappable, not only the
         // opaque descendants. The GestureDetector defaults to

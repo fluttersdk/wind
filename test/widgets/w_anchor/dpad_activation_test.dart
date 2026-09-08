@@ -153,6 +153,73 @@ void main() {
 
       expect(longPresses, 0);
     });
+
+    testWidgets('an anchor with no onTap lets the key travel past it', (
+      tester,
+    ) async {
+      // Not the same assertion as the case above, and the difference is the
+      // whole finding. An `Actions` map whose `CallbackAction` is always
+      // enabled reports the key HANDLED even when its callback does nothing,
+      // and `ShortcutManager.handleKeypress` stops there. So an anchor carrying
+      // only a long press used to swallow the activation key belonging to the
+      // tappable row around it.
+      //
+      // On web the same swallow eats a scroll: `Space` maps to
+      // `PrioritizedIntents([ActivateIntent, ScrollIntent])`, and an
+      // always-enabled action wins that race.
+      int outerTaps = 0;
+
+      await pump(
+        tester,
+        WAnchor(
+          onTap: () => outerTaps++,
+          child: WAnchor(
+            onLongPress: () {},
+            child: const WText('Options'),
+          ),
+        ),
+      );
+
+      // The inner anchor is a traversal stop of its own: it carries a gesture,
+      // so it is not the styling-wrapper case.
+      final List<FocusNode> stops = traversalStops(tester);
+      expect(stops.length, 2);
+      stops.last.requestFocus();
+      await tester.pump();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+
+      expect(outerTaps, 1);
+    });
+
+    testWidgets('a disabled anchor installs no action map at all', (
+      tester,
+    ) async {
+      // Asserted structurally rather than by pressing a key, and the reason is
+      // worth writing down: a disabled anchor is already unfocusable
+      // (`canRequestFocus` gates on it), so a test that focuses one and presses
+      // a key exercises nothing. What is checkable is that the map is absent,
+      // which is what keeps the guard out of `_activate`. An early return there
+      // would look equivalent and is not: the action would still report itself
+      // enabled and the key would stop rather than travel on.
+      await pump(
+        tester,
+        WAnchor(
+          onTap: () {},
+          isDisabled: true,
+          child: const WText('Save'),
+        ),
+      );
+
+      expect(
+        find.descendant(
+          of: find.byType(WAnchor),
+          matching: find.byType(Actions),
+        ),
+        findsNothing,
+      );
+    });
   });
 
   group('one control, one traversal stop', () {
@@ -228,6 +295,70 @@ void main() {
         const WDiv(
           className: 'p-2 focus:ring-2 focus:ring-blue-500',
           child: WInput(placeholder: 'Search'),
+        ),
+      );
+
+      await tester.tap(find.byType(WInput));
+      await tester.pump();
+
+      final BuildContext inner = tester.element(find.byType(WInput));
+      expect(WindAnchorStateProvider.of(inner)?.isFocused, isTrue);
+    });
+
+    testWidgets('focus does not leak to a ring-styled SIBLING of the field', (
+      tester,
+    ) async {
+      // The narrow edge of the inheritance. A tappable card containing a field
+      // is enough to reach it: the card's own node reports focus-WITHIN, so a
+      // wrapper that inherited plain `isFocused` lit up while the user was
+      // typing somewhere else entirely.
+      //
+      // Only the ancestor's PRIMARY focus is inherited, which is the case where
+      // the wrapper really is that ancestor's decoration.
+      await pump(
+        tester,
+        WAnchor(
+          onTap: () {},
+          child: const WDiv(
+            className: 'flex flex-row',
+            children: <Widget>[
+              WDiv(
+                className: 'p-2 focus:ring-2 focus:ring-blue-500',
+                child: WText('Label'),
+              ),
+              // `flex-1 min-w-0`, because a `Row` hands its child unbounded
+              // width on the main axis and `RenderEditable` tries to fill it.
+              WDiv(
+                className: 'flex-1 min-w-0',
+                child: WInput(placeholder: 'Search'),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WInput));
+      await tester.pump();
+
+      final BuildContext sibling = tester.element(find.text('Label'));
+      expect(WindAnchorStateProvider.of(sibling)?.isFocused, isFalse);
+    });
+
+    testWidgets('but it does reach the decoration wrapping the field', (
+      tester,
+    ) async {
+      // The case the narrowing must not break: a ring-styled div that CONTAINS
+      // the focused input still lights, and it does so through its own node
+      // rather than through the inheritance, because `hasFocus` covers
+      // descendants.
+      await pump(
+        tester,
+        WAnchor(
+          onTap: () {},
+          child: const WDiv(
+            className: 'p-2 focus:ring-2 focus:ring-blue-500',
+            child: WInput(placeholder: 'Search'),
+          ),
         ),
       );
 
