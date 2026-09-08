@@ -851,7 +851,7 @@ class WDiv extends StatelessWidget {
   }
 
   /// Whether any direct flex child carries a `basis-*` token. Cheap pre-check
-  /// (substring) so the common no-basis case skips the LayoutBuilder wrap.
+  /// (substring) so the common no-basis case skips the extent-provider wrap.
   static bool _anyChildHasBasis(List<Widget> children) {
     for (final child in children) {
       final className = _extractChildClassName(child);

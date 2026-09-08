@@ -190,18 +190,15 @@ LayoutBuilder does not support returning intrinsic dimensions.
 - Wind's own `items-stretch` grid equalizes row heights with real layout rather than `IntrinsicHeight`, so reach for it INSTEAD of wrapping.
 
 ```dart
-// Throws if a card resolves h-full / basis-* internally:
+// Throws: the wrapped subtree contains a grid.
 IntrinsicHeight(
-  child: WDiv(className: 'flex flex-row', children: cards),
+  child: WDiv(className: 'grid grid-cols-2 gap-4', children: cards),
 )
 
-// Safe: explicit height on each cell, no IntrinsicHeight needed.
+// Safe: items-stretch equalizes the row heights with real layout.
 WDiv(
-  className: 'flex flex-row gap-4',
-  children: [
-    WDiv(className: 'h-40 ...', child: card1),
-    WDiv(className: 'h-40 ...', child: card2),
-  ],
+  className: 'grid grid-cols-2 gap-4 items-stretch',
+  children: cards,
 )
 ```
 
