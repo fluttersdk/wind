@@ -120,9 +120,11 @@ WAnchor(onTap: play, child: const WText('Play'))
 
 Only `onTap` is bound. `ActivateIntent` means the primary action and there is no second key for a secondary one, so `onLongPress` and `onDoubleTap` stay pointer-only, exactly as they are on Flutter's own buttons.
 
+An anchor with no `onTap`, or a disabled one, binds nothing and lets the key travel on to whatever is above it. That is narrower than it may look: a `CallbackAction` is always enabled and `ShortcutManager` reports a key handled for any enabled action, so binding unconditionally would have made a long-press-only anchor eat the activation key belonging to the row around it, and on web eat `Space`'s scroll with it, because `Space` maps to `PrioritizedIntents([ActivateIntent, ScrollIntent])` and an always-enabled action wins that race.
+
 ### One control is one stop
 
-A control has to cost one press of the remote, so only an anchor that carries a gesture is a traversal stop. A gestureless `WAnchor` is a styling wrapper, and it inherits `focus` and `disabled` from the nearest anchor above it instead of publishing its own.
+A control has to cost one press of the remote, so only an anchor that carries a gesture is a traversal stop. A gestureless `WAnchor` is a styling wrapper, and it inherits from the nearest anchor above it instead of publishing its own state.
 
 This matters because `WDiv` wraps itself in a gestureless `WAnchor` whenever its className carries `hover:`, `focus:` or `active:`. Without the inheritance, the element carrying `focus:ring-2` would be the one element that could not see the focus:
 
@@ -140,7 +142,23 @@ WAnchor(
 
 Two shapes are unaffected. A `WDiv` carrying `focus:` with no anchor above it keeps its own focus node, because that is how a consumer styles a custom control. And a focusable descendant still lights the wrapper's ring: `FocusNode.hasFocus` covers descendants, so a `WInput` inside a ring-styled `WDiv` draws the ring around the field the user is typing in.
 
-`hover` is deliberately not inherited. Focus has one holder in the whole tree, so a descendant asking "is this focused" and a tappable ancestor holding focus are the same question. Hover is a pointer position, and two siblings inside one anchor legitimately highlight independently.
+What the wrapper inherits is deliberately narrow: the ancestor's PRIMARY focus, never its focus-within. The two are different questions and `WindAnchorState` now exposes both. A tappable card containing a text field reports focus-within the whole time the user types, so a wrapper inheriting that would light up even when it sits *beside* the field rather than around it:
+
+```dart
+// The ring belongs to nothing here, and stays dark while the field has focus.
+WAnchor(
+  onTap: open,
+  child: const WDiv(
+    className: 'flex flex-row',
+    children: <Widget>[
+      WDiv(className: 'p-2 focus:ring-2', child: WText('Label')),
+      WDiv(className: 'flex-1 min-w-0', child: WInput()),
+    ],
+  ),
+)
+```
+
+`hover` is not inherited at all. It is a pointer position, and two siblings inside one anchor legitimately highlight independently.
 
 ### What is not here
 
