@@ -6,20 +6,18 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
-## [Unreleased]
+## [1.5.3] - 2026-09-11
 
 ### Added
 
 - **A focused `WAnchor` activates on the keyboard and on a television remote.** `onTap` now answers `ActivateIntent`, which `WidgetsApp` raises for `Enter`, `Space`, numpad `Enter`, the gamepad A button and `select`, the D-pad centre on Android TV and the click on the Apple TV remote. `WAnchor` binds no key of its own, so a key the platform adds later arrives for free. Only `onTap` is bound: `ActivateIntent` means the primary action and there is no second key for `onLongPress` or `onDoubleTap`, which matches every button Flutter ships.
+- **`WindAnchorState.hasPrimaryFocus`**, separating "this element is the focus" from "this element contains the focus". A gestureless wrapper republishes it with the inherited value ORed in, so the signal chains through nesting: a wrapper's own node never holds primary focus, so stopping at it left a ring two wrappers deep dark, and any `hover:` or `active:` class on an intermediate div creates that second wrapper. `isFocused` has always been the second of those, because it comes from `FocusNode.hasFocus`, which is true for an ancestor of the real holder. The distinction is what a styling wrapper has to inherit: a tappable card containing a text field reports focus-within while the user types, so a wrapper inheriting `isFocused` lit its ring while sitting beside the field rather than around it. Defaults to `false`, so nothing that constructs the state by hand has to change.
 
 ### Fixed
 
 - **One control is one traversal stop, and the focus ring lands on the thing that activates.** `WDiv` wraps itself in a gestureless `WAnchor` whenever its className carries `hover:`, `focus:` or `active:`, and that wrapper was a full focus stop publishing its own state. So `WAnchor(onTap:) > WDiv('focus:ring-2')`, the shape of every ring-styled control, cost two presses of Tab: the first landed on the node carrying the gesture and drew no ring, the second drew the ring on a node `Enter` could not activate. A gestureless wrapper is now a styling wrapper: it is not a traversal stop, and it inherits `focus` and `disabled` from the nearest anchor above it instead of shadowing them. Two shapes are deliberately unchanged: a `WDiv` carrying `focus:` with no anchor above it keeps its own node, because that is how a consumer styles a custom control, and a focusable descendant still lights the wrapper's ring, because `FocusNode.hasFocus` covers descendants and a `WInput` inside a ring-styled `WDiv` has always drawn the ring around the field being typed in.
 - **`disabled:` now fires on a `WDiv` inside a disabled `WAnchor`.** The same shadowing, in a third state: the gestureless wrapper published `isDisabled: false` over a disabled ancestor, so the element carrying `disabled:opacity-50` never saw it. Covered by the same inheritance.
-
-### Added
-
-- **`WindAnchorState.hasPrimaryFocus`**, separating "this element is the focus" from "this element contains the focus". A gestureless wrapper republishes it with the inherited value ORed in, so the signal chains through nesting: a wrapper's own node never holds primary focus, so stopping at it left a ring two wrappers deep dark, and any `hover:` or `active:` class on an intermediate div creates that second wrapper. `isFocused` has always been the second of those, because it comes from `FocusNode.hasFocus`, which is true for an ancestor of the real holder. The distinction is what a styling wrapper has to inherit: a tappable card containing a text field reports focus-within while the user types, so a wrapper inheriting `isFocused` lit its ring while sitting beside the field rather than around it. Defaults to `false`, so nothing that constructs the state by hand has to change.
+- **Disabling a focused `WAnchor` takes its focus ring with it.** Turning disabled sets `canRequestFocus` to false and `FocusNode` gives up focus in response, but the focus listener returns early for a disabled widget, so the flags kept the values they held on the last enabled frame. Hover was already cleared on that transition and focus was not; the asymmetry stayed private while a gestureless wrapper published its own `isFocused: false` over it, and the inheritance above is what made it visible. A `WDiv` carrying `focus:ring-2 disabled:opacity-50` inside a button that disables itself on submit drew the ring and the dimming at the same time. (`lib/src/widgets/w_anchor.dart`)
 
 ## [1.5.2] - 2026-09-08
 
@@ -330,7 +328,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.5.2...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.5.3...HEAD
+[1.5.3]: https://github.com/fluttersdk/wind/releases/tag/1.5.3
 [1.5.2]: https://github.com/fluttersdk/wind/releases/tag/1.5.2
 [1.5.1]: https://github.com/fluttersdk/wind/releases/tag/1.5.1
 [1.5.0]: https://github.com/fluttersdk/wind/releases/tag/1.5.0

@@ -158,11 +158,21 @@ class _WAnchorState extends State<WAnchor> {
     _focusNode.addListener(_onFocusChange);
   }
 
+  /// Drops every interaction flag the moment the widget turns disabled.
+  ///
+  /// Focus has to be cleared here, not left to the listener. Turning disabled
+  /// sets `canRequestFocus` to false, which makes `FocusNode` unfocus itself,
+  /// but [_onFocusChange] returns early for a disabled widget and the flags
+  /// would keep the values they held on the last enabled frame. A gestureless
+  /// wrapper inherits `hasPrimaryFocus`, so a stale one is not a private
+  /// detail: it draws `focus:ring-*` around a control that is disabled.
   @override
   void didUpdateWidget(covariant WAnchor oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isDisabled && !oldWidget.isDisabled) {
       _isHovering = false;
+      _isFocused = false;
+      _hasPrimaryFocus = false;
     }
   }
 
