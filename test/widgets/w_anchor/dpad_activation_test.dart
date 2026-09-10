@@ -524,5 +524,37 @@ void main() {
       final BuildContext inner = tester.element(find.byType(WText));
       expect(WindAnchorStateProvider.of(inner)?.isDisabled, isTrue);
     });
+
+    testWidgets('and disabling a focused one takes its ring with it', (
+      tester,
+    ) async {
+      // Turning disabled unfocuses the node (`canRequestFocus: false` makes
+      // `FocusNode` give up focus), but `_onFocusChange` returns early for a
+      // disabled widget, so the flags survived the transition. The wrapper
+      // inherits `hasPrimaryFocus`, which is what turned a private staleness
+      // into a ring drawn around a control the user can no longer activate.
+      Widget build(bool disabled) => WAnchor(
+            onTap: () {},
+            isDisabled: disabled,
+            child: const WDiv(
+              className: 'p-2 focus:ring-2 disabled:opacity-50',
+              child: WText('Play'),
+            ),
+          );
+
+      await pump(tester, build(false));
+      traversalStops(tester).single.requestFocus();
+      await tester.pump();
+
+      BuildContext inner() => tester.element(find.byType(WText));
+      expect(WindAnchorStateProvider.of(inner())?.isFocused, isTrue);
+
+      await pump(tester, build(true));
+      await tester.pump();
+
+      expect(WindAnchorStateProvider.of(inner())?.isDisabled, isTrue);
+      expect(WindAnchorStateProvider.of(inner())?.isFocused, isFalse);
+      expect(WindAnchorStateProvider.of(inner())?.hasPrimaryFocus, isFalse);
+    });
   });
 }
