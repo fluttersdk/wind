@@ -35,6 +35,48 @@ void main() {
       expect(find.byType(ClipRRect), findsOneWidget);
     });
 
+    testWidgets('a rounded overflow clip is anti-aliased', (tester) async {
+      // `Clip.hardEdge` cuts along whole pixels, so on a curve it saws the
+      // clip path into a staircase. `strokeAlignInside` puts a border's outer
+      // edge exactly on that path, so the staircase eats the 1px line rather
+      // than the surface behind it and the border disappears through every
+      // corner while the straight runs stay crisp.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className:
+                'overflow-hidden rounded-2xl border border-gray-300 w-32 h-32',
+            children: [Text('Content')],
+          ),
+        ),
+      );
+
+      final ClipRRect clip = tester.widget<ClipRRect>(find.byType(ClipRRect));
+
+      expect(clip.clipBehavior, Clip.antiAlias);
+      expect(clip.borderRadius, isNot(BorderRadius.zero));
+    });
+
+    testWidgets('a square overflow clip stays hard-edged', (tester) async {
+      // Anti-aliasing a straight edge buys nothing and `antiAlias` carries a
+      // documented bleeding-edge artifact, so the square case keeps the
+      // cheaper behaviour. Pinning it is what scopes the change above to the
+      // shape that needed it.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className: 'overflow-hidden border border-gray-300 w-32 h-32',
+            children: [Text('Content')],
+          ),
+        ),
+      );
+
+      final ClipRRect clip = tester.widget<ClipRRect>(find.byType(ClipRRect));
+
+      expect(clip.clipBehavior, Clip.hardEdge);
+      expect(clip.borderRadius, BorderRadius.zero);
+    });
+
     testWidgets('overflow-visible does not use ClipRect', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

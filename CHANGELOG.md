@@ -6,6 +6,14 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **A rounded `overflow-hidden` no longer erases the border at the corners.** The clip was a `ClipRRect` with `Clip.hardEdge`, which takes no anti-aliasing and can therefore only cut along whole pixels. On a square clip that is right and it is the cheapest option; on a rounded one it saws the curve into a staircase, and the thing standing on that curve is the border. `BorderSide.strokeAlign` defaults to `strokeAlignInside`, so the stroke's outer edge sits exactly on the clip path and the staircase eats a 1px line rather than the surface behind it. What a reader sees is a border that thins and vanishes through each corner while the straight runs stay crisp, which reads as a rendering fault rather than as a clip. Found on a consumer app's settings rows and its status-preview card, both `overflow-hidden rounded-2xl border`; it reaches every recipe in the ecosystem that clips and draws a border, `magic_starter`'s settings sections, accordions, selects and comboboxes among them. Flutter's own guidance reads the same way: `hardEdge` is documented as reasonable "if the container is an axis-aligned rectangle or an axis-aligned rounded rectangle with very small corner radii" and `antiAlias` as recommended "when clipping is needed and the shape is not an axis-aligned rectangle", and wind's rounded tokens run from 4px to 32px. The zero-radius case keeps `hardEdge` and the test pins that branch too: anti-aliasing a straight edge buys nothing and `antiAlias` carries Flutter's documented bleeding-edge artifact, so the change is scoped to the shape that needed it. (`lib/src/widgets/w_div.dart`, `doc/layout/overflow.md`)
+
+---
+
 ## [1.5.3] - 2026-09-11
 
 ### Added

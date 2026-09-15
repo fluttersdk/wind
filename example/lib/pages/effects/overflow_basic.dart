@@ -83,8 +83,8 @@ class OverflowBasicExamplePage extends StatelessWidget {
             children: const [
               _RefRow(
                 cls: 'overflow-hidden',
-                maps: 'Clip.hardEdge',
-                body: 'Clip overflowing content',
+                maps: 'Clip.antiAlias / Clip.hardEdge',
+                body: 'Clip overflowing content (anti-aliased when rounded)',
               ),
               _RefRow(
                 cls: 'overflow-visible',
