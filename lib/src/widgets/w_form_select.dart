@@ -55,6 +55,7 @@ class WFormSelect<T> extends FormField<T> {
     this.createOptionBuilder,
     this.onLoadMore,
     this.hasMore = false,
+    this.onOpen,
     this.disabled = false,
     this.menuWidth,
     this.maxMenuHeight = 300,
@@ -91,6 +92,7 @@ class WFormSelect<T> extends FormField<T> {
               createOptionBuilder: createOptionBuilder,
               onLoadMore: onLoadMore,
               hasMore: hasMore,
+              onOpen: onOpen,
               disabled: disabled || !enabled,
               menuWidth: menuWidth,
               maxMenuHeight: maxMenuHeight,
@@ -144,6 +146,13 @@ class WFormSelect<T> extends FormField<T> {
 
   /// Whether more options are available for pagination.
   final bool hasMore;
+
+  /// Called when the menu opens; see [WSelect.onOpen].
+  ///
+  /// A caller paginating through [onLoadMore] resets its cursor here: opening
+  /// puts the visible list back to [options], so a cursor kept across that
+  /// reset asks for the page after the one the reader can no longer see.
+  final VoidCallback? onOpen;
 
   /// Whether the select is disabled.
   final bool disabled;
@@ -204,6 +213,7 @@ class _WFormSelectContent<T> extends StatelessWidget {
     this.createOptionBuilder,
     this.onLoadMore,
     required this.hasMore,
+    this.onOpen,
     required this.disabled,
     this.menuWidth,
     required this.maxMenuHeight,
@@ -233,6 +243,9 @@ class _WFormSelectContent<T> extends StatelessWidget {
   final CreateOptionBuilder? createOptionBuilder;
   final Future<List<SelectOption<T>>> Function()? onLoadMore;
   final bool hasMore;
+
+  /// Called when the menu opens; see [WSelect.onOpen].
+  final VoidCallback? onOpen;
   final bool disabled;
   final double? menuWidth;
   final double maxMenuHeight;
@@ -273,6 +286,7 @@ class _WFormSelectContent<T> extends StatelessWidget {
       createOptionBuilder: createOptionBuilder,
       onLoadMore: onLoadMore,
       hasMore: hasMore,
+      onOpen: onOpen,
       disabled: disabled,
       menuWidth: menuWidth,
       maxMenuHeight: maxMenuHeight,

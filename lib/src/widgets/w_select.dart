@@ -147,6 +147,21 @@ class WSelect<T> extends StatefulWidget {
   /// Whether more pages are available for pagination.
   final bool hasMore;
 
+  /// Called when the menu OPENS, before the first frame of the overlay.
+  ///
+  /// Opening resets this widget's own visible list: `_searchQuery` goes back to
+  /// empty and `_filteredOptions` back to [options]. A caller paginating
+  /// through [onLoadMore] keeps its cursor across that reset unless something
+  /// tells it, and then the next scroll to the bottom asks for the page AFTER
+  /// the one the reader can no longer see. Reported against a searchable
+  /// timezone select: open, scroll once to pull page two, close, reopen, and
+  /// page two's rows were unreachable without searching for them.
+  ///
+  /// So a caller that paginates resets its cursor here. Nothing else in this
+  /// widget needs it, which is why it is a callback rather than internal state:
+  /// the cursor belongs to whoever owns [onLoadMore].
+  final VoidCallback? onOpen;
+
   // ============== STYLING ==============
 
   /// Tailwind-like utility classes for the trigger container.
@@ -226,6 +241,7 @@ class WSelect<T> extends StatefulWidget {
     // Pagination
     this.onLoadMore,
     this.hasMore = false,
+    this.onOpen,
     // Styling
     this.className,
     this.menuClassName,
@@ -358,6 +374,9 @@ class _WSelectState<T> extends State<WSelect<T>> {
         _searchQuery = '';
         _filteredOptions = widget.options;
         _hoveredIndex = -1;
+        // The visible list is back to `options`, so a caller's pagination
+        // cursor is now ahead of what the reader can see. Tell it.
+        widget.onOpen?.call();
         // Defer the overlay mount to the next frame so the opening tap's own
         // pointer-up is fully dispatched BEFORE the overlay's TapRegion exists.
         // OverlayPortal mounts synchronously, so showing it now routes that
