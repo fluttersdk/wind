@@ -381,6 +381,12 @@ class _WSelectState<T> extends State<WSelect<T>> {
         _searchQuery = '';
         _filteredOptions = widget.options;
         _hoveredIndex = -1;
+        // The query and the list are back to their defaults, so the search
+        // that was in flight against the old query no longer owns this menu.
+        // Leaving the flag set stranded the reopened menu on a spinner:
+        // `_filterOptions` only lowers it when the response still matches
+        // `_searchQuery`, and the reset above guarantees it never will.
+        _isSearching = false;
         // The visible list is back to `options`, so a caller's pagination
         // cursor is now ahead of what the reader can see. Tell it.
         widget.onOpen?.call();
