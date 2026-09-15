@@ -194,5 +194,131 @@ void main() {
       expect(find.text('A'), findsOneWidget);
       expect(find.text('B'), findsNothing);
     });
+
+    testWidgets('drops an EMPTY-query search that lands after it', (
+      tester,
+    ) async {
+      // The query string cannot tell a stale response from a current one when
+      // the query is empty, because the reset sets `_searchQuery` to exactly
+      // that. Type, delete back to empty (which fires a fresh remote search
+      // rather than local filtering whenever `onSearch` is set), close and
+      // reopen before it lands: the response passes a query-equality guard and
+      // overwrites the list the reopen restored.
+      final typed = Completer<List<SelectOption<String>>>();
+      final cleared = Completer<List<SelectOption<String>>>();
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: const [SelectOption(value: 'a', label: 'A')],
+            searchable: true,
+            onSearch: (query) => query.isEmpty ? cleared.future : typed.future,
+            className: 'w-64',
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(EditableText), 'p');
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText), '');
+      await tester.pump();
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pump();
+      await tester.pump();
+
+      typed.complete(const [SelectOption(value: 'p', label: 'P')]);
+      cleared.complete(const [SelectOption(value: 'b', label: 'B')]);
+      await tester.pump();
+
+      expect(find.text('A'), findsOneWidget);
+      expect(
+        find.text('B'),
+        findsNothing,
+        reason: 'the stale empty-query response wrote over the restored list',
+      );
+    });
+
+    testWidgets('drops a page that lands after it', (tester) async {
+      // Same shape on the other async path: a page asked for before the close
+      // appends onto the list the reopen restored, so the reader sees page two
+      // stitched under a page one they never scrolled past.
+      final completer = Completer<List<SelectOption<String>>>();
+      int asked = 0;
+      final page = List<SelectOption<String>>.generate(
+        30,
+        (i) => SelectOption(value: 'a$i', label: 'A$i'),
+      );
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: page,
+            hasMore: true,
+            onLoadMore: () {
+              asked++;
+              // Only the first ask is the one held open across the reopen. The
+              // walk to the end below asks again, and answering it with an
+              // empty page keeps the assertion about the stale page alone.
+              return asked == 1
+                  ? completer.future
+                  : Future.value(const <SelectOption<String>>[]);
+            },
+            className: 'w-64',
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      // Scroll the menu to its end, which is what asks for the next page.
+      await tester.drag(find.byType(Scrollable).last, const Offset(0, -2000));
+      await tester.pump();
+
+      expect(asked, 1, reason: 'the scroll has to be what asks for the page');
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pump();
+      await tester.pump();
+
+      completer.complete(
+        List<SelectOption<String>>.generate(
+          10,
+          (i) => SelectOption(value: 'b$i', label: 'B$i'),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      // Walk to the end of the reopened list and look there. A `find.text`
+      // without the walk is vacuous: the menu is a lazy `ListView`, so a row
+      // stitched onto the end is never built and the finder answers
+      // `findsNothing` whether or not the append happened. Scroll extent is no
+      // better, because the reopen recomputes whether the menu opens upward
+      // and the viewport height moves with it.
+      for (var i = 0; i < 6; i++) {
+        await tester.drag(find.byType(Scrollable).last, const Offset(0, -600));
+        await tester.pump();
+      }
+
+      expect(
+        find.text('B9'),
+        findsNothing,
+        reason: 'the stale page appended onto the restored list',
+      );
+      expect(
+        find.text('A29'),
+        findsOneWidget,
+        reason: 'the restored list still ends where the reader left it',
+      );
+    });
   });
 }

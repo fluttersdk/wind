@@ -301,6 +301,19 @@ class _WSelectState<T> extends State<WSelect<T>> {
   List<SelectOption<T>> _filteredOptions = [];
   bool _isSearching = false;
   bool _isLoadingMore = false;
+
+  /// Bumped every time the menu resets its own list, which is every open.
+  ///
+  /// An async response captured before that reset must not write to the list
+  /// the reset restored, and neither async path can decide that on its own.
+  /// A search compares query strings, and the empty query is equal to itself
+  /// across a reset, so clearing the box and reopening inside the window let a
+  /// stale response overwrite the restored options. A page has no query to
+  /// compare at all, so it was stitched onto the end of a list the reader had
+  /// not scrolled past. Both are the same question, which is not "is this the
+  /// answer I last asked for" but "is the list I was answering still on
+  /// screen".
+  int _listEpoch = 0;
   bool _isCreating = false;
   int _hoveredIndex = -1;
 
@@ -343,12 +356,18 @@ class _WSelectState<T> extends State<WSelect<T>> {
   Future<void> _loadMore() async {
     if (_isLoadingMore || widget.onLoadMore == null) return;
 
+    final int epoch = _listEpoch;
+
     setState(() => _isLoadingMore = true);
     try {
       final moreOptions = await widget.onLoadMore!();
       if (mounted) {
         setState(() {
-          _filteredOptions = [..._filteredOptions, ...moreOptions];
+          // The flag is lowered either way: a discarded page still ends the
+          // request, and leaving it raised would refuse every later scroll.
+          if (epoch == _listEpoch) {
+            _filteredOptions = [..._filteredOptions, ...moreOptions];
+          }
           _isLoadingMore = false;
         });
       }
@@ -387,6 +406,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
         // `_filterOptions` only lowers it when the response still matches
         // `_searchQuery`, and the reset above guarantees it never will.
         _isSearching = false;
+        _listEpoch++;
         // The visible list is back to `options`, so a caller's pagination
         // cursor is now ahead of what the reader can see. Tell it.
         widget.onOpen?.call();
@@ -485,10 +505,12 @@ class _WSelectState<T> extends State<WSelect<T>> {
     _searchQuery = query;
 
     if (widget.onSearch != null) {
+      final int epoch = _listEpoch;
+
       setState(() => _isSearching = true);
       try {
         final results = await widget.onSearch!(query);
-        if (mounted && _searchQuery == query) {
+        if (mounted && epoch == _listEpoch && _searchQuery == query) {
           setState(() {
             _filteredOptions = results;
             _isSearching = false;
