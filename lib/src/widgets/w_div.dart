@@ -1605,11 +1605,41 @@ class WDiv extends StatelessWidget {
       // Use ClipRRect to clip content that overflows
       // This respects the container's border radius if present
       final borderRadius = styles.decoration?.borderRadius;
+      final BorderRadius resolvedRadius = borderRadius is BorderRadius
+          ? borderRadius
+          : BorderRadius.zero;
 
+      // Anti-alias a ROUNDED clip, hard-edge a square one.
+      //
+      // `Clip.hardEdge` takes no anti-aliasing, so it can only cut along whole
+      // pixels. On a square clip that is exactly right and it is the cheapest
+      // option. On a rounded one it saws the curve into a staircase, and the
+      // thing standing on that curve is the border: `BorderSide.strokeAlign`
+      // defaults to `strokeAlignInside`, which puts the stroke's OUTER edge
+      // exactly on the clip path, so the staircase eats into a 1px line rather
+      // than into the surface behind it. The visible result is a border that
+      // thins and vanishes through each corner while the straight runs stay
+      // crisp, which reads as a rendering fault rather than as a clip. Found
+      // on a consumer app's settings list and status-preview cards, both
+      // `overflow-hidden rounded-2xl border`.
+      //
+      // Flutter's own guidance is the same reading: `hardEdge` is documented
+      // as reasonable "if the container is an axis-aligned rectangle or an
+      // axis-aligned rounded rectangle with very small corner radii", and
+      // `antiAlias` as recommended "when clipping is needed and the shape is
+      // not an axis-aligned rectangle" (`dart:ui painting.dart`). Wind's
+      // rounded tokens run from `rounded-sm` (4px) to `rounded-3xl` (32px), so
+      // "very small" does not describe them.
+      //
+      // The zero-radius case keeps `hardEdge` deliberately. Anti-aliasing a
+      // straight edge buys nothing, and `antiAlias` carries Flutter's
+      // documented bleeding-edge artifact where a child painting right up to
+      // the boundary shows through.
       widgetToBuild = ClipRRect(
-        borderRadius:
-            borderRadius is BorderRadius ? borderRadius : BorderRadius.zero,
-        clipBehavior: Clip.hardEdge,
+        borderRadius: resolvedRadius,
+        clipBehavior: resolvedRadius == BorderRadius.zero
+            ? Clip.hardEdge
+            : Clip.antiAlias,
         child: widgetToBuild,
       );
     }
