@@ -28,7 +28,16 @@ Use `overflow-{mode}` to control how content behaves when it exceeds the contain
 
 ### Hidden
 
-Use `overflow-hidden` to clip any content that extends beyond the container's edges. This applies `Clip.hardEdge` to the widget.
+Use `overflow-hidden` to clip any content that extends beyond the container's edges.
+
+The clip follows the container's own corner radius, and the anti-aliasing follows
+the shape: a square clip uses `Clip.hardEdge`, which is the cheapest option and
+exactly right on an axis-aligned rectangle, while a ROUNDED one uses
+`Clip.antiAlias`. Hard-edging a curve can only cut on whole pixels, and because
+a border's stroke sits inside the clip path (`BorderSide.strokeAlign` defaults to
+`strokeAlignInside`), the staircase eats the border rather than the surface
+behind it: the line thins and vanishes through each corner while the straight
+runs stay crisp.
 
 ```dart
 WDiv(
@@ -76,7 +85,7 @@ WDiv(
 | Class | Flutter Equivalent | Description |
 |:------|:-------------------|:------------|
 | `overflow-auto` | `SingleChildScrollView` (conditional) | Scroll only if content overflows |
-| `overflow-hidden` | `Clip.hardEdge` | Clip overflowing content |
+| `overflow-hidden` | `Clip.antiAlias` when rounded, `Clip.hardEdge` when square | Clip overflowing content |
 | `overflow-visible` | `Clip.none` | Content flows outside container |
 | `overflow-scroll` | `SingleChildScrollView` | Always enable scrolling |
 
