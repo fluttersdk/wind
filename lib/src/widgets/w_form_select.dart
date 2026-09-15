@@ -381,6 +381,7 @@ class WFormMultiSelect<T> extends FormField<List<T>> {
     this.createOptionBuilder,
     this.onLoadMore,
     this.hasMore = false,
+    this.onOpen,
     this.disabled = false,
     this.menuWidth,
     this.maxMenuHeight = 300,
@@ -418,6 +419,7 @@ class WFormMultiSelect<T> extends FormField<List<T>> {
               createOptionBuilder: createOptionBuilder,
               onLoadMore: onLoadMore,
               hasMore: hasMore,
+              onOpen: onOpen,
               disabled: disabled || !enabled,
               menuWidth: menuWidth,
               maxMenuHeight: maxMenuHeight,
@@ -472,6 +474,14 @@ class WFormMultiSelect<T> extends FormField<List<T>> {
 
   /// Whether more options are available for pagination.
   final bool hasMore;
+
+  /// Called when the menu opens; see [WSelect.onOpen].
+  ///
+  /// A multi-select stays open while the reader picks, so a paginating caller
+  /// reaches this more often than on a single select: opening puts the visible
+  /// list back to [options], and a cursor kept across that reset asks for the
+  /// page after the one the reader can see.
+  final VoidCallback? onOpen;
 
   /// Whether the select is disabled.
   final bool disabled;
@@ -535,6 +545,7 @@ class _WFormMultiSelectContent<T> extends StatelessWidget {
     this.createOptionBuilder,
     this.onLoadMore,
     required this.hasMore,
+    this.onOpen,
     required this.disabled,
     this.menuWidth,
     required this.maxMenuHeight,
@@ -565,6 +576,9 @@ class _WFormMultiSelectContent<T> extends StatelessWidget {
   final CreateOptionBuilder? createOptionBuilder;
   final Future<List<SelectOption<T>>> Function()? onLoadMore;
   final bool hasMore;
+
+  /// Called when the menu opens; see [WSelect.onOpen].
+  final VoidCallback? onOpen;
   final bool disabled;
   final double? menuWidth;
   final double maxMenuHeight;
@@ -607,6 +621,7 @@ class _WFormMultiSelectContent<T> extends StatelessWidget {
       createOptionBuilder: createOptionBuilder,
       onLoadMore: onLoadMore,
       hasMore: hasMore,
+      onOpen: onOpen,
       disabled: disabled,
       menuWidth: menuWidth,
       maxMenuHeight: maxMenuHeight,

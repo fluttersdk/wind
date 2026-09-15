@@ -82,5 +82,52 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('reaches a WFormMultiSelect too', (tester) async {
+      // A multi-select stays open while the reader picks, so a paginating
+      // caller reaches the reset more often here than on a single select. The
+      // prop was documented for this widget before it was forwarded, which is
+      // the reverse of useful: an agent reading the skill wrote it and got a
+      // compile error.
+      int opened = 0;
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Form(
+            child: WFormMultiSelect<String>(
+              options: const [SelectOption(value: 'a', label: 'A')],
+              onOpen: () => opened++,
+              className: 'w-64',
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      expect(opened, 1);
+    });
+
+    testWidgets('reaches a WFormSelect too', (tester) async {
+      int opened = 0;
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Form(
+            child: WFormSelect<String>(
+              options: const [SelectOption(value: 'a', label: 'A')],
+              onOpen: () => opened++,
+              className: 'w-64',
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      expect(opened, 1);
+    });
   });
 }
