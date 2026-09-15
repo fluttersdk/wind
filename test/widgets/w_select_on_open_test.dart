@@ -133,6 +133,92 @@ void main() {
     });
   });
 
+  group('WSelect options change', () {
+    testWidgets('drops a page that lands after the caller swapped options', (
+      tester,
+    ) async {
+      // The third place the widget replaces its own list, and the one the
+      // reopen epoch did not cover. A caller refreshing `options` while a page
+      // is in flight gets that page stitched onto the refreshed list, which is
+      // the same symptom the reopen case has: rows from a list the reader is
+      // no longer looking at.
+      final completer = Completer<List<SelectOption<String>>>();
+      int asked = 0;
+      final first = List<SelectOption<String>>.generate(
+        30,
+        (i) => SelectOption(value: 'a$i', label: 'A$i'),
+      );
+      final refreshed = List<SelectOption<String>>.generate(
+        30,
+        (i) => SelectOption(value: 'c$i', label: 'C$i'),
+      );
+
+      late StateSetter setOuter;
+      List<SelectOption<String>> options = first;
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          StatefulBuilder(
+            builder: (context, setState) {
+              setOuter = setState;
+              return WSelect<String>(
+                options: options,
+                hasMore: true,
+                onLoadMore: () {
+                  asked++;
+                  return asked == 1
+                      ? completer.future
+                      : Future.value(const <SelectOption<String>>[]);
+                },
+                className: 'w-64',
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.byType(Scrollable).last, const Offset(0, -2000));
+      await tester.pump();
+      expect(asked, 1, reason: 'the scroll has to be what asks for the page');
+
+      // The caller swaps the list under the open menu. Counted pumps, not a
+      // settle: the load-more spinner is up and a spinner never settles.
+      setOuter(() => options = refreshed);
+      await tester.pump();
+      await tester.pump();
+
+      completer.complete(
+        List<SelectOption<String>>.generate(
+          10,
+          (i) => SelectOption(value: 'b$i', label: 'B$i'),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      // Walk to the end of the refreshed list, for the same reason the reopen
+      // case does: a row stitched onto the end of a lazy list is never built.
+      for (var i = 0; i < 6; i++) {
+        await tester.drag(find.byType(Scrollable).last, const Offset(0, -600));
+        await tester.pump();
+      }
+
+      expect(
+        find.text('B9'),
+        findsNothing,
+        reason: 'the stale page appended onto the refreshed list',
+      );
+      expect(
+        find.text('C29'),
+        findsOneWidget,
+        reason: 'the refreshed list still ends where the caller left it',
+      );
+    });
+  });
+
   group('WSelect reopen', () {
     testWidgets('clears a search that was still in flight when it closed', (
       tester,

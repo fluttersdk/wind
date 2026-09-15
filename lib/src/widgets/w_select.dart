@@ -302,7 +302,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
   bool _isSearching = false;
   bool _isLoadingMore = false;
 
-  /// Bumped every time the menu resets its own list, which is every open.
+  /// Bumped every time the widget replaces its own list wholesale, which is
+  /// every open and every caller-driven change of `options`.
   ///
   /// An async response captured before that reset must not write to the list
   /// the reset restored, and neither async path can decide that on its own.
@@ -329,6 +330,12 @@ class _WSelectState<T> extends State<WSelect<T>> {
     super.didUpdateWidget(oldWidget);
     if (widget.options != oldWidget.options) {
       _filteredOptions = widget.options;
+      // The other place the list is replaced wholesale, and the epoch covers
+      // it for the same reason it covers the open: a page or a search captured
+      // against the previous list must not write into this one. A caller
+      // refreshing `options` while the menu is open is narrower than a reopen
+      // but the symptom is identical, rows from a list nobody is looking at.
+      _listEpoch++;
       if (_searchQuery.isNotEmpty) {
         _filterOptions(_searchQuery);
       }
