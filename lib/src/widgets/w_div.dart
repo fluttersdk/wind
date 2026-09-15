@@ -1605,9 +1605,8 @@ class WDiv extends StatelessWidget {
       // Use ClipRRect to clip content that overflows
       // This respects the container's border radius if present
       final borderRadius = styles.decoration?.borderRadius;
-      final BorderRadius resolvedRadius = borderRadius is BorderRadius
-          ? borderRadius
-          : BorderRadius.zero;
+      final BorderRadius resolvedRadius =
+          borderRadius is BorderRadius ? borderRadius : BorderRadius.zero;
 
       // Anti-alias a ROUNDED clip, hard-edge a square one.
       //
