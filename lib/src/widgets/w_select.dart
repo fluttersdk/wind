@@ -160,6 +160,13 @@ class WSelect<T> extends StatefulWidget {
   /// So a caller that paginates resets its cursor here. Nothing else in this
   /// widget needs it, which is why it is a callback rather than internal state:
   /// the cursor belongs to whoever owns [onLoadMore].
+  ///
+  /// That advice assumes [options] goes back to page one along with the visible
+  /// list, which is the ordinary shape: return rows from [onLoadMore] and leave
+  /// [options] alone. A caller that instead MIRRORS fetched pages into
+  /// [options] already holds all of them on reopen, so resetting its cursor
+  /// here would re-fetch page two and append duplicates. Reset the cursor only
+  /// if [options] resets too.
   final VoidCallback? onOpen;
 
   // ============== STYLING ==============
