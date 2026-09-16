@@ -70,6 +70,18 @@ class _SelectPaginationExamplePageState
     return results;
   }
 
+  /// Puts the cursor back on the list the reopen restored.
+  ///
+  /// Opening the menu clears the search and shows `options` again, so a cursor
+  /// left on the last query's page would ask for the page after one the reader
+  /// can no longer see. The loaded users are all in `_users`, so the page to
+  /// resume from is however many pages of them there are.
+  void _onMenuOpen() {
+    _searchQuery = '';
+    _page = (_users.length / 10).ceil();
+    _hasMore = _users.length < 50;
+  }
+
   Future<List<SelectOption<String>>> _onLoadMore() async {
     _page++;
     final moreUsers = await _fetchUsers(_searchQuery, _page);
@@ -159,6 +171,7 @@ class _SelectPaginationExamplePageState
                 placeholder: 'Select a user...',
                 onChange: (value) => setState(() => _selectedUser = value),
                 onSearch: _onSearch,
+                onOpen: _onMenuOpen,
                 onLoadMore: _onLoadMore,
                 hasMore: _hasMore,
                 className: '''
@@ -189,6 +202,7 @@ class _SelectPaginationExamplePageState
                   _referenceRow('onCreateOption:', 'Create new'),
                   _referenceRow('onLoadMore:', 'Pagination'),
                   _referenceRow('hasMore:', 'More available'),
+                  _referenceRow('onOpen:', 'Reset on reopen'),
                 ],
               ),
             ],
