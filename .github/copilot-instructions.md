@@ -30,12 +30,12 @@ When source under `lib/` changes, the agent updates each of these in the same ch
 - New or changed widget / parser / token / theme field: locate the matching file under `doc/widgets/`, `doc/layout/`, `doc/styling/`, etc. Format details live in `.claude/rules/docs.md`.
 - New widget: create `doc/widgets/<w-name>.md` mirroring the format of the nearest neighbor file (one `#` title, ToC, `<x-preview>` tag, Props table with `Required`/default/description columns, Constructor signature, Styling Examples, Related Documentation).
 - Removed surface: delete the doc file or mark deprecated; never leave a stale doc pointing at a removed API.
-- Acceptance: the doc file's `<x-preview source="...">` path matches a real `example/lib/pages/` file (sync surface #2 below).
+- Acceptance: `python3 tool/check-docs.py` exits 0. It enforces the whole doc contract: one H1 per page and it is the opening line, relative `.md` targets, fragments, ToC-reachable anchors, `<x-preview source>` matching a real `example/lib/pages/` file (sync surface #2 below), and `<x-preview path>` matching a route registered in `example/lib/routes.dart`.
 
 **2. `example/lib/pages/`** — the demo gallery (consumed by `fluttersdk.com` via per-page iframes; see `example/CLAUDE.md`).
 
 - New widget / token / pattern: add `example/lib/pages/<category>/<feature>_basic.dart` (or extend an existing demo). Page shape rules live in `.claude/rules/example-pages.md`.
-- `<x-preview source="..." path="...">` in any `doc/` file points to a real example page. If you add a doc x-preview, you add or extend the example page. If you delete an example page, you remove the doc x-preview.
+- `<x-preview source="..." path="...">` in any `doc/` file points to a real example page. If you add a doc x-preview, you add or extend the example page. If you delete an example page, you remove the doc x-preview. `path` also needs its route in `example/lib/routes.dart`: the docs site builds the iframe URL from the preview base plus that path, so an unregistered route renders an empty frame with no error anywhere.
 - Acceptance: `cd example && flutter run -d chrome` boots without errors; new pages render with realistic content (no Lorem ipsum); every color token carries its `dark:` pair.
 
 **3. `skills/wind-ui/`** — the LLM-facing skill (source-of-truth lives here).
@@ -51,14 +51,14 @@ When source under `lib/` changes, the agent updates each of these in the same ch
   - `[Unreleased]` during normal development.
   - The currently-prepping version section during release prep (e.g., `[1.0.0]`).
 - Entries land under one of the subsections: `Added`, `Changed`, `Fixed`, `Removed` (BREAKING), `Quality` (test/coverage/CI infra), `Security`. Pick the one closest to user impact, not internal scope.
-- Format: one-line bullet per change, with backticked code identifiers and GitHub issue numbers (`(#61)`) when relevant. Match the surrounding entries' tone; no emojis unless adjacent entries use them.
+- Format: a bullet opening with what a reader now gets, in bold, then what it cost to find out: the defect, what it was measured against, the alternative that was rejected and why. Close with the files touched, in backticks. One line is right where the change genuinely is one line; a defect whose symptom is geometry or a race earns the paragraph, because the next reader cannot reconstruct it from the diff. Backtick every code identifier, name the PR (`(#207)`), and match the surrounding entries' tone; no emojis unless adjacent entries use them.
 - Acceptance: `grep -A 5 "^## \[" CHANGELOG.md | head -20` shows the new entry in the correct section.
 
 **5. `README.md`** — overview-level only.
 
 - Update only when the change is overview-worthy: a new widget added to the public roster, a new top-level feature (theme field, parser token family, integration entry point), a public API addition or removal.
 - Internal refactors, test additions, doc fixes, dependency tweaks: NO README update needed — the noise harms more than the precision helps.
-- Acceptance: README's "What you get" / "The Wind Surface" sections reflect the v1 roster (22 widgets, 19 parsers, 24 theme fields) accurately.
+- Acceptance: README's "What you get" / "The Wind Surface" sections reflect the v1 roster (27 widgets, 20 parsers, 24 theme fields) accurately.
 
 **One change set, all five surfaces.** Do not split "code now, docs later" — the next session loses context and the docs rot.
 
@@ -69,6 +69,7 @@ Standard Flutter package commands (`flutter test`, `dart analyze`, `dart format 
 | Command | Purpose |
 |---------|---------|
 | `./tool/coverage.sh 90` | Run tests with coverage + enforce 90% line threshold (the CI gate). Plain `./tool/coverage.sh` just reports. |
+| `python3 tool/check-docs.py` | Docs link + `<x-preview>` gate (the `docs-link-check.yml` CI gate). Offline, no Flutter toolchain. |
 | `cd example && flutter run -d chrome` | Demo app (`example/lib/main.dart`) |
 
 `.claude/settings.json` PostToolUse hooks auto-run `dart format` and `dart analyze` after every `.dart` edit. CI runs `flutter analyze` + `dart format --set-exit-if-changed` + `./tool/coverage.sh 90` on push.
@@ -95,5 +96,6 @@ GitHub Flow. One long-lived release branch, every task on its own branch, every 
 - **Task branches** are cut from `master` with short kebab-case names: `feat/<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>` (e.g., `feat/w-tabs`, `fix/parser-cache-stale-after-theme-toggle`, `docs/skill-section-15`). One topic per branch; multi-topic branches get split. PR back into `master`. Squash or merge per the PR's commit shape.
 - **Release** opens a `release: X.Y.Z` PR from a topic branch that (a) bumps `pubspec.yaml` `version:`, (b) promotes `## [Unreleased]` in `CHANGELOG.md` to `## [X.Y.Z] - YYYY-MM-DD` with the trailing link reference, (c) runs the full Definition of done gate. Merge the PR, then `git tag X.Y.Z && git push origin X.Y.Z`. The tag triggers `.github/workflows/publish.yml` to push to pub.dev. No accumulator branch; no `develop`.
 - **External contributors** fork the repo and PR against `master` using the same shape.
+- **Branch lifetime ends at the merge.** `delete_branch_on_merge` is on, so GitHub removes the head branch the moment its PR lands. `master` and `v0` are protected and exempt. Nothing is lost: the commits stay reachable through `refs/pull/<n>/head` for the life of the repo and the PR page keeps its Restore branch button, so a deletion is reversible. Do not hand-roll a cleanup script here. This repo squash-merges, which writes a new commit and severs ancestry, so `git branch --merged` calls a landed branch unmerged and anything built on it is wrong in both directions. PR state is the only honest signal.
 
-CI gates apply per PR, not per push to a feature branch in isolation: the Definition of done (`dart analyze`, `dart format`, `flutter test`, `./tool/coverage.sh 90`) plus the post-change sync (five surfaces) must pass before a PR is mergeable.
+CI gates apply per PR, not per push to a feature branch in isolation: the Definition of done (`dart analyze`, `dart format`, `flutter test`, `./tool/coverage.sh 90`) plus the post-change sync (five surfaces) must pass before a PR is mergeable. Branch protection backs that with one approving review and two required status checks, `Lint & Test` and `Internal Links & Previews`. `zizmor SAST` is deliberately not required: `zizmor.yml` filters on `.github/workflows/**`, so on a PR that touches no workflow the check never reports, and a required context that never arrives blocks the PR forever.
