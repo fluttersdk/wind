@@ -175,7 +175,7 @@ WKeyboardActions(
 )
 ```
 
-<a name="styling-examples"></a>
+<a name="the-toolbar-occludes-and-says-so"></a>
 ## The Toolbar Occludes, and Says So
 
 The toolbar is drawn in the root overlay at `bottom: viewInsets.bottom`, which puts it directly ON TOP of the keyboard. The engine reports the keyboard through `viewInsets` and knows nothing about the bar, so the region a focused field has to clear is the keyboard PLUS the toolbar, and anything reading `viewInsets` alone reserves too little. A field that cleared the keyboard came out from under it and straight under the bar.
@@ -190,6 +190,7 @@ Zero when no bar is up, which covers every platform the widget is gated off and 
 
 The height is measured rather than assumed, because the row is built from `IconButton`s whose size comes from the ambient theme and `toolbarClassName` can change the padding around them.
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Minimal (single field, iOS only)

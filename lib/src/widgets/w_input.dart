@@ -361,6 +361,52 @@ class _WInputState extends State<WInput>
       _controller = TextEditingController(text: widget.value ?? '');
       _ownsController = true;
     }
+    _controller.addListener(_onCaretMoved);
+  }
+
+  /// The clearance used by the LAST build, so a rebuild is only spent when the
+  /// caret has actually changed how much field sits below it.
+  double _clearanceAtLastBuild = 0;
+
+  /// Keeps [_clearanceBelowCaret] live as the caret descends.
+  ///
+  /// It is read during `build`, and typing does not rebuild this widget:
+  /// `EditableText` owns the text and the only controller listener here drives
+  /// the placeholder, whose subtree collapses the moment the field is not
+  /// empty. So without this the padding stays the one computed at focus, while
+  /// `EditableText` re-reveals the caret on every keystroke, and a field taller
+  /// than the visible area walks its top off the screen as the reader types.
+  /// Measured on a 40-line field: top 12 after the tap, -534 after typing to
+  /// the last line.
+  void _onCaretMoved() {
+    if (!mounted || !_focusNode.hasFocus) return;
+
+    // After the frame, because the controller notifies SYNCHRONOUSLY on a text
+    // change and the render editable has not laid the new text out yet: read
+    // now and the caret rect is the one from before the keystroke, the
+    // difference is zero, and this bails for good. Measured that way the
+    // padding stayed at its focus-time 582 through forty typed lines.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_focusNode.hasFocus) return;
+
+      // Only when it moved enough to matter, so an ordinary keystroke inside
+      // one line costs nothing.
+      if ((_clearanceBelowCaret - _clearanceAtLastBuild).abs() < 1) return;
+
+      setState(() {});
+
+      // And show the caret again with the corrected padding. The reveal that
+      // came with the keystroke used the stale one, so the view is already
+      // wherever that put it and a new padding alone does not move it back.
+      // Measured without this: the padding fell from 582 to 36 exactly as it
+      // should and the field stayed 534 pixels above the top of the screen.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_focusNode.hasFocus) return;
+        _editableTextKey.currentState?.bringIntoView(
+          _controller.selection.extent,
+        );
+      });
+    });
   }
 
   void _initFocusNode() {
@@ -412,8 +458,14 @@ class _WInputState extends State<WInput>
         20,
         20,
         20,
-        20 + _clearanceBelowCaret + WKeyboardToolbarInset.of(context),
+        20 + _recordClearance() + WKeyboardToolbarInset.of(context),
       );
+
+  /// Reads the clearance and remembers it for [_onCaretMoved]'s comparison.
+  double _recordClearance() {
+    _clearanceAtLastBuild = _clearanceBelowCaret;
+    return _clearanceAtLastBuild;
+  }
 
   /// How much of the field extends BELOW the caret, right now.
   ///
@@ -487,6 +539,7 @@ class _WInputState extends State<WInput>
 
     // Handle controller change
     if (widget.controller != oldWidget.controller) {
+      _controller.removeListener(_onCaretMoved);
       if (_ownsController) {
         _controller.dispose();
       }
@@ -527,6 +580,7 @@ class _WInputState extends State<WInput>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _controller.removeListener(_onCaretMoved);
     _focusNode.removeListener(_onFocusChange);
     if (_ownsFocusNode) {
       _focusNode.dispose();

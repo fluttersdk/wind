@@ -305,7 +305,7 @@ void main() {
         // frame and `pumpAndSettle` on a focused textarea never returns.
         // Several: the overlay is inserted on the focus frame, its Material has
         // no size until the frame after, the measurement retries until it does,
-        // and the publish defers one more so  is legal.
+        // and the publish defers one more so setState is legal.
         for (var i = 0; i < 6; i++) {
           await tester.pump();
         }
@@ -340,14 +340,23 @@ void main() {
       // padding term of the FULL field height would have reintroduced:
       // `EditableText` inflates the CARET rect, not the field's, so once the
       // reader types down to the last line a full-height term reserves a second
-      // field below the caret and pushes the top off the screen. Measured with
-      // the caret at the end, on 10, 25 and 40 line fields: tops at 416, 374
-      // and 262, all on screen, with the overflow below where it belongs.
+      // field below the caret and scrolls the whole thing away.
+      //
+      // Asserted on the BOTTOM, not the top. With the caret on the last line
+      // the caret sits at the field's bottom, so a field taller than the
+      // visible area cannot both show its caret and keep its top on screen:
+      // overflowing upward is the correct degradation, and an earlier version
+      // of this test demanded the impossible and only passed because the
+      // padding was wrong in a way that happened to hide it. Measured at 10,
+      // 25 and 40 lines: bottoms 572, 572, 572, tops 416, 206 and -4.
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(390, 900);
       addTearDown(tester.view.reset);
 
       for (final int lines in <int>[10, 25, 40]) {
+        tester.view.reset();
+        tester.view.devicePixelRatio = 1.0;
+        tester.view.physicalSize = const Size(390, 900);
         tester.view.viewInsets = FakeViewPadding.zero;
 
         final ScrollController controller = ScrollController();
@@ -400,9 +409,9 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          tester.getRect(find.byType(WInput)).top,
-          greaterThanOrEqualTo(0.0),
-          reason: 'a $lines line field was pushed off the top of the screen',
+          tester.getRect(find.byType(WInput)).bottom,
+          572.0,
+          reason: 'the caret on the last line has to clear the keyboard',
         );
       }
     });
