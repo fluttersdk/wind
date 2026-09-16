@@ -418,6 +418,7 @@ const WSelect({
   // Pagination:
   Future<List<SelectOption<T>>> Function()? onLoadMore,
   bool hasMore = false,
+  VoidCallback? onOpen,
   // Styling:
   String? className,                 // trigger container
   String? menuClassName,             // dropdown overlay
@@ -442,6 +443,7 @@ Behavior:
 - Multi-select keeps menu open after each selection; default chips use `bg-blue-100 rounded px-2 py-0.5`.
 - Search: async `onSearch` runs filtering remotely; without it, local `contains`-based filter.
 - Pagination: scroll listener triggers `onLoadMore` at 50 px from bottom when `hasMore: true`.
+- Opening the menu clears the search and puts the visible list back to `options`, so rows fetched through `onLoadMore` are gone. `onOpen` fires there: a paginating caller resets its cursor, or the next scroll asks for the page after the one the reader can see. Only reset if `options` resets too; a caller that mirrors fetched pages into `options` would re-fetch and duplicate.
 
 ### `WDatePicker`
 
@@ -555,7 +557,7 @@ const WFormSelect({
   String? hintClassName,
   bool showError = true,
   String? errorClassName,
-  // WSelect passthrough: searchable, onSearch, onCreateOption, onLoadMore, hasMore,
+  // WSelect passthrough: searchable, onSearch, onCreateOption, onLoadMore, hasMore, onOpen,
   // disabled, menuWidth, maxMenuHeight, className, menuClassName, states, placeholder,
   // triggerBuilder, itemBuilder, emptyBuilder, loadingBuilder
   // ...
@@ -579,7 +581,7 @@ const WFormMultiSelect({
   bool enabled = true,
   String? forceErrorText,
   // Layout: same as WFormSelect
-  // WSelect passthrough: searchable, onSearch, onCreateOption, onLoadMore, hasMore,
+  // WSelect passthrough: searchable, onSearch, onCreateOption, onLoadMore, hasMore, onOpen,
   // multiTriggerBuilder, selectedChipBuilder, itemBuilder, emptyBuilder, loadingBuilder
   // ...
 })

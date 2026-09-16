@@ -59,6 +59,7 @@ const WSelect({
   CreateOptionBuilder? createOptionBuilder,
   Future<List<SelectOption<T>>> Function()? onLoadMore,
   bool hasMore = false,
+  VoidCallback? onOpen,
   String? className,
   String? menuClassName,
   String placeholder = 'Select an option',
@@ -93,6 +94,7 @@ const WSelect({
 | `createOptionBuilder` | `CreateOptionBuilder?` | `null` | Custom builder for the "create new option" row in the menu |
 | `onLoadMore` | `Future<List<SelectOption<T>>> Function()?` | `null` | Pagination handler; called when the user scrolls past the current list |
 | `hasMore` | `bool` | `false` | When true, indicates more pages are available for `onLoadMore` |
+| `onOpen` | `VoidCallback?` | `null` | Called when the menu opens, after this widget has reset its own search and visible list. A paginating caller resets its cursor here; see below |
 | `placeholder` | `String` | `'Select an option'` | Text shown when no value is selected |
 | `disabled` | `bool` | `false` | Prevents interaction |
 | `menuWidth` | `double?` | `null` | Fixed dropdown width; defaults to the trigger width |
@@ -158,8 +160,27 @@ WSelect<String>(
     // Load next page of options
     return fetchNextPage();
   },
+  onOpen: resetCursorToPageOne,
 )
 ```
+
+### Pagination and reopening
+
+Opening the menu resets this widget's own view of the list: the search is
+cleared and the visible options go back to `options`. Rows that arrived through
+`onLoadMore` were appended to the visible list only, so they are gone.
+
+A caller holding a page cursor keeps it across that reset unless `onOpen` tells
+it, and the next scroll to the bottom then asks for the page AFTER the one the
+reader can see. Measured on a searchable select over a paged endpoint: open,
+scroll once to pull page two, close, reopen, and page two's rows were
+unreachable without searching for them.
+
+The reset advice assumes `options` goes back to page one along with the visible
+list, which is the ordinary shape: return rows from `onLoadMore` and leave
+`options` alone. A caller that instead MIRRORS fetched pages into `options`
+already has all of them on reopen, so resetting its cursor there would re-fetch
+page two and append duplicates. Reset the cursor only if `options` resets too.
 
 ## State Variants
 

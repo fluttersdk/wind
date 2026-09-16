@@ -147,6 +147,28 @@ class WSelect<T> extends StatefulWidget {
   /// Whether more pages are available for pagination.
   final bool hasMore;
 
+  /// Called when the menu OPENS, before the first frame of the overlay.
+  ///
+  /// Opening resets this widget's own visible list: `_searchQuery` goes back to
+  /// empty and `_filteredOptions` back to [options]. A caller paginating
+  /// through [onLoadMore] keeps its cursor across that reset unless something
+  /// tells it, and then the next scroll to the bottom asks for the page AFTER
+  /// the one the reader can no longer see. Reported against a searchable
+  /// timezone select: open, scroll once to pull page two, close, reopen, and
+  /// page two's rows were unreachable without searching for them.
+  ///
+  /// So a caller that paginates resets its cursor here. Nothing else in this
+  /// widget needs it, which is why it is a callback rather than internal state:
+  /// the cursor belongs to whoever owns [onLoadMore].
+  ///
+  /// That advice assumes [options] goes back to page one along with the visible
+  /// list, which is the ordinary shape: return rows from [onLoadMore] and leave
+  /// [options] alone. A caller that instead MIRRORS fetched pages into
+  /// [options] already holds all of them on reopen, so resetting its cursor
+  /// here would re-fetch page two and append duplicates. Reset the cursor only
+  /// if [options] resets too.
+  final VoidCallback? onOpen;
+
   // ============== STYLING ==============
 
   /// Tailwind-like utility classes for the trigger container.
@@ -226,6 +248,7 @@ class WSelect<T> extends StatefulWidget {
     // Pagination
     this.onLoadMore,
     this.hasMore = false,
+    this.onOpen,
     // Styling
     this.className,
     this.menuClassName,
@@ -278,6 +301,20 @@ class _WSelectState<T> extends State<WSelect<T>> {
   List<SelectOption<T>> _filteredOptions = [];
   bool _isSearching = false;
   bool _isLoadingMore = false;
+
+  /// Bumped every time the widget replaces its own list wholesale, which is
+  /// every open and every caller-driven change of `options`.
+  ///
+  /// An async response captured before that reset must not write to the list
+  /// the reset restored, and neither async path can decide that on its own.
+  /// A search compares query strings, and the empty query is equal to itself
+  /// across a reset, so clearing the box and reopening inside the window let a
+  /// stale response overwrite the restored options. A page has no query to
+  /// compare at all, so it was stitched onto the end of a list the reader had
+  /// not scrolled past. Both are the same question, which is not "is this the
+  /// answer I last asked for" but "is the list I was answering still on
+  /// screen".
+  int _listEpoch = 0;
   bool _isCreating = false;
   int _hoveredIndex = -1;
 
@@ -293,6 +330,20 @@ class _WSelectState<T> extends State<WSelect<T>> {
     super.didUpdateWidget(oldWidget);
     if (widget.options != oldWidget.options) {
       _filteredOptions = widget.options;
+      // The other place the list is replaced wholesale, and the epoch covers
+      // it for the same reason it covers the open: a page or a search captured
+      // against the previous list must not write into this one. A caller
+      // refreshing `options` while the menu is open is narrower than a reopen
+      // but the symptom is identical, rows from a list nobody is looking at.
+      //
+      // Lowering the flag is not optional here, and the bump is exactly why.
+      // The resolve path is the only place that lowers it and it is guarded on
+      // the epoch, so bumping without this strands the menu on a spinner: a
+      // search for the empty query has nothing behind it to raise and lower
+      // the flag again, since the re-filter below only runs for a non-empty
+      // one. The open branch lowers it for the same reason.
+      _listEpoch++;
+      _isSearching = false;
       if (_searchQuery.isNotEmpty) {
         _filterOptions(_searchQuery);
       }
@@ -320,12 +371,18 @@ class _WSelectState<T> extends State<WSelect<T>> {
   Future<void> _loadMore() async {
     if (_isLoadingMore || widget.onLoadMore == null) return;
 
+    final int epoch = _listEpoch;
+
     setState(() => _isLoadingMore = true);
     try {
       final moreOptions = await widget.onLoadMore!();
       if (mounted) {
         setState(() {
-          _filteredOptions = [..._filteredOptions, ...moreOptions];
+          // The flag is lowered either way: a discarded page still ends the
+          // request, and leaving it raised would refuse every later scroll.
+          if (epoch == _listEpoch) {
+            _filteredOptions = [..._filteredOptions, ...moreOptions];
+          }
           _isLoadingMore = false;
         });
       }
@@ -358,6 +415,16 @@ class _WSelectState<T> extends State<WSelect<T>> {
         _searchQuery = '';
         _filteredOptions = widget.options;
         _hoveredIndex = -1;
+        // The query and the list are back to their defaults, so the search
+        // that was in flight against the old query no longer owns this menu.
+        // Leaving the flag set stranded the reopened menu on a spinner:
+        // `_filterOptions` only lowers it when the response still matches
+        // `_searchQuery`, and the reset above guarantees it never will.
+        _isSearching = false;
+        _listEpoch++;
+        // The visible list is back to `options`, so a caller's pagination
+        // cursor is now ahead of what the reader can see. Tell it.
+        widget.onOpen?.call();
         // Defer the overlay mount to the next frame so the opening tap's own
         // pointer-up is fully dispatched BEFORE the overlay's TapRegion exists.
         // OverlayPortal mounts synchronously, so showing it now routes that
@@ -453,17 +520,24 @@ class _WSelectState<T> extends State<WSelect<T>> {
     _searchQuery = query;
 
     if (widget.onSearch != null) {
+      final int epoch = _listEpoch;
+
       setState(() => _isSearching = true);
       try {
         final results = await widget.onSearch!(query);
-        if (mounted && _searchQuery == query) {
+        if (mounted && epoch == _listEpoch && _searchQuery == query) {
           setState(() {
             _filteredOptions = results;
             _isSearching = false;
           });
         }
       } catch (_) {
-        if (mounted) {
+        // Guarded like the success path, and for the same reason: a request
+        // that fails after a newer one went out, or after the list was
+        // replaced, no longer owns this flag. Lowering it anyway dropped the
+        // spinner while the newer search was still in flight, leaving the
+        // pre-search list on screen looking settled until it landed.
+        if (mounted && epoch == _listEpoch && _searchQuery == query) {
           setState(() => _isSearching = false);
         }
       }
