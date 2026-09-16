@@ -444,6 +444,40 @@ class WindThemeData {
   ///
   /// The logic tries to map 'primary', 'secondary', and 'error' colors from
   /// the [colors] map. If not found, it falls back to defaults.
+  /// The colour the `bg-surface` alias paints at the current [brightness], or
+  /// null when it does not resolve to a literal one.
+  ///
+  /// Reads the alias VALUE as text rather than running the parser, which is
+  /// what keeps this safe to call from [toThemeData]: the parser resolves a
+  /// className against a theme, and this runs while that theme is being built.
+  /// An alias is `'bg-[#F9FAFB] dark:bg-[#07090C]'`, so the hex is already
+  /// there to be read.
+  ///
+  /// Anything else answers null and leaves the existing default alone: an
+  /// alias naming a palette colour (`bg-gray-50`), one with no `dark:` pair
+  /// while the theme is dark, or no `bg-surface` alias at all. Null is
+  /// "this alias does not name a literal colour", never "the colour is
+  /// transparent".
+  Color? _surfaceFromAlias() {
+    final String? value = aliases['bg-surface'];
+    if (value == null) return null;
+
+    // The dark half wins in dark mode and is the only thing read there; the
+    // bare token would otherwise hand a dark theme the light canvas.
+    final RegExp pattern = brightness == Brightness.dark
+        ? RegExp(r'(?:^|\s)dark:bg-\[#([0-9a-fA-F]{6,8})\]')
+        : RegExp(r'(?:^|\s)bg-\[#([0-9a-fA-F]{6,8})\]');
+
+    final RegExpMatch? match = pattern.firstMatch(value);
+    if (match == null) return null;
+
+    final String hex = match.group(1)!;
+    // Six digits are RGB and take a full alpha; eight already carry their own,
+    // in Flutter's AARRGGBB order rather than CSS's RRGGBBAA.
+    final int packed = int.parse(hex, radix: 16);
+    return Color(hex.length == 6 ? 0xFF000000 | packed : packed);
+  }
+
   ThemeData toThemeData() {
     // Helper to safely fetch default material color
     MaterialColor getDefault(String name) {
@@ -476,7 +510,22 @@ class WindThemeData {
     if (colors.containsKey('background')) {
       background = colors['background']!;
     } else {
-      if (brightness == Brightness.dark) {
+      // The `bg-surface` alias, when the consumer defines one, because that is
+      // the colour their pages are actually painted with and this field is
+      // Flutter's name for the same thing. `colors['background']` cannot say
+      // it: it holds ONE colour for both brightnesses, and a themed app needs a
+      // different canvas in each.
+      //
+      // It matters because the two are read by different layers. An app paints
+      // its canvas through the className on a widget of its own, while anything
+      // Material puts behind a page reads `scaffoldBackgroundColor`, and until
+      // something actually painted a page nobody noticed they disagreed.
+      // Measured on one consumer: the alias resolved to `#F9FAFB` light and
+      // `#07090C` dark, against this field's `#FFFFFF` and `#111827`.
+      final Color? fromAlias = _surfaceFromAlias();
+      if (fromAlias != null) {
+        background = fromAlias;
+      } else if (brightness == Brightness.dark) {
         final gray = default_colors.colors['gray'] as Map<int, Color>;
         background = gray[900]!;
       } else {

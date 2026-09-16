@@ -8,6 +8,14 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`ThemeData.scaffoldBackgroundColor` now agrees with the colour a themed app actually paints its pages.** It was filled from `colors['background']`, or failing that from this package's own white and gray-900, while an app's canvas comes from a `bg-surface` className alias on a widget of its own. The two are read by different layers and had no reason to agree, and nothing painted a page, so nobody noticed. Measured on one consumer: the alias resolved to `#F9FAFB` light and `#07090C` dark, against this field's `#FFFFFF` and `#111827`.
+
+  `magic` 0.0.12 starts painting a page background, to stop a pushed route showing the page underneath it through a transparent one, which turns the disagreement into a visibly wrong colour on every screen and is worst in dark mode. `colors['background']` could not fix it consumer-side either: it holds ONE colour for both brightnesses, and a themed app needs a different canvas in each. The alias already carries both.
+
+  The alias value is read as TEXT rather than through the parser, which is what makes it safe to call while the theme is being built: the parser resolves a className against a theme, and that theme is what this is assembling. So only a literal `bg-[#hex]` is read. An alias naming a palette colour (`bg-gray-50`), a dark theme whose alias has no `dark:` pair, and an app with no `bg-surface` alias each keep the shipped default, and an explicit `colors['background']` still wins over everything.
+
 ---
 
 ## [1.6.0] - 2026-09-16
