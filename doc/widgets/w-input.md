@@ -6,6 +6,7 @@ A utility-first form input that combines React-style controlled state management
 - [Constructor](#constructor)
 - [Props](#props)
 - [Layout Modes](#layout-modes)
+- [Keyboard Clearance](#keyboard-clearance)
 - [Event Handling](#event-handling)
 - [State Variants](#state-variants)
 - [Accessibility](#accessibility)
@@ -125,6 +126,28 @@ WInput(
   placeholder: 'Enter your message...',
 )
 ```
+
+<a name="keyboard-clearance"></a>
+## Keyboard Clearance
+
+A focused `WInput` lifts the WHOLE field above the software keyboard, not just the line the caret is on.
+
+Flutter reveals the caret rect with `scrollPadding` around it, which is the same box as the field while the field is one line tall. On a multiline field it is not: the caret sits on the first line, so line one clears the keyboard and every line below it stays under it. `WInput` widens `scrollPadding` by however much of the field sits below the caret, so Flutter's own caret scroll carries the rest of the field with it, and it recomputes as the caret moves down through the text.
+
+The keyboard is not the only thing in the way. A [WKeyboardActions](./w-keyboard-actions.md) toolbar is drawn on top of the keyboard and the engine reports nothing about it, so the region a field has to clear is the keyboard plus the bar. `WInput` reads the bar's published height and adds it, which means a field inside a `WKeyboardActions` needs no setup at all.
+
+```dart
+WInput(
+  type: InputType.multiline,
+  minLines: 3,
+  maxLines: 5,
+  className: 'w-full p-4 border rounded-xl',
+  placeholder: 'Write an update...',
+)
+```
+
+> [!NOTE]
+> Nothing here is a prop. The clearance is computed from the field's own geometry, so a field that sits inside your own scroll view behaves the same as one that does not.
 
 <a name="event-handling"></a>
 ## Event Handling

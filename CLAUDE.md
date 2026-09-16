@@ -51,7 +51,7 @@ When source under `lib/` changes, the agent updates each of these in the same ch
   - `[Unreleased]` during normal development.
   - The currently-prepping version section during release prep (e.g., `[1.0.0]`).
 - Entries land under one of the subsections: `Added`, `Changed`, `Fixed`, `Removed` (BREAKING), `Quality` (test/coverage/CI infra), `Security`. Pick the one closest to user impact, not internal scope.
-- Format: one-line bullet per change, with backticked code identifiers and GitHub issue numbers (`(#61)`) when relevant. Match the surrounding entries' tone; no emojis unless adjacent entries use them.
+- Format: a bullet opening with what a reader now gets, in bold, then what it cost to find out: the defect, what it was measured against, the alternative that was rejected and why. Close with the files touched, in backticks. One line is right where the change genuinely is one line; a defect whose symptom is geometry or a race earns the paragraph, because the next reader cannot reconstruct it from the diff. Backtick every code identifier, name the PR (`(#207)`), and match the surrounding entries' tone; no emojis unless adjacent entries use them.
 - Acceptance: `grep -A 5 "^## \[" CHANGELOG.md | head -20` shows the new entry in the correct section.
 
 **5. `README.md`** — overview-level only.

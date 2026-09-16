@@ -69,6 +69,39 @@ void main() {
       expect(opened, 2, reason: 'once per open, never on a close');
     });
 
+    testWidgets('a caller that throws still gets the menu it opened', (
+      tester,
+    ) async {
+      // The callback used to fire INSIDE the `setState` that resets the list,
+      // and ahead of the post-frame callback that mounts the overlay. A
+      // caller throwing there abandoned the closure half done: `_isOpen` true,
+      // the mount never scheduled, so the menu was marked open with nothing on
+      // screen and the next tap closed a menu the reader never saw.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: const [SelectOption(value: 'a', label: 'A')],
+            onOpen: () => throw StateError('the caller fell over'),
+            className: 'w-64',
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.takeException(),
+        isStateError,
+        reason: 'the throw belongs to the caller and is not swallowed here',
+      );
+      expect(
+        find.text('A'),
+        findsOneWidget,
+        reason: 'the menu is open on screen, not just in the state',
+      );
+    });
+
     testWidgets('a select without the callback still opens', (tester) async {
       await tester.pumpWidget(
         wrapWithTheme(
