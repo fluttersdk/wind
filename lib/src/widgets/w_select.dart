@@ -409,8 +409,10 @@ class _WSelectState<T> extends State<WSelect<T>> {
       }
     }
 
+    final bool isOpening = !_isOpen;
+
     setState(() {
-      _isOpen = !_isOpen;
+      _isOpen = isOpening;
       if (_isOpen) {
         _searchQuery = '';
         _filteredOptions = widget.options;
@@ -422,9 +424,6 @@ class _WSelectState<T> extends State<WSelect<T>> {
         // `_searchQuery`, and the reset above guarantees it never will.
         _isSearching = false;
         _listEpoch++;
-        // The visible list is back to `options`, so a caller's pagination
-        // cursor is now ahead of what the reader can see. Tell it.
-        widget.onOpen?.call();
         // Defer the overlay mount to the next frame so the opening tap's own
         // pointer-up is fully dispatched BEFORE the overlay's TapRegion exists.
         // OverlayPortal mounts synchronously, so showing it now routes that
@@ -438,6 +437,14 @@ class _WSelectState<T> extends State<WSelect<T>> {
         _overlayController.hide();
       }
     });
+
+    // Outside the `setState`, and for the same reason every other caller
+    // callback in this file is: a caller that throws here would otherwise
+    // abandon the closure half done, leaving the menu marked open with its
+    // overlay mount never scheduled. The visible list is back to `options` by
+    // now, so a caller's pagination cursor is ahead of what the reader can
+    // see, which is what this call is telling it.
+    if (isOpening) widget.onOpen?.call();
   }
 
   void _closeMenu() {
