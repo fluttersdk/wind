@@ -532,7 +532,12 @@ class _WSelectState<T> extends State<WSelect<T>> {
           });
         }
       } catch (_) {
-        if (mounted) {
+        // Guarded like the success path, and for the same reason: a request
+        // that fails after a newer one went out, or after the list was
+        // replaced, no longer owns this flag. Lowering it anyway dropped the
+        // spinner while the newer search was still in flight, leaving the
+        // pre-search list on screen looking settled until it landed.
+        if (mounted && epoch == _listEpoch && _searchQuery == query) {
           setState(() => _isSearching = false);
         }
       }

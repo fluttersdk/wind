@@ -133,6 +133,56 @@ void main() {
     });
   });
 
+  group('WSelect search failure', () {
+    testWidgets('a failing stale search leaves the newer one its flag', (
+      tester,
+    ) async {
+      // The last place in this widget that touched a flag it might not own.
+      // Type `p` so request A goes out, type `pa` so B goes out and re-raises
+      // the flag, then fail A: the spinner dropped while B was still in flight
+      // and the menu showed the pre-search list until B landed.
+      final typedOne = Completer<List<SelectOption<String>>>();
+      final typedTwo = Completer<List<SelectOption<String>>>();
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: const [SelectOption(value: 'a', label: 'A')],
+            searchable: true,
+            onSearch: (query) =>
+                query == 'p' ? typedOne.future : typedTwo.future,
+            className: 'w-64',
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(EditableText), 'p');
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText), 'pa');
+      await tester.pump();
+
+      // A fails while B is still out.
+      typedOne.completeError(Exception('network'));
+      await tester.pump();
+      await tester.pump();
+
+      expect(
+        find.byType(CircularProgressIndicator),
+        findsOneWidget,
+        reason: 'B still owns the flag, so the menu is still searching',
+      );
+
+      typedTwo.complete(const [SelectOption(value: 'pa', label: 'PA')]);
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('PA'), findsOneWidget);
+    });
+  });
+
   group('WSelect options change', () {
     testWidgets('drops a page that lands after the caller swapped options', (
       tester,
