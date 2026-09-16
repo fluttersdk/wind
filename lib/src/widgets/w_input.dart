@@ -8,8 +8,8 @@ import 'package:flutter/services.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../theme/wind_theme.dart';
-import 'w_keyboard_actions.dart';
 import '../utils/wind_logger.dart';
+import 'w_keyboard_actions.dart';
 
 /// Input type enum for WInput widget
 ///
