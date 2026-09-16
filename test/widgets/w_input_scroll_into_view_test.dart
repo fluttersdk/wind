@@ -321,6 +321,20 @@ void main() {
           greaterThan(0),
           reason: 'the bar is up, so its height has to reach the subtree',
         );
+
+        // And back to zero when the bar goes. A published height that outlived
+        // its toolbar would have every field below reserving room for a bar
+        // that is not on screen.
+        node.unfocus();
+        for (var i = 0; i < 4; i++) {
+          await tester.pump();
+        }
+
+        expect(
+          published,
+          0,
+          reason: 'the bar is down, so nothing should still be reserved',
+        );
         expect(
           padding,
           greaterThanOrEqualTo(toolbar),
