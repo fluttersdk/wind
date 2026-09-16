@@ -123,7 +123,7 @@ void main() {
       // of this fix that did exactly that.
       expect(
         field.bottom,
-        550.0,
+        564.0,
         reason: 'the whole field has to clear the keyboard, not just line one',
       );
     });
@@ -133,7 +133,7 @@ void main() {
       // cannot overshoot it into the opposite failure.
       final Rect field = await tapAndRaiseKeyboard(tester, minLines: 1);
 
-      expect(field.bottom, 550.0);
+      expect(field.bottom, 564.0);
       expect(
         field.top,
         greaterThanOrEqualTo(0.0),
@@ -257,76 +257,154 @@ void main() {
       //
       // Reset inside the BODY, not through `addTearDown`: the framework's
       // foundation-vars invariant runs before tear-downs and fails the test
-      // with "a foundation debug variable was changed by the test".
+      // with "a foundation debug variable was changed by the test". In a
+      // `finally`, so a throw in any pump below cannot leak iOS into every
+      // later test in the process.
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        tester.view.devicePixelRatio = 1.0;
+        tester.view.physicalSize = const Size(390, 900);
+        addTearDown(tester.view.reset);
 
-      tester.view.devicePixelRatio = 1.0;
-      tester.view.physicalSize = const Size(390, 900);
-      addTearDown(tester.view.reset);
+        final FocusNode node = FocusNode();
+        addTearDown(node.dispose);
 
-      final FocusNode node = FocusNode();
-      addTearDown(node.dispose);
+        double published = -1;
 
-      double published = -1;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: WindTheme(
-            data: WindThemeData(),
-            child: Scaffold(
-              body: WKeyboardActions(
-                focusNodes: [node],
-                platform: 'ios',
-                child: Builder(
-                  builder: (BuildContext context) {
-                    published = WKeyboardToolbarInset.of(context);
-                    return WInput(
-                      focusNode: node,
-                      type: InputType.multiline,
-                      minLines: 3,
-                      maxLines: 3,
-                      placeholder: 'composer',
-                    );
-                  },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: Scaffold(
+                body: WKeyboardActions(
+                  focusNodes: [node],
+                  platform: 'ios',
+                  child: Builder(
+                    builder: (BuildContext context) {
+                      published = WKeyboardToolbarInset.of(context);
+                      return WInput(
+                        focusNode: node,
+                        type: InputType.multiline,
+                        minLines: 3,
+                        maxLines: 3,
+                        placeholder: 'composer',
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
-
-      expect(published, 0, reason: 'nothing is focused, so no bar is up');
-
-      node.requestFocus();
-      // Counted pumps, never a settle: an active toolbar schedules a frame per
-      // frame and `pumpAndSettle` on a focused textarea never returns.
-      // Several: the overlay is inserted on the focus frame, its Material has
-      // no size until the frame after, the measurement retries until it does,
-      // and the publish defers one more so  is legal.
-      for (var i = 0; i < 6; i++) {
+        );
         await tester.pump();
+
+        expect(published, 0, reason: 'nothing is focused, so no bar is up');
+
+        node.requestFocus();
+        // Counted pumps, never a settle: an active toolbar schedules a frame per
+        // frame and `pumpAndSettle` on a focused textarea never returns.
+        // Several: the overlay is inserted on the focus frame, its Material has
+        // no size until the frame after, the measurement retries until it does,
+        // and the publish defers one more so  is legal.
+        for (var i = 0; i < 6; i++) {
+          await tester.pump();
+        }
+
+        final double toolbar = published;
+        final double padding = tester
+            .widget<EditableText>(find.byType(EditableText))
+            .scrollPadding
+            .bottom;
+
+        expect(
+          toolbar,
+          greaterThan(0),
+          reason: 'the bar is up, so its height has to reach the subtree',
+        );
+        expect(
+          padding,
+          greaterThanOrEqualTo(toolbar),
+          reason: 'the field clears the keyboard, the bar, and its own lines',
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
       }
+    });
+  });
 
-      final double toolbar = published;
-      final double padding = tester
-          .widget<EditableText>(find.byType(EditableText))
-          .scrollPadding
-          .bottom;
-      final double field = tester.getRect(find.byType(WInput)).height;
+  group('the caret', () {
+    testWidgets('a field taller than the viewport keeps its top on screen', (
+      tester,
+    ) async {
+      // The failure the earlier `ensureVisible` version had, and the one a
+      // padding term of the FULL field height would have reintroduced:
+      // `EditableText` inflates the CARET rect, not the field's, so once the
+      // reader types down to the last line a full-height term reserves a second
+      // field below the caret and pushes the top off the screen. Measured with
+      // the caret at the end, on 10, 25 and 40 line fields: tops at 416, 374
+      // and 262, all on screen, with the overflow below where it belongs.
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(390, 900);
+      addTearDown(tester.view.reset);
 
-      debugDefaultTargetPlatformOverride = null;
+      for (final int lines in <int>[10, 25, 40]) {
+        tester.view.viewInsets = FakeViewPadding.zero;
 
-      expect(
-        toolbar,
-        greaterThan(0),
-        reason: 'the bar is up, so its height has to reach the subtree',
-      );
-      expect(
-        padding,
-        greaterThanOrEqualTo(field + toolbar),
-        reason: 'the field clears the keyboard, its own lines AND the bar',
-      );
+        final ScrollController controller = ScrollController();
+        final TextEditingController text = TextEditingController(
+          text: List<String>.filled(lines, 'x').join('\n'),
+        );
+        addTearDown(controller.dispose);
+        addTearDown(text.dispose);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                body: _ResizingHost(
+                  child: SingleChildScrollView(
+                    controller: controller,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 1500),
+                        WInput(
+                          controller: text,
+                          type: InputType.multiline,
+                          minLines: lines,
+                          maxLines: lines,
+                          placeholder: 'composer',
+                        ),
+                        const SizedBox(height: 900),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        controller.jumpTo(
+          controller.offset + tester.getRect(find.byType(WInput)).bottom - 880,
+        );
+        await tester.pumpAndSettle();
+
+        // Where the caret sits after typing, which is the case the full-height
+        // term got wrong.
+        text.selection = TextSelection.collapsed(offset: text.text.length);
+        await tester.tap(find.byType(EditableText));
+        await tester.pump();
+        tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.getRect(find.byType(WInput)).top,
+          greaterThanOrEqualTo(0.0),
+          reason: 'a $lines line field was pushed off the top of the screen',
+        );
+      }
     });
   });
 }

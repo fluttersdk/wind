@@ -11,6 +11,7 @@ A wrapper that renders a Done button and field-navigation toolbar above the keyb
 - [Navigation Between Fields](#navigation-between-fields)
 - [Toolbar Styling](#toolbar-styling)
 - [Custom Close Button](#custom-close-button)
+- [The Toolbar Occludes, and Says So](#the-toolbar-occludes-and-says-so)
 - [Styling Examples](#styling-examples)
 - [Related Documentation](#related-documentation)
 
@@ -175,6 +176,20 @@ WKeyboardActions(
 ```
 
 <a name="styling-examples"></a>
+## The Toolbar Occludes, and Says So
+
+The toolbar is drawn in the root overlay at `bottom: viewInsets.bottom`, which puts it directly ON TOP of the keyboard. The engine reports the keyboard through `viewInsets` and knows nothing about the bar, so the region a focused field has to clear is the keyboard PLUS the toolbar, and anything reading `viewInsets` alone reserves too little. A field that cleared the keyboard came out from under it and straight under the bar.
+
+`WKeyboardActions` measures its own bar and publishes the height to its subtree:
+
+```dart
+final double toolbar = WKeyboardToolbarInset.of(context);
+```
+
+Zero when no bar is up, which covers every platform the widget is gated off and every moment nothing is focused. `WInput` already consumes it, so a plain field inside a `WKeyboardActions` needs nothing; reach for it in a widget of your own that positions something against the keyboard.
+
+The height is measured rather than assumed, because the row is built from `IconButton`s whose size comes from the ambient theme and `toolbarClassName` can change the padding around them.
+
 ## Styling Examples
 
 ### Minimal (single field, iOS only)

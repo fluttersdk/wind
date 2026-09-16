@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/services.dart';
 
 import '../parser/wind_parser.dart';
@@ -395,9 +398,8 @@ class _WInputState extends State<WInput>
   /// several they are not: the caret sits on the first line and everything
   /// below it stays under the keyboard. Handing the field's height to the
   /// mechanism Flutter already runs, on every metrics frame, aims it at the
-  /// same place [_scrollFullyIntoView] aims at, so the two reinforce rather
-  /// than race. Reported against a three-line update composer where the
-  /// keyboard covered all but the first line.
+  /// whole field rather than at the caret alone. Reported against a three-line
+  /// update composer where the keyboard covered all but the first line.
   /// Plus the keyboard toolbar, which occludes and is not in `viewInsets`.
   ///
   /// [WKeyboardActions] draws its bar in an overlay at `bottom:
@@ -410,8 +412,40 @@ class _WInputState extends State<WInput>
         20,
         20,
         20,
-        20 + _measuredHeight + WKeyboardToolbarInset.of(context),
+        20 + _clearanceBelowCaret + WKeyboardToolbarInset.of(context),
       );
+
+  /// How much of the field extends BELOW the caret, right now.
+  ///
+  /// This and not the field's whole height, because `EditableText` inflates the
+  /// CARET rect by `scrollPadding` rather than the field's
+  /// (`editable_text.dart`, `caretPadding.inflateRect(rectToReveal)`). The two
+  /// agree only while the caret is on line one. Once the reader types down to
+  /// the last line, a term of the full height reserves a second field below the
+  /// caret: measured on a 156px field, the bottom came to rest 112px clear of
+  /// the keyboard instead of 42, and a field taller than the visible area has
+  /// its top pushed off the screen that way. That is the failure the earlier
+  /// `ensureVisible` version had, reintroduced through the padding.
+  ///
+  /// Falls back to the whole height before the first layout, where there is no
+  /// caret geometry to ask about and the caret is at the top anyway.
+  double get _clearanceBelowCaret {
+    final RenderEditable? editable =
+        _editableTextKey.currentState?.renderEditable;
+    if (editable == null || !editable.hasSize) return _measuredHeight;
+
+    final Rect caret = editable.getLocalRectForCaret(
+      _controller.selection.extent,
+    );
+
+    // Measured against the FIELD's height rather than the editable's, so the
+    // field's own bottom padding is reserved too. Generous by the top padding,
+    // which costs a few pixels of clearance and never under-reserves.
+    return math.max(
+      0,
+      math.min(_measuredHeight, _measuredHeight - caret.bottom),
+    );
+  }
 
   /// The keyboard arriving is what makes a focused field need moving.
   ///
@@ -426,25 +460,12 @@ class _WInputState extends State<WInput>
     if (_focusNode.hasFocus) _measureForScrollPadding();
   }
 
-  /// Brings the WHOLE field above the keyboard, not just the caret.
+  /// Records the field's own height for [_scrollPadding].
   ///
-  /// `EditableText` already scrolls on focus and on every keyboard metrics
-  /// change, but it scrolls the CARET rect with `scrollPadding` around it. On a
-  /// single-line field the two are the same thing. On a multi-line one they are
-  /// not: the caret sits on the first line, so the first line clears the
-  /// keyboard and every line below it stays under it. Reported against a
-  /// three-line incident-update composer, where tapping the field left most of
-  /// it behind the keyboard and the reader scrolled by hand.
-  ///
-  /// Deferred to the end of the frame because the keyboard has not been
-  /// reported yet at the moment focus arrives: the viewport is still full
-  /// height, so a scroll computed now targets a layout that is about to change.
-  /// The post-frame callback runs after the metrics change has been laid out.
-  ///
-  /// `ensureVisible` on this element rather than on the editable, so the box
-  /// being cleared is the field with its padding and border rather than the
-  /// text inside it, and `alignmentPolicy` keeps a field that is ALREADY fully
-  /// visible exactly where it is instead of yanking it to an edge.
+  /// Deferred to the end of the frame because the box has not been laid out at
+  /// the moment focus arrives, and re-run on every metrics change because the
+  /// field can be a different size by the time the keyboard has finished
+  /// arriving.
   void _measureForScrollPadding() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_focusNode.hasFocus) return;
