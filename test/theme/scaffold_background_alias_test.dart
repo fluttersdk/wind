@@ -103,5 +103,26 @@ void main() {
 
       expect(theme.scaffoldBackgroundColor.toARGB32(), 0x80F9FAFB);
     });
+
+    test('a three-digit shorthand resolves like the parser resolves it', () {
+      // `hexToColor` expands `#fff` to `#FFFFFF`, so a theme written that way
+      // has to reach the same colour here: the whole point of this field is
+      // that Material paints what the className paints.
+      final ThemeData theme = WindThemeData(
+        aliases: const {'bg-surface': 'bg-[#fff] dark:bg-[#123]'},
+      ).toThemeData();
+
+      expect(theme.scaffoldBackgroundColor, const Color(0xFFFFFFFF));
+    });
+
+    test('a seven-digit typo is left alone rather than guessed at', () {
+      // Neither six nor eight, so it names no colour anybody wrote. Answering
+      // one would paint a canvas from a typo.
+      final ThemeData theme = WindThemeData(
+        aliases: const {'bg-surface': 'bg-[#F9FAFB1]'},
+      ).toThemeData();
+
+      expect(theme.scaffoldBackgroundColor, Colors.white);
+    });
   });
 }

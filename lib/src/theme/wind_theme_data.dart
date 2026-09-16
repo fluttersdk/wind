@@ -12,6 +12,7 @@ import 'defaults/leading.dart' as default_leading;
 import 'defaults/screens.dart' as default_screens;
 import 'defaults/tracking.dart' as default_tracking;
 import 'defaults/ring_widths.dart' as default_ring_widths;
+import '../utils/color_utils.dart' show hexToColor;
 import 'defaults/box_shadows.dart';
 import 'defaults/opacities.dart' as default_opacities;
 import 'defaults/z_indices.dart' as default_z_indices;
@@ -458,24 +459,33 @@ class WindThemeData {
   /// while the theme is dark, or no `bg-surface` alias at all. Null is
   /// "this alias does not name a literal colour", never "the colour is
   /// transparent".
+  ///
+  /// The accepted lengths are the ones [hexToColor] accepts, and for the same
+  /// reason: a value this reads and a value the parser reads have to resolve
+  /// to the same colour, or the canvas Material paints disagrees with the one
+  /// the className paints, which is the defect this exists to close.
   Color? _surfaceFromAlias() {
     final String? value = aliases['bg-surface'];
     if (value == null) return null;
 
     // The dark half wins in dark mode and is the only thing read there; the
     // bare token would otherwise hand a dark theme the light canvas.
+    // 3, 4, 6 and 8 digits, which is exactly what `hexToColor` accepts, and
+    // nothing between them: `{6,8}` would take a seven-digit typo and answer a
+    // colour nobody wrote.
+    const String hexDigits =
+        r'[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3}';
     final RegExp pattern = brightness == Brightness.dark
-        ? RegExp(r'(?:^|\s)dark:bg-\[#([0-9a-fA-F]{6,8})\]')
-        : RegExp(r'(?:^|\s)bg-\[#([0-9a-fA-F]{6,8})\]');
+        ? RegExp('(?:^|\\s)dark:bg-\\[#($hexDigits)\\]')
+        : RegExp('(?:^|\\s)bg-\\[#($hexDigits)\\]');
 
     final RegExpMatch? match = pattern.firstMatch(value);
     if (match == null) return null;
 
-    final String hex = match.group(1)!;
-    // Six digits are RGB and take a full alpha; eight already carry their own,
-    // in Flutter's AARRGGBB order rather than CSS's RRGGBBAA.
-    final int packed = int.parse(hex, radix: 16);
-    return Color(hex.length == 6 ? 0xFF000000 | packed : packed);
+    // Through the same helper the parser uses, so the two cannot drift: it
+    // expands the shorthand and puts alpha first, since Flutter packs
+    // AARRGGBB where CSS writes RRGGBBAA.
+    return hexToColor(match.group(1)!);
   }
 
   ThemeData toThemeData() {
