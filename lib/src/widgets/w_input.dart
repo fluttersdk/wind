@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../theme/wind_theme.dart';
+import 'w_keyboard_actions.dart';
 import '../utils/wind_logger.dart';
 
 /// Input type enum for WInput widget
@@ -377,7 +378,7 @@ class _WInputState extends State<WInput>
       });
     }
 
-    if (_focusNode.hasFocus) _scrollFullyIntoView();
+    if (_focusNode.hasFocus) _measureForScrollPadding();
   }
 
   /// The field's own rendered height, measured after layout.
@@ -397,8 +398,20 @@ class _WInputState extends State<WInput>
   /// same place [_scrollFullyIntoView] aims at, so the two reinforce rather
   /// than race. Reported against a three-line update composer where the
   /// keyboard covered all but the first line.
-  EdgeInsets get _scrollPadding =>
-      EdgeInsets.fromLTRB(20, 20, 20, 20 + _measuredHeight);
+  /// Plus the keyboard toolbar, which occludes and is not in `viewInsets`.
+  ///
+  /// [WKeyboardActions] draws its bar in an overlay at `bottom:
+  /// viewInsets.bottom`, so it sits ON TOP of the keyboard and the engine knows
+  /// nothing about it. A field that cleared the keyboard alone came out from
+  /// under it and straight under the toolbar, which is what a three-line
+  /// composer showing half of its first line was. Zero wherever no toolbar is
+  /// mounted, which is every platform it is gated off.
+  EdgeInsets get _scrollPadding => EdgeInsets.fromLTRB(
+        20,
+        20,
+        20,
+        20 + _measuredHeight + WKeyboardToolbarInset.of(context),
+      );
 
   /// The keyboard arriving is what makes a focused field need moving.
   ///
@@ -410,7 +423,7 @@ class _WInputState extends State<WInput>
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
-    if (_focusNode.hasFocus) _scrollFullyIntoView();
+    if (_focusNode.hasFocus) _measureForScrollPadding();
   }
 
   /// Brings the WHOLE field above the keyboard, not just the caret.
@@ -432,24 +445,18 @@ class _WInputState extends State<WInput>
   /// being cleared is the field with its padding and border rather than the
   /// text inside it, and `alignmentPolicy` keeps a field that is ALREADY fully
   /// visible exactly where it is instead of yanking it to an edge.
-  void _scrollFullyIntoView() {
+  void _measureForScrollPadding() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_focusNode.hasFocus) return;
 
-      final double height = context.size?.height ?? 0;
-      if (height != _measuredHeight) {
-        setState(() => _measuredHeight = height);
+      // `context.size` asserts when the element has not been laid out, which
+      // an offstage route focusing a field reaches.
+      final RenderObject? box = context.findRenderObject();
+      if (box is! RenderBox || !box.hasSize) return;
+
+      if (box.size.height != _measuredHeight) {
+        setState(() => _measuredHeight = box.size.height);
       }
-
-      final ScrollableState? scrollable = Scrollable.maybeOf(context);
-      if (scrollable == null) return;
-
-      Scrollable.ensureVisible(
-        context,
-        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-      );
     });
   }
 

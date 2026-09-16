@@ -131,9 +131,55 @@ class WKeyboardActions extends StatefulWidget {
   State<WKeyboardActions> createState() => _WKeyboardActionsState();
 }
 
+/// Publishes the height of the keyboard toolbar currently on screen.
+///
+/// The toolbar sits in an [Overlay] at `bottom: viewInsets.bottom`, which is
+/// directly ON TOP of the keyboard, so the region a focused field has to clear
+/// is the keyboard PLUS this. Nothing in `viewInsets` accounts for it: the
+/// engine reports the keyboard, and the toolbar is the app's own widget drawn
+/// above it. A field that cleared only `viewInsets` came out from under the
+/// keyboard and straight under the toolbar, which was reported as a three-line
+/// composer showing half of its first line.
+///
+/// Zero when no toolbar is up, which is every platform this widget is gated
+/// off and every moment nothing is focused.
+class WKeyboardToolbarInset extends InheritedWidget {
+  /// Creates the inset publisher.
+  const WKeyboardToolbarInset({
+    super.key,
+    required this.height,
+    required super.child,
+  });
+
+  /// The toolbar's measured height in logical pixels, or zero when it is down.
+  final double height;
+
+  /// The toolbar height in scope, or zero where there is no [WKeyboardActions].
+  static double of(BuildContext context) {
+    return context
+            .dependOnInheritedWidgetOfExactType<WKeyboardToolbarInset>()
+            ?.height ??
+        0;
+  }
+
+  @override
+  bool updateShouldNotify(WKeyboardToolbarInset oldWidget) =>
+      oldWidget.height != height;
+}
+
 class _WKeyboardActionsState extends State<WKeyboardActions> {
   OverlayEntry? _overlayEntry;
   int? _currentIndex;
+
+  /// The toolbar's measured height, published through [WKeyboardToolbarInset].
+  ///
+  /// Measured rather than assumed: the row is built from `IconButton`s whose
+  /// size comes from the ambient theme, and a consumer's `toolbarClassName` can
+  /// change the padding around them.
+  double _toolbarHeight = 0;
+
+  /// Identifies the toolbar's own box so its height can be read back.
+  final GlobalKey _toolbarKey = GlobalKey();
 
   /// Parsed platform gate, derived from widget.platform once in initState.
   late WKeyboardPlatform _platform;
@@ -201,9 +247,11 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
     if (found != null && _platformMatches()) {
       _currentIndex = found;
       _insertOrUpdateOverlay();
+      _scheduleToolbarMeasurement();
     } else {
       _currentIndex = null;
       _removeOverlay();
+      _publishToolbarHeight(0);
     }
   }
 
@@ -269,13 +317,17 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
   /// must walk up to `WindTheme`, see `_resolveToolbarColor`).
   Widget _buildToolbar(BuildContext context) {
     final index = _currentIndex;
-    if (index == null) return const SizedBox.shrink();
+    if (index == null) {
+      _publishToolbarHeight(0);
+      return const SizedBox.shrink();
+    }
 
     return Positioned(
       left: 0,
       right: 0,
       bottom: MediaQuery.viewInsetsOf(context).bottom,
       child: Material(
+        key: _toolbarKey,
         color: _resolveToolbarColor(context),
         child: SafeArea(
           top: false,
@@ -354,8 +406,47 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
     };
   }
 
+  /// Reads the toolbar's height once the frame that drew it has laid out.
+  ///
+  /// [attempt] exists because the overlay entry is inserted during the frame
+  /// that focus arrives in and its `Material` has no size until the frame
+  /// after. Measuring once from the entry's own builder read nothing and never
+  /// came back, so the published height stayed zero and the whole mechanism
+  /// was inert while looking wired.
+  void _scheduleToolbarMeasurement({int attempt = 0}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _currentIndex == null) return;
+
+      final RenderObject? box = _toolbarKey.currentContext?.findRenderObject();
+      if (box is! RenderBox || !box.hasSize) {
+        // Bounded: three frames is far more than the one the overlay needs,
+        // and an unbounded retry would spin for the life of a toolbar that
+        // never lays out.
+        if (attempt < 3) _scheduleToolbarMeasurement(attempt: attempt + 1);
+        return;
+      }
+
+      _publishToolbarHeight(box.size.height);
+    });
+  }
+
+  void _publishToolbarHeight(double height) {
+    if (height == _toolbarHeight) return;
+    if (!mounted) return;
+
+    // Deferred: this runs from the overlay's own build on the no-toolbar path,
+    // and `setState` during a build is illegal.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || height == _toolbarHeight) return;
+      setState(() => _toolbarHeight = height);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    return WKeyboardToolbarInset(
+      height: _toolbarHeight,
+      child: widget.child,
+    );
   }
 }

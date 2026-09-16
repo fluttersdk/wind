@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride, TargetPlatform;
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 /// A host that shrinks its child by the keyboard inset.
@@ -40,6 +42,9 @@ void main() {
     tester.view.viewInsets = FakeViewPadding.zero;
     addTearDown(tester.view.reset);
 
+    final ScrollController controller = ScrollController();
+    addTearDown(controller.dispose);
+
     await tester.pumpWidget(
       MaterialApp(
         home: WindTheme(
@@ -48,6 +53,7 @@ void main() {
             resizeToAvoidBottomInset: false,
             body: _ResizingHost(
               child: SingleChildScrollView(
+                controller: controller,
                 child: Column(
                   children: [
                     const SizedBox(height: 1500),
@@ -57,7 +63,14 @@ void main() {
                       maxLines: minLines > 1 ? 6 : 1,
                       placeholder: 'field',
                     ),
-                    const SizedBox(height: 8),
+                    // 900 below the field rather than a few pixels. With the
+                    // field at the page bottom every scroll ends at
+                    // `maxScrollExtent` and an assertion about where the field
+                    // landed passes on the page running out instead: measured
+                    // 584 at every field height, `pixels == maxScrollExtent`
+                    // each time, so the harness could not tell a working
+                    // alignment from a broken one.
+                    const SizedBox(height: 900),
                   ],
                 ),
               ),
@@ -68,19 +81,23 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Dragged from a POINT rather than from a `Scrollable` finder: a finder can
-    // land on a scrollable that is not the content one, and a drag on that
-    // silently moves nothing, which reads as a page that would not scroll.
-    for (var i = 0; i < 4; i++) {
-      await tester.dragFrom(const Offset(195, 400), const Offset(0, -600));
-      await tester.pumpAndSettle();
-    }
+    // Put the field just above the fold, which is where a reader is standing
+    // when they tap the last field on a long page. Dragging to the END of the
+    // page instead scrolls PAST it and measures a different situation.
+    final double fieldBottom = tester.getRect(find.byType(WInput)).bottom;
+    controller.jumpTo(controller.offset + fieldBottom - 880);
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byType(EditableText));
     await tester.pump();
 
+    // No `handleMetricsChanged()`: `TestFlutterView.viewInsets`'s setter
+    // already calls `platformDispatcher.onMetricsChanged`
+    // (`flutter_test/lib/src/window.dart:1207`). Firing it a second time hands
+    // this widget two post-frame callbacks to `EditableText`'s one, since
+    // `EditableText` de-dupes its own, and that is what made an earlier
+    // `ensureVisible` look like it was doing the work.
     tester.view.viewInsets = const FakeViewPadding(bottom: 300);
-    tester.binding.handleMetricsChanged();
     await tester.pumpAndSettle();
 
     return tester.getRect(find.byType(EditableText));
@@ -100,9 +117,13 @@ void main() {
       // to 608 against a keyboard starting at 600.
       final Rect field = await tapAndRaiseKeyboard(tester, minLines: 3);
 
+      // An EXACT value, not `lessThanOrEqualTo(600)`. The loose form passes
+      // for any scroll that went far enough, including one that overshot the
+      // field off the top of the screen, and it passed throughout the version
+      // of this fix that did exactly that.
       expect(
         field.bottom,
-        lessThanOrEqualTo(600.0),
+        550.0,
         reason: 'the whole field has to clear the keyboard, not just line one',
       );
     });
@@ -112,7 +133,7 @@ void main() {
       // cannot overshoot it into the opposite failure.
       final Rect field = await tapAndRaiseKeyboard(tester, minLines: 1);
 
-      expect(field.bottom, lessThanOrEqualTo(600.0));
+      expect(field.bottom, 550.0);
       expect(
         field.top,
         greaterThanOrEqualTo(0.0),
@@ -155,8 +176,13 @@ void main() {
 
       await tester.tap(find.byType(EditableText));
       await tester.pump();
+      // No `handleMetricsChanged()` here: `TestFlutterView.viewInsets`'s setter
+      // already calls `platformDispatcher.onMetricsChanged`
+      // (`flutter_test/lib/src/window.dart:1207`). Firing it a second time gave
+      // this widget two post-frame callbacks to `EditableText`'s one, because
+      // `EditableText` de-dupes its own and this one did not, and that is what
+      // made an earlier `ensureVisible` look like it was working.
       tester.view.viewInsets = const FakeViewPadding(bottom: 300);
-      tester.binding.handleMetricsChanged();
       await tester.pumpAndSettle();
 
       expect(tester.getRect(find.byType(EditableText)), before);
@@ -209,5 +235,98 @@ void main() {
       greaterThanOrEqualTo(height),
       reason: 'the caret has to clear the lines below it, not just itself',
     );
+  });
+
+  group('the iOS keyboard toolbar', () {
+    testWidgets('is published, and the field asks to clear it as well', (
+      tester,
+    ) async {
+      // The occlusion nothing reports. `WKeyboardActions` draws its bar in an
+      // overlay at `bottom: viewInsets.bottom`, so it sits ON TOP of the
+      // keyboard and the engine knows nothing about it: a field that cleared
+      // `viewInsets` alone came out from under the keyboard and straight under
+      // the toolbar. It is also why this never reproduced in a test before,
+      // since the bar is iOS-gated and widget tests run as Android.
+      //
+      // Asserted on the published height and the padding that consumes it,
+      // in one run. The two comparisons that look more natural are both
+      // confounded: before-and-after on one focus grows either way, because
+      // focusing also measures the field's own height into the padding, and
+      // running the same widget twice in one test body carries state between
+      // the runs (measured 78 then 126, in the wrong direction).
+      //
+      // Reset inside the BODY, not through `addTearDown`: the framework's
+      // foundation-vars invariant runs before tear-downs and fails the test
+      // with "a foundation debug variable was changed by the test".
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(390, 900);
+      addTearDown(tester.view.reset);
+
+      final FocusNode node = FocusNode();
+      addTearDown(node.dispose);
+
+      double published = -1;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Scaffold(
+              body: WKeyboardActions(
+                focusNodes: [node],
+                platform: 'ios',
+                child: Builder(
+                  builder: (BuildContext context) {
+                    published = WKeyboardToolbarInset.of(context);
+                    return WInput(
+                      focusNode: node,
+                      type: InputType.multiline,
+                      minLines: 3,
+                      maxLines: 3,
+                      placeholder: 'composer',
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(published, 0, reason: 'nothing is focused, so no bar is up');
+
+      node.requestFocus();
+      // Counted pumps, never a settle: an active toolbar schedules a frame per
+      // frame and `pumpAndSettle` on a focused textarea never returns.
+      // Several: the overlay is inserted on the focus frame, its Material has
+      // no size until the frame after, the measurement retries until it does,
+      // and the publish defers one more so  is legal.
+      for (var i = 0; i < 6; i++) {
+        await tester.pump();
+      }
+
+      final double toolbar = published;
+      final double padding = tester
+          .widget<EditableText>(find.byType(EditableText))
+          .scrollPadding
+          .bottom;
+      final double field = tester.getRect(find.byType(WInput)).height;
+
+      debugDefaultTargetPlatformOverride = null;
+
+      expect(
+        toolbar,
+        greaterThan(0),
+        reason: 'the bar is up, so its height has to reach the subtree',
+      );
+      expect(
+        padding,
+        greaterThanOrEqualTo(field + toolbar),
+        reason: 'the field clears the keyboard, its own lines AND the bar',
+      );
+    });
   });
 }
