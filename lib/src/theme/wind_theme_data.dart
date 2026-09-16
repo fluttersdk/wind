@@ -12,6 +12,7 @@ import 'defaults/leading.dart' as default_leading;
 import 'defaults/screens.dart' as default_screens;
 import 'defaults/tracking.dart' as default_tracking;
 import 'defaults/ring_widths.dart' as default_ring_widths;
+import '../utils/color_utils.dart' show hexToColor;
 import 'defaults/box_shadows.dart';
 import 'defaults/opacities.dart' as default_opacities;
 import 'defaults/z_indices.dart' as default_z_indices;
@@ -444,6 +445,49 @@ class WindThemeData {
   ///
   /// The logic tries to map 'primary', 'secondary', and 'error' colors from
   /// the [colors] map. If not found, it falls back to defaults.
+  /// The colour the `bg-surface` alias paints at the current [brightness], or
+  /// null when it does not resolve to a literal one.
+  ///
+  /// Reads the alias VALUE as text rather than running the parser, which is
+  /// what keeps this safe to call from [toThemeData]: the parser resolves a
+  /// className against a theme, and this runs while that theme is being built.
+  /// An alias is `'bg-[#F9FAFB] dark:bg-[#07090C]'`, so the hex is already
+  /// there to be read.
+  ///
+  /// Anything else answers null and leaves the existing default alone: an
+  /// alias naming a palette colour (`bg-gray-50`), one with no `dark:` pair
+  /// while the theme is dark, or no `bg-surface` alias at all. Null is
+  /// "this alias does not name a literal colour", never "the colour is
+  /// transparent".
+  ///
+  /// The accepted lengths are the ones [hexToColor] accepts, and for the same
+  /// reason: a value this reads and a value the parser reads have to resolve
+  /// to the same colour, or the canvas Material paints disagrees with the one
+  /// the className paints, which is the defect this exists to close.
+  Color? _surfaceFromAlias() {
+    final String? value = aliases['bg-surface'];
+    if (value == null) return null;
+
+    // The dark half wins in dark mode and is the only thing read there; the
+    // bare token would otherwise hand a dark theme the light canvas.
+    // 3, 4, 6 and 8 digits, which is exactly what `hexToColor` accepts, and
+    // nothing between them: `{6,8}` would take a seven-digit typo and answer a
+    // colour nobody wrote.
+    const String hexDigits =
+        r'[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3}';
+    final RegExp pattern = brightness == Brightness.dark
+        ? RegExp('(?:^|\\s)dark:bg-\\[#($hexDigits)\\]')
+        : RegExp('(?:^|\\s)bg-\\[#($hexDigits)\\]');
+
+    final RegExpMatch? match = pattern.firstMatch(value);
+    if (match == null) return null;
+
+    // Through the same helper the parser uses, so the two cannot drift: it
+    // expands the shorthand and puts alpha first, since Flutter packs
+    // AARRGGBB where CSS writes RRGGBBAA.
+    return hexToColor(match.group(1)!);
+  }
+
   ThemeData toThemeData() {
     // Helper to safely fetch default material color
     MaterialColor getDefault(String name) {
@@ -476,7 +520,22 @@ class WindThemeData {
     if (colors.containsKey('background')) {
       background = colors['background']!;
     } else {
-      if (brightness == Brightness.dark) {
+      // The `bg-surface` alias, when the consumer defines one, because that is
+      // the colour their pages are actually painted with and this field is
+      // Flutter's name for the same thing. `colors['background']` cannot say
+      // it: it holds ONE colour for both brightnesses, and a themed app needs a
+      // different canvas in each.
+      //
+      // It matters because the two are read by different layers. An app paints
+      // its canvas through the className on a widget of its own, while anything
+      // Material puts behind a page reads `scaffoldBackgroundColor`, and until
+      // something actually painted a page nobody noticed they disagreed.
+      // Measured on one consumer: the alias resolved to `#F9FAFB` light and
+      // `#07090C` dark, against this field's `#FFFFFF` and `#111827`.
+      final Color? fromAlias = _surfaceFromAlias();
+      if (fromAlias != null) {
+        background = fromAlias;
+      } else if (brightness == Brightness.dark) {
         final gray = default_colors.colors['gray'] as Map<int, Color>;
         background = gray[900]!;
       } else {
