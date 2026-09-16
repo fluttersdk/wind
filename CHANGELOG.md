@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.6.1] - 2026-09-16
+
 ### Fixed
 
 - **`ThemeData.scaffoldBackgroundColor` now agrees with the colour a themed app actually paints its pages.** It was filled from `colors['background']`, or failing that from this package's own white and gray-900, while an app's canvas comes from a `bg-surface` className alias on a widget of its own. The two are read by different layers and had no reason to agree, and nothing painted a page, so nobody noticed. Measured on one consumer: the alias resolved to `#F9FAFB` light and `#07090C` dark, against this field's `#FFFFFF` and `#111827`.
@@ -366,7 +370,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.1...HEAD
+[1.6.1]: https://github.com/fluttersdk/wind/releases/tag/1.6.1
 [1.6.0]: https://github.com/fluttersdk/wind/releases/tag/1.6.0
 [1.5.3]: https://github.com/fluttersdk/wind/releases/tag/1.5.3
 [1.5.2]: https://github.com/fluttersdk/wind/releases/tag/1.5.2
