@@ -322,6 +322,11 @@ void main() {
           reason: 'the bar is up, so its height has to reach the subtree',
         );
 
+        expect(
+          padding,
+          greaterThanOrEqualTo(toolbar),
+          reason: 'the field clears the keyboard, the bar, and its own lines',
+        );
         // And back to zero when the bar goes. A published height that outlived
         // its toolbar would have every field below reserving room for a bar
         // that is not on screen.
@@ -334,11 +339,6 @@ void main() {
           published,
           0,
           reason: 'the bar is down, so nothing should still be reserved',
-        );
-        expect(
-          padding,
-          greaterThanOrEqualTo(toolbar),
-          reason: 'the field clears the keyboard, the bar, and its own lines',
         );
       } finally {
         debugDefaultTargetPlatformOverride = null;
