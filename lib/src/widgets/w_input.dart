@@ -279,6 +279,7 @@ class WInput extends StatefulWidget {
 }
 
 class _WInputState extends State<WInput>
+    with WidgetsBindingObserver
     implements TextSelectionGestureDetectorBuilderDelegate {
   /// Default content padding (12 horizontal / 8 vertical) used when className
   /// supplies no `p-*`.
@@ -345,6 +346,7 @@ class _WInputState extends State<WInput>
     _initFocusNode();
     _selectionGestureDetectorBuilder =
         _WInputSelectionGestureDetectorBuilder(state: this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   void _initController() {
@@ -374,6 +376,56 @@ class _WInputState extends State<WInput>
         _isFocused = _focusNode.hasFocus;
       });
     }
+
+    if (_focusNode.hasFocus) _scrollFullyIntoView();
+  }
+
+  /// The keyboard arriving is what makes a focused field need moving.
+  ///
+  /// Focus alone is not the signal: at the moment focus lands the keyboard has
+  /// not been reported, the viewport is still full height, and a field near the
+  /// bottom is genuinely visible, so a scroll computed then correctly does
+  /// nothing. The viewport shrinks one metrics change later, and that is where
+  /// the field goes under. `EditableText` listens here for the same reason.
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    if (_focusNode.hasFocus) _scrollFullyIntoView();
+  }
+
+  /// Brings the WHOLE field above the keyboard, not just the caret.
+  ///
+  /// `EditableText` already scrolls on focus and on every keyboard metrics
+  /// change, but it scrolls the CARET rect with `scrollPadding` around it. On a
+  /// single-line field the two are the same thing. On a multi-line one they are
+  /// not: the caret sits on the first line, so the first line clears the
+  /// keyboard and every line below it stays under it. Reported against a
+  /// three-line incident-update composer, where tapping the field left most of
+  /// it behind the keyboard and the reader scrolled by hand.
+  ///
+  /// Deferred to the end of the frame because the keyboard has not been
+  /// reported yet at the moment focus arrives: the viewport is still full
+  /// height, so a scroll computed now targets a layout that is about to change.
+  /// The post-frame callback runs after the metrics change has been laid out.
+  ///
+  /// `ensureVisible` on this element rather than on the editable, so the box
+  /// being cleared is the field with its padding and border rather than the
+  /// text inside it, and `alignmentPolicy` keeps a field that is ALREADY fully
+  /// visible exactly where it is instead of yanking it to an edge.
+  void _scrollFullyIntoView() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_focusNode.hasFocus) return;
+
+      final ScrollableState? scrollable = Scrollable.maybeOf(context);
+      if (scrollable == null) return;
+
+      Scrollable.ensureVisible(
+        context,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
@@ -421,6 +473,7 @@ class _WInputState extends State<WInput>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _focusNode.removeListener(_onFocusChange);
     if (_ownsFocusNode) {
       _focusNode.dispose();
