@@ -458,14 +458,8 @@ class _WInputState extends State<WInput>
         20,
         20,
         20,
-        20 + _recordClearance() + WKeyboardToolbarInset.of(context),
+        20 + _clearanceAtLastBuild + WKeyboardToolbarInset.of(context),
       );
-
-  /// Reads the clearance and remembers it for [_onCaretMoved]'s comparison.
-  double _recordClearance() {
-    _clearanceAtLastBuild = _clearanceBelowCaret;
-    return _clearanceAtLastBuild;
-  }
 
   /// How much of the field extends BELOW the caret, right now.
   ///
@@ -593,6 +587,12 @@ class _WInputState extends State<WInput>
 
   @override
   Widget build(BuildContext context) {
+    // Read once, here, rather than from inside the `_scrollPadding` getter.
+    // Recording it there made a getter that MUTATES: any second read, a debug
+    // print or a future caller, silently rearmed `_onCaretMoved`'s difference
+    // test and swallowed the corrective `bringIntoView` that follows it.
+    _clearanceAtLastBuild = _clearanceBelowCaret;
+
     // Build active states set
     final Set<String> activeStates = {
       ...?widget.states,
