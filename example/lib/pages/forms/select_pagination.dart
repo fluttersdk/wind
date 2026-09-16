@@ -63,30 +63,47 @@ class _SelectPaginationExamplePageState
   }
 
   Future<List<SelectOption<String>>> _onSearch(String query) async {
-    _searchQuery = query;
-    _page = 1;
     final results = await _fetchUsers(query, 1);
-    _hasMore = results.length >= 10;
+    setState(() {
+      _searchQuery = query;
+      _page = 1;
+      _hasMore = results.length >= 10;
+    });
     return results;
   }
 
   /// Puts the cursor back on the list the reopen restored.
   ///
-  /// Opening the menu clears the search and shows `options` again, so a cursor
-  /// left on the last query's page would ask for the page after one the reader
-  /// can no longer see. The loaded users are all in `_users`, so the page to
-  /// resume from is however many pages of them there are.
+  /// Opening the menu clears the search and shows `options` again, which here
+  /// is the first page. A cursor left on the last query's page would ask for
+  /// the page after one the reader can no longer see, so it goes back to where
+  /// the visible list actually ends.
+  ///
+  /// Through `setState`, because `WSelect` reads `hasMore` off the widget: a
+  /// field written on its own never reaches the select, and a search that ran
+  /// out of pages would leave the restored list refusing to load any.
   void _onMenuOpen() {
-    _searchQuery = '';
-    _page = (_users.length / 10).ceil();
-    _hasMore = _users.length < 50;
+    setState(() {
+      _searchQuery = '';
+      _page = 1;
+      _hasMore = _users.length >= 10;
+    });
   }
 
+  /// Loads the next page of whatever list is on screen, filtered or not.
+  ///
+  /// The rows are RETURNED rather than pushed into `_users`. `WSelect` owns the
+  /// visible list once a search has filtered it and rebuilds that list whenever
+  /// `options` changes identity, so appending from here would throw the
+  /// filtered list away mid-scroll and leave `_users` holding another query's
+  /// rows for the next reopen to restore.
   Future<List<SelectOption<String>>> _onLoadMore() async {
-    _page++;
-    final moreUsers = await _fetchUsers(_searchQuery, _page);
-    if (moreUsers.length < 10) _hasMore = false;
-    setState(() => _users = [..._users, ...moreUsers]);
+    final int next = _page + 1;
+    final moreUsers = await _fetchUsers(_searchQuery, next);
+    setState(() {
+      _page = next;
+      _hasMore = moreUsers.length >= 10;
+    });
     return moreUsers;
   }
 
