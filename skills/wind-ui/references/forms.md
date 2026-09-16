@@ -369,6 +369,8 @@ WFormInput(
 
 When the order is not a clean run of adjacent fields, do not try to fix it with `.next`. Reach for `WKeyboardActions` instead: it renders a toolbar above the keyboard whose Previous / Next buttons walk an explicit `focusNodes` list, so the advance order is data you control rather than a side effect of widget tree layout.
 
+**That toolbar occludes, and `viewInsets` does not know it.** It is drawn in the root overlay at `bottom: viewInsets.bottom`, so it sits ON TOP of the keyboard: the region a focused field has to clear is the keyboard PLUS the bar. `WKeyboardActions` measures its own bar and publishes the height as `WKeyboardToolbarInset.of(context)`, zero when none is up. `WInput` already adds it to the clearance it asks for, so a field needs nothing; reach for it in a widget of your own that positions something against the keyboard.
+
 ---
 
 ## Anti-patterns
