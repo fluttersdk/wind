@@ -217,6 +217,74 @@ void main() {
         reason: 'the refreshed list still ends where the caller left it',
       );
     });
+    testWidgets('does not strand the menu on a spinner after the swap', (
+      tester,
+    ) async {
+      // The other half of the same bump, and the half that reopened a bug the
+      // epoch had just closed. Dropping a stale response is right; dropping it
+      // through the ONLY path that lowers the in-flight flag is not. The reset
+      // has to lower it, exactly as the open branch does, because after the
+      // reset nobody else owns it.
+      //
+      // The empty query is what makes this reachable: `didUpdateWidget`
+      // re-runs the search only when the query is non-empty, so a search for
+      // `''` in flight at the swap has nothing behind it to raise and lower
+      // the flag again.
+      final cleared = Completer<List<SelectOption<String>>>();
+      final typed = Completer<List<SelectOption<String>>>();
+
+      late StateSetter setOuter;
+      List<SelectOption<String>> options = const [
+        SelectOption(value: 'a', label: 'A'),
+      ];
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          StatefulBuilder(
+            builder: (context, setState) {
+              setOuter = setState;
+              return WSelect<String>(
+                options: options,
+                searchable: true,
+                onSearch: (query) =>
+                    query.isEmpty ? cleared.future : typed.future,
+                className: 'w-64',
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WSelect<String>));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(EditableText), 'p');
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText), '');
+      await tester.pump();
+
+      // The caller refreshes the list while that search is still out, which is
+      // the ordinary shape: its own search handler writing results to state.
+      setOuter(() => options = const [SelectOption(value: 'c', label: 'C')]);
+      await tester.pump();
+      await tester.pump();
+
+      expect(
+        find.byType(CircularProgressIndicator),
+        findsNothing,
+        reason: 'the refreshed list is here, so nothing is still loading',
+      );
+      expect(find.text('C'), findsOneWidget);
+
+      // And the late response must not put the spinner back or overwrite it.
+      typed.complete(const [SelectOption(value: 'p', label: 'P')]);
+      cleared.complete(const [SelectOption(value: 'b', label: 'B')]);
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('C'), findsOneWidget);
+      expect(find.text('B'), findsNothing);
+    });
   });
 
   group('WSelect reopen', () {

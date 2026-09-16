@@ -335,7 +335,15 @@ class _WSelectState<T> extends State<WSelect<T>> {
       // against the previous list must not write into this one. A caller
       // refreshing `options` while the menu is open is narrower than a reopen
       // but the symptom is identical, rows from a list nobody is looking at.
+      //
+      // Lowering the flag is not optional here, and the bump is exactly why.
+      // The resolve path is the only place that lowers it and it is guarded on
+      // the epoch, so bumping without this strands the menu on a spinner: a
+      // search for the empty query has nothing behind it to raise and lower
+      // the flag again, since the re-filter below only runs for a non-empty
+      // one. The open branch lowers it for the same reason.
       _listEpoch++;
+      _isSearching = false;
       if (_searchQuery.isNotEmpty) {
         _filterOptions(_searchQuery);
       }
