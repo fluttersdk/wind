@@ -34,6 +34,8 @@ class _SelectPaginationExamplePageState
 
   Future<void> _loadInitialUsers() async {
     final users = await _fetchUsers('', 1);
+    if (!mounted) return;
+
     setState(() {
       _users = users;
       _page = 1;
@@ -64,6 +66,11 @@ class _SelectPaginationExamplePageState
 
   Future<List<SelectOption<String>>> _onSearch(String query) async {
     final results = await _fetchUsers(query, 1);
+    // Half a second of latency is long enough for the reader to leave the
+    // gallery page, and `setState` after dispose throws. `WSelect` guards its
+    // own writes the same way.
+    if (!mounted) return results;
+
     setState(() {
       _searchQuery = query;
       _page = 1;
@@ -100,6 +107,8 @@ class _SelectPaginationExamplePageState
   Future<List<SelectOption<String>>> _onLoadMore() async {
     final int next = _page + 1;
     final moreUsers = await _fetchUsers(_searchQuery, next);
+    if (!mounted) return moreUsers;
+
     setState(() {
       _page = next;
       _hasMore = moreUsers.length >= 10;
@@ -113,6 +122,8 @@ class _SelectPaginationExamplePageState
       value: query.toLowerCase().replaceAll(' ', '_'),
       label: query,
     );
+    if (!mounted) return newTag;
+
     setState(() => _tagOptions = [..._tagOptions, newTag]);
     return newTag;
   }
