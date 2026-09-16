@@ -162,4 +162,52 @@ void main() {
       expect(tester.getRect(find.byType(EditableText)), before);
     });
   });
+
+  testWidgets('the caret padding grows with the field', (tester) async {
+    // The second half of the fix, and the one that does not depend on this
+    // widget winning a race. `EditableText` scrolls its CARET into view on
+    // every metrics frame with `scrollPadding` around it, so widening that
+    // padding below by the field's own height aims Flutter's own mechanism
+    // at the same place `ensureVisible` aims at. Whichever runs last on a
+    // given device then produces the same result.
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(390, 900);
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WindTheme(
+          data: WindThemeData(),
+          child: Scaffold(
+            body: Column(
+              children: [
+                WInput(
+                  type: InputType.multiline,
+                  minLines: 6,
+                  maxLines: 6,
+                  placeholder: 'tall',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final double height = tester.getRect(find.byType(WInput)).height;
+
+    await tester.tap(find.byType(EditableText));
+    await tester.pumpAndSettle();
+
+    final EditableText editable = tester.widget<EditableText>(
+      find.byType(EditableText),
+    );
+
+    expect(
+      editable.scrollPadding.bottom,
+      greaterThanOrEqualTo(height),
+      reason: 'the caret has to clear the lines below it, not just itself',
+    );
+  });
 }

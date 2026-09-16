@@ -380,6 +380,26 @@ class _WInputState extends State<WInput>
     if (_focusNode.hasFocus) _scrollFullyIntoView();
   }
 
+  /// The field's own rendered height, measured after layout.
+  ///
+  /// Feeds [_scrollPadding]. Zero until the first frame has laid out, which is
+  /// before anything can be focused, so the default padding covers that window.
+  double _measuredHeight = 0;
+
+  /// The padding `EditableText` keeps around the CARET when it scrolls itself
+  /// into view, widened below by this field's own height.
+  ///
+  /// The default `EdgeInsets.all(20)` clears the caret, and on one line the
+  /// caret and the field are the same box so that is the whole field. On
+  /// several they are not: the caret sits on the first line and everything
+  /// below it stays under the keyboard. Handing the field's height to the
+  /// mechanism Flutter already runs, on every metrics frame, aims it at the
+  /// same place [_scrollFullyIntoView] aims at, so the two reinforce rather
+  /// than race. Reported against a three-line update composer where the
+  /// keyboard covered all but the first line.
+  EdgeInsets get _scrollPadding =>
+      EdgeInsets.fromLTRB(20, 20, 20, 20 + _measuredHeight);
+
   /// The keyboard arriving is what makes a focused field need moving.
   ///
   /// Focus alone is not the signal: at the moment focus lands the keyboard has
@@ -415,6 +435,11 @@ class _WInputState extends State<WInput>
   void _scrollFullyIntoView() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_focusNode.hasFocus) return;
+
+      final double height = context.size?.height ?? 0;
+      if (height != _measuredHeight) {
+        setState(() => _measuredHeight = height);
+      }
 
       final ScrollableState? scrollable = Scrollable.maybeOf(context);
       if (scrollable == null) return;
@@ -593,6 +618,7 @@ class _WInputState extends State<WInput>
       // A form that wants field-to-field advance still asks for it explicitly
       // through [textInputAction], which is the only place that intent can be
       // stated correctly: only the form knows its own field order.
+      scrollPadding: _scrollPadding,
       textInputAction: widget.textInputAction ??
           (widget.type == InputType.multiline
               ? TextInputAction.newline
