@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.6.2] - 2026-09-19
+
 ### Fixed
 
 - **A focused `WInput` no longer turns into a flat grey box when a route transition is pushed in above it.** `_clearanceBelowCaret` runs during `build` and asked `RenderEditable` for the pixel-snapped caret rect. That snap ends in `_snapToPhysicalPixel` → `localToGlobal`, which walks every ancestor's `applyPaintTransform`, and `RenderFractionalTranslation.applyPaintTransform` reads `size` with no layout guard while `RenderBox.size` throws rather than asserting. A slide route transition builds exactly that object, and during the frame it is inserted it has not been laid out. Measured on an iPhone in a release build: `StateError: Bad state: RenderBox was not laid out: RenderFractionalTranslation`, thrown from `build`, which replaces the subtree with an `ErrorWidget`. Debug never reaches it, which is why no simulator run and no test had ever seen it.
@@ -380,7 +384,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.1...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.2...HEAD
+[1.6.2]: https://github.com/fluttersdk/wind/releases/tag/1.6.2
 [1.6.1]: https://github.com/fluttersdk/wind/releases/tag/1.6.1
 [1.6.0]: https://github.com/fluttersdk/wind/releases/tag/1.6.0
 [1.5.3]: https://github.com/fluttersdk/wind/releases/tag/1.5.3
