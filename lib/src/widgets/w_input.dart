@@ -479,7 +479,6 @@ class _WInputState extends State<WInput>
     final RenderEditable? editable =
         _editableTextKey.currentState?.renderEditable;
     if (editable == null || !editable.hasSize) return _measuredHeight;
-    if (!_controller.selection.isValid) return _measuredHeight;
 
     // `getEndpointsForSelection` RATHER THAN `getLocalRectForCaret`, and the
     // difference is that one of them leaves this render object and the other
@@ -504,10 +503,23 @@ class _WInputState extends State<WInput>
     // sub-pixel difference this getter cannot feel: it is already documented as
     // generous by the top padding, and its consumer compares with a 1px
     // threshold.
+    // AN INVALID SELECTION IS TREATED AS OFFSET 0, not as "give up and reserve
+    // the whole field". Review found the path and it is ordinary rather than
+    // theoretical: `_updateControllerValue` assigns `_controller.text`, whose
+    // setter forces `TextSelection.collapsed(offset: -1)`, and when the new
+    // value is EMPTY neither branch below it restores a valid one. So a focused
+    // field whose `value` prop is set to `''` arrives here with no selection.
+    //
+    // Returning `_measuredHeight` there would be the over-reserve this getter's
+    // own docblock warns about, about a line height more than the old code
+    // computed. An empty field's caret is at the start, so offset 0 is both
+    // correct and the number that was already being produced.
+    final TextPosition extent = _controller.selection.isValid
+        ? _controller.selection.extent
+        : const TextPosition(offset: 0);
+
     final double caretBottom = editable
-        .getEndpointsForSelection(
-          TextSelection.fromPosition(_controller.selection.extent),
-        )
+        .getEndpointsForSelection(TextSelection.fromPosition(extent))
         .first
         .point
         .dy;

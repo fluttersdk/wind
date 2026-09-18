@@ -32,6 +32,52 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 void main() {
   setUp(WindParser.clearCache);
 
+  testWidgets('clearing a focused field does not jump its scroll padding', (
+    tester,
+  ) async {
+    // Review found this path, and it is ordinary: `_controller.text = ''` forces
+    // `TextSelection.collapsed(offset: -1)`, and `_updateControllerValue`
+    // restores a valid selection only when the new value is non-empty. A first
+    // version of the crash fix bailed out to the full field height there, which
+    // is the over-reserve `_clearanceBelowCaret` documents as the failure its
+    // caret measurement exists to avoid.
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(390, 900);
+    addTearDown(tester.view.reset);
+
+    final FocusNode focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+
+    String value = 'something';
+    late StateSetter setOuter;
+
+    await tester.pumpWidget(
+      WindTheme(
+        data: WindThemeData(),
+        child: MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                setOuter = setState;
+
+                return WInput(focusNode: focusNode, value: value, minLines: 1);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    focusNode.requestFocus();
+    await tester.pumpAndSettle();
+
+    setOuter(() => value = '');
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(WInput), findsOneWidget);
+  });
+
   testWidgets('a field pushed in under a transition renders and does not throw',
       (
     tester,

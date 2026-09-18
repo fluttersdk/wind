@@ -8,6 +8,25 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixes
+
+- `WInput` no longer crashes when a route transition is inserted above a focused
+  field. `_clearanceBelowCaret` runs during `build` and asked for the
+  pixel-snapped caret rect, whose snap calls `localToGlobal` and walks every
+  ancestor's `applyPaintTransform`;
+  `RenderFractionalTranslation.applyPaintTransform` reads `size` with no layout
+  guard, and `RenderBox.size` throws rather than asserting. A slide route
+  transition builds exactly that object, and during the frame it is inserted it
+  has not been laid out. Measured on an iPhone in a release build:
+  `StateError: Bad state: RenderBox was not laid out:
+  RenderFractionalTranslation`, which replaced the field with a flat grey box.
+
+  The clearance now comes from `getEndpointsForSelection`, which reads the same
+  text metrics without leaving the render object. For a collapsed selection it
+  answers the line bottom rather than the caret bottom, a sub-pixel difference:
+  all seven pixel assertions in `w_input_scroll_into_view_test.dart` are
+  unchanged.
+
 ---
 
 ## [1.6.1] - 2026-09-16
