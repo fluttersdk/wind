@@ -479,17 +479,45 @@ class _WInputState extends State<WInput>
     final RenderEditable? editable =
         _editableTextKey.currentState?.renderEditable;
     if (editable == null || !editable.hasSize) return _measuredHeight;
+    if (!_controller.selection.isValid) return _measuredHeight;
 
-    final Rect caret = editable.getLocalRectForCaret(
-      _controller.selection.extent,
-    );
+    // `getEndpointsForSelection` RATHER THAN `getLocalRectForCaret`, and the
+    // difference is that one of them leaves this render object and the other
+    // does not. This runs during `build`, where an ancestor inserted THIS frame
+    // has no size yet.
+    //
+    // `getLocalRectForCaret` ends in `_snapToPhysicalPixel`, which calls
+    // `localToGlobal`, which walks every ancestor's `applyPaintTransform`.
+    // `RenderFractionalTranslation.applyPaintTransform` reads `size` with no
+    // layout guard, and `RenderBox.size` THROWS rather than asserting. A slide
+    // route transition builds exactly that object, so pushing a route while a
+    // field is focused crashed the field into an `ErrorWidget`.
+    //
+    // MEASURED on an iPhone on 2026-09-18, release: `StateError: RenderBox was
+    // not laid out: RenderFractionalTranslation`. The `hasSize` guard above
+    // could never have caught it, because the editable itself IS laid out; the
+    // object without a size is an ancestor.
+    //
+    // `getEndpointsForSelection` computes the same metrics from `_textPainter`
+    // and `_paintOffset` and never leaves this box. For a collapsed selection
+    // it answers one point at the line bottom rather than the caret bottom, a
+    // sub-pixel difference this getter cannot feel: it is already documented as
+    // generous by the top padding, and its consumer compares with a 1px
+    // threshold.
+    final double caretBottom = editable
+        .getEndpointsForSelection(
+          TextSelection.fromPosition(_controller.selection.extent),
+        )
+        .first
+        .point
+        .dy;
 
     // Measured against the FIELD's height rather than the editable's, so the
     // field's own bottom padding is reserved too. Generous by the top padding,
     // which costs a few pixels of clearance and never under-reserves.
     return math.max(
       0,
-      math.min(_measuredHeight, _measuredHeight - caret.bottom),
+      math.min(_measuredHeight, _measuredHeight - caretBottom),
     );
   }
 
