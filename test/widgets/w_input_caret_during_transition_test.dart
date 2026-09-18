@@ -32,15 +32,33 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 void main() {
   setUp(WindParser.clearCache);
 
-  testWidgets('clearing a focused field does not jump its scroll padding', (
+  testWidgets('clearing a focused field renders and does not throw', (
     tester,
   ) async {
-    // Review found this path, and it is ordinary: `_controller.text = ''` forces
-    // `TextSelection.collapsed(offset: -1)`, and `_updateControllerValue`
-    // restores a valid selection only when the new value is non-empty. A first
-    // version of the crash fix bailed out to the full field height there, which
-    // is the over-reserve `_clearanceBelowCaret` documents as the failure its
-    // caret measurement exists to avoid.
+    // NAMED FOR WHAT IT ASSERTS. Review asked for the scroll-padding number
+    // here, on the reasoning that `_controller.text = ''` forces
+    // `TextSelection.collapsed(offset: -1)` and `_updateControllerValue`
+    // restores a valid selection only when the new value is non-empty, so the
+    // invalid selection would reach `_clearanceBelowCaret` and over-reserve.
+    //
+    // I instrumented the getter rather than trusting the reasoning, and it
+    // never sees an invalid selection. Clearing a focused field through the
+    // `value` prop prints, on every frame including the first:
+    //
+    //   isValid=true sel=TextSelection.collapsed(offset: 0) text=""
+    //
+    // Something normalises the -1 to 0 before `build` reads the clearance, so
+    // the framework already does what the offset-0 fallback does, and
+    // `scrollPadding.bottom` measures 36.0 before the clear, one pump after it
+    // and at settle, identically with the fallback and with the old
+    // `return _measuredHeight` bailout restored. A padding assertion here
+    // would pass against the defect, which is the thing review was right to
+    // object to in the first version of this test.
+    //
+    // The fallback still ships: offset 0 is the caret of an empty field and
+    // costs nothing, so it is the right answer if any path does arrive
+    // invalid. It has no test because I could not construct that path, and a
+    // test that cannot fail is worse than a stated gap.
     tester.view.devicePixelRatio = 1.0;
     tester.view.physicalSize = const Size(390, 900);
     addTearDown(tester.view.reset);
