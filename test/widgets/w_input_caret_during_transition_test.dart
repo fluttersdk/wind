@@ -32,7 +32,8 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 void main() {
   setUp(WindParser.clearCache);
 
-  testWidgets('a field pushed in under a transition renders and does not throw', (
+  testWidgets('a field pushed in under a transition renders and does not throw',
+      (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1.0;
