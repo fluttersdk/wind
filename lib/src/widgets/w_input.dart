@@ -480,16 +480,56 @@ class _WInputState extends State<WInput>
         _editableTextKey.currentState?.renderEditable;
     if (editable == null || !editable.hasSize) return _measuredHeight;
 
-    final Rect caret = editable.getLocalRectForCaret(
-      _controller.selection.extent,
-    );
+    // `getEndpointsForSelection` RATHER THAN `getLocalRectForCaret`, and the
+    // difference is that one of them leaves this render object and the other
+    // does not. This runs during `build`, where an ancestor inserted THIS frame
+    // has no size yet.
+    //
+    // `getLocalRectForCaret` ends in `_snapToPhysicalPixel`, which calls
+    // `localToGlobal`, which walks every ancestor's `applyPaintTransform`.
+    // `RenderFractionalTranslation.applyPaintTransform` reads `size` with no
+    // layout guard, and `RenderBox.size` THROWS rather than asserting. A slide
+    // route transition builds exactly that object, so pushing a route while a
+    // field is focused crashed the field into an `ErrorWidget`.
+    //
+    // MEASURED on an iPhone on 2026-09-18, release: `StateError: RenderBox was
+    // not laid out: RenderFractionalTranslation`. The `hasSize` guard above
+    // could never have caught it, because the editable itself IS laid out; the
+    // object without a size is an ancestor.
+    //
+    // `getEndpointsForSelection` computes the same metrics from `_textPainter`
+    // and `_paintOffset` and never leaves this box. For a collapsed selection
+    // it answers one point at the line bottom rather than the caret bottom, a
+    // sub-pixel difference this getter cannot feel: it is already documented as
+    // generous by the top padding, and its consumer compares with a 1px
+    // threshold.
+    // AN INVALID SELECTION IS TREATED AS OFFSET 0, not as "give up and reserve
+    // the whole field". Review found the path and it is ordinary rather than
+    // theoretical: `_updateControllerValue` assigns `_controller.text`, whose
+    // setter forces `TextSelection.collapsed(offset: -1)`, and when the new
+    // value is EMPTY neither branch below it restores a valid one. So a focused
+    // field whose `value` prop is set to `''` arrives here with no selection.
+    //
+    // Returning `_measuredHeight` there would be the over-reserve this getter's
+    // own docblock warns about, about a line height more than the old code
+    // computed. An empty field's caret is at the start, so offset 0 is both
+    // correct and the number that was already being produced.
+    final TextPosition extent = _controller.selection.isValid
+        ? _controller.selection.extent
+        : const TextPosition(offset: 0);
+
+    final double caretBottom = editable
+        .getEndpointsForSelection(TextSelection.fromPosition(extent))
+        .first
+        .point
+        .dy;
 
     // Measured against the FIELD's height rather than the editable's, so the
     // field's own bottom padding is reserved too. Generous by the top padding,
     // which costs a few pixels of clearance and never under-reserves.
     return math.max(
       0,
-      math.min(_measuredHeight, _measuredHeight - caret.bottom),
+      math.min(_measuredHeight, _measuredHeight - caretBottom),
     );
   }
 

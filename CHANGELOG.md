@@ -8,6 +8,16 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A focused `WInput` no longer turns into a flat grey box when a route transition is pushed in above it.** `_clearanceBelowCaret` runs during `build` and asked `RenderEditable` for the pixel-snapped caret rect. That snap ends in `_snapToPhysicalPixel` → `localToGlobal`, which walks every ancestor's `applyPaintTransform`, and `RenderFractionalTranslation.applyPaintTransform` reads `size` with no layout guard while `RenderBox.size` throws rather than asserting. A slide route transition builds exactly that object, and during the frame it is inserted it has not been laid out. Measured on an iPhone in a release build: `StateError: Bad state: RenderBox was not laid out: RenderFractionalTranslation`, thrown from `build`, which replaces the subtree with an `ErrorWidget`. Debug never reaches it, which is why no simulator run and no test had ever seen it.
+
+  The clearance now comes from `getEndpointsForSelection`, which reads `_textPainter`, `preferredLineHeight` and `_paintOffset` and never leaves the render object. `getLocalRectForCaret` was the obvious alternative and is the thing being replaced: it is the one that snaps. For a collapsed selection the endpoint answers the line bottom rather than the caret bottom, a sub-pixel difference against a getter already documented as generous by the top padding and compared by its consumer with a 1px threshold; all seven pixel assertions in `w_input_scroll_into_view_test.dart` are unchanged by it.
+
+  An invalid selection now reads as offset 0 rather than bailing out to the full field height, since offset 0 is where an empty field's caret sits and the full height is the over-reserve this getter exists to avoid. No test covers that branch: instrumenting the getter shows the selection arriving as `collapsed(offset: 0)` on every frame after a focused field is cleared, so the framework normalises it before `build` reads it and the path could not be constructed. The regression test is named for what it asserts rather than for that.
+
+  The crash itself has no reproducer either, and the test file says so first: a hand-driven `SlideTransition` and a real `Navigator.push` with an autofocusing field both pass with the defect in place, because on a device the focus change and the transition's insertion land in the same frame while in a widget test autofocus fires a frame later, by which time the ancestor is laid out and the unsafe read succeeds. What holds the fix is the stack trace and the API contract. (`lib/src/widgets/w_input.dart`, `test/widgets/w_input_caret_during_transition_test.dart`) (#212)
+
 ---
 
 ## [1.6.1] - 2026-09-16
