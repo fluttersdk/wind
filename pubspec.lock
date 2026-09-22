@@ -86,9 +86,10 @@ packages:
   fluttersdk_wind_diagnostics_contracts:
     dependency: "direct main"
     description:
-      path: "/Users/anilcan/Code/fluttersdk/wind_diagnostics_contracts"
-      relative: false
-    source: path
+      name: fluttersdk_wind_diagnostics_contracts
+      sha256: "3c302f7504c9e8037072b4d2be2c266fb5488aa907eda1ce9321f1ee8556c972"
+      url: "https://pub.dev"
+    source: hosted
     version: "1.1.0"
   http:
     dependency: transitive
