@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.6.3] - 2026-09-22
+
 ### Fixed
 
 - **`bg-transparent`, `text-transparent`, `border-transparent`, `ring-transparent`, `fill-transparent`, `stroke-transparent`, `decoration-transparent` and `to-transparent` resolve. None of them ever had.** `WindThemeData._initColors` built a `MaterialColor` for every entry in `defaults/colors.dart`, used `MaterialColor(0, {})` as its "this value is not a colour" sentinel, and then dropped the sentinel with `removeWhere((_, value) => value.toARGB32() == 0)`. An ARGB of 0 does not mean "not a colour": it is exactly `transparent` (`Color(0x00000000)`, `defaults/colors.dart:4`). So the filter deleted the one token it was never aimed at, `isValidColor('transparent')` answered false, and every parser that resolves a named colour walked past the class to whatever came before it. The sentinel meanwhile was unreachable, because all 26 shipped entries are a `Color` or a `Map<int, Color>`, so the branch was dead in both directions and the filter only ever did harm.
@@ -400,7 +404,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.2...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.3...HEAD
+[1.6.3]: https://github.com/fluttersdk/wind/releases/tag/1.6.3
 [1.6.2]: https://github.com/fluttersdk/wind/releases/tag/1.6.2
 [1.6.1]: https://github.com/fluttersdk/wind/releases/tag/1.6.1
 [1.6.0]: https://github.com/fluttersdk/wind/releases/tag/1.6.0
