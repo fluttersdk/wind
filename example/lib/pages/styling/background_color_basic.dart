@@ -79,8 +79,9 @@ class BackgroundColorBasicExamplePage extends StatelessWidget {
           title: 'Arbitrary Hex with Alpha',
           description:
               'Four and eight digits carry alpha, and it leads: Flutter packs '
-              'AARRGGBB where CSS writes RRGGBBAA. Shown over a solid panel so '
-              'the alpha reads.',
+              'AARRGGBB where CSS writes RRGGBBAA. The short form doubles each '
+              'digit, so #8f00 is alpha 0x88. Shown over a solid panel so the '
+              'alpha reads.',
           child: WDiv(
             className: 'p-4 rounded-lg bg-amber-400',
             child: WDiv(

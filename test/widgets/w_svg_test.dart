@@ -106,6 +106,28 @@ void main() {
         ),
       );
     });
+
+    testWidgets('parses stroke-transparent', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Builder(
+              builder: (context) {
+                final style = WindParser.parse('stroke-transparent', context);
+                expect(
+                  style.strokeColor,
+                  const Color(0x00000000),
+                  reason: 'stroke-transparent resolves through the palette, '
+                      'unlike stroke-none which the parser special-cases',
+                );
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      );
+    });
   });
 
   group('WSvg Widget Tests', () {

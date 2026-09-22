@@ -74,6 +74,14 @@ void main() {
         expect(updatedStyles.color, const Color(0x80123456));
       });
 
+      test('resolves decoration-transparent to a fully transparent color', () {
+        final styles = WindStyle();
+        final classes = ['underline', 'decoration-transparent'];
+        final updatedStyles = parser.parse(styles, classes, context);
+
+        expect(updatedStyles.textDecorationColor, const Color(0x00000000));
+      });
+
       test('parses an eight-digit hex decoration color with alpha', () {
         final styles = WindStyle();
         final classes = ['underline', 'decoration-[#80123456]'];

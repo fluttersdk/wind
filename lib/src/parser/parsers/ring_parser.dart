@@ -30,9 +30,14 @@ class RingParser implements WindParserInterface {
     r'^ring-(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]+))?$',
   );
 
-  /// Regex for arbitrary ring color: ring-[#ff0000]
+  /// Regex for arbitrary ring color: ring-[#ff0000], ring-[#80ff0000]
+  ///
+  /// 3, 4, 6 and 8 digits, which is exactly what [hexToColor] accepts, and
+  /// nothing between them. `{3,8}` took a five- or seven-digit typo through to
+  /// `int.parse`, which answered a colour nobody wrote: `ring-[#12345]` painted
+  /// `Color(0x00012345)`, an invisible ring rather than a dropped class.
   static final RegExp _ringArbitraryColorRegex = RegExp(
-    r'^ring-\[(?<value>#[0-9a-fA-F]{3,8})\]$',
+    r'^ring-\[(?<value>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\]$',
   );
 
   /// Regex for ring offset: ring-offset-0, ring-offset-2

@@ -4,6 +4,8 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 void main() {
   group('Shadow Parsing Tests', () {
+    setUp(WindParser.clearCache);
+
     testWidgets('renders shadow-sm', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -158,6 +160,43 @@ void main() {
         decoration.boxShadow![0].color,
         const Color(0xff1da1f2).withValues(alpha: 0.1),
       );
+    });
+
+    testWidgets('drops a five-digit arbitrary shadow color', (tester) async {
+      // `{3,8}` used to take this through to int.parse and paint
+      // Color(0x00012345), an invisible shadow rather than a dropped class.
+      Color renderedShadowColor() {
+        final container = tester.widget<Container>(find.byType(Container));
+        final decoration = container.decoration as BoxDecoration;
+        return decoration.boxShadow![0].color;
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              className: 'shadow-lg',
+              children: [Text('Shadow')],
+            ),
+          ),
+        ),
+      );
+      final presetColor = renderedShadowColor();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              className: 'shadow-lg shadow-[#12345]',
+              children: [Text('Shadow')],
+            ),
+          ),
+        ),
+      );
+
+      expect(renderedShadowColor(), presetColor);
     });
   });
 }

@@ -191,6 +191,46 @@ void main() {
         expect(wDiv.states?.contains('checked') ?? false, isFalse);
       });
 
+      testWidgets('a checked box drops its outline', (tester) async {
+        // `checked:border-transparent` is in the widget's own default
+        // className. It was inert while `transparent` was missing from the
+        // palette, so a checked box kept the grey outline it is written to
+        // shed; this pins the shipped appearance against that returning.
+        await tester.pumpWidget(
+          wrapWithTheme(const WCheckbox(value: true)),
+        );
+        await tester.pump();
+
+        final container = tester.widget<Container>(
+          find
+              .descendant(
+                of: find.byType(WCheckbox),
+                matching: find.byType(Container),
+              )
+              .first,
+        );
+        final border = (container.decoration as BoxDecoration).border as Border;
+        expect(border.top.color, const Color(0x00000000));
+      });
+
+      testWidgets('an unchecked box keeps its outline', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WCheckbox(value: false)),
+        );
+        await tester.pump();
+
+        final container = tester.widget<Container>(
+          find
+              .descendant(
+                of: find.byType(WCheckbox),
+                matching: find.byType(Container),
+              )
+              .first,
+        );
+        final border = (container.decoration as BoxDecoration).border as Border;
+        expect(border.top.color, isNot(const Color(0x00000000)));
+      });
+
       testWidgets('passes disabled state to WDiv', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
