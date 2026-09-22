@@ -101,6 +101,12 @@ If you need specific hex colors that aren't in your theme, use square bracket no
 WDiv(className: 'bg-gradient-to-r from-[#1da1f2] to-[#1a91da]')
 ```
 
+Three, four, six and eight hex digits are accepted, matching [`hexToColor`](../utilities/color-helpers.md#hex-colors). The four- and eight-digit forms carry alpha and it leads, because Flutter packs `AARRGGBB` where CSS writes `RRGGBBAA`. A scrim fading out is the usual reason to reach for one:
+
+```dart
+WDiv(className: 'bg-gradient-to-t from-[#cc000000] to-transparent')
+```
+
 ## Customizing Theme
 
 Gradient colors use your theme's color palette. To add new colors, update the `colors` key in `WindThemeData`.

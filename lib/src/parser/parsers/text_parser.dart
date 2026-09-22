@@ -31,9 +31,15 @@ import 'wind_parser_interface.dart';
 class TextParser implements WindParserInterface {
   const TextParser();
 
-  /// Regex for text color: `text-red-500`, `text-[#123456]`
+  /// Regex for text color: `text-red-500`, `text-[#123456]`, `text-[#80123456]`
+  ///
+  /// The arbitrary alternative takes 3, 4, 6 and 8 hex digits, which is exactly
+  /// what [hexToColor] accepts and what `border-[#...]` already took. Nothing
+  /// between them: `{3,8}` would take a five- or seven-digit typo and answer a
+  /// colour nobody wrote. The four- and eight-digit forms lead with alpha
+  /// (Flutter packs AARRGGBB where CSS writes RRGGBBAA).
   static final RegExp _textColorRegex = RegExp(
-    r'^text-(?:(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]{2,3}))?|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])$',
+    r'^text-(?:(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]{2,3}))?|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\])$',
   );
 
   /// Regex for text alignment: `text-center`
@@ -80,8 +86,10 @@ class TextParser implements WindParserInterface {
   );
 
   /// Regex for decoration color: `decoration-red-500`
+  ///
+  /// Same hex lengths as [_textColorRegex], for the same reason.
   static final RegExp _textDecorationColorRegex = RegExp(
-    r'^decoration-(?:(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]{2,3}))?|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])$',
+    r'^decoration-(?:(?<color>[a-zA-Z]+)(?:-(?<shade>[0-9]{2,3}))?|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\])$',
   );
 
   /// Regex for decoration style: `decoration-solid`

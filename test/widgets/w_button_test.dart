@@ -637,6 +637,63 @@ void main() {
       );
 
       testWidgets(
+        'falls through to contrast when the text color is transparent',
+        (tester) async {
+          // `loading:text-transparent` was the pattern this widget's own class
+          // doc recommended, and it was inert while `transparent` was missing
+          // from the palette. Reading it as a spinner color paints nothing for
+          // the whole loading state, which is what the contrast fallback
+          // exists to prevent.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                isLoading: true,
+                className:
+                    'bg-gray-900 p-3 rounded-xl loading:text-transparent',
+                child: const Text('Ghost Button'),
+              ),
+            ),
+          );
+
+          final indicator = tester.widget<CircularProgressIndicator>(
+            find.byType(CircularProgressIndicator),
+          );
+          final animation =
+              indicator.valueColor as AlwaysStoppedAnimation<Color>;
+
+          expect(animation.value.a, greaterThan(0));
+          expect(animation.value, equals(Colors.white));
+        },
+      );
+
+      testWidgets(
+        'an explicit transparent loadingColor is still honoured',
+        (tester) async {
+          // The fall-through above reads a text color, never an explicit ask.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                isLoading: true,
+                loadingColor: const Color(0x00000000),
+                className: 'bg-gray-900 p-3 rounded-xl',
+                child: const Text('Invisible Spinner'),
+              ),
+            ),
+          );
+
+          final indicator = tester.widget<CircularProgressIndicator>(
+            find.byType(CircularProgressIndicator),
+          );
+          final animation =
+              indicator.valueColor as AlwaysStoppedAnimation<Color>;
+
+          expect(animation.value, equals(const Color(0x00000000)));
+        },
+      );
+
+      testWidgets(
         'uses explicit loadingColor over all fallbacks',
         (tester) async {
           await tester.pumpWidget(

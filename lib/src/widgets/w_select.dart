@@ -1012,11 +1012,16 @@ class _WSelectState<T> extends State<WSelect<T>> {
       );
     }
 
+    // The resting arm carries no class rather than `bg-transparent`. Both paint
+    // nothing, but a resolved transparent colour is still a colour: it builds a
+    // `BoxDecoration`, which trips `WDiv`'s `needsContainer` and wraps every
+    // unselected option in a `DecoratedBox` that paints nothing, once per row
+    // for the length of the list.
     final String bgClass = isSelected
         ? 'bg-primary-50 dark:bg-primary-900/30'
         : isHovered
             ? 'bg-gray-100 dark:bg-slate-700'
-            : 'bg-transparent';
+            : '';
     final String textColorClass = option.disabled
         ? 'text-gray-400 dark:text-gray-500'
         : isSelected

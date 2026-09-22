@@ -97,6 +97,36 @@ void main() {
         expect(style.ringColor!.r, closeTo(0.937, 0.01)); // red-500
       });
 
+      test('resolves ring-transparent to a fully transparent color', () {
+        final parser = const RingParser();
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-transparent',
+            ],
+            createTestContext());
+
+        expect(style.ringColor, const Color(0x00000000));
+      });
+
+      test('drops a five-digit arbitrary ring color', () {
+        // `{3,8}` used to take this through to int.parse and paint
+        // Color(0x00012345), an invisible ring rather than a dropped class.
+        // A dropped class leaves the theme's own ring color standing.
+        final parser = const RingParser();
+        final context = createTestContext();
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-[#12345]',
+            ],
+            context);
+
+        expect(style.ringColor, context.theme.ringColor);
+      });
+
       test('parses arbitrary ring color', () {
         final parser = const RingParser();
         final style = parser.parse(

@@ -2,10 +2,10 @@
 name: wind-ui
 description: "fluttersdk_wind 1.6: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
 when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Load it before the first line of new UI, and equally when auditing UI that already exists."
-version: 2.17.0
+version: 2.18.0
 ---
 
-<!-- fluttersdk_wind 1.6.x | Skill v2.17.0 (2026-09-16) -->
+<!-- fluttersdk_wind 1.6.x | Skill v2.18.0 (2026-09-22) -->
 
 # Wind UI 1.6
 
@@ -171,7 +171,7 @@ Inline this catalog as your default reach-for set. For the full per-parser regex
 
 **Position**: `relative` `absolute`. `top-N` `right-N` `bottom-N` `left-N` `inset-N` `inset-x-N` `inset-y-N`, negative `-top-N` `-inset-N`, arbitrary `top-[24px]` (no `%` for offsets). `fixed` / `sticky` are recognised by the parser but produce no visual effect.
 
-**Colors** (every line needs a `dark:` peer): `bg-{family}-{shade}` `bg-[#hex]` `bg-transparent` `bg-white` `bg-black`. Opacity modifier `/N` (0-100): `bg-red-500/50`. Same shape for `text-*` `border-*` `ring-*` `shadow-*` `fill-*` `stroke-*`. Bare shade defaults to 500: `bg-red` = `bg-red-500`. Gradients: `bg-gradient-to-{t|tr|r|br|b|bl|l|tl}` + `from-{c}-{shade}` `via-{c}-{shade}` `to-{c}-{shade}`.
+**Colors** (every line needs a `dark:` peer): `bg-{family}-{shade}` `bg-[#hex]` `bg-transparent` `bg-white` `bg-black`. Arbitrary hex takes 3, 4, 6 or 8 digits and alpha LEADS in the 4- and 8-digit forms (Flutter packs `AARRGGBB` where CSS writes `RRGGBBAA`): 50%-alpha red is `bg-[#80ff0000]`. Opacity modifier `/N` (0-100): `bg-red-500/50`. Same shape for `text-*` `border-*` `ring-*` `shadow-*` `fill-*` `stroke-*`. Bare shade defaults to 500: `bg-red` = `bg-red-500`. Gradients: `bg-gradient-to-{t|tr|r|br|b|bl|l|tl}` + `from-{c}-{shade}` `via-{c}-{shade}` `to-{c}-{shade}`.
 
 **Borders**: `border` `border-N` `border-t` `border-r` `border-b` `border-l` `border-x` `border-y`. `border-solid` `border-none` (only these two; `border-dashed` / `border-dotted` are recognised but not wired). `rounded` `rounded-{sm|md|lg|xl|2xl|3xl|full|none}`, directional `rounded-t-lg` `rounded-tl-xl`, arbitrary `rounded-[8px]`.
 

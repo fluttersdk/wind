@@ -50,12 +50,44 @@ void main() {
         expect(updatedStyles.color, context.theme.getColor('red', 500));
       });
 
+      test('resolves text-transparent to a fully transparent color', () {
+        final styles = WindStyle();
+        final classes = ['text-primary', 'text-transparent'];
+        final updatedStyles = parser.parse(styles, classes, context);
+
+        expect(updatedStyles.color, const Color(0x00000000));
+      });
+
       test('parses custom hex text color classes', () {
         final styles = WindStyle();
         final classes = ['text-[#123456]'];
         final updatedStyles = parser.parse(styles, classes, context);
 
         expect(updatedStyles.color, const Color(0xFF123456));
+      });
+
+      test('parses an eight-digit hex text color with alpha', () {
+        final styles = WindStyle();
+        final classes = ['text-[#80123456]'];
+        final updatedStyles = parser.parse(styles, classes, context);
+
+        expect(updatedStyles.color, const Color(0x80123456));
+      });
+
+      test('resolves decoration-transparent to a fully transparent color', () {
+        final styles = WindStyle();
+        final classes = ['underline', 'decoration-transparent'];
+        final updatedStyles = parser.parse(styles, classes, context);
+
+        expect(updatedStyles.textDecorationColor, const Color(0x00000000));
+      });
+
+      test('parses an eight-digit hex decoration color with alpha', () {
+        final styles = WindStyle();
+        final classes = ['underline', 'decoration-[#80123456]'];
+        final updatedStyles = parser.parse(styles, classes, context);
+
+        expect(updatedStyles.textDecorationColor, const Color(0x80123456));
       });
 
       test('parses text color with opacity', () {

@@ -20,9 +20,16 @@ import 'wind_parser_interface.dart';
 class BackgroundParser implements WindParserInterface {
   const BackgroundParser();
 
-  /// Regex for background color classes
+  /// Regex for background color classes.
+  ///
+  /// The arbitrary alternative takes 3, 4, 6 and 8 hex digits, which is
+  /// exactly what [hexToColor] accepts and what `border-[#...]` already took.
+  /// Nothing between them: `{3,8}` would take a five- or seven-digit typo and
+  /// answer a colour nobody wrote. The four- and eight-digit forms lead with
+  /// alpha (Flutter packs AARRGGBB where CSS writes RRGGBBAA), which is the
+  /// only way to write a partially transparent background.
   static final _backgroundColorRegex = RegExp(
-    r'^bg-(?:(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])$',
+    r'^bg-(?:(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\])$',
   );
 
   /// Regex for background image classes.
@@ -68,9 +75,12 @@ class BackgroundParser implements WindParserInterface {
   );
 
   /// Regex for gradient stops (from, via, to)
-  /// Matches: from-red-500, to-[#123456], via-blue-200
+  /// Matches: from-red-500, to-[#123456], via-[#80FF0000]
+  ///
+  /// Same hex lengths as [_backgroundColorRegex], for the same reason: a stop
+  /// that fades to a partially transparent colour has no other spelling.
   static final _gradientStopRegex = RegExp(
-    r'^(?<type>from|via|to)-(?:(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))\])$',
+    r'^(?<type>from|via|to)-(?:(?<color>[a-zA-Z0-9]+)-?(?<shade>[0-9]{0,3})|\[(?<arbitrary>#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}))\])$',
   );
 
   /// Map for gradient alignments

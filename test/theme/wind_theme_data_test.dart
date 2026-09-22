@@ -72,6 +72,23 @@ void main() {
       expect(() => theme.getColor('black', 500), returnsNormally);
     });
 
+    test('keeps the transparent token in the palette', () {
+      final theme = WindThemeData();
+
+      expect(theme.isValidColor('transparent'), isTrue);
+      expect(theme.isValidColor('transparent', shade: 500), isTrue);
+      expect(theme.getColor('transparent', 500), const Color(0x00000000));
+    });
+
+    test('carries every default color token into the palette', () {
+      final theme = WindThemeData();
+
+      // The guard against a value-based filter coming back: a fully
+      // transparent color is indistinguishable from "absent" by ARGB alone,
+      // so the only honest test is that no token is lost on the way in.
+      expect(theme.colors.keys.toSet(), default_colors.colors.keys.toSet());
+    });
+
     test('copyWith merges new colors and screens with existing ones', () {
       final originalTheme = WindThemeData();
       const newColor = MaterialColor(0xFF0000FF, {500: Color(0xFF0000FF)});

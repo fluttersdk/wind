@@ -246,21 +246,49 @@ class WindThemeData {
 
   /// Initializes the default colors from the predefined color map.
   ///
-  /// Converts the dynamic color definitions into MaterialColor instances.
+  /// [default_colors.colors] is a `Map<String, dynamic>` holding two shapes: a
+  /// full `Map<int, Color>` swatch, and a single [Color] that every shade
+  /// resolves to. Each is narrowed and converted to a [MaterialColor]; an
+  /// entry matching neither is skipped rather than admitted and filtered out
+  /// afterwards.
+  ///
+  /// That distinction is the whole point. The previous form built an entry for
+  /// every key, using `MaterialColor(0, {})` as the "not a color" sentinel, and
+  /// dropped it with `removeWhere((_, value) => value.toARGB32() == 0)`. An
+  /// ARGB of 0 does not mean "not a color": it is exactly `transparent`
+  /// (`defaults/colors.dart`), so the filter deleted the token it was never
+  /// aimed at. `isValidColor('transparent')` then answered false and every
+  /// parser resolving a named color walked past `bg-transparent`,
+  /// `text-transparent` and `border-transparent` to whatever class came before
+  /// it. Measured on a consumer: a ghost button declared
+  /// `bg-transparent border text-gray-500` rendered as a filled brand button
+  /// with grey text on it.
+  ///
+  /// Filtering on the sentinel's identity rather than on its value would fix
+  /// that too, but a sentinel nothing can produce is not worth constructing:
+  /// the shipped map holds nothing but the two valid shapes, so the branch was
+  /// dead in both directions.
   static Map<String, MaterialColor> _initColors() {
-    return default_colors.colors.map((key, value) {
+    final Map<String, MaterialColor> palette = <String, MaterialColor>{};
+
+    for (final MapEntry<String, dynamic> entry
+        in default_colors.colors.entries) {
+      final dynamic value = entry.value;
+
       if (value is Map<int, Color>) {
-        return MapEntry(key, MaterialColor(value[500]!.toARGB32(), value));
+        palette[entry.key] = MaterialColor(value[500]!.toARGB32(), value);
+        continue;
       }
+
       if (value is Color) {
-        final shades = {
+        final Map<int, Color> shades = <int, Color>{
           for (var i = 50; i <= 900; i += (i == 50 ? 50 : 100)) i: value,
         };
-        return MapEntry(key, MaterialColor(value.toARGB32(), shades));
+        palette[entry.key] = MaterialColor(value.toARGB32(), shades);
       }
-      return MapEntry(key, MaterialColor(0, {}));
-    })
-      ..removeWhere((key, value) => value.toARGB32() == 0);
+    }
+
+    return palette;
   }
 
   /// Returns a color from the theme.
