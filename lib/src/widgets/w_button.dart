@@ -14,7 +14,9 @@ import 'w_text.dart';
 ///
 /// ### Supported Features:
 /// - **States:** `hover:bg-blue-700`, `focus:ring-2`, `disabled:opacity-50`
-/// - **Loading:** Built-in spinner, `loading:text-transparent`
+/// - **Loading:** Built-in spinner. It REPLACES the child rather than
+///   overlaying it, so no class is needed to hide the label; `loadingColor`
+///   sets the spinner's colour and `loadingText` puts a caption beside it.
 /// - **Interactvity:** `onTap`, `onDoubleTap`, `onLongPress`
 /// - **Styling:** `bg-blue-500`, `text-white`, `rounded`, `shadow`
 ///
@@ -212,12 +214,19 @@ class WButton extends StatelessWidget {
 
     // Determine spinner color:
     // 1. Explicit loadingColor takes priority.
-    // 2. Text color from className (styles.color).
+    // 2. Text color from className (styles.color), unless it is fully
+    //    transparent. `text-transparent` says "do not show the label"; the
+    //    spinner is not the label, and reading it as a spinner color paints
+    //    nothing for the whole loading state. `loadingColor` is the channel
+    //    for asking for a transparent spinner on purpose, and it still wins.
     // 3. Contrast color based on background: prevents invisible spinners
     //    (e.g., white spinner on white button).
     // 4. Final fallback: white.
-    final Color spinnerColor =
-        loadingColor ?? styles.color ?? _contrastColor(styles);
+    final Color? textColor = styles.color;
+    final Color spinnerColor = loadingColor ??
+        ((textColor != null && textColor.a > 0)
+            ? textColor
+            : _contrastColor(styles));
 
     final Widget spinner = SizedBox(
       width: loadingSize,
