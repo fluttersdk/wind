@@ -20,6 +20,8 @@ void main() {
 ''';
 
   group('SvgParser via WindParser Tests', () {
+    setUp(WindParser.clearCache);
+
     testWidgets('parses fill-red-500', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -74,6 +76,28 @@ void main() {
                   (style.fillColor!.a * 255).round(),
                   equals(0),
                   reason: 'fill-none should be transparent',
+                );
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      );
+    });
+
+    testWidgets('parses fill-transparent', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Builder(
+              builder: (context) {
+                final style = WindParser.parse('fill-transparent', context);
+                expect(
+                  style.fillColor,
+                  const Color(0x00000000),
+                  reason: 'fill-transparent resolves through the palette, '
+                      'unlike fill-none which the parser special-cases',
                 );
                 return const SizedBox();
               },

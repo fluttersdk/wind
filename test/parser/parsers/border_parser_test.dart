@@ -141,6 +141,20 @@ void main() {
         final border = result.decoration!.border as Border;
         expect(border.top.color, const Color(0xFFFF5733));
       });
+
+      test('resolves border-transparent to a fully transparent color', () {
+        final result = parser.parse(
+            const WindStyle(),
+            [
+              'border',
+              'border-primary',
+              'border-transparent',
+            ],
+            context);
+
+        final border = result.decoration!.border as Border;
+        expect(border.top.color, const Color(0x00000000));
+      });
     });
 
     group('border radius', () {

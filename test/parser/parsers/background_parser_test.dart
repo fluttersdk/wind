@@ -55,6 +55,21 @@ void main() {
       expect(color, default_colors.colors['blue']![500]);
     });
 
+    test('resolves bg-transparent to a fully transparent color', () {
+      final classes = ['bg-transparent'];
+      final color = BackgroundParser.parseColor(classes, themeData);
+      expect(color, const Color(0x00000000));
+    });
+
+    test('a later bg-transparent beats an earlier color', () {
+      // The ghost-button shape: a base class paints a fill and the variant
+      // clears it. Without this, the earlier class wins and the "transparent"
+      // button renders filled.
+      final classes = ['bg-primary', 'bg-transparent'];
+      final color = BackgroundParser.parseColor(classes, themeData);
+      expect(color, const Color(0x00000000));
+    });
+
     test('parses color with default shade', () {
       final classes = ['bg-red'];
       final color = BackgroundParser.parseColor(classes, themeData);
@@ -78,6 +93,20 @@ void main() {
       final classes = ['bg-[#f00]'];
       final color = BackgroundParser.parseColor(classes, themeData);
       expect(color, const Color(0xffff0000));
+    });
+
+    test('parses an eight-digit arbitrary color class with alpha', () {
+      // Alpha leads, as `hexToColor` reads it: Flutter packs AARRGGBB where
+      // CSS writes RRGGBBAA.
+      final classes = ['bg-[#80FF5733]'];
+      final color = BackgroundParser.parseColor(classes, themeData);
+      expect(color, const Color(0x80FF5733));
+    });
+
+    test('parses a four-digit arbitrary color class with alpha', () {
+      final classes = ['bg-[#8f00]'];
+      final color = BackgroundParser.parseColor(classes, themeData);
+      expect(color, const Color(0x88ff0000));
     });
 
     test('returns null for invalid color name', () {
@@ -249,6 +278,21 @@ void main() {
       expect(updatedStyles.decoration, isA<BoxDecoration>());
       final decoration = updatedStyles.decoration as BoxDecoration;
       expect(decoration.color, themeData.getColor('red', 500));
+    });
+
+    test('applies an eight-digit gradient stop with alpha', () {
+      final styles = WindStyle();
+      final classes = [
+        'bg-gradient-to-r',
+        'from-[#80FF0000]',
+        'to-transparent'
+      ];
+      final updatedStyles = parser.parse(styles, classes, context);
+
+      final decoration = updatedStyles.decoration as BoxDecoration;
+      final gradient = decoration.gradient as LinearGradient;
+      expect(gradient.colors.first, const Color(0x80FF0000));
+      expect(gradient.colors.last, const Color(0x00000000));
     });
 
     test('applies background image to style', () {

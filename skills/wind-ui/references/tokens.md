@@ -169,7 +169,7 @@ Color tokens always need a `dark:` peer.
 |---|---|
 | `bg-{family}-{shade}` | Theme color (`bg-red-500`, `bg-blue-300`) |
 | `bg-{family}` | Defaults to shade 500 (`bg-red` = `bg-red-500`) |
-| `bg-[#hex]` | Arbitrary hex (3, 4, 6, or 8 chars; `#`-prefixed inside brackets) |
+| `bg-[#hex]` | Arbitrary hex (3, 4, 6, or 8 chars; `#`-prefixed inside brackets). Alpha LEADS in the 4- and 8-char forms: Flutter packs `AARRGGBB` where CSS writes `RRGGBBAA`, so 50%-alpha red is `bg-[#80ff0000]`, never `bg-[#ff000080]`. Nothing between those lengths: a 5- or 7-char value is a typo and drops silently. |
 | `bg-{family}-{shade}/{N}` | Opacity modifier (`bg-red-500/50` = 50% opacity) |
 | `bg-transparent` / `bg-white` / `bg-black` | Specials |
 | `bg-current` / `bg-inherit` | Inherit from `DefaultTextStyle.color` |
@@ -304,7 +304,7 @@ Order: covered in §2.
 | `text-[18px]/[24px]` | Arbitrary size AND line-height (slash-separated, both bracketed) |
 | `text-xl/8` | Preset size + numeric line-height |
 
-**Color**: `text-{family}-{shade}`, `text-[#hex]`, `text-{family}-{shade}/{N}`, `text-transparent`, `text-current` (inherits), `text-inherit`. Needs `dark:` peer.
+**Color**: `text-{family}-{shade}`, `text-[#hex]` (3, 4, 6 or 8 chars, alpha leading as above), `text-{family}-{shade}/{N}`, `text-transparent`, `text-current` (inherits), `text-inherit`. Needs `dark:` peer.
 
 **Alignment**: `text-left` `text-center` `text-right` `text-justify` `text-start` `text-end` (last two are RTL-aware via `Directionality`).
 

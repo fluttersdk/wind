@@ -4,6 +4,31 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 void main() {
   group('Background Parsing Tests', () {
+    setUp(WindParser.clearCache);
+
+    testWidgets('a later bg-transparent clears an earlier fill', (
+      tester,
+    ) async {
+      // The reported symptom, at the widget level: a ghost button whose base
+      // class paints a brand fill and whose variant clears it rendered filled,
+      // with the muted text meant for a transparent surface on top of it.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: const WDiv(
+              className: 'bg-primary bg-transparent border text-gray-500',
+              children: [Text('Continue as Guest')],
+            ),
+          ),
+        ),
+      );
+
+      final container = tester.widget<Container>(find.byType(Container));
+      final decoration = container.decoration as BoxDecoration;
+      expect(decoration.color, const Color(0x00000000));
+    });
+
     testWidgets('Parsing background color with opacity', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

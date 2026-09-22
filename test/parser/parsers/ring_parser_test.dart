@@ -97,6 +97,19 @@ void main() {
         expect(style.ringColor!.r, closeTo(0.937, 0.01)); // red-500
       });
 
+      test('resolves ring-transparent to a fully transparent color', () {
+        final parser = const RingParser();
+        final style = parser.parse(
+            const WindStyle(),
+            [
+              'ring-2',
+              'ring-transparent',
+            ],
+            createTestContext());
+
+        expect(style.ringColor, const Color(0x00000000));
+      });
+
       test('parses arbitrary ring color', () {
         final parser = const RingParser();
         final style = parser.parse(

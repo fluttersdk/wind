@@ -102,6 +102,13 @@ WText(
 )
 ```
 
+Three, four, six and eight hex digits are accepted, matching [`hexToColor`](../utilities/color-helpers.md#hex-colors). The four- and eight-digit forms carry alpha and it leads, because Flutter packs `AARRGGBB` where CSS writes `RRGGBBAA`. The same lengths apply to `decoration-[#...]`.
+
+```dart
+WText('Half-faded', className: 'text-[#8050d71e]')
+WText('Underlined', className: 'underline decoration-[#80ff0000]')
+```
+
 ## Customizing Theme
 
 To add your own colors, modify the `colors` property in `WindThemeData`.

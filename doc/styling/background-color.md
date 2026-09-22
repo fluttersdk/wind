@@ -101,6 +101,17 @@ WDiv(className: 'bg-[#1da1f2] text-white p-4') // Twitter Blue
 WDiv(className: 'bg-[#ff0000]') // Bright Red
 ```
 
+Three, four, six and eight hex digits are accepted, matching [`hexToColor`](../utilities/color-helpers.md#hex-colors). The four- and eight-digit forms carry alpha and it leads, because Flutter packs `AARRGGBB` where CSS writes `RRGGBBAA`.
+
+```dart
+WDiv(className: 'bg-[#f00]')        // #FF0000, opaque
+WDiv(className: 'bg-[#80ff0000]')   // #FF0000 at 50% alpha
+WDiv(className: 'bg-[#8f00]')       // the same, in shorthand
+```
+
+> [!NOTE]
+> The opacity modifier is the shorter route to the same result on a theme color: `bg-red-500/50`. Reach for the alpha hex when the color itself is not in the theme.
+
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
