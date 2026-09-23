@@ -8,6 +8,12 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A rounded, bordered `overflow-hidden` box keeps its border through the corners.** The clip sat on the outer border edge, so a child that fills the box painted its square corners over the curved stroke; 1.6.0's anti-aliasing (#206) did not touch that. It now clips the padding box with the inner border radius, as CSS does, and keeps `duration-*` tweening padding and alignment. A box shadow on such a box, previously clipped away, now paints.
+
+  Measured on a consumer's settings list at DPR 1: the straight edge read the border (`236` in light mode, `28` in dark) while the pixel on the curve read the row fill (`255`, `18`). Light mode shows it most, because the fill is white and the border a pale grey. (`lib/src/widgets/w_div.dart`, `test/widgets/w_div/overflow_test.dart`, `doc/layout/overflow.md`, `skills/wind-ui/`) (#218)
+
 ---
 
 ## [1.6.3] - 2026-09-22
