@@ -135,6 +135,34 @@ void main() {
       expect(padding.padding, const EdgeInsets.all(16));
     });
 
+    testWidgets('alignment moves inside the clip, tweening under duration', (
+      tester,
+    ) async {
+      Future<void> pumpClass(String className) => tester.pumpWidget(
+            wrapWithTheme(
+              WDiv(
+                className: className,
+                children: const [Text('Content')],
+              ),
+            ),
+          );
+      Finder alignInClip<T>() => find.descendant(
+            of: find.byType(ClipRRect),
+            matching: find.byType(T),
+          );
+
+      await pumpClass(
+          'overflow-hidden rounded-lg border self-center w-32 h-32');
+      expect(alignInClip<Align>(), findsWidgets);
+      expect(alignInClip<AnimatedAlign>(), findsNothing);
+
+      WindParser.clearCache();
+      await pumpClass(
+        'overflow-hidden rounded-lg border self-center duration-300 w-32 h-32',
+      );
+      expect(alignInClip<AnimatedAlign>(), findsOneWidget);
+    });
+
     testWidgets('a border as wide as the corner clips hard-edged', (
       tester,
     ) async {

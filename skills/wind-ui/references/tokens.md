@@ -259,7 +259,7 @@ Overflow:
 | `overflow-x-hidden` / `-visible` / `-scroll` / `-auto` | Horizontal |
 | `overflow-y-hidden` / `-visible` / `-scroll` / `-auto` | Vertical |
 
-`overflow-hidden` on a box with a border clips at the padding box with the inner radius (outer radius minus border width), as CSS does: children never paint over the border, and the box's own `shadow-*` is not clipped.
+`overflow-hidden` on a box with a border clips at the padding box with the inner radius (each corner's outer radius minus the widths of the two borders that meet there), as CSS does: children never paint over the border, and the box's own `shadow-*` is not clipped.
 
 When `overflow-y-auto` (or any scroll variant) appears, also pass the constructor prop `scrollPrimary: true` on the `WDiv` to enable iOS tap-to-top. No className covers this.
 
