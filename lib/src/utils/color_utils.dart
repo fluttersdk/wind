@@ -53,6 +53,12 @@ Color hexToColor(String code) {
     code = 'FF$code';
   }
 
+  // Any other length used to parse as a smaller number, so `#12345` became a
+  // nearly transparent colour instead of an error.
+  if (code.length != 8) {
+    throw FormatException('Invalid hex colour length', code);
+  }
+
   return Color(int.parse(code, radix: 16));
 }
 

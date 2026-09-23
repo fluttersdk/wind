@@ -29,6 +29,11 @@ void main() {
     });
 
     group('hexToColor', () {
+      test('should reject a length no format accepts', () {
+        expect(() => hexToColor('#12345'), throwsFormatException);
+        expect(() => hexToColor('1234567'), throwsFormatException);
+      });
+
       test('should handle #RRGGBB format', () {
         expect(hexToColor('#FF5733'), const Color(0xFFFF5733));
       });
