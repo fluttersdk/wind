@@ -93,16 +93,15 @@ void main() {
 
       // The midpoint of the 4px stroke on the top-left corner's diagonal.
       final double inset = radius - (radius - 2) / 1.4142135623730951;
-      final RenderRepaintBoundary render = boundary.currentContext!
-          .findRenderObject()! as RenderRepaintBoundary;
+      final RenderRepaintBoundary render =
+          boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;
 
       final ByteData bytes = (await tester.runAsync<ByteData?>(() async {
         final image = await render.toImage();
         return image.toByteData();
       }))!;
-      final int offset = (inset.round() * render.size.width.round() +
-              inset.round()) *
-          4;
+      final int offset =
+          (inset.round() * render.size.width.round() + inset.round()) * 4;
       final int red = bytes.getUint8(offset);
       final int blue = bytes.getUint8(offset + 2);
 
