@@ -2,7 +2,7 @@
 name: wind-ui
 description: "fluttersdk_wind 1.6: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
 when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Load it before the first line of new UI, and equally when auditing UI that already exists."
-version: 2.18.0
+version: 2.19.0
 ---
 
 <!-- fluttersdk_wind 1.6.x | Skill v2.18.0 (2026-09-22) -->
@@ -179,7 +179,7 @@ Inline this catalog as your default reach-for set. For the full per-parser regex
 
 **Effects**: `opacity-N` (5-step scale, plus arbitrary `opacity-[0.5]`). `shadow-sm` `shadow` `shadow-md` `shadow-lg` `shadow-xl` `shadow-2xl` `shadow-inner` `shadow-none`. Colored shadow `shadow-blue-500/20`. `ring-N` `ring-{color}` `ring-offset-N` `ring-inset`. `aspect-square` `aspect-video` `aspect-[4/3]`. `z-0` `z-10` through `z-50`, arbitrary `z-[100]`, `z-auto`.
 
-**Overflow**: `overflow-hidden` `overflow-visible` `overflow-scroll` `overflow-auto`, axis-specific `overflow-x-auto` `overflow-y-auto`. Scrolling requires the constructor prop `scrollPrimary: true` for iOS tap-to-top (there is no className for it).
+**Overflow**: `overflow-hidden` `overflow-visible` `overflow-scroll` `overflow-auto`, axis-specific `overflow-x-auto` `overflow-y-auto`. On a box with a border, `overflow-hidden` clips inside the border (the padding box, inner radius), so the border stays whole at rounded corners and the box's own `shadow-*` still paints. Scrolling requires the constructor prop `scrollPrimary: true` for iOS tap-to-top (there is no className for it).
 
 **Cursor** (web/desktop; `WDiv` adds a `MouseRegion`, inert on touch): `cursor-pointer` `cursor-default` `cursor-text` `cursor-wait` `cursor-progress` `cursor-help` `cursor-not-allowed` `cursor-none` `cursor-move` `cursor-grab` `cursor-grabbing` `cursor-zoom-in` `cursor-zoom-out` `cursor-col-resize` `cursor-row-resize` `cursor-{n,e,s,w,ne,nw,se,sw,ew,ns,nesw,nwse}-resize` plus `cursor-context-menu` `cursor-cell` `cursor-crosshair` `cursor-alias` `cursor-copy` `cursor-no-drop` `cursor-all-scroll`. Last token wins; unknown names no-op.
 

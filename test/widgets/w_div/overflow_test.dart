@@ -113,6 +113,47 @@ void main() {
       );
     });
 
+    testWidgets('a clipped bordered box still tweens its padding', (
+      tester,
+    ) async {
+      // The padding moves inside the clip, out of `AnimatedContainer`, so it
+      // has to bring the transition with it or `duration-*` stops animating it.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className:
+                'overflow-hidden rounded-lg border p-4 duration-300 w-32 h-32',
+            children: [Text('Content')],
+          ),
+        ),
+      );
+
+      final AnimatedPadding padding = tester.widget<AnimatedPadding>(
+        find.byType(AnimatedPadding),
+      );
+      expect(padding.duration, const Duration(milliseconds: 300));
+      expect(padding.padding, const EdgeInsets.all(16));
+    });
+
+    testWidgets('a border as wide as the corner clips hard-edged', (
+      tester,
+    ) async {
+      // `rounded` is 4px and `border-4` is 4px, so the padding box is square.
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className: 'overflow-hidden rounded border-4 border-gray-300 '
+                'w-32 h-32',
+            children: [Text('Content')],
+          ),
+        ),
+      );
+
+      final ClipRRect clip = tester.widget<ClipRRect>(find.byType(ClipRRect));
+      expect(clip.borderRadius, BorderRadius.zero);
+      expect(clip.clipBehavior, Clip.hardEdge);
+    });
+
     testWidgets('a square overflow clip stays hard-edged', (tester) async {
       // Anti-aliasing a straight edge buys nothing and `antiAlias` carries a
       // documented bleeding-edge artifact, so the square case keeps the

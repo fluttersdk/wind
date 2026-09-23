@@ -1551,16 +1551,40 @@ class WDiv extends StatelessWidget {
 
         if (paddingBoxRadius != null) {
           logger.wrapWith("ClipRRect", "overflow-hidden inside the border");
+          // Under `duration-*` the padding and alignment keep tweening: they
+          // leave `AnimatedContainer` for the clip, so they take its duration
+          // and curve with them.
+          final Duration? duration = styles.transitionDuration;
+          final Curve curve = styles.transitionCurve ?? Curves.linear;
           Widget clipped = widgetToBuild;
           if (containerAlignment != null) {
-            clipped = Align(alignment: containerAlignment, child: clipped);
+            clipped = duration == null
+                ? Align(alignment: containerAlignment, child: clipped)
+                : AnimatedAlign(
+                    alignment: containerAlignment,
+                    duration: duration,
+                    curve: curve,
+                    child: clipped,
+                  );
           }
           if (containerPadding != null) {
-            clipped = Padding(padding: containerPadding, child: clipped);
+            clipped = duration == null
+                ? Padding(padding: containerPadding, child: clipped)
+                : AnimatedPadding(
+                    padding: containerPadding,
+                    duration: duration,
+                    curve: curve,
+                    child: clipped,
+                  );
           }
           widgetToBuild = ClipRRect(
             borderRadius: paddingBoxRadius,
-            clipBehavior: Clip.antiAlias,
+            // A border as wide as the corner leaves a square padding box, and
+            // a square clip stays hard-edged for the reason given at the outer
+            // clip below.
+            clipBehavior: paddingBoxRadius == BorderRadius.zero
+                ? Clip.hardEdge
+                : Clip.antiAlias,
             child: clipped,
           );
           containerPadding = null;
