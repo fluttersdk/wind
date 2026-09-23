@@ -1167,6 +1167,42 @@ class WDiv extends StatelessWidget {
     return indexed.map((e) => e.child).toList();
   }
 
+  /// The corner radii of [decoration]'s padding box: each outer radius less
+  /// the border widths on either side of that corner, floored at zero (CSS's
+  /// inner border radius).
+  ///
+  /// Null when there is nothing to clip inside: no border, a zero border, or
+  /// square corners. On a square box the outer clip already matches the
+  /// padding box's straight edges, since `Container` insets its child by the
+  /// border widths.
+  static BorderRadius? _paddingBoxRadius(
+    BoxDecoration? decoration,
+    TextDirection textDirection,
+  ) {
+    final BoxBorder? border = decoration?.border;
+    final BorderRadius? radius =
+        decoration?.borderRadius?.resolve(textDirection);
+    if (border == null || radius == null || radius == BorderRadius.zero) {
+      return null;
+    }
+
+    final EdgeInsets widths = border.dimensions.resolve(textDirection);
+    if (widths == EdgeInsets.zero) return null;
+
+    Radius shrink(Radius corner, double horizontal, double vertical) =>
+        Radius.elliptical(
+          (corner.x - horizontal).clamp(0.0, double.infinity),
+          (corner.y - vertical).clamp(0.0, double.infinity),
+        );
+
+    return BorderRadius.only(
+      topLeft: shrink(radius.topLeft, widths.left, widths.top),
+      topRight: shrink(radius.topRight, widths.right, widths.top),
+      bottomLeft: shrink(radius.bottomLeft, widths.left, widths.bottom),
+      bottomRight: shrink(radius.bottomRight, widths.right, widths.bottom),
+    );
+  }
+
   /// Checks if a child widget resolves to `absolute` positioning
   /// by parsing its className through WindParser (context-aware).
   static bool _isAbsolutePositioned(Widget child, BuildContext context) {
@@ -1443,6 +1479,10 @@ class WDiv extends StatelessWidget {
     // Track if padding is consumed by Container (so we don't apply it again)
     bool paddingConsumedByContainer = false;
 
+    // Set when `overflow-hidden` was already applied inside the border, so
+    // the outer clip below does not clip the box a second time.
+    bool clippedInsideBorder = false;
+
     if (needsContainer) {
       // Merge decoration with shadows (boxShadow + ringShadow)
       BoxDecoration? finalDecoration = styles.decoration;
@@ -1483,9 +1523,51 @@ class WDiv extends StatelessWidget {
       }
 
       // Padding should be INSIDE the container (Tailwind behavior)
-      final containerPadding = styles.padding;
+      EdgeInsetsGeometry? containerPadding = styles.padding;
       paddingConsumedByContainer =
           containerPadding != null && containerPadding != EdgeInsets.zero;
+      AlignmentGeometry? containerAlignment = styles.alignment;
+
+      // A rounded, bordered `overflow-hidden` clips at the PADDING box, as
+      // CSS does, rather than at the outer border edge.
+      //
+      // `Container` insets its child by the border's straight widths only, so
+      // the child's square corners reach into the curve the border strokes.
+      // A clip on the outer edge keeps those corners, and they paint over the
+      // stroke: the straight runs stay intact while every corner takes the
+      // child's colour, which reads as a border fading out at the corners.
+      // Found on a consumer app's settings list and status-preview cards
+      // (`overflow-hidden rounded-lg border` over full-bleed row fills).
+      //
+      // The clip therefore goes between the decoration and the padding, with
+      // each corner shrunk by the adjoining border widths (CSS's inner border
+      // radius). Alignment and padding move inside it so the clipped box is
+      // the whole padding box rather than the child's own size.
+      if (hasOverflowClip && !hasOverflowScroll && widgetToBuild != null) {
+        final BorderRadius? paddingBoxRadius = _paddingBoxRadius(
+          finalDecoration,
+          Directionality.maybeOf(context) ?? TextDirection.ltr,
+        );
+
+        if (paddingBoxRadius != null) {
+          logger.wrapWith("ClipRRect", "overflow-hidden inside the border");
+          Widget clipped = widgetToBuild;
+          if (containerAlignment != null) {
+            clipped = Align(alignment: containerAlignment, child: clipped);
+          }
+          if (containerPadding != null) {
+            clipped = Padding(padding: containerPadding, child: clipped);
+          }
+          widgetToBuild = ClipRRect(
+            borderRadius: paddingBoxRadius,
+            clipBehavior: Clip.antiAlias,
+            child: clipped,
+          );
+          containerPadding = null;
+          containerAlignment = null;
+          clippedInsideBorder = true;
+        }
+      }
 
       // Use AnimatedContainer if transition duration is set
       if (styles.transitionDuration != null) {
@@ -1501,7 +1583,7 @@ class WDiv extends StatelessWidget {
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
-          alignment: styles.alignment,
+          alignment: containerAlignment,
           child: widgetToBuild,
         );
       } else {
@@ -1512,7 +1594,7 @@ class WDiv extends StatelessWidget {
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
-          alignment: styles.alignment,
+          alignment: containerAlignment,
           child: widgetToBuild,
         );
       }
@@ -1600,7 +1682,7 @@ class WDiv extends StatelessWidget {
           ),
         );
       }
-    } else if (hasOverflowClip) {
+    } else if (hasOverflowClip && !clippedInsideBorder) {
       logger.wrapWith("ClipRRect", "overflow-hidden");
       // Use ClipRRect to clip content that overflows
       // This respects the container's border radius if present
@@ -1610,30 +1692,20 @@ class WDiv extends StatelessWidget {
 
       // Anti-alias a ROUNDED clip, hard-edge a square one.
       //
-      // `Clip.hardEdge` takes no anti-aliasing, so it can only cut along whole
-      // pixels. On a square clip that is exactly right and it is the cheapest
-      // option. On a rounded one it saws the curve into a staircase, and the
-      // thing standing on that curve is the border: `BorderSide.strokeAlign`
-      // defaults to `strokeAlignInside`, which puts the stroke's OUTER edge
-      // exactly on the clip path, so the staircase eats into a 1px line rather
-      // than into the surface behind it. The visible result is a border that
-      // thins and vanishes through each corner while the straight runs stay
-      // crisp, which reads as a rendering fault rather than as a clip. Found
-      // on a consumer app's settings list and status-preview cards, both
-      // `overflow-hidden rounded-2xl border`.
+      // A rounded box WITH a border never reaches here: it clips inside the
+      // border in the decoration step above. What remains is a rounded box
+      // without one, where `Clip.hardEdge` would saw the curve into a pixel
+      // staircase, and a square box, where it is exactly right and cheapest.
       //
-      // Flutter's own guidance is the same reading: `hardEdge` is documented
-      // as reasonable "if the container is an axis-aligned rectangle or an
-      // axis-aligned rounded rectangle with very small corner radii", and
-      // `antiAlias` as recommended "when clipping is needed and the shape is
-      // not an axis-aligned rectangle" (`dart:ui painting.dart`). Wind's
-      // rounded tokens run from `rounded-sm` (4px) to `rounded-3xl` (32px), so
-      // "very small" does not describe them.
-      //
-      // The zero-radius case keeps `hardEdge` deliberately. Anti-aliasing a
-      // straight edge buys nothing, and `antiAlias` carries Flutter's
-      // documented bleeding-edge artifact where a child painting right up to
-      // the boundary shows through.
+      // Flutter's own guidance agrees: `hardEdge` is reasonable "if the
+      // container is an axis-aligned rectangle or an axis-aligned rounded
+      // rectangle with very small corner radii", and `antiAlias` is
+      // recommended "when clipping is needed and the shape is not an
+      // axis-aligned rectangle" (`dart:ui painting.dart`). Wind's rounded
+      // tokens run from `rounded-sm` (4px) to `rounded-3xl` (32px), so "very
+      // small" does not describe them. The zero-radius case keeps `hardEdge`
+      // because `antiAlias` carries a documented bleeding-edge artifact and
+      // buys nothing on a straight edge.
       widgetToBuild = ClipRRect(
         borderRadius: resolvedRadius,
         clipBehavior: resolvedRadius == BorderRadius.zero

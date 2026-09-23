@@ -85,7 +85,7 @@ WDiv(
 | Class | Flutter Equivalent | Description |
 |:------|:-------------------|:------------|
 | `overflow-auto` | `SingleChildScrollView` (conditional) | Scroll only if content overflows |
-| `overflow-hidden` | `Clip.antiAlias` when rounded, `Clip.hardEdge` when square | Clip overflowing content |
+| `overflow-hidden` | `Clip.antiAlias` when rounded, `Clip.hardEdge` when square | Clip overflowing content; with a border, the clip sits inside it (the padding box), as in CSS |
 | `overflow-visible` | `Clip.none` | Content flows outside container |
 | `overflow-scroll` | `SingleChildScrollView` | Always enable scrolling |
 

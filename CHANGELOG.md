@@ -8,6 +8,12 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A rounded, bordered `overflow-hidden` box keeps its border through the corners.** 1.6.0's fix (#206) anti-aliased the clip and left it where it was, on the OUTER border edge, which was not the cause. `Container` insets its child by the border's straight widths only, so a child that fills the box keeps square corners that reach into the curve the border strokes, and a clip on the outer edge lets them paint over it. The straight runs stayed intact and every corner took the child's colour: measured on a consumer's settings list, the stroke pixel on the curve read the row fill (`255` in light mode, `18` in dark) where the straight edge read the border (`236`, `28`). It shows most on a light theme, where the fill is white and the border a pale grey.
+
+  The clip now sits where CSS puts `overflow: hidden`: on the padding box, between the decoration and the padding, with each corner shrunk by the adjoining border widths (CSS's inner border radius). Padding and alignment move inside it so the clipped region is the whole padding box rather than the child's own size. A borderless rounded box and a square one keep the outer clip exactly as before. One visible side effect is intended: a box shadow on such a box (`shadow-md overflow-hidden rounded-lg border`) used to be clipped away with the rest of the outer box and now paints, as it does in CSS. (`lib/src/widgets/w_div.dart`, `test/widgets/w_div/overflow_test.dart`)
+
 ---
 
 ## [1.6.3] - 2026-09-22
