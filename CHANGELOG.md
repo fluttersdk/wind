@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.6.4] - 2026-09-23
+
 ### Fixed
 
 - **A rounded, bordered `overflow-hidden` box keeps its border through the corners.** The clip sat on the outer border edge, so a child that fills the box painted its square corners over the curved stroke; 1.6.0's anti-aliasing (#206) did not touch that. It now clips the padding box with the inner border radius, as CSS does, and keeps `duration-*` tweening padding and alignment. A box shadow on such a box, previously clipped away, now paints.
@@ -410,7 +414,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.3...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.4...HEAD
+[1.6.4]: https://github.com/fluttersdk/wind/releases/tag/1.6.4
 [1.6.3]: https://github.com/fluttersdk/wind/releases/tag/1.6.3
 [1.6.2]: https://github.com/fluttersdk/wind/releases/tag/1.6.2
 [1.6.1]: https://github.com/fluttersdk/wind/releases/tag/1.6.1
