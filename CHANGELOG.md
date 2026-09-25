@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- **`contrastRatio` and `contrastForeground` in `color_utils.dart`.** A colour an end user picks, such as a status page operator's brand colour, cannot resolve through a theme token: it reaches the runtime as a `Color`, not a className. `contrastRatio(a, b)` is the WCAG 2.x contrast ratio (1 to 21). `contrastForeground(background, {light, dark})` returns whichever of `light` (default white) or `dark` (default black) has the higher ratio against `background`, comparing the two ratios against each other rather than checking `background`'s luminance against the usual 0.179 threshold, which is only correct for pure black and pure white candidates. (`lib/src/utils/color_utils.dart`, `test/utils/color_utils_test.dart`, `doc/utilities/color-helpers.md`)
+
 ---
 
 ## [1.6.4] - 2026-09-23
