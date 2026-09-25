@@ -3,6 +3,7 @@
 - [Resolving Colors](#resolving-colors)
 - [Hex Colors](#hex-colors)
 - [Opacity Handling](#opacity-handling)
+- [Contrast](#contrast)
 - [Material Color Inversion](#material-color-inversion)
 - [Context Extensions](#context-extensions)
 
@@ -100,6 +101,32 @@ Color applyOpacity(Color color, double opacity)
 
 ```dart
 final semiTransparent = applyOpacity(Colors.blue, 0.5);
+```
+
+<a name="contrast"></a>
+## Contrast
+
+`contrastRatio` and `contrastForeground` compute WCAG 2.x contrast for a colour your theme does not own, such as a brand colour an end user picks for a public status page. A theme token already has a correct `dark:` pair; these two exist for the colour that does not.
+
+```dart
+double contrastRatio(Color a, Color b)
+
+Color contrastForeground(
+  Color background, {
+  Color light = const Color(0xFFFFFFFF),
+  Color dark = const Color(0xFF000000),
+})
+```
+
+`contrastRatio` returns a value from 1 (identical colours) to 21 (pure black against pure white). `contrastForeground` picks whichever of `light` or `dark` has the higher ratio against `background`, comparing the two ratios directly rather than checking `background`'s luminance against the usual 0.179 crossover. That threshold is only correct when both candidates are pure black and pure white; pass a `dark` tuned away from pure black (a near-black brand tone, say) and the threshold can pick the candidate that reads worse.
+
+```dart
+// A status page renders its operator's brand colour behind white text.
+// The brand colour is not a theme token, so it needs a computed answer.
+final Color heading = contrastForeground(brandColor);
+
+// Compare a fixed pair directly.
+final double ratio = contrastRatio(brandColor, Colors.white);
 ```
 
 <a name="material-color-inversion"></a>
