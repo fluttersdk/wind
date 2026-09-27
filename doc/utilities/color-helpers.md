@@ -120,6 +120,8 @@ Color contrastForeground(
 
 `contrastRatio` returns a value from 1 (identical colours) to 21 (pure black against pure white). `contrastForeground` picks whichever of `light` or `dark` has the higher ratio against `background`, comparing the two ratios directly rather than checking `background`'s luminance against the usual 0.179 crossover. That threshold is only correct when both candidates are pure black and pure white; pass a `dark` tuned away from pure black (a near-black brand tone, say) and the threshold can pick the candidate that reads worse.
 
+Both helpers take opaque colours. Luminance ignores alpha, so a translucent colour reports the ratio of its opaque self rather than of what renders; composite it over its backdrop (`Color.alphaBlend(color, backdrop)`) before calling either one.
+
 ```dart
 // A status page renders its operator's brand colour behind white text.
 // The brand colour is not a theme token, so it needs a computed answer.
