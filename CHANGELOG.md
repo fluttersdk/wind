@@ -8,9 +8,13 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.7.0] - 2026-09-27
+
 ### Added
 
-- **`contrastRatio` and `contrastForeground` in `color_utils.dart`.** A colour an end user picks, such as a status page operator's brand colour, cannot resolve through a theme token: it reaches the runtime as a `Color`, not a className. `contrastRatio(a, b)` is the WCAG 2.x contrast ratio (1 to 21). `contrastForeground(background, {light, dark})` returns whichever of `light` (default white) or `dark` (default black) has the higher ratio against `background`, comparing the two ratios against each other rather than checking `background`'s luminance against the usual 0.179 threshold, which is only correct for pure black and pure white candidates. (`lib/src/utils/color_utils.dart`, `test/utils/color_utils_test.dart`, `doc/utilities/color-helpers.md`)
+- **`contrastRatio` and `contrastForeground` in `color_utils.dart`.** A colour an end user picks, such as a status page operator's brand colour, cannot resolve through a theme token: it reaches the runtime as a `Color`, not a className. `contrastRatio(a, b)` is the WCAG 2.x contrast ratio (1 to 21). `contrastForeground(background, {light, dark})` returns whichever of `light` (default white) or `dark` (default black) has the higher ratio against `background`, comparing the two ratios against each other rather than checking `background`'s luminance against the usual 0.179 threshold, which is only correct for pure black and pure white candidates. (`lib/src/utils/color_utils.dart`, `test/utils/color_utils_test.dart`, `doc/utilities/color-helpers.md`, `skills/wind-ui/SKILL.md`)
 
 ---
 
@@ -418,7 +422,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.6.4...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.7.0...HEAD
+[1.7.0]: https://github.com/fluttersdk/wind/releases/tag/1.7.0
 [1.6.4]: https://github.com/fluttersdk/wind/releases/tag/1.6.4
 [1.6.3]: https://github.com/fluttersdk/wind/releases/tag/1.6.3
 [1.6.2]: https://github.com/fluttersdk/wind/releases/tag/1.6.2
