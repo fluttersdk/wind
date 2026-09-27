@@ -61,5 +61,57 @@ void main() {
         expect(hexToColor('8F53'), const Color(0x88FF5533));
       });
     });
+
+    group('contrastRatio', () {
+      test('white against black is 21.0, the WCAG maximum', () {
+        expect(
+          contrastRatio(const Color(0xFFFFFFFF), const Color(0xFF000000)),
+          closeTo(21.0, 0.01),
+        );
+      });
+
+      test('a colour against itself is 1.0, the WCAG minimum', () {
+        const Color grey = Color(0xFF767676);
+        expect(contrastRatio(grey, grey), closeTo(1.0, 0.01));
+      });
+
+      test('is symmetric: the argument order does not change the ratio', () {
+        const Color a = Color(0xFF767676);
+        const Color b = Color(0xFF07090C);
+        expect(contrastRatio(a, b), contrastRatio(b, a));
+      });
+    });
+
+    group('contrastForeground', () {
+      test(
+        'picks white over the app near-black at a mid-grey background, '
+        'where the 0.179 luminance threshold would pick the worse candidate',
+        () {
+          // 4.54:1 (white) beats 4.39:1 (near-black); the shortcut threshold
+          // would choose the near-black candidate here, the worse of the two.
+          const Color midGrey = Color(0xFF767676);
+          const Color nearBlack = Color(0xFF07090C);
+
+          expect(
+            contrastForeground(midGrey, dark: nearBlack),
+            const Color(0xFFFFFFFF),
+          );
+        },
+      );
+
+      test('picks black on a light brand colour', () {
+        expect(
+          contrastForeground(const Color(0xFFFFEB3B)),
+          const Color(0xFF000000),
+        );
+      });
+
+      test('picks white on a dark navy brand colour', () {
+        expect(
+          contrastForeground(const Color(0xFF001F3F)),
+          const Color(0xFFFFFFFF),
+        );
+      });
+    });
   });
 }

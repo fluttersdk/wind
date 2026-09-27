@@ -97,3 +97,42 @@ Color applyOpacity(Color color, double opacity) {
   final alpha = (opacity * 255).round().clamp(0, 255);
   return color.withAlpha(alpha);
 }
+
+/// The WCAG 2.x contrast ratio between two colours, from 1 (identical) to 21
+/// (black against white).
+///
+/// Use this, not a fixed luminance threshold, when the background is a
+/// colour an end user chose rather than one of your own theme tokens: a
+/// status page operator's brand colour is the case this exists for.
+/// [Color.computeLuminance] already returns WCAG relative luminance, so this
+/// is only the ratio formula around it. Opaque colours only: luminance
+/// ignores alpha, so composite a translucent colour over its backdrop first.
+double contrastRatio(Color a, Color b) {
+  final double first = a.computeLuminance();
+  final double second = b.computeLuminance();
+  final double lighter = first > second ? first : second;
+  final double darker = first > second ? second : first;
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+/// The more readable of [light] and [dark] on top of [background], picked by
+/// comparing their actual WCAG contrast ratios against each other.
+///
+/// This is for a colour you do not control, such as a user-chosen brand
+/// colour on a status page: every other surface should answer to a theme
+/// token instead. Comparing ratios rather than checking [background]'s
+/// luminance against the usual 0.179 crossover matters because that constant
+/// is only correct when the two candidates are pure black and pure white; a
+/// [dark] candidate tuned away from pure black (a near-black brand tone, for
+/// instance) can lose that comparison in a band where [light] would in fact
+/// read better.
+Color contrastForeground(
+  Color background, {
+  Color light = const Color(0xFFFFFFFF),
+  Color dark = const Color(0xFF000000),
+}) {
+  return contrastRatio(background, light) >= contrastRatio(background, dark)
+      ? light
+      : dark;
+}
