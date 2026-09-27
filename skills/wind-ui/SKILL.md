@@ -1,13 +1,13 @@
 ---
 name: wind-ui
-description: "fluttersdk_wind 1.6: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
+description: "fluttersdk_wind 1.7: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
 when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Load it before the first line of new UI, and equally when auditing UI that already exists."
-version: 2.19.0
+version: 2.20.0
 ---
 
-<!-- fluttersdk_wind 1.6.x | Skill v2.19.0 (2026-09-23) -->
+<!-- fluttersdk_wind 1.7.x | Skill v2.20.0 (2026-09-27) -->
 
-# Wind UI 1.6
+# Wind UI 1.7
 
 Utility-first Flutter styling. Every visual decision lives in a `className: String?` parsed at build time into an immutable `WindStyle` and composed into a native Flutter widget tree. Tailwind syntax (`flex`, `p-4`, `dark:bg-gray-800`, `hover:shadow-lg`), Flutter physics.
 
@@ -31,7 +31,7 @@ These hold for every line of Wind code. Apply each as a hard constraint, not a s
 
 1. **className is the styling surface.** Inline Dart props (`backgroundColor` on `WDiv`, `foregroundColor` on `WText`) exist only as runtime-dynamic escape hatches for values the cache key cannot represent. Default to className. Never reach for `BoxDecoration`, `EdgeInsets`, `TextStyle` when a token covers it.
 
-2. **Every `bg-` / `text-` / `border-` / `ring-` / `shadow-` / `fill-` carries a `dark:` peer in the same className.** Missing pair is a bug, not a style choice. Pair `bg-white dark:bg-gray-800` on the same line, not at the top and bottom of a multi-line className. Wind's dark-mode contract: the agent never opts in; every color opts in by default.
+2. **Every `bg-` / `text-` / `border-` / `ring-` / `shadow-` / `fill-` carries a `dark:` peer in the same className.** Missing pair is a bug, not a style choice. Pair `bg-white dark:bg-gray-800` on the same line, not at the top and bottom of a multi-line className. Wind's dark-mode contract: the agent never opts in; every color opts in by default. The one color no token can pair is one an end user chose at runtime (a status page operator's brand color): it arrives as a `Color`, so pick its text with `contrastForeground(background)` (or measure with `contrastRatio(a, b)`, WCAG 2.x) instead of guessing a `dark:` class.
 
 3. **Conditional styling routes through `states: Set<String>?` plus prefixed classes.** Never interpolate Dart expressions into className. `'bg-${isOn ? "blue" : "gray"}-500'` breaks the parser cache and is a bug. The right shape:
 
