@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../parser/wind_parser.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import 'w_div.dart';
 
 /// **Popover Alignment Options**
@@ -621,6 +622,7 @@ class _WPopoverState extends State<WPopover> {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WPopover');
     return OverlayPortal(
       controller: _overlayController,
       overlayChildBuilder: _buildOverlay,

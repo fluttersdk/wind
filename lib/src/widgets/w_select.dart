@@ -10,6 +10,7 @@ import 'w_input.dart';
 import 'w_text.dart';
 import '../utils/wind_extensions.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// Signature for building a custom trigger widget for [WSelect].
 ///
@@ -611,6 +612,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WSelect');
+
     // Accessibility: surface the closed trigger as a `button` SemanticsNode
     // labelled with the placeholder (or the selected option label as
     // fallback) so Playwright `getByRole('button', { name: ... })` resolves

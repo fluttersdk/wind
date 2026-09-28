@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../utils/wind_perf_counters.dart';
 import 'w_input.dart';
 import 'w_text.dart';
 import 'w_div.dart';
@@ -424,6 +425,8 @@ class _WFormInputContentState extends State<_WFormInputContent> {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WFormInput');
+
     // Build states set including error state when validation fails
     final Set<String> effectiveStates = {
       ...?widget.states,

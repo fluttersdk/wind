@@ -160,6 +160,7 @@ class WDiv extends StatelessWidget {
     // WAnchor whose Builder calls this method, so this is the one place every
     // WDiv style resolution passes through exactly once.
     WindPerfCounters.recordWDivBuild();
+    WindPerfCounters.recordWidgetBuild('WDiv');
 
     // 1. RESOLVE STYLES (The Logic Layer)
     // Fetch state from WindAnchorStateProvider (if present)
@@ -244,6 +245,7 @@ class WDiv extends StatelessWidget {
         hasTextOverflow ||
         hasMaxLines) {
       logger.wrapWith("DefaultTextStyle.merge", "style: $textStyle");
+      WindPerfCounters.recordWrapperEmission('DefaultTextStyle');
 
       finalWidget = DefaultTextStyle.merge(
         style: textStyle,
@@ -259,6 +261,7 @@ class WDiv extends StatelessWidget {
     // Wrap with AspectRatio widget if aspectRatio is set.
     if (styles.aspectRatio != null) {
       logger.wrapWith("AspectRatio", "aspectRatio: ${styles.aspectRatio}");
+      WindPerfCounters.recordWrapperEmission('AspectRatio');
       finalWidget = AspectRatio(
         aspectRatio: styles.aspectRatio!,
         child: finalWidget,
@@ -270,6 +273,7 @@ class WDiv extends StatelessWidget {
     if (styles.opacity != null) {
       if (styles.transitionDuration != null) {
         logger.wrapWith("AnimatedOpacity", "opacity: ${styles.opacity}");
+        WindPerfCounters.recordWrapperEmission('AnimatedOpacity');
         finalWidget = AnimatedOpacity(
           duration: styles.transitionDuration!,
           curve: styles.transitionCurve ?? Curves.linear,
@@ -278,6 +282,7 @@ class WDiv extends StatelessWidget {
         );
       } else {
         logger.wrapWith("Opacity", "opacity: ${styles.opacity}");
+        WindPerfCounters.recordWrapperEmission('Opacity');
         finalWidget = Opacity(opacity: styles.opacity!, child: finalWidget);
       }
     }
@@ -291,6 +296,7 @@ class WDiv extends StatelessWidget {
     // so its cursor wins for the area it covers.
     if (styles.mouseCursor != null) {
       logger.wrapWith("MouseRegion", "cursor: ${styles.mouseCursor}");
+      WindPerfCounters.recordWrapperEmission('MouseRegion');
       finalWidget = MouseRegion(
         cursor: styles.mouseCursor!,
         child: finalWidget,
@@ -302,6 +308,7 @@ class WDiv extends StatelessWidget {
     if (styles.animationType != null &&
         styles.animationType != WindAnimationType.none) {
       logger.wrapWith("Animation", "type: ${styles.animationType}");
+      WindPerfCounters.recordWrapperEmission('WindAnimationWrapper');
       finalWidget = wrapWithAnimation(
         child: finalWidget,
         animationType: styles.animationType,
@@ -1288,9 +1295,13 @@ class WDiv extends StatelessWidget {
       builder: (context, constraints) {
         // Calculate item width based on available space and columns
         final totalGapWidth = gapX * (cols - 1);
-        final availableWidth = constraints.maxWidth.isFinite
-            ? constraints.maxWidth
-            : MediaQuery.of(context).size.width;
+        final double availableWidth;
+        if (constraints.maxWidth.isFinite) {
+          availableWidth = constraints.maxWidth;
+        } else {
+          availableWidth = MediaQuery.of(context).size.width;
+          WindPerfCounters.recordInheritedRead('mediaQuerySize');
+        }
         final itemWidth = (availableWidth - totalGapWidth) / cols;
 
         return Wrap(
@@ -1558,25 +1569,34 @@ class WDiv extends StatelessWidget {
           final Curve curve = styles.transitionCurve ?? Curves.linear;
           Widget clipped = widgetToBuild;
           if (containerAlignment != null) {
-            clipped = duration == null
-                ? Align(alignment: containerAlignment, child: clipped)
-                : AnimatedAlign(
-                    alignment: containerAlignment,
-                    duration: duration,
-                    curve: curve,
-                    child: clipped,
-                  );
+            if (duration == null) {
+              WindPerfCounters.recordWrapperEmission('Align');
+              clipped = Align(alignment: containerAlignment, child: clipped);
+            } else {
+              WindPerfCounters.recordWrapperEmission('AnimatedAlign');
+              clipped = AnimatedAlign(
+                alignment: containerAlignment,
+                duration: duration,
+                curve: curve,
+                child: clipped,
+              );
+            }
           }
           if (containerPadding != null) {
-            clipped = duration == null
-                ? Padding(padding: containerPadding, child: clipped)
-                : AnimatedPadding(
-                    padding: containerPadding,
-                    duration: duration,
-                    curve: curve,
-                    child: clipped,
-                  );
+            if (duration == null) {
+              WindPerfCounters.recordWrapperEmission('Padding');
+              clipped = Padding(padding: containerPadding, child: clipped);
+            } else {
+              WindPerfCounters.recordWrapperEmission('AnimatedPadding');
+              clipped = AnimatedPadding(
+                padding: containerPadding,
+                duration: duration,
+                curve: curve,
+                child: clipped,
+              );
+            }
           }
+          WindPerfCounters.recordWrapperEmission('ClipRRect');
           widgetToBuild = ClipRRect(
             borderRadius: paddingBoxRadius,
             // A border as wide as the corner leaves a square padding box, and
@@ -1599,6 +1619,7 @@ class WDiv extends StatelessWidget {
           "AnimatedContainer",
           "duration: ${styles.transitionDuration!.inMilliseconds}ms",
         );
+        WindPerfCounters.recordWrapperEmission('AnimatedContainer');
         widgetToBuild = AnimatedContainer(
           duration: styles.transitionDuration!,
           curve: styles.transitionCurve ?? Curves.linear,
@@ -1612,6 +1633,7 @@ class WDiv extends StatelessWidget {
         );
       } else {
         logger.wrapWith("Container", "decoration/constraints/shadow");
+        WindPerfCounters.recordWrapperEmission('Container');
         widgetToBuild = Container(
           width: wantFullWidth ? double.infinity : null,
           height: wantFullHeight ? double.infinity : null,
@@ -1632,6 +1654,7 @@ class WDiv extends StatelessWidget {
         "SizedBox",
         "width: ${styles.width}, height: ${styles.height}",
       );
+      WindPerfCounters.recordWrapperEmission('SizedBox');
       widgetToBuild = SizedBox(
         width: styles.width,
         height: styles.height,
@@ -1652,6 +1675,7 @@ class WDiv extends StatelessWidget {
           "SingleChildScrollView",
           "horizontal${scrollPrimary ? ', primary' : ''}",
         );
+        WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
         final port = WindViewportWidthPort();
         widgetToBuild = WindViewportWidthProvider(
           port: port,
@@ -1673,6 +1697,7 @@ class WDiv extends StatelessWidget {
           "SingleChildScrollView",
           "vertical${scrollPrimary ? ', primary' : ''}",
         );
+        WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
         widgetToBuild = SingleChildScrollView(
           scrollDirection: Axis.vertical,
           primary: scrollPrimary,
@@ -1688,6 +1713,10 @@ class WDiv extends StatelessWidget {
           "SingleChildScrollView",
           "both (nested)${scrollPrimary ? ', primary on outer' : ''}",
         );
+        // Two SingleChildScrollView instances are constructed below (outer
+        // vertical, inner horizontal); both count.
+        WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
+        WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
         final port = WindViewportWidthPort();
         widgetToBuild = WindViewportWidthProvider(
           port: port,
@@ -1708,6 +1737,7 @@ class WDiv extends StatelessWidget {
       }
     } else if (hasOverflowClip && !clippedInsideBorder) {
       logger.wrapWith("ClipRRect", "overflow-hidden");
+      WindPerfCounters.recordWrapperEmission('ClipRRect');
       // Use ClipRRect to clip content that overflows
       // This respects the container's border radius if present
       final borderRadius = styles.decoration?.borderRadius;
@@ -1742,6 +1772,7 @@ class WDiv extends StatelessWidget {
     // Apply outer sizing for overflow cases
     if (outerConstraints != null) {
       logger.wrapWith("SizedBox", "outer sizing for overflow");
+      WindPerfCounters.recordWrapperEmission('SizedBox');
       widgetToBuild = SizedBox(
         width: outerConstraints.maxWidth.isFinite
             ? outerConstraints.maxWidth
@@ -1808,6 +1839,7 @@ class WDiv extends StatelessWidget {
           // SizedBox(width: infinity) would assert on the scroll's unbounded
           // width; WindMinWidthBox reads the threaded viewport width instead.
           logger.wrapWith("WindMinWidthBox", "w-full in horizontal scroll");
+          WindPerfCounters.recordWrapperEmission('WindMinWidthBox');
           widgetToBuild = WindMinWidthBox(
             port: scrollScope!.horizontalPort!,
             floorMinWidth: styles.constraints?.minWidth ?? 0,
@@ -1816,6 +1848,7 @@ class WDiv extends StatelessWidget {
         } else if (isFullWidth) {
           // w-full: expand to fill available width
           logger.wrapWith("SizedBox", "w-full (no LayoutBuilder)");
+          WindPerfCounters.recordWrapperEmission('SizedBox');
           widgetToBuild = SizedBox(
             width: double.infinity,
             child: innerChild,
@@ -1823,6 +1856,7 @@ class WDiv extends StatelessWidget {
         } else {
           // w-1/2, w-1/3, etc: use FractionallySizedBox (render-layer, no LayoutBuilder)
           logger.wrapWith("FractionallySizedBox", "w-fraction");
+          WindPerfCounters.recordWrapperEmission('FractionallySizedBox');
           widgetToBuild = FractionallySizedBox(
             widthFactor: styles.widthFactor,
             child: innerChild,
@@ -1832,6 +1866,7 @@ class WDiv extends StatelessWidget {
         // Apply max constraints via ConstrainedBox if present
         if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
           logger.wrapWith("ConstrainedBox", "max constraints");
+          WindPerfCounters.recordWrapperEmission('ConstrainedBox');
           widgetToBuild = ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: hasMaxWidthConstraint
@@ -1856,9 +1891,12 @@ class WDiv extends StatelessWidget {
           // height bounded"), and asking it with a LayoutBuilder defers this
           // whole subtree into a second layout pass. A consumer measured 1056
           // of them in one eight-scroll session against 258 widget builds.
+          final double fallbackHeight = MediaQuery.of(context).size.height;
+          WindPerfCounters.recordInheritedRead('mediaQuerySize');
           logger.wrapWith("WindFullHeightBox", "h-full");
+          WindPerfCounters.recordWrapperEmission('WindFullHeightBox');
           widgetToBuild = WindFullHeightBox(
-            fallbackHeight: MediaQuery.of(context).size.height,
+            fallbackHeight: fallbackHeight,
             maxHeight:
                 hasMaxHeightConstraint ? styles.constraints!.maxHeight : null,
             child: innerChild,
@@ -1866,11 +1904,13 @@ class WDiv extends StatelessWidget {
         } else {
           // h-1/2, h-1/3, etc: FractionallySizedBox (no LayoutBuilder)
           logger.wrapWith("FractionallySizedBox", "h-fraction");
+          WindPerfCounters.recordWrapperEmission('FractionallySizedBox');
           widgetToBuild = FractionallySizedBox(
             heightFactor: styles.heightFactor,
             child: innerChild,
           );
           if (hasMaxHeightConstraint) {
+            WindPerfCounters.recordWrapperEmission('ConstrainedBox');
             widgetToBuild = ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: styles.constraints!.maxHeight,
@@ -1886,9 +1926,12 @@ class WDiv extends StatelessWidget {
         if (isFullHeight) {
           // Both axes, height full: the same render-layer box as the
           // height-only path, carrying the width factor too.
+          final double fallbackHeight = MediaQuery.of(context).size.height;
+          WindPerfCounters.recordInheritedRead('mediaQuerySize');
           logger.wrapWith("WindFullHeightBox", "w+h-full");
+          WindPerfCounters.recordWrapperEmission('WindFullHeightBox');
           widgetToBuild = WindFullHeightBox(
-            fallbackHeight: MediaQuery.of(context).size.height,
+            fallbackHeight: fallbackHeight,
             widthFactor: styles.widthFactor,
             maxWidth:
                 hasMaxWidthConstraint ? styles.constraints!.maxWidth : null,
@@ -1899,12 +1942,14 @@ class WDiv extends StatelessWidget {
         } else {
           // Both fractional, neither h-full: FractionallySizedBox handles it
           logger.wrapWith("FractionallySizedBox", "w+h fraction");
+          WindPerfCounters.recordWrapperEmission('FractionallySizedBox');
           widgetToBuild = FractionallySizedBox(
             widthFactor: styles.widthFactor,
             heightFactor: styles.heightFactor,
             child: innerChild,
           );
           if (hasMaxWidthConstraint || hasMaxHeightConstraint) {
+            WindPerfCounters.recordWrapperEmission('ConstrainedBox');
             widgetToBuild = ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: hasMaxWidthConstraint
@@ -1926,6 +1971,7 @@ class WDiv extends StatelessWidget {
         styles.padding != null &&
         styles.padding != EdgeInsets.zero) {
       logger.wrapWith("Padding", "${styles.padding}");
+      WindPerfCounters.recordWrapperEmission('Padding');
       widgetToBuild = Padding(padding: styles.padding!, child: widgetToBuild);
     }
 
@@ -1933,6 +1979,7 @@ class WDiv extends StatelessWidget {
     // Note: Margin wraps the element, but is inside layout wrappers like Expanded.
     if (styles.margin != null && styles.margin != EdgeInsets.zero) {
       logger.wrapWith("Padding (Margin)", "${styles.margin}");
+      WindPerfCounters.recordWrapperEmission('Padding');
       widgetToBuild = Padding(padding: styles.margin!, child: widgetToBuild);
     }
 
@@ -1943,12 +1990,14 @@ class WDiv extends StatelessWidget {
     // Apply Alignment (align-self-*)
     if (styles.alignment != null) {
       logger.wrapWith("Align", "${styles.alignment}");
+      WindPerfCounters.recordWrapperEmission('Align');
       widgetToBuild = Align(alignment: styles.alignment!, child: widgetToBuild);
     }
 
     // Apply mx-auto (horizontal centering like Tailwind)
     if (styles.marginXAuto) {
       logger.wrapWith("Align", "horizontal center (mx-auto)");
+      WindPerfCounters.recordWrapperEmission('Align');
       widgetToBuild = Align(
         alignment: Alignment.topCenter,
         child: widgetToBuild,
@@ -1967,12 +2016,14 @@ class WDiv extends StatelessWidget {
     if (!skipFlexWrap) {
       if (styles.flex != null) {
         logger.wrapWith("Expanded", "flex: ${styles.flex}");
+        WindPerfCounters.recordWrapperEmission('Expanded');
         widgetToBuild = Expanded(
           flex: styles.flex!,
           child: widgetToBuild ?? const SizedBox.shrink(),
         );
       } else if (styles.flexFit != null) {
         logger.wrapWith("Flexible", "fit: ${styles.flexFit}");
+        WindPerfCounters.recordWrapperEmission('Flexible');
         widgetToBuild = Flexible(
           fit: styles.flexFit!,
           child: widgetToBuild ?? const SizedBox.shrink(),

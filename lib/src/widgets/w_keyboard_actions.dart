@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../parser/wind_parser.dart';
+import '../utils/wind_perf_counters.dart';
 import 'w_keyboard_platform.dart';
 
 /// A Wind-styled wrapper that adds keyboard actions (Done button, navigation)
@@ -444,6 +445,7 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WKeyboardActions');
     return WKeyboardToolbarInset(
       height: _toolbarHeight,
       child: widget.child,

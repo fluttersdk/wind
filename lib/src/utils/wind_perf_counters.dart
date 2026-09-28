@@ -35,6 +35,25 @@ class WindPerfCounters {
   static int _wDivBuilds = 0;
   static int _wTextBuilds = 0;
 
+  /// Per-type build counts for every W-widget with a build method (e.g.
+  /// `'WButton'`), keyed by [Widget.runtimeType] as printed at the call site,
+  /// not via reflection.
+  static final Map<String, int> _widgetBuilds = <String, int>{};
+
+  /// Per-type emission counts for the Flutter (or Wind-authored render-layer)
+  /// wrapper widgets Wind inserts around content (`'Container'`, `'Padding'`,
+  /// `'MouseRegion'`, ...).
+  static final Map<String, int> _wrapperEmissions = <String, int>{};
+
+  /// Inherited-widget read counts, fixed to four keys: `mediaQuerySize`,
+  /// `mediaQueryBrightness`, `windTheme`, `defaultTextStyle`.
+  static final Map<String, int> _inheritedReads = <String, int>{
+    'mediaQuerySize': 0,
+    'mediaQueryBrightness': 0,
+    'windTheme': 0,
+    'defaultTextStyle': 0,
+  };
+
   /// Parses served from the style cache.
   static int get cacheHits => _cacheHits;
 
@@ -49,6 +68,20 @@ class WindPerfCounters {
 
   /// `WText` builds that reached the style-resolution step.
   static int get wTextBuilds => _wTextBuilds;
+
+  /// Per-W-widget-type build counts. Read-only snapshot; mutate only through
+  /// [recordWidgetBuild].
+  static Map<String, int> get widgetBuilds => Map.unmodifiable(_widgetBuilds);
+
+  /// Per-wrapper-type emission counts. Read-only snapshot; mutate only
+  /// through [recordWrapperEmission].
+  static Map<String, int> get wrapperEmissions =>
+      Map.unmodifiable(_wrapperEmissions);
+
+  /// Inherited-widget read counts. Read-only snapshot; mutate only through
+  /// [recordInheritedRead].
+  static Map<String, int> get inheritedReads =>
+      Map.unmodifiable(_inheritedReads);
 
   /// Records a style served from the cache.
   @internal
@@ -85,6 +118,34 @@ class WindPerfCounters {
     _wTextBuilds++;
   }
 
+  /// Records one build of the W-widget named [typeName] (e.g. `'WButton'`).
+  ///
+  /// Additive to [recordWDivBuild] / [recordWTextBuild]: those two dedicated
+  /// counters stay for backward compatibility with the pinned six-key
+  /// contract, and this call sits next to them rather than replacing them.
+  @internal
+  static void recordWidgetBuild(String typeName) {
+    if (!enabled) return;
+    _widgetBuilds[typeName] = (_widgetBuilds[typeName] ?? 0) + 1;
+  }
+
+  /// Records one emission of the wrapper widget named [typeName] (e.g.
+  /// `'Container'`, `'MouseRegion'`).
+  @internal
+  static void recordWrapperEmission(String typeName) {
+    if (!enabled) return;
+    _wrapperEmissions[typeName] = (_wrapperEmissions[typeName] ?? 0) + 1;
+  }
+
+  /// Records one read of the inherited widget named [key], one of
+  /// `'mediaQuerySize'`, `'mediaQueryBrightness'`, `'windTheme'`,
+  /// `'defaultTextStyle'`.
+  @internal
+  static void recordInheritedRead(String key) {
+    if (!enabled) return;
+    _inheritedReads[key] = (_inheritedReads[key] ?? 0) + 1;
+  }
+
   /// Zeroes every counter, leaving [enabled] alone.
   ///
   /// Public, unlike the recorders: a measurement session opens by zeroing the
@@ -102,5 +163,8 @@ class WindPerfCounters {
     _cacheBypasses = 0;
     _wDivBuilds = 0;
     _wTextBuilds = 0;
+    _widgetBuilds.clear();
+    _wrapperEmissions.clear();
+    _inheritedReads.updateAll((_, __) => 0);
   }
 }

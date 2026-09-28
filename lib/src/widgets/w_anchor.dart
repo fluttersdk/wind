@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import '../state/wind_anchor_state.dart';
 import '../state/wind_anchor_state_provider.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **The Foundational State Wrapper**
 ///
@@ -229,6 +230,8 @@ class _WAnchorState extends State<WAnchor> {
   /// `GestureDetector` for tap events, disabling them if `widget.isDisabled` is true.
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WAnchor');
+
     final hasGestures = widget.onTap != null ||
         widget.onLongPress != null ||
         widget.onDoubleTap != null;
@@ -283,6 +286,7 @@ class _WAnchorState extends State<WAnchor> {
     // and the ring was on the second one while the gesture was on the first.
     // The node itself stays, because `FocusNode.hasFocus` covers descendants
     // and that is what draws the ring around a `WInput` inside a styled div.
+    WindPerfCounters.recordWrapperEmission('Focus');
     Widget innerChild = Focus(
       focusNode: _focusNode,
       canRequestFocus: !widget.isDisabled && (hasGestures || inherited == null),
@@ -300,11 +304,13 @@ class _WAnchorState extends State<WAnchor> {
     // `PrioritizedIntents([ActivateIntent, ScrollIntent])`, and an
     // always-enabled action wins that race.
     if (widget.onTap != null && !widget.isDisabled) {
+      WindPerfCounters.recordWrapperEmission('Actions');
       innerChild = Actions(actions: _actions, child: innerChild);
     }
 
     // Only wrap with GestureDetector if there are actual gesture callbacks
     if (hasGestures) {
+      WindPerfCounters.recordWrapperEmission('GestureDetector');
       innerChild = GestureDetector(
         // Translucent so the whole anchor bounds are tappable, not only the
         // opaque descendants. The GestureDetector defaults to
@@ -331,6 +337,8 @@ class _WAnchorState extends State<WAnchor> {
     // the structural problem of WAnchor not knowing its eventual textual
     // content when callers (e.g. WButton) interpose a Builder between
     // WAnchor and its leaf widgets.
+    WindPerfCounters.recordWrapperEmission('WindAnchorStateProvider');
+    WindPerfCounters.recordWrapperEmission('MouseRegion');
     Widget result = WindAnchorStateProvider(
       state: currentState,
       child: MouseRegion(
@@ -356,6 +364,7 @@ class _WAnchorState extends State<WAnchor> {
     //    still trigger them. `onDoubleTap` has no SemanticsAction equivalent
     //    and is intentionally not exposed here.
     if (widget.semanticLabel != null) {
+      WindPerfCounters.recordWrapperEmission('Semantics');
       return Semantics(
         button: true,
         enabled: !widget.isDisabled,
@@ -400,6 +409,8 @@ class _WAnchorState extends State<WAnchor> {
     // 3. Gestures, no explicit label: keep the MergeSemantics path so the
     //    descendant Text/WText nodes collapse into this node and supply the
     //    name.
+    WindPerfCounters.recordWrapperEmission('MergeSemantics');
+    WindPerfCounters.recordWrapperEmission('Semantics');
     return MergeSemantics(
       child: Semantics(
         button: true,

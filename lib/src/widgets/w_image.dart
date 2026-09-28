@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// Signature for building a custom error widget.
 typedef ImageErrorBuilder = Widget Function(
@@ -105,6 +106,8 @@ class WImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WImage');
+
     // Parse styles from className
     final WindStyle styles = className != null
         ? WindParser.parse(className!, context, states: states)
@@ -147,11 +150,13 @@ class WImage extends StatelessWidget {
         (styles.decoration?.borderRadius as BorderRadius?) ?? BorderRadius.zero;
 
     if (styles.decoration != null && borderRadius != BorderRadius.zero) {
+      WindPerfCounters.recordWrapperEmission('ClipRRect');
       imageWidget = ClipRRect(borderRadius: borderRadius, child: imageWidget);
     }
 
     // Apply border
     if (styles.decoration != null) {
+      WindPerfCounters.recordWrapperEmission('Container');
       imageWidget = Container(
         decoration: styles.decoration,
         child: imageWidget,
@@ -160,6 +165,7 @@ class WImage extends StatelessWidget {
 
     // Apply aspect ratio (must be inside sized container)
     if (styles.aspectRatio != null) {
+      WindPerfCounters.recordWrapperEmission('AspectRatio');
       imageWidget = AspectRatio(
         aspectRatio: styles.aspectRatio!,
         child: imageWidget,
@@ -168,6 +174,7 @@ class WImage extends StatelessWidget {
 
     // Apply sizing (outermost wrapper to provide constraints)
     if (styles.width != null || styles.height != null) {
+      WindPerfCounters.recordWrapperEmission('SizedBox');
       imageWidget = SizedBox(
         width: styles.width,
         height: styles.height,
@@ -177,6 +184,7 @@ class WImage extends StatelessWidget {
 
     // Apply opacity
     if (styles.opacity != null) {
+      WindPerfCounters.recordWrapperEmission('Opacity');
       imageWidget = Opacity(opacity: styles.opacity!, child: imageWidget);
     }
 

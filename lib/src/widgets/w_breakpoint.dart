@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../parser/wind_context.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **Declarative Breakpoint-Keyed Builder**
 ///
@@ -89,6 +90,7 @@ class WBreakpoint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WBreakpoint');
     final windContext = WindContext.build(context);
     return _resolve(windContext)(context);
   }

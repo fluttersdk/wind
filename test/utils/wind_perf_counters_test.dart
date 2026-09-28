@@ -81,6 +81,12 @@ void main() {
       expect(WindPerfCounters.cacheHits, 0);
       expect(WindPerfCounters.cacheMisses, 0);
       expect(WindPerfCounters.cacheBypasses, 0);
+      expect(WindPerfCounters.widgetBuilds, isEmpty);
+      expect(WindPerfCounters.wrapperEmissions, isEmpty);
+      expect(
+        WindPerfCounters.inheritedReads.values.every((int v) => v == 0),
+        isTrue,
+      );
     });
 
     test('reset() zeroes the counters and leaves the session enabled', () {
@@ -90,6 +96,9 @@ void main() {
       WindPerfCounters.recordCacheBypass();
       WindPerfCounters.recordWDivBuild();
       WindPerfCounters.recordWTextBuild();
+      WindPerfCounters.recordWidgetBuild('WButton');
+      WindPerfCounters.recordWrapperEmission('Container');
+      WindPerfCounters.recordInheritedRead('windTheme');
 
       WindPerfCounters.reset();
 
@@ -98,11 +107,139 @@ void main() {
       expect(WindPerfCounters.cacheBypasses, 0);
       expect(WindPerfCounters.wDivBuilds, 0);
       expect(WindPerfCounters.wTextBuilds, 0);
+      expect(WindPerfCounters.widgetBuilds, isEmpty);
+      expect(WindPerfCounters.wrapperEmissions, isEmpty);
+      // The inherited-reads map keeps its four fixed keys, all zeroed, rather
+      // than being cleared: the resolver's `stats()` output always carries
+      // the same four keys whether or not a session has run yet.
+      expect(
+        WindPerfCounters.inheritedReads,
+        <String, int>{
+          'mediaQuerySize': 0,
+          'mediaQueryBrightness': 0,
+          'windTheme': 0,
+          'defaultTextStyle': 0,
+        },
+      );
       // A measurement session outlives a cache clear: clearCache() calls
       // reset(), and turning the flag off there would end the session that
       // asked for the numbers.
       expect(WindPerfCounters.enabled, isTrue);
     });
+
+    testWidgets(
+      'widgetBuilds and wrapperEmissions count a pumped WButton',
+      (tester) async {
+        WindPerfCounters.enabled = true;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              className: 'bg-blue-600',
+              child: const WText('x'),
+            ),
+          ),
+        );
+
+        // w_button.dart:184 (Container) and w_anchor.dart:336 (MouseRegion,
+        // unconditional) are the two cited emission sites.
+        expect(WindPerfCounters.widgetBuilds['WButton'], 1);
+        expect(
+          WindPerfCounters.wrapperEmissions['Container'],
+          greaterThanOrEqualTo(1),
+        );
+        expect(
+          WindPerfCounters.wrapperEmissions['MouseRegion'],
+          greaterThanOrEqualTo(1),
+        );
+      },
+    );
+
+    testWidgets(
+      'inheritedReads counts windTheme/mediaQueryBrightness on a pumped WInput',
+      (tester) async {
+        WindPerfCounters.enabled = true;
+
+        await tester.pumpWidget(wrapWithTheme(const WInput()));
+
+        // w_input.dart:679-681: WindTheme.maybeDataOf is always read; the
+        // ambient WindTheme supplies a brightness, so the MediaQuery fallback
+        // is not reached in this fixture (a WindTheme ancestor is present).
+        expect(
+          WindPerfCounters.inheritedReads['windTheme'],
+          greaterThanOrEqualTo(1),
+        );
+      },
+    );
+
+    testWidgets(
+      'inheritedReads counts defaultTextStyle/mediaQueryBrightness on a bare WText',
+      (tester) async {
+        WindPerfCounters.enabled = true;
+
+        // No Material ancestor and no explicit text color, so WText's
+        // fallback (w_text.dart:200-207) reads both. Mirrors the "bare
+        // context" fixture in test/widgets/w_text/baseline_test.dart.
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WindTheme(
+              data: WindThemeData(),
+              child: const WText('Latency'),
+            ),
+          ),
+        );
+
+        expect(
+          WindPerfCounters.inheritedReads['defaultTextStyle'],
+          greaterThanOrEqualTo(1),
+        );
+        expect(
+          WindPerfCounters.inheritedReads['mediaQueryBrightness'],
+          greaterThanOrEqualTo(1),
+        );
+      },
+    );
+
+    testWidgets(
+      'counting changes nothing emitted: identical find.byType inventory on and off',
+      (tester) async {
+        // A representative WDiv className set exercising the Container,
+        // Padding, Align, Expanded and DefaultTextStyle.merge branches of the
+        // composition pipeline (w_div.dart), so a counting call that ever
+        // added, removed or reordered a wrapper would show up as a differing
+        // widget-type inventory below.
+        Widget buildTree() => wrapWithTheme(
+              WDiv(
+                className: 'flex flex-col p-4 gap-2 items-center',
+                children: const [
+                  WDiv(
+                    className:
+                        'bg-blue-500 rounded-lg shadow-md m-2 flex-1 text-white',
+                    child: WText('Row 1', className: 'text-sm font-bold'),
+                  ),
+                  WDiv(
+                    className: 'w-1/2 self-center opacity-75',
+                    child: WText('Row 2'),
+                  ),
+                ],
+              ),
+            );
+
+        WindPerfCounters.enabled = false;
+        await tester.pumpWidget(buildTree());
+        final List<Type> typesOff =
+            tester.allWidgets.map((Widget w) => w.runtimeType).toList();
+
+        WindPerfCounters.enabled = true;
+        await tester.pumpWidget(buildTree());
+        final List<Type> typesOn =
+            tester.allWidgets.map((Widget w) => w.runtimeType).toList();
+
+        expect(typesOn, typesOff);
+      },
+    );
   });
 
   group('Wind.installPerfResolver()', () {
@@ -134,7 +271,9 @@ void main() {
       expect(WindDebugRegistry.currentPerf, isA<WindPerfResolverImpl>());
     });
 
-    testWidgets('stats() reports exactly the six pinned keys', (tester) async {
+    testWidgets('stats() reports exactly the nine pinned keys', (
+      tester,
+    ) async {
       WindPerfCounters.enabled = true;
       await tester.pumpWidget(
         wrapWithTheme(
@@ -159,6 +298,9 @@ void main() {
           'cacheSize',
           'wDivBuilds',
           'wTextBuilds',
+          'widgetBuilds',
+          'wrapperEmissions',
+          'inheritedReads',
         ],
       );
       expect(stats['wDivBuilds'], 1);
@@ -169,6 +311,17 @@ void main() {
       // that is worth asserting rather than assuming.
       expect(stats['cacheBypasses'], 0);
       expect(stats['cacheMisses'], greaterThanOrEqualTo(2));
+      expect((stats['widgetBuilds'] as Map)['WDiv'], 1);
+      expect((stats['widgetBuilds'] as Map)['WText'], 1);
+      expect(
+        (stats['inheritedReads'] as Map).keys.toSet(),
+        <String>{
+          'mediaQuerySize',
+          'mediaQueryBrightness',
+          'windTheme',
+          'defaultTextStyle',
+        },
+      );
     });
 
     testWidgets('a widget given an explicit style bypasses the cache', (

@@ -4,6 +4,7 @@ import 'w_anchor.dart';
 import 'w_div.dart';
 import 'w_icon.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 
@@ -91,6 +92,8 @@ class WCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WCheckbox');
+
     // A null onChanged means the checkbox is non-interactive: treat it exactly
     // like disabled == true so the disabled: prefix activates, no gesture is
     // attached, and Semantics reports the control as not enabled. WRadio and
@@ -129,6 +132,8 @@ class WCheckbox extends StatelessWidget {
     // row is a visible label, not a semantic one: the two stay separate nodes.
     // Callers who want one named node wrap the pair in `MergeSemantics`, which
     // folds this node into it and carries the label plus the checked state.
+    WindPerfCounters.recordWrapperEmission('Semantics');
+    WindPerfCounters.recordWrapperEmission('MergeSemantics');
     return Semantics(
       container: true,
       checked: value,

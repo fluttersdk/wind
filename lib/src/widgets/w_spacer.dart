@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **WSpacer - Lightweight Spacing Widget**
 ///
@@ -75,6 +76,9 @@ class WSpacer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WSpacer');
+    WindPerfCounters.recordWrapperEmission('SizedBox');
+
     // Early return for no className - render empty SizedBox
     if (className == null || className!.trim().isEmpty) {
       return const SizedBox();

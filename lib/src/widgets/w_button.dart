@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../state/wind_anchor_state_provider.dart';
+import '../utils/wind_perf_counters.dart';
 import 'w_anchor.dart';
 import 'w_div.dart';
 import 'w_text.dart';
@@ -134,6 +135,8 @@ class WButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WButton');
+
     // Determine if button is interactive
     final bool isInteractive = !isLoading && !disabled;
 
@@ -181,6 +184,8 @@ class WButton extends StatelessWidget {
           }
 
           // Wrap in styled container
+          WindPerfCounters.recordWrapperEmission('Container');
+          WindPerfCounters.recordWrapperEmission('DefaultTextStyle');
           Widget styledButton = Container(
             width: styles.widthFactor != null ? double.infinity : styles.width,
             height:
@@ -197,6 +202,7 @@ class WButton extends StatelessWidget {
 
           // Wrap with AbsorbPointer when not interactive
           if (!isInteractive) {
+            WindPerfCounters.recordWrapperEmission('AbsorbPointer');
             styledButton = AbsorbPointer(child: styledButton);
           }
 

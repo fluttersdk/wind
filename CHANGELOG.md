@@ -8,6 +8,11 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- **`WindPerfCounters` gains `widgetBuilds`, `wrapperEmissions` and `inheritedReads`.** The existing six counters (`cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds`, `wTextBuilds`) answered "how much did the style cache do" and "how many `WDiv`/`WText` builds ran", but nothing counted every OTHER W-widget's builds, the Flutter (or Wind-authored render-layer) wrapper widgets Wind inserts around content (`Container`, `Padding`, `MouseRegion`, `Semantics`, `DefaultTextStyle`, ...), or the four inherited-widget reads on the hot path (`mediaQuerySize`, `mediaQueryBrightness`, `windTheme`, `defaultTextStyle`). `widgetBuilds` and `wrapperEmissions` are `Map<String, int>` keyed by type name; `inheritedReads` is fixed to the four keys above. Every increment is one inline call next to the emission or the read it counts, behind the existing `enabled` flag, so a disabled counter still costs one bool check and nothing is added, removed or reordered in the widget tree. `Wind.installPerfResolver()` publishes all nine keys through `WindDebugRegistry.currentPerf?.stats()`. (`lib/src/utils/wind_perf_counters.dart`, `lib/src/wind_facade.dart`, `lib/src/widgets/*.dart`, `test/utils/wind_perf_counters_test.dart`, `doc/core-concepts/debugging.md`, `skills/wind-ui/`)
+- **`Wind.installDebugResolver()` / `Wind.installPerfResolver()` widen from `kDebugMode` to `!kReleaseMode`.** A profile build (`flutter run --profile`) now carries both resolvers, so a performance measurement session can run against a build that is actually representative of production timing; release still tree-shakes both. (`lib/src/wind_facade.dart`, `test/wind_facade_test.dart`)
+
 ---
 
 ## [1.7.0] - 2026-09-27

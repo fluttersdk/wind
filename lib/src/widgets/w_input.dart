@@ -9,6 +9,7 @@ import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../theme/wind_theme.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import 'w_keyboard_actions.dart';
 
 /// Input type enum for WInput widget
@@ -627,6 +628,8 @@ class _WInputState extends State<WInput>
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WInput');
+
     // Read once, here, rather than from inside the `_scrollPadding` getter.
     // Recording it there made a getter that MUTATES: any second read, a debug
     // print or a future caller, silently rearmed `_onCaretMoved`'s difference
@@ -676,9 +679,16 @@ class _WInputState extends State<WInput>
     // Prefer Wind's effective brightness (the source `dark:` classes resolve
     // against) so the default color matches the rendered background; fall back
     // to the platform brightness only when no WindTheme is present.
-    final Brightness brightness = WindTheme.maybeDataOf(context)?.brightness ??
-        MediaQuery.maybePlatformBrightnessOf(context) ??
-        Brightness.light;
+    final Brightness? windBrightness =
+        WindTheme.maybeDataOf(context)?.brightness;
+    WindPerfCounters.recordInheritedRead('windTheme');
+    Brightness? platformBrightness;
+    if (windBrightness == null) {
+      platformBrightness = MediaQuery.maybePlatformBrightnessOf(context);
+      WindPerfCounters.recordInheritedRead('mediaQueryBrightness');
+    }
+    final Brightness brightness =
+        windBrightness ?? platformBrightness ?? Brightness.light;
     final Color baselineColor = brightness == Brightness.dark
         ? const Color(0xFFFFFFFF)
         : const Color(0xFF000000);
@@ -851,6 +861,7 @@ class _WInputState extends State<WInput>
 
     // Wrap in the decorated box (className → BoxDecoration, same path WDiv
     // uses), recomputing on focus so the ring/border reacts to `_isFocused`.
+    WindPerfCounters.recordWrapperEmission('DecoratedBox');
     Widget result = DecoratedBox(
       decoration: _buildDecoration(styles),
       child: field,
@@ -866,6 +877,9 @@ class _WInputState extends State<WInput>
     // builder's own `onSingleTapUp`/`requestKeyboard`; `onUserTap` only fires
     // `widget.onTap` (see the builder subclass below).
     if (widget.enabled) {
+      // The concrete wrapper widget here is a framework-internal type
+      // returned by TextSelectionGestureDetectorBuilder.buildGestureDetector,
+      // not a stable public class Wind can name; left uncounted.
       result = _selectionGestureDetectorBuilder.buildGestureDetector(
         behavior: HitTestBehavior.translucent,
         child: result,
@@ -874,6 +888,7 @@ class _WInputState extends State<WInput>
       // Disabled: swallow all pointer events so the field cannot be tapped,
       // focused, or have its cursor placed, honoring the enabled: false
       // contract (the EditableText otherwise still reacts to taps on glyphs).
+      WindPerfCounters.recordWrapperEmission('IgnorePointer');
       result = IgnorePointer(child: result);
     }
 
@@ -888,6 +903,7 @@ class _WInputState extends State<WInput>
     // (a disabled field is read-only), so without this a screen reader could
     // not distinguish "disabled" from "read-only". The Material TextField in
     // 1.0.0 exposed this flag; the Material-free rewrite must keep parity.
+    WindPerfCounters.recordWrapperEmission('Semantics');
     result = Semantics(
       enabled: widget.enabled,
       label: widget.semanticLabel ?? widget.placeholder,
@@ -911,6 +927,7 @@ class _WInputState extends State<WInput>
       if (styles.widthFactor == 1.0) width = double.infinity;
       if (styles.heightFactor == 1.0) height = double.infinity;
 
+      WindPerfCounters.recordWrapperEmission('Container');
       result = Container(
         margin: styles.margin,
         width: width,
@@ -923,8 +940,10 @@ class _WInputState extends State<WInput>
     // Apply Flexible/Expanded wrapper if flex-auto or flex-1 is present
     // This allows WInput to properly expand in flex containers
     if (styles.flex != null) {
+      WindPerfCounters.recordWrapperEmission('Expanded');
       result = Expanded(flex: styles.flex!, child: result);
     } else if (styles.flexFit != null) {
+      WindPerfCounters.recordWrapperEmission('Flexible');
       result = Flexible(fit: styles.flexFit!, child: result);
     }
 
@@ -932,6 +951,7 @@ class _WInputState extends State<WInput>
     // ancestor supplies one, so bare usages outside MaterialApp/WidgetsApp do
     // not throw "No Directionality widget found" (mirrors WText:228-236).
     if (Directionality.maybeOf(context) == null) {
+      WindPerfCounters.recordWrapperEmission('Directionality');
       result = Directionality(textDirection: TextDirection.ltr, child: result);
     }
 

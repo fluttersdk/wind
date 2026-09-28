@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import 'w_anchor.dart';
 import 'w_div.dart';
 import 'w_text.dart';
@@ -125,6 +126,8 @@ class WTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WTabs');
+
     // 1. Parse panel className for debug: delegates the tab-level parse to each tab builder.
     final WindStyle panelStyles = panelClassName != null
         ? WindParser.parse(panelClassName!, context)
