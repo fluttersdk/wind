@@ -681,11 +681,13 @@ class _WInputState extends State<WInput>
     // to the platform brightness only when no WindTheme is present.
     final Brightness? windBrightness =
         WindTheme.maybeDataOf(context)?.brightness;
-    WindPerfCounters.recordInheritedRead('windTheme');
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.windTheme);
     Brightness? platformBrightness;
     if (windBrightness == null) {
       platformBrightness = MediaQuery.maybePlatformBrightnessOf(context);
-      WindPerfCounters.recordInheritedRead('mediaQueryBrightness');
+      WindPerfCounters.recordInheritedRead(
+        WindInheritedRead.mediaQueryBrightness,
+      );
     }
     final Brightness brightness =
         windBrightness ?? platformBrightness ?? Brightness.light;

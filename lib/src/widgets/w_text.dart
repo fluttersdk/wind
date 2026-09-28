@@ -200,11 +200,13 @@ class WText extends StatelessWidget {
     //      legible. Explicitly supplied colors always win.
     if (finalTextStyle.color == null) {
       final Color? ancestorColor = DefaultTextStyle.of(context).style.color;
-      WindPerfCounters.recordInheritedRead('defaultTextStyle');
+      WindPerfCounters.recordInheritedRead(WindInheritedRead.defaultTextStyle);
       if (ancestorColor == null) {
         final isDark =
             MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
-        WindPerfCounters.recordInheritedRead('mediaQueryBrightness');
+        WindPerfCounters.recordInheritedRead(
+          WindInheritedRead.mediaQueryBrightness,
+        );
         finalTextStyle = finalTextStyle.copyWith(
           color: isDark ? Colors.white : Colors.black,
         );

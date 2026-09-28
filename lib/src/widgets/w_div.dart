@@ -1300,7 +1300,8 @@ class WDiv extends StatelessWidget {
           availableWidth = constraints.maxWidth;
         } else {
           availableWidth = MediaQuery.of(context).size.width;
-          WindPerfCounters.recordInheritedRead('mediaQuerySize');
+          WindPerfCounters.recordInheritedRead(
+              WindInheritedRead.mediaQuerySize);
         }
         final itemWidth = (availableWidth - totalGapWidth) / cols;
 
@@ -1892,7 +1893,8 @@ class WDiv extends StatelessWidget {
           // whole subtree into a second layout pass. A consumer measured 1056
           // of them in one eight-scroll session against 258 widget builds.
           final double fallbackHeight = MediaQuery.of(context).size.height;
-          WindPerfCounters.recordInheritedRead('mediaQuerySize');
+          WindPerfCounters.recordInheritedRead(
+              WindInheritedRead.mediaQuerySize);
           logger.wrapWith("WindFullHeightBox", "h-full");
           WindPerfCounters.recordWrapperEmission('WindFullHeightBox');
           widgetToBuild = WindFullHeightBox(
@@ -1927,7 +1929,8 @@ class WDiv extends StatelessWidget {
           // Both axes, height full: the same render-layer box as the
           // height-only path, carrying the width factor too.
           final double fallbackHeight = MediaQuery.of(context).size.height;
-          WindPerfCounters.recordInheritedRead('mediaQuerySize');
+          WindPerfCounters.recordInheritedRead(
+              WindInheritedRead.mediaQuerySize);
           logger.wrapWith("WindFullHeightBox", "w+h-full");
           WindPerfCounters.recordWrapperEmission('WindFullHeightBox');
           widgetToBuild = WindFullHeightBox(

@@ -1,5 +1,24 @@
 import 'package:flutter/foundation.dart';
 
+/// The four inherited-widget reads [WindPerfCounters.recordInheritedRead]
+/// tracks. Backed by an enum rather than a free string so a call site cannot
+/// typo a key that would then silently sit outside the pinned four; `.name`
+/// is what gets written into [WindPerfCounters.inheritedReads], so the stats
+/// map keys are unchanged by this type.
+enum WindInheritedRead {
+  /// `MediaQuery.of(context).size`.
+  mediaQuerySize,
+
+  /// `MediaQuery.maybePlatformBrightnessOf(context)`.
+  mediaQueryBrightness,
+
+  /// `WindTheme.dataOf(context)` / `WindTheme.maybeDataOf(context)`.
+  windTheme,
+
+  /// `DefaultTextStyle.of(context)`.
+  defaultTextStyle,
+}
+
 /// Opt-in aggregate counters for Wind's hottest path.
 ///
 /// `WindParser.parse` runs on every build of every W-widget, so these counters
@@ -137,12 +156,11 @@ class WindPerfCounters {
     _wrapperEmissions[typeName] = (_wrapperEmissions[typeName] ?? 0) + 1;
   }
 
-  /// Records one read of the inherited widget named [key], one of
-  /// `'mediaQuerySize'`, `'mediaQueryBrightness'`, `'windTheme'`,
-  /// `'defaultTextStyle'`.
+  /// Records one read of the inherited widget [read].
   @internal
-  static void recordInheritedRead(String key) {
+  static void recordInheritedRead(WindInheritedRead read) {
     if (!enabled) return;
+    final String key = read.name;
     _inheritedReads[key] = (_inheritedReads[key] ?? 0) + 1;
   }
 

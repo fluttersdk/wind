@@ -5,6 +5,7 @@ import '../state/wind_anchor_state.dart';
 import '../state/wind_anchor_state_provider.dart';
 import '../theme/wind_theme.dart';
 import '../theme/wind_theme_data.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **The styling context context**
 ///
@@ -68,7 +69,9 @@ class WindContext {
 
   factory WindContext.build(BuildContext context, {Set<String>? states}) {
     final theme = WindTheme.dataOf(context);
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.windTheme);
     final size = MediaQuery.of(context).size;
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.mediaQuerySize);
     final screenWidth = size.width;
     final screenHeight = size.height;
 

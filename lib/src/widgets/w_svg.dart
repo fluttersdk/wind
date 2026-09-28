@@ -83,7 +83,7 @@ class WSvg extends StatelessWidget {
 
     // Get inherited text style from parent (like WIcon)
     final TextStyle inheritedStyle = DefaultTextStyle.of(context).style;
-    WindPerfCounters.recordInheritedRead('defaultTextStyle');
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.defaultTextStyle);
     final double? inheritedSize = inheritedStyle.fontSize;
     final Color? inheritedColor = inheritedStyle.color;
 

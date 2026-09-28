@@ -81,7 +81,7 @@ class WIcon extends StatelessWidget {
 
     // Get inherited text style from parent (e.g., from WDiv's DefaultTextStyle)
     final TextStyle inheritedStyle = DefaultTextStyle.of(context).style;
-    WindPerfCounters.recordInheritedRead('defaultTextStyle');
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.defaultTextStyle);
     final double? inheritedSize = inheritedStyle.fontSize;
     final Color? inheritedColor = inheritedStyle.color;
 

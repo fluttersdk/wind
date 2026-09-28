@@ -98,7 +98,7 @@ void main() {
       WindPerfCounters.recordWTextBuild();
       WindPerfCounters.recordWidgetBuild('WButton');
       WindPerfCounters.recordWrapperEmission('Container');
-      WindPerfCounters.recordInheritedRead('windTheme');
+      WindPerfCounters.recordInheritedRead(WindInheritedRead.windTheme);
 
       WindPerfCounters.reset();
 
@@ -166,6 +166,28 @@ void main() {
         // w_input.dart:679-681: WindTheme.maybeDataOf is always read; the
         // ambient WindTheme supplies a brightness, so the MediaQuery fallback
         // is not reached in this fixture (a WindTheme ancestor is present).
+        expect(
+          WindPerfCounters.inheritedReads['windTheme'],
+          greaterThanOrEqualTo(1),
+        );
+      },
+    );
+
+    testWidgets(
+      'inheritedReads counts mediaQuerySize/windTheme on a plain WDiv build',
+      (tester) async {
+        WindPerfCounters.enabled = true;
+
+        // wind_context.dart:70-71: WindContext.build reads WindTheme.dataOf
+        // and MediaQuery.of(context).size on every WindParser.parse, which
+        // runs for every WDiv/WText build, not only WInput and the h-full
+        // paths that were the only recorders before this fix.
+        await tester.pumpWidget(wrapWithTheme(const WDiv(className: 'p-2')));
+
+        expect(
+          WindPerfCounters.inheritedReads['mediaQuerySize'],
+          greaterThanOrEqualTo(1),
+        );
         expect(
           WindPerfCounters.inheritedReads['windTheme'],
           greaterThanOrEqualTo(1),
