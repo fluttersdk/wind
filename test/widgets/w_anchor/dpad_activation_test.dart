@@ -557,4 +557,83 @@ void main() {
       expect(WindAnchorStateProvider.of(inner())?.hasPrimaryFocus, isFalse);
     });
   });
+
+  group('styling wrappers without focus: classes', () {
+    for (final String className in <String>[
+      'p-2 hover:bg-gray-100',
+      'p-2 active:bg-gray-200',
+    ]) {
+      testWidgets('"$className" is not a traversal stop and has no Focus', (
+        tester,
+      ) async {
+        // The one deliberate change to what a keyboard reaches: a div that only
+        // styles hover or press cannot show focus, so a Tab or remote stop on
+        // it was a press that lit nothing.
+        await pump(
+          tester,
+          WDiv(className: className, child: const WText('Row')),
+        );
+
+        expect(traversalStops(tester), isEmpty);
+        expect(
+          find.descendant(
+            of: find.byType(WAnchor),
+            matching: find.byType(Focus),
+          ),
+          findsNothing,
+        );
+      });
+    }
+
+    testWidgets('a hover-only div still reports hover', (tester) async {
+      await pump(
+        tester,
+        const WDiv(className: 'p-2 hover:bg-gray-100', child: WText('Row')),
+      );
+
+      final TestGesture gesture = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+      );
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: Offset.zero);
+      await gesture.moveTo(tester.getCenter(find.text('Row')));
+      await tester.pump();
+
+      expect(
+        WindAnchorStateProvider.of(tester.element(find.text('Row')))
+            ?.isHovering,
+        isTrue,
+      );
+    });
+
+    testWidgets('focus-within still reaches a ring through a hover-only div', (
+      tester,
+    ) async {
+      // The hover-only div in the middle no longer carries a focus node, so
+      // the ring has to light through its OWN node, whose `hasFocus` covers
+      // every descendant, the text field two levels down included.
+      const Key ringKey = ValueKey<String>('ring');
+      await pump(
+        tester,
+        const WDiv(
+          key: ringKey,
+          className: 'p-2 focus:ring-2 focus:ring-blue-500',
+          child: WDiv(
+            className: 'p-2 hover:bg-gray-100',
+            child: WInput(placeholder: 'Search'),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(WInput));
+      await tester.pump();
+
+      final BuildContext ring = tester.element(
+        find
+            .descendant(of: find.byKey(ringKey), matching: find.byType(Builder))
+            .first,
+      );
+      expect(WindAnchorStateProvider.of(ring)?.isFocused, isTrue);
+    });
+  });
 }

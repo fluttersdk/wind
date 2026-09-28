@@ -56,6 +56,7 @@ const WAnchor({
   Set<String>? states,
   MouseCursor? mouseCursor,
   String? semanticLabel,
+  bool trackFocus = true,
 })
 ```
 
@@ -71,6 +72,7 @@ const WAnchor({
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., `{'active'}`). |
 | `mouseCursor` | `MouseCursor?` | `null` | Custom cursor. Defaults to click when interactive. |
 | `semanticLabel` | `String?` | `null` | Accessible name for icon-only controls. When set, excludes the child subtree from semantics so the label overrides any child text; prefer it for icon-only controls rather than controls that already expose readable text. |
+| `trackFocus` | `bool` | `true` | Whether a gestureless anchor installs a focus node. `WDiv` passes `false` when its className has no `focus:` class. Ignored when the anchor has a gesture, which always keeps its node. |
 
 ## Layout Modes
 
@@ -139,6 +141,8 @@ WAnchor(
   ),
 )
 ```
+
+A `WDiv` whose only state classes are `hover:` or `active:` carries no focus node at all (its wrapper gets `trackFocus: false`): it cannot draw focus, so a stop on it was a key press that lit nothing. Hover, press and the primary focus chained down from an anchor above it still pass through.
 
 Two shapes are unaffected. A `WDiv` carrying `focus:` with no anchor above it keeps its own focus node, because that is how a consumer styles a custom control. And a focusable descendant still lights the wrapper's ring: `FocusNode.hasFocus` covers descendants, so a `WInput` inside a ring-styled `WDiv` draws the ring around the field the user is typing in.
 

@@ -70,7 +70,11 @@ class WindContext {
   factory WindContext.build(BuildContext context, {Set<String>? states}) {
     final theme = WindTheme.dataOf(context);
     WindPerfCounters.recordInheritedRead(WindInheritedRead.windTheme);
-    final size = MediaQuery.of(context).size;
+    // The size aspect only: breakpoints read the width and `w-screen` /
+    // `h-screen` read both axes, but nothing here reads the rest of
+    // MediaQueryData. Depending on all of it rebuilt every styled widget on
+    // each frame of a keyboard inset animation.
+    final Size size = MediaQuery.sizeOf(context);
     WindPerfCounters.recordInheritedRead(WindInheritedRead.mediaQuerySize);
     final screenWidth = size.width;
     final screenHeight = size.height;

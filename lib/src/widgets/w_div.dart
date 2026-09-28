@@ -148,6 +148,7 @@ class WDiv extends StatelessWidget {
     if (isInteractive) {
       return WAnchor(
         isDisabled: false,
+        trackFocus: className!.contains('focus:'),
         child: Builder(builder: (innerContext) => _buildImpl(innerContext)),
       );
     }
@@ -1299,7 +1300,7 @@ class WDiv extends StatelessWidget {
         if (constraints.maxWidth.isFinite) {
           availableWidth = constraints.maxWidth;
         } else {
-          availableWidth = MediaQuery.of(context).size.width;
+          availableWidth = MediaQuery.sizeOf(context).width;
           WindPerfCounters.recordInheritedRead(
               WindInheritedRead.mediaQuerySize);
         }
@@ -1414,6 +1415,90 @@ class WDiv extends StatelessWidget {
       crossAxisAlignment: styles.crossAxisAlignment ?? CrossAxisAlignment.start,
       children: gappedChildren,
     );
+  }
+
+  /// The box `Container` would build, composed from its primitives directly.
+  ///
+  /// `Container` is a `StatelessWidget` whose `build` only stacks these same
+  /// primitives, so on the hottest path in Wind it cost one extra element per
+  /// decorated div. The order and the three behaviours below follow
+  /// `Container.build` (`widgets/container.dart`) so the geometry is
+  /// identical; `test/widgets/w_div/sizing_test.dart` pins it.
+  ///
+  /// 1. A null child under loose constraints expands to fill a bounded
+  ///    parent and collapses on an unbounded axis (`LimitedBox`).
+  /// 2. The padding is inset by the decoration's own padding, the border
+  ///    widths, so content never sits under the stroke.
+  /// 3. [width] and [height] tighten [constraints] rather than replace them,
+  ///    which is what lets `w-full` be clamped by `max-w-*`.
+  ///
+  /// A zero padding is skipped where `Container` would emit it: it neither
+  /// moves nor resizes anything.
+  Widget _buildBox({
+    required Widget? child,
+    required double? width,
+    required double? height,
+    required BoxConstraints? constraints,
+    required BoxDecoration? decoration,
+    required EdgeInsetsGeometry? padding,
+    required AlignmentGeometry? alignment,
+    required WindLogger logger,
+  }) {
+    final BoxConstraints? effectiveConstraints =
+        (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+                BoxConstraints.tightFor(width: width, height: height)
+            : constraints;
+
+    Widget? current = child;
+    if (child == null &&
+        (effectiveConstraints == null || !effectiveConstraints.isTight)) {
+      WindPerfCounters.recordWrapperEmission('LimitedBox');
+      WindPerfCounters.recordWrapperEmission('ConstrainedBox');
+      current = LimitedBox(
+        maxWidth: 0.0,
+        maxHeight: 0.0,
+        child: ConstrainedBox(constraints: const BoxConstraints.expand()),
+      );
+    } else if (alignment != null) {
+      logger.wrapWith("Align", "$alignment");
+      WindPerfCounters.recordWrapperEmission('Align');
+      current = Align(alignment: alignment, child: current);
+    }
+
+    final EdgeInsetsGeometry? effectivePadding = switch ((
+      padding,
+      decoration?.padding,
+    )) {
+      (null, final EdgeInsetsGeometry? inset) => inset,
+      (final EdgeInsetsGeometry? own, null) => own,
+      (final EdgeInsetsGeometry own, final EdgeInsetsGeometry inset) =>
+        own.add(inset),
+    };
+    if (effectivePadding != null && effectivePadding != EdgeInsets.zero) {
+      logger.wrapWith("Padding", "$effectivePadding");
+      WindPerfCounters.recordWrapperEmission('Padding');
+      current = Padding(padding: effectivePadding, child: current);
+    }
+
+    if (decoration != null) {
+      logger.wrapWith("DecoratedBox", "decoration/shadow");
+      WindPerfCounters.recordWrapperEmission('DecoratedBox');
+      current = DecoratedBox(decoration: decoration, child: current);
+    }
+
+    if (effectiveConstraints != null) {
+      logger.wrapWith("ConstrainedBox", "$effectiveConstraints");
+      WindPerfCounters.recordWrapperEmission('ConstrainedBox');
+      current = ConstrainedBox(
+        constraints: effectiveConstraints,
+        child: current,
+      );
+    }
+
+    // Non-null by construction: a null child without a tight constraint took
+    // the `LimitedBox`, and a tight constraint is non-null and wrapped above.
+    return current!;
   }
 
   /// **The Composition Pipeline**
@@ -1633,16 +1718,15 @@ class WDiv extends StatelessWidget {
           child: widgetToBuild,
         );
       } else {
-        logger.wrapWith("Container", "decoration/constraints/shadow");
-        WindPerfCounters.recordWrapperEmission('Container');
-        widgetToBuild = Container(
+        widgetToBuild = _buildBox(
+          child: widgetToBuild,
           width: wantFullWidth ? double.infinity : null,
           height: wantFullHeight ? double.infinity : null,
           constraints: innerConstraints,
           decoration: finalDecoration,
           padding: containerPadding,
           alignment: containerAlignment,
-          child: widgetToBuild,
+          logger: logger,
         );
       }
     }
@@ -1892,7 +1976,7 @@ class WDiv extends StatelessWidget {
           // height bounded"), and asking it with a LayoutBuilder defers this
           // whole subtree into a second layout pass. A consumer measured 1056
           // of them in one eight-scroll session against 258 widget builds.
-          final double fallbackHeight = MediaQuery.of(context).size.height;
+          final double fallbackHeight = MediaQuery.sizeOf(context).height;
           WindPerfCounters.recordInheritedRead(
               WindInheritedRead.mediaQuerySize);
           logger.wrapWith("WindFullHeightBox", "h-full");
@@ -1928,7 +2012,7 @@ class WDiv extends StatelessWidget {
         if (isFullHeight) {
           // Both axes, height full: the same render-layer box as the
           // height-only path, carrying the width factor too.
-          final double fallbackHeight = MediaQuery.of(context).size.height;
+          final double fallbackHeight = MediaQuery.sizeOf(context).height;
           WindPerfCounters.recordInheritedRead(
               WindInheritedRead.mediaQuerySize);
           logger.wrapWith("WindFullHeightBox", "w+h-full");

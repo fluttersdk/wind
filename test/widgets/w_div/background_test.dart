@@ -6,6 +6,9 @@ void main() {
   group('Background Parsing Tests', () {
     setUp(WindParser.clearCache);
 
+    // WDiv emits its decoration on a DecoratedBox since the box model was
+    // rebuilt from primitives; there is no Container to read it from.
+
     testWidgets('a later bg-transparent clears an earlier fill', (
       tester,
     ) async {
@@ -24,8 +27,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.color, const Color(0x00000000));
     });
 
@@ -42,8 +45,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.color!.a, closeTo(0.5, 0.01));
     });
 
@@ -60,8 +63,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.color!.a, closeTo(0.2, 0.01));
     });
 
@@ -78,8 +81,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.gradient, isA<LinearGradient>());
       final gradient = decoration.gradient as LinearGradient;
       expect(gradient.begin, Alignment.centerLeft);
@@ -101,8 +104,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       final gradient = decoration.gradient as LinearGradient;
       expect(gradient.colors.length, 3);
     });

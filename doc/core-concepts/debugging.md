@@ -221,11 +221,11 @@ WindPerfCounters.enabled = true;
 print(WindPerfCounters.cacheHits);          // and cacheMisses, cacheBypasses
 print(WindPerfCounters.wDivBuilds);         // and wTextBuilds
 print(WindPerfCounters.widgetBuilds);       // {'WButton': 3, 'WDiv': 12, ...}
-print(WindPerfCounters.wrapperEmissions);   // {'Container': 5, 'MouseRegion': 2, ...}
+print(WindPerfCounters.wrapperEmissions);   // {'DecoratedBox': 5, 'MouseRegion': 2, ...}
 print(WindPerfCounters.inheritedReads);     // mediaQuerySize, mediaQueryBrightness, windTheme, defaultTextStyle
 ```
 
-`widgetBuilds` counts every W-widget with a build method, by its type name (`'WButton'`, `'WDiv'`, ...); `wDivBuilds`/`wTextBuilds` stay as dedicated counters alongside it rather than being folded in, since they are the pinned six-key contract's own fields. `wrapperEmissions` counts the Flutter (or Wind-authored render-layer) wrapper widget Wind inserts at each composition-pipeline branch (`Container`, `Padding`, `MouseRegion`, `Semantics`, `DefaultTextStyle`, ...), one inline call beside the construction it never changes. `inheritedReads` is fixed to four keys: `mediaQuerySize` (a `MediaQuery.of(context).size` read), `mediaQueryBrightness` (`MediaQuery.maybePlatformBrightnessOf`), `windTheme` (`WindTheme.maybeDataOf`), `defaultTextStyle` (`DefaultTextStyle.of`).
+`widgetBuilds` counts every W-widget with a build method, by its type name (`'WButton'`, `'WDiv'`, ...); `wDivBuilds`/`wTextBuilds` stay as dedicated counters alongside it rather than being folded in, since they are the pinned six-key contract's own fields. `wrapperEmissions` counts the Flutter (or Wind-authored render-layer) wrapper widget Wind inserts at each composition-pipeline branch (`DecoratedBox`, `ConstrainedBox`, `Padding`, `MouseRegion`, `Semantics`, `DefaultTextStyle`, ...), one inline call beside the construction it never changes. `inheritedReads` is fixed to four keys: `mediaQuerySize` (a `MediaQuery.sizeOf(context)` read, which depends on the size aspect only), `mediaQueryBrightness` (`MediaQuery.maybePlatformBrightnessOf`), `windTheme` (`WindTheme.maybeDataOf`), `defaultTextStyle` (`DefaultTextStyle.of`).
 
 `WindParser.clearCache()` resets the counters as well as the cache, so a hit rate is always reported against the cache it was measured on. That is also why a theme change mid-measurement zeroes them.
 

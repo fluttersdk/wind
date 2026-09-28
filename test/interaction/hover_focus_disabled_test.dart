@@ -15,7 +15,7 @@ Widget wrapWithTheme(Widget child) {
 }
 
 /// Reads the resolved background color from the first [DecoratedBox] beneath
-/// [finder]. WDiv emits a Container (a DecoratedBox under the hood) when a
+/// [finder]. WDiv emits a DecoratedBox when a
 /// background color is resolved.
 Color? resolvedBackgroundColor(WidgetTester tester, Finder finder) {
   final decoratedBoxes = tester.widgetList<DecoratedBox>(

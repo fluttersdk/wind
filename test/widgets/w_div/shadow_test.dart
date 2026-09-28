@@ -17,21 +17,21 @@ void main() {
         ),
       );
 
-      final containerFinder = find.byType(Container);
+      final containerFinder = find.byType(DecoratedBox);
       // WDiv might create multiple containers (one for decoration).
       // We look for the one with boxShadow.
       final containerWithShadow = containerFinder.evaluate().firstWhere((
         element,
       ) {
-        final widget = element.widget as Container;
+        final widget = element.widget as DecoratedBox;
         final decoration = widget.decoration;
         if (decoration is BoxDecoration) {
           return decoration.boxShadow != null;
         }
         return false;
-      }, orElse: () => throw Exception('Container with shadow not found'));
+      }, orElse: () => throw Exception('DecoratedBox with shadow not found'));
 
-      final container = containerWithShadow.widget as Container;
+      final container = containerWithShadow.widget as DecoratedBox;
       final decoration = container.decoration as BoxDecoration;
 
       expect(decoration.boxShadow, isNotNull);
@@ -52,19 +52,19 @@ void main() {
         ),
       );
 
-      final containerFinder = find.byType(Container);
+      final containerFinder = find.byType(DecoratedBox);
       final containerWithShadow = containerFinder.evaluate().firstWhere((
         element,
       ) {
-        final widget = element.widget as Container;
+        final widget = element.widget as DecoratedBox;
         final decoration = widget.decoration;
         if (decoration is BoxDecoration) {
           return decoration.boxShadow != null;
         }
         return false;
-      }, orElse: () => throw Exception('Container with shadow not found'));
+      }, orElse: () => throw Exception('DecoratedBox with shadow not found'));
 
-      final container = containerWithShadow.widget as Container;
+      final container = containerWithShadow.widget as DecoratedBox;
       final decoration = container.decoration as BoxDecoration;
 
       expect(decoration.boxShadow, isNotNull);
@@ -94,19 +94,19 @@ void main() {
         ),
       );
 
-      final containerFinder = find.byType(Container);
+      final containerFinder = find.byType(DecoratedBox);
       final containerWithShadow = containerFinder.evaluate().firstWhere((
         element,
       ) {
-        final widget = element.widget as Container;
+        final widget = element.widget as DecoratedBox;
         final decoration = widget.decoration;
         if (decoration is BoxDecoration) {
           return decoration.boxShadow != null;
         }
         return false;
-      }, orElse: () => throw Exception('Container with shadow not found'));
+      }, orElse: () => throw Exception('DecoratedBox with shadow not found'));
 
-      final container = containerWithShadow.widget as Container;
+      final container = containerWithShadow.widget as DecoratedBox;
       final decoration = container.decoration as BoxDecoration;
 
       expect(decoration.boxShadow, isNotNull);

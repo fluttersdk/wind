@@ -6,7 +6,8 @@ import 'package:flutter/foundation.dart';
 /// is what gets written into [WindPerfCounters.inheritedReads], so the stats
 /// map keys are unchanged by this type.
 enum WindInheritedRead {
-  /// `MediaQuery.of(context).size`.
+  /// `MediaQuery.sizeOf(context)`: the size aspect only, so a keyboard inset
+  /// does not rebuild the reader.
   mediaQuerySize,
 
   /// `MediaQuery.maybePlatformBrightnessOf(context)`.

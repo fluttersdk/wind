@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttersdk_wind/fluttersdk_wind.dart' show WDiv, WindParser;
+import 'package:fluttersdk_wind/src/utils/wind_perf_counters.dart';
 import 'package:fluttersdk_wind/src/parser/wind_context.dart';
 import 'package:fluttersdk_wind/src/state/wind_anchor_state.dart';
 import 'package:fluttersdk_wind/src/state/wind_anchor_state_provider.dart';
@@ -294,6 +296,67 @@ void main() {
         final context2 = context1.copyWith(theme: theme2);
 
         expect(context1.cacheKey('p-4'), isNot(context2.cacheKey('p-4')));
+      });
+    });
+
+    group('MediaQuery dependency', () {
+      setUp(() {
+        WindParser.clearCache();
+        WindPerfCounters.enabled = true;
+      });
+
+      tearDown(() {
+        WindPerfCounters.enabled = false;
+        WindParser.clearCache();
+      });
+
+      Widget tree(MediaQueryData data) {
+        return MediaQuery(
+          data: data,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: WindTheme(
+              data: testTheme,
+              child: const WDiv(
+                className: 'p-2',
+                child: SizedBox(width: 10, height: 10),
+              ),
+            ),
+          ),
+        );
+      }
+
+      testWidgets('a keyboard inset does not rebuild a plain WDiv', (
+        tester,
+      ) async {
+        // The context only needs the screen size (breakpoints, `w-screen`,
+        // `h-screen`), so it subscribes to that aspect alone. Subscribing to
+        // the whole MediaQuery rebuilt every styled widget on each frame of
+        // a keyboard animation.
+        const MediaQueryData closed = MediaQueryData(size: Size(390, 800));
+        await tester.pumpWidget(tree(closed));
+        final int builds = WindPerfCounters.wDivBuilds;
+
+        await tester.pumpWidget(
+          tree(
+            closed.copyWith(viewInsets: const EdgeInsets.only(bottom: 300)),
+          ),
+        );
+
+        expect(WindPerfCounters.wDivBuilds, builds);
+      });
+
+      testWidgets('a size change still rebuilds a plain WDiv', (tester) async {
+        await tester.pumpWidget(
+          tree(const MediaQueryData(size: Size(390, 800))),
+        );
+        final int builds = WindPerfCounters.wDivBuilds;
+
+        await tester.pumpWidget(
+          tree(const MediaQueryData(size: Size(1024, 800))),
+        );
+
+        expect(WindPerfCounters.wDivBuilds, builds + 1);
       });
     });
   });

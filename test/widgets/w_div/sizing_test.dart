@@ -63,6 +63,137 @@ void main() {
     });
   });
 
+  // Pinned against the geometry `Container` produced before the box model was
+  // rebuilt from primitives. Each case exercises one of the three behaviours
+  // that rebuild has to reproduce: a childless box expanding through
+  // `LimitedBox`, padding inset by the border widths, and `width`/`height`
+  // tightening the constraints.
+  group('Box model geometry', () {
+    Future<void> pumpInColumn(WidgetTester tester, Widget child) {
+      return tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Scaffold(
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[child],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Future<void> pumpCentered(WidgetTester tester, Widget child) {
+      return tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Center(child: child),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('an empty divider fills the cross axis of a start column', (
+      tester,
+    ) async {
+      await pumpInColumn(
+        tester,
+        const WDiv(className: 'h-[1px] bg-gray-200'),
+      );
+
+      expect(tester.getSize(find.byType(WDiv)), const Size(800, 1));
+    });
+
+    testWidgets('an empty box with no height collapses in a start column', (
+      tester,
+    ) async {
+      // `h-px` is not a sizing token, so no height reaches the box. The
+      // childless box then expands across the bounded width and collapses on
+      // the unbounded height through `LimitedBox`.
+      await pumpInColumn(
+        tester,
+        const WDiv(className: 'h-px bg-gray-200'),
+      );
+
+      expect(tester.getSize(find.byType(WDiv)), const Size(800, 0));
+    });
+
+    testWidgets('padding sits inside the border of a rounded box', (
+      tester,
+    ) async {
+      const Key childKey = ValueKey<String>('child');
+      await pumpCentered(
+        tester,
+        const WDiv(
+          className: 'border-2 rounded-lg p-4 bg-white',
+          child: SizedBox(key: childKey, width: 20, height: 10),
+        ),
+      );
+
+      final Finder box = find.byType(WDiv);
+      expect(tester.getSize(box), const Size(56, 46));
+      expect(
+        tester.getTopLeft(find.byKey(childKey)) - tester.getTopLeft(box),
+        const Offset(18, 18),
+      );
+    });
+
+    testWidgets('w-full stretches a decorated box across the column', (
+      tester,
+    ) async {
+      await pumpInColumn(
+        tester,
+        const WDiv(
+          className: 'w-full bg-white p-2',
+          child: SizedBox(width: 10, height: 10),
+        ),
+      );
+
+      expect(tester.getSize(find.byType(WDiv)), const Size(800, 26));
+    });
+
+    testWidgets('w-full is clamped by max-w-* when tightened', (tester) async {
+      await pumpInColumn(
+        tester,
+        const WDiv(
+          className: 'w-full max-w-sm bg-white',
+          child: SizedBox(width: 10, height: 10),
+        ),
+      );
+
+      expect(tester.getSize(find.byType(WDiv)), const Size(384, 10));
+    });
+
+    testWidgets('an aligned box positions its child inside a fixed size', (
+      tester,
+    ) async {
+      const Key childKey = ValueKey<String>('child');
+      await pumpCentered(
+        tester,
+        const WDiv(
+          className: 'self-center w-40 h-20 bg-white',
+          child: SizedBox(key: childKey, width: 10, height: 10),
+        ),
+      );
+
+      // The outer `Align` for `self-center` fills the screen; the decorated
+      // box inside it keeps its fixed size and centres the child.
+      final Finder decorated = find
+          .descendant(
+            of: find.byType(WDiv),
+            matching: find.byType(DecoratedBox),
+          )
+          .first;
+      expect(tester.getSize(find.byType(WDiv)), const Size(800, 600));
+      expect(tester.getSize(decorated), const Size(160, 80));
+      expect(tester.getTopLeft(decorated), const Offset(320, 260));
+      expect(tester.getTopLeft(find.byKey(childKey)), const Offset(395, 295));
+    });
+  });
+
   group('Sizing Parsing Tests', () {
     testWidgets('Parsing width/height numeric values correctly (using theme)', (
       tester,
@@ -79,13 +210,18 @@ void main() {
       // w-10 -> 10 * 4 = 40.0
       // h-20 -> 20 * 4 = 80.0
 
-      final containerFinder = find.byType(Container);
-      expect(containerFinder, findsOneWidget);
-      final Container container = tester.widget(containerFinder);
-      expect(container.constraints!.minWidth, 40.0);
-      expect(container.constraints!.maxWidth, 40.0);
-      expect(container.constraints!.minHeight, 80.0);
-      expect(container.constraints!.maxHeight, 80.0);
+      // The box carries its constraints on a ConstrainedBox since it was
+      // rebuilt from primitives; there is no Container to read them from.
+      final boxFinder = find.descendant(
+        of: find.byType(WDiv),
+        matching: find.byType(ConstrainedBox),
+      );
+      expect(boxFinder, findsOneWidget);
+      final ConstrainedBox box = tester.widget(boxFinder);
+      expect(box.constraints.minWidth, 40.0);
+      expect(box.constraints.maxWidth, 40.0);
+      expect(box.constraints.minHeight, 80.0);
+      expect(box.constraints.maxHeight, 80.0);
     });
 
     testWidgets('Parsing fractions', (tester) async {

@@ -157,6 +157,84 @@ void main() {
     );
 
     testWidgets(
+      'a decorated WDiv counts its box primitives, not a Container',
+      (tester) async {
+        WindPerfCounters.enabled = true;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDiv(
+              className: 'w-20 p-2 bg-white border rounded-lg',
+              child: WText('Box'),
+            ),
+          ),
+        );
+
+        final Map<String, int> emitted = WindPerfCounters.wrapperEmissions;
+        expect(emitted['Container'], isNull);
+        expect(emitted['DecoratedBox'], 1);
+        expect(emitted['Padding'], 1);
+        expect(emitted['ConstrainedBox'], 1);
+      },
+    );
+
+    testWidgets(
+      'a transitioned WDiv still counts one AnimatedContainer',
+      (tester) async {
+        WindPerfCounters.enabled = true;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDiv(
+              className: 'p-2 bg-white duration-300',
+              child: WText('Box'),
+            ),
+          ),
+        );
+
+        expect(WindPerfCounters.wrapperEmissions['AnimatedContainer'], 1);
+        expect(WindPerfCounters.wrapperEmissions['DecoratedBox'], isNull);
+      },
+    );
+
+    testWidgets(
+      'a hover-only WDiv counts no Focus, a focus: WDiv counts one',
+      (tester) async {
+        WindPerfCounters.enabled = true;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDiv(className: 'hover:bg-gray-100', child: WText('Row')),
+          ),
+        );
+        expect(WindPerfCounters.wrapperEmissions['Focus'], isNull);
+        expect(WindPerfCounters.wrapperEmissions['MouseRegion'], 1);
+        expect(WindPerfCounters.wrapperEmissions['WindAnchorStateProvider'], 1);
+
+        WindPerfCounters.reset();
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDiv(className: 'focus:ring-2', child: WText('Row')),
+          ),
+        );
+        expect(WindPerfCounters.wrapperEmissions['Focus'], 1);
+      },
+    );
+
+    testWidgets(
+      'a WText with its own colour reads no DefaultTextStyle',
+      (tester) async {
+        WindPerfCounters.enabled = true;
+
+        await tester.pumpWidget(
+          wrapWithTheme(const WText('Latency', className: 'text-gray-900')),
+        );
+
+        expect(WindPerfCounters.inheritedReads['defaultTextStyle'], 0);
+      },
+    );
+
+    testWidgets(
       'inheritedReads counts windTheme/mediaQueryBrightness on a pumped WInput',
       (tester) async {
         WindPerfCounters.enabled = true;

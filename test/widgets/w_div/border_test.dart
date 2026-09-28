@@ -4,6 +4,8 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 void main() {
   group('WDiv Border Feature Tests', () {
+    // WDiv emits its decoration on a DecoratedBox since the box model was
+    // rebuilt from primitives; there is no Container to read it from.
     testWidgets('applies border-radius via rounded-lg class', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -14,9 +16,9 @@ void main() {
         ),
       );
 
-      // Find the Container that has the decoration
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration?;
+      // Find the box that carries the decoration
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration?;
 
       expect(decoration, isNotNull);
       expect(decoration!.borderRadius, BorderRadius.circular(8.0));
@@ -32,8 +34,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration?;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration?;
 
       expect(decoration, isNotNull);
       expect(decoration!.border, isNotNull);
@@ -54,8 +56,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration?;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration?;
 
       expect(decoration, isNotNull);
       expect(decoration!.border, isNotNull);
@@ -76,8 +78,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration?;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration?;
 
       expect(decoration, isNotNull);
 
@@ -109,8 +111,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration?;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration?;
 
       expect(decoration, isNotNull);
       // Custom theme merge adds value but doesn't override existing
@@ -132,8 +134,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration?;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration?;
 
       expect(decoration, isNotNull);
       final border = decoration!.border as Border;
@@ -150,8 +152,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration?;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration?;
 
       expect(decoration, isNotNull);
       expect(decoration!.borderRadius, BorderRadius.circular(9999.0));
@@ -169,8 +171,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration?;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration?;
 
       expect(decoration, isNotNull);
       final border = decoration!.border as Border;

@@ -130,13 +130,13 @@ Output (sample):
 ```
 [Wind] WDiv:
   className: 'flex flex-col gap-4 p-6 bg-white dark:bg-gray-800'
-  composition: Container(decoration) → Padding(EdgeInsets.all(24)) → Column(crossAxisAlignment: start, mainAxisSize: max, children: [...])
+  composition: DecoratedBox(decoration) → Padding(EdgeInsets.all(24)) → Column(crossAxisAlignment: start, mainAxisSize: max, children: [...])
   final style: WindStyle(displayType: flex, flexDirection: vertical, gapY: 16, padding: EdgeInsets.all(24), color: 0xFFFFFFFF, ...)
   build: 142µs
 ```
 
 What it shows:
-1. **Composition tree**: pseudo-Dart pseudo-code of the widget hierarchy Wind constructs (Container → Padding → Column / Row / etc.).
+1. **Composition tree**: pseudo-Dart pseudo-code of the widget hierarchy Wind constructs (DecoratedBox → Padding → Column / Row / etc.).
 2. **Final WindStyle**: the immutable value object after all parsers have run.
 3. **Build time**: microseconds from className-receive to widget-return.
 
@@ -235,4 +235,4 @@ A bypass is a property of a caller writing `style:`, NOT of using `WDiv` / `WTex
 
 `WindParser.clearCache()` resets the counters too, which is why a theme change mid-measurement zeroes them.
 
-`Wind.installPerfResolver()` publishes nine keys through `WindDebugRegistry.currentPerf?.stats()`: the six `int` counters above plus three `Map<String, int>` counters — `widgetBuilds` (every W-widget with a build method, by type name: `'WButton'`, `'WDiv'`, ...), `wrapperEmissions` (the Flutter or Wind-authored render-layer wrapper widget inserted at each composition-pipeline branch: `'Container'`, `'Padding'`, `'MouseRegion'`, `'Semantics'`, `'DefaultTextStyle'`, ...), `inheritedReads` (fixed to `mediaQuerySize`, `mediaQueryBrightness`, `windTheme`, `defaultTextStyle`). A `null` there means no resolver was installed, which is deliberately distinguishable from "the counters are zero". Both `installDebugResolver()` and `installPerfResolver()` gate on `!kReleaseMode`, not `kDebugMode`, so a profile build still carries them.
+`Wind.installPerfResolver()` publishes nine keys through `WindDebugRegistry.currentPerf?.stats()`: the six `int` counters above plus three `Map<String, int>` counters: `widgetBuilds` (every W-widget with a build method, by type name: `'WButton'`, `'WDiv'`, ...), `wrapperEmissions` (the Flutter or Wind-authored render-layer wrapper widget inserted at each composition-pipeline branch: `'DecoratedBox'`, `'ConstrainedBox'`, `'Padding'`, `'MouseRegion'`, `'Semantics'`, `'DefaultTextStyle'`, ...), `inheritedReads` (fixed to `mediaQuerySize`, `mediaQueryBrightness`, `windTheme`, `defaultTextStyle`). A `null` there means no resolver was installed, which is deliberately distinguishable from "the counters are zero". Both `installDebugResolver()` and `installPerfResolver()` gate on `!kReleaseMode`, not `kDebugMode`, so a profile build still carries them.

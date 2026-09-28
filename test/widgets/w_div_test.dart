@@ -127,7 +127,7 @@ void main() {
     expect(paddingFinder, findsOneWidget);
   });
 
-  testWidgets('renders Container with decoration when bg-red-500 is used', (
+  testWidgets('renders a decorated box when bg-red-500 is used', (
     tester,
   ) async {
     const testKey = Key('test-wdiv-bg');
@@ -145,11 +145,12 @@ void main() {
     );
 
     // Assert
-    // Look for a Container that has a BoxDecoration with red color
+    // Look for the DecoratedBox carrying a red BoxDecoration. WDiv builds its
+    // box from primitives, so there is no Container around it.
     final containerFinder = find.descendant(
       of: find.byKey(testKey),
       matching: find.byWidgetPredicate((widget) {
-        if (widget is Container && widget.decoration is BoxDecoration) {
+        if (widget is DecoratedBox && widget.decoration is BoxDecoration) {
           final decoration = widget.decoration as BoxDecoration;
           return decoration.color == default_colors.colors['red']![500];
         }
@@ -282,7 +283,7 @@ void main() {
     });
 
     testWidgets(
-        'paints Container color when backgroundColor is provided '
+        'paints the box color when backgroundColor is provided '
         'without any bg-* className', (tester) async {
       const color = Color(0xFF123456);
       const testKey = Key('bg-only');
@@ -302,7 +303,7 @@ void main() {
       final containerFinder = find.descendant(
         of: find.byKey(testKey),
         matching: find.byWidgetPredicate((widget) {
-          if (widget is! Container) return false;
+          if (widget is! DecoratedBox) return false;
           final decoration = widget.decoration;
           return decoration is BoxDecoration && decoration.color == color;
         }),
@@ -330,7 +331,7 @@ void main() {
       final containerFinder = find.descendant(
         of: find.byKey(testKey),
         matching: find.byWidgetPredicate((widget) {
-          if (widget is! Container) return false;
+          if (widget is! DecoratedBox) return false;
           final decoration = widget.decoration;
           return decoration is BoxDecoration && decoration.color == override;
         }),
@@ -356,13 +357,13 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(
+      final box = tester.widget<DecoratedBox>(
         find.descendant(
           of: find.byKey(testKey),
-          matching: find.byType(Container),
+          matching: find.byType(DecoratedBox),
         ),
       );
-      final decoration = container.decoration as BoxDecoration;
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.color, override);
       expect(decoration.gradient, isNull);
       expect(decoration.image, isNull);
