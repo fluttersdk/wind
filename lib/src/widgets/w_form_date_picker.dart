@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../utils/wind_perf_counters.dart';
 import 'w_date_picker.dart';
 import 'w_div.dart';
 import 'w_text.dart';
@@ -248,6 +249,8 @@ class _WFormDatePickerContentState extends State<_WFormDatePickerContent> {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WFormDatePicker');
+
     final Set<String> effectiveStates = {
       ...?widget.states,
       if (widget.state.hasError) 'error',

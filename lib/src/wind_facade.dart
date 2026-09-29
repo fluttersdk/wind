@@ -24,6 +24,9 @@ class WindPerfResolverImpl implements WindPerfResolver {
         'cacheSize': WindParser.cacheSize,
         'wDivBuilds': WindPerfCounters.wDivBuilds,
         'wTextBuilds': WindPerfCounters.wTextBuilds,
+        'widgetBuilds': WindPerfCounters.widgetBuilds,
+        'wrapperEmissions': WindPerfCounters.wrapperEmissions,
+        'inheritedReads': WindPerfCounters.inheritedReads,
       };
 }
 
@@ -31,7 +34,7 @@ class WindPerfResolverImpl implements WindPerfResolver {
 ///
 /// Consumer host integration in lib/main.dart:
 /// ```dart
-/// if (kDebugMode) {
+/// if (!kReleaseMode) {
 ///   Wind.installDebugResolver();
 ///   Wind.installPerfResolver();
 /// }
@@ -44,15 +47,18 @@ class Wind {
 
   /// Installs the Wind diagnostics resolver into the global
   /// fluttersdk_wind_diagnostics_contracts registry. Idempotent. No-op in
-  /// release builds (kDebugMode gate).
+  /// release builds (`!kReleaseMode` gate, so a profile build still carries
+  /// it for a profiling session; release tree-shakes it).
   static void installDebugResolver() {
-    if (!kDebugMode || _installed) return;
+    if (kReleaseMode || _installed) return;
     _installed = true;
     WindDebugRegistry.register(const WindDebugResolverImpl());
   }
 
   /// Installs the Wind performance resolver into the perf slot of the same
-  /// registry. Idempotent. No-op in release builds (kDebugMode gate).
+  /// registry. Idempotent. No-op in release builds (`!kReleaseMode` gate, so
+  /// a profile build still carries it for a profiling session; release
+  /// tree-shakes it).
   ///
   /// Separate from [installDebugResolver] because the two answer different
   /// questions and a host may want one without the other: the debug resolver
@@ -60,7 +66,7 @@ class Wind {
   /// process-wide counters. Installing it costs nothing on its own, since
   /// counting stays off until [WindPerfCounters.enabled] is set.
   static void installPerfResolver() {
-    if (!kDebugMode || _perfInstalled) return;
+    if (kReleaseMode || _perfInstalled) return;
     _perfInstalled = true;
     WindDebugRegistry.registerPerf(const WindPerfResolverImpl());
   }

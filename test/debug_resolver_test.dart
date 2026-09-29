@@ -771,4 +771,33 @@ void main() {
       },
     );
   });
+
+  group('perf counters', () {
+    tearDown(() {
+      WindPerfCounters.enabled = false;
+      WindPerfCounters.reset();
+    });
+
+    // The resolver runs in profile builds now, next to a measurement session.
+    // Its own WindContext.build and parse are snapshot work, not a build, so
+    // counting them inflated `inheritedReads` and the cache counters by one
+    // per inspected widget.
+    testWidgets('resolving a widget records nothing in the counters', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithTheme(const WDiv(className: 'p-4 bg-blue-500')),
+      );
+      final element = _firstElementOf<WDiv>(tester);
+      WindPerfCounters.enabled = true;
+      WindPerfCounters.reset();
+
+      final data = const WindDebugResolverImpl().resolve(element);
+
+      expect(data['className'], 'p-4 bg-blue-500');
+      expect(WindPerfCounters.inheritedReads.values, everyElement(0));
+      expect(WindPerfCounters.cacheHits + WindPerfCounters.cacheMisses, 0);
+      expect(WindPerfCounters.enabled, isTrue);
+    });
+  });
 }

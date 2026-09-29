@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
+import '../utils/wind_perf_counters.dart';
 import 'w_div.dart';
 import 'w_icon.dart';
 import 'w_popover.dart';
@@ -531,6 +532,8 @@ class _WDatePickerState extends State<WDatePicker> {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WDatePicker');
+
     final Set<String> activeStates = {
       ...widget.states,
       if (widget.disabled) 'disabled',

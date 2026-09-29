@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import '../state/wind_anchor_state.dart';
 import '../state/wind_anchor_state_provider.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **The Foundational State Wrapper**
 ///
@@ -87,6 +88,17 @@ class WAnchor extends StatefulWidget {
   /// Semantics node would be suppressed.
   final String? semanticLabel;
 
+  /// Whether a gestureless anchor installs a [Focus] node.
+  ///
+  /// `WDiv` passes `false` when its className carries no `focus:` class. A
+  /// styling wrapper that cannot show focus gains nothing from a node, and the
+  /// node it had was a Tab and D-pad stop that lit nothing. Hover, press and
+  /// the state published to descendants are unaffected.
+  ///
+  /// Ignored when the anchor has a gesture: a tappable anchor is a keyboard
+  /// and remote target, so it always keeps its node.
+  final bool trackFocus;
+
   /// Creates a `WAnchor` widget.
   ///
   /// The [child] argument is required and represents the interactive area.
@@ -101,6 +113,7 @@ class WAnchor extends StatefulWidget {
     this.states,
     this.mouseCursor,
     this.semanticLabel,
+    this.trackFocus = true,
   });
 
   @override
@@ -229,6 +242,8 @@ class _WAnchorState extends State<WAnchor> {
   /// `GestureDetector` for tap events, disabling them if `widget.isDisabled` is true.
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WAnchor');
+
     final hasGestures = widget.onTap != null ||
         widget.onLongPress != null ||
         widget.onDoubleTap != null;
@@ -275,7 +290,8 @@ class _WAnchorState extends State<WAnchor> {
       customStates: widget.states,
     );
 
-    // Focus is always present, needed for focus: class prefix to work.
+    // Focus is present wherever something can show it: every gesture anchor,
+    // and every styling wrapper whose div carries a `focus:` class.
     //
     // A gestureless wrapper keeps the node but stops competing for it. It is
     // not a traversal stop, because one control has to cost one press of the
@@ -283,11 +299,23 @@ class _WAnchorState extends State<WAnchor> {
     // and the ring was on the second one while the gesture was on the first.
     // The node itself stays, because `FocusNode.hasFocus` covers descendants
     // and that is what draws the ring around a `WInput` inside a styled div.
-    Widget innerChild = Focus(
-      focusNode: _focusNode,
-      canRequestFocus: !widget.isDisabled && (hasGestures || inherited == null),
-      child: widget.child,
-    );
+    //
+    // A wrapper without `focus:` drops the node altogether. `Focus` builds a
+    // node attachment and a `Semantics(focusable:)` on every build, which a
+    // consumer measured on nearly half of its anchors, all of them hover-only
+    // rows that could never draw focus. Chained primary focus still passes
+    // through such a wrapper, because that travels in the provider below,
+    // not in the node.
+    Widget innerChild = widget.child;
+    if (hasGestures || widget.trackFocus) {
+      WindPerfCounters.recordWrapperEmission('Focus');
+      innerChild = Focus(
+        focusNode: _focusNode,
+        canRequestFocus:
+            !widget.isDisabled && (hasGestures || inherited == null),
+        child: innerChild,
+      );
+    }
 
     // The action map goes on only where there is a primary action to run, and
     // that is narrower than `hasGestures` on purpose.
@@ -300,11 +328,13 @@ class _WAnchorState extends State<WAnchor> {
     // `PrioritizedIntents([ActivateIntent, ScrollIntent])`, and an
     // always-enabled action wins that race.
     if (widget.onTap != null && !widget.isDisabled) {
+      WindPerfCounters.recordWrapperEmission('Actions');
       innerChild = Actions(actions: _actions, child: innerChild);
     }
 
     // Only wrap with GestureDetector if there are actual gesture callbacks
     if (hasGestures) {
+      WindPerfCounters.recordWrapperEmission('GestureDetector');
       innerChild = GestureDetector(
         // Translucent so the whole anchor bounds are tappable, not only the
         // opaque descendants. The GestureDetector defaults to
@@ -331,6 +361,8 @@ class _WAnchorState extends State<WAnchor> {
     // the structural problem of WAnchor not knowing its eventual textual
     // content when callers (e.g. WButton) interpose a Builder between
     // WAnchor and its leaf widgets.
+    WindPerfCounters.recordWrapperEmission('WindAnchorStateProvider');
+    WindPerfCounters.recordWrapperEmission('MouseRegion');
     Widget result = WindAnchorStateProvider(
       state: currentState,
       child: MouseRegion(
@@ -356,6 +388,7 @@ class _WAnchorState extends State<WAnchor> {
     //    still trigger them. `onDoubleTap` has no SemanticsAction equivalent
     //    and is intentionally not exposed here.
     if (widget.semanticLabel != null) {
+      WindPerfCounters.recordWrapperEmission('Semantics');
       return Semantics(
         button: true,
         enabled: !widget.isDisabled,
@@ -400,6 +433,8 @@ class _WAnchorState extends State<WAnchor> {
     // 3. Gestures, no explicit label: keep the MergeSemantics path so the
     //    descendant Text/WText nodes collapse into this node and supply the
     //    name.
+    WindPerfCounters.recordWrapperEmission('MergeSemantics');
+    WindPerfCounters.recordWrapperEmission('Semantics');
     return MergeSemantics(
       child: Semantics(
         button: true,

@@ -156,14 +156,14 @@ If neither applies, you can skip this step. Wind itself does not depend on the r
 
 ### Wiring it up
 
-Call `Wind.installDebugResolver()` once during app startup, inside a `kDebugMode` guard. The call is idempotent (safe to call multiple times) and is automatically a no-op in release builds, so the bridge is tree-shaken out of production binaries.
+Call `Wind.installDebugResolver()` once during app startup, inside a `!kReleaseMode` guard (so a profile build still carries it). The call is idempotent (safe to call multiple times) and is automatically a no-op in release builds, so the bridge is tree-shaken out of production binaries.
 
 ```dart
 import 'package:flutter/foundation.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
 void main() {
-  if (kDebugMode) {
+  if (!kReleaseMode) {
     Wind.installDebugResolver();
   }
   runApp(const MyApp());
@@ -190,7 +190,7 @@ Fields whose value is null are omitted; the map only carries what the widget act
 
 ### Release-build safety
 
-`Wind.installDebugResolver()` is a no-op in release builds. The `kDebugMode` guard in user code further ensures dart2js / dart2native tree-shakes the entire branch on every platform. There is no production cost from leaving the call in place.
+`Wind.installDebugResolver()` and `Wind.installPerfResolver()` are no-ops in release builds (`!kReleaseMode`, not `kDebugMode`, so a profile build still carries them for a profiling session). The guard in user code further ensures dart2js / dart2native tree-shakes the entire branch in release. There is no production cost from leaving the call in place.
 
 <a name="aggregate-performance-counters"></a>
 ## Aggregate Performance Counters
@@ -218,23 +218,28 @@ Counting is off by default and every increment sits behind one static bool check
 ```dart
 WindPerfCounters.enabled = true;
 // ... drive the interaction you want to measure ...
-print(WindPerfCounters.cacheHits);      // and cacheMisses, cacheBypasses
-print(WindPerfCounters.wDivBuilds);     // and wTextBuilds
+print(WindPerfCounters.cacheHits);          // and cacheMisses, cacheBypasses
+print(WindPerfCounters.wDivBuilds);         // and wTextBuilds
+print(WindPerfCounters.widgetBuilds);       // {'WButton': 3, 'WDiv': 12, ...}
+print(WindPerfCounters.wrapperEmissions);   // {'DecoratedBox': 5, 'MouseRegion': 2, ...}
+print(WindPerfCounters.inheritedReads);     // mediaQuerySize, mediaQueryBrightness, windTheme, defaultTextStyle
 ```
+
+`widgetBuilds` counts every W-widget with a build method, by its type name (`'WButton'`, `'WDiv'`, ...); `wDivBuilds`/`wTextBuilds` stay as dedicated counters alongside it rather than being folded in, since they are the pinned six-key contract's own fields. `wrapperEmissions` counts the Flutter (or Wind-authored render-layer) wrapper widget Wind inserts at each composition-pipeline branch (`DecoratedBox`, `ConstrainedBox`, `Padding`, `MouseRegion`, `Semantics`, `DefaultTextStyle`, ...), one inline call beside the construction it never changes. `inheritedReads` is fixed to four keys: `mediaQuerySize` (a `MediaQuery.sizeOf(context)` read, which depends on the size aspect only), `mediaQueryBrightness` (`MediaQuery.maybePlatformBrightnessOf`), `windTheme` (`WindTheme.maybeDataOf`), `defaultTextStyle` (`DefaultTextStyle.of`).
 
 `WindParser.clearCache()` resets the counters as well as the cache, so a hit rate is always reported against the cache it was measured on. That is also why a theme change mid-measurement zeroes them.
 
 ### Reading them from outside
 
-`Wind.installPerfResolver()` publishes the totals through the diagnostics contracts package, the same bridge `installDebugResolver()` uses and a separate slot on the same registry. It is idempotent, `kDebugMode`-gated, and installing it costs nothing on its own since counting stays off until the flag is set:
+`Wind.installPerfResolver()` publishes the totals through the diagnostics contracts package, the same bridge `installDebugResolver()` uses and a separate slot on the same registry. It is idempotent, `!kReleaseMode`-gated (so a profile build still carries it), and installing it costs nothing on its own since counting stays off until the flag is set:
 
 ```dart
-if (kDebugMode) {
+if (!kReleaseMode) {
   Wind.installDebugResolver();   // per-Element state
   Wind.installPerfResolver();    // aggregate counters
 }
 ```
 
-A tool then reads `WindDebugRegistry.currentPerf?.stats()` and gets exactly six `int` keys: `cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds`, `wTextBuilds`. The `null` when no resolver is registered is meaningful and worth passing through rather than flattening to zeros: it is what lets a caller tell "wind never installed one" from "the counters really are zero".
+A tool then reads `WindDebugRegistry.currentPerf?.stats()` and gets exactly nine keys: `cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds`, `wTextBuilds` (all `int`), plus `widgetBuilds`, `wrapperEmissions`, `inheritedReads` (all `Map<String, int>`). The `null` when no resolver is registered is meaningful and worth passing through rather than flattening to zeros: it is what lets a caller tell "wind never installed one" from "the counters really are zero".
 
 `fluttersdk_dusk` reads this during a `dusk:perf_begin` / `dusk:perf_end` session.

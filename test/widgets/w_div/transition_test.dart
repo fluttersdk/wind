@@ -22,7 +22,7 @@ void main() {
       expect(find.byType(AnimatedContainer), findsOneWidget);
     });
 
-    testWidgets('uses regular Container when no duration', (tester) async {
+    testWidgets('uses a static box when no duration', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -33,13 +33,14 @@ void main() {
         ),
       );
 
-      // Should use Container, not AnimatedContainer
-      expect(find.byType(Container), findsWidgets);
+      // A static DecoratedBox, not AnimatedContainer. WDiv builds the static
+      // box from primitives, so there is no Container to find.
+      expect(find.byType(DecoratedBox), findsWidgets);
       expect(find.byType(AnimatedContainer), findsNothing);
     });
 
     testWidgets(
-      'uses regular Container when only ease is present without duration',
+      'uses a static box when only ease is present without duration',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -54,8 +55,8 @@ void main() {
           ),
         );
 
-        // Should use Container, not AnimatedContainer because duration is missing
-        expect(find.byType(Container), findsWidgets);
+        // A static DecoratedBox, not AnimatedContainer: duration is missing.
+        expect(find.byType(DecoratedBox), findsWidgets);
         expect(find.byType(AnimatedContainer), findsNothing);
       },
     );

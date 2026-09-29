@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../utils/wind_perf_counters.dart';
 import 'select_option.dart';
 import 'w_select.dart';
 import 'w_div.dart';
@@ -269,6 +270,7 @@ class _WFormSelectContent<T> extends StatelessWidget {
       if (state.hasError) 'error',
     };
 
+    WindPerfCounters.recordWidgetBuild('WFormSelect');
     final select = WSelect<T>(
       value: state.value,
       options: options,
@@ -603,6 +605,7 @@ class _WFormMultiSelectContent<T> extends StatelessWidget {
       if (state.hasError) 'error',
     };
 
+    WindPerfCounters.recordWidgetBuild('WFormMultiSelect');
     final select = WSelect<T>(
       isMulti: true,
       values: state.value,

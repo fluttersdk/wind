@@ -56,6 +56,7 @@ const WAnchor({
   Set<String>? states,
   MouseCursor? mouseCursor,
   String? semanticLabel,
+  bool trackFocus = true,
 })
 ```
 
@@ -71,6 +72,7 @@ const WAnchor({
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., `{'active'}`). |
 | `mouseCursor` | `MouseCursor?` | `null` | Custom cursor. Defaults to click when interactive. |
 | `semanticLabel` | `String?` | `null` | Accessible name for icon-only controls. When set, excludes the child subtree from semantics so the label overrides any child text; prefer it for icon-only controls rather than controls that already expose readable text. |
+| `trackFocus` | `bool` | `true` | Whether a gestureless anchor installs a focus node. `WDiv` passes `false` when its className has no `focus:` class. Ignored when the anchor has a gesture, which always keeps its node. |
 
 ## Layout Modes
 
@@ -140,7 +142,13 @@ WAnchor(
 )
 ```
 
+A `WDiv` whose only state classes are `hover:` or `active:` carries no focus node at all (its wrapper gets `trackFocus: false`): it cannot draw focus, so a stop on it was a key press that lit nothing. Hover, press and the primary focus chained down from an anchor above it still pass through.
+
+One thing it no longer publishes is focus-within to its own descendants. A `focus:` class on a label reads the nearest wrapper, so in `WDiv(className: 'hover:bg-gray-50', children: [WText('Email', className: 'focus:text-blue-600'), WInput(...)])` the label stays gray while the field has focus. Give the row any `focus:` class of its own (`hover:bg-gray-50 focus:bg-gray-50`) and its wrapper keeps the node, so the label lights again.
+
 Two shapes are unaffected. A `WDiv` carrying `focus:` with no anchor above it keeps its own focus node, because that is how a consumer styles a custom control. And a focusable descendant still lights the wrapper's ring: `FocusNode.hasFocus` covers descendants, so a `WInput` inside a ring-styled `WDiv` draws the ring around the field the user is typing in.
+
+One consequence to know: whether the node exists follows the className, so a `WDiv` that adds or drops a `focus:` class at runtime changes its subtree's shape, and the children below remount and lose their `State` (a `WInput`'s text among it). Keep a `focus:` class present on a div whose children hold state, and switch what it paints instead.
 
 What the wrapper inherits is deliberately narrow: the ancestor's PRIMARY focus, never its focus-within. It passes that signal on rather than stopping at it, because any `hover:` or `active:` class on a div in between creates a second wrapper whose own node never holds focus, and a ring two wrappers deep would otherwise stay dark. The two are different questions and `WindAnchorState` now exposes both. A tappable card containing a text field reports focus-within the whole time the user types, so a wrapper inheriting that would light up even when it sits *beside* the field rather than around it:
 

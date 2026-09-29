@@ -5,9 +5,9 @@ import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostic
 
 /// Tests for `Wind` facade — install flag management and registry integration.
 ///
-/// `kDebugMode` is always `true` under `flutter test`, so the `!kDebugMode`
-/// branch in `installDebugResolver()` is unreachable from this suite and
-/// intentionally left uncovered.
+/// `kReleaseMode` is always `false` under `flutter test`, so the
+/// `kReleaseMode` early-return branch in `installDebugResolver()` is
+/// unreachable from this suite and intentionally left uncovered.
 void main() {
   setUp(() {
     Wind.resetForTesting();

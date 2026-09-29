@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'w_anchor.dart';
 import 'w_div.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 
@@ -103,6 +104,8 @@ class WRadio<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WRadio');
+
     // A null onChanged means the radio is non-interactive: treat it exactly
     // like disabled == true so the disabled: prefix activates, no gesture is
     // attached, and Semantics reports the control as not enabled.
@@ -164,6 +167,8 @@ class WRadio<T> extends StatelessWidget {
     //
     // `inMutuallyExclusiveGroup: true` surfaces the radio group relationship
     // in the accessibility tree alongside the checked state.
+    WindPerfCounters.recordWrapperEmission('Semantics');
+    WindPerfCounters.recordWrapperEmission('MergeSemantics');
     return Semantics(
       container: true,
       checked: _isSelected,

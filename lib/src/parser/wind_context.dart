@@ -5,6 +5,7 @@ import '../state/wind_anchor_state.dart';
 import '../state/wind_anchor_state_provider.dart';
 import '../theme/wind_theme.dart';
 import '../theme/wind_theme_data.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **The styling context context**
 ///
@@ -68,7 +69,13 @@ class WindContext {
 
   factory WindContext.build(BuildContext context, {Set<String>? states}) {
     final theme = WindTheme.dataOf(context);
-    final size = MediaQuery.of(context).size;
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.windTheme);
+    // The size aspect only: breakpoints read the width and `w-screen` /
+    // `h-screen` read both axes, but nothing here reads the rest of
+    // MediaQueryData. Depending on all of it rebuilt every styled widget on
+    // each frame of a keyboard inset animation.
+    final Size size = MediaQuery.sizeOf(context);
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.mediaQuerySize);
     final screenWidth = size.width;
     final screenHeight = size.height;
 

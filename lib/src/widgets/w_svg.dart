@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **The Utility-First SVG Component**
 ///
@@ -78,8 +79,11 @@ class WSvg extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WSvg');
+
     // Get inherited text style from parent (like WIcon)
     final TextStyle inheritedStyle = DefaultTextStyle.of(context).style;
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.defaultTextStyle);
     final double? inheritedSize = inheritedStyle.fontSize;
     final Color? inheritedColor = inheritedStyle.color;
 
@@ -134,6 +138,7 @@ class WSvg extends StatelessWidget {
     // Apply opacity if specified (animated when duration is set)
     if (styles.opacity != null) {
       if (styles.transitionDuration != null) {
+        WindPerfCounters.recordWrapperEmission('AnimatedOpacity');
         svgWidget = AnimatedOpacity(
           duration: styles.transitionDuration!,
           curve: styles.transitionCurve ?? Curves.linear,
@@ -141,6 +146,7 @@ class WSvg extends StatelessWidget {
           child: svgWidget,
         );
       } else {
+        WindPerfCounters.recordWrapperEmission('Opacity');
         svgWidget = Opacity(opacity: styles.opacity!, child: svgWidget);
       }
     }

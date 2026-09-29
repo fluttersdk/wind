@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import 'w_div.dart';
 import 'w_text.dart';
 
@@ -66,6 +67,8 @@ class WBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WBadge');
+
     // 1. Resolve styles for debug logging only (WDiv re-parses internally).
     final String composedClassName =
         className != null ? '$_baseClasses $className' : _baseClasses;

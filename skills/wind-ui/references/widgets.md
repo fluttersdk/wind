@@ -64,7 +64,7 @@ const WDiv({
 Behavior:
 - Auto-wraps in `WAnchor` when className contains the literal substrings `hover:`, `focus:`, or `active:`. (Note: `active:` prefix is not yet wired; the substring check is for forward-compatibility.)
 - Honors layout tokens (flex, grid, wrap, block), sizing, spacing (padding/margin/gap), positioning, borders, shadows, opacity, transitions, animations.
-- Composition pipeline (innermost → outermost): aspect ratio → opacity → animation → Container (decoration + constraints + padding) → scroll/clip → outer sizing → fractional sizing → margin → alignment → flex/expanded.
+- Composition pipeline (innermost → outermost): aspect ratio → opacity → animation → box (`Align` → `Padding` inset by the border → `DecoratedBox` → `ConstrainedBox`, the primitives `Container` would build, without the `Container`; `AnimatedContainer` under `duration-*`) → scroll/clip → outer sizing → fractional sizing → margin → alignment → flex/expanded.
 - `scrollPrimary: true` only applies when className contains `overflow-y-auto`, `overflow-y-scroll`, `overflow-x-auto`, `overflow-x-scroll`, or `overflow-scroll`.
 - `flex-*` classes skip the Expanded wrap when `WindFlexOverflowScope.skipExpanded` is true (the main axis is scrollable). This is invisible to consumers and prevents unbounded-constraint assertions.
 
@@ -242,6 +242,7 @@ const WAnchor({
   Set<String>? states,
   MouseCursor? mouseCursor,           // defaults to SystemMouseCursors.click when gestures exist
   String? semanticLabel,              // accessible name for icon-only anchors (no child text for Semantics to absorb)
+  bool trackFocus = true,             // gestureless only: false drops the Focus node (WDiv passes false without focus:)
 })
 ```
 
@@ -252,7 +253,7 @@ Three accessibility paths, checked in this order:
 2. No label and no gesture: no node of its own.
 3. No label, with a gesture: `MergeSemantics` → `Semantics(button: true, enabled: !isDisabled)` → the rest below.
 
-The rest, in all three: `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvider` (broadcasts hover/focus/disabled state) → optional `GestureDetector` and `Actions` (both only if any callback is non-null) → `Focus` → `child`.
+The rest, in all three: `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvider` (broadcasts hover/focus/disabled state) → optional `GestureDetector` and `Actions` (both only if any callback is non-null) → `Focus` (with a gesture, or when `trackFocus` is true) → `child`.
 
 State tracking:
 - Hover: `MouseRegion.onEnter` / `onExit` set `_isHovering`; calls `setState` only on change.
@@ -262,6 +263,7 @@ State tracking:
 Keyboard and remote activation:
 - `Actions` maps `ActivateIntent` and `ButtonActivateIntent` to `onTap`, and is installed only when `onTap != null && !isDisabled`. `WidgetsApp` raises those intents for `Enter`, `Space`, numpad `Enter`, gamepad A and `select` (the Android TV D-pad centre, the Apple TV remote click), so `WAnchor` binds no key itself and inherits whatever the platform adds. Only `onTap` is bound: `ActivateIntent` is the primary action and there is no second key for `onLongPress` / `onDoubleTap`.
 - The install gate is narrower than `hasGestures` on purpose. A `CallbackAction` is always enabled and `ShortcutManager` reports a key HANDLED for any enabled action, so an always-installed map made a long-press-only or disabled anchor swallow the activation key belonging to its parent, and on web beat `Space`'s `PrioritizedIntents([ActivateIntent, ScrollIntent])` race so the page stopped scrolling. An early return inside the callback does NOT fix that: the action still reports enabled.
+- `Focus` is installed only when the anchor has a gesture or `trackFocus` is true. `WDiv` passes `trackFocus: className.contains('focus:')`, so a hover-only or active-only div has no node, is no Tab or D-pad stop, and publishes no `focusable` semantics. The provider and `MouseRegion` stay unconditional: every parse reads the provider, and hover needs the region. It also publishes no focus-within to its children: a `focus:` label beside a `WInput` under a hover-only row stays unlit, so give the row any `focus:` class when a sibling has to light.
 - `canRequestFocus: !isDisabled && (hasGestures || no ancestor anchor state)`. A gestureless `WAnchor` under another anchor is a styling wrapper, not a traversal stop, so one control costs one press of the remote. Standalone (nothing to inherit from) it keeps its node, because that is how a consumer styles a custom control.
 - A gestureless wrapper inherits the ancestor's `hasPrimaryFocus` and `isDisabled`, NOT its `isFocused`, and it REPUBLISHES `hasPrimaryFocus` with the inherited value ORed in so the signal chains: a wrapper's own node never holds primary focus, so stopping at it left a ring two wrappers deep dark, and any `hover:` / `active:` class on an intermediate div creates that second wrapper. `WindAnchorState.isFocused` is focus-WITHIN (it comes from `FocusNode.hasFocus`, true for an ancestor of the real holder), so inheriting it lit the ring on every wrapper under a tappable card while the user typed in a field inside that card, including wrappers sitting beside the field. The container case still works without inheritance: a ring-styled `WDiv` wrapping a `WInput` lights through its own node. `isHovering` is never inherited: hover is a pointer position and sibling divs inside one anchor highlight independently.
 

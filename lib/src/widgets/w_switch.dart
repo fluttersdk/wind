@@ -5,6 +5,7 @@ import 'w_div.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 
 /// **A Utility-First Toggle Switch Component**
 ///
@@ -108,6 +109,8 @@ class WSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WSwitch');
+
     // A null onChanged means the switch is non-interactive: treat it exactly
     // like disabled == true so the disabled: prefix activates, no gesture is
     // attached, and Semantics reports the control as not enabled.
@@ -147,6 +150,8 @@ class WSwitch extends StatelessWidget {
 
     // 3. Wrap with Semantics to surface toggle role + state for accessibility
     //    and Playwright `getByRole('switch')` resolution.
+    WindPerfCounters.recordWrapperEmission('Semantics');
+    WindPerfCounters.recordWrapperEmission('MergeSemantics');
     return Semantics(
       container: true,
       toggled: value,

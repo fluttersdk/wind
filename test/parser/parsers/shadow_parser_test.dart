@@ -6,6 +6,9 @@ void main() {
   group('Shadow Parsing Tests', () {
     setUp(WindParser.clearCache);
 
+    // WDiv emits its decoration on a DecoratedBox since the box model was
+    // rebuilt from primitives; there is no Container to read it from.
+
     testWidgets('renders shadow-sm', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -19,8 +22,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.boxShadow, isNotNull);
       expect(decoration.boxShadow!.length, 1);
       expect(decoration.boxShadow![0].blurRadius, 2);
@@ -39,12 +42,14 @@ void main() {
         ),
       );
 
-      // shadow-none carries no visual, so it wraps no shadow-bearing
-      // Container. The child renders and no decoration applies a box shadow.
+      // shadow-none carries no visual, so it wraps no shadow-bearing box.
+      // The child renders and no decoration applies a box shadow. WDiv emits
+      // decoration on a DecoratedBox since its box was rebuilt from
+      // primitives, so that is the type scanned here.
       expect(find.text('Shadow'), findsOneWidget);
-      for (final container
-          in tester.widgetList<Container>(find.byType(Container))) {
-        final decoration = container.decoration;
+      for (final box
+          in tester.widgetList<DecoratedBox>(find.byType(DecoratedBox))) {
+        final decoration = box.decoration;
         if (decoration is BoxDecoration) {
           expect(decoration.boxShadow ?? const <BoxShadow>[], isEmpty);
         }
@@ -61,8 +66,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.boxShadow, isNotNull);
       expect(decoration.boxShadow!.length, 2); // Default has 2 shadows
     });
@@ -80,8 +85,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.boxShadow, isNotNull);
       expect(decoration.boxShadow!.length, 2);
       expect(decoration.boxShadow![0].blurRadius, 25);
@@ -100,8 +105,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.boxShadow, isNotNull);
       // shadow-lg has 2 shadows. Both should be tinted red.
       expect(
@@ -125,8 +130,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.boxShadow, isNotNull);
       // shadow-lg has 2 shadows. First has alpha ~0.1 (exact value depends on WindBoxShadows)
       // If code ignores input opacity, it remains ~0.1.
@@ -153,8 +158,8 @@ void main() {
         ),
       );
 
-      final container = tester.widget<Container>(find.byType(Container));
-      final decoration = container.decoration as BoxDecoration;
+      final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+      final decoration = box.decoration as BoxDecoration;
       expect(decoration.boxShadow, isNotNull);
       expect(
         decoration.boxShadow![0].color,
@@ -166,8 +171,8 @@ void main() {
       // `{3,8}` used to take this through to int.parse and paint
       // Color(0x00012345), an invisible shadow rather than a dropped class.
       Color renderedShadowColor() {
-        final container = tester.widget<Container>(find.byType(Container));
-        final decoration = container.decoration as BoxDecoration;
+        final box = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
+        final decoration = box.decoration as BoxDecoration;
         return decoration.boxShadow![0].color;
       }
 

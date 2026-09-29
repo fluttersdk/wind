@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../utils/wind_perf_counters.dart';
 import 'w_div.dart';
 
 /// **A Surface Container for Card-Style Layouts**
@@ -76,6 +77,8 @@ class WCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WCard');
+
     // 1. Resolve the effective className for the root container.
     final String effectiveClassName = className ?? _defaultClassName;
 

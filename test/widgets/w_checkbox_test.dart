@@ -25,12 +25,13 @@ Widget wrapWithPrimary(Widget child, MaterialColor primary) {
 
 /// Returns the first non-null `BoxDecoration` background color under [of].
 Color? firstDecorationColor(WidgetTester tester, Finder of) {
-  final containers = tester.widgetList<Container>(
-    find.descendant(of: of, matching: find.byType(Container)),
+  // WDiv paints its fill through a DecoratedBox; it emits no Container.
+  final boxes = tester.widgetList<DecoratedBox>(
+    find.descendant(of: of, matching: find.byType(DecoratedBox)),
   );
 
-  for (final container in containers) {
-    final decoration = container.decoration;
+  for (final box in boxes) {
+    final decoration = box.decoration;
     if (decoration is BoxDecoration && decoration.color != null) {
       return decoration.color;
     }
@@ -201,15 +202,15 @@ void main() {
         );
         await tester.pump();
 
-        final container = tester.widget<Container>(
+        final box = tester.widget<DecoratedBox>(
           find
               .descendant(
                 of: find.byType(WCheckbox),
-                matching: find.byType(Container),
+                matching: find.byType(DecoratedBox),
               )
               .first,
         );
-        final border = (container.decoration as BoxDecoration).border as Border;
+        final border = (box.decoration as BoxDecoration).border as Border;
         expect(border.top.color, const Color(0x00000000));
       });
 
@@ -219,15 +220,15 @@ void main() {
         );
         await tester.pump();
 
-        final container = tester.widget<Container>(
+        final box = tester.widget<DecoratedBox>(
           find
               .descendant(
                 of: find.byType(WCheckbox),
-                matching: find.byType(Container),
+                matching: find.byType(DecoratedBox),
               )
               .first,
         );
-        final border = (container.decoration as BoxDecoration).border as Border;
+        final border = (box.decoration as BoxDecoration).border as Border;
         expect(border.top.color, isNot(const Color(0x00000000)));
       });
 

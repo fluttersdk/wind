@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import 'wind_animation_wrapper.dart';
 
 /// **The Utility-First Icon Component**
@@ -76,8 +77,11 @@ class WIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WIcon');
+
     // Get inherited text style from parent (e.g., from WDiv's DefaultTextStyle)
     final TextStyle inheritedStyle = DefaultTextStyle.of(context).style;
+    WindPerfCounters.recordInheritedRead(WindInheritedRead.defaultTextStyle);
     final double? inheritedSize = inheritedStyle.fontSize;
     final Color? inheritedColor = inheritedStyle.color;
 
@@ -117,6 +121,7 @@ class WIcon extends StatelessWidget {
     // Apply opacity if specified (animated when duration is set)
     if (styles.opacity != null) {
       if (styles.transitionDuration != null) {
+        WindPerfCounters.recordWrapperEmission('AnimatedOpacity');
         iconWidget = AnimatedOpacity(
           duration: styles.transitionDuration!,
           curve: styles.transitionCurve ?? Curves.linear,
@@ -124,6 +129,7 @@ class WIcon extends StatelessWidget {
           child: iconWidget,
         );
       } else {
+        WindPerfCounters.recordWrapperEmission('Opacity');
         iconWidget = Opacity(opacity: styles.opacity!, child: iconWidget);
       }
     }
@@ -131,6 +137,7 @@ class WIcon extends StatelessWidget {
     // Apply animation if specified
     if (styles.animationType != null &&
         styles.animationType != WindAnimationType.none) {
+      WindPerfCounters.recordWrapperEmission('WindAnimationWrapper');
       iconWidget = wrapWithAnimation(
         child: iconWidget,
         animationType: styles.animationType,

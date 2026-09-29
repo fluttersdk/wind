@@ -100,6 +100,7 @@ class WText extends StatelessWidget {
     // WText has no _buildImpl indirection: build() resolves styles directly,
     // so this is its equivalent of WDiv's counting site.
     WindPerfCounters.recordWTextBuild();
+    WindPerfCounters.recordWidgetBuild('WText');
 
     // 1. CALL THE "ORCHESTRATOR": Style Resolution final
     WindStyle styles = className != null
@@ -197,13 +198,19 @@ class WText extends StatelessWidget {
     //      ancestor, which would otherwise render Flutter's debug yellow
     //      underline) fall back to a brightness-aware neutral so the text stays
     //      legible. Explicitly supplied colors always win.
-    if (finalTextStyle.color == null &&
-        DefaultTextStyle.of(context).style.color == null) {
-      final isDark =
-          MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
-      finalTextStyle = finalTextStyle.copyWith(
-        color: isDark ? Colors.white : Colors.black,
-      );
+    if (finalTextStyle.color == null) {
+      final Color? ancestorColor = DefaultTextStyle.of(context).style.color;
+      WindPerfCounters.recordInheritedRead(WindInheritedRead.defaultTextStyle);
+      if (ancestorColor == null) {
+        final isDark =
+            MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
+        WindPerfCounters.recordInheritedRead(
+          WindInheritedRead.mediaQueryBrightness,
+        );
+        finalTextStyle = finalTextStyle.copyWith(
+          color: isDark ? Colors.white : Colors.black,
+        );
+      }
     }
 
     // B. Apply Text Transformation (uppercase, lowercase)
@@ -244,6 +251,7 @@ class WText extends StatelessWidget {
     // no ancestor supplies one, so bare usages outside MaterialApp/WidgetsApp
     // do not throw "No Directionality widget found".
     if (Directionality.maybeOf(context) == null) {
+      WindPerfCounters.recordWrapperEmission('Directionality');
       return Directionality(
         textDirection: TextDirection.ltr,
         child: textWidget,
@@ -286,6 +294,7 @@ class WText extends StatelessWidget {
           : styles.constraints;
 
       logger.wrapWith("Container", "decoration: ${styles.decoration}");
+      WindPerfCounters.recordWrapperEmission('Container');
       widgetToBuild = Container(
         decoration: styles.decoration,
         constraints: constraints,
@@ -296,18 +305,21 @@ class WText extends StatelessWidget {
     // Step B: Padding
     if (styles.padding != null && styles.padding != EdgeInsets.zero) {
       logger.wrapWith("Padding", "padding: ${styles.padding}");
+      WindPerfCounters.recordWrapperEmission('Padding');
       widgetToBuild = Padding(padding: styles.padding!, child: widgetToBuild);
     }
 
     // Step C: Margin
     if (styles.margin != null && styles.margin != EdgeInsets.zero) {
       logger.wrapWith("Padding (Margin)", "padding: ${styles.margin}");
+      WindPerfCounters.recordWrapperEmission('Padding');
       widgetToBuild = Padding(padding: styles.margin!, child: widgetToBuild);
     }
 
     // Step D: Alignment (align-self)
     if (styles.alignment != null) {
       logger.wrapWith("Align", "alignment: ${styles.alignment}");
+      WindPerfCounters.recordWrapperEmission('Align');
       widgetToBuild = Align(alignment: styles.alignment!, child: widgetToBuild);
     }
 
@@ -315,9 +327,11 @@ class WText extends StatelessWidget {
     if (!skipFlexWrap) {
       if (styles.flex != null) {
         logger.wrapWith("Expanded", "flex: ${styles.flex}");
+        WindPerfCounters.recordWrapperEmission('Expanded');
         widgetToBuild = Expanded(flex: styles.flex!, child: widgetToBuild);
       } else if (styles.flexFit != null) {
         logger.wrapWith("Flexible", "fit: ${styles.flexFit}");
+        WindPerfCounters.recordWrapperEmission('Flexible');
         widgetToBuild = Flexible(fit: styles.flexFit!, child: widgetToBuild);
       }
     }

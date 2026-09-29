@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../utils/wind_perf_counters.dart';
 import 'w_anchor.dart';
 import 'w_checkbox.dart';
 import 'w_text.dart';
@@ -184,6 +185,8 @@ class _WFormCheckboxContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WindPerfCounters.recordWidgetBuild('WFormCheckbox');
+
     // Build states set including error state when validation fails
     final Set<String> effectiveStates = {
       ...?states,
