@@ -105,7 +105,8 @@ int? wScreen(BuildContext context, String name) {
 /// }
 /// ```
 bool wScreenIs(BuildContext context, String name) {
-  final screenWidth = MediaQuery.of(context).size.width;
+  // The size aspect only, so a keyboard inset does not rebuild the caller.
+  final screenWidth = MediaQuery.sizeOf(context).width;
   final breakpointValue = wScreen(context, name);
 
   if (breakpointValue == null) return false;
@@ -121,7 +122,7 @@ bool wScreenIs(BuildContext context, String name) {
 /// ```
 String wScreenCurrent(BuildContext context) {
   final theme = WindTheme.dataOf(context);
-  final screenWidth = MediaQuery.of(context).size.width;
+  final screenWidth = MediaQuery.sizeOf(context).width;
 
   // Sort breakpoints by value descending
   final sortedBreakpoints = theme.screens.entries.toList()

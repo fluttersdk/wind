@@ -517,7 +517,7 @@ class _WPopoverState extends State<WPopover> {
         _triggerKey.currentContext?.findRenderObject() as RenderBox?;
     if (triggerBox != null && triggerBox.hasSize) {
       final triggerPosition = triggerBox.localToGlobal(Offset.zero);
-      final screenSize = MediaQuery.of(context).size;
+      final screenSize = MediaQuery.sizeOf(context);
 
       // Estimate the overlay width the way the overlay itself sizes it, so the
       // flip decision matches the rendered box. A fixed width (`width` prop or a

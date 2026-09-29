@@ -237,6 +237,50 @@ void main() {
       });
     });
 
+    group('screen helpers read the size aspect only', () {
+      Widget tree(MediaQueryData data) {
+        return MediaQuery(
+          data: data,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: WindTheme(
+              data: WindThemeData(),
+              child: const _ScreenReader(),
+            ),
+          ),
+        );
+      }
+
+      testWidgets('a keyboard inset does not rebuild a breakpoint reader', (
+        tester,
+      ) async {
+        // A shell that swaps its whole tree on `wScreenIs(context, 'lg')`
+        // rebuilt on every frame of a keyboard animation while it depended
+        // on all of MediaQuery.
+        const MediaQueryData closed = MediaQueryData(size: Size(390, 800));
+        await tester.pumpWidget(tree(closed));
+        final int builds = _ScreenReader.builds;
+
+        await tester.pumpWidget(
+          tree(closed.copyWith(viewInsets: const EdgeInsets.only(bottom: 300))),
+        );
+
+        expect(_ScreenReader.builds, builds);
+      });
+
+      testWidgets('a size change still rebuilds it', (tester) async {
+        await tester
+            .pumpWidget(tree(const MediaQueryData(size: Size(390, 800))));
+        final int builds = _ScreenReader.builds;
+
+        await tester.pumpWidget(
+          tree(const MediaQueryData(size: Size(1280, 800))),
+        );
+
+        expect(_ScreenReader.builds, builds + 1);
+      });
+    });
+
     group('wScreenCurrent', () {
       testWidgets('returns current breakpoint name', (tester) async {
         String? result;
@@ -276,4 +320,21 @@ void main() {
       });
     });
   });
+}
+
+/// Reads both screen helpers and counts its builds; const, so only a
+/// dependency it registered can rebuild it.
+class _ScreenReader extends StatelessWidget {
+  const _ScreenReader();
+
+  static int builds = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    builds++;
+    wScreenIs(context, 'lg');
+    wScreenCurrent(context);
+
+    return const SizedBox();
+  }
 }

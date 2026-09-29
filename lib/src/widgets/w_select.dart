@@ -401,7 +401,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
           _triggerKey.currentContext?.findRenderObject() as RenderBox?;
       if (triggerBox != null) {
         final triggerPosition = triggerBox.localToGlobal(Offset.zero);
-        final screenHeight = MediaQuery.of(context).size.height;
+        final screenHeight = MediaQuery.sizeOf(context).height;
         final spaceBelow =
             screenHeight - triggerPosition.dy - triggerBox.size.height;
         final menuMaxHeight = widget.maxMenuHeight;
