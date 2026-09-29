@@ -7,6 +7,7 @@ import 'parser/wind_parser.dart';
 // transitively re-exported by wind_parser.dart. Importing it here
 // is mandatory; without it Dart fails with "Undefined name 'WindStyle'".
 import 'parser/wind_style.dart';
+import 'utils/wind_perf_counters.dart';
 
 /// Concrete WindDebugResolver wired into the registry at app boot
 /// via `Wind.installDebugResolver()`. Resolves up to 7 fields (5 always
@@ -26,9 +27,21 @@ class WindDebugResolverImpl implements WindDebugResolver {
     if (className == null || className.isEmpty) {
       return const {};
     }
-    // 2. Resolve context + style at snapshot time (Element IS a BuildContext)
-    final WindContext ctx = WindContext.build(element);
-    final WindStyle style = WindParser.parse(className, element);
+    // 2. Resolve context + style at snapshot time (Element IS a BuildContext).
+    //    Counting is suspended around it: this is snapshot work, and since
+    //    the resolver also runs in profile builds, next to a measurement
+    //    session, counting it would add one inherited read and one cache
+    //    lookup per inspected widget to reads no build caused.
+    final bool counting = WindPerfCounters.enabled;
+    WindPerfCounters.enabled = false;
+    final WindContext ctx;
+    final WindStyle style;
+    try {
+      ctx = WindContext.build(element);
+      style = WindParser.parse(className, element);
+    } finally {
+      WindPerfCounters.enabled = counting;
+    }
     // 3. Build the field map: 5 fields always present, bgColor + textColor
     //    conditional on non-null resolved values (up to 7 total) when the
     //    widget is a valid W-widget.

@@ -635,5 +635,40 @@ void main() {
       );
       expect(WindAnchorStateProvider.of(ring)?.isFocused, isTrue);
     });
+
+    // A sibling label reads focus from the nearest wrapper, so it lights only
+    // when that wrapper carries a `focus:` class of its own. A hover-only row
+    // used to light it through a node it no longer has; this pins the new
+    // behaviour and the one-class way back that the docs describe.
+    for (final (String className, bool lights) in <(String, bool)>[
+      ('p-2 hover:bg-gray-50', false),
+      ('p-2 hover:bg-gray-50 focus:bg-gray-50', true),
+    ]) {
+      testWidgets(
+          'a sibling label under "$className" '
+          '${lights ? 'reads' : 'does not read'} the field\'s focus', (
+        tester,
+      ) async {
+        await pump(
+          tester,
+          WDiv(
+            className: className,
+            children: const <Widget>[
+              WText('Email', className: 'focus:text-blue-600'),
+              WInput(placeholder: 'you@example.com'),
+            ],
+          ),
+        );
+
+        await tester.tap(find.byType(WInput));
+        await tester.pump();
+
+        expect(
+          WindAnchorStateProvider.of(tester.element(find.text('Email')))
+              ?.isFocused,
+          lights,
+        );
+      });
+    }
   });
 }

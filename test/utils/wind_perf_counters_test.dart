@@ -458,4 +458,127 @@ void main() {
       expect(stats['cacheSize'], 0);
     });
   });
+
+  // The less common wrapper paths each record their own emission, so a perf
+  // report can say which wrapper a frame paid for. Each case pumps the one
+  // shape that reaches its path and reads the counter it should move.
+  group('wrapper emissions and inherited reads on the rarer paths', () {
+    Future<void> measure(WidgetTester tester, Widget app) async {
+      WindPerfCounters.enabled = true;
+      WindPerfCounters.reset();
+      await tester.pumpWidget(app);
+    }
+
+    testWidgets('WText padding and margin each emit a Padding', (
+      tester,
+    ) async {
+      await measure(
+        tester,
+        wrapWithTheme(const WText('Latency', className: 'p-2 m-2')),
+      );
+
+      expect(WindPerfCounters.wrapperEmissions['Padding'], 2);
+    });
+
+    testWidgets('WText align-self and flex emit Align, Expanded and Flexible',
+        (tester) async {
+      await measure(
+        tester,
+        wrapWithTheme(
+          const WDiv(
+            className: 'flex flex-row',
+            children: <Widget>[
+              WText('Up', className: 'self-center'),
+              WText('Latency', className: 'flex-1'),
+              WText('Region', className: 'flex-initial'),
+            ],
+          ),
+        ),
+      );
+
+      expect(WindPerfCounters.wrapperEmissions['Align'], greaterThan(0));
+      expect(WindPerfCounters.wrapperEmissions['Expanded'], 1);
+      expect(WindPerfCounters.wrapperEmissions['Flexible'], 1);
+    });
+
+    testWidgets('a clipped, padded box emits its Padding inside the clip', (
+      tester,
+    ) async {
+      await measure(
+        tester,
+        wrapWithTheme(
+          const WDiv(
+            className: 'overflow-hidden rounded-lg border p-4',
+            child: WText('Status'),
+          ),
+        ),
+      );
+
+      expect(WindPerfCounters.wrapperEmissions['ClipRRect'], 1);
+      // Two: the border-width inset outside the clip, as `Container` does,
+      // and `p-4` moved inside it.
+      expect(WindPerfCounters.wrapperEmissions['Padding'], 2);
+    });
+
+    for (final String className in <String>[
+      'h-1/2 max-h-20',
+      'w-1/2 h-1/2 max-w-20',
+    ]) {
+      testWidgets('"$className" emits the ConstrainedBox that clamps it', (
+        tester,
+      ) async {
+        await measure(
+          tester,
+          wrapWithTheme(
+            SizedBox(
+              height: 400,
+              child: WDiv(className: className, child: const WText('Chart')),
+            ),
+          ),
+        );
+
+        // Two: the box's own `max-*` constraint, and the clamp around the
+        // FractionallySizedBox, which cannot carry a max itself.
+        expect(WindPerfCounters.wrapperEmissions['ConstrainedBox'], 2);
+      });
+    }
+
+    testWidgets('a grid with unbounded width reads the media query size', (
+      tester,
+    ) async {
+      Widget grid() => const WDiv(
+            className: 'grid grid-cols-2 gap-2',
+            children: <Widget>[WText('A'), WText('B')],
+          );
+
+      await measure(tester, wrapWithTheme(grid()));
+      final int bounded = WindPerfCounters.inheritedReads['mediaQuerySize']!;
+
+      await measure(
+        tester,
+        wrapWithTheme(
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: grid(),
+          ),
+        ),
+      );
+
+      expect(WindPerfCounters.inheritedReads['mediaQuerySize'], bounded + 1);
+    });
+
+    testWidgets('WInput without a WindTheme reads the platform brightness', (
+      tester,
+    ) async {
+      await measure(
+        tester,
+        const MaterialApp(home: Scaffold(body: WInput(placeholder: 'Email'))),
+      );
+
+      expect(
+        WindPerfCounters.inheritedReads['mediaQueryBrightness'],
+        greaterThan(0),
+      );
+    });
+  });
 }
