@@ -126,15 +126,15 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.7.0"
+    version: "1.8.0"
   fluttersdk_wind_diagnostics_contracts:
     dependency: transitive
     description:
       name: fluttersdk_wind_diagnostics_contracts
-      sha256: "3c302f7504c9e8037072b4d2be2c266fb5488aa907eda1ce9321f1ee8556c972"
+      sha256: "909f743ed9f2b7c67ae68ae8b7af8dd997cd1f309167a9c1a6c1e283d18f19ce"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   google_fonts:
     dependency: "direct main"
     description:
