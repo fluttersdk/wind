@@ -146,6 +146,8 @@ A `WDiv` whose only state classes are `hover:` or `active:` carries no focus nod
 
 Two shapes are unaffected. A `WDiv` carrying `focus:` with no anchor above it keeps its own focus node, because that is how a consumer styles a custom control. And a focusable descendant still lights the wrapper's ring: `FocusNode.hasFocus` covers descendants, so a `WInput` inside a ring-styled `WDiv` draws the ring around the field the user is typing in.
 
+One consequence to know: whether the node exists follows the className, so a `WDiv` that adds or drops a `focus:` class at runtime changes its subtree's shape, and the children below remount and lose their `State` (a `WInput`'s text among it). Keep a `focus:` class present on a div whose children hold state, and switch what it paints instead.
+
 What the wrapper inherits is deliberately narrow: the ancestor's PRIMARY focus, never its focus-within. It passes that signal on rather than stopping at it, because any `hover:` or `active:` class on a div in between creates a second wrapper whose own node never holds focus, and a ring two wrappers deep would otherwise stay dark. The two are different questions and `WindAnchorState` now exposes both. A tappable card containing a text field reports focus-within the whole time the user types, so a wrapper inheriting that would light up even when it sits *beside* the field rather than around it:
 
 ```dart

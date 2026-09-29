@@ -79,9 +79,9 @@ className: '''
 ''',
 ```
 
-## Container elision
+## Box elision
 
-A `Container` is emitted only when `styles.decoration != null` OR a non-empty `boxShadow` / `ringShadow` exists. Padding-only, text-only, and `shadow-none` paths must stay Container-free. `WindStyle.copyWith` must NOT fabricate an empty `BoxDecoration`, or the `decoration != null` gate breaks and every styled widget grows a needless Container.
+WDiv's non-animated box is `_buildBox`, `Container.build`'s own primitives in its order (`LimitedBox` + expand for a null child, `Align`, `Padding` inset by the border widths, `DecoratedBox`, `ConstrainedBox`), and each is emitted only when its input exists: a `DecoratedBox` only when `styles.decoration != null` OR a non-empty `boxShadow` / `ringShadow` exists, a `Padding` only when non-zero. Padding-only, text-only, and `shadow-none` paths must stay free of a `DecoratedBox`. `WindStyle.copyWith` must NOT fabricate an empty `BoxDecoration`, or the `decoration != null` gate breaks and every styled widget grows a needless one. `test/widgets/w_div/sizing_test.dart` pins the geometry against `Container`'s; `AnimatedContainer` stays on the transition path.
 
 ## What never goes in `lib/src/widgets/`
 
