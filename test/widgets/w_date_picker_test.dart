@@ -572,14 +572,36 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
 
+      // The trigger sits about 256 pixels down, leaving roughly 290 below
+      // and 244 above: less than the 400 pixel calendar limit on both
+      // sides, so the side cap is what bounds the popover.
       await tester.pumpWidget(wrapWithTheme(
-        const SizedBox(width: 320, child: WDatePicker()),
+        Padding(
+          padding: const EdgeInsets.only(top: 240),
+          child: SizedBox(
+            width: 320,
+            child: WDatePicker(value: DateTime(2025, 1, 15)),
+          ),
+        ),
       ));
       await tester.tap(find.byType(WDatePicker));
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      expect(find.byType(SingleChildScrollView), findsWidgets);
+
+      final Finder scrollable = find
+          .ancestor(
+            of: find.text('January 2025'),
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      final Rect viewport = tester.getRect(scrollable);
+      final ScrollPosition position =
+          tester.state<ScrollableState>(scrollable).position;
+
+      expect(viewport.bottom, lessThanOrEqualTo(600));
+      expect(viewport.height, lessThan(400));
+      expect(position.maxScrollExtent, greaterThan(0));
     });
 
     group('Disabled Date Cells', () {
