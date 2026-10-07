@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.8.1] - 2026-10-07
+
 ### Fixed
 
 - **A `WPopover` taller than the room on both sides of its trigger stays inside the window and scrolls.** The auto-flip picks the roomier side, but the overlay kept its full `maxHeight`, so a 480 pixel menu opened under a control band at y=256 of a 600 pixel desktop window ran 200 pixels past the bottom edge, and the rows down there could not be reached, not even by scrolling, since the scroll view itself was the part off screen. Measured in a Watchools macOS player menu, which a UI driver then refused as off-viewport. With `autoFlip` on (the default) the overlay is now capped at the room left on its side, 8 pixels short of the edge, through the new `computeAvailableHeight`, mirroring the horizontal clamp; a popover that fits keeps its own `maxHeight`, and `autoFlip: false` leaves the height alone. The clamp relies on content that scrolls, as the `maxHeight` doc already promised: `WDatePicker`'s calendar was a plain column and overflowed by 268 pixels once capped, so its popover now carries `overflow-y-auto`; a consumer whose popover content is a plain column should add the same class. (#227) (`lib/src/widgets/w_popover.dart`, `lib/src/widgets/w_date_picker.dart`, `test/widgets/w_popover/height_test.dart`, `test/widgets/w_popover/width_test.dart`, `test/widgets/w_date_picker_test.dart`, `doc/widgets/w-popover.md`, `skills/wind-ui/SKILL.md`)
@@ -448,7 +452,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.8.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.8.1...HEAD
+[1.8.1]: https://github.com/fluttersdk/wind/releases/tag/1.8.1
 [1.8.0]: https://github.com/fluttersdk/wind/releases/tag/1.8.0
 [1.7.0]: https://github.com/fluttersdk/wind/releases/tag/1.7.0
 [1.6.4]: https://github.com/fluttersdk/wind/releases/tag/1.6.4
