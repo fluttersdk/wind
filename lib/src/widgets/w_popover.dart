@@ -89,6 +89,35 @@ double computeHorizontalClamp({
   );
 }
 
+/// The height left for the overlay on the side [alignment] opens toward: below
+/// the trigger for a bottom alignment, above it for a top one, less [margin]
+/// from the viewport edge. Never negative.
+///
+/// [computeEffectiveAlignment] picks the side with more room but cannot make a
+/// popover taller than both sides fit, so the overlay is capped at this height
+/// and its content scrolls rather than running off the window.
+double computeAvailableHeight({
+  required PopoverAlignment alignment,
+  required Offset triggerPosition,
+  required Size triggerSize,
+  required Size screenSize,
+  required Offset offset,
+  double margin = 8,
+}) {
+  final bool isTop = alignment == PopoverAlignment.topLeft ||
+      alignment == PopoverAlignment.topCenter ||
+      alignment == PopoverAlignment.topRight;
+  final double available = isTop
+      ? triggerPosition.dy - offset.dy - margin
+      : screenSize.height -
+          triggerPosition.dy -
+          triggerSize.height -
+          offset.dy -
+          margin;
+
+  return available < 0 ? 0 : available;
+}
+
 /// Controller for programmatic popover control
 class PopoverController extends ChangeNotifier {
   bool _isOpen = false;
@@ -815,6 +844,23 @@ class _WPopoverState extends State<WPopover> {
       }
     }
 
+    // Vertical viewport clamp: the flip picks the roomier side, but a popover
+    // taller than both sides still ran off the window (a 480px menu under a
+    // control band at y=256 of a 600px desktop window). Cap the overlay at the
+    // room on its side so the content scrolls. Gated on autoFlip, like the
+    // horizontal clamp.
+    double effectiveMaxHeight = widget.maxHeight;
+    if (widget.autoFlip && triggerBox != null && triggerBox.hasSize) {
+      final double available = computeAvailableHeight(
+        alignment: effectiveAlignment,
+        triggerPosition: triggerBox.localToGlobal(Offset.zero),
+        triggerSize: triggerBox.size,
+        screenSize: MediaQuery.sizeOf(context),
+        offset: widget.offset,
+      );
+      if (available < effectiveMaxHeight) effectiveMaxHeight = available;
+    }
+
     return CompositedTransformFollower(
       link: _layerLink,
       targetAnchor: _targetAnchorFor(effectiveAlignment),
@@ -837,14 +883,14 @@ class _WPopoverState extends State<WPopover> {
                 constraints: fixedWidth != null
                     // Fixed width: pin the overlay exactly (WSelect parity).
                     ? BoxConstraints(
-                        maxHeight: widget.maxHeight,
+                        maxHeight: effectiveMaxHeight,
                         minWidth: fixedWidth,
                         maxWidth: fixedWidth,
                       )
                     // Flexible width: at least the trigger width (clamped so it
                     // never exceeds the bound), at most effectiveMaxWidth.
                     : BoxConstraints(
-                        maxHeight: widget.maxHeight,
+                        maxHeight: effectiveMaxHeight,
                         minWidth: triggerWidth > effectiveMaxWidth
                             ? effectiveMaxWidth
                             : triggerWidth,

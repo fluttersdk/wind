@@ -83,7 +83,7 @@ const WPopover({
 | `controller` | `PopoverController?` | `null` | Optional controller for programmatic show/hide/toggle. |
 | `alignment` | `PopoverAlignment` | `bottomLeft` | Where to position the popover relative to the trigger. |
 | `offset` | `Offset` | `Offset(0, 4)` | Gap between the trigger and the popover. |
-| `maxHeight` | `double` | `400` | Maximum height for the content. It will scroll if exceeded. |
+| `maxHeight` | `double` | `400` | Maximum height for the content. It will scroll if exceeded. With `autoFlip` on, the overlay is also capped at the room left on its side of the trigger, so it never runs off the window. |
 | `width` | `double?` | `null` | Pins the overlay to a fixed width (like `WSelect`'s `menuWidth`). Overrides a `w-*` token in `className`. |
 | `maxWidth` | `double?` | `null` | Upper bound for the overlay width. Falls back to a `max-w-*` token, then to the screen width, so the overlay never stretches off-screen. Ignored when a fixed `width` (or `w-*`) is set. |
 | `enableTriggerOnTap` | `bool` | `true` | Whether tapping the trigger toggles the popover. |
@@ -91,7 +91,7 @@ const WPopover({
 | `disabled` | `bool` | `false` | When true, the trigger will not respond to interactions. |
 | `onOpen` | `VoidCallback?` | `null` | Callback fired when the popover is opened. |
 | `onClose` | `VoidCallback?` | `null` | Callback fired when the popover is closed. |
-| `autoFlip` | `bool` | `true` | When true, the popover flips its alignment to the opposite side if the natural position would render off-screen. |
+| `autoFlip` | `bool` | `true` | When true, the popover flips its alignment to the opposite side if the natural position would render off-screen, and is held inside the viewport: pulled in horizontally, and capped vertically at the room on its side (the content scrolls). |
 
 ## Layout Modes
 
@@ -99,7 +99,7 @@ While `WPopover` itself isn't a layout container, it supports various **Alignmen
 
 ### Alignment
 
-`WPopover` intelligently "flips" the alignment if the requested position would cause the overlay to overflow the screen edges.
+`WPopover` intelligently "flips" the alignment if the requested position would cause the overlay to overflow the screen edges. When neither side has room for `maxHeight`, it keeps the roomier side and shrinks to the space there, 8 pixels short of the edge, so a tall menu scrolls instead of running off a small window. The content has to be able to scroll for that: give the popover `overflow-y-auto` (or build the content on a scroll view), or a plain column overflows once capped.
 
 <x-preview path="widgets/w_popover_alignment" size="md" source="example/lib/pages/widgets/w_popover_alignment.dart"></x-preview>
 
