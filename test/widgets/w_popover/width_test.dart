@@ -25,9 +25,10 @@ WPopover _popover({double? width, double? maxWidth, String? className}) {
   );
 }
 
-/// The overlay [ConstrainedBox] is the one carrying the popover's maxHeight
-/// (400); a `max-w-*` token on the content WDiv produces its own inner
-/// ConstrainedBox (maxHeight infinity), so select by maxHeight to avoid it.
+/// The overlay [ConstrainedBox] is the one carrying a finite maxHeight (the
+/// popover's 400, or less once the viewport clamp caps it to the room below the
+/// trigger); a `max-w-*` token on the content WDiv produces its own inner
+/// ConstrainedBox (maxHeight infinity), so select by a finite maxHeight.
 BoxConstraints _overlayConstraints(WidgetTester tester) {
   final box = tester
       .widgetList<ConstrainedBox>(
@@ -36,7 +37,7 @@ BoxConstraints _overlayConstraints(WidgetTester tester) {
           matching: find.byType(ConstrainedBox),
         ),
       )
-      .firstWhere((b) => b.constraints.maxHeight == 400);
+      .firstWhere((b) => b.constraints.maxHeight.isFinite);
   return box.constraints;
 }
 

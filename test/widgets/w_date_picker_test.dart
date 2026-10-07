@@ -565,6 +565,45 @@ void main() {
       });
     });
 
+    testWidgets(
+        'on a window too short for the calendar it stays on screen and '
+        'scrolls instead of overflowing', (tester) async {
+      tester.view.physicalSize = const Size(800, 600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      // The trigger sits about 256 pixels down, leaving roughly 290 below
+      // and 244 above: less than the 400 pixel calendar limit on both
+      // sides, so the side cap is what bounds the popover.
+      await tester.pumpWidget(wrapWithTheme(
+        Padding(
+          padding: const EdgeInsets.only(top: 240),
+          child: SizedBox(
+            width: 320,
+            child: WDatePicker(value: DateTime(2025, 1, 15)),
+          ),
+        ),
+      ));
+      await tester.tap(find.byType(WDatePicker));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+
+      final Finder scrollable = find
+          .ancestor(
+            of: find.text('January 2025'),
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      final Rect viewport = tester.getRect(scrollable);
+      final ScrollPosition position =
+          tester.state<ScrollableState>(scrollable).position;
+
+      expect(viewport.bottom, lessThanOrEqualTo(600));
+      expect(viewport.height, lessThan(400));
+      expect(position.maxScrollExtent, greaterThan(0));
+    });
+
     group('Disabled Date Cells', () {
       testWidgets('disabled dates outside min/max have no tap callback',
           (tester) async {
