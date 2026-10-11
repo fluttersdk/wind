@@ -428,6 +428,27 @@ void main() {
         );
       });
 
+      // `WSwitch`, `WCheckbox` and `WTabs` pass `onTap: null` while disabled,
+      // so a disabled control is gestureless; it must still read as not
+      // clickable inside a tappable row.
+      testWidgets('a disabled anchor with no gesture shows the basic cursor',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              isDisabled: true,
+              child: const SizedBox(width: 100, height: 100),
+            ),
+          ),
+        );
+
+        final mouseRegion = tester.widget<MouseRegion>(find
+            .ancestor(
+                of: find.byType(SizedBox), matching: find.byType(MouseRegion))
+            .first);
+        expect(mouseRegion.cursor, equals(SystemMouseCursors.basic));
+      });
+
       testWidgets('a lone styling wrapper shows the basic cursor',
           (tester) async {
         await tester.pumpWidget(
