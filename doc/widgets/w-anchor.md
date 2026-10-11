@@ -70,7 +70,7 @@ const WAnchor({
 | `onDoubleTap` | `VoidCallback?` | `null` | Triggered when the widget is double-tapped. |
 | `isDisabled` | `bool` | `false` | When true, gestures are ignored and the `disabled:` prefix is activated. |
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., `{'active'}`). |
-| `mouseCursor` | `MouseCursor?` | `null` | Custom cursor. Defaults to click when interactive. |
+| `mouseCursor` | `MouseCursor?` | `null` | Custom cursor. Defaults to click when interactive, basic when disabled, and `MouseCursor.defer` when the anchor has no gesture, so a styling wrapper keeps the cursor of the control around it. |
 | `semanticLabel` | `String?` | `null` | Accessible name for icon-only controls. When set, excludes the child subtree from semantics so the label overrides any child text; prefer it for icon-only controls rather than controls that already expose readable text. |
 | `trackFocus` | `bool` | `true` | Whether a gestureless anchor installs a focus node. `WDiv` passes `false` when its className has no `focus:` class. Ignored when the anchor has a gesture, which always keeps its node. |
 

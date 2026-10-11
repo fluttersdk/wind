@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A control styled with `hover:` or `focus:` shows the click cursor again.** `WDiv` wraps itself in a gestureless `WAnchor` for those prefixes, and that anchor's `MouseRegion` claimed `SystemMouseCursors.basic`. Sitting deeper than the tappable `WAnchor` around it, it won the cursor, so every round control of a Watchools player band (`WAnchor(onTap:) > WDiv('hover:bg-scrim focus:ring-2')`) showed the arrow over a button. A gestureless anchor now defers (`MouseCursor.defer`), which leaves the cursor to the control around it and resolves to the basic cursor when nothing is there; an anchor with a gesture keeps click, or basic while disabled. (`lib/src/widgets/w_anchor.dart`, `test/widgets/w_anchor_test.dart`, `doc/widgets/w-anchor.md`, `skills/wind-ui/references/widgets.md`)
+
 ---
 
 ## [1.8.1] - 2026-10-07
