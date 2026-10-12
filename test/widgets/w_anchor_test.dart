@@ -2,6 +2,7 @@ import 'dart:ui' show Tristate;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RendererBinding;
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
@@ -379,7 +380,7 @@ void main() {
         expect(mouseRegion.cursor, equals(SystemMouseCursors.click));
       });
 
-      testWidgets('shows basic cursor when non-interactive', (tester) async {
+      testWidgets('defers the cursor when non-interactive', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WAnchor(
@@ -392,7 +393,84 @@ void main() {
             .ancestor(
                 of: find.byType(SizedBox), matching: find.byType(MouseRegion))
             .first);
+        expect(mouseRegion.cursor, equals(MouseCursor.defer));
+      });
+
+      // `WDiv` wraps itself in a gestureless anchor for `hover:` / `focus:`,
+      // and that wrapper sits deeper than the tappable anchor around it. A
+      // cursor of its own outranked the click cursor of the control.
+      testWidgets('a styling wrapper keeps the click cursor of its control',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Center(
+              child: WAnchor(
+                onTap: () {},
+                child: WDiv(
+                  className: 'w-24 h-24 hover:bg-gray-100 focus:ring-2',
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        addTearDown(gesture.removePointer);
+        await gesture.addPointer(location: Offset.zero);
+        await gesture.moveTo(tester.getCenter(find.byType(WDiv)));
+        await tester.pump();
+
+        expect(
+          RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+          equals(SystemMouseCursors.click),
+        );
+      });
+
+      // `WSwitch`, `WCheckbox` and `WTabs` pass `onTap: null` while disabled,
+      // so a disabled control is gestureless; it must still read as not
+      // clickable inside a tappable row.
+      testWidgets('a disabled anchor with no gesture shows the basic cursor',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WAnchor(
+              isDisabled: true,
+              child: const SizedBox(width: 100, height: 100),
+            ),
+          ),
+        );
+
+        final mouseRegion = tester.widget<MouseRegion>(find
+            .ancestor(
+                of: find.byType(SizedBox), matching: find.byType(MouseRegion))
+            .first);
         expect(mouseRegion.cursor, equals(SystemMouseCursors.basic));
+      });
+
+      testWidgets('a lone styling wrapper shows the basic cursor',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Center(
+              child: WDiv(className: 'w-24 h-24 hover:bg-gray-100'),
+            ),
+          ),
+        );
+
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        addTearDown(gesture.removePointer);
+        await gesture.addPointer(location: Offset.zero);
+        await gesture.moveTo(tester.getCenter(find.byType(WDiv)));
+        await tester.pump();
+
+        expect(
+          RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+          equals(SystemMouseCursors.basic),
+        );
       });
     });
 

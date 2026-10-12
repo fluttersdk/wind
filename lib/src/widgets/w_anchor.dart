@@ -70,8 +70,11 @@ class WAnchor extends StatefulWidget {
 
   /// The cursor to use when the mouse pointer is over the widget.
   ///
-  /// If not provided, it defaults to `SystemMouseCursors.click` if there are gestures
-  /// and the widget is not disabled, otherwise `SystemMouseCursors.basic`.
+  /// If not provided, it defaults to `SystemMouseCursors.basic` when the
+  /// widget is disabled, `SystemMouseCursors.click` when it has gestures, and
+  /// `MouseCursor.defer` when it has none, so an anchor that only styles
+  /// leaves the cursor to whatever sits around it (the basic cursor when
+  /// nothing does).
   final MouseCursor? mouseCursor;
 
   /// An explicit accessible label for the button Semantics node.
@@ -366,12 +369,17 @@ class _WAnchorState extends State<WAnchor> {
     Widget result = WindAnchorStateProvider(
       state: currentState,
       child: MouseRegion(
+        // Disabled reads as not clickable whatever it carries: `WSwitch`,
+        // `WCheckbox` and `WTabs` drop `onTap` while disabled. Otherwise a
+        // gestureless anchor defers: it is the styling wrapper `WDiv` adds
+        // for `hover:` / `focus:`, deeper than the control around it, so a
+        // cursor of its own would outrank that control's click cursor.
         cursor: widget.mouseCursor ??
             (widget.isDisabled
                 ? SystemMouseCursors.basic
                 : hasGestures
                     ? SystemMouseCursors.click
-                    : SystemMouseCursors.basic),
+                    : MouseCursor.defer),
         onEnter: widget.isDisabled ? null : (_) => _onHover(true),
         onExit: widget.isDisabled ? null : (_) => _onHover(false),
         child: innerChild,

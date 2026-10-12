@@ -240,7 +240,7 @@ const WAnchor({
   VoidCallback? onDoubleTap,
   bool isDisabled = false,
   Set<String>? states,
-  MouseCursor? mouseCursor,           // defaults to SystemMouseCursors.click when gestures exist
+  MouseCursor? mouseCursor,           // click with gestures, basic when disabled, MouseCursor.defer with none
   String? semanticLabel,              // accessible name for icon-only anchors (no child text for Semantics to absorb)
   bool trackFocus = true,             // gestureless only: false drops the Focus node (WDiv passes false without focus:)
 })
