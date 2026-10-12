@@ -161,10 +161,11 @@ class WInput extends StatefulWidget {
   /// what to fill into this field, e.g. [AutofillHints.email] or
   /// [AutofillHints.password].
   ///
-  /// Forwarded to the underlying `EditableText`. The hints only take effect
-  /// inside an [AutofillGroup], which the host owns: wrap the sign-in form in
-  /// one, since [WInput] never creates it. `null` (the default) opts the field
-  /// out of autofill.
+  /// Forwarded to the underlying `EditableText`, with its default: an empty
+  /// list leaves platform autofill on with no hint, and `null` opts the field
+  /// out of autofill altogether. Fields that belong to one form (a sign-in's
+  /// username and password) go inside an [AutofillGroup], which the host owns;
+  /// [WInput] never creates one.
   final Iterable<String>? autofillHints;
 
   /// Called when the user submits the input (e.g., presses done/enter/send).
@@ -267,7 +268,7 @@ class WInput extends StatefulWidget {
     this.readOnly = false,
     this.autofocus = false,
     this.textInputAction,
-    this.autofillHints,
+    this.autofillHints = const <String>[],
     this.onSubmitted,
     this.onEditingComplete,
     this.onTap,

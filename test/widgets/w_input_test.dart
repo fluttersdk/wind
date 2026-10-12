@@ -396,8 +396,22 @@ void main() {
         expect(editableText.autofillHints, [AutofillHints.email]);
       });
 
-      testWidgets('autofillHints default to null', (tester) async {
+      testWidgets('a field with no hints keeps platform autofill on',
+          (tester) async {
+        // `EditableText` reads null as `AutofillConfiguration.disabled`; its
+        // own default is an empty list, which leaves autofill on.
         await tester.pumpWidget(wrapWithTheme(const WInput()));
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofillHints, isEmpty);
+        expect(editableText.autofillHints, isNotNull);
+      });
+
+      testWidgets('an explicit null still opts the field out', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WInput(autofillHints: null)),
+        );
 
         final editableText =
             tester.widget<EditableText>(find.byType(EditableText));
