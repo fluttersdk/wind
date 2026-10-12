@@ -10,6 +10,22 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [1.8.4] - 2026-10-13
+
+### Fixed
+
+- **A `WInput` or `WFormInput` with no `autofillHints` keeps platform autofill on again.** 1.8.3 forwarded the new parameter as `null` whenever a caller gave none, and `EditableText` reads `null` as `AutofillConfiguration.disabled`, so every unhinted field in every app lost Android and web autofill. The parameter now defaults to `const <String>[]`, `EditableText`'s own default, which is what applied before 1.8.3; an explicit `null` still opts a field out. (`lib/src/widgets/w_input.dart`, `lib/src/widgets/w_form_input.dart`, `test/widgets/w_input_test.dart`, `test/widgets/w_form_input_test.dart`, `doc/widgets/w-input.md`, `doc/widgets/w-form-input.md`)
+
+---
+
+## [1.8.3] - 2026-10-12
+
+### Added
+
+- **`WInput.autofillHints` and `WFormInput.autofillHints` let a sign-in form attach a password manager.** Neither widget exposed the hints, so a host could not mark a field as `AutofillHints.email` or `AutofillHints.password` even inside an `AutofillGroup`, and the platform had nothing to match a saved credential against. The parameter is an optional `Iterable<String>?` beside `textInputAction`, forwarded to the `EditableText` that `WInput` builds and, for `WFormInput`, to its inner `WInput`; `null` keeps today's behavior. Wind creates no `AutofillGroup` itself, since only the host knows which fields belong to one form. (`lib/src/widgets/w_input.dart`, `lib/src/widgets/w_form_input.dart`, `test/widgets/w_input_test.dart`, `test/widgets/w_form_input_test.dart`, `doc/widgets/w-input.md`, `doc/widgets/w-form-input.md`)
+
+---
+
 ## [1.8.2] - 2026-10-12
 
 ### Fixed
@@ -460,7 +476,9 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.8.2...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.8.4...HEAD
+[1.8.4]: https://github.com/fluttersdk/wind/releases/tag/1.8.4
+[1.8.3]: https://github.com/fluttersdk/wind/releases/tag/1.8.3
 [1.8.2]: https://github.com/fluttersdk/wind/releases/tag/1.8.2
 [1.8.1]: https://github.com/fluttersdk/wind/releases/tag/1.8.1
 [1.8.0]: https://github.com/fluttersdk/wind/releases/tag/1.8.0

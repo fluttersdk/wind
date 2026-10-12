@@ -383,6 +383,41 @@ void main() {
         expect(editableText.textInputAction, TextInputAction.send);
       });
 
+      testWidgets('autofillHints are forwarded to EditableText',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(autofillHints: [AutofillHints.email]),
+          ),
+        );
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofillHints, [AutofillHints.email]);
+      });
+
+      testWidgets('a field with no hints keeps platform autofill on',
+          (tester) async {
+        // `EditableText` reads null as `AutofillConfiguration.disabled`; its
+        // own default is an empty list, which leaves autofill on.
+        await tester.pumpWidget(wrapWithTheme(const WInput()));
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofillHints, isEmpty);
+        expect(editableText.autofillHints, isNotNull);
+      });
+
+      testWidgets('an explicit null still opts the field out', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WInput(autofillHints: null)),
+        );
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofillHints, isNull);
+      });
+
       testWidgets('onEditingComplete is called', (tester) async {
         bool editingCompleted = false;
 
