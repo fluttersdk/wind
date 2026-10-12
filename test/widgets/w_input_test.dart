@@ -383,6 +383,27 @@ void main() {
         expect(editableText.textInputAction, TextInputAction.send);
       });
 
+      testWidgets('autofillHints are forwarded to EditableText',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(autofillHints: [AutofillHints.email]),
+          ),
+        );
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofillHints, [AutofillHints.email]);
+      });
+
+      testWidgets('autofillHints default to null', (tester) async {
+        await tester.pumpWidget(wrapWithTheme(const WInput()));
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofillHints, isNull);
+      });
+
       testWidgets('onEditingComplete is called', (tester) async {
         bool editingCompleted = false;
 
