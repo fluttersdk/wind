@@ -57,6 +57,7 @@ const WInput({
   bool readOnly = false,
   bool autofocus = false,
   TextInputAction? textInputAction,
+  Iterable<String>? autofillHints = const <String>[],
   ValueChanged<String>? onSubmitted,
   VoidCallback? onEditingComplete,
   VoidCallback? onTap,
@@ -91,6 +92,7 @@ const WInput({
 | `readOnly` | `bool` | `false` | Whether the input is read-only |
 | `autofocus` | `bool` | `false` | Autofocus on mount |
 | `textInputAction` | `TextInputAction?` | `null` | Keyboard action (e.g., `.done`, `.next`). When `null`, resolves to `.done` on a single-line field and `.newline` on a multiline one. |
+| `autofillHints` | `Iterable<String>?` | `const []` | Hints for a password manager or the platform autofill service (e.g., `[AutofillHints.email]`). The empty default keeps platform autofill on with no hint; `null` opts the field out. Fields of one form go inside an `AutofillGroup`, which the host provides; `WInput` never creates one. |
 | `onSubmitted` | `ValueChanged<String>?` | `null` | Callback when action button is pressed |
 | `onTapOutside` | `TapRegionCallback?` | `null` | Callback when tapping outside (useful for blur) |
 | `maxLines` | `int?` | `null` | Max lines for multiline input |

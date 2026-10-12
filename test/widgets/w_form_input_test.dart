@@ -483,6 +483,28 @@ void main() {
         expect(editableText.textInputAction, TextInputAction.search);
       });
 
+      testWidgets('autofillHints are forwarded', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Form(child: WFormInput(autofillHints: [AutofillHints.password])),
+          ),
+        );
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofillHints, [AutofillHints.password]);
+      });
+
+      testWidgets('a field with no hints keeps platform autofill on',
+          (tester) async {
+        await tester.pumpWidget(wrapWithTheme(Form(child: WFormInput())));
+
+        final editableText =
+            tester.widget<EditableText>(find.byType(EditableText));
+        expect(editableText.autofillHints, isEmpty);
+        expect(editableText.autofillHints, isNotNull);
+      });
+
       testWidgets('onSubmitted is called', (tester) async {
         String? submittedValue;
 
