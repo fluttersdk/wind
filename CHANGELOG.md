@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.8.2] - 2026-10-12
+
 ### Fixed
 
 - **A control styled with `hover:` or `focus:` shows the click cursor again.** `WDiv` wraps itself in a gestureless `WAnchor` for those prefixes, and that anchor's `MouseRegion` claimed `SystemMouseCursors.basic`. Sitting deeper than the tappable `WAnchor` around it, it won the cursor, so every round control of a Watchools player band (`WAnchor(onTap:) > WDiv('hover:bg-scrim focus:ring-2')`) showed the arrow over a button. A gestureless anchor now defers (`MouseCursor.defer`), which leaves the cursor to the control around it and resolves to the basic cursor when nothing is there. A disabled anchor still shows basic whether or not it carries a gesture, because `WSwitch`, `WCheckbox` and `WTabs` drop `onTap` while disabled and would otherwise inherit a tappable row's click cursor; an enabled anchor with a gesture keeps click. (#229) (`lib/src/widgets/w_anchor.dart`, `lib/src/widgets/w_div.dart`, `test/widgets/w_anchor_test.dart`, `doc/widgets/w-anchor.md`, `skills/wind-ui/references/widgets.md`)
@@ -456,7 +460,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.8.1...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.8.2...HEAD
+[1.8.2]: https://github.com/fluttersdk/wind/releases/tag/1.8.2
 [1.8.1]: https://github.com/fluttersdk/wind/releases/tag/1.8.1
 [1.8.0]: https://github.com/fluttersdk/wind/releases/tag/1.8.0
 [1.7.0]: https://github.com/fluttersdk/wind/releases/tag/1.7.0
