@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- **`WInput.autofillHints` and `WFormInput.autofillHints` let a sign-in form attach a password manager.** Neither widget exposed the hints, so a host could not mark a field as `AutofillHints.email` or `AutofillHints.password` even inside an `AutofillGroup`, and the platform had nothing to match a saved credential against. The parameter is an optional `Iterable<String>?` beside `textInputAction`, forwarded to the `EditableText` that `WInput` builds and, for `WFormInput`, to its inner `WInput`; `null` keeps today's behavior. Wind creates no `AutofillGroup` itself, since only the host knows which fields belong to one form. (`lib/src/widgets/w_input.dart`, `lib/src/widgets/w_form_input.dart`, `test/widgets/w_input_test.dart`, `test/widgets/w_form_input_test.dart`, `doc/widgets/w-input.md`, `doc/widgets/w-form-input.md`)
+
 ---
 
 ## [1.8.2] - 2026-10-12

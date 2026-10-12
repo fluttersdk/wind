@@ -94,6 +94,7 @@ class WFormInput extends FormField<String> {
     this.className,
     this.placeholderClassName,
     this.textInputAction,
+    this.autofillHints,
     this.onSubmitted,
     this.onChanged,
     this.onEditingComplete,
@@ -137,6 +138,7 @@ class WFormInput extends FormField<String> {
               className: className,
               placeholderClassName: placeholderClassName,
               textInputAction: textInputAction,
+              autofillHints: autofillHints,
               onSubmitted: onSubmitted,
               onChanged: onChanged,
               onEditingComplete: onEditingComplete,
@@ -197,6 +199,15 @@ class WFormInput extends FormField<String> {
 
   /// The action button on the keyboard (e.g., done, next, search).
   final TextInputAction? textInputAction;
+
+  /// Hints a password manager or the platform autofill service uses to decide
+  /// what to fill into this field, e.g. [AutofillHints.email] or
+  /// [AutofillHints.password].
+  ///
+  /// Forwarded to the inner [WInput]. The hints only take effect inside an
+  /// [AutofillGroup], which the host owns. `null` (the default) opts the field
+  /// out of autofill.
+  final Iterable<String>? autofillHints;
 
   /// Called when the user submits the input.
   final ValueChanged<String>? onSubmitted;
@@ -306,6 +317,7 @@ class _WFormInputContent extends StatefulWidget {
     this.className,
     this.placeholderClassName,
     this.textInputAction,
+    this.autofillHints,
     this.onSubmitted,
     this.onChanged,
     this.onEditingComplete,
@@ -339,6 +351,7 @@ class _WFormInputContent extends StatefulWidget {
   final String? className;
   final String? placeholderClassName;
   final TextInputAction? textInputAction;
+  final Iterable<String>? autofillHints;
   final ValueChanged<String>? onSubmitted;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
@@ -446,6 +459,7 @@ class _WFormInputContentState extends State<_WFormInputContent> {
       className: widget.className,
       placeholderClassName: widget.placeholderClassName,
       textInputAction: widget.textInputAction,
+      autofillHints: widget.autofillHints,
       onSubmitted: widget.onSubmitted,
       onChanged: (value) {
         widget.state.didChange(value);

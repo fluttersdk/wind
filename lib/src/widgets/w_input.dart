@@ -157,6 +157,16 @@ class WInput extends StatefulWidget {
   /// - `TextInputAction.go` - Shows "Go" button
   final TextInputAction? textInputAction;
 
+  /// Hints a password manager or the platform autofill service uses to decide
+  /// what to fill into this field, e.g. [AutofillHints.email] or
+  /// [AutofillHints.password].
+  ///
+  /// Forwarded to the underlying `EditableText`. The hints only take effect
+  /// inside an [AutofillGroup], which the host owns: wrap the sign-in form in
+  /// one, since [WInput] never creates it. `null` (the default) opts the field
+  /// out of autofill.
+  final Iterable<String>? autofillHints;
+
   /// Called when the user submits the input (e.g., presses done/enter/send).
   ///
   /// This is triggered when the user taps the action button on the keyboard.
@@ -257,6 +267,7 @@ class WInput extends StatefulWidget {
     this.readOnly = false,
     this.autofocus = false,
     this.textInputAction,
+    this.autofillHints,
     this.onSubmitted,
     this.onEditingComplete,
     this.onTap,
@@ -757,6 +768,7 @@ class _WInputState extends State<WInput>
           (widget.type == InputType.multiline
               ? TextInputAction.newline
               : TextInputAction.done),
+      autofillHints: widget.autofillHints,
       textCapitalization: widget.textCapitalization,
       autocorrect: widget.autocorrect,
       enableSuggestions: widget.enableSuggestions,
