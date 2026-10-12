@@ -495,12 +495,14 @@ void main() {
         expect(editableText.autofillHints, [AutofillHints.password]);
       });
 
-      testWidgets('autofillHints default to null', (tester) async {
+      testWidgets('a field with no hints keeps platform autofill on',
+          (tester) async {
         await tester.pumpWidget(wrapWithTheme(Form(child: WFormInput())));
 
         final editableText =
             tester.widget<EditableText>(find.byType(EditableText));
-        expect(editableText.autofillHints, isNull);
+        expect(editableText.autofillHints, isEmpty);
+        expect(editableText.autofillHints, isNotNull);
       });
 
       testWidgets('onSubmitted is called', (tester) async {

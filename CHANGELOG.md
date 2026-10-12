@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A `WInput` or `WFormInput` with no `autofillHints` keeps platform autofill on again.** 1.8.3 forwarded the new parameter as `null` whenever a caller gave none, and `EditableText` reads `null` as `AutofillConfiguration.disabled`, so every unhinted field in every app lost Android and web autofill. The parameter now defaults to `const <String>[]`, `EditableText`'s own default, which is what applied before 1.8.3; an explicit `null` still opts a field out. (`lib/src/widgets/w_input.dart`, `lib/src/widgets/w_form_input.dart`, `test/widgets/w_input_test.dart`, `test/widgets/w_form_input_test.dart`, `doc/widgets/w-input.md`, `doc/widgets/w-form-input.md`)
+
 ---
 
 ## [1.8.3] - 2026-10-12

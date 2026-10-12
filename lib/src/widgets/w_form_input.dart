@@ -94,7 +94,7 @@ class WFormInput extends FormField<String> {
     this.className,
     this.placeholderClassName,
     this.textInputAction,
-    this.autofillHints,
+    this.autofillHints = const <String>[],
     this.onSubmitted,
     this.onChanged,
     this.onEditingComplete,
@@ -204,9 +204,10 @@ class WFormInput extends FormField<String> {
   /// what to fill into this field, e.g. [AutofillHints.email] or
   /// [AutofillHints.password].
   ///
-  /// Forwarded to the inner [WInput]. The hints only take effect inside an
-  /// [AutofillGroup], which the host owns. `null` (the default) opts the field
-  /// out of autofill.
+  /// Forwarded to the inner [WInput], with its default: an empty list leaves
+  /// platform autofill on with no hint, and `null` opts the field out of
+  /// autofill altogether. Fields of one form go inside an [AutofillGroup],
+  /// which the host owns.
   final Iterable<String>? autofillHints;
 
   /// Called when the user submits the input.
@@ -317,7 +318,7 @@ class _WFormInputContent extends StatefulWidget {
     this.className,
     this.placeholderClassName,
     this.textInputAction,
-    this.autofillHints,
+    this.autofillHints = const <String>[],
     this.onSubmitted,
     this.onChanged,
     this.onEditingComplete,
