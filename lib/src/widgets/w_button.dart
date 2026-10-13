@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../state/wind_anchor_state_provider.dart';
+import '../utils/wind_helpers.dart';
 import '../utils/wind_perf_counters.dart';
 import 'w_anchor.dart';
 import 'w_div.dart';
@@ -195,7 +196,11 @@ class WButton extends StatelessWidget {
             decoration: styles.decoration,
             alignment: containerAlignment,
             child: DefaultTextStyle.merge(
-              style: styles.toTextStyle(),
+              style: styles.toTextStyle(
+                inheritedFontSize: styles.needsInheritedFontSize
+                    ? wInheritedFontSize(innerContext)
+                    : null,
+              ),
               child: content,
             ),
           );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../state/wind_flex_overflow_scope.dart';
+import '../utils/wind_helpers.dart';
 import '../utils/wind_logger.dart';
 import '../utils/wind_perf_counters.dart';
 
@@ -173,7 +174,18 @@ class WText extends StatelessWidget {
   }) {
     // A. Build TextStyle from className tokens.
     // This style contains `null` for properties not set in the className.
-    final TextStyle windTextStyle = styles.toTextStyle();
+    // An em `tracking-*` resolves against the size this text renders at: the
+    // `textStyle` prop's size wins over a `text-*` class (it is merged on top
+    // below), and with neither the text inherits its size from above.
+    final double? textStyleFontSize = textStyle?.fontSize;
+    final WindStyle sizedStyles = textStyleFontSize == null
+        ? styles
+        : styles.copyWith(fontSize: textStyleFontSize);
+    final TextStyle windTextStyle = sizedStyles.toTextStyle(
+      inheritedFontSize: sizedStyles.needsInheritedFontSize
+          ? wInheritedFontSize(context)
+          : null,
+    );
 
     // Merge with the explicit `textStyle` prop so callers can supply
     // additional Flutter-native properties (e.g. letterSpacing).

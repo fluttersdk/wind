@@ -21,7 +21,8 @@ import 'wind_parser_interface.dart';
 /// - **Decoration Color:** `decoration-{color}-{shade}`, `decoration-[#hex]`
 /// - **Decoration Thickness:** `decoration-{value}`, `decoration-[{value}]`
 /// - **Transform:** `uppercase`, `lowercase`, `capitalize`, `normal-case`
-/// - **Letter Spacing:** `tracking-{tighter|tight|normal|wide|wider|widest}`, `tracking-[{value}]`
+/// - **Letter Spacing:** `tracking-{tighter|tight|normal|wide|wider|widest}` (em),
+///   `tracking-[{value}em]`, `tracking-[{value}px]`, `tracking-[{value}]` (px)
 /// - **Line Height:** `leading-{preset|value}`, `leading-[{value}]`
 /// - **Text Overflow:** `truncate`, `text-ellipsis`, `text-clip`
 /// - **Line Clamp:** `line-clamp-{number|none}`
@@ -107,9 +108,14 @@ class TextParser implements WindParserInterface {
     r'^(?<transform>uppercase|lowercase|capitalize|normal-case)$',
   );
 
-  /// Regex for letter spacing: `tracking-wide`, `tracking-[0.1em]`
+  /// Regex for letter spacing: `tracking-wide`, `tracking-[0.1em]`,
+  /// `tracking-[-1px]`, `tracking-[2]`.
+  ///
+  /// The arbitrary value takes a sign, since tightening is half of what
+  /// tracking is for. Its unit is `em` or `px`; a bare number is logical
+  /// pixels, as it is in `leading-[24]` and `text-[20]`.
   static final RegExp _letterSpacingRegex = RegExp(
-    r'^tracking-(?:(?<value>tighter|tight|normal|wide|wider|widest)|\[(?<arbitrary>[0-9.]+(?:px|em)?)\])$',
+    r'^tracking-(?:(?<value>tighter|tight|normal|wide|wider|widest)|\[(?<arbitrary>-?[0-9.]+)(?<unit>px|em)?\])$',
   );
 
   /// Regex for line height: `leading-loose`, `leading-[24px]`
@@ -183,6 +189,7 @@ class TextParser implements WindParserInterface {
     FontWeight? fontWeight;
     FontStyle? fontStyle;
     double? letterSpacing;
+    WindLetterSpacingUnit? letterSpacingUnit;
     double? heightLine;
     double? heightLineFactor;
     TextDecoration? textDecoration;
@@ -392,21 +399,23 @@ class TextParser implements WindParserInterface {
       }
 
       // 11. Letter Spacing (Tracking)
+      // The unit travels with the value: the widget resolves an em against
+      // the font size it renders at, which the parser cannot know when the
+      // className sets no `text-*` size.
       if (letterSpacing == null) {
         final match = _letterSpacingRegex.firstMatch(className);
         if (match != null) {
-          double? parsedValue;
-
-          if (match.namedGroup('arbitrary') != null) {
-            final val = match.namedGroup('arbitrary')!;
-            parsedValue = double.tryParse(val.replaceAll(RegExp(r'px|em'), ''));
-          } else {
-            final key = match.namedGroup('value')!;
-            parsedValue = theme.tracking[key]?.toDouble();
-          }
+          final String? arbitrary = match.namedGroup('arbitrary');
+          final double? parsedValue = arbitrary != null
+              ? double.tryParse(arbitrary)
+              : theme.tracking[match.namedGroup('value')!];
 
           if (parsedValue != null) {
             letterSpacing = parsedValue;
+            letterSpacingUnit =
+                arbitrary != null && match.namedGroup('unit') != 'em'
+                    ? WindLetterSpacingUnit.px
+                    : WindLetterSpacingUnit.em;
             continue;
           }
         }
@@ -520,6 +529,7 @@ class TextParser implements WindParserInterface {
       fontWeight: fontWeight,
       fontStyle: fontStyle,
       letterSpacing: letterSpacing,
+      letterSpacingUnit: letterSpacingUnit,
       heightLine: heightLine,
       heightLineFactor: heightLineFactor,
       textDecoration: textDecoration,

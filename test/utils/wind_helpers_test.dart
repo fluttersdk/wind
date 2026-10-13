@@ -319,6 +319,72 @@ void main() {
         expect(result?.padding, isNotNull);
       });
     });
+
+    group('wInheritedFontSize', () {
+      testWidgets('reads the ambient DefaultTextStyle font size',
+          (tester) async {
+        double? result;
+        await tester.pumpWidget(
+          createTestApp(
+            DefaultTextStyle(
+              style: const TextStyle(fontSize: 22),
+              child: Builder(
+                builder: (context) {
+                  result = wInheritedFontSize(context);
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ),
+        );
+
+        expect(result, 22);
+      });
+
+      testWidgets(
+          'falls back to the size Flutter paints at, not the theme base size',
+          (tester) async {
+        // A DefaultTextStyle with no size paints text at kDefaultFontSize,
+        // whatever the theme's `base` says, so em tracking resolves there too.
+        double? result;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(fontSizes: {'base': 18}),
+              child: DefaultTextStyle(
+                style: const TextStyle(),
+                child: Builder(
+                  builder: (context) {
+                    result = wInheritedFontSize(context);
+                    return const SizedBox();
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(result, kDefaultFontSize);
+      });
+
+      testWidgets('falls back to kDefaultFontSize without a WindTheme',
+          (tester) async {
+        double? result;
+        await tester.pumpWidget(
+          DefaultTextStyle(
+            style: const TextStyle(),
+            child: Builder(
+              builder: (context) {
+                result = wInheritedFontSize(context);
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+
+        expect(result, kDefaultFontSize);
+      });
+    });
   });
 }
 

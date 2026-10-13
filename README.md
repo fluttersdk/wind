@@ -131,7 +131,7 @@ That runs as written. No `MouseRegion`, no `setState`, no `_isHovered` boolean, 
 | Conflicts | The last class in a family wins. `p-2 p-6` is padding 6. |
 | Dark mode | Every color token carries its `dark:` pair in the SAME className. A missing pair is a bug, and the parser says so once in `kDebugMode`. |
 | Unknown tokens | Dropped silently in release, named once in debug. A typo never throws and never renders a red screen. |
-| Spacing scale | One step is 4 logical pixels, so `p-4` is 16. Font size and tracking are pixel based too. |
+| Spacing scale | One step is 4 logical pixels, so `p-4` is 16. Font size is pixel based too; tracking is em, as in Tailwind, so `tracking-tight` on 14px text is -0.35. |
 | Caching | A parsed className is cached on `className + breakpoint + brightness + platform + states`, so rebuilds cost a map lookup. |
 
 Wind is not a literal Tailwind port. Transforms, filters, `group-*` / `peer-*`, container queries and `@apply` have no Flutter counterpart and are deliberately out of scope; the full list lives in the [docs](https://fluttersdk.com/wind).

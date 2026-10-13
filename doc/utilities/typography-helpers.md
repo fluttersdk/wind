@@ -4,6 +4,7 @@
 - [Global Functions](#global-functions)
     - [wFontSize](#wfontsize)
     - [wFontWeight](#wfontweight)
+    - [wInheritedFontSize](#winheritedfontsize)
 - [BuildContext Extensions](#buildcontext-extensions)
 - [Theme Scale Access](#theme-scale-access)
 - [Customizing Scales](#customizing-scales)
@@ -40,6 +41,18 @@ FontWeight? weight = wFontWeight(context, 'bold'); // Returns FontWeight.w700
 
 Supported weight names include `thin`, `extralight`, `light`, `normal`, `medium`, `semibold`, `bold`, `extrabold`, and `black`.
 
+<a name="winheritedfontsize"></a>
+### wInheritedFontSize
+
+The `wInheritedFontSize` function returns the font size text at `context` inherits: the nearest `DefaultTextStyle`'s size, else Flutter's `kDefaultFontSize` (14), the size unsized text paints at. W-widgets use it to turn an em `tracking-*` into pixels; pass it to `WindStyle.toTextStyle` when you build your own text from a parsed style.
+
+```dart
+final style = wStyle(context, 'tracking-wide');
+final textStyle = style.toTextStyle(
+  inheritedFontSize: wInheritedFontSize(context),
+);
+```
+
 <a name="buildcontext-extensions"></a>
 ## BuildContext Extensions
 
@@ -64,7 +77,7 @@ final theme = context.windThemeData;
 // Access the raw scales
 Map<String, double> sizes = theme.fontSizes;
 Map<String, FontWeight> weights = theme.fontWeights;
-Map<String, double> letterSpacing = theme.tracking;
+Map<String, double> letterSpacing = theme.tracking; // em multipliers
 Map<String, double> lineHeights = theme.leading;
 Map<String, String> families = theme.fontFamilies;
 ```
