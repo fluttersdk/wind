@@ -77,7 +77,7 @@ const WPopover({
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `triggerBuilder` | `PopoverTriggerBuilder` | **Required** | Builder for the trigger widget. Receives `isOpen` and `isHovering` states. |
+| `triggerBuilder` | `PopoverTriggerBuilder` | **Required** | Builder for the trigger widget. Receives `isOpen` and `isHovering` states; `hover:`, `focus:` and `disabled:` classes on the trigger also follow the popover. |
 | `contentBuilder` | `PopoverContentBuilder` | **Required** | Builder for the popover content. Receives a `close` callback. |
 | `className` | `String?` | `null` | Wind utility classes for the popover container styling. |
 | `controller` | `PopoverController?` | `null` | Optional controller for programmatic show/hide/toggle. |
@@ -88,7 +88,7 @@ const WPopover({
 | `maxWidth` | `double?` | `null` | Upper bound for the overlay width. Falls back to a `max-w-*` token, then to the screen width, so the overlay never stretches off-screen. Ignored when a fixed `width` (or `w-*`) is set. |
 | `enableTriggerOnTap` | `bool` | `true` | Whether tapping the trigger toggles the popover. |
 | `closeOnContentTap` | `bool` | `false` | Whether tapping inside the content closes the popover. |
-| `disabled` | `bool` | `false` | When true, the trigger will not respond to interactions. |
+| `disabled` | `bool` | `false` | When true, the trigger will not respond to interactions and is not a Tab stop. |
 | `onOpen` | `VoidCallback?` | `null` | Callback fired when the popover is opened. |
 | `onClose` | `VoidCallback?` | `null` | Callback fired when the popover is closed. |
 | `autoFlip` | `bool` | `true` | When true, the popover flips its alignment to the opposite side if the natural position would render off-screen, and is held inside the viewport: pulled in horizontally, and capped vertically at the room on its side (the content scrolls). |
@@ -131,9 +131,30 @@ WPopover(
 )
 ```
 
+### Keyboard
+
+The trigger is one Tab stop. Enter, Space, and the Android TV D-pad centre toggle the popover, through the same `ActivateIntent` a `WAnchor` answers, so the keys follow whatever the platform binds to activation. Escape closes an open popover from the trigger or from anything focused inside the panel, returns focus to the trigger, and stops there: one press closes the popover and not also the dialog or sheet holding it, and a page pushed over an open popover keeps its own Escape. While the popover is closed, Escape is left alone and reaches the app's own shortcuts, so a dialog holding a popover still closes on it. After a keyboard open, focus stays on the trigger even on the web, where the browser drops it as the panel mounts. The trigger and the panel form one traversal group in widget order, so the next Tab moves into the panel, top to bottom, whether it opened below the trigger or flipped above it, and Tab past its last control leaves the popover.
+
+A disabled popover is not a Tab stop. With `enableTriggerOnTap: false`, Enter and Space do nothing, as a tap does nothing; Escape still closes a popover the controller opened.
+
 ## State Variants
 
 Since the popover trigger is built via `triggerBuilder`, you can apply state-based styling manually or use Wind's state prefixes if the trigger is a Wind widget like `WButton` or `WDiv`.
+
+The popover publishes its trigger's interaction state the way a `WAnchor` does, so a plain `WDiv` trigger answers `hover:`, `focus:` and `disabled:` without an anchor of its own. Give the trigger a `focus:` class, or a keyboard user cannot see where focus is:
+
+```dart
+WPopover(
+  triggerBuilder: (context, isOpen, isHovering) => WDiv(
+    className: '''
+      p-2 rounded-lg bg-white dark:bg-gray-800
+      focus:ring-2 focus:ring-blue-500
+    ''',
+    child: WIcon(Icons.notifications_outlined),
+  ),
+  contentBuilder: (context, close) => MyContent(),
+)
+```
 
 ```dart
 WPopover(
