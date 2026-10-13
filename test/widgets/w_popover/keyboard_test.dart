@@ -234,23 +234,34 @@ void main() {
         expect(trigger.hasPrimaryFocus, isFalse);
       });
 
-      testWidgets('Escape closes an open popover wherever focus is', (
-        tester,
-      ) async {
+      testWidgets('Escape in a dialog closes the popover and keeps the dialog',
+          (tester) async {
+        // One press, one layer. A key handler outside the focus tree cannot
+        // consume the key, so the dialog's own Escape popped it as well.
         await tester.pumpWidget(
           wrapWithTheme(
-            Column(
-              children: [
-                popover(),
-                WAnchor(onTap: () {}, child: const Text('Elsewhere')),
-              ],
+            Builder(
+              builder: (context) => TextButton(
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (_) => Dialog(
+                    child: WindTheme(
+                      data: WindThemeData(),
+                      child: popover(),
+                    ),
+                  ),
+                ),
+                child: const Text('Open dialog'),
+              ),
             ),
           ),
         );
-
-        await tester.tap(find.text('Trigger'));
+        await tester.tap(find.text('Open dialog'));
         await tester.pumpAndSettle();
-        FocusManager.instance.primaryFocus?.unfocus();
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
         await tester.pumpAndSettle();
 
         expect(find.text('Content'), findsOneWidget);
@@ -259,6 +270,52 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Content'), findsNothing);
+        expect(find.byType(Dialog), findsOneWidget);
+      });
+
+      testWidgets('Escape on a route pushed over an open popover leaves it', (
+        tester,
+      ) async {
+        // A panel item that pushes a page without closing the popover: the
+        // page's Escape is the page's, and the hidden trigger must not take
+        // focus out from under it.
+        bool? open;
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WPopover(
+              triggerBuilder: (context, isOpen, isHovering) {
+                open = isOpen;
+                return const WDiv(
+                  className: 'w-10 h-10 bg-white',
+                  child: Text('Trigger'),
+                );
+              },
+              contentBuilder: (context, close) => TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => Scaffold(
+                      body: WAnchor(onTap: () {}, child: const Text('Page')),
+                    ),
+                  ),
+                ),
+                child: const Text('Push'),
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.text('Trigger'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Push'));
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        final FocusNode? onPage = FocusManager.instance.primaryFocus;
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+
+        expect(open, isTrue);
+        expect(FocusManager.instance.primaryFocus, same(onPage));
       });
 
       testWidgets('Tab goes into the panel before a control beside the trigger',

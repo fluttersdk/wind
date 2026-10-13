@@ -321,6 +321,9 @@ class _WPopoverState extends State<WPopover> {
 
   /// Armed by a keyboard open, spent on the first focus change after it.
   ///
+  /// Escape depends on it as well: the Escape handler sits on the focus tree,
+  /// so it hears the key only while focus is on the trigger or in the panel.
+  ///
   /// A web build drops the trigger's focus as the panel mounts: the browser
   /// loses the focused element and the framework falls back to the page's
   /// scope, so the ring went dark and the next Tab started over from the top
@@ -329,9 +332,6 @@ class _WPopoverState extends State<WPopover> {
   /// handed back to the trigger. Only once, and only then: a viewer who moves
   /// focus anywhere real, or a later drop, is left alone.
   bool _reclaimFocusOnce = false;
-
-  /// Whether [_handleEscape] is registered with [HardwareKeyboard].
-  bool _listensForEscape = false;
 
   /// The keyboard and remote-control half of a tap on the trigger.
   ///
@@ -528,7 +528,6 @@ class _WPopoverState extends State<WPopover> {
 
   @override
   void dispose() {
-    _stopListeningForEscape();
     _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
     widget.controller?.removeListener(_handleControllerChange);
@@ -563,16 +562,6 @@ class _WPopoverState extends State<WPopover> {
     return primary == null || primary is FocusScopeNode;
   }
 
-  /// Whether focus is on the trigger, inside the panel, or nowhere, which are
-  /// the cases where closing should hand it back to the trigger.
-  bool get _focusIsOursOrNowhere {
-    if (_focusNode.hasFocus || _focusFellToAScope) return true;
-
-    return FocusManager.instance.primaryFocus?.context
-            ?.findAncestorStateOfType<_WPopoverState>() ==
-        this;
-  }
-
   Object? _activate(Intent intent) {
     final bool opening = !_isOpen;
     toggle();
@@ -581,41 +570,31 @@ class _WPopoverState extends State<WPopover> {
     return null;
   }
 
-  /// Closes an open popover on Escape, wherever focus is, and hands focus
-  /// back to the trigger when it was on the trigger, in the panel or nowhere.
+  /// Closes an open popover on Escape, from the trigger or from anything
+  /// focused inside the panel, consumes the key, and hands focus back to the
+  /// trigger.
   ///
-  /// A [HardwareKeyboard] handler, registered only while the popover is open,
-  /// rather than anything on the focus tree. A focus-tree handler hears the
-  /// key only while focus is inside the popover, and a web build drops focus
-  /// as the panel mounts, which left Escape dead after a keyboard open. And it
-  /// is not a [DismissIntent] action either, because the key has to travel on
-  /// while the popover is closed: `ShortcutManager` asks only the NEAREST
-  /// action for an intent, so a disabled one would swallow Escape and a dialog
+  /// On the focus tree, above the portal, so the key stops here: one press
+  /// closes the popover and not also the dialog or sheet around it, and a
+  /// page pushed over an open popover keeps its own Escape. A
+  /// [HardwareKeyboard] handler was tried and rejected, because returning true
+  /// from one does not stop the key reaching the focus tree afterwards.
+  ///
+  /// Not a [DismissIntent] action either: the key has to travel on while the
+  /// popover is closed, and `ShortcutManager` asks only the NEAREST action
+  /// for an intent, so a disabled one would swallow Escape and a dialog
   /// holding a closed popover would stop closing on it.
-  bool _handleEscape(KeyEvent event) {
+  KeyEventResult _handleKey(FocusNode node, KeyEvent event) {
     if (!_isOpen ||
         event is! KeyDownEvent ||
         event.logicalKey != LogicalKeyboardKey.escape) {
-      return false;
+      return KeyEventResult.ignored;
     }
 
-    final bool refocus = _focusIsOursOrNowhere;
     close();
-    if (refocus) _focusNode.requestFocus();
+    _focusNode.requestFocus();
 
-    return true;
-  }
-
-  void _startListeningForEscape() {
-    if (_listensForEscape) return;
-    HardwareKeyboard.instance.addHandler(_handleEscape);
-    _listensForEscape = true;
-  }
-
-  void _stopListeningForEscape() {
-    if (!_listensForEscape) return;
-    HardwareKeyboard.instance.removeHandler(_handleEscape);
-    _listensForEscape = false;
+    return KeyEventResult.handled;
   }
 
   void _handleControllerChange() {
@@ -657,8 +636,6 @@ class _WPopoverState extends State<WPopover> {
     } else {
       _effectiveAlignment = widget.alignment;
     }
-
-    _startListeningForEscape();
 
     setState(() {
       _isOpen = true;
@@ -737,7 +714,6 @@ class _WPopoverState extends State<WPopover> {
     if (!_isOpen) return;
     _suppressNextTapOutside = false;
     _reclaimFocusOnce = false;
-    _stopListeningForEscape();
     setState(() {
       _isOpen = false;
       _overlayController.hide();
@@ -834,12 +810,18 @@ class _WPopoverState extends State<WPopover> {
     // widget order is trigger, then the panel top to bottom as it was built.
     return FocusTraversalGroup(
       policy: WidgetOrderTraversalPolicy(),
-      child: OverlayPortal(
-        controller: _overlayController,
-        overlayChildBuilder: _buildOverlay,
-        child: CompositedTransformTarget(
-          link: _layerLink,
-          child: trigger,
+      // Above the portal, so Escape reaches it from inside the panel too.
+      child: Focus(
+        canRequestFocus: false,
+        skipTraversal: true,
+        onKeyEvent: _handleKey,
+        child: OverlayPortal(
+          controller: _overlayController,
+          overlayChildBuilder: _buildOverlay,
+          child: CompositedTransformTarget(
+            link: _layerLink,
+            child: trigger,
+          ),
         ),
       ),
     );
