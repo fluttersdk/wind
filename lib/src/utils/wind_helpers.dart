@@ -69,9 +69,12 @@ double? wFontSize(BuildContext context, String sizeName) {
 
 /// Returns the font size text under [context] inherits, in logical pixels.
 ///
-/// The ambient [DefaultTextStyle]'s size when it sets one, else the theme's
-/// `base` size, else [kDefaultFontSize] when no [WindTheme] is present. An em
-/// `tracking-*` on a className with no `text-*` size resolves against it.
+/// The ambient [DefaultTextStyle]'s size when it sets one, else
+/// [kDefaultFontSize], which is what Flutter paints unsized text at. The
+/// theme's `base` is not consulted: no widget paints at it unless a
+/// [DefaultTextStyle] says so, and an em resolved against a size the glyphs
+/// are not drawn at would be wrong by the ratio. An em `tracking-*` on a
+/// className with no `text-*` size resolves against this.
 ///
 /// Example:
 /// ```dart
@@ -83,14 +86,8 @@ double? wFontSize(BuildContext context, String sizeName) {
 double wInheritedFontSize(BuildContext context) {
   final double? ambient = DefaultTextStyle.of(context).style.fontSize;
   WindPerfCounters.recordInheritedRead(WindInheritedRead.defaultTextStyle);
-  if (ambient != null) {
-    return ambient;
-  }
 
-  final WindThemeData? theme = WindTheme.maybeDataOf(context);
-  WindPerfCounters.recordInheritedRead(WindInheritedRead.windTheme);
-
-  return theme?.fontSizes['base'] ?? kDefaultFontSize;
+  return ambient ?? kDefaultFontSize;
 }
 
 /// Returns a font weight by name.

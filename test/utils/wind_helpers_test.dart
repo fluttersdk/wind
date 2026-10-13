@@ -341,7 +341,11 @@ void main() {
         expect(result, 22);
       });
 
-      testWidgets('falls back to the theme base size', (tester) async {
+      testWidgets(
+          'falls back to the size Flutter paints at, not the theme base size',
+          (tester) async {
+        // A DefaultTextStyle with no size paints text at kDefaultFontSize,
+        // whatever the theme's `base` says, so em tracking resolves there too.
         double? result;
         await tester.pumpWidget(
           MaterialApp(
@@ -360,7 +364,7 @@ void main() {
           ),
         );
 
-        expect(result, 18);
+        expect(result, kDefaultFontSize);
       });
 
       testWidgets('falls back to kDefaultFontSize without a WindTheme',

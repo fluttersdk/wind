@@ -57,9 +57,9 @@ Flutter's `TextStyle.letterSpacing` is in logical pixels, so Wind multiplies the
 
 1. The `text-*` size in the same className, including a responsive or state variant (`text-sm md:text-3xl`). On `WText`, a `textStyle:` font size wins over both, because it is what the text renders at.
 2. The font size the element inherits from the nearest `DefaultTextStyle` (a parent `WDiv` with a `text-*` class publishes one, and so does a Material ancestor).
-3. The theme's `base` font size (`WindThemeData.fontSizes['base']`, 16 by default).
+3. Flutter's `kDefaultFontSize` (14), the size unsized text paints at. The theme's `base` is not used: no text paints at it unless a `DefaultTextStyle` sets it, and the em has to match the glyphs.
 
-`WInput` skips the second and third steps: `EditableText` reads no `DefaultTextStyle`, so a field with no `text-*` size paints at Flutter's `kDefaultFontSize` (14) and its em resolves there.
+`WInput` skips the second step: `EditableText` reads no `DefaultTextStyle`, so a field with no `text-*` size paints at Flutter's `kDefaultFontSize` (14) and its em resolves there.
 
 The em is taken from the unscaled font size. Flutter scales `fontSize` by the accessibility `TextScaler` but leaves `letterSpacing` as written, so under large text the spacing is a smaller share of the glyph than the em says.
 

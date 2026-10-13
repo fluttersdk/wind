@@ -44,7 +44,7 @@ Supported weight names include `thin`, `extralight`, `light`, `normal`, `medium`
 <a name="winheritedfontsize"></a>
 ### wInheritedFontSize
 
-The `wInheritedFontSize` function returns the font size text at `context` inherits: the nearest `DefaultTextStyle`'s size, else the theme's `base` size, else Flutter's `kDefaultFontSize` when there is no `WindTheme`. W-widgets use it to turn an em `tracking-*` into pixels; pass it to `WindStyle.toTextStyle` when you build your own text from a parsed style.
+The `wInheritedFontSize` function returns the font size text at `context` inherits: the nearest `DefaultTextStyle`'s size, else Flutter's `kDefaultFontSize` (14), the size unsized text paints at. W-widgets use it to turn an em `tracking-*` into pixels; pass it to `WindStyle.toTextStyle` when you build your own text from a parsed style.
 
 ```dart
 final style = wStyle(context, 'tracking-wide');

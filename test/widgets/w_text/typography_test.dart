@@ -397,8 +397,11 @@ void main() {
       expect(renderedLetterSpacing(tester, 'Label'), closeTo(0.5, 1e-9));
     });
 
-    testWidgets('resolves named tracking against the theme base size',
-        (tester) async {
+    testWidgets(
+        'resolves named tracking against the size it paints at when no size '
+        'is set anywhere', (tester) async {
+      // The theme's `base` of 20 is not the size this text paints at: a
+      // DefaultTextStyle with no size paints at kDefaultFontSize (14).
       await tester.pumpWidget(
         themed(
           const DefaultTextStyle(
@@ -409,7 +412,7 @@ void main() {
         ),
       );
 
-      expect(renderedLetterSpacing(tester, 'Base'), closeTo(2.0, 1e-9));
+      expect(renderedLetterSpacing(tester, 'Base'), closeTo(1.4, 1e-9));
     });
 
     testWidgets('resolves negative arbitrary em tracking', (tester) async {
