@@ -1,7 +1,7 @@
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
@@ -660,6 +660,83 @@ void main() {
         // Cursor should still be at 5
         expect(controller.selection.baseOffset, 5);
       });
+    });
+
+    group('Letter Spacing', () {
+      testWidgets('resolves em tracking against the field text size',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(const WInput(className: 'text-xl tracking-wide')),
+        );
+
+        final EditableText editable = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
+
+        expect(editable.style.letterSpacing, closeTo(0.5, 1e-9));
+      });
+
+      testWidgets(
+        'resolves em tracking against kDefaultFontSize with no text size',
+        (tester) async {
+          // EditableText reads no DefaultTextStyle, so a field with no text-*
+          // size paints at kDefaultFontSize and its em resolves there.
+          await tester.pumpWidget(
+            wrapWithTheme(const WInput(className: 'tracking-widest')),
+          );
+
+          final EditableText editable = tester.widget<EditableText>(
+            find.byType(EditableText),
+          );
+
+          expect(
+            editable.style.letterSpacing,
+            closeTo(0.1 * kDefaultFontSize, 1e-9),
+          );
+        },
+      );
+
+      testWidgets('resolves placeholder em tracking against the field size',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(
+              placeholder: 'Search',
+              className: 'text-xl',
+              placeholderClassName: 'tracking-widest',
+            ),
+          ),
+        );
+
+        final Text placeholder = tester.widget<Text>(find.text('Search'));
+
+        expect(placeholder.style?.letterSpacing, closeTo(2.0, 1e-9));
+      });
+
+      testWidgets(
+        'resolves placeholder em tracking against the ambient size it paints at',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const DefaultTextStyle(
+                style: TextStyle(fontSize: 30),
+                child: WInput(
+                  placeholder: 'Find',
+                  placeholderClassName: 'tracking-widest',
+                ),
+              ),
+            ),
+          );
+
+          final double? letterSpacing = tester
+              .renderObject<RenderParagraph>(find.text('Find'))
+              .text
+              .style
+              ?.letterSpacing;
+
+          expect(letterSpacing, closeTo(3.0, 1e-9));
+        },
+      );
     });
 
     group('Placeholder Styling', () {

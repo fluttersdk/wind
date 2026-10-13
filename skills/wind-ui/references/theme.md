@@ -72,7 +72,7 @@ WindThemeData({
   Map<String, int>? containers,                    // max-w-* size → px (13 named sizes)
   Map<String, double>? fontSizes,                  // text-* size key → px (defaults xs through 6xl)
   Map<String, FontWeight>? fontWeights,            // font-* key → FontWeight
-  Map<String, double>? tracking,                   // tracking-* key → letter-spacing px
+  Map<String, double>? tracking,                   // tracking-* key → letter-spacing em multiplier
   Map<String, double>? leading,                    // leading-* key → line-height multiplier
   Map<String, double>? borderWidths,               // border-* width key → px
   Map<String, double>? borderRadius,               // rounded-* key → px
@@ -107,7 +107,7 @@ WindThemeData({
 
 **Font families** (3): `sans`, `serif`, `mono` (default system stacks).
 
-**Tracking** (6): `tighter` (-2), `tight` (-1), `normal` (0), `wide` (1), `wider` (2), `widest` (4).
+**Tracking** (6, em multipliers of the font size): `tighter` (-0.05), `tight` (-0.025), `normal` (0), `wide` (0.025), `wider` (0.05), `widest` (0.1). A custom value is em too: `{'tight': -1}` is -1em, -14px on `text-sm`.
 
 **Leading** (5): `tight` (1.25), `snug` (1.375), `normal` (1.5), `relaxed` (1.625), `loose` (2.0).
 

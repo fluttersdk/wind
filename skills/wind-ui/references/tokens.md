@@ -318,7 +318,7 @@ Order: covered in §2.
 
 **Transform**: `uppercase` / `lowercase` / `capitalize` / `normal-case`. `capitalize` raises the first letter of EVERY word and leaves the rest as typed (`the HTTP client` -> `The HTTP Client`), matching CSS `text-transform: capitalize`. A word runs through letters, digits, underscores and apostrophes, plus any combining mark or invisible format character attached to them (so decomposed NFD text does not capitalise mid-word, while `U+200B` still breaks the word), and anything else opens a new one: `"quoted words"` -> `"Quoted Words"`, `well-known` -> `Well-Known`, `read/write` -> `Read/Write`, while `3rd party` -> `3rd Party` and `l'orange` -> `L'orange` keep theirs. Casing follows the AMBIENT LOCALE (`Localizations.maybeLocaleOf`), so Turkish and Azerbaijani get the dotted/dotless `i` right: under `Locale('tr')`, `uppercase` on `izleyiciler` is `İZLEYİCİLER` and on `kullanılan` is `KULLANILAN`. With NO `Localizations` ancestor (a bare widget test, or a subtree outside a `MaterialApp`) it falls back to Dart's locale-independent casing.
 
-**Tracking (letter-spacing)**: `tracking-tighter` (-2) / `-tight` (-1) / `-normal` (0) / `-wide` (1) / `-wider` (2) / `-widest` (4). Arbitrary `tracking-[0.5]`.
+**Tracking (letter-spacing)**: em, as in Tailwind: `tracking-tighter` (-0.05em) / `-tight` (-0.025em) / `-normal` (0) / `-wide` (0.025em) / `-wider` (0.05em) / `-widest` (0.1em). The em multiplies the font size the text renders at (`text-*` in the same className, else the inherited `DefaultTextStyle` size, else the theme `base`), so `text-sm tracking-tight` is -0.35 px. Arbitrary `tracking-[-0.02em]` is em; `tracking-[1px]` and a bare `tracking-[1]` are logical pixels; both take a sign. A custom widget building text from a parsed `WindStyle` calls `style.toTextStyle(inheritedFontSize: wInheritedFontSize(context))` so the em resolves the same way.
 
 **Leading (line-height)**: `leading-tight` (1.25) / `-snug` (1.375) / `-normal` (1.5) / `-relaxed` (1.625) / `-loose` (2.0). Arbitrary `leading-[24px]`, numeric `leading-6` (6 × 4 px).
 
@@ -436,7 +436,7 @@ Bracket syntax `[VALUE]` for one-off pixel-exact values where the theme scale do
 | Ring offset | `ring-offset-[N]` | `ring-offset-[2px]` |
 | Font size | `text-[N]` / `text-[N]/[M]` | `text-[18px]`, `text-[18px]/[24px]` |
 | Font weight | `font-[N]` | `font-[450]` |
-| Tracking | `tracking-[N]` | `tracking-[0.5]` |
+| Tracking | `tracking-[Nem]` / `tracking-[Npx]` / `tracking-[N]` (px) | `tracking-[-0.02em]`, `tracking-[1px]` |
 | Leading | `leading-[N]` | `leading-[24px]`, `leading-6` |
 | Decoration thickness | `decoration-[N]` | `decoration-[3px]` |
 | Duration | `duration-[Nms]` | `duration-[450ms]` |

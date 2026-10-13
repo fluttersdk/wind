@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
+import '../utils/wind_helpers.dart';
 import '../utils/wind_logger.dart';
 import '../utils/wind_perf_counters.dart';
 import 'wind_animation_wrapper.dart';
@@ -233,7 +234,12 @@ class WDiv extends StatelessWidget {
     /// 6. TEXT STYLES (If applicable)
     /// If text-specific styles are defined, we wrap the final widget
     /// in a `DefaultTextStyle.merge` to apply them.
-    final TextStyle textStyle = styles.toTextStyle();
+    /// An em `tracking-*` resolves here, at this element's font size, and
+    /// descendants inherit the resulting pixels, as CSS computes it.
+    final TextStyle textStyle = styles.toTextStyle(
+      inheritedFontSize:
+          styles.needsInheritedFontSize ? wInheritedFontSize(context) : null,
+    );
     final bool hasTextStyle = textStyle != const TextStyle(); // Check if empty
     final bool hasTextAlign = styles.textAlign != null;
     final bool hasSoftWrap = styles.softWrap != null;

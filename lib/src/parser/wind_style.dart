@@ -13,6 +13,13 @@ enum WindAnimationType { spin, ping, pulse, bounce, none }
 /// Position types for positioned elements e.g., relative, absolute
 enum WindPositionType { relative, absolute }
 
+/// The unit [WindStyle.letterSpacing] is written in.
+///
+/// [em] is a multiple of the font size of the text it applies to (named
+/// `tracking-*` and `tracking-[0.1em]`), [px] is logical pixels
+/// (`tracking-[1px]` and a bare `tracking-[1]`).
+enum WindLetterSpacingUnit { px, em }
+
 /// **The Immutable Style Object**
 ///
 /// `WindStyle` represents a resolved set of style properties derived from
@@ -129,8 +136,14 @@ class WindStyle {
   /// Font style e.g., italic, not-italic
   final FontStyle? fontStyle;
 
-  /// Text letter spacing e.g., tracking-wide, tracking-tight
+  /// Text letter spacing e.g., tracking-wide, tracking-[1px], read in
+  /// [letterSpacingUnit]. [toTextStyle] turns it into logical pixels.
   final double? letterSpacing;
+
+  /// The unit [letterSpacing] is written in. Named `tracking-*` and
+  /// `tracking-[Nem]` are [WindLetterSpacingUnit.em]; `tracking-[Npx]` and a
+  /// bare number are [WindLetterSpacingUnit.px], the default.
+  final WindLetterSpacingUnit letterSpacingUnit;
 
   /// Text line height e.g., leading-[15px]
   final double? heightLine;
@@ -293,6 +306,7 @@ class WindStyle {
     this.fontWeight,
     this.fontStyle,
     this.letterSpacing,
+    this.letterSpacingUnit = WindLetterSpacingUnit.px,
     this.heightLine,
     this.heightLineFactor,
     this.textDecoration,
@@ -367,6 +381,7 @@ class WindStyle {
     FontWeight? fontWeight,
     FontStyle? fontStyle,
     double? letterSpacing,
+    WindLetterSpacingUnit? letterSpacingUnit,
     double? heightLine,
     double? heightLineFactor,
     TextDecoration? textDecoration,
@@ -458,6 +473,7 @@ class WindStyle {
       fontWeight: fontWeight ?? this.fontWeight,
       fontStyle: fontStyle ?? this.fontStyle,
       letterSpacing: letterSpacing ?? this.letterSpacing,
+      letterSpacingUnit: letterSpacingUnit ?? this.letterSpacingUnit,
       heightLine: heightLine ?? this.heightLine,
       heightLineFactor: heightLineFactor ?? this.heightLineFactor,
       textDecoration: textDecoration ?? this.textDecoration,
@@ -538,6 +554,7 @@ class WindStyle {
           fontWeight == other.fontWeight &&
           fontStyle == other.fontStyle &&
           letterSpacing == other.letterSpacing &&
+          letterSpacingUnit == other.letterSpacingUnit &&
           heightLine == other.heightLine &&
           heightLineFactor == other.heightLineFactor &&
           textDecoration == other.textDecoration &&
@@ -612,6 +629,7 @@ class WindStyle {
       fontWeight.hashCode ^
       fontStyle.hashCode ^
       letterSpacing.hashCode ^
+      letterSpacingUnit.hashCode ^
       heightLine.hashCode ^
       heightLineFactor.hashCode ^
       textDecoration.hashCode ^
@@ -668,18 +686,51 @@ class WindStyle {
     return null;
   }
 
+  /// Whether an em [letterSpacing] has no [fontSize] of its own to resolve
+  /// against, so [toTextStyle] needs the font size the text inherits.
+  ///
+  /// Widgets read it to skip the `DefaultTextStyle.of` lookup (and the
+  /// rebuild dependency it registers) whenever the answer is not needed.
+  bool get needsInheritedFontSize =>
+      letterSpacing != null &&
+      letterSpacingUnit == WindLetterSpacingUnit.em &&
+      fontSize == null;
+
+  /// The letter spacing in logical pixels, the unit Flutter's
+  /// [TextStyle.letterSpacing] takes.
+  ///
+  /// An em value is multiplied by [fontSize], else by [inheritedFontSize],
+  /// else by [kDefaultFontSize], the size Flutter paints a style with no font
+  /// size at. CSS computes `letter-spacing` the same way: against the font
+  /// size of the element that declares it, and descendants inherit the
+  /// resulting length rather than the em.
+  double? effectiveLetterSpacing({double? inheritedFontSize}) {
+    if (letterSpacing == null ||
+        letterSpacingUnit == WindLetterSpacingUnit.px) {
+      return letterSpacing;
+    }
+
+    return letterSpacing! * (fontSize ?? inheritedFontSize ?? kDefaultFontSize);
+  }
+
   /// Converts the typography properties of this `WindStyle` into a
   /// Flutter `TextStyle`.
   ///
   /// This allows `WDiv` to pass these styles down to its children via
   /// `DefaultTextStyle`, enabling CSS-like inheritance.
-  TextStyle toTextStyle() {
+  ///
+  /// [inheritedFontSize] is the font size the text renders at when this
+  /// style sets none; only an em letter spacing reads it (see
+  /// [needsInheritedFontSize] and [effectiveLetterSpacing]).
+  TextStyle toTextStyle({double? inheritedFontSize}) {
     return TextStyle(
       color: color,
       fontSize: fontSize,
       fontWeight: fontWeight,
       fontStyle: fontStyle,
-      letterSpacing: letterSpacing,
+      letterSpacing: effectiveLetterSpacing(
+        inheritedFontSize: inheritedFontSize,
+      ),
       height: effectiveLineHeight,
       decoration: textDecoration,
       decorationColor: textDecorationColor,
@@ -724,6 +775,7 @@ class WindStyle {
         'fontWeight: $fontWeight, '
         'fontStyle: $fontStyle, '
         'letterSpacing: $letterSpacing, '
+        'letterSpacingUnit: $letterSpacingUnit, '
         'heightLine: $heightLine, '
         'heightLineFactor: $heightLineFactor, '
         'textDecoration: $textDecoration, '

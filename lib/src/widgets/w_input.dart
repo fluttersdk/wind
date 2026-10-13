@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../theme/wind_theme.dart';
+import '../utils/wind_helpers.dart';
 import '../utils/wind_logger.dart';
 import '../utils/wind_perf_counters.dart';
 import 'w_keyboard_actions.dart';
@@ -706,9 +707,14 @@ class _WInputState extends State<WInput>
     final Color baselineColor = brightness == Brightness.dark
         ? const Color(0xFFFFFFFF)
         : const Color(0xFF000000);
-    final TextStyle textStyle = styles.toTextStyle().color == null
-        ? styles.toTextStyle().copyWith(color: baselineColor)
-        : styles.toTextStyle();
+    // EditableText reads no DefaultTextStyle, so a field with no `text-*`
+    // size paints at kDefaultFontSize; an em `tracking-*` resolves there.
+    final TextStyle parsedTextStyle = styles.toTextStyle(
+      inheritedFontSize: kDefaultFontSize,
+    );
+    final TextStyle textStyle = parsedTextStyle.color == null
+        ? parsedTextStyle.copyWith(color: baselineColor)
+        : parsedTextStyle;
 
     // EditableText requires both cursor colors explicitly (no theme to fall
     // back to). Derive from the resolved text color, mirroring WText's
@@ -1042,7 +1048,18 @@ class _WInputState extends State<WInput>
     required TextStyle textStyle,
     required Color baselineColor,
   }) {
-    TextStyle hintStyle = textStyle.merge(placeholderStyles.toTextStyle());
+    // The placeholder is a Text, so with no field size it paints at the
+    // ambient DefaultTextStyle size; its em resolves where it paints.
+    final WindStyle sizedPlaceholder = placeholderStyles.copyWith(
+      fontSize: placeholderStyles.fontSize ?? textStyle.fontSize,
+    );
+    TextStyle hintStyle = textStyle.merge(
+      sizedPlaceholder.toTextStyle(
+        inheritedFontSize: sizedPlaceholder.needsInheritedFontSize
+            ? wInheritedFontSize(context)
+            : null,
+      ),
+    );
 
     if (placeholderStyles.color == null) {
       final Color base = styles.color ?? baselineColor;

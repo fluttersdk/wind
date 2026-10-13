@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
@@ -391,6 +392,53 @@ void main() {
 
       // Two WDivs parsed the same className; only one cache entry should exist.
       expect(WindParser.cacheSize, 1);
+    });
+  });
+
+  group('WDiv letter spacing', () {
+    double? renderedLetterSpacing(WidgetTester tester, String text) {
+      return tester
+          .renderObject<RenderParagraph>(find.text(text))
+          .text
+          .style
+          ?.letterSpacing;
+    }
+
+    testWidgets('publishes em tracking resolved at its own text size',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: WDiv(
+              className: 'text-sm tracking-wide',
+              child: const Text('Row'),
+            ),
+          ),
+        ),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Row'), closeTo(0.35, 1e-9));
+    });
+
+    testWidgets('publishes em tracking resolved at the inherited text size',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: DefaultTextStyle(
+              style: const TextStyle(fontSize: 20),
+              child: WDiv(
+                className: 'tracking-wide',
+                child: const Text('Cell'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Cell'), closeTo(0.5, 1e-9));
     });
   });
 }

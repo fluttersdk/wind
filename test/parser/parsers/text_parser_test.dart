@@ -326,28 +326,137 @@ void main() {
         expect(updatedStyles.textTransform, WindTextTransform.uppercase);
       });
 
-      test('parses tracking classes', () {
-        final styles = WindStyle();
-        final classes = ['tracking-wide'];
-        final updatedStyles = parser.parse(styles, classes, context);
+      test('parses named tracking classes as Tailwind em multipliers', () {
+        const expected = {
+          'tighter': -0.05,
+          'tight': -0.025,
+          'normal': 0.0,
+          'wide': 0.025,
+          'wider': 0.05,
+          'widest': 0.1,
+        };
 
-        expect(updatedStyles.letterSpacing, context.theme.tracking['wide']);
+        for (final entry in expected.entries) {
+          final updatedStyles = parser.parse(
+            const WindStyle(),
+            ['tracking-${entry.key}'],
+            context,
+          );
+
+          expect(
+            updatedStyles.letterSpacing,
+            entry.value,
+            reason: 'tracking-${entry.key}',
+          );
+          expect(
+            updatedStyles.letterSpacingUnit,
+            WindLetterSpacingUnit.em,
+            reason: 'tracking-${entry.key}',
+          );
+        }
       });
 
-      test('parses arbitrary tracking classes', () {
-        final styles = WindStyle();
-        final classes = ['tracking-[0.1em]'];
-        final updatedStyles = parser.parse(styles, classes, context);
+      test('parses arbitrary em tracking as em', () {
+        final updatedStyles = parser.parse(
+          const WindStyle(),
+          ['tracking-[0.1em]'],
+          context,
+        );
 
         expect(updatedStyles.letterSpacing, 0.1);
+        expect(updatedStyles.letterSpacingUnit, WindLetterSpacingUnit.em);
+      });
+
+      test('parses arbitrary px tracking as logical pixels', () {
+        final updatedStyles = parser.parse(
+          const WindStyle(),
+          ['tracking-[1px]'],
+          context,
+        );
+
+        expect(updatedStyles.letterSpacing, 1.0);
+        expect(updatedStyles.letterSpacingUnit, WindLetterSpacingUnit.px);
+      });
+
+      test('parses a bare arbitrary tracking number as logical pixels', () {
+        final updatedStyles = parser.parse(
+          const WindStyle(),
+          ['tracking-[2]'],
+          context,
+        );
+
+        expect(updatedStyles.letterSpacing, 2.0);
+        expect(updatedStyles.letterSpacingUnit, WindLetterSpacingUnit.px);
+      });
+
+      test('parses negative arbitrary em tracking', () {
+        final updatedStyles = parser.parse(
+          const WindStyle(),
+          ['tracking-[-0.02em]'],
+          context,
+        );
+
+        expect(updatedStyles.letterSpacing, -0.02);
+        expect(updatedStyles.letterSpacingUnit, WindLetterSpacingUnit.em);
+      });
+
+      test('parses negative arbitrary px tracking', () {
+        final updatedStyles = parser.parse(
+          const WindStyle(),
+          ['tracking-[-1.5px]'],
+          context,
+        );
+
+        expect(updatedStyles.letterSpacing, -1.5);
+        expect(updatedStyles.letterSpacingUnit, WindLetterSpacingUnit.px);
       });
 
       test('last class wins for conflicting tracking classes', () {
-        final styles = WindStyle();
-        final classes = ['tracking-tight', 'tracking-wide'];
-        final updatedStyles = parser.parse(styles, classes, context);
+        final updatedStyles = parser.parse(
+          const WindStyle(),
+          ['tracking-tight', 'tracking-wide'],
+          context,
+        );
 
-        expect(updatedStyles.letterSpacing, context.theme.tracking['wide']);
+        expect(updatedStyles.letterSpacing, 0.025);
+        expect(updatedStyles.letterSpacingUnit, WindLetterSpacingUnit.em);
+      });
+
+      test('last class wins across px and em tracking', () {
+        final emWins = parser.parse(
+          const WindStyle(),
+          ['tracking-[1px]', 'tracking-wide'],
+          context,
+        );
+        final pxWins = parser.parse(
+          const WindStyle(),
+          ['tracking-wide', 'tracking-[1px]'],
+          context,
+        );
+
+        expect(emWins.letterSpacing, 0.025);
+        expect(emWins.letterSpacingUnit, WindLetterSpacingUnit.em);
+        expect(pxWins.letterSpacing, 1.0);
+        expect(pxWins.letterSpacingUnit, WindLetterSpacingUnit.px);
+      });
+
+      test('em tracking replaces px letter spacing carried by a base style',
+          () {
+        const base = WindStyle(letterSpacing: 3);
+        final updatedStyles = parser.parse(base, ['tracking-wide'], context);
+
+        expect(updatedStyles.letterSpacing, 0.025);
+        expect(updatedStyles.letterSpacingUnit, WindLetterSpacingUnit.em);
+      });
+
+      test('rejects a malformed arbitrary tracking value', () {
+        final updatedStyles = parser.parse(
+          const WindStyle(),
+          ['tracking-[1.2.3em]'],
+          context,
+        );
+
+        expect(updatedStyles.letterSpacing, isNull);
       });
 
       test('parses leading classes', () {
@@ -455,6 +564,8 @@ void main() {
           'uppercase',
           'tracking-wide',
           'tracking-[0.1em]',
+          'tracking-[-0.02em]',
+          'tracking-[1px]',
           'leading-loose',
           'leading-[24px]',
           'truncate',

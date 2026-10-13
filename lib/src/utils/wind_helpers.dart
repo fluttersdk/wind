@@ -67,6 +67,32 @@ double? wFontSize(BuildContext context, String sizeName) {
   return theme.fontSizes[sizeName];
 }
 
+/// Returns the font size text under [context] inherits, in logical pixels.
+///
+/// The ambient [DefaultTextStyle]'s size when it sets one, else the theme's
+/// `base` size, else [kDefaultFontSize] when no [WindTheme] is present. An em
+/// `tracking-*` on a className with no `text-*` size resolves against it.
+///
+/// Example:
+/// ```dart
+/// final style = WindParser.parse('tracking-wide', context);
+/// final textStyle = style.toTextStyle(
+///   inheritedFontSize: wInheritedFontSize(context),
+/// );
+/// ```
+double wInheritedFontSize(BuildContext context) {
+  final double? ambient = DefaultTextStyle.of(context).style.fontSize;
+  WindPerfCounters.recordInheritedRead(WindInheritedRead.defaultTextStyle);
+  if (ambient != null) {
+    return ambient;
+  }
+
+  final WindThemeData? theme = WindTheme.maybeDataOf(context);
+  WindPerfCounters.recordInheritedRead(WindInheritedRead.windTheme);
+
+  return theme?.fontSizes['base'] ?? kDefaultFontSize;
+}
+
 /// Returns a font weight by name.
 ///
 /// Supports: thin, extralight, light, normal, medium, semibold, bold, extrabold, black

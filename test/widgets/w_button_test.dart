@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -720,6 +720,33 @@ void main() {
           expect(spinnerColor, equals(Colors.red));
         },
       );
+    });
+
+    group('Letter Spacing', () {
+      setUp(() {
+        WindParser.clearCache();
+      });
+
+      testWidgets('resolves em tracking against the label text size',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              className: 'text-sm tracking-wide',
+              child: const Text('Save'),
+            ),
+          ),
+        );
+
+        final double? letterSpacing = tester
+            .renderObject<RenderParagraph>(find.text('Save'))
+            .text
+            .style
+            ?.letterSpacing;
+
+        expect(letterSpacing, closeTo(0.35, 1e-9));
+      });
     });
   });
 }

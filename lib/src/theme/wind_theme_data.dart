@@ -80,9 +80,11 @@ class WindThemeData {
   /// Defaults to [default_font_weights.fontWeights].
   final Map<String, FontWeight> fontWeights;
 
-  /// A map of letter spacing names to spacing values.
+  /// A map of letter spacing names to em multipliers, read by the named
+  /// `tracking-*` classes: `0.025` is 2.5% of the font size of the text it
+  /// applies to, never 0.025 logical pixels.
   ///
-  /// Defaults to [default_tracking.tracking].
+  /// Defaults to [default_tracking.tracking], Tailwind's scale.
   final Map<String, double> tracking;
 
   /// A map of line height names to height values.

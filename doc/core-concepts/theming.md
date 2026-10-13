@@ -261,7 +261,7 @@ WDiv(className: 'row-c bg-white dark:bg-gray-800')
 | `fontFamilies` | `Map<String, String>` | Font aliases (`sans`, `serif`, `mono`, custom) |
 | `fontSizes` | `Map<String, double>` | Text size scale (`text-xs` through `text-6xl`) |
 | `fontWeights` | `Map<String, FontWeight>` | Weight scale (`font-thin` through `font-black`) |
-| `tracking` | `Map<String, double>` | Letter spacing (`tracking-tight`, etc.) |
+| `tracking` | `Map<String, double>` | Letter spacing in em, a multiple of the font size (`tracking-tight`, etc.) |
 | `leading` | `Map<String, double>` | Line height (`leading-none`, etc.) |
 | `borderWidths` | `Map<String, double>` | Border width scale (`border-2`, etc.) |
 | `borderRadius` | `Map<String, double>` | Corner radius scale (`rounded-lg`, etc.) |

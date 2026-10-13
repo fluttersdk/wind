@@ -56,5 +56,77 @@ void main() {
       expect(updated.mouseCursor, SystemMouseCursors.forbidden);
       expect(updated.toString(), contains('mouseCursor'));
     });
+
+    test('a differing letterSpacingUnit breaks equality', () {
+      const px = WindStyle(letterSpacing: 1);
+      const em = WindStyle(
+        letterSpacing: 1,
+        letterSpacingUnit: WindLetterSpacingUnit.em,
+      );
+
+      expect(px == em, isFalse);
+      expect(em.toString(), contains('letterSpacingUnit'));
+    });
+  });
+
+  group('WindStyle letter spacing resolution', () {
+    test('passes px letter spacing through unchanged', () {
+      const style = WindStyle(fontSize: 30, letterSpacing: 1.5);
+
+      expect(style.toTextStyle().letterSpacing, 1.5);
+      expect(style.needsInheritedFontSize, isFalse);
+    });
+
+    test('resolves em letter spacing against its own font size', () {
+      const style = WindStyle(
+        fontSize: 14,
+        letterSpacing: -0.025,
+        letterSpacingUnit: WindLetterSpacingUnit.em,
+      );
+
+      expect(
+        style.toTextStyle(inheritedFontSize: 40).letterSpacing,
+        closeTo(-0.35, 1e-9),
+      );
+      expect(style.needsInheritedFontSize, isFalse);
+    });
+
+    test('resolves em letter spacing against the inherited font size', () {
+      const style = WindStyle(
+        letterSpacing: 0.025,
+        letterSpacingUnit: WindLetterSpacingUnit.em,
+      );
+
+      expect(
+        style.toTextStyle(inheritedFontSize: 20).letterSpacing,
+        closeTo(0.5, 1e-9),
+      );
+      expect(style.needsInheritedFontSize, isTrue);
+    });
+
+    test('resolves em against kDefaultFontSize when no size is known', () {
+      const style = WindStyle(
+        letterSpacing: 0.1,
+        letterSpacingUnit: WindLetterSpacingUnit.em,
+      );
+
+      expect(
+        style.toTextStyle().letterSpacing,
+        closeTo(0.1 * kDefaultFontSize, 1e-9),
+      );
+    });
+
+    test('copyWith carries the letter spacing unit through', () {
+      const base = WindStyle(letterSpacing: 2);
+      final updated = base.copyWith(
+        letterSpacing: 0.05,
+        letterSpacingUnit: WindLetterSpacingUnit.em,
+      );
+
+      expect(updated.letterSpacing, 0.05);
+      expect(updated.letterSpacingUnit, WindLetterSpacingUnit.em);
+      expect(
+          base.copyWith(width: 1).letterSpacingUnit, WindLetterSpacingUnit.px);
+    });
   });
 }

@@ -11,7 +11,7 @@ class LetterSpacingExamplePage extends StatelessWidget {
     return ExampleScaffold(
       title: 'Letter Spacing',
       description:
-          'tracking-{key} controls letterSpacing. Six built-in steps go from negative (tighter) to wide (widest).',
+          'tracking-{key} controls letterSpacing in em, as in Tailwind: a multiple of the font size, from tighter (-0.05em) to widest (0.1em).',
       gradient: 'from-purple-500 to-fuchsia-600',
       children: [
         ExampleSection(
@@ -42,27 +42,38 @@ class LetterSpacingExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description: 'Six built-in tokens cover most use cases.',
+          description:
+              'Six built-in em steps. The pixels shown are for 14px text (text-sm).',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
-              _RefRow(cls: 'tracking-tighter', val: '-2.0'),
-              _RefRow(cls: 'tracking-tight', val: '-1.0'),
-              _RefRow(cls: 'tracking-normal', val: '0.0 (default)'),
-              _RefRow(cls: 'tracking-wide', val: '1.0'),
-              _RefRow(cls: 'tracking-wider', val: '2.0'),
-              _RefRow(cls: 'tracking-widest', val: '4.0'),
+              _RefRow(cls: 'tracking-tighter', val: '-0.05em (-0.7)'),
+              _RefRow(cls: 'tracking-tight', val: '-0.025em (-0.35)'),
+              _RefRow(cls: 'tracking-normal', val: '0em (default)'),
+              _RefRow(cls: 'tracking-wide', val: '0.025em (0.35)'),
+              _RefRow(cls: 'tracking-wider', val: '0.05em (0.7)'),
+              _RefRow(cls: 'tracking-widest', val: '0.1em (1.4)'),
             ],
           ),
         ),
         ExampleSection(
           title: 'Arbitrary Tracking',
           description:
-              'tracking-[3px] applies an exact letter spacing. Useful for one-off branded headings.',
-          child: const WText(
-            'B R A N D',
-            className:
-                'tracking-[6px] text-xl font-bold text-slate-900 dark:text-white',
+              'tracking-[6px] applies exact logical pixels at any size; tracking-[-0.02em] scales with the font size.',
+          child: WDiv(
+            className: 'flex flex-col gap-2',
+            children: const [
+              WText(
+                'B R A N D',
+                className:
+                    'tracking-[6px] text-xl font-bold text-slate-900 dark:text-white',
+              ),
+              WText(
+                'Quarterly results',
+                className:
+                    'tracking-[-0.02em] text-3xl font-semibold text-slate-900 dark:text-white',
+              ),
+            ],
           ),
         ),
       ],

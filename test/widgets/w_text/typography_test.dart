@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
 import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
@@ -355,6 +356,113 @@ void main() {
       // Flutter's TextStyle.height is a multiplier: 32 / 20 = 1.6
       expect(textWidget.style?.fontSize, themeData.fontSizes['xl']);
       expect(textWidget.style?.height, closeTo(1.6, 0.01));
+    });
+  });
+
+  group('WText letter spacing', () {
+    Widget themed(Widget child, {WindThemeData? data}) {
+      return MaterialApp(
+        home: WindTheme(data: data ?? WindThemeData(), child: child),
+      );
+    }
+
+    double? renderedLetterSpacing(WidgetTester tester, String text) {
+      return tester
+          .renderObject<RenderParagraph>(find.text(text))
+          .text
+          .style
+          ?.letterSpacing;
+    }
+
+    testWidgets('resolves named tracking against its own text size',
+        (tester) async {
+      await tester.pumpWidget(
+        themed(const WText('Title', className: 'text-sm tracking-tight')),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Title'), closeTo(-0.35, 1e-9));
+    });
+
+    testWidgets('resolves named tracking against the inherited text size',
+        (tester) async {
+      await tester.pumpWidget(
+        themed(
+          const DefaultTextStyle(
+            style: TextStyle(fontSize: 20),
+            child: WText('Label', className: 'tracking-wide'),
+          ),
+        ),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Label'), closeTo(0.5, 1e-9));
+    });
+
+    testWidgets('resolves named tracking against the theme base size',
+        (tester) async {
+      await tester.pumpWidget(
+        themed(
+          const DefaultTextStyle(
+            style: TextStyle(),
+            child: WText('Base', className: 'tracking-widest'),
+          ),
+          data: WindThemeData(fontSizes: {'base': 20}),
+        ),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Base'), closeTo(2.0, 1e-9));
+    });
+
+    testWidgets('resolves negative arbitrary em tracking', (tester) async {
+      await tester.pumpWidget(
+        themed(const WText('Hero', className: 'text-3xl tracking-[-0.02em]')),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Hero'), closeTo(-0.6, 1e-9));
+    });
+
+    testWidgets('resolves em tracking against a responsive text size',
+        (tester) async {
+      tester.view.physicalSize = const Size(1024, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(
+        themed(
+          const WText(
+            'Wide',
+            className: 'text-sm md:text-3xl tracking-[-0.02em]',
+          ),
+        ),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Wide'), closeTo(-0.6, 1e-9));
+    });
+
+    testWidgets('keeps arbitrary px tracking in logical pixels',
+        (tester) async {
+      await tester.pumpWidget(
+        themed(const WText('Pixel', className: 'text-3xl tracking-[1px]')),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Pixel'), 1.0);
+    });
+
+    testWidgets('resolves em tracking against a textStyle font size',
+        (tester) async {
+      await tester.pumpWidget(
+        themed(
+          const WText(
+            'Override',
+            className: 'text-sm tracking-wide',
+            textStyle: TextStyle(fontSize: 60),
+          ),
+        ),
+      );
+
+      expect(renderedLetterSpacing(tester, 'Override'), closeTo(1.5, 1e-9));
     });
   });
 }

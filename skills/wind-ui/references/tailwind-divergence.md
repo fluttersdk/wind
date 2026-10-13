@@ -57,7 +57,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | `rounded-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3; Wind has NOT adopted the v4 rename shift |
 | `shadow-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3 |
 | `ring` (bare) | v3 default 3 px; v4 default 1 px | Wind matches v3 (default 3 px) |
-| `tracking-{tighter..widest}` | em fractions (`tracking-wide` = 0.025em, scales with font size) | Fixed px (`tighter` -2, `tight` -1, `wide` 1, `wider` 2, `widest` 4) because `TextStyle.letterSpacing` is pixel-based; NOT proportional across font sizes |
+| `tracking-{tighter..widest}` | em fractions (`tracking-wide` = 0.025em, scales with font size) | Identical em scale, converted to px at build against the element's `text-*` size, else the inherited `DefaultTextStyle` size, else the theme `base`. A `WDiv` publishes the resolved px to its children, as CSS inherits the computed length. `WInput` with no `text-*` resolves against 14 (`kDefaultFontSize`). |
 | `max-w-prose` | `65ch`, font-relative (≈ 520-624 px depending on font) | Fixed `512 px`; a divergence, not an equivalent |
 
 ---
