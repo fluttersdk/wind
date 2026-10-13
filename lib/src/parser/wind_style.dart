@@ -686,11 +686,6 @@ class WindStyle {
     return null;
   }
 
-  /// Whether an em [letterSpacing] has no [fontSize] of its own to resolve
-  /// against, so [toTextStyle] needs the font size the text inherits.
-  ///
-  /// Widgets read it to skip the `DefaultTextStyle.of` lookup (and the
-  /// rebuild dependency it registers) whenever the answer is not needed.
   /// The `ring-*` outline as a decoration to paint in the FOREGROUND of the
   /// element's box, or null when it carries no ring (or `ring-0`).
   ///
@@ -727,6 +722,11 @@ class WindStyle {
     );
   }
 
+  /// Whether an em [letterSpacing] has no [fontSize] of its own to resolve
+  /// against, so [toTextStyle] needs the font size the text inherits.
+  ///
+  /// Widgets read it to skip the `DefaultTextStyle.of` lookup (and the
+  /// rebuild dependency it registers) whenever the answer is not needed.
   bool get needsInheritedFontSize =>
       letterSpacing != null &&
       letterSpacingUnit == WindLetterSpacingUnit.em &&

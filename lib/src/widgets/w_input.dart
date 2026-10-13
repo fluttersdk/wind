@@ -883,10 +883,20 @@ class _WInputState extends State<WInput>
     // Wrap in the decorated box (className → BoxDecoration, same path WDiv
     // uses), recomputing on focus so the ring/border reacts to `_isFocused`.
     WindPerfCounters.recordWrapperEmission('DecoratedBox');
-    Widget result = DecoratedBox(
-      decoration: _buildDecoration(styles),
-      child: field,
-    );
+    final BoxDecoration decoration = _buildDecoration(styles);
+    Widget result = DecoratedBox(decoration: decoration, child: field);
+
+    // The ring outline while focused, on the field's own corner radius,
+    // which falls back to the field's default when className sets none.
+    final BoxDecoration? ring = _isFocused ? styles.ringOutline : null;
+    if (ring != null) {
+      WindPerfCounters.recordWrapperEmission('DecoratedBox');
+      result = DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: ring.copyWith(borderRadius: decoration.borderRadius),
+        child: result,
+      );
+    }
 
     // Native selection gesture layer wraps the WHOLE decorated box (padding +
     // prefix/suffix Row + DecoratedBox). The builder hit-tests against the
@@ -1018,13 +1028,13 @@ class _WInputState extends State<WInput>
       );
     }
 
-    // Focus ring: promote ring color/width to the border and paint the ring
-    // shadow, matching the previous focus-on border behavior.
-    List<BoxShadow>? boxShadow = styles.boxShadow;
+    // Focus ring: promote ring color/width to the border, matching the
+    // previous focus-on border behavior. The ring outside it is the outline
+    // `_ringOutline` paints over this box, never a shadow under it: a shadow
+    // filled a transparent field with the ring colour.
     if (_isFocused &&
         styles.ringShadow != null &&
         styles.ringShadow!.isNotEmpty) {
-      boxShadow = styles.ringShadow;
       final Color ringColor = styles.ringColor ?? _defaultBorderColor;
       final double ringWidth = styles.ringWidth ?? _defaultBorderWidth;
       border = Border.all(color: ringColor, width: ringWidth);
@@ -1034,7 +1044,7 @@ class _WInputState extends State<WInput>
       color: fillColor,
       border: border,
       borderRadius: borderRadius,
-      boxShadow: boxShadow,
+      boxShadow: styles.boxShadow,
       gradient: parsed?.gradient,
       image: parsed?.image,
     );
