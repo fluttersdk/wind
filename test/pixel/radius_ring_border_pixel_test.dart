@@ -7,7 +7,7 @@ import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 ///
 /// Radius presets (Tailwind v3): `rounded-lg` = 8, `rounded-2xl` = 16. Border
 /// widths: `border` (DEFAULT) = 1, `border-2` = 2, `border-4` = 4. Ring widths:
-/// `ring` (DEFAULT) = 3, `ring-2` = 2, rendered as a spread-only [BoxShadow].
+/// `ring` (DEFAULT) = 3, `ring-2` = 2, painted as an outline outside the box.
 ///
 /// Each value is read from the actually-rendered [RenderDecoratedBox.decoration]
 /// (the render layer the plan mandates for exact decoration), not from the
@@ -95,27 +95,48 @@ void main() {
     });
   });
 
-  group('Ring widths (spread-only BoxShadow)', () {
-    testWidgets('ring (DEFAULT) = 3 px spread', (tester) async {
+  group('Ring widths (outline outside the box)', () {
+    /// The ring's stroke: the foreground decoration the WDiv paints over its
+    /// box. `ring_outline_pixel_test.dart` reads what it looks like.
+    BorderSide ringOf(WidgetTester tester) {
+      final DecoratedBox ring = tester.widget<DecoratedBox>(
+        find.descendant(
+          of: find.byType(WDiv),
+          matching: find.byWidgetPredicate(
+            (w) =>
+                w is DecoratedBox &&
+                w.position == DecorationPosition.foreground,
+          ),
+        ),
+      );
+
+      return ((ring.decoration as BoxDecoration).border! as Border).top;
+    }
+
+    testWidgets('ring (DEFAULT) = 3 px, outside the edge', (tester) async {
       await tester.pumpWidget(
         wrapWithTheme(const WDiv(className: 'ring ring-blue-500')),
       );
 
-      final shadows = _decorationOf(tester).boxShadow!;
-      expect(shadows, isNotEmpty);
-      // Spread radius carries the ring width; offset 0, no offset shadow here.
-      expect(shadows.last.spreadRadius, 3.0);
-      expect(shadows.last.blurRadius, 0.0);
+      expect(ringOf(tester).width, 3.0);
+      expect(ringOf(tester).strokeAlign, BorderSide.strokeAlignOutside);
     });
 
-    testWidgets('ring-2 = 2 px spread', (tester) async {
+    testWidgets('ring-2 = 2 px, outside the edge', (tester) async {
       await tester.pumpWidget(
         wrapWithTheme(const WDiv(className: 'ring-2 ring-blue-500')),
       );
 
-      final shadows = _decorationOf(tester).boxShadow!;
-      expect(shadows.last.spreadRadius, 2.0);
-      expect(shadows.last.blurRadius, 0.0);
+      expect(ringOf(tester).width, 2.0);
+      expect(ringOf(tester).strokeAlign, BorderSide.strokeAlignOutside);
+    });
+
+    testWidgets('a ring adds no shadow to the box', (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(const WDiv(className: 'ring-2 ring-blue-500 bg-white')),
+      );
+
+      expect(_decorationOf(tester).boxShadow, isNull);
     });
   });
 }

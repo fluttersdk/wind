@@ -53,7 +53,6 @@ class ImageBasicExamplePage extends StatelessWidget {
                 className: '''
                   w-20 h-20 rounded-full object-cover
                   ring-4 ring-emerald-500 ring-offset-2
-                  ring-offset-white dark:ring-offset-slate-900
                 ''',
               ),
             ],

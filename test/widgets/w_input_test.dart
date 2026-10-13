@@ -941,6 +941,47 @@ void main() {
         expect((after.decoration as BoxDecoration).border, isNotNull);
       });
 
+      testWidgets('a focus ring is an outline, not a shadow under the field', (
+        tester,
+      ) async {
+        // A transparent field filled with the ring colour while it had focus,
+        // because the ring was a spread shadow the field did not cover.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WInput(
+              className:
+                  'p-3 bg-transparent rounded-lg focus:ring-2 focus:ring-blue-500',
+            ),
+          ),
+        );
+
+        await tester.tap(find.byType(WInput));
+        await tester.pump();
+
+        final Iterable<DecoratedBox> boxes = tester.widgetList<DecoratedBox>(
+          find.descendant(
+            of: find.byType(WInput),
+            matching: find.byType(DecoratedBox),
+          ),
+        );
+        final DecoratedBox field = boxes.firstWhere(
+          (box) => box.position == DecorationPosition.background,
+        );
+        final DecoratedBox ring = boxes.firstWhere(
+          (box) => box.position == DecorationPosition.foreground,
+        );
+
+        expect((field.decoration as BoxDecoration).boxShadow, isNull);
+        final Border outline =
+            (ring.decoration as BoxDecoration).border! as Border;
+        expect(outline.top.width, 2);
+        expect(outline.top.strokeAlign, BorderSide.strokeAlignOutside);
+        expect(
+          (ring.decoration as BoxDecoration).borderRadius,
+          (field.decoration as BoxDecoration).borderRadius,
+        );
+      });
+
       testWidgets('regular border class applies border to DecoratedBox', (
         tester,
       ) async {

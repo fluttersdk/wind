@@ -1,6 +1,6 @@
 # Ring Width, Color, and Offset
 
-Utilities for creating outline rings with box-shadows. These are useful for focus states or highlighting elements without affecting layout.
+Utilities for drawing an outline ring around an element. These are useful for focus states or highlighting elements without affecting layout.
 
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
@@ -26,10 +26,10 @@ WDiv(className: 'ring-2 ring-offset-2')
 
 ## Basic Usage
 
-Use `ring-{width}` utilities to apply a solid box-shadow to an element. By default, this adds a 3px blue ring.
+Use `ring-{width}` utilities to draw a solid outline around an element. By default, this adds a 3px blue ring.
 
 > [!NOTE]
-> Rings in Wind are implemented using `BoxShadow` with a spread radius and zero blur. They do not take up space in the layout, unlike borders.
+> Tailwind draws a ring as a box-shadow, which a browser clips to the outside of the element. Wind paints the same thing as an outline stroke over the element's box, on its corner radius, so an element with no background stays empty inside its ring. A ring does not take up space in the layout, unlike a border.
 
 ```dart
 WDiv(
@@ -49,7 +49,7 @@ WDiv(
 | `ring-4` | 4px | 4px ring width |
 | `ring-8` | 8px | 8px ring width |
 | `ring-inset` | - | Forces ring to be on the inside |
-| `ring-offset-{width}` | - | Simulates an offset by adding a transparent gap |
+| `ring-offset-{width}` | - | Moves the ring out, leaving an unpainted gap |
 
 ## Variants
 
@@ -66,11 +66,11 @@ WDiv(className: 'ring-2 ring-red-500/50') // 50% opacity
 
 ### Ring Offset
 
-Use `ring-offset-{width}` to simulate space between the element and the ring. This is helpful for focus states on colored backgrounds.
+Use `ring-offset-{width}` to leave space between the element and the ring. The gap is not painted, so whatever is behind the element shows through it; Wind has no `ring-offset-{color}`.
 
 ```dart
 // Creates a 2px gap between the element and the ring
-WDiv(className: 'ring-2 ring-offset-2 ring-offset-white')
+WDiv(className: 'ring-2 ring-offset-2')
 ```
 
 | Class | Value | Description |

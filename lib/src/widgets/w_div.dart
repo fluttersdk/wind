@@ -1591,11 +1591,11 @@ class WDiv extends StatelessWidget {
       // Merge decoration with shadows (boxShadow + ringShadow)
       BoxDecoration? finalDecoration = styles.decoration;
 
-      // Combine box shadows and ring shadows
-      List<BoxShadow>? combinedShadows;
-      if (styles.boxShadow != null || styles.ringShadow != null) {
-        combinedShadows = [...?styles.boxShadow, ...?styles.ringShadow];
-      }
+      // Box shadows only. The ring is an outline painted around the box below
+      // (`WindStyle.ringOutline`), never a shadow: a Flutter `BoxShadow` is not clipped
+      // to the outside of its box as a browser's box-shadow is, so a ring
+      // shadow filled any element without a background with the ring colour.
+      final List<BoxShadow>? combinedShadows = styles.boxShadow;
 
       if (combinedShadows != null && combinedShadows.isNotEmpty) {
         if (finalDecoration == null) {
@@ -1734,6 +1734,17 @@ class WDiv extends StatelessWidget {
           padding: containerPadding,
           alignment: containerAlignment,
           logger: logger,
+        );
+      }
+
+      final BoxDecoration? ring = styles.ringOutline;
+      if (ring != null) {
+        logger.wrapWith("DecoratedBox (Ring)", "${styles.ringWidth}px");
+        WindPerfCounters.recordWrapperEmission('DecoratedBox');
+        widgetToBuild = DecoratedBox(
+          position: DecorationPosition.foreground,
+          decoration: ring,
+          child: widgetToBuild,
         );
       }
     }
