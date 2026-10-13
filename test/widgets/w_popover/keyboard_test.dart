@@ -261,6 +261,96 @@ void main() {
         expect(find.text('Content'), findsNothing);
       });
 
+      testWidgets('Tab goes into the panel before a control beside the trigger',
+          (
+        tester,
+      ) async {
+        // Reading order alone ranks by position: the control on the trigger's
+        // row comes before the panel below it, so a keyboard user left the
+        // open panel behind. A host app's phone shell never reached its rows.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                popover(
+                  content: WAnchor(onTap: () {}, child: const Text('Item')),
+                ),
+                WAnchor(onTap: () {}, child: const Text('Beside')),
+              ],
+            ),
+          ),
+        );
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+
+        final BuildContext focused =
+            FocusManager.instance.primaryFocus!.context!;
+        expect(
+          find.descendant(
+            of: find.byWidget(focused.widget),
+            matching: find.text('Item'),
+          ),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('Tab goes into a panel that opened above the trigger', (
+        tester,
+      ) async {
+        // A trigger at the foot of a rail flips its panel upward, and reading
+        // order then ranked the whole panel BEFORE the trigger: Tab from the
+        // trigger left the group and the panel was reachable only backwards.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                WPopover(
+                  alignment: PopoverAlignment.topLeft,
+                  maxHeight: 200,
+                  triggerBuilder: (context, isOpen, isHovering) => const WDiv(
+                    className: 'w-10 h-10 bg-white',
+                    child: Text('Trigger'),
+                  ),
+                  contentBuilder: (context, close) =>
+                      WAnchor(onTap: () {}, child: const Text('Item')),
+                ),
+                WAnchor(onTap: () {}, child: const Text('Below')),
+              ],
+            ),
+          ),
+        );
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.getTopLeft(find.text('Item')).dy,
+          lessThan(tester.getTopLeft(find.text('Trigger')).dy),
+        );
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+
+        final BuildContext focused =
+            FocusManager.instance.primaryFocus!.context!;
+        expect(
+          find.descendant(
+            of: find.byWidget(focused.widget),
+            matching: find.text('Item'),
+          ),
+          findsOneWidget,
+        );
+      });
+
       testWidgets('Tab goes from the trigger into the panel before the page', (
         tester,
       ) async {

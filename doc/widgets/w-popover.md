@@ -133,7 +133,7 @@ WPopover(
 
 ### Keyboard
 
-The trigger is one Tab stop. Enter, Space, and the Android TV D-pad centre toggle the popover, through the same `ActivateIntent` a `WAnchor` answers, so the keys follow whatever the platform binds to activation. Escape closes an open popover wherever focus is, and returns focus to the trigger when it was on the trigger or inside the panel. While the popover is closed, Escape is left alone and reaches the app's own shortcuts, so a dialog holding a popover still closes on it. After a keyboard open, focus stays on the trigger even on the web, where the browser drops it as the panel mounts, so the next Tab moves into the panel.
+The trigger is one Tab stop. Enter, Space, and the Android TV D-pad centre toggle the popover, through the same `ActivateIntent` a `WAnchor` answers, so the keys follow whatever the platform binds to activation. Escape closes an open popover wherever focus is, and returns focus to the trigger when it was on the trigger or inside the panel. While the popover is closed, Escape is left alone and reaches the app's own shortcuts, so a dialog holding a popover still closes on it. After a keyboard open, focus stays on the trigger even on the web, where the browser drops it as the panel mounts. The trigger and the panel form one traversal group in widget order, so the next Tab moves into the panel, top to bottom, whether it opened below the trigger or flipped above it, and Tab past its last control leaves the popover.
 
 A disabled popover is not a Tab stop. With `enableTriggerOnTap: false`, Enter and Space do nothing, as a tap does nothing; Escape still closes a popover the controller opened.
 

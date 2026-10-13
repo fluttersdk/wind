@@ -819,12 +819,28 @@ class _WPopoverState extends State<WPopover> {
       trigger = Actions(actions: _activateActions, child: trigger);
     }
 
-    return OverlayPortal(
-      controller: _overlayController,
-      overlayChildBuilder: _buildOverlay,
-      child: CompositedTransformTarget(
-        link: _layerLink,
-        child: trigger,
+    // One traversal group for the trigger and the panel, so Tab goes from the
+    // trigger straight into the open panel and out of it again. The overlay
+    // child is placed in the overlay but is this widget's descendant in the
+    // element tree, so the group covers it. Without the group, reading order
+    // ranked every control on the page by position: anything beside the
+    // trigger came before the panel below it, and in a host app's phone shell
+    // Tab never reached the panel at all.
+    //
+    // Widget order inside the group, not reading order: a panel flipped above
+    // its trigger (a bell at the foot of a rail) would otherwise rank before
+    // the trigger, and Tab from the trigger would leave the group. The
+    // trigger's node joins the tree first and the panel's when it opens, so
+    // widget order is trigger, then the panel top to bottom as it was built.
+    return FocusTraversalGroup(
+      policy: WidgetOrderTraversalPolicy(),
+      child: OverlayPortal(
+        controller: _overlayController,
+        overlayChildBuilder: _buildOverlay,
+        child: CompositedTransformTarget(
+          link: _layerLink,
+          child: trigger,
+        ),
       ),
     );
   }
