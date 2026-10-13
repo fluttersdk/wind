@@ -55,7 +55,6 @@ class RingColorsExamplePage extends StatelessWidget {
               bg-white dark:bg-slate-800
               border border-gray-300 dark:border-gray-600
               focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
-              focus:ring-offset-white dark:focus:ring-offset-slate-900
             ''',
           ),
         ),

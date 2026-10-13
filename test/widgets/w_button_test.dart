@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -746,6 +747,75 @@ void main() {
             ?.letterSpacing;
 
         expect(letterSpacing, closeTo(0.35, 1e-9));
+      });
+    });
+
+    // The button's box was built from the parsed decoration alone, so a ring
+    // and a shadow in its className parsed and painted nothing: a host app's
+    // dialog buttons showed no focus while Tab moved between them.
+    group('Ring and shadow', () {
+      setUp(WindParser.clearCache);
+
+      testWidgets('a focus: ring outlines the button while it has focus', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Center(
+              child: WButton(
+                onTap: () {},
+                className:
+                    'px-4 py-2 bg-white focus:ring-2 focus:ring-blue-500',
+                child: const Text('Save'),
+              ),
+            ),
+          ),
+        );
+
+        Border? ring() {
+          final Iterable<DecoratedBox> boxes = tester.widgetList<DecoratedBox>(
+            find.ancestor(
+              of: find.text('Save'),
+              matching: find.byWidgetPredicate(
+                (w) =>
+                    w is DecoratedBox &&
+                    w.position == DecorationPosition.foreground,
+              ),
+            ),
+          );
+
+          return boxes.isEmpty
+              ? null
+              : (boxes.first.decoration as BoxDecoration).border as Border?;
+        }
+
+        expect(ring(), isNull);
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+
+        expect(ring()?.top.width, 2);
+        expect(ring()?.top.strokeAlign, BorderSide.strokeAlignOutside);
+      });
+
+      testWidgets('a shadow class casts a shadow', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              className: 'px-4 py-2 bg-white shadow-md',
+              child: const Text('Save'),
+            ),
+          ),
+        );
+
+        final Container box = tester.widget<Container>(
+          find
+              .ancestor(of: find.text('Save'), matching: find.byType(Container))
+              .first,
+        );
+
+        expect((box.decoration! as BoxDecoration).boxShadow, isNotEmpty);
       });
     });
   });

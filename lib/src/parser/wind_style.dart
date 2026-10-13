@@ -691,6 +691,42 @@ class WindStyle {
   ///
   /// Widgets read it to skip the `DefaultTextStyle.of` lookup (and the
   /// rebuild dependency it registers) whenever the answer is not needed.
+  /// The `ring-*` outline as a decoration to paint in the FOREGROUND of the
+  /// element's box, or null when it carries no ring (or `ring-0`).
+  ///
+  /// Tailwind's ring is a box-shadow, and a browser clips a box-shadow to the
+  /// outside of its element, so what a reader sees is an outline. A Flutter
+  /// [BoxShadow] is not clipped, which filled every element without a
+  /// background with the ring colour, so widgets paint this instead: a stroke
+  /// [ringWidth] wide outside the box, or inside it for `ring-inset`, on the
+  /// box's own corner radius. A `ring-offset-*` moves the stroke that far out
+  /// and leaves the gap unpainted, since Wind has no `ring-offset-color`.
+  ///
+  /// `strokeAlign` 1 puts the stroke wholly outside the edge; each further
+  /// `2 / width` moves it one logical pixel out, which is how the offset is
+  /// expressed without a second box.
+  BoxDecoration? get ringOutline {
+    final double width = ringWidth ?? 0;
+    final Color? color = ringColor;
+    if (width <= 0 || color == null || (ringShadow?.isEmpty ?? true)) {
+      return null;
+    }
+
+    final double offset = ringOffset ?? 0;
+    final double strokeAlign = (ringInset ?? false)
+        ? BorderSide.strokeAlignInside
+        : BorderSide.strokeAlignOutside + 2 * offset / width;
+
+    return BoxDecoration(
+      borderRadius: decoration?.borderRadius,
+      border: Border.all(
+        color: color,
+        width: width,
+        strokeAlign: strokeAlign,
+      ),
+    );
+  }
+
   bool get needsInheritedFontSize =>
       letterSpacing != null &&
       letterSpacingUnit == WindLetterSpacingUnit.em &&

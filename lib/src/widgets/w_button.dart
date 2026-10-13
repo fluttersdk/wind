@@ -184,6 +184,15 @@ class WButton extends StatelessWidget {
             containerAlignment = styles.alignment;
           }
 
+          // The box shadow travels beside the decoration in WindStyle, so it
+          // is folded in here; building from the decoration alone dropped
+          // every `shadow-*` on a button.
+          final List<BoxShadow>? shadows = styles.boxShadow;
+          final BoxDecoration? decoration = shadows == null || shadows.isEmpty
+              ? styles.decoration
+              : (styles.decoration ?? const BoxDecoration())
+                  .copyWith(boxShadow: shadows);
+
           // Wrap in styled container
           WindPerfCounters.recordWrapperEmission('Container');
           WindPerfCounters.recordWrapperEmission('DefaultTextStyle');
@@ -193,7 +202,7 @@ class WButton extends StatelessWidget {
                 styles.heightFactor != null ? double.infinity : styles.height,
             constraints: styles.constraints,
             padding: styles.padding,
-            decoration: styles.decoration,
+            decoration: decoration,
             alignment: containerAlignment,
             child: DefaultTextStyle.merge(
               style: styles.toTextStyle(
@@ -204,6 +213,19 @@ class WButton extends StatelessWidget {
               child: content,
             ),
           );
+
+          // The ring, an outline around the box (`WindStyle.ringOutline`).
+          // A button is the control most often focused from the keyboard, and
+          // its `focus:ring-*` painted nothing until this.
+          final BoxDecoration? ring = styles.ringOutline;
+          if (ring != null) {
+            WindPerfCounters.recordWrapperEmission('DecoratedBox');
+            styledButton = DecoratedBox(
+              position: DecorationPosition.foreground,
+              decoration: ring,
+              child: styledButton,
+            );
+          }
 
           // Wrap with AbsorbPointer when not interactive
           if (!isInteractive) {
