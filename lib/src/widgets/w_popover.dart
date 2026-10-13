@@ -1,7 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../parser/wind_parser.dart';
+import '../state/wind_anchor_state.dart';
+import '../state/wind_anchor_state_provider.dart';
 import '../utils/wind_logger.dart';
 import '../utils/wind_perf_counters.dart';
 import 'w_div.dart';
@@ -176,6 +179,11 @@ class WPopover extends StatefulWidget {
   /// Receives:
   /// - [isOpen]: Current open state
   /// - [isHovering]: Mouse hover state (for styling)
+  ///
+  /// The trigger also sits under a `WindAnchorStateProvider`, so `hover:`,
+  /// `focus:` and `disabled:` classes on a plain `WDiv` trigger follow the
+  /// popover. The trigger is a Tab stop; give it a `focus:` class or keyboard
+  /// focus on it is invisible.
   final PopoverTriggerBuilder triggerBuilder;
 
   /// Builder for the popover content.
@@ -302,6 +310,27 @@ class _WPopoverState extends State<WPopover> {
   /// already applied to `WSelect`.
   final FocusNode _focusNode = FocusNode();
   final GlobalKey _triggerKey = GlobalKey();
+
+  /// Whether [_focusNode] holds focus, published to the trigger so its
+  /// `focus:` classes light. Tracked rather than read in build, because a
+  /// focus change does not rebuild this widget on its own.
+  bool _hasFocus = false;
+
+  /// Whether [_focusNode] is itself the focus rather than an ancestor of it.
+  bool _hasPrimaryFocus = false;
+
+  /// The keyboard and remote-control half of a tap on the trigger.
+  ///
+  /// `WidgetsApp` binds `enter`, `numpadEnter`, `space`, `gameButtonA` and
+  /// `select` (the Android TV D-pad centre) to [ActivateIntent], so answering
+  /// the intent answers every one of them, exactly as `WAnchor` does. Built
+  /// once: a map rebuilt every frame hands `Actions` a new [Action] each time.
+  late final Map<Type, Action<Intent>> _activateActions =
+      <Type, Action<Intent>>{
+    ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: _activate),
+    ButtonActivateIntent:
+        CallbackAction<ButtonActivateIntent>(onInvoke: _activate),
+  };
 
   /// Unique group ID for TapRegion to link trigger and overlay
   late final Object _tapRegionGroupId = Object();
@@ -470,6 +499,7 @@ class _WPopoverState extends State<WPopover> {
   @override
   void initState() {
     super.initState();
+    _focusNode.addListener(_handleFocusChange);
     widget.controller?.addListener(_handleControllerChange);
   }
 
@@ -484,9 +514,50 @@ class _WPopoverState extends State<WPopover> {
 
   @override
   void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
     widget.controller?.removeListener(_handleControllerChange);
     super.dispose();
+  }
+
+  void _handleFocusChange() {
+    if (_focusNode.hasFocus == _hasFocus &&
+        _focusNode.hasPrimaryFocus == _hasPrimaryFocus) {
+      return;
+    }
+    setState(() {
+      _hasFocus = _focusNode.hasFocus;
+      _hasPrimaryFocus = _focusNode.hasPrimaryFocus;
+    });
+  }
+
+  Object? _activate(Intent intent) {
+    toggle();
+
+    return null;
+  }
+
+  /// Closes an open popover on Escape, from the trigger or from anything
+  /// focused inside the panel, and hands focus back to the trigger, which is
+  /// where a keyboard user opened it from.
+  ///
+  /// A key handler rather than a [DismissIntent] action, because the key has
+  /// to travel on while the popover is closed. `ShortcutManager` asks only
+  /// the NEAREST action for an intent: a disabled one makes it ignore the key
+  /// without consulting the `Actions` further up, so a dialog holding a closed
+  /// popover would stop closing on Escape. Ignoring the event here lets it
+  /// reach the app's shortcuts unchanged.
+  KeyEventResult _handleKey(FocusNode node, KeyEvent event) {
+    if (!_isOpen ||
+        event is! KeyDownEvent ||
+        event.logicalKey != LogicalKeyboardKey.escape) {
+      return KeyEventResult.ignored;
+    }
+
+    close();
+    _focusNode.requestFocus();
+
+    return KeyEventResult.handled;
   }
 
   void _handleControllerChange() {
@@ -652,20 +723,53 @@ class _WPopoverState extends State<WPopover> {
   @override
   Widget build(BuildContext context) {
     WindPerfCounters.recordWidgetBuild('WPopover');
-    return OverlayPortal(
-      controller: _overlayController,
-      overlayChildBuilder: _buildOverlay,
-      child: CompositedTransformTarget(
-        link: _layerLink,
-        child: Focus(
-          focusNode: _focusNode,
-          child: TapRegion(
-            groupId: _tapRegionGroupId,
-            child: KeyedSubtree(
-              key: _triggerKey,
-              child: _buildTrigger(context),
+
+    // The trigger's interaction state goes down the way `WAnchor` sends its
+    // own, so a `focus:` class on the trigger lights while the popover holds
+    // focus. Before this the node took focus and nothing could show it. A
+    // trigger div with a `focus:` class also stops being a second Tab stop:
+    // its own styling wrapper now inherits this focus instead of competing
+    // for one, so the control costs one press of the key or the remote.
+    Widget trigger = Focus(
+      focusNode: _focusNode,
+      canRequestFocus: !widget.disabled,
+      child: TapRegion(
+        groupId: _tapRegionGroupId,
+        child: KeyedSubtree(
+          key: _triggerKey,
+          child: WindAnchorStateProvider(
+            state: WindAnchorState(
+              isHovering: _isHovering,
+              isFocused: _hasFocus,
+              hasPrimaryFocus: _hasPrimaryFocus,
+              isDisabled: widget.disabled,
             ),
+            child: _buildTrigger(context),
           ),
+        ),
+      ),
+    );
+
+    // Only where a tap would toggle. A `CallbackAction` is always enabled, so
+    // installing it on a disabled or manually controlled popover would answer
+    // the activation key for a row around it and do nothing.
+    if (widget.enableTriggerOnTap && !widget.disabled) {
+      trigger = Actions(actions: _activateActions, child: trigger);
+    }
+
+    // Above the portal, so Escape reaches it from inside the panel too: the
+    // overlay child is placed in the overlay but is this widget's descendant
+    // in the element tree, and its focus nodes hang below this one.
+    return Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      onKeyEvent: _handleKey,
+      child: OverlayPortal(
+        controller: _overlayController,
+        overlayChildBuilder: _buildOverlay,
+        child: CompositedTransformTarget(
+          link: _layerLink,
+          child: trigger,
         ),
       ),
     );
