@@ -192,6 +192,111 @@ void main() {
       });
     });
 
+    group('Focus after a keyboard open', () {
+      testWidgets('takes focus back once when it drops to the page', (
+        tester,
+      ) async {
+        await tester.pumpWidget(wrapWithTheme(popover()));
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        final FocusNode trigger = FocusManager.instance.primaryFocus!;
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+
+        // What a web build does as the panel mounts: the browser drops the
+        // focused element and the framework falls back to the scope.
+        trigger.unfocus();
+        await tester.pumpAndSettle();
+
+        expect(trigger.hasPrimaryFocus, isTrue);
+
+        // Only once: a second drop is the viewer's, and is left alone.
+        trigger.unfocus();
+        await tester.pumpAndSettle();
+
+        expect(trigger.hasPrimaryFocus, isFalse);
+      });
+
+      testWidgets('leaves a pointer-opened popover to wherever focus goes', (
+        tester,
+      ) async {
+        await tester.pumpWidget(wrapWithTheme(popover()));
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        final FocusNode trigger = FocusManager.instance.primaryFocus!;
+        await tester.tap(find.text('Trigger'));
+        await tester.pumpAndSettle();
+        trigger.unfocus();
+        await tester.pumpAndSettle();
+
+        expect(trigger.hasPrimaryFocus, isFalse);
+      });
+
+      testWidgets('Escape closes an open popover wherever focus is', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Column(
+              children: [
+                popover(),
+                WAnchor(onTap: () {}, child: const Text('Elsewhere')),
+              ],
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Trigger'));
+        await tester.pumpAndSettle();
+        FocusManager.instance.primaryFocus?.unfocus();
+        await tester.pumpAndSettle();
+
+        expect(find.text('Content'), findsOneWidget);
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Content'), findsNothing);
+      });
+
+      testWidgets('Tab goes from the trigger into the panel before the page', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Column(
+              children: [
+                popover(
+                  content: WAnchor(onTap: () {}, child: const Text('Item')),
+                ),
+                const SizedBox(height: 300),
+                WAnchor(onTap: () {}, child: const Text('Below')),
+              ],
+            ),
+          ),
+        );
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+
+        final BuildContext focused =
+            FocusManager.instance.primaryFocus!.context!;
+        expect(
+          find.descendant(
+            of: find.byWidget(focused.widget),
+            matching: find.text('Item'),
+          ),
+          findsOneWidget,
+        );
+      });
+    });
+
     group('Focus state', () {
       testWidgets('a focus: class on the trigger lights while it has focus',
           (tester) async {

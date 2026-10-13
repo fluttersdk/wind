@@ -319,6 +319,20 @@ class _WPopoverState extends State<WPopover> {
   /// Whether [_focusNode] is itself the focus rather than an ancestor of it.
   bool _hasPrimaryFocus = false;
 
+  /// Armed by a keyboard open, spent on the first focus change after it.
+  ///
+  /// A web build drops the trigger's focus as the panel mounts: the browser
+  /// loses the focused element and the framework falls back to the page's
+  /// scope, so the ring went dark and the next Tab started over from the top
+  /// (measured in a host app's walk, on both widths). When the first change
+  /// after a keyboard open lands on a scope rather than a control, focus is
+  /// handed back to the trigger. Only once, and only then: a viewer who moves
+  /// focus anywhere real, or a later drop, is left alone.
+  bool _reclaimFocusOnce = false;
+
+  /// Whether [_handleEscape] is registered with [HardwareKeyboard].
+  bool _listensForEscape = false;
+
   /// The keyboard and remote-control half of a tap on the trigger.
   ///
   /// `WidgetsApp` binds `enter`, `numpadEnter`, `space`, `gameButtonA` and
@@ -514,6 +528,7 @@ class _WPopoverState extends State<WPopover> {
 
   @override
   void dispose() {
+    _stopListeningForEscape();
     _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
     widget.controller?.removeListener(_handleControllerChange);
@@ -521,6 +536,15 @@ class _WPopoverState extends State<WPopover> {
   }
 
   void _handleFocusChange() {
+    if (_reclaimFocusOnce && !_focusNode.hasFocus) {
+      _reclaimFocusOnce = false;
+      if (_isOpen && _focusFellToAScope) {
+        _focusNode.requestFocus();
+
+        return;
+      }
+    }
+
     if (_focusNode.hasFocus == _hasFocus &&
         _focusNode.hasPrimaryFocus == _hasPrimaryFocus) {
       return;
@@ -531,33 +555,67 @@ class _WPopoverState extends State<WPopover> {
     });
   }
 
+  /// Whether nothing a viewer can act on holds focus: it fell back to a scope,
+  /// or is nowhere at all.
+  bool get _focusFellToAScope {
+    final FocusNode? primary = FocusManager.instance.primaryFocus;
+
+    return primary == null || primary is FocusScopeNode;
+  }
+
+  /// Whether focus is on the trigger, inside the panel, or nowhere, which are
+  /// the cases where closing should hand it back to the trigger.
+  bool get _focusIsOursOrNowhere {
+    if (_focusNode.hasFocus || _focusFellToAScope) return true;
+
+    return FocusManager.instance.primaryFocus?.context
+            ?.findAncestorStateOfType<_WPopoverState>() ==
+        this;
+  }
+
   Object? _activate(Intent intent) {
+    final bool opening = !_isOpen;
     toggle();
+    _reclaimFocusOnce = opening && _isOpen;
 
     return null;
   }
 
-  /// Closes an open popover on Escape, from the trigger or from anything
-  /// focused inside the panel, and hands focus back to the trigger, which is
-  /// where a keyboard user opened it from.
+  /// Closes an open popover on Escape, wherever focus is, and hands focus
+  /// back to the trigger when it was on the trigger, in the panel or nowhere.
   ///
-  /// A key handler rather than a [DismissIntent] action, because the key has
-  /// to travel on while the popover is closed. `ShortcutManager` asks only
-  /// the NEAREST action for an intent: a disabled one makes it ignore the key
-  /// without consulting the `Actions` further up, so a dialog holding a closed
-  /// popover would stop closing on Escape. Ignoring the event here lets it
-  /// reach the app's shortcuts unchanged.
-  KeyEventResult _handleKey(FocusNode node, KeyEvent event) {
+  /// A [HardwareKeyboard] handler, registered only while the popover is open,
+  /// rather than anything on the focus tree. A focus-tree handler hears the
+  /// key only while focus is inside the popover, and a web build drops focus
+  /// as the panel mounts, which left Escape dead after a keyboard open. And it
+  /// is not a [DismissIntent] action either, because the key has to travel on
+  /// while the popover is closed: `ShortcutManager` asks only the NEAREST
+  /// action for an intent, so a disabled one would swallow Escape and a dialog
+  /// holding a closed popover would stop closing on it.
+  bool _handleEscape(KeyEvent event) {
     if (!_isOpen ||
         event is! KeyDownEvent ||
         event.logicalKey != LogicalKeyboardKey.escape) {
-      return KeyEventResult.ignored;
+      return false;
     }
 
+    final bool refocus = _focusIsOursOrNowhere;
     close();
-    _focusNode.requestFocus();
+    if (refocus) _focusNode.requestFocus();
 
-    return KeyEventResult.handled;
+    return true;
+  }
+
+  void _startListeningForEscape() {
+    if (_listensForEscape) return;
+    HardwareKeyboard.instance.addHandler(_handleEscape);
+    _listensForEscape = true;
+  }
+
+  void _stopListeningForEscape() {
+    if (!_listensForEscape) return;
+    HardwareKeyboard.instance.removeHandler(_handleEscape);
+    _listensForEscape = false;
   }
 
   void _handleControllerChange() {
@@ -599,6 +657,8 @@ class _WPopoverState extends State<WPopover> {
     } else {
       _effectiveAlignment = widget.alignment;
     }
+
+    _startListeningForEscape();
 
     setState(() {
       _isOpen = true;
@@ -676,6 +736,8 @@ class _WPopoverState extends State<WPopover> {
   void close() {
     if (!_isOpen) return;
     _suppressNextTapOutside = false;
+    _reclaimFocusOnce = false;
+    _stopListeningForEscape();
     setState(() {
       _isOpen = false;
       _overlayController.hide();
@@ -757,20 +819,12 @@ class _WPopoverState extends State<WPopover> {
       trigger = Actions(actions: _activateActions, child: trigger);
     }
 
-    // Above the portal, so Escape reaches it from inside the panel too: the
-    // overlay child is placed in the overlay but is this widget's descendant
-    // in the element tree, and its focus nodes hang below this one.
-    return Focus(
-      canRequestFocus: false,
-      skipTraversal: true,
-      onKeyEvent: _handleKey,
-      child: OverlayPortal(
-        controller: _overlayController,
-        overlayChildBuilder: _buildOverlay,
-        child: CompositedTransformTarget(
-          link: _layerLink,
-          child: trigger,
-        ),
+    return OverlayPortal(
+      controller: _overlayController,
+      overlayChildBuilder: _buildOverlay,
+      child: CompositedTransformTarget(
+        link: _layerLink,
+        child: trigger,
       ),
     );
   }
