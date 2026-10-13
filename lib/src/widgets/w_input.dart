@@ -1029,9 +1029,10 @@ class _WInputState extends State<WInput>
     }
 
     // Focus ring: promote ring color/width to the border, matching the
-    // previous focus-on border behavior. The ring outside it is the outline
-    // `_ringOutline` paints over this box, never a shadow under it: a shadow
-    // filled a transparent field with the ring colour.
+    // previous focus-on border behavior. The ring outside it is
+    // `WindStyle.ringOutline`, painted over this box in `build`, never a
+    // shadow under it: a shadow filled a transparent field with the ring
+    // colour.
     if (_isFocused &&
         styles.ringShadow != null &&
         styles.ringShadow!.isNotEmpty) {
