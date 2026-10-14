@@ -227,6 +227,26 @@ class WButton extends StatelessWidget {
             );
           }
 
+          // The opacity, as `WDiv` applies it: animated under a transition.
+          // It is how a `disabled:` or `loading:` button usually fades, and it
+          // painted nothing until this.
+          final double? opacity = styles.opacity;
+          if (opacity != null) {
+            final Duration? duration = styles.transitionDuration;
+            if (duration != null) {
+              WindPerfCounters.recordWrapperEmission('AnimatedOpacity');
+              styledButton = AnimatedOpacity(
+                duration: duration,
+                curve: styles.transitionCurve ?? Curves.linear,
+                opacity: opacity,
+                child: styledButton,
+              );
+            } else {
+              WindPerfCounters.recordWrapperEmission('Opacity');
+              styledButton = Opacity(opacity: opacity, child: styledButton);
+            }
+          }
+
           // Wrap with AbsorbPointer when not interactive
           if (!isInteractive) {
             WindPerfCounters.recordWrapperEmission('AbsorbPointer');

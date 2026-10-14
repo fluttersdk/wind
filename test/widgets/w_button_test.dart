@@ -167,6 +167,68 @@ void main() {
         // Widget should render
         expect(find.text('Disabled'), findsOneWidget);
       });
+
+      // The box was built without the parsed opacity, so `disabled:opacity-50`
+      // parsed and painted nothing: a disabled button looked enabled.
+      testWidgets('disabled: opacity fades the button', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              disabled: true,
+              className: 'bg-blue-500 disabled:opacity-50',
+              child: const Text('Disabled'),
+            ),
+          ),
+        );
+
+        final Opacity opacity = tester.widget<Opacity>(
+          find.ancestor(
+              of: find.text('Disabled'), matching: find.byType(Opacity)),
+        );
+        expect(opacity.opacity, 0.5);
+      });
+
+      testWidgets('an enabled button ignores its disabled: opacity', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              className: 'bg-blue-500 disabled:opacity-50',
+              child: const Text('Enabled'),
+            ),
+          ),
+        );
+
+        expect(
+          find.ancestor(
+              of: find.text('Enabled'), matching: find.byType(Opacity)),
+          findsNothing,
+        );
+      });
+
+      testWidgets('a transition animates the opacity', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              disabled: true,
+              className: 'bg-blue-500 duration-200 disabled:opacity-50',
+              child: const Text('Disabled'),
+            ),
+          ),
+        );
+
+        final AnimatedOpacity opacity = tester.widget<AnimatedOpacity>(
+          find.ancestor(
+            of: find.text('Disabled'),
+            matching: find.byType(AnimatedOpacity),
+          ),
+        );
+        expect(opacity.opacity, 0.5);
+      });
     });
 
     group('Loading State', () {
