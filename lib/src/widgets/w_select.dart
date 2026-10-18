@@ -633,27 +633,48 @@ class _WSelectState<T> extends State<WSelect<T>> {
   Widget build(BuildContext context) {
     WindPerfCounters.recordWidgetBuild('WSelect');
 
-    // Accessibility: surface the closed trigger as a `button` SemanticsNode
-    // labelled with the selected option label (the placeholder while nothing
-    // is selected) so Playwright `getByRole('button', { name: ... })` resolves
-    // on the collapsed dropdown. The MergeSemantics collapses the inner
-    // trigger subtree (icon + selected label text) into the parent node.
+    // Accessibility: the closed trigger is ONE `button` SemanticsNode labelled
+    // with the selected option label (the placeholder while nothing is
+    // selected), so Playwright `getByRole('button', { name: ... })` resolves on
+    // the collapsed dropdown and a screen reader announces it once.
+    //
+    // The previous shape wrapped a MergeSemantics inside this `container`
+    // node. A container is a boundary, so the merge became a SECOND boundary
+    // instead of folding up: the outer node had the label and button flag but
+    // no action, the inner one the merged text, the tap and the focus. Both are
+    // sent to the platform (neither is `isMergedIntoParent`), so the control
+    // was announced twice and an agent could pick the action-less one.
+    //
+    // Now the outer node carries everything and `ExcludeSemantics` drops the
+    // trigger subtree below it, the explicit-label path of `WAnchor`
+    // (`w_anchor.dart`). The tap is lifted onto this node because the excluded
+    // GestureDetector's own action goes with it; it is absent when disabled.
+    // `Focus` sits OUTSIDE the exclusion so its `focusable` / `focused` /
+    // `onFocus` still merge into this node, which is why the exclusion is a
+    // widget of its own instead of `excludeSemantics:` on this `Semantics`.
+    //
+    // Nothing a user can reach is lost. The multi select chips (and their
+    // remove taps) and a custom `triggerBuilder`'s content were already
+    // merged into the inner node and never published on their own, and the
+    // search field lives in the OverlayPortal overlay, a separate subtree this
+    // exclusion does not touch.
     return Semantics(
       container: true,
       button: true,
       enabled: !widget.disabled,
       label: _resolveSemanticsLabel(),
-      child: MergeSemantics(
-        child: OverlayPortal(
-          controller: _overlayController,
-          overlayChildBuilder: _buildOverlay,
-          child: CompositedTransformTarget(
-            link: _layerLink,
-            child: Focus(
-              focusNode: _focusNode,
-              canRequestFocus: !widget.disabled,
-              // A custom trigger can carry its own focus node.
-              descendantsAreFocusable: !widget.disabled,
+      onTap: widget.disabled ? null : _toggleMenu,
+      child: OverlayPortal(
+        controller: _overlayController,
+        overlayChildBuilder: _buildOverlay,
+        child: CompositedTransformTarget(
+          link: _layerLink,
+          child: Focus(
+            focusNode: _focusNode,
+            canRequestFocus: !widget.disabled,
+            // A custom trigger can carry its own focus node.
+            descendantsAreFocusable: !widget.disabled,
+            child: ExcludeSemantics(
               child:
                   KeyedSubtree(key: _triggerKey, child: _buildTrigger(context)),
             ),

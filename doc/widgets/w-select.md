@@ -187,6 +187,8 @@ page two and append duplicates. Reset the cursor only if `options` resets too.
 
 The closed trigger is one button whose accessible name is its visible text: the selected option's label (labels joined with `, ` in multi-select), and the `placeholder` only while nothing is selected. A test or dusk script that finds a select with a value by its placeholder text must look for the selected label instead. The default placeholder is English and wind has no localization layer, so pass a translated `placeholder` in a localized app.
 
+The closed trigger publishes exactly one semantics node: it carries the button role, the enabled state, the name, the tap action that opens or closes the menu (absent when `disabled`) and the keyboard focus state. The trigger's own content, including multi-select chips and the output of `triggerBuilder` / `multiTriggerBuilder`, is excluded from semantics so it is not announced a second time. The search field of an open menu keeps its own semantics.
+
 ## State Variants
 
 `WSelect` automatically manages several states that you can style using prefixes in `className`:

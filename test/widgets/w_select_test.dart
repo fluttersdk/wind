@@ -1,3 +1,5 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -984,6 +986,207 @@ void main() {
       );
 
       expect(node.label, 'Pick fruit');
+    });
+
+    // Every node the platform receives for the closed trigger: the select's own
+    // node and anything unmerged below it. A node merged into its parent never
+    // leaves the framework, so counting tree nodes would report a duplicate no
+    // screen reader ever hears. No role or label filter: the second node of the
+    // old duplicate pair had no button flag and carried the merged trigger
+    // text, and any other unmerged descendant would be announced as well.
+    List<SemanticsNode> closedTriggerNodes(WidgetTester tester) {
+      final List<SemanticsNode> found = <SemanticsNode>[];
+
+      void visit(SemanticsNode node) {
+        if (!node.isMergedIntoParent) found.add(node);
+        node.visitChildren((SemanticsNode child) {
+          visit(child);
+          return true;
+        });
+      }
+
+      visit(tester.getSemantics(find.byType(WSelect<String>)));
+      return found;
+    }
+
+    Future<void> pumpSelect(WidgetTester tester, Widget select) {
+      return tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Scaffold(
+              body: Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: select,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // `ensureSemantics()` has to be released inside the body: flutter_test
+    // checks the handle before any tearDown runs.
+    Future<void> withSemantics(
+      WidgetTester tester,
+      Future<void> Function() body,
+    ) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      try {
+        await body();
+      } finally {
+        handle.dispose();
+      }
+    }
+
+    testWidgets('publishes one button node for a closed single select',
+        (tester) async {
+      await withSemantics(tester, () async {
+        await pumpSelect(
+          tester,
+          WSelect<String>(
+            options: selectOptions,
+            value: 'apple',
+            onChange: (_) {},
+          ),
+        );
+
+        final List<SemanticsNode> nodes = closedTriggerNodes(tester);
+        expect(nodes, hasLength(1));
+        expect(nodes.single.label, 'Apple');
+        expect(nodes.single.flagsCollection.isButton, isTrue);
+        expect(nodes.single.flagsCollection.isEnabled, Tristate.isTrue);
+      });
+    });
+
+    testWidgets('publishes one button node for a closed multi select',
+        (tester) async {
+      await withSemantics(tester, () async {
+        await pumpSelect(
+          tester,
+          WSelect<String>(
+            isMulti: true,
+            values: const ['apple', 'banana'],
+            options: selectOptions,
+            onMultiChange: (_) {},
+          ),
+        );
+
+        final List<SemanticsNode> nodes = closedTriggerNodes(tester);
+        expect(nodes, hasLength(1));
+        expect(nodes.single.label, 'Apple, Banana');
+      });
+    });
+
+    testWidgets('publishes one button node for a custom trigger',
+        (tester) async {
+      await withSemantics(tester, () async {
+        await pumpSelect(
+          tester,
+          WSelect<String>(
+            options: selectOptions,
+            value: 'apple',
+            onChange: (_) {},
+            triggerBuilder: (context, selected, isOpen) =>
+                Text('Custom ${selected?.label}'),
+          ),
+        );
+
+        final List<SemanticsNode> nodes = closedTriggerNodes(tester);
+        expect(nodes, hasLength(1));
+        expect(nodes.single.label, 'Apple');
+      });
+    });
+
+    testWidgets('puts the tap action on the one node and it opens the menu',
+        (tester) async {
+      await withSemantics(tester, () async {
+        await pumpSelect(
+          tester,
+          WSelect<String>(
+            options: selectOptions,
+            value: 'apple',
+            onChange: (_) {},
+          ),
+        );
+
+        final SemanticsNode node = closedTriggerNodes(tester).single;
+        expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+        expect(find.text('Banana'), findsNothing);
+
+        tester.binding.renderViews.single.owner!.semanticsOwner!
+            .performAction(node.id, SemanticsAction.tap);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Banana'), findsOneWidget);
+      });
+    });
+
+    testWidgets('keeps the menu closed and the node inert when disabled',
+        (tester) async {
+      await withSemantics(tester, () async {
+        await pumpSelect(
+          tester,
+          WSelect<String>(
+            options: selectOptions,
+            value: 'apple',
+            disabled: true,
+            onChange: (_) {},
+          ),
+        );
+
+        final SemanticsNode node = closedTriggerNodes(tester).single;
+        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
+        expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
+      });
+    });
+
+    testWidgets('reports keyboard focus on the one node', (tester) async {
+      await withSemantics(tester, () async {
+        await pumpSelect(
+          tester,
+          WSelect<String>(
+            options: selectOptions,
+            value: 'apple',
+            onChange: (_) {},
+          ),
+        );
+
+        final SemanticsNode resting = closedTriggerNodes(tester).single;
+        expect(resting.flagsCollection.isFocused, Tristate.isFalse);
+        expect(
+          resting.getSemanticsData().hasAction(SemanticsAction.focus),
+          isTrue,
+        );
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+
+        final SemanticsNode focused = closedTriggerNodes(tester).single;
+        expect(focused.flagsCollection.isFocused, Tristate.isTrue);
+      });
+    });
+
+    testWidgets('is not focusable when disabled', (tester) async {
+      await withSemantics(tester, () async {
+        await pumpSelect(
+          tester,
+          WSelect<String>(
+            options: selectOptions,
+            value: 'apple',
+            disabled: true,
+            onChange: (_) {},
+          ),
+        );
+
+        final SemanticsNode node = closedTriggerNodes(tester).single;
+        expect(node.flagsCollection.isFocused, Tristate.none);
+        expect(
+            node.getSemanticsData().hasAction(SemanticsAction.focus), isFalse);
+      });
     });
   });
 
