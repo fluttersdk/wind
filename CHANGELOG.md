@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.9.1] - 2026-10-18
+
 ### Fixed
 
 - **Every `WButton` is a button to assistive technology, including one with no callback, and it is not enabled while disabled, loading or without a callback.** A button with no `onTap`, `onLongPress` or `onDoubleTap` (the common `disabled: !canSubmit, onTap: canSubmit ? submit : null`, or `onTap: null` alone) gave `WAnchor` nothing to gesture on, and a gestureless anchor publishes no node, so its label read as plain text. It now publishes one button node of its own with `enabled: false`, labelled by its child text or its `semanticLabel`, and no tap action; a `semanticLabel` on such a button used to publish an enabled button. An enabled button keeps the single node `WAnchor` gives it, and a gestureless `WAnchor` used for styling still publishes nothing. (`lib/src/widgets/w_button.dart`, `test/widgets/w_button_test.dart`)
@@ -499,7 +503,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.1...HEAD
+[1.9.1]: https://github.com/fluttersdk/wind/releases/tag/1.9.1
 [1.9.0]: https://github.com/fluttersdk/wind/releases/tag/1.9.0
 [1.8.4]: https://github.com/fluttersdk/wind/releases/tag/1.8.4
 [1.8.3]: https://github.com/fluttersdk/wind/releases/tag/1.8.3
