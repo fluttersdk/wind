@@ -613,24 +613,20 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   /// Resolves the Semantics label for the closed-trigger state.
   ///
-  /// Preference order matches the public contract documented in
-  /// `.ac/plans/ai-test-v2/plan.md` Step 1: explicit `placeholder` wins
-  /// (it is the caller-supplied trigger label); when no placeholder is
-  /// supplied or the placeholder equals the default, the resolver falls
-  /// back to the selected option's label so a populated trigger still
-  /// surfaces a meaningful accessible name.
+  /// The name follows the trigger's visible text: the selected option's label
+  /// (labels joined with ', ' for a multi select), and the `placeholder` only
+  /// while nothing is selected. An empty placeholder with no selection leaves
+  /// the trigger unnamed (`null`).
   String? _resolveSemanticsLabel() {
-    if (widget.placeholder.isNotEmpty) {
-      return widget.placeholder;
+    final String? selectedLabel = widget.isMulti
+        ? _selectedOptions.map((SelectOption<T> opt) => opt.label).join(', ')
+        : _selectedOption?.label;
+
+    if (selectedLabel != null && selectedLabel.isNotEmpty) {
+      return selectedLabel;
     }
-    if (widget.isMulti) {
-      final List<SelectOption<T>> selected = _selectedOptions;
-      if (selected.isNotEmpty) {
-        return selected.map((SelectOption<T> opt) => opt.label).join(', ');
-      }
-      return null;
-    }
-    return _selectedOption?.label;
+
+    return widget.placeholder.isEmpty ? null : widget.placeholder;
   }
 
   @override
@@ -638,8 +634,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
     WindPerfCounters.recordWidgetBuild('WSelect');
 
     // Accessibility: surface the closed trigger as a `button` SemanticsNode
-    // labelled with the placeholder (or the selected option label as
-    // fallback) so Playwright `getByRole('button', { name: ... })` resolves
+    // labelled with the selected option label (the placeholder while nothing
+    // is selected) so Playwright `getByRole('button', { name: ... })` resolves
     // on the collapsed dropdown. The MergeSemantics collapses the inner
     // trigger subtree (icon + selected label text) into the parent node.
     return Semantics(

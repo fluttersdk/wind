@@ -881,8 +881,10 @@ void main() {
       expect(node.label, 'Choose fruit');
     });
 
-    testWidgets('emits button role with selected option label as fallback',
-        (tester) async {
+    Future<SemanticsNode> pumpAndReadNode(
+      WidgetTester tester,
+      Widget select,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -892,10 +894,7 @@ void main() {
                 alignment: Alignment.topLeft,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: WSelect<String>(
-                    options: selectOptions,
-                    value: 'apple',
-                  ),
+                  child: select,
                 ),
               ),
             ),
@@ -903,13 +902,88 @@ void main() {
         ),
       );
 
-      final SemanticsNode node =
-          tester.getSemantics(find.byType(WSelect<String>));
+      return tester.getSemantics(find.byType(WSelect<String>));
+    }
+
+    testWidgets('names a single select by its selected option label',
+        (tester) async {
+      final SemanticsNode node = await pumpAndReadNode(
+        tester,
+        WSelect<String>(options: selectOptions, value: 'apple'),
+      );
+
       expect(node.flagsCollection.isButton, isTrue);
-      // Default placeholder 'Select an option' wins over selected label since
-      // it is explicitly set. With a null placeholder, the resolver falls
-      // back to the selected option label.
+      expect(node.label, 'Apple');
+    });
+
+    testWidgets(
+        'names a select by the selected label, not a custom placeholder',
+        (tester) async {
+      final SemanticsNode node = await pumpAndReadNode(
+        tester,
+        WSelect<String>(
+          options: selectOptions,
+          value: 'banana',
+          placeholder: 'Choose fruit',
+        ),
+      );
+
+      expect(node.label, 'Banana');
+    });
+
+    testWidgets('names a single select by its placeholder until it has a value',
+        (tester) async {
+      final SemanticsNode node = await pumpAndReadNode(
+        tester,
+        WSelect<String>(options: selectOptions),
+      );
+
       expect(node.label, 'Select an option');
+    });
+
+    testWidgets(
+        'has no name when nothing is selected and the placeholder is empty',
+        (tester) async {
+      final SemanticsNode node = await pumpAndReadNode(
+        tester,
+        WSelect<String>(options: selectOptions, placeholder: ''),
+      );
+
+      expect(node.label, isEmpty);
+    });
+
+    testWidgets(
+        'names a multi select by its selected labels joined with commas',
+        (tester) async {
+      final SemanticsNode node = await pumpAndReadNode(
+        tester,
+        WSelect<String>(
+          isMulti: true,
+          values: const ['apple', 'banana'],
+          options: selectOptions,
+          onMultiChange: (_) {},
+          placeholder: 'Pick fruit',
+        ),
+      );
+
+      expect(node.flagsCollection.isButton, isTrue);
+      expect(node.label, 'Apple, Banana');
+    });
+
+    testWidgets('names an empty multi select by its placeholder',
+        (tester) async {
+      final SemanticsNode node = await pumpAndReadNode(
+        tester,
+        WSelect<String>(
+          isMulti: true,
+          values: const [],
+          options: selectOptions,
+          onMultiChange: (_) {},
+          placeholder: 'Pick fruit',
+        ),
+      );
+
+      expect(node.label, 'Pick fruit');
     });
   });
 

@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A `WSelect` is named by its selection, and by its placeholder only while it is empty.** The closed trigger's accessible name was the `placeholder` whenever one was set, and the default is the English "Select an option", so a select showing "Apple" was announced as "Select an option" and, in a Turkish app, in the wrong language. The name now follows the trigger's visible text: the selected option's label, the labels joined with ', ' for a multi select, and the placeholder (none when it is empty) when nothing is selected, as Flutter's `DropdownButton` names itself by its visible child. Visible to dusk and tests: a script that found a selected select by its placeholder text now finds it by the selected label. (`lib/src/widgets/w_select.dart`, `test/widgets/w_select_test.dart`, `doc/widgets/w-select.md`, `doc/widgets/w-form-select.md`)
+
 ---
 
 ## [1.9.1] - 2026-10-18
