@@ -1,5 +1,8 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -27,6 +30,46 @@ void main() {
     });
 
     group('Basic Rendering', () {
+      testWidgets('a callback-less WButton trigger is one enabled, named button', (
+        tester,
+      ) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WPopover(
+              triggerBuilder: (context, isOpen, isHovering) => WButton(
+                onTap: null,
+                child: const WText('Open Menu'),
+              ),
+              contentBuilder: (context, close) => const Text('Content'),
+            ),
+          ),
+        );
+
+        // What assistive technology sees: nodes merged up into a parent are
+        // not separate, so only the surviving nodes count.
+        final List<SemanticsData> buttons = <SemanticsData>[];
+        void collect(SemanticsNode node) {
+          if (!node.isMergedIntoParent && node.getSemanticsData().flagsCollection.isButton) {
+            buttons.add(node.getSemanticsData());
+          }
+          node.visitChildren((SemanticsNode child) {
+            collect(child);
+            return true;
+          });
+        }
+
+        collect(tester.getSemantics(find.byType(WPopover)));
+
+        expect(buttons, hasLength(1));
+        expect(buttons.single.label, 'Open Menu');
+        expect(buttons.single.hasAction(SemanticsAction.tap), isTrue);
+        expect(buttons.single.flagsCollection.isEnabled, isNot(Tristate.isFalse));
+
+        handle.dispose();
+      });
+
       testWidgets('renders trigger widget', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(

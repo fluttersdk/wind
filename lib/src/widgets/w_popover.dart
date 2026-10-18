@@ -865,15 +865,22 @@ class _WPopoverState extends State<WPopover> {
       // wrap it in Semantics with a tap action: screen readers and keyboard
       // activation reach `toggle` through the semantic action while pointer
       // input reaches it through the Listener.
-      return Semantics(
-        button: true,
-        enabled: !widget.disabled,
-        onTap: widget.disabled ? null : toggle,
-        child: Listener(
-          onPointerDown: (event) {
-            if (event.buttons == kPrimaryButton) toggle();
-          },
-          child: trigger,
+      //
+      // MergeSemantics makes this the ONE node for the trigger: a callback-less
+      // WButton trigger (the documented `onTap: null` pattern) publishes its
+      // own disabled button node, which would otherwise sit nameless-inside-
+      // named as a second button.
+      return MergeSemantics(
+        child: Semantics(
+          button: true,
+          enabled: !widget.disabled,
+          onTap: widget.disabled ? null : toggle,
+          child: Listener(
+            onPointerDown: (event) {
+              if (event.buttons == kPrimaryButton) toggle();
+            },
+            child: trigger,
+          ),
         ),
       );
     }
