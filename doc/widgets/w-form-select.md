@@ -159,6 +159,11 @@ WFormSelect<String>(
 )
 ```
 
+<a name="accessibility"></a>
+## Accessibility
+
+The underlying `WSelect` trigger is one button named by its visible text: the selected option's label (labels joined with `, ` for `WFormMultiSelect`), and the `placeholder` only while nothing is selected. Pass a translated `placeholder` in a localized app; the default is English.
+
 <a name="state-variants"></a>
 ## State Variants
 

@@ -182,6 +182,10 @@ list, which is the ordinary shape: return rows from `onLoadMore` and leave
 already has all of them on reopen, so resetting its cursor there would re-fetch
 page two and append duplicates. Reset the cursor only if `options` resets too.
 
+## Accessibility
+
+The closed trigger is one button whose accessible name is its visible text: the selected option's label (labels joined with `, ` in multi-select), and the `placeholder` only while nothing is selected. A test or dusk script that finds a select with a value by its placeholder text must look for the selected label instead. The default placeholder is English and wind has no localization layer, so pass a translated `placeholder` in a localized app.
+
 ## State Variants
 
 `WSelect` automatically manages several states that you can style using prefixes in `className`:
