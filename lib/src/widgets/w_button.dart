@@ -141,13 +141,15 @@ class WButton extends StatelessWidget {
     // Determine if button is interactive
     final bool isInteractive = !isLoading && !disabled;
 
-    // Wrap with WAnchor for state management FIRST
-    // Then use Builder to access the state inside WAnchor's subtree
+    // The callbacks reach WAnchor even when the button is inert, because a
+    // gestureless anchor reads as a styling wrapper and publishes no button
+    // node: a disabled or loading button vanished from the Semantics tree.
+    // `isDisabled` is what keeps them from firing, so loading must set it too.
     return WAnchor(
-      onTap: isInteractive ? onTap : null,
-      onLongPress: isInteractive ? onLongPress : null,
-      onDoubleTap: isInteractive ? onDoubleTap : null,
-      isDisabled: disabled,
+      onTap: onTap,
+      onLongPress: onLongPress,
+      onDoubleTap: onDoubleTap,
+      isDisabled: !isInteractive,
       states: states,
       semanticLabel: semanticLabel,
       mouseCursor: isInteractive

@@ -8,6 +8,11 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A disabled or loading `WButton` is still a button, announced as disabled.** It handed `WAnchor` no callbacks while inert, and a gestureless anchor is a styling wrapper that publishes no button node, so screen readers lost the control and Playwright's `getByRole('button')` found nothing. Visible to dusk: a disabled or loading button now appears in a snapshot as a button with `enabled: false` and its label (the `loadingText` while loading), where it used to be absent. The callbacks now reach `WAnchor` with `isDisabled` set for loading as well as disabled, so `WAnchor`'s own guard keeps tap, long press, double tap, the activation key and the lifted semantics actions from firing; loading still activates only `loading:`, not `disabled:`. A loading button is no longer a Tab stop and no longer lights `hover:` or `focus:`, as Material's buttons behave with a null callback. (`lib/src/widgets/w_button.dart`, `test/widgets/w_button_test.dart`)
+- **A `WSelect` shows keyboard focus, and a disabled one is skipped by Tab.** The trigger lit `focus:` only while its menu was open, so a keyboard user tabbing through a form saw nothing on the select they had landed on. It now also lights while the trigger holds focus in the traditional (keyboard) highlight mode, so a tap does not ring it. Its `Focus` node takes `canRequestFocus: !disabled`, and `focus` is never active on a disabled select. The trigger publishes its state through `WindAnchorStateProvider`, as `WPopover` does, so the `WAnchor` a `focus:` class wraps around the trigger div inherits instead of being a second Tab stop that a disabled select kept. (`lib/src/widgets/w_select.dart`, `test/widgets/w_select_test.dart`)
+
 ---
 
 ## [1.9.0] - 2026-10-14

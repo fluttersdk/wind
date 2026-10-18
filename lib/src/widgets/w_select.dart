@@ -281,6 +281,13 @@ class _WSelectState<T> extends State<WSelect<T>> {
   bool _isHovering = false;
   bool _openUpward = false;
 
+  /// Whether the trigger holds focus that a keyboard put there.
+  ///
+  /// Gated on [FocusHighlightMode.traditional] the way Flutter's own focus
+  /// highlights are, so a ring answers Tab and not a tap that happens to move
+  /// focus. Never true while disabled.
+  bool _hasKeyboardFocus = false;
+
   /// The theme's `primary` swatch, used for the raw [Icon] colors that cannot
   /// take a className. `primary` is always present in the resolved color map
   /// (Wind seeds it into the default theme), so the brand color drives these
@@ -324,6 +331,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
     super.initState();
     _filteredOptions = widget.options;
     _scrollController.addListener(_onScroll);
+    _focusNode.addListener(_syncKeyboardFocus);
+    FocusManager.instance.addHighlightModeListener(_onHighlightModeChange);
   }
 
   @override
@@ -353,10 +362,24 @@ class _WSelectState<T> extends State<WSelect<T>> {
 
   @override
   void dispose() {
+    FocusManager.instance.removeHighlightModeListener(_onHighlightModeChange);
+    _focusNode.removeListener(_syncKeyboardFocus);
     _focusNode.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onHighlightModeChange(FocusHighlightMode mode) => _syncKeyboardFocus();
+
+  void _syncKeyboardFocus() {
+    final bool hasKeyboardFocus = !widget.disabled &&
+        _focusNode.hasFocus &&
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+
+    if (hasKeyboardFocus != _hasKeyboardFocus) {
+      setState(() => _hasKeyboardFocus = hasKeyboardFocus);
+    }
   }
 
   /// Handle scroll for infinite scroll pagination
@@ -632,6 +655,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
             link: _layerLink,
             child: Focus(
               focusNode: _focusNode,
+              canRequestFocus: !widget.disabled,
               child:
                   KeyedSubtree(key: _triggerKey, child: _buildTrigger(context)),
             ),
@@ -688,11 +712,13 @@ class _WSelectState<T> extends State<WSelect<T>> {
         ? (widget.values?.isNotEmpty ?? false)
         : widget.value != null;
 
+    final bool isFocused = !widget.disabled && (_isOpen || _hasKeyboardFocus);
+
     final Set<String> activeStates = {
       ...?widget.states,
       if (widget.disabled) 'disabled',
       if (_isHovering) 'hover',
-      if (_isOpen) 'focus',
+      if (isFocused) 'focus',
       if (_isOpen) 'open',
       if (hasSelection) 'selected',
     };
@@ -729,29 +755,41 @@ class _WSelectState<T> extends State<WSelect<T>> {
           cursor: widget.disabled
               ? SystemMouseCursors.forbidden
               : SystemMouseCursors.click,
-          child: WDiv(
-            className: triggerClassName,
-            states: activeStates,
-            children: [
-              WDiv(
-                className: 'flex items-center gap-2',
-                children: [
-                  WDiv(
-                    className: 'flex-1',
-                    child: widget.isMulti
-                        ? _buildMultiSelectTriggerContent()
-                        : _buildSingleSelectTriggerContent(),
-                  ),
-                  Icon(
-                    _isOpen
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    size: 20,
-                    color: Colors.grey.shade600,
-                  ),
-                ],
-              ),
-            ],
+          // A `focus:` class makes the trigger div wrap itself in a WAnchor,
+          // and with no provider above it that anchor became a second Tab
+          // stop, one that a disabled select kept. Publishing this trigger's
+          // state makes it inherit instead of competing for focus.
+          child: WindAnchorStateProvider(
+            state: WindAnchorState(
+              isHovering: _isHovering,
+              isFocused: isFocused,
+              hasPrimaryFocus: isFocused,
+              isDisabled: widget.disabled,
+            ),
+            child: WDiv(
+              className: triggerClassName,
+              states: activeStates,
+              children: [
+                WDiv(
+                  className: 'flex items-center gap-2',
+                  children: [
+                    WDiv(
+                      className: 'flex-1',
+                      child: widget.isMulti
+                          ? _buildMultiSelectTriggerContent()
+                          : _buildSingleSelectTriggerContent(),
+                    ),
+                    Icon(
+                      _isOpen
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      size: 20,
+                      color: Colors.grey.shade600,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

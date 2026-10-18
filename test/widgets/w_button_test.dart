@@ -95,6 +95,141 @@ void main() {
         await tester.pump();
         expect(tapped, isTrue);
       });
+
+      // A disabled or loading button dropped its callbacks before reaching
+      // WAnchor, which then took it for a styling wrapper and published no
+      // button node at all: screen readers and dusk lost the control.
+      testWidgets('disabled button is a disabled button node with its label',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          var tapped = false;
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () => tapped = true,
+                disabled: true,
+                child: const Text('Save'),
+              ),
+            ),
+          );
+
+          final SemanticsNode node = tester.getSemantics(find.byType(WButton));
+          expect(
+            node,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Save',
+              hasTapAction: false,
+            ),
+          );
+
+          await tester.tap(find.text('Save'), warnIfMissed: false);
+          await tester.pump();
+          expect(tapped, isFalse);
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('loading button is a disabled button node with its label',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          var tapped = false;
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () => tapped = true,
+                isLoading: true,
+                loadingText: 'Saving',
+                child: const Text('Save'),
+              ),
+            ),
+          );
+
+          final SemanticsNode node = tester.getSemantics(find.byType(WButton));
+          expect(
+            node,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Saving',
+              hasTapAction: false,
+            ),
+          );
+
+          await tester.tap(find.text('Saving'), warnIfMissed: false);
+          await tester.pump();
+          expect(tapped, isFalse);
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('loading button with semanticLabel lifts no tap action',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                onLongPress: () {},
+                isLoading: true,
+                semanticLabel: 'Add item',
+                child: const Icon(Icons.add),
+              ),
+            ),
+          );
+
+          expect(
+            tester.getSemantics(find.byType(WButton)),
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Add item',
+              hasTapAction: false,
+              hasLongPressAction: false,
+            ),
+          );
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('loading button ignores the activation key', (tester) async {
+        var tapped = false;
+        final FocusNode before = FocusNode(debugLabel: 'before');
+        addTearDown(before.dispose);
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Column(
+              children: [
+                Focus(focusNode: before, child: const SizedBox(height: 10)),
+                WButton(
+                  onTap: () => tapped = true,
+                  isLoading: true,
+                  child: const Text('Save'),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        before.requestFocus();
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pump();
+
+        expect(tapped, isFalse);
+      });
     });
 
     group('Tap Interaction', () {

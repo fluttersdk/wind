@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttersdk_wind/fluttersdk_wind.dart';
 
@@ -909,6 +910,81 @@ void main() {
       // it is explicitly set. With a null placeholder, the resolver falls
       // back to the selected option label.
       expect(node.label, 'Select an option');
+    });
+  });
+
+  // The trigger only lit `focus:` while the menu was open, so a keyboard user
+  // tabbing through a form saw no ring on the select they had landed on, and a
+  // disabled select was still a Tab stop.
+  group('Keyboard focus', () {
+    const String triggerClassName = 'p-3 bg-white focus:bg-red-500';
+
+    Color? triggerColor(WidgetTester tester) {
+      final Iterable<DecoratedBox> boxes = tester.widgetList<DecoratedBox>(
+        find.ancestor(
+          of: find.text('Select an option'),
+          matching: find.byType(DecoratedBox),
+        ),
+      );
+
+      return boxes
+          .map((DecoratedBox box) => (box.decoration as BoxDecoration).color)
+          .whereType<Color>()
+          .firstOrNull;
+    }
+
+    testWidgets('Tab onto an enabled select paints its focus: classes',
+        (tester) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WSelect<String>(
+            options: testOptions,
+            className: triggerClassName,
+            onChange: (_) {},
+          ),
+        ),
+      );
+
+      final Color? resting = triggerColor(tester);
+      expect(resting, isNotNull);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+
+      expect(triggerColor(tester), isNot(resting));
+      // Focus alone must not open the menu.
+      expect(find.text('Apple'), findsNothing);
+    });
+
+    testWidgets('Tab skips a disabled select and lights nothing on it',
+        (tester) async {
+      final FocusNode after = FocusNode(debugLabel: 'after');
+      addTearDown(after.dispose);
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              WSelect<String>(
+                options: testOptions,
+                className: triggerClassName,
+                disabled: true,
+                onChange: (_) {},
+              ),
+              Focus(focusNode: after, child: const SizedBox(height: 10)),
+            ],
+          ),
+        ),
+      );
+
+      final Color? resting = triggerColor(tester);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+
+      expect(after.hasPrimaryFocus, isTrue);
+      expect(triggerColor(tester), resting);
     });
   });
 
