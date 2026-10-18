@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.9.4] - 2026-10-18
+
 ### Fixed
 
 - **A single-line `WInput` centres its text and placeholder vertically in a box taller than the line.** With `min-h-11` or `h-12` the text and the placeholder were drawn at the top of the box, where a CSS input centres them. The box size lands on the outer `Container`, and below it the editable sat directly in the content `Padding` (or, with a placeholder, in a `Stack` that aligned `topStart`), so the extra height stayed under the text. Measured on a 44 px box, the caret line centred at 7 px against a box centre of 22 px, and at 7 px against a box centre of 24 px on a 48 px box. The no-adornment path now wraps the field in an `Align` (`AlignmentDirectional.centerStart`, `heightFactor: 1`) inside the content padding, so it stays one line tall and takes the box's min height through the constraints; the placeholder sits in that same aligned line. Horizontal position, content padding and the height of a field with no height class are unchanged (30 px for one 14 px line with 8 px of vertical padding), the whole box stays tappable, and a multiline field keeps its top alignment. The editable (and its text-field semantics node) is now one line tall inside the box, as it already was with a placeholder, so an accessibility focus rect or a dusk bound for a field with no placeholder covers the line rather than the padded box. The prefix and suffix path already centred through its `Row` and is untouched. (`lib/src/widgets/w_input.dart`, `test/widgets/w_input_test.dart`, `doc/widgets/w-input.md`)
@@ -523,7 +527,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.3...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.4...HEAD
+[1.9.4]: https://github.com/fluttersdk/wind/releases/tag/1.9.4
 [1.9.3]: https://github.com/fluttersdk/wind/releases/tag/1.9.3
 [1.9.2]: https://github.com/fluttersdk/wind/releases/tag/1.9.2
 [1.9.1]: https://github.com/fluttersdk/wind/releases/tag/1.9.1
