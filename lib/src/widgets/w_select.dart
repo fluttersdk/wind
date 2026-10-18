@@ -656,6 +656,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
             child: Focus(
               focusNode: _focusNode,
               canRequestFocus: !widget.disabled,
+              // A custom trigger can carry its own focus node.
+              descendantsAreFocusable: !widget.disabled,
               child:
                   KeyedSubtree(key: _triggerKey, child: _buildTrigger(context)),
             ),

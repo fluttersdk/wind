@@ -986,6 +986,40 @@ void main() {
       expect(after.hasPrimaryFocus, isTrue);
       expect(triggerColor(tester), resting);
     });
+
+    testWidgets('Tab skips a focusable custom trigger of a disabled select',
+        (tester) async {
+      final FocusNode trigger = FocusNode(debugLabel: 'trigger');
+      final FocusNode after = FocusNode(debugLabel: 'after');
+      addTearDown(trigger.dispose);
+      addTearDown(after.dispose);
+
+      await tester.pumpWidget(
+        wrapWithTheme(
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              WSelect<String>(
+                options: testOptions,
+                disabled: true,
+                onChange: (_) {},
+                triggerBuilder: (context, selected, isOpen) => Focus(
+                  focusNode: trigger,
+                  child: const SizedBox(height: 10),
+                ),
+              ),
+              Focus(focusNode: after, child: const SizedBox(height: 10)),
+            ],
+          ),
+        ),
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+
+      expect(trigger.hasFocus, isFalse);
+      expect(after.hasPrimaryFocus, isTrue);
+    });
   });
 
   // -------------------------------------------------------------------------
