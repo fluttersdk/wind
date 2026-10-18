@@ -126,7 +126,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.9.3"
+    version: "1.9.4"
   fluttersdk_wind_diagnostics_contracts:
     dependency: transitive
     description:
