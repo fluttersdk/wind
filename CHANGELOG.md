@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.9.3] - 2026-10-18
+
 ### Fixed
 
 - **A closed `WSelect` publishes one button node with the tap action, so a screen reader announces it once.** The trigger was a `Semantics(container: true, button: true)` node around a `MergeSemantics`, and a container is a semantics boundary, so the merge did not fold into it: it became a second boundary. The platform received two nested nodes with the same name, an outer button with the label and no action, and an inner one with the merged trigger text, the tap and the focus. Neither is `isMergedIntoParent`, so dusk listed the control twice and an agent could pick the action-less node. Measured on the default single trigger, the multi trigger with chips and a custom `triggerBuilder`: each had two platform nodes, now one. The outer node now carries the label, the button flag, the enabled state and the tap that opens or closes the menu (absent when disabled), and an `ExcludeSemantics` drops the trigger subtree below it, as `WAnchor` does for an explicit label. `Focus` stays outside the exclusion so the node keeps `focusable`, `focused` and the focus action. Nothing reachable is lost: the chips' remove taps and a custom trigger's content were already merged into the inner node, and the search field lives in the overlay, which this does not touch. (`lib/src/widgets/w_select.dart`, `test/widgets/w_select_test.dart`, `doc/widgets/w-select.md`)
@@ -515,7 +519,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.2...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.3...HEAD
+[1.9.3]: https://github.com/fluttersdk/wind/releases/tag/1.9.3
 [1.9.2]: https://github.com/fluttersdk/wind/releases/tag/1.9.2
 [1.9.1]: https://github.com/fluttersdk/wind/releases/tag/1.9.1
 [1.9.0]: https://github.com/fluttersdk/wind/releases/tag/1.9.0
