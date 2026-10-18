@@ -113,6 +113,8 @@ const WInput({
 <a name="layout-modes"></a>
 ## Layout Modes
 
+A single-line field centres its text and placeholder vertically in whatever height `min-h-*` or `h-*` gives the box, as a CSS input does; a multiline field keeps its text at the top.
+
 ### Multiline Input
 
 For text areas, set the `type` to `InputType.multiline`. You can control the height using `minLines` or standard sizing classes.
