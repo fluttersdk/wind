@@ -95,6 +95,266 @@ void main() {
         await tester.pump();
         expect(tapped, isTrue);
       });
+
+      // A disabled or loading button dropped its callbacks before reaching
+      // WAnchor, which then took it for a styling wrapper and published no
+      // button node at all: screen readers and dusk lost the control.
+      testWidgets('disabled button is a disabled button node with its label',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          var tapped = false;
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () => tapped = true,
+                disabled: true,
+                child: const Text('Save'),
+              ),
+            ),
+          );
+
+          final SemanticsNode node = tester.getSemantics(find.byType(WButton));
+          expect(
+            node,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Save',
+              hasTapAction: false,
+            ),
+          );
+
+          await tester.tap(find.text('Save'), warnIfMissed: false);
+          await tester.pump();
+          expect(tapped, isFalse);
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('loading button is a disabled button node with its label',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          var tapped = false;
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () => tapped = true,
+                isLoading: true,
+                loadingText: 'Saving',
+                child: const Text('Save'),
+              ),
+            ),
+          );
+
+          final SemanticsNode node = tester.getSemantics(find.byType(WButton));
+          expect(
+            node,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Saving',
+              hasTapAction: false,
+            ),
+          );
+
+          await tester.tap(find.text('Saving'), warnIfMissed: false);
+          await tester.pump();
+          expect(tapped, isFalse);
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('loading button with semanticLabel lifts no tap action',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                onLongPress: () {},
+                isLoading: true,
+                semanticLabel: 'Add item',
+                child: const Icon(Icons.add),
+              ),
+            ),
+          );
+
+          expect(
+            tester.getSemantics(find.byType(WButton)),
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Add item',
+              hasTapAction: false,
+              hasLongPressAction: false,
+            ),
+          );
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('loading button ignores the activation key', (tester) async {
+        var tapped = false;
+        final FocusNode before = FocusNode(debugLabel: 'before');
+        addTearDown(before.dispose);
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Column(
+              children: [
+                Focus(focusNode: before, child: const SizedBox(height: 10)),
+                WButton(
+                  onTap: () => tapped = true,
+                  isLoading: true,
+                  child: const Text('Save'),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        before.requestFocus();
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pump();
+
+        expect(tapped, isFalse);
+      });
+
+      // The dominant call site is `disabled: !canSubmit, onTap: canSubmit ?
+      // submit : null`, so an inert button usually has no callback at all, and
+      // a gestureless WAnchor publishes nothing: the label read as plain text.
+      testWidgets('button without a callback is one disabled button node',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WButton(
+                onTap: null,
+                child: WText('Save'),
+              ),
+            ),
+          );
+
+          final List<SemanticsNode> buttons = _buttonNodes(tester);
+          expect(buttons, hasLength(1));
+          expect(
+            buttons.single,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Save',
+              hasTapAction: false,
+            ),
+          );
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('disabled button without a callback is one disabled node',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WButton(
+                disabled: true,
+                onTap: null,
+                child: WText('Save'),
+              ),
+            ),
+          );
+
+          final List<SemanticsNode> buttons = _buttonNodes(tester);
+          expect(buttons, hasLength(1));
+          expect(
+            buttons.single,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Save',
+              hasTapAction: false,
+            ),
+          );
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('labelled button without a callback is not enabled',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WButton(
+                onTap: null,
+                semanticLabel: 'Add item',
+                child: Icon(Icons.add),
+              ),
+            ),
+          );
+
+          final List<SemanticsNode> buttons = _buttonNodes(tester);
+          expect(buttons, hasLength(1));
+          expect(
+            buttons.single,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Add item',
+              hasTapAction: false,
+            ),
+          );
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('enabled button is still exactly one button node',
+          (tester) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () {},
+                child: const WText('Save'),
+              ),
+            ),
+          );
+
+          final List<SemanticsNode> buttons = _buttonNodes(tester);
+          expect(buttons, hasLength(1));
+          expect(
+            buttons.single,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: true,
+              label: 'Save',
+              hasTapAction: true,
+            ),
+          );
+        } finally {
+          handle.dispose();
+        }
+      });
     });
 
     group('Tap Interaction', () {
@@ -881,4 +1141,28 @@ void main() {
       });
     });
   });
+}
+
+/// Every button node the platform would actually receive.
+///
+/// The same walk as `w_anchor_test.dart`: a node with `isMergedIntoParent` is
+/// folded into its parent and never reaches assistive technology, so it is not
+/// counted.
+List<SemanticsNode> _buttonNodes(WidgetTester tester) {
+  final List<SemanticsNode> found = <SemanticsNode>[];
+
+  void walk(SemanticsNode node) {
+    if (!node.isMergedIntoParent &&
+        node.getSemanticsData().flagsCollection.isButton) {
+      found.add(node);
+    }
+    node.visitChildren((SemanticsNode child) {
+      walk(child);
+      return true;
+    });
+  }
+
+  walk(tester.getSemantics(find.byType(MaterialApp)));
+
+  return found;
 }

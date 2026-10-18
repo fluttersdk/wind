@@ -93,7 +93,7 @@ WButton(
 
 ## Event Handling
 
-`WButton` exposes standard gesture callbacks. All interaction is automatically suppressed when `isLoading` or `disabled` is set to `true`.
+`WButton` exposes standard gesture callbacks. All interaction is automatically suppressed when `isLoading` or `disabled` is set to `true`. A disabled or loading button still appears to assistive technology as a button, marked not enabled, so a screen reader announces it as "dimmed" instead of skipping it.
 
 ```dart
 WButton(

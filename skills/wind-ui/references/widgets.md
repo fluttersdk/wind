@@ -269,7 +269,7 @@ Keyboard and remote activation:
 
 ### `WButton`
 
-Pressable surface with built-in loading state. Always wraps in `WAnchor`.
+Pressable surface with built-in loading state. Always wraps in `WAnchor`. Disabled or loading: callbacks never fire, but the button stays in the Semantics tree as a button with `enabled: false`.
 
 ```dart
 const WButton({
@@ -396,7 +396,7 @@ No `semanticLabel` prop: the widget publishes one node carrying the `checked` st
 
 ### `WSelect<T>`
 
-Dropdown with single OR multi-select, search, async search, tagging, pagination.
+Dropdown with single OR multi-select, search, async search, tagging, pagination. `focus:` applies while open AND on keyboard focus of the trigger (not while disabled).
 
 ```dart
 const WSelect({

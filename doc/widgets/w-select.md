@@ -187,7 +187,7 @@ page two and append duplicates. Reset the cursor only if `options` resets too.
 `WSelect` automatically manages several states that you can style using prefixes in `className`:
 
 - `hover:` - When the mouse is over the trigger.
-- `focus:` - When the dropdown is open.
+- `focus:` - When the dropdown is open, or when the trigger has keyboard focus (Tab). Never while `disabled`; a disabled select is skipped by Tab.
 - `disabled:` - When the widget is disabled.
 - `selected:` - When a value is selected.
 

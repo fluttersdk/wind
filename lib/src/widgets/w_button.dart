@@ -140,16 +140,22 @@ class WButton extends StatelessWidget {
 
     // Determine if button is interactive
     final bool isInteractive = !isLoading && !disabled;
+    final bool hasCallback =
+        onTap != null || onLongPress != null || onDoubleTap != null;
 
-    // Wrap with WAnchor for state management FIRST
-    // Then use Builder to access the state inside WAnchor's subtree
-    return WAnchor(
-      onTap: isInteractive ? onTap : null,
-      onLongPress: isInteractive ? onLongPress : null,
-      onDoubleTap: isInteractive ? onDoubleTap : null,
-      isDisabled: disabled,
+    // The callbacks reach WAnchor even when the button is inert, because a
+    // gestureless anchor reads as a styling wrapper and publishes no button
+    // node: a disabled or loading button vanished from the Semantics tree.
+    // `isDisabled` is what keeps them from firing, so loading must set it too.
+    final Widget anchor = WAnchor(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      onDoubleTap: onDoubleTap,
+      isDisabled: !isInteractive,
       states: states,
-      semanticLabel: semanticLabel,
+      // Without a callback the label goes on the node built below: WAnchor
+      // would publish it as an ENABLED button, since it is not `isDisabled`.
+      semanticLabel: hasCallback ? semanticLabel : null,
       mouseCursor: isInteractive
           ? SystemMouseCursors.click
           : SystemMouseCursors.forbidden,
@@ -255,6 +261,26 @@ class WButton extends StatelessWidget {
 
           return styledButton;
         },
+      ),
+    );
+
+    if (hasCallback) {
+      return anchor;
+    }
+
+    // With no callback WAnchor is gestureless and publishes nothing, which is
+    // right for a styling wrapper and wrong for a button: the common
+    // `onTap: canSubmit ? submit : null` left its label as plain text. The
+    // button publishes its own node, never enabled, since nothing can run.
+    WindPerfCounters.recordWrapperEmission('MergeSemantics');
+    WindPerfCounters.recordWrapperEmission('Semantics');
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        enabled: false,
+        label: semanticLabel,
+        excludeSemantics: semanticLabel != null,
+        child: anchor,
       ),
     );
   }
