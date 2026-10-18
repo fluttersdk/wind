@@ -988,30 +988,24 @@ void main() {
       expect(node.label, 'Pick fruit');
     });
 
-    // The nodes the platform receives that present as a control: a node merged
-    // into its parent never leaves the framework, so counting tree nodes would
-    // report a duplicate that no screen reader ever hears. A node counts when
-    // it carries the button flag or the tap action, since an agent (dusk) reads
-    // a tappable node as a button whether or not the flag is set. The label is
-    // not a filter: the second node of a duplicate pair carries the merged
-    // trigger text, which is not always the resolved label.
-    List<SemanticsNode> platformButtons(WidgetTester tester) {
+    // Every node the platform receives for the closed trigger: the select's own
+    // node and anything unmerged below it. A node merged into its parent never
+    // leaves the framework, so counting tree nodes would report a duplicate no
+    // screen reader ever hears. No role or label filter: the second node of the
+    // old duplicate pair had no button flag and carried the merged trigger
+    // text, and any other unmerged descendant would be announced as well.
+    List<SemanticsNode> closedTriggerNodes(WidgetTester tester) {
       final List<SemanticsNode> found = <SemanticsNode>[];
 
       void visit(SemanticsNode node) {
-        if (!node.isMergedIntoParent &&
-            (node.flagsCollection.isButton ||
-                node.getSemanticsData().hasAction(SemanticsAction.tap))) {
-          found.add(node);
-        }
+        if (!node.isMergedIntoParent) found.add(node);
         node.visitChildren((SemanticsNode child) {
           visit(child);
           return true;
         });
       }
 
-      visit(tester.binding.renderViews.single.owner!.semanticsOwner!
-          .rootSemanticsNode!);
+      visit(tester.getSemantics(find.byType(WSelect<String>)));
       return found;
     }
 
@@ -1060,7 +1054,7 @@ void main() {
           ),
         );
 
-        final List<SemanticsNode> nodes = platformButtons(tester);
+        final List<SemanticsNode> nodes = closedTriggerNodes(tester);
         expect(nodes, hasLength(1));
         expect(nodes.single.label, 'Apple');
         expect(nodes.single.flagsCollection.isButton, isTrue);
@@ -1081,7 +1075,7 @@ void main() {
           ),
         );
 
-        final List<SemanticsNode> nodes = platformButtons(tester);
+        final List<SemanticsNode> nodes = closedTriggerNodes(tester);
         expect(nodes, hasLength(1));
         expect(nodes.single.label, 'Apple, Banana');
       });
@@ -1101,7 +1095,7 @@ void main() {
           ),
         );
 
-        final List<SemanticsNode> nodes = platformButtons(tester);
+        final List<SemanticsNode> nodes = closedTriggerNodes(tester);
         expect(nodes, hasLength(1));
         expect(nodes.single.label, 'Apple');
       });
@@ -1119,7 +1113,7 @@ void main() {
           ),
         );
 
-        final SemanticsNode node = platformButtons(tester).single;
+        final SemanticsNode node = closedTriggerNodes(tester).single;
         expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
         expect(find.text('Banana'), findsNothing);
 
@@ -1144,7 +1138,7 @@ void main() {
           ),
         );
 
-        final SemanticsNode node = platformButtons(tester).single;
+        final SemanticsNode node = closedTriggerNodes(tester).single;
         expect(node.flagsCollection.isEnabled, Tristate.isFalse);
         expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
       });
@@ -1161,7 +1155,7 @@ void main() {
           ),
         );
 
-        final SemanticsNode resting = platformButtons(tester).single;
+        final SemanticsNode resting = closedTriggerNodes(tester).single;
         expect(resting.flagsCollection.isFocused, Tristate.isFalse);
         expect(
           resting.getSemanticsData().hasAction(SemanticsAction.focus),
@@ -1171,7 +1165,7 @@ void main() {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pump();
 
-        final SemanticsNode focused = platformButtons(tester).single;
+        final SemanticsNode focused = closedTriggerNodes(tester).single;
         expect(focused.flagsCollection.isFocused, Tristate.isTrue);
       });
     });
@@ -1188,7 +1182,7 @@ void main() {
           ),
         );
 
-        final SemanticsNode node = platformButtons(tester).single;
+        final SemanticsNode node = closedTriggerNodes(tester).single;
         expect(node.flagsCollection.isFocused, Tristate.none);
         expect(
             node.getSemanticsData().hasAction(SemanticsAction.focus), isFalse);
