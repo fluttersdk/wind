@@ -1320,6 +1320,165 @@ void main() {
       });
     });
 
+    // A single-line field centres its text in whatever height the box has, as
+    // CSS does for an input; a multi-line field keeps the text at the top.
+    group('Vertical centring', () {
+      Widget topLeft(Widget input) {
+        return wrapWithTheme(Align(alignment: Alignment.topLeft, child: input));
+      }
+
+      Finder editable() => find.byType(EditableText);
+
+      // The glyph line, not the EditableText widget: the editable can be as
+      // tall as the box while its text is painted at the top of it.
+      double textCentreY(WidgetTester tester) {
+        final RenderEditable renderEditable =
+            tester.state<EditableTextState>(editable()).renderEditable;
+        final Rect caret = renderEditable.getLocalRectForCaret(
+          const TextPosition(offset: 0),
+        );
+        return renderEditable.localToGlobal(caret.center).dy;
+      }
+
+      testWidgets('min-h-11 centres filled single-line text', (tester) async {
+        await tester.pumpWidget(
+          topLeft(const WInput(value: 'Hello', className: 'min-h-11 px-3')),
+        );
+
+        final Rect box = tester.getRect(find.byType(WInput));
+        expect(box.height, 44.0);
+        expect(textCentreY(tester), closeTo(box.center.dy, 1));
+      });
+
+      testWidgets('min-h-11 centres the placeholder and the caret line',
+          (tester) async {
+        await tester.pumpWidget(
+          topLeft(
+            const WInput(placeholder: 'Email', className: 'min-h-11 px-3'),
+          ),
+        );
+
+        final Rect box = tester.getRect(find.byType(WInput));
+        expect(box.height, 44.0);
+        expect(textCentreY(tester), closeTo(box.center.dy, 1));
+        expect(
+          tester.getCenter(find.text('Email')).dy,
+          closeTo(box.center.dy, 1),
+        );
+      });
+
+      testWidgets('h-12 centres filled single-line text', (tester) async {
+        await tester.pumpWidget(
+          topLeft(const WInput(value: 'Hello', className: 'h-12 px-3')),
+        );
+
+        final Rect box = tester.getRect(find.byType(WInput));
+        expect(box.height, 48.0);
+        expect(textCentreY(tester), closeTo(box.center.dy, 1));
+      });
+
+      testWidgets('h-12 centres the placeholder', (tester) async {
+        await tester.pumpWidget(
+          topLeft(const WInput(placeholder: 'Email', className: 'h-12 px-3')),
+        );
+
+        final Rect box = tester.getRect(find.byType(WInput));
+        expect(box.height, 48.0);
+        expect(textCentreY(tester), closeTo(box.center.dy, 1));
+        expect(
+          tester.getCenter(find.text('Email')).dy,
+          closeTo(box.center.dy, 1),
+        );
+      });
+
+      testWidgets('keeps the text at the start edge after centring',
+          (tester) async {
+        await tester.pumpWidget(
+          topLeft(const WInput(placeholder: 'Email', className: 'h-12 px-3')),
+        );
+
+        final Rect box = tester.getRect(find.byType(WInput));
+        expect(tester.getTopLeft(find.text('Email')).dx, box.left + 12);
+        expect(tester.getTopLeft(editable()).dx, box.left + 12);
+      });
+
+      testWidgets('a tap in the top 4px of a 44px box focuses the field',
+          (tester) async {
+        final focusNode = FocusNode();
+        addTearDown(focusNode.dispose);
+
+        await tester.pumpWidget(
+          topLeft(
+            WInput(
+              focusNode: focusNode,
+              placeholder: 'Email',
+              className: 'min-h-11 px-3',
+            ),
+          ),
+        );
+
+        final Rect box = tester.getRect(find.byType(WInput));
+        await tester.tapAt(Offset(box.center.dx, box.top + 2));
+        await tester.pump();
+
+        expect(focusNode.hasFocus, isTrue);
+      });
+
+      testWidgets('a field with no height class keeps its natural height',
+          (tester) async {
+        await tester.pumpWidget(topLeft(const WInput()));
+        final double bare = tester.getSize(find.byType(WInput)).height;
+
+        await tester.pumpWidget(
+          topLeft(const WInput(placeholder: 'P', className: 'px-3 py-2')),
+        );
+        final double padded = tester.getSize(find.byType(WInput)).height;
+
+        // Measured on the unmodified widget: 8px of vertical content padding
+        // (the default, and py-2) above and below one 14px text line.
+        expect(bare, 30.0);
+        expect(padded, 30.0);
+      });
+
+      testWidgets('multi-line min-h-24 keeps the text at the top padding',
+          (tester) async {
+        await tester.pumpWidget(
+          topLeft(
+            const WInput(
+              type: InputType.multiline,
+              placeholder: 'Notes',
+              className: 'min-h-24 px-3 py-2',
+            ),
+          ),
+        );
+
+        final Rect box = tester.getRect(find.byType(WInput));
+        expect(box.height, 96.0);
+        final RenderEditable renderEditable =
+            tester.state<EditableTextState>(editable()).renderEditable;
+        expect(renderEditable.localToGlobal(Offset.zero).dy, box.top + 8);
+        expect(tester.getTopLeft(find.text('Notes')).dy, box.top + 8);
+      });
+
+      testWidgets('prefix and suffix with min-h-11 centre the text',
+          (tester) async {
+        await tester.pumpWidget(
+          topLeft(
+            const WInput(
+              value: 'Hello',
+              prefix: Icon(Icons.search),
+              suffix: Icon(Icons.clear),
+              className: 'min-h-11 px-3',
+            ),
+          ),
+        );
+
+        final Rect box = tester.getRect(find.byType(WInput));
+        expect(box.height, 44.0);
+        expect(textCentreY(tester), closeTo(box.center.dy, 1));
+      });
+    });
+
     group('Layout stability and theming', () {
       testWidgets('box height does not change between empty and filled',
           (tester) async {

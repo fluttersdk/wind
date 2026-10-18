@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A single-line `WInput` centres its text and placeholder vertically in a box taller than the line.** With `min-h-11` or `h-12` the text and the placeholder were drawn at the top of the box, where a CSS input centres them. The box size lands on the outer `Container`, and below it the editable sat directly in the content `Padding` (or, with a placeholder, in a `Stack` that aligned `topStart`), so the extra height stayed under the text. Measured on a 44 px box, the caret line centred at 7 px against a box centre of 22 px, and at 7 px against a box centre of 24 px on a 48 px box. The no-adornment path now wraps the field in an `Align` (`AlignmentDirectional.centerStart`, `heightFactor: 1`) inside the content padding, so it stays one line tall and takes the box's min height through the constraints; the placeholder sits in that same aligned line. Horizontal position, content padding and the height of a field with no height class are unchanged (30 px for one 14 px line with 8 px of vertical padding), the whole box stays tappable, and a multiline field keeps its top alignment. The editable (and its text-field semantics node) is now one line tall inside the box, as it already was with a placeholder, so an accessibility focus rect or a dusk bound for a field with no placeholder covers the line rather than the padded box. The prefix and suffix path already centred through its `Row` and is untouched. (`lib/src/widgets/w_input.dart`, `test/widgets/w_input_test.dart`, `doc/widgets/w-input.md`)
+
 ---
 
 ## [1.9.3] - 2026-10-18

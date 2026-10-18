@@ -877,6 +877,20 @@ class _WInputState extends State<WInput>
         ],
       );
     } else {
+      // A single-line field centres its text in a box taller than the line
+      // (`min-h-11`, `h-12`), as a CSS input does; without this the editable
+      // fills the box and paints its one line at the top. `heightFactor: 1`
+      // keeps the Align one line tall, so it never grows to a large or
+      // unbounded max height, while the box's min height still lands through
+      // the constraints. Multi-line keeps the top-aligned text.
+      if (maxLines == 1) {
+        WindPerfCounters.recordWrapperEmission('Align');
+        field = Align(
+          alignment: AlignmentDirectional.centerStart,
+          heightFactor: 1,
+          child: field,
+        );
+      }
       field = Padding(padding: contentPadding, child: field);
     }
 
