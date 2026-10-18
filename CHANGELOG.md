@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.9.2] - 2026-10-18
+
 ### Fixed
 
 - **A `WSelect` is named by its selection, and by its placeholder only while it is empty.** The closed trigger's accessible name was the `placeholder` whenever one was set, and the default is the English "Select an option", so a select showing "Apple" was announced as "Select an option" and, in a Turkish app, in the wrong language. The name now follows the trigger's visible text: the selected option's label, the labels joined with ', ' for a multi select, and the placeholder (none when it is empty) when nothing is selected, as Flutter's `DropdownButton` names itself by its visible child. Visible to dusk and tests: a script that found a selected select by its placeholder text now finds it by the selected label. (`lib/src/widgets/w_select.dart`, `test/widgets/w_select_test.dart`, `doc/widgets/w-select.md`, `doc/widgets/w-form-select.md`)
@@ -507,7 +511,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.1...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.2...HEAD
+[1.9.2]: https://github.com/fluttersdk/wind/releases/tag/1.9.2
 [1.9.1]: https://github.com/fluttersdk/wind/releases/tag/1.9.1
 [1.9.0]: https://github.com/fluttersdk/wind/releases/tag/1.9.0
 [1.8.4]: https://github.com/fluttersdk/wind/releases/tag/1.8.4
