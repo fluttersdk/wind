@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A closed `WSelect` publishes one button node with the tap action, so a screen reader announces it once.** The trigger was a `Semantics(container: true, button: true)` node around a `MergeSemantics`, and a container is a semantics boundary, so the merge did not fold into it: it became a second boundary. The platform received two nested nodes with the same name, an outer button with the label and no action, and an inner one with the merged trigger text, the tap and the focus. Neither is `isMergedIntoParent`, so dusk listed the control twice and an agent could pick the action-less node. Measured on the default single trigger, the multi trigger with chips and a custom `triggerBuilder`: each had two platform nodes, now one. The outer node now carries the label, the button flag, the enabled state and the tap that opens or closes the menu (absent when disabled), and an `ExcludeSemantics` drops the trigger subtree below it, as `WAnchor` does for an explicit label. `Focus` stays outside the exclusion so the node keeps `focusable`, `focused` and the focus action. Nothing reachable is lost: the chips' remove taps and a custom trigger's content were already merged into the inner node, and the search field lives in the overlay, which this does not touch. (`lib/src/widgets/w_select.dart`, `test/widgets/w_select_test.dart`, `doc/widgets/w-select.md`)
+
 ---
 
 ## [1.9.2] - 2026-10-18
