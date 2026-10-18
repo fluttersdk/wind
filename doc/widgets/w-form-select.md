@@ -7,6 +7,7 @@ A Wind-styled single or multi-select dropdown that integrates seamlessly with Fl
 - [Props](#props)
 - [Layout Modes](#layout-modes)
 - [Event Handling](#event-handling)
+- [Accessibility](#accessibility)
 - [State Variants](#state-variants)
 - [Styling Examples](#styling-examples)
 - [All Supported Classes](#all-supported-classes)

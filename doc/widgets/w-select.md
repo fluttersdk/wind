@@ -7,6 +7,7 @@ A highly customizable, utility-first select component that supports single selec
 - [Props](#props)
 - [Layout Modes](#layout-modes)
 - [Event Handling](#event-handling)
+- [Accessibility](#accessibility)
 - [State Variants](#state-variants)
 - [Styling Examples](#styling-examples)
 - [All Supported Classes](#all-supported-classes)
