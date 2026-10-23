@@ -279,6 +279,33 @@ void main() {
     );
   });
 
+  group('WindParser object-position tokens', () {
+    setUp(WindParser.clearCache);
+
+    test('does not warn on the nine widget-consumed object-position tokens',
+        () {
+      final logs = <String>[];
+      final original = debugPrint;
+      debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+
+      try {
+        WindParser.findAndGroupClasses(
+          'object-bottom object-center object-left object-left-bottom '
+          'object-left-top object-right object-right-bottom '
+          'object-right-top object-top md:object-top hover:object-bottom',
+          createTestContext(
+            activeBreakpoint: 'md',
+            isHovering: true,
+          ),
+        );
+      } finally {
+        debugPrint = original;
+      }
+
+      expect(logs.where((l) => l.contains('unknown className')), isEmpty);
+    });
+  });
+
   group('WindParser.resolveClasses', () {
     test('should return all classes if no prefixes are used', () {
       final context = createTestContext();

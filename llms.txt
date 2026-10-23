@@ -72,7 +72,7 @@ if (kDebugMode) Wind.installDebugResolver();
 ### Media
 
 - [WIcon](https://fluttersdk.com/wind/widgets/w-icon.md): `IconData` with `className` size and color.
-- [WImage](https://fluttersdk.com/wind/widgets/w-image.md): Image with `className`-driven sizing, object-fit, border, opacity.
+- [WImage](https://fluttersdk.com/wind/widgets/w-image.md): Image with `className`-driven sizing, object-fit, object-position, border, opacity.
 - [WSvg](https://fluttersdk.com/wind/widgets/w-svg.md): SVG via `flutter_svg` with `className` fill / stroke + `preserve-colors` opt-in.
 
 ### Dynamic

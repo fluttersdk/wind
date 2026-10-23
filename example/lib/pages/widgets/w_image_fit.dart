@@ -11,9 +11,9 @@ class WImageFitExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExampleScaffold(
-      title: 'Object Fit',
+      title: 'Object Fit and Position',
       description:
-          'object-{cover|contain|fill|none|scale-down} controls how the image scales inside its container. Same source, different fit modes.',
+          'object-{cover|contain|fill|none|scale-down} controls how the image scales inside its container, object-{top|left|...} decides which part of it stays in view. Same source, different modes.',
       gradient: 'from-teal-500 to-emerald-600',
       children: [
         ExampleSection(
@@ -27,6 +27,43 @@ class WImageFitExamplePage extends StatelessWidget {
               _FitTile(label: 'object-contain', fit: 'object-contain'),
               _FitTile(label: 'object-fill', fit: 'object-fill'),
               _FitTile(label: 'object-scale-down', fit: 'object-scale-down'),
+            ],
+          ),
+        ),
+        ExampleSection(
+          title: 'Object Position',
+          description:
+              'With object-cover the crop is centred by default. object-top keeps the upper part of a backdrop (faces, skylines); object-{left|right|bottom} and the four corners move the crop the same way.',
+          child: WDiv(
+            className: 'grid grid-cols-1 sm:grid-cols-3 gap-3',
+            children: const [
+              _FitTile(
+                label: 'object-left-top',
+                fit: 'object-cover object-left-top',
+              ),
+              _FitTile(label: 'object-top', fit: 'object-cover object-top'),
+              _FitTile(
+                label: 'object-right-top',
+                fit: 'object-cover object-right-top',
+              ),
+              _FitTile(label: 'object-left', fit: 'object-cover object-left'),
+              _FitTile(
+                label: 'object-center',
+                fit: 'object-cover object-center',
+              ),
+              _FitTile(label: 'object-right', fit: 'object-cover object-right'),
+              _FitTile(
+                label: 'object-left-bottom',
+                fit: 'object-cover object-left-bottom',
+              ),
+              _FitTile(
+                label: 'object-bottom',
+                fit: 'object-cover object-bottom',
+              ),
+              _FitTile(
+                label: 'object-right-bottom',
+                fit: 'object-cover object-right-bottom',
+              ),
             ],
           ),
         ),

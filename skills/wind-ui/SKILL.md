@@ -2,10 +2,10 @@
 name: wind-ui
 description: "fluttersdk_wind 1.9: utility-first Flutter styling with Tailwind-syntax className strings. 27 W-prefix widgets (WDiv, WText, WButton, WInput, WSelect, WDatePicker, WPopover, WCard, WTabs, plus five WForm* wrappers) parse className into a cached immutable WindStyle; WindRecipe and WindSlotRecipe compose variant classNames. Prefixes stack freely (dark: / hover: / focus: / md: / ios: / selected: / disabled: / custom), the last class in a family wins, an unrecognized token drops with a one-time kDebugMode hint, and every color token carries a dark: peer in the same className. TRIGGER when: writing or editing UI in a Flutter app that depends on fluttersdk_wind; any className string; any W-prefix widget; any WindTheme or WindThemeData reference; the user mentions Tailwind for Flutter, utility-first, className, or wind-ui. DO NOT TRIGGER when: backend, API, or state-management work that never touches a widget tree; a Flutter project without fluttersdk_wind in pubspec.yaml; Material-only widgets (Scaffold, AppBar, Dialog) with no Wind content inside."
 when_to_use: "Any task that produces, modifies, or audits Wind-styled UI: composing a className, picking the right W-widget, wiring a Form field, customizing WindThemeData, pairing dark-mode classes, debugging a layout or a RenderFlex overflow, building a popover, rendering a JSON tree via WDynamic, or composing a WindRecipe. Load it before the first line of new UI, and equally when auditing UI that already exists."
-version: 2.27.0
+version: 2.28.0
 ---
 
-<!-- fluttersdk_wind 1.9.x | Skill v2.27.0 (2026-10-24) -->
+<!-- fluttersdk_wind 1.9.x | Skill v2.28.0 (2026-10-27) -->
 
 # Wind UI 1.9
 
@@ -78,7 +78,7 @@ The headline 25 (table below) are the ones an agent reaches for daily. Two more 
 | `WBreakpoint` | Structural | none | Per-breakpoint `WidgetBuilder` map (`base`, `sm`, `md`, `lg`, `xl`, `xxl`, plus theme-defined custom keys). Escape hatch when className prefixes are not enough. |
 | `WText` | Display | `data: String` | Typography; supports `selectable` prop. Inline color prop: `foregroundColor`. No `child` / `children`. |
 | `WIcon` | Display | `icon: IconData` | Material icons; use `Icons.*_outlined` variants by convention. Reads `text-*` for size AND color (overloaded). Inherits from `DefaultTextStyle` when className is absent. Inline color prop: `foregroundColor`. |
-| `WImage` | Display | none (requires `src` or `image`) | Network (URL) or asset (prefix `asset://path`) or `ImageProvider`. `object-cover` default. |
+| `WImage` | Display | none (requires `src` or `image`) | Network (URL) or asset (prefix `asset://path`) or `ImageProvider`. `object-cover` default; `object-top` / `object-left-bottom` / ... (default `object-center`) pick which part of a cropped image stays in view. |
 | `WSvg` / `WSvg.string` | Display | `src` / `svg` | Vector graphics. `fill-*` / `stroke-*` for color. `preserve-colors` token disables tint for multi-color SVGs (QR codes, logos). |
 | `WAnchor` | Interactive | `child: Widget` | Low-level gesture + focus + hover propagator. Emits `Semantics(button: true)` only when it carries a gesture, or when `semanticLabel` is set. |
 | `WButton` | Interactive | `child: Widget` | Wraps `WAnchor` + `WDiv` + built-in spinner. `isLoading: true` injects `loading:` state. `disabled: true` injects `disabled:` state and blocks taps. |
