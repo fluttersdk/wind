@@ -211,6 +211,15 @@ class WInput extends StatefulWidget {
   /// Input formatters to apply.
   final List<TextInputFormatter>? inputFormatters;
 
+  /// The one decimal mark an [InputType.number] field accepts, `.` by default.
+  ///
+  /// Pass the mark the user's locale writes (`,` in Turkish or German), so a
+  /// typed `2,5` stays `2,5` instead of losing its comma and becoming `25`.
+  /// The field keeps the text as typed: converting it to the `.` a wire format
+  /// expects is the caller's job. Ignored when [inputFormatters] is given,
+  /// since caller formatters replace the number filter entirely.
+  final String decimalSeparator;
+
   /// Text capitalization behavior.
   ///
   /// Defaults to `TextCapitalization.none`.
@@ -280,13 +289,18 @@ class WInput extends StatefulWidget {
     this.controller,
     this.states,
     this.inputFormatters,
+    this.decimalSeparator = '.',
     this.textCapitalization = TextCapitalization.none,
     this.autocorrect = true,
     this.enableSuggestions = true,
     this.prefix,
     this.suffix,
     this.semanticLabel,
-  }) : assert(
+  })  : assert(
+          decimalSeparator.length == 1,
+          'decimalSeparator must be a single character.',
+        ),
+        assert(
           value == null || controller == null,
           'WInput: pass value (controlled) or controller (external), not both; '
           'value is ignored when controller is set.',
@@ -817,7 +831,7 @@ class _WInputState extends State<WInput>
       // platform (the keyboard type alone enforces nothing on web).
       inputFormatters: widget.inputFormatters ??
           (widget.type == InputType.number
-              ? const [_SignedDecimalTextInputFormatter()]
+              ? [_SignedDecimalTextInputFormatter(widget.decimalSeparator)]
               : null),
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
@@ -1217,16 +1231,20 @@ class _WInputSelectionGestureDetectorBuilder
 }
 
 /// Restricts input to a signed decimal number: an optional leading minus, any
-/// number of digits, and at most one decimal point. Allows the in-progress
-/// states a user types through (`-`, `1.`, `.5`).
+/// number of digits, and at most one [WInput.decimalSeparator]. Allows the
+/// in-progress states a user types through (`-`, `1.`, `.5`, or `1,` and `,5`
+/// with a comma mark).
 ///
 /// Applied by default for [InputType.number] (web included, where the keyboard
 /// type alone enforces nothing) unless the caller supplies their own
 /// [WInput.inputFormatters], which then take over entirely.
 class _SignedDecimalTextInputFormatter extends TextInputFormatter {
-  const _SignedDecimalTextInputFormatter();
+  _SignedDecimalTextInputFormatter(String decimalSeparator)
+      : _pattern = RegExp(
+          '^-?\\d*${RegExp.escape(decimalSeparator)}?\\d*\$',
+        );
 
-  static final RegExp _pattern = RegExp(r'^-?\d*\.?\d*$');
+  final RegExp _pattern;
 
   @override
   TextEditingValue formatEditUpdate(

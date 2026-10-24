@@ -85,6 +85,7 @@ WFormInput({
   int minLines = 1,
   Set<String>? states,
   List<TextInputFormatter>? inputFormatters,
+  String decimalSeparator = '.',
   TextCapitalization textCapitalization = TextCapitalization.none,
   bool autocorrect = true,
   bool enableSuggestions = true,
@@ -118,6 +119,7 @@ WFormInput({
 | `restorationId` | `String?` | `null` | Restoration bucket ID used by Flutter state restoration. |
 | `validator` | `String? Function(String?)?` | `null` | Form validation logic returning error string or null. |
 | `type` | `InputType` | `InputType.text` | Determines keyboard layout and visual masking (e.g., `password`). |
+| `decimalSeparator` | `String` | `'.'` | The one decimal mark a `number` field accepts, forwarded to `WInput.decimalSeparator`. |
 | `autofillHints` | `Iterable<String>?` | `const []` | Hints for a password manager or the platform autofill service (e.g., `[AutofillHints.password]`). The empty default keeps platform autofill on with no hint; `null` opts the field out. Fields of one form go inside an `AutofillGroup`, which the host provides. |
 | `prefix` | `Widget?` | `null` | Widget (like an Icon) displayed before the input text. |
 | `suffix` | `Widget?` | `null` | Widget (like a visibility toggle) displayed after the input text. |

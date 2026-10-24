@@ -106,6 +106,7 @@ class WFormInput extends FormField<String> {
     this.minLines = 1,
     this.states,
     this.inputFormatters,
+    this.decimalSeparator = '.',
     this.textCapitalization = TextCapitalization.none,
     this.autocorrect = true,
     this.enableSuggestions = true,
@@ -151,6 +152,7 @@ class WFormInput extends FormField<String> {
               enabled: enabled,
               states: states,
               inputFormatters: inputFormatters,
+              decimalSeparator: decimalSeparator,
               textCapitalization: textCapitalization,
               autocorrect: autocorrect,
               enableSuggestions: enableSuggestions,
@@ -246,6 +248,10 @@ class WFormInput extends FormField<String> {
   /// Input formatters to apply.
   final List<TextInputFormatter>? inputFormatters;
 
+  /// The one decimal mark an [InputType.number] field accepts; forwarded to
+  /// [WInput.decimalSeparator].
+  final String decimalSeparator;
+
   /// Text capitalization behavior.
   final TextCapitalization textCapitalization;
 
@@ -331,6 +337,7 @@ class _WFormInputContent extends StatefulWidget {
     required this.enabled,
     this.states,
     this.inputFormatters,
+    required this.decimalSeparator,
     required this.textCapitalization,
     required this.autocorrect,
     required this.enableSuggestions,
@@ -365,6 +372,7 @@ class _WFormInputContent extends StatefulWidget {
   final bool enabled;
   final Set<String>? states;
   final List<TextInputFormatter>? inputFormatters;
+  final String decimalSeparator;
   final TextCapitalization textCapitalization;
   final bool autocorrect;
   final bool enableSuggestions;
@@ -476,6 +484,7 @@ class _WFormInputContentState extends State<_WFormInputContent> {
       minLines: widget.minLines,
       states: effectiveStates,
       inputFormatters: widget.inputFormatters,
+      decimalSeparator: widget.decimalSeparator,
       textCapitalization: widget.textCapitalization,
       autocorrect: widget.autocorrect,
       enableSuggestions: widget.enableSuggestions,

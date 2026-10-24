@@ -1693,6 +1693,55 @@ void main() {
         );
       });
 
+      testWidgets('a comma decimalSeparator keeps "2,5" whole', (tester) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WInput(
+              controller: controller,
+              type: InputType.number,
+              decimalSeparator: ',',
+              placeholder: 'n',
+            ),
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), '2,5');
+        await tester.pump();
+        expect(
+          controller.text,
+          '2,5',
+          reason: 'a Turkish decimal comma must not be swallowed into "25".',
+        );
+
+        await tester.enterText(find.byType(EditableText), '2.5');
+        await tester.pump();
+        expect(
+          controller.text,
+          '2,5',
+          reason: 'only the configured mark is a decimal mark.',
+        );
+      });
+
+      testWidgets('the default decimalSeparator stays a point', (tester) async {
+        final controller = TextEditingController(text: '2');
+        addTearDown(controller.dispose);
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WInput(
+              controller: controller,
+              type: InputType.number,
+              placeholder: 'n',
+            ),
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), '2,5');
+        await tester.pump();
+        expect(controller.text, '2');
+      });
+
       testWidgets('caller inputFormatters override the number default',
           (tester) async {
         final controller = TextEditingController();
