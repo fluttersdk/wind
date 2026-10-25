@@ -218,6 +218,9 @@ class WInput extends StatefulWidget {
   /// The field keeps the text as typed: converting it to the `.` a wire format
   /// expects is the caller's job. Ignored when [inputFormatters] is given,
   /// since caller formatters replace the number filter entirely.
+  ///
+  /// One character, never a digit, `+` or `-`: either would let the filter
+  /// accept `1-2` as a number. Both rules are debug asserts.
   final String decimalSeparator;
 
   /// Text capitalization behavior.
@@ -1240,7 +1243,11 @@ class _WInputSelectionGestureDetectorBuilder
 /// [WInput.inputFormatters], which then take over entirely.
 class _SignedDecimalTextInputFormatter extends TextInputFormatter {
   _SignedDecimalTextInputFormatter(String decimalSeparator)
-      : _pattern = RegExp(
+      : assert(
+          !RegExp(r'[\d+-]').hasMatch(decimalSeparator),
+          'decimalSeparator cannot be a digit, "+" or "-".',
+        ),
+        _pattern = RegExp(
           '^-?\\d*${RegExp.escape(decimalSeparator)}?\\d*\$',
         );
 

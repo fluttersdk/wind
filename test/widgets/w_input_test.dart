@@ -1724,6 +1724,27 @@ void main() {
         );
       });
 
+      testWidgets('a digit or minus decimalSeparator fails its assert',
+          (tester) async {
+        for (final String mark in <String>['-', '+', '5']) {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WInput(
+                key: ValueKey<String>(mark),
+                type: InputType.number,
+                decimalSeparator: mark,
+                placeholder: 'n',
+              ),
+            ),
+          );
+          expect(
+            tester.takeException(),
+            isA<AssertionError>(),
+            reason: '"$mark" would let the filter accept "1${mark}2".',
+          );
+        }
+      });
+
       testWidgets('the default decimalSeparator stays a point', (tester) async {
         final controller = TextEditingController(text: '2');
         addTearDown(controller.dispose);

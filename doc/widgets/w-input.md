@@ -106,7 +106,7 @@ const WInput({
 | `onTap` | `VoidCallback?` | `null` | Callback fired when the field is tapped |
 | `focusNode` | `FocusNode?` | `null` | External focus controller for programmatic focus management |
 | `inputFormatters` | `List<TextInputFormatter>?` | `null` | Formatters applied as the user types (digit-only, masks, etc.) |
-| `decimalSeparator` | `String` | `'.'` | The one decimal mark a `number` field accepts. Pass the locale's mark (`','` in Turkish or German) so `2,5` is not typed as `25`; the text stays as typed, so convert it to `.` before it goes on the wire. Ignored when `inputFormatters` is set. |
+| `decimalSeparator` | `String` | `'.'` | The one decimal mark a `number` field accepts. Pass the locale's mark (`','` in Turkish or German) so `2,5` is not typed as `25`; the text stays as typed, so convert it to `.` before it goes on the wire. One character, never a digit, `+` or `-` (debug asserts). Ignored when `inputFormatters` is set. |
 | `textCapitalization` | `TextCapitalization` | `TextCapitalization.none` | Auto-capitalize behavior (`none` / `sentences` / `words` / `characters`) |
 | `autocorrect` | `bool` | `true` | Enable OS autocorrect suggestions |
 | `enableSuggestions` | `bool` | `true` | Enable OS suggestion bar (Android) |
