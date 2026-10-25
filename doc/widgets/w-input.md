@@ -68,6 +68,7 @@ const WInput({
   TextEditingController? controller,
   Set<String>? states,
   List<TextInputFormatter>? inputFormatters,
+  String decimalSeparator = '.',
   TextCapitalization textCapitalization = TextCapitalization.none,
   bool autocorrect = true,
   bool enableSuggestions = true,
@@ -86,7 +87,7 @@ const WInput({
 | `placeholderClassName` | `String?` | `null` | Utility classes for styling the hint text |
 | `value` | `String?` | `null` | The controlled value of the input |
 | `onChanged` | `ValueChanged<String>?` | `null` | Callback when text changes |
-| `type` | `InputType` | `InputType.text` | Input keyboard and behavior (`text`, `password`, `email`, `number`, `multiline`). `number` restricts input to a signed decimal on every platform (web included); pass `inputFormatters` to override. |
+| `type` | `InputType` | `InputType.text` | Input keyboard and behavior (`text`, `password`, `email`, `number`, `multiline`). `number` restricts input to a signed decimal on every platform (web included), with `decimalSeparator` as its one decimal mark; pass `inputFormatters` to override. |
 | `placeholder` | `String?` | `null` | Hint text shown when input is empty |
 | `enabled` | `bool` | `true` | Whether the input is interactive |
 | `readOnly` | `bool` | `false` | Whether the input is read-only |
@@ -105,6 +106,7 @@ const WInput({
 | `onTap` | `VoidCallback?` | `null` | Callback fired when the field is tapped |
 | `focusNode` | `FocusNode?` | `null` | External focus controller for programmatic focus management |
 | `inputFormatters` | `List<TextInputFormatter>?` | `null` | Formatters applied as the user types (digit-only, masks, etc.) |
+| `decimalSeparator` | `String` | `'.'` | The one decimal mark a `number` field accepts. Pass the locale's mark (`','` in Turkish or German) so `2,5` is not typed as `25`; the text stays as typed, so convert it to `.` before it goes on the wire. One character, never a digit, `+` or `-` (debug asserts). Ignored when `inputFormatters` is set. |
 | `textCapitalization` | `TextCapitalization` | `TextCapitalization.none` | Auto-capitalize behavior (`none` / `sentences` / `words` / `characters`) |
 | `autocorrect` | `bool` | `true` | Enable OS autocorrect suggestions |
 | `enableSuggestions` | `bool` | `true` | Enable OS suggestion bar (Android) |

@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- **A number `WInput` or `WFormInput` accepts the decimal mark the user's locale writes.** The default `InputType.number` filter allowed only `.`, and swallowed any other keystroke, so a Turkish user typing `2,5` got `25`, a silent 10x amount, and every app writing a comma locale had to replace the filter with a formatter of its own. A new `decimalSeparator` (default `'.'`, one character other than a digit, `+` or `-`, asserted) names the one mark the filter accepts; `,` keeps `2,5` and refuses a `.`, and the default keeps today's behaviour. The field keeps the text as typed, so converting to the `.` a wire format expects stays with the caller. Accepting both marks at once was rejected: in English `1,000` is a thousand, and reading it as `1.000` would turn a grouping comma into a decimal one. Caller `inputFormatters` still replace the filter entirely. (#253) (`lib/src/widgets/w_input.dart`, `lib/src/widgets/w_form_input.dart`, `test/widgets/w_input_test.dart`, `test/widgets/w_form_input_test.dart`, `doc/widgets/w-input.md`, `doc/widgets/w-form-input.md`, `skills/wind-ui/SKILL.md`)
+
 ---
 
 ## [1.9.4] - 2026-10-18

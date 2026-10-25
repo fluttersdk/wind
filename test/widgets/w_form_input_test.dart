@@ -410,6 +410,26 @@ void main() {
         expect(editableText.keyboardType, TextInputType.emailAddress);
       });
 
+      testWidgets('number type forwards its decimalSeparator', (tester) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Form(
+              child: WFormInput(
+                controller: controller,
+                type: InputType.number,
+                decimalSeparator: ',',
+              ),
+            ),
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), '0,5');
+        await tester.pump();
+        expect(controller.text, '0,5');
+      });
+
       testWidgets('multiline type allows multiple lines', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
