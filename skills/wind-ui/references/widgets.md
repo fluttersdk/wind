@@ -187,6 +187,7 @@ Source dispatch:
 
 Tokens consumed:
 - `object-cover` (default) / `object-contain` / `object-fill` / `object-none` / `object-scale-down` → `BoxFit`
+- `object-center` (default) / `object-top` / `object-bottom` / `object-left` / `object-right` / `object-left-top` / `object-left-bottom` / `object-right-top` / `object-right-bottom` → the image's `Alignment`, so `object-cover object-top` keeps the upper part of a backdrop in a short wide banner. Read off the raw className like `object-*` fit: first match wins, a prefixed form (`md:object-top`) is not applied
 - `aspect-*` → `AspectRatio` wrapping
 - `rounded-*` → `ClipRRect`
 - `border-*` / `shadow-*` → `Container` decoration

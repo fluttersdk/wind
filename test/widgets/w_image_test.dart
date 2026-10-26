@@ -169,6 +169,105 @@ void main() {
       });
     });
 
+    group('Object Position', () {
+      Future<Image> pumpImage(WidgetTester tester, String? className) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WImage(
+              src: 'https://example.com/x.jpg',
+              className: className,
+              errorBuilder: _silentErrorBuilder,
+            ),
+          ),
+        );
+        return tester.widget<Image>(find.byType(Image));
+      }
+
+      testWidgets('defaults to Alignment.center when no object-* position',
+          (tester) async {
+        final image = await pumpImage(tester, 'w-32 h-32 object-cover');
+
+        expect(image.alignment, equals(Alignment.center));
+      });
+
+      testWidgets('defaults to Alignment.center when className is null',
+          (tester) async {
+        final image = await pumpImage(tester, null);
+
+        expect(image.alignment, equals(Alignment.center));
+      });
+
+      testWidgets('object-top with object-cover aligns the crop to topCenter',
+          (tester) async {
+        final image =
+            await pumpImage(tester, 'w-full h-full object-cover object-top');
+
+        expect(image.fit, equals(BoxFit.cover));
+        expect(image.alignment, equals(Alignment.topCenter));
+      });
+
+      testWidgets('position token order does not matter against the fit token',
+          (tester) async {
+        final image = await pumpImage(tester, 'object-top object-contain');
+
+        expect(image.fit, equals(BoxFit.contain));
+        expect(image.alignment, equals(Alignment.topCenter));
+      });
+
+      const positions = <String, Alignment>{
+        'object-bottom': Alignment.bottomCenter,
+        'object-center': Alignment.center,
+        'object-left': Alignment.centerLeft,
+        'object-left-bottom': Alignment.bottomLeft,
+        'object-left-top': Alignment.topLeft,
+        'object-right': Alignment.centerRight,
+        'object-right-bottom': Alignment.bottomRight,
+        'object-right-top': Alignment.topRight,
+        'object-top': Alignment.topCenter,
+      };
+
+      for (final entry in positions.entries) {
+        testWidgets('maps ${entry.key} to ${entry.value}', (tester) async {
+          final image = await pumpImage(tester, 'w-32 h-32 ${entry.key}');
+
+          expect(image.alignment, equals(entry.value));
+        });
+      }
+
+      testWidgets('applies the alignment to asset and provider images',
+          (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Column(
+              children: [
+                WImage(
+                  src: 'asset://logo.png',
+                  className: 'object-left-top',
+                  errorBuilder: _silentErrorBuilder,
+                ),
+                WImage(
+                  image: MemoryImage(Uint8List(0)),
+                  className: 'object-right-bottom',
+                  errorBuilder: _silentErrorBuilder,
+                ),
+              ],
+            ),
+          ),
+        );
+
+        final images = tester.widgetList<Image>(find.byType(Image)).toList();
+        expect(images[0].alignment, equals(Alignment.topLeft));
+        expect(images[1].alignment, equals(Alignment.bottomRight));
+      });
+
+      testWidgets('keeps Alignment.center for an unknown object-* token',
+          (tester) async {
+        final image = await pumpImage(tester, 'object-nowhere');
+
+        expect(image.alignment, equals(Alignment.center));
+      });
+    });
+
     group('Decoration', () {
       testWidgets('wraps with SizedBox when w-32 h-32 tokens are present',
           (tester) async {

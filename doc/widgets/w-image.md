@@ -90,6 +90,22 @@ WImage(
 )
 ```
 
+### Object Position
+
+`object-cover` centres the crop, so in a short, wide banner the upper part of a tall photo (a face, a skyline) is cut off. Choose which part stays in view with `object-{position}` classes: `object-top`, `object-bottom`, `object-left`, `object-right`, `object-left-top`, `object-left-bottom`, `object-right-top`, `object-right-bottom` and `object-center` (the default). They combine with every fit class and map to the matching Flutter `Alignment` on the image.
+
+<x-preview path="widgets/w_image_fit" size="md" source="example/lib/pages/widgets/w_image_fit.dart"></x-preview>
+
+```dart
+WImage(
+  src: 'https://example.com/backdrop.jpg',
+  className: 'w-full h-40 object-cover object-top',
+)
+```
+
+> [!NOTE]
+> Like the `object-{fit}` classes, position classes are read straight off `className`: the first match wins and prefixed forms such as `md:object-top` or `hover:object-bottom` are not applied.
+
 ### Aspect Ratio
 
 Ensure the image maintains a specific aspect ratio regardless of its content dimensions.
@@ -158,6 +174,7 @@ WImage(
 |:---------|:--------|
 | Sizing | `w-{size}`, `h-{size}`, `max-w-{size}`, `min-h-{size}` |
 | Object Fit | `object-cover`, `object-contain`, `object-fill`, `object-none`, `object-scale-down` |
+| Object Position | `object-top`, `object-bottom`, `object-left`, `object-right`, `object-left-top`, `object-left-bottom`, `object-right-top`, `object-right-bottom`, `object-center` |
 | Aspect Ratio | `aspect-square`, `aspect-video`, `aspect-{ratio}` |
 | Borders | `border`, `border-{width}`, `border-{color}`, `rounded-{size}` |
 | Effects | `shadow-{size}`, `opacity-{n}` |

@@ -91,8 +91,9 @@ class WindParser {
   /// Valid Wind tokens that no parser in [_parserMap] claims, so the
   /// unknown-token warning must NOT fire on them. Two groups:
   ///
-  /// - Widget-consumed: `object-*` is read by `WImage._parseObjectFit`, not by
-  ///   a parser, yet the full className still flows through here.
+  /// - Widget-consumed: `object-*` is read by `WImage._parseObjectFit` and
+  ///   `WImage._parseObjectPosition`, not by a parser, yet the full className
+  ///   still flows through here.
   /// - Deliberately inert compat tokens that Wind accepts as no-ops and that
   ///   Wind's own widget docstrings / the documented consumer contract emit
   ///   (e.g. `transition-colors` in `WButton`, `tabular-nums` in a metric
@@ -104,6 +105,10 @@ class WindParser {
     // object-fit (consumed by WImage)
     'object-cover', 'object-contain', 'object-fill', 'object-none',
     'object-scale-down',
+    // object-position (consumed by WImage)
+    'object-bottom', 'object-center', 'object-left', 'object-left-bottom',
+    'object-left-top', 'object-right', 'object-right-bottom',
+    'object-right-top', 'object-top',
     // inline display keywords (FlexboxGridParser claims flex/grid/block/hidden
     // but not the inline-* family; inline-flex is emitted by WBadge, and inline
     // display has no Flutter layout meaning so these are inert, not typos)

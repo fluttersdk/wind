@@ -25,6 +25,7 @@ typedef ImageLoadingBuilder = Widget Function(
 /// - **Sources:** Network URLs or `asset://` paths
 /// - **Sizing:** `w-32`, `h-32`, `w-full`, `max-w-md`
 /// - **Fit:** `object-cover`, `object-contain`, `object-fill`
+/// - **Position:** `object-top`, `object-left-bottom`, `object-center`, ...
 /// - **Aspect Ratio:** `aspect-video`, `aspect-square`, `aspect-[4/3]`
 /// - **Decoration:** `rounded-lg`, `shadow-md`, `border-2`, `opacity-90`
 ///
@@ -67,6 +68,9 @@ class WImage extends StatelessWidget {
   /// Supports:
   /// - **Dimensions:** `w-full`, `h-64`, `min-h-[200px]`
   /// - **Object Fit:** `object-cover` (default), `object-contain`
+  /// - **Object Position:** `object-top`, `object-bottom`, `object-left`,
+  ///   `object-right`, the four corners (`object-left-top`, ...) and
+  ///   `object-center` (default)
   /// - **Aspect Ratio:** `aspect-video`, `aspect-square`
   /// - **Appearance:** `rounded-lg`, `shadow-xl`, `opacity-75`
   ///
@@ -116,11 +120,15 @@ class WImage extends StatelessWidget {
     // Parse object-fit from className
     final BoxFit fit = _parseObjectFit(className);
 
+    // Parse object-position from className
+    final Alignment alignment = _parseObjectPosition(className);
+
     // Build the image widget
     Widget imageWidget = image != null
         ? Image(
             image: image!,
             fit: fit,
+            alignment: alignment,
             semanticLabel: alt,
             errorBuilder: errorBuilder,
           )
@@ -128,12 +136,14 @@ class WImage extends StatelessWidget {
             ? Image.asset(
                 _assetPath,
                 fit: fit,
+                alignment: alignment,
                 semanticLabel: alt,
                 errorBuilder: errorBuilder,
               )
             : Image.network(
                 src!,
                 fit: fit,
+                alignment: alignment,
                 semanticLabel: alt,
                 errorBuilder: errorBuilder,
                 loadingBuilder: loadingBuilder ??
@@ -236,5 +246,38 @@ class WImage extends StatelessWidget {
       }
     }
     return BoxFit.cover; // Default like CSS background-size: cover
+  }
+
+  /// Parse object-position classes from className.
+  ///
+  /// Read off the raw className like [_parseObjectFit]: the first matching
+  /// token wins and prefixed forms (`md:object-top`) are not consulted.
+  Alignment _parseObjectPosition(String? className) {
+    if (className == null) return Alignment.center;
+
+    final classes = className.split(RegExp(r'\s+'));
+    for (final cls in classes) {
+      switch (cls) {
+        case 'object-bottom':
+          return Alignment.bottomCenter;
+        case 'object-center':
+          return Alignment.center;
+        case 'object-left':
+          return Alignment.centerLeft;
+        case 'object-left-bottom':
+          return Alignment.bottomLeft;
+        case 'object-left-top':
+          return Alignment.topLeft;
+        case 'object-right':
+          return Alignment.centerRight;
+        case 'object-right-bottom':
+          return Alignment.bottomRight;
+        case 'object-right-top':
+          return Alignment.topRight;
+        case 'object-top':
+          return Alignment.topCenter;
+      }
+    }
+    return Alignment.center; // Default like CSS object-position: 50% 50%
   }
 }
