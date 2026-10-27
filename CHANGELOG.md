@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.10.0] - 2026-10-27
+
 ### Added
 
 - **`WImage` supports Tailwind's object-position classes, so `object-cover object-top` keeps the upper part of a backdrop in a short, wide banner.** `object-cover` always centred the crop, so faces and skylines in the top of a TV or film backdrop were cut off in a `w-full h-full` hero, and there was no alignment prop to reach for. `object-bottom`, `object-center`, `object-left`, `object-left-bottom`, `object-left-top`, `object-right`, `object-right-bottom`, `object-right-top` and `object-top` now map to the matching `Alignment` on the rendered `Image` (`Alignment.center` stays the default), with every fit. They follow the object-fit design rather than a new one: read straight off the className in `WImage`, never in `WindStyle`, first match wins, and a prefixed form such as `md:object-top` is not applied (as `md:object-cover` is not today). The nine tokens join the parser's known-unparsed set, so they no longer log the one-time unknown-className hint. (#257) (`lib/src/widgets/w_image.dart, `lib/src/parser/wind_parser.dart`, `test/widgets/w_image_test.dart`, `test/parser/wind_parser_test.dart`, `doc/widgets/w-image.md`)
@@ -532,7 +536,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.9.4...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.10.0...HEAD
+[1.10.0]: https://github.com/fluttersdk/wind/releases/tag/1.10.0
 [1.9.4]: https://github.com/fluttersdk/wind/releases/tag/1.9.4
 [1.9.3]: https://github.com/fluttersdk/wind/releases/tag/1.9.3
 [1.9.2]: https://github.com/fluttersdk/wind/releases/tag/1.9.2
