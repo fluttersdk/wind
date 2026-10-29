@@ -5,6 +5,39 @@ import '../theme/wind_theme.dart';
 import '../theme/wind_theme_data.dart';
 import 'wind_helpers.dart';
 
+/// How much horizontal room the window has, in the theme's own breakpoints.
+///
+/// The classes are cut at the theme's `md` and `lg` screens, so a custom
+/// `screens` table moves them. The width is the window's, not the device's:
+/// an iPad in split view is [compact] and a phone is never [expanded].
+enum WindowSizeClass {
+  /// Narrower than `md`.
+  compact,
+
+  /// `md` up to, but not including, `lg`.
+  medium,
+
+  /// `lg` and wider.
+  expanded,
+}
+
+/// Classifies the window width against the theme's `md` and `lg` screens.
+///
+/// Decide a shell's navigation (bar or rail) with this rather than with the
+/// platform: Wind maps iOS to `isMobile`, so an iPad reads as a phone by
+/// platform, and [WindContextExtension.wIsTablet] is only the `md` to `lg`
+/// band, which is false again on a wide iPad or a desktop window.
+///
+/// ```dart
+/// final bool useRail = wWindowClassOf(context) != WindowSizeClass.compact;
+/// ```
+WindowSizeClass wWindowClassOf(BuildContext context) {
+  if (wScreenIs(context, 'lg')) return WindowSizeClass.expanded;
+  if (wScreenIs(context, 'md')) return WindowSizeClass.medium;
+
+  return WindowSizeClass.compact;
+}
+
 /// **Wind Context Extensions**
 ///
 /// Extensions on [BuildContext] for ergonomic access to Wind's theme and helpers.

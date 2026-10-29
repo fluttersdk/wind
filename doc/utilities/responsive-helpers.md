@@ -6,6 +6,7 @@ Responsive helpers provide programmatic access to Wind's breakpoint system, plat
 
 - [Context Extensions](#context-extensions)
 - [Helper Functions](#helper-functions)
+- [Window Size Class](#window-size-class)
 - [Breakpoint Reference](#breakpoint-reference)
 - [Platform Detection](#platform-detection)
 
@@ -77,6 +78,23 @@ Returns the raw pixel value (`int`) for a specific breakpoint name from your the
 ```dart
 int? mdValue = wScreen(context, 'md'); // 768
 ```
+
+<a name="window-size-class"></a>
+## Window Size Class
+
+`wWindowClassOf(context)` sorts the window width into one of three `WindowSizeClass` values, cut at the theme's `md` and `lg` screens. Use it to choose between a bottom bar and a side rail by window width instead of by platform: Wind treats iOS as mobile, so an iPad reads as a phone by platform, and `wIsTablet` is only the `md` to `lg` band.
+
+| Value | Width |
+|:------|:------|
+| `WindowSizeClass.compact` | below `md` |
+| `WindowSizeClass.medium` | `md` up to, but not including, `lg` |
+| `WindowSizeClass.expanded` | `lg` and wider |
+
+```dart
+final bool useRail = wWindowClassOf(context) != WindowSizeClass.compact;
+```
+
+A custom `screens` table in `WindThemeData` moves the cuts. The width is the window's, so an iPad in split view is `compact`.
 
 <a name="breakpoint-reference"></a>
 ## Breakpoint Reference
