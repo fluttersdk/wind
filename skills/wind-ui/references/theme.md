@@ -447,8 +447,11 @@ context.wActiveBreakpoint                 // String ('base', 'sm', 'md', 'lg', '
 context.wIsMobile                         // bool (iOS or Android)
 context.wIsTablet                         // bool (heuristic)
 context.wIsDesktop                        // bool
+wWindowClassOf(context)                   // WindowSizeClass (compact < md, medium < lg, expanded >= lg)
 context.wStyleExt('p-4 bg-red-500')       // WindStyle (one-off parse)
 ```
+
+Choose a bar or a rail by window width with `wWindowClassOf(context) != WindowSizeClass.compact`, never by platform: Wind maps iOS to `isMobile`, so an iPad is mobile, and `wIsTablet` is only the `md` to `lg` band.
 
 Reach for `wScreenIsExt` and `wActiveBreakpoint` only when widget-tree branching (which `WBreakpoint` covers) is overkill. For styling, prefix the className (`md:...`) instead.
 

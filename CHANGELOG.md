@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- **`wWindowClassOf(context)` returns a `WindowSizeClass` (`compact`, `medium`, `expanded`), so a shell chooses a bar or a rail by window width and not by platform.** Wind maps iOS to `isMobile` (`platform_service.dart`), so an iPad reads as a phone by platform, and `wIsTablet` is only the `md` to `lg` band, which turns false again on a wide iPad or a desktop window; neither answers "does this window have room for a rail". The classes are cut at the theme's own `md` and `lg` screens (`compact` below `md`, `medium` up to below `lg`, `expanded` from `lg`), so a custom `screens` table moves them, and it reads the size aspect of `MediaQuery` through `wScreenIs`, so a keyboard inset does not rebuild the caller. A platform or device-idiom check was rejected: split view puts an iPad in a phone-sized window. `wIsTablet` and `isMobile` are unchanged. (`lib/src/utils/wind_extensions.dart`, `test/utils/wind_extensions_test.dart`, `doc/utilities/responsive-helpers.md`, `example/lib/pages/utilities/responsive_helpers_basic.dart`, `skills/wind-ui/SKILL.md`, `skills/wind-ui/references/theme.md`)
+
 ---
 
 ## [1.10.0] - 2026-10-27

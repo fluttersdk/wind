@@ -254,4 +254,96 @@ void main() {
       });
     });
   });
+
+  group('wWindowClassOf', () {
+    Future<WindowSizeClass> classify(
+      WidgetTester tester,
+      double width, {
+      Map<String, int>? screens,
+    }) async {
+      late WindowSizeClass result;
+      await tester.pumpWidget(
+        MediaQuery(
+          data: MediaQueryData(size: Size(width, 800)),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: WindTheme(
+              data: WindThemeData(screens: screens),
+              child: Builder(
+                builder: (context) {
+                  result = wWindowClassOf(context);
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      return result;
+    }
+
+    testWidgets('is compact below md', (tester) async {
+      expect(await classify(tester, 390), WindowSizeClass.compact);
+      expect(await classify(tester, 767.9), WindowSizeClass.compact);
+    });
+
+    testWidgets('is medium from md up to below lg', (tester) async {
+      expect(await classify(tester, 768), WindowSizeClass.medium);
+      expect(await classify(tester, 834), WindowSizeClass.medium);
+      expect(await classify(tester, 1023.9), WindowSizeClass.medium);
+    });
+
+    testWidgets('is expanded from lg up', (tester) async {
+      expect(await classify(tester, 1024), WindowSizeClass.expanded);
+      expect(await classify(tester, 1366), WindowSizeClass.expanded);
+    });
+
+    testWidgets('reads md and lg from a custom screens table', (tester) async {
+      const screens = {'md': 600, 'lg': 900};
+
+      expect(
+        await classify(tester, 599, screens: screens),
+        WindowSizeClass.compact,
+      );
+      expect(
+        await classify(tester, 600, screens: screens),
+        WindowSizeClass.medium,
+      );
+      expect(
+        await classify(tester, 899, screens: screens),
+        WindowSizeClass.medium,
+      );
+      expect(
+        await classify(tester, 900, screens: screens),
+        WindowSizeClass.expanded,
+      );
+    });
+
+    testWidgets('agrees with wIsTablet only in the medium band', (
+      tester,
+    ) async {
+      late bool tablet;
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(size: Size(1366, 1024)),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: WindTheme(
+              data: WindThemeData(),
+              child: Builder(
+                builder: (context) {
+                  tablet = context.wIsTablet;
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tablet, isFalse);
+      expect(await classify(tester, 1366), WindowSizeClass.expanded);
+    });
+  });
 }

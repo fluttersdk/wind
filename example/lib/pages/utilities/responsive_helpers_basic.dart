@@ -47,6 +47,20 @@ class ResponsiveHelpersBasicExamplePage extends StatelessWidget {
           ),
         ),
         ExampleSection(
+          title: 'Window Size Class',
+          description:
+              'wWindowClassOf(context) cuts the window width at md and lg. Pick a bar or a rail from it, not from the platform.',
+          child: WDiv(
+            className: 'flex flex-col gap-1',
+            children: [
+              _ValueRow(
+                label: 'wWindowClassOf(context)',
+                value: wWindowClassOf(context).name,
+              ),
+            ],
+          ),
+        ),
+        ExampleSection(
           title: 'Breakpoint Pixel Values',
           description:
               'wScreen(context, name) returns the raw px threshold from your theme.',
@@ -131,6 +145,30 @@ class _BoolRow extends StatelessWidget {
             className: 'text-white font-mono text-xs font-bold',
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _ValueRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _ValueRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return WDiv(
+      className: '''
+        flex flex-row items-center justify-between gap-3
+        px-3 py-2 rounded-md
+        bg-slate-50 dark:bg-slate-700/40
+      ''',
+      children: [
+        WText(label,
+            className: 'font-mono text-sm text-cyan-700 dark:text-cyan-400'),
+        WText(value,
+            className: 'font-mono text-sm text-slate-700 dark:text-slate-200'),
       ],
     );
   }
