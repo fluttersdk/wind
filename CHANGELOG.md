@@ -8,9 +8,13 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.11.0] - 2026-10-29
+
 ### Added
 
-- **`wWindowClassOf(context)` returns a `WindowSizeClass` (`compact`, `medium`, `expanded`), so a shell chooses a bar or a rail by window width and not by platform.** Wind maps iOS to `isMobile` (`platform_service.dart`), so an iPad reads as a phone by platform, and `wIsTablet` is only the `md` to `lg` band, which turns false again on a wide iPad or a desktop window; neither answers "does this window have room for a rail". The classes are cut at the theme's own `md` and `lg` screens (`compact` below `md`, `medium` up to below `lg`, `expanded` from `lg`), so a custom `screens` table moves them, and it reads the size aspect of `MediaQuery` through `wScreenIs`, so a keyboard inset does not rebuild the caller. A platform or device-idiom check was rejected: split view puts an iPad in a phone-sized window. `wIsTablet` and `isMobile` are unchanged. (`lib/src/utils/wind_extensions.dart`, `test/utils/wind_extensions_test.dart`, `doc/utilities/responsive-helpers.md`, `example/lib/pages/utilities/responsive_helpers_basic.dart`, `skills/wind-ui/SKILL.md`, `skills/wind-ui/references/theme.md`)
+- **`wWindowClassOf(context)` returns a `WindowSizeClass` (`compact`, `medium`, `expanded`), so a shell chooses a bar or a rail by window width and not by platform.** Wind maps iOS to `isMobile` (`platform_service.dart`), so an iPad reads as a phone by platform, and `wIsTablet` is only the `md` to `lg` band, which turns false again on a wide iPad or a desktop window; neither answers "does this window have room for a rail". The classes are cut at the theme's own `md` and `lg` screens (`compact` below `md`, `medium` up to below `lg`, `expanded` from `lg`), so a custom `screens` table moves them, and it reads the size aspect of `MediaQuery` through `wScreenIs`, so a keyboard inset does not rebuild the caller. A platform or device-idiom check was rejected: split view puts an iPad in a phone-sized window. `wIsTablet` and `isMobile` are unchanged. (#259) (`lib/src/utils/wind_extensions.dart`, `test/utils/wind_extensions_test.dart`, `doc/utilities/responsive-helpers.md`, `example/lib/pages/utilities/responsive_helpers_basic.dart`, `skills/wind-ui/SKILL.md`, `skills/wind-ui/references/theme.md`)
 
 ---
 
@@ -540,7 +544,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.10.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.11.0...HEAD
+[1.11.0]: https://github.com/fluttersdk/wind/releases/tag/1.11.0
 [1.10.0]: https://github.com/fluttersdk/wind/releases/tag/1.10.0
 [1.9.4]: https://github.com/fluttersdk/wind/releases/tag/1.9.4
 [1.9.3]: https://github.com/fluttersdk/wind/releases/tag/1.9.3
