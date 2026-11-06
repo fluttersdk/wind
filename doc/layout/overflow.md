@@ -109,6 +109,18 @@ WDiv(className: 'overflow-x-scroll overflow-y-hidden')
 | `overflow-x-hidden` | Clip horizontal overflow |
 | `overflow-y-visible` | Allow vertical overflow |
 
+A horizontally scrolling div keeps its own border, background and padding across at least the full viewport, the way CSS paints them on the scroll container. A tab strip's baseline runs edge to edge however few tabs it holds, and content wider than the viewport keeps its width and scrolls:
+
+```dart
+WDiv(
+  className: 'w-full flex flex-row overflow-x-auto border-b border-gray-200 dark:border-gray-700',
+  children: [
+    WText('Overview', className: 'px-4 py-3'),
+    WText('Metrics', className: 'px-4 py-3'),
+  ],
+)
+```
+
 <a name="min-width-scroll"></a>
 ## Fill on Desktop, Scroll on Narrow (Responsive Table)
 

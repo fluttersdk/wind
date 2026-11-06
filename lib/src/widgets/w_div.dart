@@ -1774,11 +1774,19 @@ class WDiv extends StatelessWidget {
         // scope so a `w-full` child fills the viewport when it is wide and
         // honors `min-w-*` (so the viewport scrolls) when it is narrow, instead
         // of asserting on the scroll's unbounded width.
+        //
+        // This div's own box (its border, background, padding) sits INSIDE the
+        // scroll view, so it is held to at least the viewport width too. CSS
+        // paints those on the scroll container itself: a tab strip's
+        // `border-b` runs edge to edge however few tabs it holds. Sized to its
+        // content instead, the baseline stopped after the last tab. Content
+        // wider than the viewport keeps its own width and scrolls.
         logger.wrapWith(
           "SingleChildScrollView",
           "horizontal${scrollPrimary ? ', primary' : ''}",
         );
         WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
+        WindPerfCounters.recordWrapperEmission('WindMinWidthBox');
         final port = WindViewportWidthPort();
         widgetToBuild = WindViewportWidthProvider(
           port: port,
@@ -1787,7 +1795,14 @@ class WDiv extends StatelessWidget {
             primary: scrollPrimary,
             child: WindMinWidthScrollScope(
               horizontalPort: port,
-              child: widgetToBuild ?? const SizedBox.shrink(),
+              child: WindMinWidthBox(
+                port: port,
+                // The div's own `min-w-*` sizes the scroll container, not what
+                // it scrolls, so the floor here is the viewport alone.
+                floorMinWidth: 0,
+                loose: true,
+                child: widgetToBuild ?? const SizedBox.shrink(),
+              ),
             ),
           ),
         );
@@ -1817,9 +1832,11 @@ class WDiv extends StatelessWidget {
           "both (nested)${scrollPrimary ? ', primary on outer' : ''}",
         );
         // Two SingleChildScrollView instances are constructed below (outer
-        // vertical, inner horizontal); both count.
+        // vertical, inner horizontal); both count. The div's own box spans the
+        // viewport width for the reason the horizontal-only branch gives.
         WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
         WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
+        WindPerfCounters.recordWrapperEmission('WindMinWidthBox');
         final port = WindViewportWidthPort();
         widgetToBuild = WindViewportWidthProvider(
           port: port,
@@ -1832,7 +1849,12 @@ class WDiv extends StatelessWidget {
               child: WindMinWidthScrollScope(
                 horizontalPort: port,
                 verticalUnbounded: true,
-                child: widgetToBuild ?? const SizedBox.shrink(),
+                child: WindMinWidthBox(
+                  port: port,
+                  floorMinWidth: 0,
+                  loose: true,
+                  child: widgetToBuild ?? const SizedBox.shrink(),
+                ),
               ),
             ),
           ),

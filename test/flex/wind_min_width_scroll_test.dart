@@ -30,6 +30,58 @@ void main() {
     expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
   });
 
+  testWidgets(
+      'a loose box fills the viewport but lets wider content keep its width',
+      (tester) async {
+    final port = WindViewportWidthPort()..value = 400;
+    Widget loose(double contentWidth) => host(
+          UnconstrainedBox(
+            alignment: Alignment.topLeft,
+            child: WindMinWidthBox(
+              port: port,
+              floorMinWidth: 0,
+              loose: true,
+              child: SizedBox(width: contentWidth, height: 20),
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(loose(50));
+    expect(tester.takeException(), isNull);
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
+
+    // Wider than the 400px viewport, inside the 800px test surface.
+    await tester.pumpWidget(loose(700));
+    expect(tester.takeException(), isNull);
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 700);
+  });
+
+  testWidgets('switching loose re-lays out the child', (tester) async {
+    final port = WindViewportWidthPort()..value = 400;
+    Widget box({required bool loose}) => host(
+          UnconstrainedBox(
+            alignment: Alignment.topLeft,
+            child: WindMinWidthBox(
+              port: port,
+              floorMinWidth: 0,
+              loose: loose,
+              child: const SizedBox(width: 700, height: 20),
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(box(loose: true));
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 700);
+
+    // Tight again: the viewport width wins and the wider child is held to it.
+    await tester.pumpWidget(box(loose: false));
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
+
+    // The same value again changes nothing and lays out the same.
+    await tester.pumpWidget(box(loose: false));
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
+  });
+
   testWidgets('honors the min-w floor over a narrower viewport',
       (tester) async {
     final port = WindViewportWidthPort()..value = 120;

@@ -98,6 +98,11 @@ class _RenderViewportWidthProvider extends RenderProxyBox {
 /// narrow viewport the child takes [floorMinWidth] (wider than the viewport,
 /// so the enclosing scroll scrolls). Intrinsic/dry-layout queries delegate to
 /// the child.
+///
+/// With [loose] the width is a floor rather than a fixed size: the child is at
+/// least that wide and keeps any larger content width. A scrolling div wraps its
+/// own decorated box in a loose one, so its border spans the viewport while
+/// content wider than the viewport still scrolls.
 class WindMinWidthBox extends SingleChildRenderObjectWidget {
   /// The shared carrier written by the enclosing [WindViewportWidthProvider].
   final WindViewportWidthPort port;
@@ -105,16 +110,21 @@ class WindMinWidthBox extends SingleChildRenderObjectWidget {
   /// The lower bound on the child's width (from `min-w-[Npx]`); `0` for none.
   final double floorMinWidth;
 
+  /// Whether the target width is only a minimum, leaving the child free to be
+  /// wider; `false` sizes the child to exactly that width.
+  final bool loose;
+
   const WindMinWidthBox({
     super.key,
     required this.port,
     required this.floorMinWidth,
+    this.loose = false,
     required super.child,
   });
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      _RenderMinWidthBox(port, floorMinWidth);
+      _RenderMinWidthBox(port, floorMinWidth, loose);
 
   @override
   void updateRenderObject(
@@ -123,12 +133,20 @@ class WindMinWidthBox extends SingleChildRenderObjectWidget {
   ) {
     (renderObject as _RenderMinWidthBox)
       ..port = port
-      ..floorMinWidth = floorMinWidth;
+      ..floorMinWidth = floorMinWidth
+      ..loose = loose;
   }
 }
 
 class _RenderMinWidthBox extends RenderProxyBox {
-  _RenderMinWidthBox(this._port, this._floorMinWidth);
+  _RenderMinWidthBox(this._port, this._floorMinWidth, this._loose);
+
+  bool _loose;
+  set loose(bool value) {
+    if (value == _loose) return;
+    _loose = value;
+    markNeedsLayout();
+  }
 
   WindViewportWidthPort _port;
   set port(WindViewportWidthPort value) {
@@ -198,7 +216,7 @@ class _RenderMinWidthBox extends RenderProxyBox {
     child.layout(
       BoxConstraints(
         minWidth: target,
-        maxWidth: target,
+        maxWidth: _loose ? constraints.maxWidth : target,
         minHeight: constraints.minHeight,
         maxHeight: constraints.maxHeight,
       ),

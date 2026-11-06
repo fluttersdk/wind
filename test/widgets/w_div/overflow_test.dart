@@ -478,6 +478,91 @@ void main() {
       },
     );
 
+    group('overflow-x-auto decoration spans the scroll container', () {
+      // The box that paints the className's `border-b`, wherever the
+      // pipeline put it (a Container or a bare DecoratedBox).
+      Finder borderBox() => find.byWidgetPredicate((widget) {
+            final Decoration? decoration = switch (widget) {
+              Container(:final decoration) => decoration,
+              DecoratedBox(:final decoration) => decoration,
+              _ => null,
+            };
+
+            return decoration is BoxDecoration && decoration.border != null;
+          });
+
+      Widget strip(
+        List<Widget> children, {
+        String overflow = 'overflow-x-auto',
+      }) =>
+          wrapWithTheme(
+            SizedBox(
+              width: 800,
+              height: 200,
+              child: WDiv(
+                className: '''
+                  w-full flex flex-row $overflow
+                  border-b border-gray-200 dark:border-gray-700
+                ''',
+                children: children,
+              ),
+            ),
+          );
+
+      testWidgets(
+        'scrolling on both axes draws the border across the viewport too',
+        (tester) async {
+          await tester.pumpWidget(
+            strip(
+              const [SizedBox(width: 100, height: 40)],
+              overflow: 'overflow-auto',
+            ),
+          );
+
+          expect(tester.takeException(), isNull);
+          expect(find.byType(SingleChildScrollView), findsNWidgets(2));
+          expect(tester.getSize(borderBox()).width, 800);
+        },
+      );
+
+      testWidgets(
+        'a row narrower than the viewport draws its border across the viewport',
+        (tester) async {
+          // CSS puts the border on the scroll container, so a tab strip's
+          // baseline runs edge to edge however few tabs it holds. It used to be
+          // drawn on the content-sized row inside the scroll view and stopped
+          // after the last tab.
+          await tester.pumpWidget(
+            strip(const [
+              SizedBox(width: 100, height: 40),
+              SizedBox(width: 100, height: 40),
+            ]),
+          );
+
+          expect(tester.takeException(), isNull);
+          expect(tester.getSize(borderBox()).width, 800);
+          // The children still start at the leading edge.
+          expect(tester.getTopLeft(find.byType(SizedBox).at(1)).dx, 0);
+        },
+      );
+
+      testWidgets(
+        'a row wider than the viewport keeps its content width and scrolls',
+        (tester) async {
+          await tester.pumpWidget(
+            strip(const [
+              SizedBox(width: 600, height: 40),
+              SizedBox(width: 600, height: 40),
+            ]),
+          );
+
+          expect(tester.takeException(), isNull);
+          expect(tester.getSize(borderBox()).width, 1200);
+          expect(find.byType(SingleChildScrollView), findsOneWidget);
+        },
+      );
+    });
+
     testWidgets('no overflow class does not add ClipRect', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
