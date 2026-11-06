@@ -1832,9 +1832,11 @@ class WDiv extends StatelessWidget {
           "both (nested)${scrollPrimary ? ', primary on outer' : ''}",
         );
         // Two SingleChildScrollView instances are constructed below (outer
-        // vertical, inner horizontal); both count.
+        // vertical, inner horizontal); both count. The div's own box spans the
+        // viewport width for the reason the horizontal-only branch gives.
         WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
         WindPerfCounters.recordWrapperEmission('SingleChildScrollView');
+        WindPerfCounters.recordWrapperEmission('WindMinWidthBox');
         final port = WindViewportWidthPort();
         widgetToBuild = WindViewportWidthProvider(
           port: port,
@@ -1847,7 +1849,12 @@ class WDiv extends StatelessWidget {
               child: WindMinWidthScrollScope(
                 horizontalPort: port,
                 verticalUnbounded: true,
-                child: widgetToBuild ?? const SizedBox.shrink(),
+                child: WindMinWidthBox(
+                  port: port,
+                  floorMinWidth: 0,
+                  loose: true,
+                  child: widgetToBuild ?? const SizedBox.shrink(),
+                ),
               ),
             ),
           ),

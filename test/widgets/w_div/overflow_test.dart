@@ -491,18 +491,39 @@ void main() {
             return decoration is BoxDecoration && decoration.border != null;
           });
 
-      Widget strip(List<Widget> children) => wrapWithTheme(
+      Widget strip(
+        List<Widget> children, {
+        String overflow = 'overflow-x-auto',
+      }) =>
+          wrapWithTheme(
             SizedBox(
               width: 800,
+              height: 200,
               child: WDiv(
                 className: '''
-                  w-full flex flex-row overflow-x-auto
+                  w-full flex flex-row $overflow
                   border-b border-gray-200 dark:border-gray-700
                 ''',
                 children: children,
               ),
             ),
           );
+
+      testWidgets(
+        'scrolling on both axes draws the border across the viewport too',
+        (tester) async {
+          await tester.pumpWidget(
+            strip(
+              const [SizedBox(width: 100, height: 40)],
+              overflow: 'overflow-auto',
+            ),
+          );
+
+          expect(tester.takeException(), isNull);
+          expect(find.byType(SingleChildScrollView), findsNWidgets(2));
+          expect(tester.getSize(borderBox()).width, 800);
+        },
+      );
 
       testWidgets(
         'a row narrower than the viewport draws its border across the viewport',
