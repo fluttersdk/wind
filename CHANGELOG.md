@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.11.1] - 2026-11-06
+
 ### Fixed
 
 - **A horizontally scrolling `WDiv` (`overflow-x-*` alone or `overflow-auto` on both axes) paints its border, background and padding across at least the full viewport, so a `w-full flex flex-row overflow-x-auto border-b` tab strip keeps its baseline edge to edge.** The div's own box was built inside the horizontal `SingleChildScrollView` and sized to its content, so with four tabs on a desktop the baseline stopped after the fourth one; the `w-full` it carried sized the scroll view, not the box inside it. CSS paints those on the scroll container. The box is now wrapped in a `WindMinWidthBox` in a new `loose` mode: at least the published viewport width, and free to be wider, so content wider than the viewport still scrolls. Reusing the tight mode `w-full` children get was rejected: it forced wide content into the viewport width and overflowed. The div's own `min-w-*` is not applied here, since it sizes the scroll container rather than what it scrolls. (#264) (`lib/src/widgets/w_div.dart`, `lib/src/widgets/wind_min_width_scroll.dart`, `test/widgets/w_div/overflow_test.dart`, `test/flex/wind_min_width_scroll_test.dart`, `doc/layout/overflow.md`)
@@ -548,7 +552,8 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.11.0...HEAD
+[Unreleased]: https://github.com/fluttersdk/wind/compare/1.11.1...HEAD
+[1.11.1]: https://github.com/fluttersdk/wind/releases/tag/1.11.1
 [1.11.0]: https://github.com/fluttersdk/wind/releases/tag/1.11.0
 [1.10.0]: https://github.com/fluttersdk/wind/releases/tag/1.10.0
 [1.9.4]: https://github.com/fluttersdk/wind/releases/tag/1.9.4
