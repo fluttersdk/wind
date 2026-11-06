@@ -30,6 +30,32 @@ void main() {
     expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
   });
 
+  testWidgets(
+      'a loose box fills the viewport but lets wider content keep its width',
+      (tester) async {
+    final port = WindViewportWidthPort()..value = 400;
+    Widget loose(double contentWidth) => host(
+          UnconstrainedBox(
+            alignment: Alignment.topLeft,
+            child: WindMinWidthBox(
+              port: port,
+              floorMinWidth: 0,
+              loose: true,
+              child: SizedBox(width: contentWidth, height: 20),
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(loose(50));
+    expect(tester.takeException(), isNull);
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
+
+    // Wider than the 400px viewport, inside the 800px test surface.
+    await tester.pumpWidget(loose(700));
+    expect(tester.takeException(), isNull);
+    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 700);
+  });
+
   testWidgets('honors the min-w floor over a narrower viewport',
       (tester) async {
     final port = WindViewportWidthPort()..value = 120;
