@@ -129,36 +129,38 @@ void main() {
       });
 
       testWidgets(
-          'a partial primary swatch does not crash the raw icon shade lookups',
-          (tester) async {
-        // A consumer may register a primary MaterialColor with only its base
-        // shade. The raw Icon colors read shades 400/600/700 through a safe
-        // lookup that falls back to the base color, so a partial swatch must
-        // render (open + selected check icon) without throwing.
-        const partialPrimary =
-            MaterialColor(0xFF16A34A, {500: Color(0xFF16A34A)});
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(colors: const {'primary': partialPrimary}),
-              child: Scaffold(
-                body: WSelect<String>(
-                  value: 'apple',
-                  options: testOptions,
-                  onChange: (_) {},
+        'a partial primary swatch does not crash the raw icon shade lookups',
+        (tester) async {
+          // A consumer may register a primary MaterialColor with only its base
+          // shade. The raw Icon colors read shades 400/600/700 through a safe
+          // lookup that falls back to the base color, so a partial swatch must
+          // render (open + selected check icon) without throwing.
+          const partialPrimary = MaterialColor(0xFF16A34A, {
+            500: Color(0xFF16A34A),
+          });
+          await tester.pumpWidget(
+            MaterialApp(
+              home: WindTheme(
+                data: WindThemeData(colors: const {'primary': partialPrimary}),
+                child: Scaffold(
+                  body: WSelect<String>(
+                    value: 'apple',
+                    options: testOptions,
+                    onChange: (_) {},
+                  ),
                 ),
               ),
             ),
-          ),
-        );
+          );
 
-        // Open the dropdown: the selected option paints its check icon through
-        // the primary swatch (shade 600), the exact path that used to throw.
-        await tester.tap(find.text('Apple'));
-        await tester.pumpAndSettle();
+          // Open the dropdown: the selected option paints its check icon through
+          // the primary swatch (shade 600), the exact path that used to throw.
+          await tester.tap(find.text('Apple'));
+          await tester.pumpAndSettle();
 
-        expect(tester.takeException(), isNull);
-      });
+          expect(tester.takeException(), isNull);
+        },
+      );
 
       testWidgets('shows up arrow when open', (tester) async {
         await tester.pumpWidget(
@@ -855,8 +857,9 @@ void main() {
       const SelectOption(value: 'banana', label: 'Banana'),
     ];
 
-    testWidgets('emits button role with placeholder when no value selected',
-        (tester) async {
+    testWidgets('emits button role with placeholder when no value selected', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -877,8 +880,9 @@ void main() {
         ),
       );
 
-      final SemanticsNode node =
-          tester.getSemantics(find.byType(WSelect<String>));
+      final SemanticsNode node = tester.getSemantics(
+        find.byType(WSelect<String>),
+      );
       expect(node.flagsCollection.isButton, isTrue);
       expect(node.label, 'Choose fruit');
     });
@@ -907,8 +911,9 @@ void main() {
       return tester.getSemantics(find.byType(WSelect<String>));
     }
 
-    testWidgets('names a single select by its selected option label',
-        (tester) async {
+    testWidgets('names a single select by its selected option label', (
+      tester,
+    ) async {
       final SemanticsNode node = await pumpAndReadNode(
         tester,
         WSelect<String>(options: selectOptions, value: 'apple'),
@@ -919,61 +924,67 @@ void main() {
     });
 
     testWidgets(
-        'names a select by the selected label, not a custom placeholder',
-        (tester) async {
-      final SemanticsNode node = await pumpAndReadNode(
-        tester,
-        WSelect<String>(
-          options: selectOptions,
-          value: 'banana',
-          placeholder: 'Choose fruit',
-        ),
-      );
+      'names a select by the selected label, not a custom placeholder',
+      (tester) async {
+        final SemanticsNode node = await pumpAndReadNode(
+          tester,
+          WSelect<String>(
+            options: selectOptions,
+            value: 'banana',
+            placeholder: 'Choose fruit',
+          ),
+        );
 
-      expect(node.label, 'Banana');
-    });
-
-    testWidgets('names a single select by its placeholder until it has a value',
-        (tester) async {
-      final SemanticsNode node = await pumpAndReadNode(
-        tester,
-        WSelect<String>(options: selectOptions),
-      );
-
-      expect(node.label, 'Select an option');
-    });
+        expect(node.label, 'Banana');
+      },
+    );
 
     testWidgets(
-        'has no name when nothing is selected and the placeholder is empty',
-        (tester) async {
-      final SemanticsNode node = await pumpAndReadNode(
-        tester,
-        WSelect<String>(options: selectOptions, placeholder: ''),
-      );
+      'names a single select by its placeholder until it has a value',
+      (tester) async {
+        final SemanticsNode node = await pumpAndReadNode(
+          tester,
+          WSelect<String>(options: selectOptions),
+        );
 
-      expect(node.label, isEmpty);
-    });
+        expect(node.label, 'Select an option');
+      },
+    );
 
     testWidgets(
-        'names a multi select by its selected labels joined with commas',
-        (tester) async {
-      final SemanticsNode node = await pumpAndReadNode(
-        tester,
-        WSelect<String>(
-          isMulti: true,
-          values: const ['apple', 'banana'],
-          options: selectOptions,
-          onMultiChange: (_) {},
-          placeholder: 'Pick fruit',
-        ),
-      );
+      'has no name when nothing is selected and the placeholder is empty',
+      (tester) async {
+        final SemanticsNode node = await pumpAndReadNode(
+          tester,
+          WSelect<String>(options: selectOptions, placeholder: ''),
+        );
 
-      expect(node.flagsCollection.isButton, isTrue);
-      expect(node.label, 'Apple, Banana');
-    });
+        expect(node.label, isEmpty);
+      },
+    );
 
-    testWidgets('names an empty multi select by its placeholder',
-        (tester) async {
+    testWidgets(
+      'names a multi select by its selected labels joined with commas',
+      (tester) async {
+        final SemanticsNode node = await pumpAndReadNode(
+          tester,
+          WSelect<String>(
+            isMulti: true,
+            values: const ['apple', 'banana'],
+            options: selectOptions,
+            onMultiChange: (_) {},
+            placeholder: 'Pick fruit',
+          ),
+        );
+
+        expect(node.flagsCollection.isButton, isTrue);
+        expect(node.label, 'Apple, Banana');
+      },
+    );
+
+    testWidgets('names an empty multi select by its placeholder', (
+      tester,
+    ) async {
       final SemanticsNode node = await pumpAndReadNode(
         tester,
         WSelect<String>(
@@ -1042,8 +1053,9 @@ void main() {
       }
     }
 
-    testWidgets('publishes one button node for a closed single select',
-        (tester) async {
+    testWidgets('publishes one button node for a closed single select', (
+      tester,
+    ) async {
       await withSemantics(tester, () async {
         await pumpSelect(
           tester,
@@ -1062,8 +1074,9 @@ void main() {
       });
     });
 
-    testWidgets('publishes one button node for a closed multi select',
-        (tester) async {
+    testWidgets('publishes one button node for a closed multi select', (
+      tester,
+    ) async {
       await withSemantics(tester, () async {
         await pumpSelect(
           tester,
@@ -1081,8 +1094,9 @@ void main() {
       });
     });
 
-    testWidgets('publishes one button node for a custom trigger',
-        (tester) async {
+    testWidgets('publishes one button node for a custom trigger', (
+      tester,
+    ) async {
       await withSemantics(tester, () async {
         await pumpSelect(
           tester,
@@ -1101,8 +1115,9 @@ void main() {
       });
     });
 
-    testWidgets('puts the tap action on the one node and it opens the menu',
-        (tester) async {
+    testWidgets('puts the tap action on the one node and it opens the menu', (
+      tester,
+    ) async {
       await withSemantics(tester, () async {
         await pumpSelect(
           tester,
@@ -1117,16 +1132,19 @@ void main() {
         expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
         expect(find.text('Banana'), findsNothing);
 
-        tester.binding.renderViews.single.owner!.semanticsOwner!
-            .performAction(node.id, SemanticsAction.tap);
+        tester.binding.renderViews.single.owner!.semanticsOwner!.performAction(
+          node.id,
+          SemanticsAction.tap,
+        );
         await tester.pumpAndSettle();
 
         expect(find.text('Banana'), findsOneWidget);
       });
     });
 
-    testWidgets('keeps the menu closed and the node inert when disabled',
-        (tester) async {
+    testWidgets('keeps the menu closed and the node inert when disabled', (
+      tester,
+    ) async {
       await withSemantics(tester, () async {
         await pumpSelect(
           tester,
@@ -1185,7 +1203,9 @@ void main() {
         final SemanticsNode node = closedTriggerNodes(tester).single;
         expect(node.flagsCollection.isFocused, Tristate.none);
         expect(
-            node.getSemanticsData().hasAction(SemanticsAction.focus), isFalse);
+          node.getSemanticsData().hasAction(SemanticsAction.focus),
+          isFalse,
+        );
       });
     });
   });
@@ -1210,8 +1230,9 @@ void main() {
           .firstOrNull;
     }
 
-    testWidgets('Tab onto an enabled select paints its focus: classes',
-        (tester) async {
+    testWidgets('Tab onto an enabled select paints its focus: classes', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WSelect<String>(
@@ -1233,8 +1254,9 @@ void main() {
       expect(find.text('Apple'), findsNothing);
     });
 
-    testWidgets('Tab skips a disabled select and lights nothing on it',
-        (tester) async {
+    testWidgets('Tab skips a disabled select and lights nothing on it', (
+      tester,
+    ) async {
       final FocusNode after = FocusNode(debugLabel: 'after');
       addTearDown(after.dispose);
 
@@ -1264,8 +1286,9 @@ void main() {
       expect(triggerColor(tester), resting);
     });
 
-    testWidgets('Tab skips a focusable custom trigger of a disabled select',
-        (tester) async {
+    testWidgets('Tab skips a focusable custom trigger of a disabled select', (
+      tester,
+    ) async {
       final FocusNode trigger = FocusNode(debugLabel: 'trigger');
       final FocusNode after = FocusNode(debugLabel: 'after');
       addTearDown(trigger.dispose);
@@ -1312,60 +1335,61 @@ void main() {
     ];
 
     testWidgets(
-        'didUpdateWidget re-filters when options change while searching',
-        (tester) async {
-      var options = const [
-        SelectOption(value: 'apple', label: 'Apple'),
-        SelectOption(value: 'banana', label: 'Banana'),
-      ];
-
-      late StateSetter rebuild;
-
-      await tester.pumpWidget(
-        wrapWithTheme(
-          StatefulBuilder(
-            builder: (context, setState) {
-              rebuild = setState;
-              return WSelect<String>(
-                options: options,
-                searchable: true,
-                onChange: (_) {},
-              );
-            },
-          ),
-        ),
-      );
-
-      // Open and search for "ap" so a search query is active.
-      await tester.tap(find.text('Select an option'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(EditableText), 'ap');
-      await tester.pumpAndSettle();
-      // Currently only "Apple" matches.
-      expect(find.text('Apple'), findsOneWidget);
-      expect(find.text('Banana'), findsNothing);
-
-      // Replace options programmatically (no outside tap that would close the
-      // overlay). didUpdateWidget re-runs the active filter on the new list.
-      rebuild(() {
-        options = const [
-          SelectOption(value: 'apricot', label: 'Apricot'),
-          SelectOption(value: 'grape', label: 'Grape'),
+      'didUpdateWidget re-filters when options change while searching',
+      (tester) async {
+        var options = const [
+          SelectOption(value: 'apple', label: 'Apple'),
           SelectOption(value: 'banana', label: 'Banana'),
         ];
-      });
-      // Two pumps: first applies the parent rebuild + didUpdateWidget's
-      // synchronous filter setState; second drains any microtask follow-ups
-      // from _filterOptions's async wrapper.
-      await tester.pump();
-      await tester.pump();
 
-      // Apple from the original list is gone — the new options replaced it.
-      expect(find.text('Apple'), findsNothing);
-      // Apricot from the new list is visible (matches "ap" query if the
-      // filter re-ran, but at minimum is part of the new options).
-      expect(find.text('Apricot'), findsOneWidget);
-    });
+        late StateSetter rebuild;
+
+        await tester.pumpWidget(
+          wrapWithTheme(
+            StatefulBuilder(
+              builder: (context, setState) {
+                rebuild = setState;
+                return WSelect<String>(
+                  options: options,
+                  searchable: true,
+                  onChange: (_) {},
+                );
+              },
+            ),
+          ),
+        );
+
+        // Open and search for "ap" so a search query is active.
+        await tester.tap(find.text('Select an option'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(EditableText), 'ap');
+        await tester.pumpAndSettle();
+        // Currently only "Apple" matches.
+        expect(find.text('Apple'), findsOneWidget);
+        expect(find.text('Banana'), findsNothing);
+
+        // Replace options programmatically (no outside tap that would close the
+        // overlay). didUpdateWidget re-runs the active filter on the new list.
+        rebuild(() {
+          options = const [
+            SelectOption(value: 'apricot', label: 'Apricot'),
+            SelectOption(value: 'grape', label: 'Grape'),
+            SelectOption(value: 'banana', label: 'Banana'),
+          ];
+        });
+        // Two pumps: first applies the parent rebuild + didUpdateWidget's
+        // synchronous filter setState; second drains any microtask follow-ups
+        // from _filterOptions's async wrapper.
+        await tester.pump();
+        await tester.pump();
+
+        // Apple from the original list is gone — the new options replaced it.
+        expect(find.text('Apple'), findsNothing);
+        // Apricot from the new list is visible (matches "ap" query if the
+        // filter re-ran, but at minimum is part of the new options).
+        expect(find.text('Apricot'), findsOneWidget);
+      },
+    );
 
     testWidgets('focus loss alone does not close an open menu', (tester) async {
       // The menu's dismissal is driven by an outside tap (the overlay's
@@ -1448,8 +1472,9 @@ void main() {
       expect(find.text('Extra 1'), findsOneWidget);
     });
 
-    testWidgets('onLoadMore error is swallowed and clears loading flag',
-        (tester) async {
+    testWidgets('onLoadMore error is swallowed and clears loading flag', (
+      tester,
+    ) async {
       final manyOptions = List.generate(
         15,
         (i) => SelectOption(value: 'row$i', label: 'Row $i'),
@@ -1511,8 +1536,9 @@ void main() {
       expect(values, isEmpty);
     });
 
-    testWidgets('tapping chip close icon removes selected value',
-        (tester) async {
+    testWidgets('tapping chip close icon removes selected value', (
+      tester,
+    ) async {
       List<String> values = ['apple', 'banana'];
 
       await tester.pumpWidget(
@@ -1555,7 +1581,8 @@ void main() {
             searchable: true,
             onSearch: (query) async => asyncOptions
                 .where(
-                    (o) => o.label.toLowerCase().contains(query.toLowerCase()))
+                  (o) => o.label.toLowerCase().contains(query.toLowerCase()),
+                )
                 .toList(),
             onChange: (_) {},
           ),
@@ -1571,8 +1598,9 @@ void main() {
       expect(find.text('Apple'), findsNothing);
     });
 
-    testWidgets('onSearch error is swallowed and clears searching flag',
-        (tester) async {
+    testWidgets('onSearch error is swallowed and clears searching flag', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WSelect<String>(
@@ -1594,8 +1622,9 @@ void main() {
       expect(find.text('LOADING_INDICATOR'), findsNothing);
     });
 
-    testWidgets('local filter restores all options when query cleared',
-        (tester) async {
+    testWidgets('local filter restores all options when query cleared', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WSelect<String>(
@@ -1648,14 +1677,16 @@ void main() {
           ),
         );
 
-        final SemanticsNode node =
-            tester.getSemantics(find.byType(WSelect<String>));
+        final SemanticsNode node = tester.getSemantics(
+          find.byType(WSelect<String>),
+        );
         expect(node.label, 'Apple, Banana');
       },
     );
 
-    testWidgets('multiTriggerBuilder renders custom multi trigger',
-        (tester) async {
+    testWidgets('multiTriggerBuilder renders custom multi trigger', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WSelect<String>(
@@ -1683,8 +1714,9 @@ void main() {
       expect(find.text('Banana'), findsOneWidget);
     });
 
-    testWidgets('selectedChipBuilder renders custom chips and onRemove fires',
-        (tester) async {
+    testWidgets('selectedChipBuilder renders custom chips and onRemove fires', (
+      tester,
+    ) async {
       List<String> values = ['apple', 'banana'];
       var removedValue = '';
 
@@ -1721,8 +1753,9 @@ void main() {
       expect(values, ['banana']);
     });
 
-    testWidgets('onCreateOption flow selects the newly created option',
-        (tester) async {
+    testWidgets('onCreateOption flow selects the newly created option', (
+      tester,
+    ) async {
       String? selected;
 
       await tester.pumpWidget(
@@ -1755,8 +1788,9 @@ void main() {
       expect(selected, 'mango');
     });
 
-    testWidgets('createOptionBuilder renders custom create button',
-        (tester) async {
+    testWidgets('createOptionBuilder renders custom create button', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WSelect<String>(
@@ -1783,12 +1817,11 @@ void main() {
       expect(find.text('Add new: pear'), findsOneWidget);
     });
 
-    testWidgets('hovering trigger toggles internal hover state',
-        (tester) async {
+    testWidgets('hovering trigger toggles internal hover state', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        wrapWithTheme(
-          WSelect<String>(options: extOptions, onChange: (_) {}),
-        ),
+        wrapWithTheme(WSelect<String>(options: extOptions, onChange: (_) {})),
       );
 
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
@@ -1811,9 +1844,7 @@ void main() {
 
     testWidgets('hovering an option updates the hovered index', (tester) async {
       await tester.pumpWidget(
-        wrapWithTheme(
-          WSelect<String>(options: extOptions, onChange: (_) {}),
-        ),
+        wrapWithTheme(WSelect<String>(options: extOptions, onChange: (_) {})),
       );
 
       await tester.tap(find.text('Select an option'));

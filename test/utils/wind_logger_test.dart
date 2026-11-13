@@ -35,10 +35,7 @@ void main() {
     test('enabled mode prints START banner on construction', () {
       WindLogger(debug: true, widgetName: 'WImage');
 
-      expect(
-        printLog.first,
-        contains('--- [WIND DEBUG] START: WImage ---'),
-      );
+      expect(printLog.first, contains('--- [WIND DEBUG] START: WImage ---'));
     });
 
     // 3. setCoreWidget reflected in printFinalCode output
@@ -54,29 +51,36 @@ void main() {
 
     // 4. wrapWith inside-out order: later wrapWith call produces outer wrapper
     test(
-        'wrapWith produces outer wrapper for later call (insert-at-0 semantics)',
-        () {
-      final logger = WindLogger(debug: true, widgetName: 'WDiv');
-      printLog.clear();
+      'wrapWith produces outer wrapper for later call (insert-at-0 semantics)',
+      () {
+        final logger = WindLogger(debug: true, widgetName: 'WDiv');
+        printLog.clear();
 
-      logger.wrapWith('SizedBox', 'width: 100');
-      logger.wrapWith('Padding', 'all: 8');
-      logger.printFinalCode();
+        logger.wrapWith('SizedBox', 'width: 100');
+        logger.wrapWith('Padding', 'all: 8');
+        logger.printFinalCode();
 
-      final output = printLog.join('\n');
-      final paddingIndex = output.indexOf('Padding(');
-      final sizedBoxIndex = output.indexOf('SizedBox(');
+        final output = printLog.join('\n');
+        final paddingIndex = output.indexOf('Padding(');
+        final sizedBoxIndex = output.indexOf('SizedBox(');
 
-      expect(paddingIndex, isNot(-1),
-          reason: 'Padding should appear in output');
-      expect(sizedBoxIndex, isNot(-1),
-          reason: 'SizedBox should appear in output');
-      expect(
-        paddingIndex < sizedBoxIndex,
-        isTrue,
-        reason: 'Padding (outer) must appear before SizedBox (inner)',
-      );
-    });
+        expect(
+          paddingIndex,
+          isNot(-1),
+          reason: 'Padding should appear in output',
+        );
+        expect(
+          sizedBoxIndex,
+          isNot(-1),
+          reason: 'SizedBox should appear in output',
+        );
+        expect(
+          paddingIndex < sizedBoxIndex,
+          isTrue,
+          reason: 'Padding (outer) must appear before SizedBox (inner)',
+        );
+      },
+    );
 
     // 5. printFinalCode renders all sections
     test('printFinalCode renders all expected section banners', () {
@@ -106,9 +110,7 @@ void main() {
     });
 
     // 7. Final styles null path: no Final Styles section when setFinalStyles is never called
-    test(
-        'printFinalCode omits Final Styles section when setFinalStyles not called',
-        () {
+    test('printFinalCode omits Final Styles section when setFinalStyles not called', () {
       final logger = WindLogger(debug: true, widgetName: 'WDiv');
       printLog.clear();
 

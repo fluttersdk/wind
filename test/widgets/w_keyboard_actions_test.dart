@@ -403,8 +403,9 @@ void main() {
   });
 
   group('WKeyboardActions overlay host', () {
-    testWidgets('the toolbar lands on the screen even under a nested overlay',
-        (tester) async {
+    testWidgets('the toolbar lands on the screen even under a nested overlay', (
+      tester,
+    ) async {
       final focusNode = FocusNode();
       addTearDown(focusNode.dispose);
 
@@ -452,7 +453,8 @@ void main() {
         expect(
           tester.getRect(toolbar).bottom,
           lessThanOrEqualTo(screenHeight),
-          reason: 'a toolbar below the viewport is a toolbar the user cannot '
+          reason:
+              'a toolbar below the viewport is a toolbar the user cannot '
               'reach, however present it is in the tree',
         );
       } finally {

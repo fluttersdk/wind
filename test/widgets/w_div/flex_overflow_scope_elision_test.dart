@@ -5,10 +5,7 @@ import 'package:wind_kit/wind_kit.dart';
 
 Widget wrapWithTheme(Widget child) {
   return MaterialApp(
-    home: WindTheme(
-      data: WindThemeData(),
-      child: child,
-    ),
+    home: WindTheme(data: WindThemeData(), child: child),
   );
 }
 
@@ -34,8 +31,9 @@ void main() {
   int scopeCount() => find.byType(WindFlexOverflowScope).evaluate().length;
 
   group('WindFlexOverflowScope elision', () {
-    testWidgets('a plain nested flex tree emits no scope at all',
-        (WidgetTester tester) async {
+    testWidgets('a plain nested flex tree emits no scope at all', (
+      WidgetTester tester,
+    ) async {
       // Nothing here scrolls on its main axis, so every scope would carry
       // `false` under a `false`.
       await tester.pumpWidget(
@@ -45,15 +43,9 @@ void main() {
             children: <Widget>[
               WDiv(
                 className: 'flex flex-row',
-                children: <Widget>[
-                  WText('a'),
-                  WText('b'),
-                ],
+                children: <Widget>[WText('a'), WText('b')],
               ),
-              WDiv(
-                className: 'flex flex-col',
-                children: <Widget>[WText('c')],
-              ),
+              WDiv(className: 'flex flex-col', children: <Widget>[WText('c')]),
             ],
           ),
         ),
@@ -62,15 +54,17 @@ void main() {
       expect(
         scopeCount(),
         0,
-        reason: 'a scope that answers what the context already answers is '
+        reason:
+            'a scope that answers what the context already answers is '
             'an Element bought for nothing',
       );
       expect(find.text('a'), findsOneWidget);
       expect(find.text('c'), findsOneWidget);
     });
 
-    testWidgets('a main-axis scrollable flex still emits its scope',
-        (WidgetTester tester) async {
+    testWidgets('a main-axis scrollable flex still emits its scope', (
+      WidgetTester tester,
+    ) async {
       // `overflow-y-auto` on a column makes the flex main-axis scrollable,
       // which is exactly the case `skipExpanded: true` exists to signal.
       await tester.pumpWidget(
@@ -88,15 +82,16 @@ void main() {
       expect(
         scopeCount(),
         greaterThanOrEqualTo(1),
-        reason: 'true under an inherited false is a real change and must '
+        reason:
+            'true under an inherited false is a real change and must '
             'still be published',
       );
     });
 
-    testWidgets(
-        'a non-scrollable flex inside a scrollable one re-publishes '
-        'false, so the ancestor true does not leak',
-        (WidgetTester tester) async {
+    testWidgets('a non-scrollable flex inside a scrollable one re-publishes '
+        'false, so the ancestor true does not leak', (
+      WidgetTester tester,
+    ) async {
       // The case that makes elision conditional rather than unconditional.
       // The inner row does not scroll, so everything below it must read
       // `false` even though an ancestor published `true`.
@@ -121,7 +116,8 @@ void main() {
       expect(
         WindFlexOverflowScope.maybeOf(innerContext)?.skipExpanded ?? false,
         isFalse,
-        reason: 'the inner row is not scrollable; its subtree must not '
+        reason:
+            'the inner row is not scrollable; its subtree must not '
             'inherit the outer column true',
       );
     });

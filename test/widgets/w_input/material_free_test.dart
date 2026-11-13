@@ -11,10 +11,7 @@ import 'package:wind_kit/src/widgets/w_input.dart';
 Widget _bareHarness(Widget child) {
   return Directionality(
     textDirection: TextDirection.ltr,
-    child: WindTheme(
-      data: WindThemeData(),
-      child: child,
-    ),
+    child: WindTheme(data: WindThemeData(), child: child),
   );
 }
 
@@ -24,56 +21,47 @@ void main() {
   group('WInput Material-free rendering', () {
     // (a) Pumps under bare harness — no "No Material widget found" crash.
     group('bare context (no Material / Scaffold ancestor)', () {
-      testWidgets(
-        'renders without throwing No Material widget found',
-        (tester) async {
-          final controller = TextEditingController();
-          addTearDown(controller.dispose);
+      testWidgets('renders without throwing No Material widget found', (
+        tester,
+      ) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
 
-          // WInput must build and lay out without requiring a Material ancestor.
-          // Currently crashes because TextField internally calls
-          // Theme.of(context), which throws when no Material ancestor exists.
-          await tester.pumpWidget(
-            _bareHarness(
-              WInput(
-                controller: controller,
-                placeholder: 'Enter text',
-              ),
-            ),
-          );
+        // WInput must build and lay out without requiring a Material ancestor.
+        // Currently crashes because TextField internally calls
+        // Theme.of(context), which throws when no Material ancestor exists.
+        await tester.pumpWidget(
+          _bareHarness(
+            WInput(controller: controller, placeholder: 'Enter text'),
+          ),
+        );
 
-          expect(find.byType(WInput), findsOneWidget);
-        },
-      );
+        expect(find.byType(WInput), findsOneWidget);
+      });
 
-      testWidgets(
-        'accepts programmatic text via controller and reflects it',
-        (tester) async {
-          final controller = TextEditingController();
-          addTearDown(controller.dispose);
+      testWidgets('accepts programmatic text via controller and reflects it', (
+        tester,
+      ) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
 
-          await tester.pumpWidget(
-            _bareHarness(
-              WInput(
-                controller: controller,
-                placeholder: 'Enter text',
-              ),
-            ),
-          );
+        await tester.pumpWidget(
+          _bareHarness(
+            WInput(controller: controller, placeholder: 'Enter text'),
+          ),
+        );
 
-          // Enter text via the test framework; EditableText should surface one
-          // text-field widget we can type into.
-          await tester.enterText(find.byType(EditableText), 'hello');
-          await tester.pump();
+        // Enter text via the test framework; EditableText should surface one
+        // text-field widget we can type into.
+        await tester.enterText(find.byType(EditableText), 'hello');
+        await tester.pump();
 
-          expect(
-            controller.text,
-            'hello',
-            reason:
-                'Text entered into the field must be reflected in the controller.',
-          );
-        },
-      );
+        expect(
+          controller.text,
+          'hello',
+          reason: 'Text entered into the field must be reflected in the controller.',
+        );
+      });
     });
 
     // (b) Semantics tree contains EXACTLY ONE isTextField node.
@@ -86,10 +74,7 @@ void main() {
 
           await tester.pumpWidget(
             _bareHarness(
-              WInput(
-                controller: controller,
-                placeholder: 'Email address',
-              ),
+              WInput(controller: controller, placeholder: 'Email address'),
             ),
           );
 
@@ -102,7 +87,8 @@ void main() {
           expect(
             textFieldNodes,
             hasLength(1),
-            reason: 'WInput must emit exactly one isTextField semantics node. '
+            reason:
+                'WInput must emit exactly one isTextField semantics node. '
                 'Currently emits two due to the Semantics(container:true, '
                 'textField:true) + MergeSemantics wrapping around TextField.',
           );
@@ -146,35 +132,34 @@ void main() {
         },
       );
 
-      testWidgets(
-        'password input isTextField node reports isObscured',
-        (tester) async {
-          final controller = TextEditingController();
-          addTearDown(controller.dispose);
+      testWidgets('password input isTextField node reports isObscured', (
+        tester,
+      ) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
 
-          await tester.pumpWidget(
-            _bareHarness(
-              WInput(
-                controller: controller,
-                placeholder: 'Password',
-                type: InputType.password,
-              ),
+        await tester.pumpWidget(
+          _bareHarness(
+            WInput(
+              controller: controller,
+              placeholder: 'Password',
+              type: InputType.password,
             ),
-          );
+          ),
+        );
 
-          final List<SemanticsNode> textFieldNodes = _collectTextFieldNodes(
-            tester.getSemantics(find.byType(WInput)),
-          );
+        final List<SemanticsNode> textFieldNodes = _collectTextFieldNodes(
+          tester.getSemantics(find.byType(WInput)),
+        );
 
-          expect(textFieldNodes, hasLength(1));
-          expect(
-            textFieldNodes.first.flagsCollection.isObscured,
-            isTrue,
-            reason:
-                'The password isTextField node must report isObscured == true.',
-          );
-        },
-      );
+        expect(textFieldNodes, hasLength(1));
+        expect(
+          textFieldNodes.first.flagsCollection.isObscured,
+          isTrue,
+          reason:
+              'The password isTextField node must report isObscured == true.',
+        );
+      });
     });
 
     // (a.2) No Directionality ancestor: WInput injects its own ltr default.
@@ -192,30 +177,27 @@ void main() {
 
         expect(find.byType(WInput), findsOneWidget);
         expect(find.byType(EditableText), findsOneWidget);
-        expect(Directionality.of(tester.element(find.byType(EditableText))),
-            TextDirection.ltr);
+        expect(
+          Directionality.of(tester.element(find.byType(EditableText))),
+          TextDirection.ltr,
+        );
       },
     );
 
     // (c) value + controller misuse throws AssertionError (W2 guard).
     group('value and controller mutual exclusion (W2)', () {
-      test(
-        'constructing WInput with both value and controller throws AssertionError',
-        () {
-          final controller = TextEditingController(text: 'preset');
-          addTearDown(controller.dispose);
+      test('constructing WInput with both value and controller throws AssertionError', () {
+        final controller = TextEditingController(text: 'preset');
+        addTearDown(controller.dispose);
 
-          expect(
-            () => WInput(
-              value: 'x',
-              controller: controller,
-            ),
-            throwsA(isA<AssertionError>()),
-            reason: 'Passing both value and controller is a developer error. '
-                'WInput must assert in debug mode to catch misuse early.',
-          );
-        },
-      );
+        expect(
+          () => WInput(value: 'x', controller: controller),
+          throwsA(isA<AssertionError>()),
+          reason:
+              'Passing both value and controller is a developer error. '
+              'WInput must assert in debug mode to catch misuse early.',
+        );
+      });
     });
   });
 }

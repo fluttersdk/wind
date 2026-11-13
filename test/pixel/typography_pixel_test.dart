@@ -25,9 +25,7 @@ Widget wrapWithTheme(Widget child) {
 
 /// Reads the effective [TextStyle] of the rendered paragraph.
 TextStyle _renderedStyle(WidgetTester tester) {
-  final paragraph = tester.renderObject<RenderParagraph>(
-    find.byType(RichText),
-  );
+  final paragraph = tester.renderObject<RenderParagraph>(find.byType(RichText));
   // The root inline span carries the resolved style after DefaultTextStyle merge.
   return paragraph.text.style!;
 }

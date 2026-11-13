@@ -47,8 +47,9 @@ void main() {
       // decoration on a DecoratedBox since its box was rebuilt from
       // primitives, so that is the type scanned here.
       expect(find.text('Shadow'), findsOneWidget);
-      for (final box
-          in tester.widgetList<DecoratedBox>(find.byType(DecoratedBox))) {
+      for (final box in tester.widgetList<DecoratedBox>(
+        find.byType(DecoratedBox),
+      )) {
         final decoration = box.decoration;
         if (decoration is BoxDecoration) {
           expect(decoration.boxShadow ?? const <BoxShadow>[], isEmpty);

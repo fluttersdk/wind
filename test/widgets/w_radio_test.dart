@@ -117,11 +117,7 @@ void main() {
       testWidgets('renders unselected radio', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WRadio<String>(
-              value: 'a',
-              groupValue: 'b',
-              onChanged: (_) {},
-            ),
+            WRadio<String>(value: 'a', groupValue: 'b', onChanged: (_) {}),
           ),
         );
         await tester.pump();
@@ -133,11 +129,7 @@ void main() {
       testWidgets('renders selected radio', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WRadio<String>(
-              value: 'a',
-              groupValue: 'a',
-              onChanged: (_) {},
-            ),
+            WRadio<String>(value: 'a', groupValue: 'a', onChanged: (_) {}),
           ),
         );
         await tester.pump();
@@ -259,7 +251,9 @@ void main() {
         // The outer WDiv (the radio shell) carries the states.
         final divs = tester.widgetList<WDiv>(find.byType(WDiv)).toList();
         expect(
-            divs.any((d) => d.states?.contains('selected') ?? false), isTrue);
+          divs.any((d) => d.states?.contains('selected') ?? false),
+          isTrue,
+        );
       });
 
       testWidgets('does not include selected state when not selected', (
@@ -354,11 +348,7 @@ void main() {
       testWidgets('emits checked semantics when selected', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WRadio<String>(
-              value: 'a',
-              groupValue: 'a',
-              onChanged: (_) {},
-            ),
+            WRadio<String>(value: 'a', groupValue: 'a', onChanged: (_) {}),
           ),
         );
         await tester.pump();
@@ -374,11 +364,7 @@ void main() {
       ) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WRadio<String>(
-              value: 'a',
-              groupValue: 'b',
-              onChanged: (_) {},
-            ),
+            WRadio<String>(value: 'a', groupValue: 'b', onChanged: (_) {}),
           ),
         );
         await tester.pump();
@@ -392,11 +378,7 @@ void main() {
       testWidgets('reports not-enabled when onChanged is null', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WRadio<String>(
-              value: 'a',
-              groupValue: 'b',
-              onChanged: null,
-            ),
+            WRadio<String>(value: 'a', groupValue: 'b', onChanged: null),
           ),
         );
         await tester.pump();

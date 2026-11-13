@@ -18,86 +18,81 @@ void main() {
   setUp(WindParser.clearCache);
 
   group('WDiv Flex Shrink Behavior', () {
-    testWidgets(
-      'flex-row with overflow-hidden wraps children with Flexible',
-      (tester) async {
-        // overflow-hidden triggers Flexible wrapping to prevent overflow
+    testWidgets('flex-row with overflow-hidden wraps children with Flexible', (
+      tester,
+    ) async {
+      // overflow-hidden triggers Flexible wrapping to prevent overflow
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: SizedBox(
-                width: 100, // Constrained to 100px
-                child: const WDiv(
-                  className: 'flex flex-row items-center gap-2 overflow-hidden',
-                  children: [
-                    // Two texts that together exceed 100px
-                    WText('Label', className: 'text-sm'),
-                    WText('Very Long Value Text', className: 'text-sm'),
-                  ],
-                ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: SizedBox(
+              width: 100, // Constrained to 100px
+              child: const WDiv(
+                className: 'flex flex-row items-center gap-2 overflow-hidden',
+                children: [
+                  // Two texts that together exceed 100px
+                  WText('Label', className: 'text-sm'),
+                  WText('Very Long Value Text', className: 'text-sm'),
+                ],
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        // Should render without overflow errors
-        expect(tester.takeException(), isNull);
+      // Should render without overflow errors
+      expect(tester.takeException(), isNull);
 
-        // Verify Row exists
-        expect(find.byType(Row), findsOneWidget);
+      // Verify Row exists
+      expect(find.byType(Row), findsOneWidget);
 
-        // Verify children are wrapped with Flexible (for shrink behavior)
-        final row = tester.widget<Row>(find.byType(Row));
+      // Verify children are wrapped with Flexible (for shrink behavior)
+      final row = tester.widget<Row>(find.byType(Row));
 
-        // Count Flexible wrappers (excluding SizedBox gaps)
-        final flexibleCount = row.children
-            .where((child) => child is Flexible && child is! Expanded)
-            .length;
+      // Count Flexible wrappers (excluding SizedBox gaps)
+      final flexibleCount = row.children
+          .where((child) => child is Flexible && child is! Expanded)
+          .length;
 
-        // We expect 2 Flexible wrappers (one for each WText)
-        expect(
-          flexibleCount,
-          2,
-          reason:
-              'overflow-hidden flex-row children should be wrapped with Flexible',
-        );
-      },
-    );
+      // We expect 2 Flexible wrappers (one for each WText)
+      expect(
+        flexibleCount,
+        2,
+        reason:
+            'overflow-hidden flex-row children should be wrapped with Flexible',
+      );
+    });
 
-    testWidgets(
-      'flex-row WITHOUT overflow-hidden does NOT wrap children',
-      (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: SizedBox(
-                width: 300, // Wide enough to not overflow
-                child: const WDiv(
-                  className: 'flex flex-row',
-                  children: [
-                    WText('Item 1'),
-                    WText('Item 2'),
-                  ],
-                ),
+    testWidgets('flex-row WITHOUT overflow-hidden does NOT wrap children', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: SizedBox(
+              width: 300, // Wide enough to not overflow
+              child: const WDiv(
+                className: 'flex flex-row',
+                children: [WText('Item 1'), WText('Item 2')],
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        expect(tester.takeException(), isNull);
+      expect(tester.takeException(), isNull);
 
-        final row = tester.widget<Row>(find.byType(Row));
-        final flexibleCount = row.children
-            .where((child) => child is Flexible && child is! Expanded)
-            .length;
+      final row = tester.widget<Row>(find.byType(Row));
+      final flexibleCount = row.children
+          .where((child) => child is Flexible && child is! Expanded)
+          .length;
 
-        // Without overflow-hidden, children are NOT wrapped
-        expect(flexibleCount, 0);
-      },
-    );
+      // Without overflow-hidden, children are NOT wrapped
+      expect(flexibleCount, 0);
+    });
 
     testWidgets(
       'flex-row with justify-between should wrap children with Flexible',
@@ -110,10 +105,7 @@ void main() {
                 width: 200,
                 child: const WDiv(
                   className: 'flex flex-row justify-between',
-                  children: [
-                    WText('Left'),
-                    WText('Right'),
-                  ],
+                  children: [WText('Left'), WText('Right')],
                 ),
               ),
             ),
@@ -143,10 +135,7 @@ void main() {
                 child: const WDiv(
                   className: 'flex flex-row overflow-hidden',
                   children: [
-                    WDiv(
-                      className: 'flex-1',
-                      child: WText('Expanded'),
-                    ),
+                    WDiv(className: 'flex-1', child: WText('Expanded')),
                     WText('Normal'),
                   ],
                 ),
@@ -171,93 +160,86 @@ void main() {
       },
     );
 
-    testWidgets(
-      'flex-row with overflow-hidden keeps the gap unshrunk',
-      (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: SizedBox(
-                width: 200,
-                child: const WDiv(
-                  className: 'flex flex-row gap-4 overflow-hidden',
-                  children: [
-                    WText('A'),
-                    WText('B'),
-                  ],
-                ),
+    testWidgets('flex-row with overflow-hidden keeps the gap unshrunk', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: SizedBox(
+              width: 200,
+              child: const WDiv(
+                className: 'flex flex-row gap-4 overflow-hidden',
+                children: [WText('A'), WText('B')],
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        expect(tester.takeException(), isNull);
+      expect(tester.takeException(), isNull);
 
-        final row = tester.widget<Row>(find.byType(Row));
+      final row = tester.widget<Row>(find.byType(Row));
 
-        // The concern this case protects is that the gap must not shrink with
-        // the children under `overflow-hidden`. It used to be phrased as "the
-        // gap SizedBox is not wrapped in Flexible", which named the mechanism;
-        // `Flex.spacing` makes it structural, since spacing is subtracted
-        // before any flex child is sized and can never be shrunk. Both the
-        // spacing and the shrink wrapping are asserted so a regression on
-        // either side still goes red.
-        expect(row.spacing, 16.0, reason: 'the gap survives shrinking');
-        expect(
-          tester.getTopLeft(find.text('B')).dx -
-              tester.getTopRight(find.text('A')).dx,
-          16.0,
-        );
+      // The concern this case protects is that the gap must not shrink with
+      // the children under `overflow-hidden`. It used to be phrased as "the
+      // gap SizedBox is not wrapped in Flexible", which named the mechanism;
+      // `Flex.spacing` makes it structural, since spacing is subtracted
+      // before any flex child is sized and can never be shrunk. Both the
+      // spacing and the shrink wrapping are asserted so a regression on
+      // either side still goes red.
+      expect(row.spacing, 16.0, reason: 'the gap survives shrinking');
+      expect(
+        tester.getTopLeft(find.text('B')).dx -
+            tester.getTopRight(find.text('A')).dx,
+        16.0,
+      );
 
-        final flexibleCount = row.children
-            .where((child) => child is Flexible && child is! Expanded)
-            .length;
-        expect(flexibleCount, 2, reason: 'both texts still shrink');
-      },
-    );
+      final flexibleCount = row.children
+          .where((child) => child is Flexible && child is! Expanded)
+          .length;
+      expect(flexibleCount, 2, reason: 'both texts still shrink');
+    });
 
-    testWidgets(
-      'flex-row with overflow-hidden inside Wrap prevents overflow',
-      (tester) async {
-        // This replicates the fix for monitor_show_view.dart
-        // where adding overflow-hidden prevents overflow on constrained items
+    testWidgets('flex-row with overflow-hidden inside Wrap prevents overflow', (
+      tester,
+    ) async {
+      // This replicates the fix for monitor_show_view.dart
+      // where adding overflow-hidden prevents overflow on constrained items
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: SizedBox(
-                width: 300,
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    // Simulate metric badges with overflow-hidden
-                    for (var i = 0; i < 3; i++)
-                      const WDiv(
-                        className:
-                            'flex flex-row items-center gap-1.5 px-2.5 py-1 overflow-hidden',
-                        children: [
-                          WText('Label', className: 'text-xs truncate'),
-                          WText('12345.67 units',
-                              className: 'text-xs truncate'),
-                        ],
-                      ),
-                  ],
-                ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: SizedBox(
+              width: 300,
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  // Simulate metric badges with overflow-hidden
+                  for (var i = 0; i < 3; i++)
+                    const WDiv(
+                      className: 'flex flex-row items-center gap-1.5 px-2.5 py-1 overflow-hidden',
+                      children: [
+                        WText('Label', className: 'text-xs truncate'),
+                        WText('12345.67 units', className: 'text-xs truncate'),
+                      ],
+                    ),
+                ],
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        // The key assertion: no overflow errors should occur
-        expect(tester.takeException(), isNull);
+      // The key assertion: no overflow errors should occur
+      expect(tester.takeException(), isNull);
 
-        // All three badges should render
-        expect(find.byType(Row), findsNWidgets(3));
-      },
-    );
+      // All three badges should render
+      expect(find.byType(Row), findsNWidgets(3));
+    });
 
     testWidgets(
       'flex-row justify-between with flex-1 child should not wrap shrink-0 child with Flexible',
@@ -279,10 +261,7 @@ void main() {
                       className: 'flex-1',
                       child: WText('Grows to fill space'),
                     ),
-                    WDiv(
-                      className: 'shrink-0',
-                      child: WText('Fixed size'),
-                    ),
+                    WDiv(className: 'shrink-0', child: WText('Fixed size')),
                   ],
                 ),
               ),
@@ -304,8 +283,7 @@ void main() {
         expect(
           flexibleCount,
           0,
-          reason:
-              'shrink-0 child must not be wrapped with Flexible when justify-between is used',
+          reason: 'shrink-0 child must not be wrapped with Flexible when justify-between is used',
         );
       },
     );
@@ -328,14 +306,8 @@ void main() {
                 child: const WDiv(
                   className: 'flex flex-row justify-between',
                   children: [
-                    WDiv(
-                      className: 'flex-1',
-                      child: WText('Title that grows'),
-                    ),
-                    WDiv(
-                      className: 'shrink-0 px-2',
-                      child: WText(fixedText),
-                    ),
+                    WDiv(className: 'flex-1', child: WText('Title that grows')),
+                    WDiv(className: 'shrink-0 px-2', child: WText(fixedText)),
                   ],
                 ),
               ),
@@ -360,8 +332,7 @@ void main() {
         expect(
           badgeWidth,
           isNot(equals(200.0)),
-          reason:
-              'shrink-0 child must retain intrinsic size — not equal-flex split',
+          reason: 'shrink-0 child must retain intrinsic size — not equal-flex split',
         );
         // Must not fill the entire container
         expect(
@@ -373,99 +344,90 @@ void main() {
       },
     );
 
-    testWidgets(
-      'flex-col should NOT auto-wrap children with Flexible',
-      (tester) async {
-        // Column direction doesn't need shrink behavior the same way
-        // because vertical space is typically scrollable
+    testWidgets('flex-col should NOT auto-wrap children with Flexible', (
+      tester,
+    ) async {
+      // Column direction doesn't need shrink behavior the same way
+      // because vertical space is typically scrollable
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: SizedBox(
-                height: 100,
-                child: const WDiv(
-                  className: 'flex flex-col',
-                  children: [
-                    WText('Item 1'),
-                    WText('Item 2'),
-                  ],
-                ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: SizedBox(
+              height: 100,
+              child: const WDiv(
+                className: 'flex flex-col',
+                children: [WText('Item 1'), WText('Item 2')],
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        expect(find.byType(Column), findsOneWidget);
+      expect(find.byType(Column), findsOneWidget);
 
-        final column = tester.widget<Column>(find.byType(Column));
+      final column = tester.widget<Column>(find.byType(Column));
 
-        // Column children should NOT be wrapped with Flexible by default
-        final flexibleCount = column.children.whereType<Flexible>().length;
-        expect(flexibleCount, 0);
-      },
-    );
+      // Column children should NOT be wrapped with Flexible by default
+      final flexibleCount = column.children.whereType<Flexible>().length;
+      expect(flexibleCount, 0);
+    });
   });
 
   group('shrink-0 does not force-fill or assert (regression)', () {
     setUp(WindParser.clearCache);
 
-    testWidgets(
-      'standalone shrink-0 WDiv builds with no Flexible self-wrap',
-      (tester) async {
-        // Regression: shrink-0 must NOT set flexFit. A non-null flexFit would
-        // self-wrap the WDiv in Flexible(fit: tight), forcing a fill and
-        // asserting outside a Flex.
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: Scaffold(
-                body: WDiv(
-                  className: 'shrink-0 w-16 h-16 bg-gray-200',
-                  child: SizedBox(),
-                ),
+    testWidgets('standalone shrink-0 WDiv builds with no Flexible self-wrap', (
+      tester,
+    ) async {
+      // Regression: shrink-0 must NOT set flexFit. A non-null flexFit would
+      // self-wrap the WDiv in Flexible(fit: tight), forcing a fill and
+      // asserting outside a Flex.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Scaffold(
+              body: WDiv(
+                className: 'shrink-0 w-16 h-16 bg-gray-200',
+                child: SizedBox(),
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        expect(tester.takeException(), isNull);
-        expect(find.byType(Flexible), findsNothing);
-      },
-    );
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Flexible), findsNothing);
+    });
 
-    testWidgets(
-      'shrink-0 child in a Row keeps its intrinsic width',
-      (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: Scaffold(
-                body: WDiv(
-                  className: 'flex flex-row',
-                  children: [
-                    WDiv(
-                      className: 'shrink-0 w-16 h-16 bg-gray-200',
-                      child: SizedBox(),
-                    ),
-                    WDiv(
-                      className: 'flex-1 h-16 bg-blue-200',
-                      child: SizedBox(),
-                    ),
-                  ],
-                ),
+    testWidgets('shrink-0 child in a Row keeps its intrinsic width', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WindTheme(
+            data: WindThemeData(),
+            child: Scaffold(
+              body: WDiv(
+                className: 'flex flex-row',
+                children: [
+                  WDiv(
+                    className: 'shrink-0 w-16 h-16 bg-gray-200',
+                    child: SizedBox(),
+                  ),
+                  WDiv(className: 'flex-1 h-16 bg-blue-200', child: SizedBox()),
+                ],
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        expect(tester.takeException(), isNull);
-        // w-16 = 16 * 4px = 64px; the sidebar holds its width, not forced fill.
-        expect(tester.getSize(find.byType(WDiv).at(1)).width, 64);
-      },
-    );
+      expect(tester.takeException(), isNull);
+      // w-16 = 16 * 4px = 64px; the sidebar holds its width, not forced fill.
+      expect(tester.getSize(find.byType(WDiv).at(1)).width, 64);
+    });
   });
 }

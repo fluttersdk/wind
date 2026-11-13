@@ -6,8 +6,9 @@ void main() {
   setUp(WindParser.clearCache);
 
   group('Childless sizing (issue #123)', () {
-    testWidgets('a childless WDiv honors size-* (renders a square box)',
-        (tester) async {
+    testWidgets('a childless WDiv honors size-* (renders a square box)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -23,15 +24,14 @@ void main() {
       expect(tester.getSize(find.byType(WDiv)), const Size(8, 8));
     });
 
-    testWidgets('a childless WDiv honors w-*/h-* without a child',
-        (tester) async {
+    testWidgets('a childless WDiv honors w-*/h-* without a child', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
             data: WindThemeData(),
-            child: const Center(
-              child: WDiv(className: 'w-10 h-10 bg-red-500'),
-            ),
+            child: const Center(child: WDiv(className: 'w-10 h-10 bg-red-500')),
           ),
         ),
       );
@@ -39,8 +39,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv)), const Size(40, 40));
     });
 
-    testWidgets('a childless size-* dot keeps its box inside a flex row',
-        (tester) async {
+    testWidgets('a childless size-* dot keeps its box inside a flex row', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -99,10 +100,7 @@ void main() {
     testWidgets('an empty divider fills the cross axis of a start column', (
       tester,
     ) async {
-      await pumpInColumn(
-        tester,
-        const WDiv(className: 'h-[1px] bg-gray-200'),
-      );
+      await pumpInColumn(tester, const WDiv(className: 'h-[1px] bg-gray-200'));
 
       expect(tester.getSize(find.byType(WDiv)), const Size(800, 1));
     });
@@ -113,10 +111,7 @@ void main() {
       // `h-px` is not a sizing token, so no height reaches the box. The
       // childless box then expands across the bounded width and collapses on
       // the unbounded height through `LimitedBox`.
-      await pumpInColumn(
-        tester,
-        const WDiv(className: 'h-px bg-gray-200'),
-      );
+      await pumpInColumn(tester, const WDiv(className: 'h-px bg-gray-200'));
 
       expect(tester.getSize(find.byType(WDiv)), const Size(800, 0));
     });
@@ -320,48 +315,48 @@ void main() {
         );
       });
 
-      testWidgets('Conflict: h-full uses LayoutBuilder in unbounded constraint',
-          (
-        tester,
-      ) async {
-        // Place WDiv in a Column to provide unbounded vertical constraints
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(),
-              child: Column(
-                children: [
-                  // h-full needs to resolve against something.
-                  // In an unbounded column, it triggers the LayoutBuilder check
-                  // to potentially fallback to screen height or similar strategies if implemented,
-                  // or just to safely handle the constraints.
-                  const WDiv(className: 'h-full', child: Text('Test')),
-                ],
+      testWidgets(
+        'Conflict: h-full uses LayoutBuilder in unbounded constraint',
+        (tester) async {
+          // Place WDiv in a Column to provide unbounded vertical constraints
+          await tester.pumpWidget(
+            MaterialApp(
+              home: WindTheme(
+                data: WindThemeData(),
+                child: Column(
+                  children: [
+                    // h-full needs to resolve against something.
+                    // In an unbounded column, it triggers the LayoutBuilder check
+                    // to potentially fallback to screen height or similar strategies if implemented,
+                    // or just to safely handle the constraints.
+                    const WDiv(className: 'h-full', child: Text('Test')),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
+          );
 
-        // The height it RESOLVED TO, not the widget it used to get there.
-        // This asserted a `LayoutBuilder` descendant, which is the thing the
-        // render-layer rewrite removed on purpose: `h-full` in an unbounded
-        // column still falls back to the screen height, and that fallback is
-        // the behaviour worth pinning.
-        final double screenHeight =
-            tester.view.physicalSize.height / tester.view.devicePixelRatio;
-        expect(tester.getSize(find.text('Test')).height, screenHeight);
+          // The height it RESOLVED TO, not the widget it used to get there.
+          // This asserted a `LayoutBuilder` descendant, which is the thing the
+          // render-layer rewrite removed on purpose: `h-full` in an unbounded
+          // column still falls back to the screen height, and that fallback is
+          // the behaviour worth pinning.
+          final double screenHeight =
+              tester.view.physicalSize.height / tester.view.devicePixelRatio;
+          expect(tester.getSize(find.text('Test')).height, screenHeight);
 
-        // Deliberately no assertion about WHICH widget produced that height.
-        // The old one named `LayoutBuilder`, and naming its replacement would
-        // repeat the mistake: the next rewrite would fail this test without
-        // changing anything a user can observe.
-        expect(
-          find.byType(WDiv),
-          findsOneWidget,
-          reason:
-              'h-full in an unbounded parent falls back to the screen height',
-        );
-      });
+          // Deliberately no assertion about WHICH widget produced that height.
+          // The old one named `LayoutBuilder`, and naming its replacement would
+          // repeat the mistake: the next rewrite would fail this test without
+          // changing anything a user can observe.
+          expect(
+            find.byType(WDiv),
+            findsOneWidget,
+            reason:
+                'h-full in an unbounded parent falls back to the screen height',
+          );
+        },
+      );
     });
   });
 }

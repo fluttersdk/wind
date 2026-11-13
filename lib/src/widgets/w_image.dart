@@ -7,7 +7,10 @@ import '../utils/wind_perf_counters.dart';
 
 /// Signature for building a custom error widget.
 typedef ImageErrorBuilder = Widget Function(
-    BuildContext context, Object error, StackTrace? stackTrace);
+  BuildContext context,
+  Object error,
+  StackTrace? stackTrace,
+);
 
 /// Signature for building a custom loading widget.
 typedef ImageLoadingBuilder = Widget Function(
@@ -137,27 +140,28 @@ class WImage extends StatelessWidget {
             errorBuilder: errorBuilder,
           )
         : (_isAsset
-            ? Image.asset(
-                _assetPath,
-                fit: fit,
-                alignment: alignment,
-                semanticLabel: alt,
-                errorBuilder: errorBuilder,
-              )
-            : Image.network(
-                src!,
-                fit: fit,
-                alignment: alignment,
-                semanticLabel: alt,
-                errorBuilder: errorBuilder,
-                loadingBuilder: loadingBuilder ??
-                    (placeholder != null
-                        ? (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return placeholder!;
-                          }
-                        : null),
-              ));
+              ? Image.asset(
+                  _assetPath,
+                  fit: fit,
+                  alignment: alignment,
+                  semanticLabel: alt,
+                  errorBuilder: errorBuilder,
+                )
+              : Image.network(
+                  src!,
+                  fit: fit,
+                  alignment: alignment,
+                  semanticLabel: alt,
+                  errorBuilder: errorBuilder,
+                  loadingBuilder:
+                      loadingBuilder ??
+                      (placeholder != null
+                          ? (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return placeholder!;
+                            }
+                          : null),
+                ));
 
     // Apply decoration (rounded corners) immediately via ClipRRect
     final BorderRadius borderRadius =

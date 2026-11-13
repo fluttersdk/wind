@@ -102,8 +102,9 @@ void main() {
       );
     });
 
-    testWidgets('none renders child directly without animation widgets',
-        (tester) async {
+    testWidgets('none renders child directly without animation widgets', (
+      tester,
+    ) async {
       const childKey = ValueKey('child');
       const wrapperKey = ValueKey('wrapper');
 
@@ -198,8 +199,9 @@ void main() {
       );
     });
 
-    testWidgets('didUpdateWidget duration change does not throw',
-        (tester) async {
+    testWidgets('didUpdateWidget duration change does not throw', (
+      tester,
+    ) async {
       const wrapperKey = ValueKey('wrapper');
       Duration currentDuration = const Duration(seconds: 1);
 

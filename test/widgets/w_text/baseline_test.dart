@@ -18,10 +18,7 @@ void main() {
           await tester.pumpWidget(
             Directionality(
               textDirection: TextDirection.ltr,
-              child: WindTheme(
-                data: WindThemeData(),
-                child: const WText('x'),
-              ),
+              child: WindTheme(data: WindThemeData(), child: const WText('x')),
             ),
           );
 
@@ -30,9 +27,8 @@ void main() {
           // The effective style must carry a non-null color so Flutter does
           // not fall back to its yellow-underline debug appearance.
           final BuildContext ctx = tester.element(find.byType(Text));
-          final TextStyle effective = DefaultTextStyle.of(ctx).style.merge(
-                textWidget.style,
-              );
+          final TextStyle effective = DefaultTextStyle.of(ctx).style
+              .merge(textWidget.style);
           expect(
             effective.color,
             isNotNull,
@@ -46,10 +42,7 @@ void main() {
         (tester) async {
           // No Directionality ancestor at all. WText must provide one.
           await tester.pumpWidget(
-            WindTheme(
-              data: WindThemeData(),
-              child: const WText('x'),
-            ),
+            WindTheme(data: WindThemeData(), child: const WText('x')),
           );
 
           expect(find.byType(Text), findsOneWidget);
@@ -57,27 +50,23 @@ void main() {
         },
       );
 
-      testWidgets(
-        'resolves TextDirection from the injected Directionality',
-        (tester) async {
-          await tester.pumpWidget(
-            WindTheme(
-              data: WindThemeData(),
-              child: const WText('x'),
-            ),
-          );
+      testWidgets('resolves TextDirection from the injected Directionality', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          WindTheme(data: WindThemeData(), child: const WText('x')),
+        );
 
-          // The Text widget itself lives inside a Directionality subtree,
-          // so resolving TextDirection must succeed (no exception).
-          final BuildContext ctx = tester.element(find.byType(Text));
-          final TextDirection? dir = Directionality.maybeOf(ctx);
-          expect(
-            dir,
-            isNotNull,
-            reason: 'WText must guarantee a TextDirection for its subtree.',
-          );
-        },
-      );
+        // The Text widget itself lives inside a Directionality subtree,
+        // so resolving TextDirection must succeed (no exception).
+        final BuildContext ctx = tester.element(find.byType(Text));
+        final TextDirection? dir = Directionality.maybeOf(ctx);
+        expect(
+          dir,
+          isNotNull,
+          reason: 'WText must guarantee a TextDirection for its subtree.',
+        );
+      });
 
       testWidgets(
         'baseline color follows platform brightness (white on dark)',
@@ -99,7 +88,8 @@ void main() {
           expect(
             textWidget.style?.color,
             Colors.white,
-            reason: 'Bare WText on a dark platform falls back to white, '
+            reason:
+                'Bare WText on a dark platform falls back to white, '
                 'not an invisible black.',
           );
         },
@@ -107,77 +97,74 @@ void main() {
     });
 
     group('explicit styles still win over baseline', () {
-      testWidgets(
-        'className text-* color overrides baseline fallback',
-        (tester) async {
-          final themeData = WindThemeData();
-          await tester.pumpWidget(
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: WindTheme(
-                data: themeData,
-                child: const WText('x', className: 'text-red-500'),
+      testWidgets('className text-* color overrides baseline fallback', (
+        tester,
+      ) async {
+        final themeData = WindThemeData();
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WindTheme(
+              data: themeData,
+              child: const WText('x', className: 'text-red-500'),
+            ),
+          ),
+        );
+
+        final Text textWidget = tester.widget(find.byType(Text));
+        expect(
+          textWidget.style?.color,
+          themeData.colors['red']![500],
+          reason: 'className text-* must still control the text color.',
+        );
+      });
+
+      testWidgets('foregroundColor prop overrides baseline fallback', (
+        tester,
+      ) async {
+        const explicitColor = Color(0xFF123456);
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WindTheme(
+              data: WindThemeData(),
+              child: const WText('x', foregroundColor: explicitColor),
+            ),
+          ),
+        );
+
+        final Text textWidget = tester.widget(find.byType(Text));
+        expect(
+          textWidget.style?.color,
+          explicitColor,
+          reason: 'foregroundColor prop must still control the text color.',
+        );
+      });
+
+      testWidgets('textStyle prop color overrides baseline fallback', (
+        tester,
+      ) async {
+        const explicitColor = Color(0xFFABCDEF);
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WindTheme(
+              data: WindThemeData(),
+              child: const WText(
+                'x',
+                textStyle: TextStyle(color: explicitColor),
               ),
             ),
-          );
+          ),
+        );
 
-          final Text textWidget = tester.widget(find.byType(Text));
-          expect(
-            textWidget.style?.color,
-            themeData.colors['red']![500],
-            reason: 'className text-* must still control the text color.',
-          );
-        },
-      );
-
-      testWidgets(
-        'foregroundColor prop overrides baseline fallback',
-        (tester) async {
-          const explicitColor = Color(0xFF123456);
-          await tester.pumpWidget(
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: WindTheme(
-                data: WindThemeData(),
-                child: const WText('x', foregroundColor: explicitColor),
-              ),
-            ),
-          );
-
-          final Text textWidget = tester.widget(find.byType(Text));
-          expect(
-            textWidget.style?.color,
-            explicitColor,
-            reason: 'foregroundColor prop must still control the text color.',
-          );
-        },
-      );
-
-      testWidgets(
-        'textStyle prop color overrides baseline fallback',
-        (tester) async {
-          const explicitColor = Color(0xFFABCDEF);
-          await tester.pumpWidget(
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: WindTheme(
-                data: WindThemeData(),
-                child: const WText(
-                  'x',
-                  textStyle: TextStyle(color: explicitColor),
-                ),
-              ),
-            ),
-          );
-
-          final Text textWidget = tester.widget(find.byType(Text));
-          expect(
-            textWidget.style?.color,
-            explicitColor,
-            reason: 'textStyle prop color must still control the text color.',
-          );
-        },
-      );
+        final Text textWidget = tester.widget(find.byType(Text));
+        expect(
+          textWidget.style?.color,
+          explicitColor,
+          reason: 'textStyle prop color must still control the text color.',
+        );
+      });
     });
 
     group('inherits an ancestor color (CSS cascade)', () {
@@ -209,13 +196,13 @@ void main() {
 
           final Text textWidget = tester.widget(find.byType(Text));
           final BuildContext ctx = tester.element(find.byType(Text));
-          final TextStyle effective = DefaultTextStyle.of(ctx).style.merge(
-                textWidget.style,
-              );
+          final TextStyle effective = DefaultTextStyle.of(ctx).style
+              .merge(textWidget.style);
           expect(
             effective.color,
             ancestorColor,
-            reason: 'A colorless WText must inherit the ancestor color, not '
+            reason:
+                'A colorless WText must inherit the ancestor color, not '
                 'the platform-brightness baseline.',
           );
         },

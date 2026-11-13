@@ -50,11 +50,7 @@ class WBadge extends StatelessWidget {
   final String? className;
 
   /// Creates a [WBadge] widget.
-  const WBadge(
-    this.label, {
-    super.key,
-    this.className,
-  });
+  const WBadge(this.label, {super.key, this.className});
 
   /// Base layout classes that every badge carries.
   ///
@@ -70,13 +66,11 @@ class WBadge extends StatelessWidget {
     WindPerfCounters.recordWidgetBuild('WBadge');
 
     // 1. Resolve styles for debug logging only (WDiv re-parses internally).
-    final String composedClassName =
-        className != null ? '$_baseClasses $className' : _baseClasses;
+    final String composedClassName = className != null
+        ? '$_baseClasses $className'
+        : _baseClasses;
 
-    final WindStyle styles = WindParser.parse(
-      composedClassName,
-      context,
-    );
+    final WindStyle styles = WindParser.parse(composedClassName, context);
 
     // 2. Initialize debug logger.
     final logger = WindLogger(
@@ -93,10 +87,7 @@ class WBadge extends StatelessWidget {
     // 3. Compose: pill container wrapping the text label.
     return WDiv(
       className: composedClassName,
-      child: WText(
-        label,
-        className: 'text-xs',
-      ),
+      child: WText(label, className: 'text-xs'),
     );
   }
 }

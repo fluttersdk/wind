@@ -118,8 +118,9 @@ void main() {
           ),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.obscureText, isTrue);
       });
 
@@ -128,19 +129,22 @@ void main() {
           wrapWithTheme(const WInput(type: InputType.email)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.keyboardType, TextInputType.emailAddress);
       });
 
-      testWidgets('InputType.number uses a signed-decimal number keyboard',
-          (tester) async {
+      testWidgets('InputType.number uses a signed-decimal number keyboard', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(const WInput(type: InputType.number)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(
           editableText.keyboardType,
           const TextInputType.numberWithOptions(decimal: true, signed: true),
@@ -152,8 +156,9 @@ void main() {
           wrapWithTheme(const WInput(type: InputType.multiline)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.maxLines, isNull); // unlimited
         expect(editableText.minLines, 1); // default
         expect(editableText.keyboardType, TextInputType.multiline);
@@ -166,8 +171,9 @@ void main() {
           ),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.minLines, 5);
         expect(editableText.maxLines, 10);
       });
@@ -180,8 +186,9 @@ void main() {
         );
 
         // disabled=false routes to readOnly=true in EditableText (no GestureDetector either).
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.readOnly, isTrue);
       });
 
@@ -190,8 +197,9 @@ void main() {
           wrapWithTheme(const WInput(readOnly: true, value: 'ReadOnly')),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.readOnly, isTrue);
       });
 
@@ -212,8 +220,9 @@ void main() {
       testWidgets('autofocus works', (tester) async {
         await tester.pumpWidget(wrapWithTheme(const WInput(autofocus: true)));
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.autofocus, isTrue);
       });
 
@@ -261,9 +270,7 @@ void main() {
         final controller = TextEditingController(text: 'Controller');
         addTearDown(controller.dispose);
 
-        await tester.pumpWidget(
-          wrapWithTheme(WInput(controller: controller)),
-        );
+        await tester.pumpWidget(wrapWithTheme(WInput(controller: controller)));
 
         expect(find.text('Controller'), findsOneWidget);
       });
@@ -279,8 +286,9 @@ void main() {
 
         await tester.enterText(find.byType(EditableText), 'abc123def');
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.controller.text, '123');
       });
     });
@@ -358,8 +366,9 @@ void main() {
           wrapWithTheme(const WInput(textInputAction: TextInputAction.search)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.textInputAction, TextInputAction.search);
       });
 
@@ -368,8 +377,9 @@ void main() {
           wrapWithTheme(const WInput(textInputAction: TextInputAction.done)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.textInputAction, TextInputAction.done);
       });
 
@@ -378,32 +388,35 @@ void main() {
           wrapWithTheme(const WInput(textInputAction: TextInputAction.send)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.textInputAction, TextInputAction.send);
       });
 
-      testWidgets('autofillHints are forwarded to EditableText',
-          (tester) async {
+      testWidgets('autofillHints are forwarded to EditableText', (
+        tester,
+      ) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WInput(autofillHints: [AutofillHints.email]),
-          ),
+          wrapWithTheme(const WInput(autofillHints: [AutofillHints.email])),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.autofillHints, [AutofillHints.email]);
       });
 
-      testWidgets('a field with no hints keeps platform autofill on',
-          (tester) async {
+      testWidgets('a field with no hints keeps platform autofill on', (
+        tester,
+      ) async {
         // `EditableText` reads null as `AutofillConfiguration.disabled`; its
         // own default is an empty list, which leaves autofill on.
         await tester.pumpWidget(wrapWithTheme(const WInput()));
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.autofillHints, isEmpty);
         expect(editableText.autofillHints, isNotNull);
       });
@@ -413,8 +426,9 @@ void main() {
           wrapWithTheme(const WInput(autofillHints: null)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.autofillHints, isNull);
       });
 
@@ -460,8 +474,9 @@ void main() {
           ),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.textCapitalization, TextCapitalization.words);
       });
 
@@ -470,8 +485,9 @@ void main() {
           wrapWithTheme(const WInput(autocorrect: false)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.autocorrect, isFalse);
       });
 
@@ -480,8 +496,9 @@ void main() {
           wrapWithTheme(const WInput(enableSuggestions: false)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.enableSuggestions, isFalse);
       });
 
@@ -496,20 +513,20 @@ void main() {
         // knows its own order.
         await tester.pumpWidget(wrapWithTheme(const WInput()));
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.textInputAction, TextInputAction.done);
       });
 
       testWidgets('an explicit textInputAction still wins', (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WInput(textInputAction: TextInputAction.next),
-          ),
+          wrapWithTheme(const WInput(textInputAction: TextInputAction.next)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.textInputAction, TextInputAction.next);
       });
 
@@ -520,8 +537,9 @@ void main() {
           wrapWithTheme(const WInput(type: InputType.multiline)),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.textInputAction, TextInputAction.newline);
       });
     });
@@ -641,8 +659,9 @@ void main() {
         // If external change is unrelated (e.g. formatting), we want cursor to stay valid.
 
         // Let's simulate:
-        final editableTextWidgetBefore =
-            tester.widget<EditableText>(editableTextFinder);
+        final editableTextWidgetBefore = tester.widget<EditableText>(
+          editableTextFinder,
+        );
         final controller = editableTextWidgetBefore.controller;
 
         // Set cursor to 5 ('Start| End')
@@ -663,8 +682,9 @@ void main() {
     });
 
     group('Letter Spacing', () {
-      testWidgets('resolves em tracking against the field text size',
-          (tester) async {
+      testWidgets('resolves em tracking against the field text size', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(const WInput(className: 'text-xl tracking-wide')),
         );
@@ -696,8 +716,9 @@ void main() {
         },
       );
 
-      testWidgets('resolves placeholder em tracking against the field size',
-          (tester) async {
+      testWidgets('resolves placeholder em tracking against the field size', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WInput(
@@ -949,8 +970,7 @@ void main() {
         await tester.pumpWidget(
           wrapWithTheme(
             const WInput(
-              className:
-                  'p-3 bg-transparent rounded-lg focus:ring-2 focus:ring-blue-500',
+              className: 'p-3 bg-transparent rounded-lg focus:ring-2 focus:ring-blue-500',
             ),
           ),
         );
@@ -1030,15 +1050,17 @@ void main() {
         );
       }
 
-      testWidgets('px-3 single-line places placeholder at 12px inset',
-          (tester) async {
+      testWidgets('px-3 single-line places placeholder at 12px inset', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const Padding(
               padding: EdgeInsets.all(40),
               child: WInput(
                 placeholder: 'P',
-                className: 'rounded-xl px-3 py-2.5 text-sm '
+                className:
+                    'rounded-xl px-3 py-2.5 text-sm '
                     'bg-white border border-gray-200',
               ),
             ),
@@ -1049,14 +1071,16 @@ void main() {
         // This replaces the geometry check used against the old TextField; the
         // DecoratedBox + Padding recipe owns the inset directly.
         final Padding contentPadding = contentPaddingOf(tester);
-        final EdgeInsets insets =
-            contentPadding.padding.resolve(TextDirection.ltr);
+        final EdgeInsets insets = contentPadding.padding.resolve(
+          TextDirection.ltr,
+        );
         expect(insets.left, 12.0);
         expect(insets.right, 12.0);
       });
 
-      testWidgets('px-3 multiline places placeholder at 12px inset',
-          (tester) async {
+      testWidgets('px-3 multiline places placeholder at 12px inset', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const Padding(
@@ -1066,7 +1090,8 @@ void main() {
                 type: InputType.multiline,
                 minLines: 5,
                 maxLines: 10,
-                className: 'rounded-xl px-3 py-2.5 text-sm '
+                className:
+                    'rounded-xl px-3 py-2.5 text-sm '
                     'bg-white border border-gray-200',
               ),
             ),
@@ -1074,8 +1099,9 @@ void main() {
         );
 
         final Padding contentPadding = contentPaddingOf(tester);
-        final EdgeInsets insets =
-            contentPadding.padding.resolve(TextDirection.ltr);
+        final EdgeInsets insets = contentPadding.padding.resolve(
+          TextDirection.ltr,
+        );
         expect(insets.left, 12.0);
         expect(insets.right, 12.0);
       });
@@ -1085,10 +1111,7 @@ void main() {
       testWidgets('renders prefix widget', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            const WInput(
-              prefix: Icon(Icons.search),
-              placeholder: 'Search',
-            ),
+            const WInput(prefix: Icon(Icons.search), placeholder: 'Search'),
           ),
         );
 
@@ -1142,8 +1165,9 @@ void main() {
     // that Step 9's `loginViaSemantics` Playwright helper depends on.
     // -------------------------------------------------------------------------
     group('Semantics', () {
-      testWidgets('emits textField role with placeholder as label',
-          (tester) async {
+      testWidgets('emits textField role with placeholder as label', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(const WInput(placeholder: 'Email', value: '')),
         );
@@ -1153,8 +1177,9 @@ void main() {
         expect(node.label, 'Email');
       });
 
-      testWidgets('emits current value through Semantics.value',
-          (tester) async {
+      testWidgets('emits current value through Semantics.value', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WInput(placeholder: 'Email', value: 'user@example.com'),
@@ -1167,8 +1192,9 @@ void main() {
         expect(node.value, 'user@example.com');
       });
 
-      testWidgets('reports disabled state when enabled is false',
-          (tester) async {
+      testWidgets('reports disabled state when enabled is false', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WInput(placeholder: 'Disabled', value: '', enabled: false),
@@ -1208,42 +1234,45 @@ void main() {
       // `<input aria-label="Password" type="password">` per the ARIA mapping
       // table.
       testWidgets(
-          'password input surfaces label through Semantics (critical regression)',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WInput(
-              type: InputType.password,
-              placeholder: 'Password',
-              value: '',
+        'password input surfaces label through Semantics (critical regression)',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WInput(
+                type: InputType.password,
+                placeholder: 'Password',
+                value: '',
+              ),
             ),
-          ),
-        );
+          );
 
-        final SemanticsNode node = tester.getSemantics(find.byType(WInput));
-        expect(
-          node.flagsCollection.isTextField,
-          isTrue,
-          reason: 'Password input must surface as textField in Semantics tree',
-        );
-        expect(
-          node.label,
-          'Password',
-          reason:
-              'Password input must surface placeholder as Semantics label so '
-              'Playwright getByLabel(/password/i) resolves',
-        );
-        expect(
-          node.flagsCollection.isObscured,
-          isTrue,
-          reason: 'Password input must still mark itself obscured',
-        );
-      });
+          final SemanticsNode node = tester.getSemantics(find.byType(WInput));
+          expect(
+            node.flagsCollection.isTextField,
+            isTrue,
+            reason:
+                'Password input must surface as textField in Semantics tree',
+          );
+          expect(
+            node.label,
+            'Password',
+            reason:
+                'Password input must surface placeholder as Semantics label so '
+                'Playwright getByLabel(/password/i) resolves',
+          );
+          expect(
+            node.flagsCollection.isObscured,
+            isTrue,
+            reason: 'Password input must still mark itself obscured',
+          );
+        },
+      );
     });
 
     group('Box Model and Lifecycle', () {
-      testWidgets('w-full + margin route through the box-model Container',
-          (tester) async {
+      testWidgets('w-full + margin route through the box-model Container', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WInput(placeholder: 'Boxed', className: 'w-full m-2'),
@@ -1259,8 +1288,9 @@ void main() {
         );
       });
 
-      testWidgets('debug className enables the logger without crashing',
-          (tester) async {
+      testWidgets('debug className enables the logger without crashing', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WInput(placeholder: 'Debug', className: 'debug p-2'),
@@ -1270,38 +1300,38 @@ void main() {
         expect(find.byType(EditableText), findsOneWidget);
       });
 
-      testWidgets('disabled input is non-interactive (no focus, no selection)',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WInput(
-              enabled: false,
-              value: 'locked',
-              placeholder: 'p',
+      testWidgets(
+        'disabled input is non-interactive (no focus, no selection)',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WInput(enabled: false, value: 'locked', placeholder: 'p'),
             ),
-          ),
-        );
+          );
 
-        // IgnorePointer swallows the tap, so the field cannot gain focus.
-        await tester.tap(find.byType(WInput), warnIfMissed: false);
-        await tester.pump();
+          // IgnorePointer swallows the tap, so the field cannot gain focus.
+          await tester.tap(find.byType(WInput), warnIfMissed: false);
+          await tester.pump();
 
-        final EditableText editable =
-            tester.widget<EditableText>(find.byType(EditableText));
-        expect(
-          editable.focusNode.hasFocus,
-          isFalse,
-          reason: 'a disabled field must not gain focus on tap.',
-        );
-        expect(
-          editable.enableInteractiveSelection,
-          isFalse,
-          reason: 'a disabled field must expose no selection UI.',
-        );
-      });
+          final EditableText editable = tester.widget<EditableText>(
+            find.byType(EditableText),
+          );
+          expect(
+            editable.focusNode.hasFocus,
+            isFalse,
+            reason: 'a disabled field must not gain focus on tap.',
+          );
+          expect(
+            editable.enableInteractiveSelection,
+            isFalse,
+            reason: 'a disabled field must expose no selection UI.',
+          );
+        },
+      );
 
-      testWidgets('swapping an owned focus node for an external one re-wires',
-          (tester) async {
+      testWidgets('swapping an owned focus node for an external one re-wires', (
+        tester,
+      ) async {
         final external = FocusNode();
         addTearDown(external.dispose);
 
@@ -1332,8 +1362,9 @@ void main() {
       // The glyph line, not the EditableText widget: the editable can be as
       // tall as the box while its text is painted at the top of it.
       double textCentreY(WidgetTester tester) {
-        final RenderEditable renderEditable =
-            tester.state<EditableTextState>(editable()).renderEditable;
+        final RenderEditable renderEditable = tester
+            .state<EditableTextState>(editable())
+            .renderEditable;
         final Rect caret = renderEditable.getLocalRectForCaret(
           const TextPosition(offset: 0),
         );
@@ -1350,8 +1381,9 @@ void main() {
         expect(textCentreY(tester), closeTo(box.center.dy, 1));
       });
 
-      testWidgets('min-h-11 centres the placeholder and the caret line',
-          (tester) async {
+      testWidgets('min-h-11 centres the placeholder and the caret line', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           topLeft(
             const WInput(placeholder: 'Email', className: 'min-h-11 px-3'),
@@ -1391,8 +1423,9 @@ void main() {
         );
       });
 
-      testWidgets('keeps the text at the start edge after centring',
-          (tester) async {
+      testWidgets('keeps the text at the start edge after centring', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           topLeft(const WInput(placeholder: 'Email', className: 'h-12 px-3')),
         );
@@ -1402,8 +1435,9 @@ void main() {
         expect(tester.getTopLeft(editable()).dx, box.left + 12);
       });
 
-      testWidgets('a tap in the top 4px of a 44px box focuses the field',
-          (tester) async {
+      testWidgets('a tap in the top 4px of a 44px box focuses the field', (
+        tester,
+      ) async {
         final focusNode = FocusNode();
         addTearDown(focusNode.dispose);
 
@@ -1424,8 +1458,9 @@ void main() {
         expect(focusNode.hasFocus, isTrue);
       });
 
-      testWidgets('a field with no height class keeps its natural height',
-          (tester) async {
+      testWidgets('a field with no height class keeps its natural height', (
+        tester,
+      ) async {
         await tester.pumpWidget(topLeft(const WInput()));
         final double bare = tester.getSize(find.byType(WInput)).height;
 
@@ -1440,8 +1475,9 @@ void main() {
         expect(padded, 30.0);
       });
 
-      testWidgets('multi-line min-h-24 keeps the text at the top padding',
-          (tester) async {
+      testWidgets('multi-line min-h-24 keeps the text at the top padding', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           topLeft(
             const WInput(
@@ -1454,14 +1490,16 @@ void main() {
 
         final Rect box = tester.getRect(find.byType(WInput));
         expect(box.height, 96.0);
-        final RenderEditable renderEditable =
-            tester.state<EditableTextState>(editable()).renderEditable;
+        final RenderEditable renderEditable = tester
+            .state<EditableTextState>(editable())
+            .renderEditable;
         expect(renderEditable.localToGlobal(Offset.zero).dy, box.top + 8);
         expect(tester.getTopLeft(find.text('Notes')).dy, box.top + 8);
       });
 
-      testWidgets('prefix and suffix with min-h-11 centre the text',
-          (tester) async {
+      testWidgets('prefix and suffix with min-h-11 centre the text', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           topLeft(
             const WInput(
@@ -1480,8 +1518,9 @@ void main() {
     });
 
     group('Layout stability and theming', () {
-      testWidgets('box height does not change between empty and filled',
-          (tester) async {
+      testWidgets('box height does not change between empty and filled', (
+        tester,
+      ) async {
         final controller = TextEditingController();
         addTearDown(controller.dispose);
 
@@ -1507,13 +1546,15 @@ void main() {
         expect(
           filledHeight,
           emptyHeight,
-          reason: 'Typing must not shift the field height; the placeholder '
+          reason:
+              'Typing must not shift the field height; the placeholder '
               'shares the EditableText strut so the box stays the same size.',
         );
       });
 
-      testWidgets('suffix-only field keeps the text off the left border',
-          (tester) async {
+      testWidgets('suffix-only field keeps the text off the left border', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             Align(
@@ -1529,20 +1570,23 @@ void main() {
         );
 
         final double boxLeft = tester.getTopLeft(find.byType(WInput)).dx;
-        final double editableLeft =
-            tester.getTopLeft(find.byType(EditableText)).dx;
+        final double editableLeft = tester
+            .getTopLeft(find.byType(EditableText))
+            .dx;
 
         // px-3 = 12px content inset; with no prefix the text must keep it.
         expect(
           editableLeft - boxLeft,
           greaterThanOrEqualTo(12.0),
-          reason: 'With a suffix but no prefix the text must still keep the '
+          reason:
+              'With a suffix but no prefix the text must still keep the '
               'horizontal content padding, not sit flush against the border.',
         );
       });
 
-      testWidgets('baseline text color follows Wind brightness, not the OS',
-          (tester) async {
+      testWidgets('baseline text color follows Wind brightness, not the OS', (
+        tester,
+      ) async {
         // WindTheme forced dark; className carries no text color, so the
         // baseline must resolve white (matching the dark background) rather
         // than the OS platform brightness.
@@ -1563,72 +1607,83 @@ void main() {
           ),
         );
 
-        final EditableText editable =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final EditableText editable = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(
           editable.style.color,
           const Color(0xFFFFFFFF),
-          reason: 'In Wind dark mode the default text color must be white so '
+          reason:
+              'In Wind dark mode the default text color must be white so '
               'it stays legible on the dark-resolved background.',
         );
       });
 
-      testWidgets('keeps focus and height when a conditional suffix toggles in',
-          (tester) async {
-        String text = '';
-        await tester.pumpWidget(
-          wrapWithTheme(
-            Align(
-              alignment: Alignment.topLeft,
-              child: StatefulBuilder(
-                builder: (context, setState) => WInput(
-                  value: text,
-                  onChanged: (v) => setState(() => text = v),
-                  placeholder: 'type then clear',
-                  className: 'w-full px-3 py-2',
-                  // Clear-button pattern: suffix only exists once there is text.
-                  suffix: text.isEmpty
-                      ? null
-                      : WButton(
-                          onTap: () {},
-                          className: 'p-1',
-                          child: const Icon(Icons.close, size: 16),
-                        ),
+      testWidgets(
+        'keeps focus and height when a conditional suffix toggles in',
+        (tester) async {
+          String text = '';
+          await tester.pumpWidget(
+            wrapWithTheme(
+              Align(
+                alignment: Alignment.topLeft,
+                child: StatefulBuilder(
+                  builder: (context, setState) => WInput(
+                    value: text,
+                    onChanged: (v) => setState(() => text = v),
+                    placeholder: 'type then clear',
+                    className: 'w-full px-3 py-2',
+                    // Clear-button pattern: suffix only exists once there is text.
+                    suffix: text.isEmpty
+                        ? null
+                        : WButton(
+                            onTap: () {},
+                            className: 'p-1',
+                            child: const Icon(Icons.close, size: 16),
+                          ),
+                  ),
                 ),
               ),
             ),
-          ),
-        );
+          );
 
-        final EditableTextState before =
-            tester.state<EditableTextState>(find.byType(EditableText));
-        final double emptyHeight = tester.getSize(find.byType(WInput)).height;
+          final EditableTextState before = tester.state<EditableTextState>(
+            find.byType(EditableText),
+          );
+          final double emptyHeight = tester.getSize(find.byType(WInput)).height;
 
-        await tester.enterText(find.byType(EditableText), 'a');
-        await tester.pump();
+          await tester.enterText(find.byType(EditableText), 'a');
+          await tester.pump();
 
-        final EditableTextState after =
-            tester.state<EditableTextState>(find.byType(EditableText));
-        final double filledHeight = tester.getSize(find.byType(WInput)).height;
+          final EditableTextState after = tester.state<EditableTextState>(
+            find.byType(EditableText),
+          );
+          final double filledHeight = tester
+              .getSize(find.byType(WInput))
+              .height;
 
-        expect(
-          identical(before, after),
-          isTrue,
-          reason: 'The conditional suffix must not rebuild the EditableText '
-              'from scratch; a GlobalKey moves the same element so focus is '
-              'kept mid-typing.',
-        );
-        expect(after.widget.focusNode.hasFocus, isTrue);
-        expect(
-          filledHeight,
-          emptyHeight,
-          reason: 'A suffix appearing must not grow the field; the tap target '
-              'is width-only so the box height stays constant.',
-        );
-      });
+          expect(
+            identical(before, after),
+            isTrue,
+            reason:
+                'The conditional suffix must not rebuild the EditableText '
+                'from scratch; a GlobalKey moves the same element so focus is '
+                'kept mid-typing.',
+          );
+          expect(after.widget.focusNode.hasFocus, isTrue);
+          expect(
+            filledHeight,
+            emptyHeight,
+            reason:
+                'A suffix appearing must not grow the field; the tap target '
+                'is width-only so the box height stays constant.',
+          );
+        },
+      );
 
-      testWidgets('readOnly activates the readonly: state prefix',
-          (tester) async {
+      testWidgets('readOnly activates the readonly: state prefix', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WInput(
@@ -1639,20 +1694,23 @@ void main() {
           ),
         );
 
-        final EditableText editable =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final EditableText editable = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(
           editable.style.color,
           const Color(0xFFEF4444),
-          reason: 'readOnly must activate readonly: prefixed classes '
+          reason:
+              'readOnly must activate readonly: prefixed classes '
               '(red-500), mirroring the disabled: state.',
         );
       });
     });
 
     group('Number input filtering', () {
-      testWidgets('keeps digits, a single decimal point and a leading sign',
-          (tester) async {
+      testWidgets('keeps digits, a single decimal point and a leading sign', (
+        tester,
+      ) async {
         final controller = TextEditingController();
         addTearDown(controller.dispose);
         await tester.pumpWidget(
@@ -1670,8 +1728,9 @@ void main() {
         expect(controller.text, '-12.5');
       });
 
-      testWidgets('rejects non-numeric input and keeps the prior value',
-          (tester) async {
+      testWidgets('rejects non-numeric input and keeps the prior value', (
+        tester,
+      ) async {
         final controller = TextEditingController(text: '7');
         addTearDown(controller.dispose);
         await tester.pumpWidget(
@@ -1724,8 +1783,9 @@ void main() {
         );
       });
 
-      testWidgets('a digit or minus decimalSeparator fails its assert',
-          (tester) async {
+      testWidgets('a digit or minus decimalSeparator fails its assert', (
+        tester,
+      ) async {
         for (final String mark in <String>['-', '+', '5']) {
           await tester.pumpWidget(
             wrapWithTheme(
@@ -1763,8 +1823,9 @@ void main() {
         expect(controller.text, '2');
       });
 
-      testWidgets('caller inputFormatters override the number default',
-          (tester) async {
+      testWidgets('caller inputFormatters override the number default', (
+        tester,
+      ) async {
         final controller = TextEditingController();
         addTearDown(controller.dispose);
         await tester.pumpWidget(
@@ -1791,20 +1852,20 @@ void main() {
     });
 
     group('Selection Toolbar', () {
-      testWidgets('renders Material-free localized buttons on selection',
-          (tester) async {
+      testWidgets('renders Material-free localized buttons on selection', (
+        tester,
+      ) async {
         final controller = TextEditingController(text: 'hello world');
         addTearDown(controller.dispose);
 
-        await tester.pumpWidget(
-          wrapWithTheme(WInput(controller: controller)),
-        );
+        await tester.pumpWidget(wrapWithTheme(WInput(controller: controller)));
 
         await tester.tap(find.byType(EditableText));
         await tester.pump();
 
-        final EditableTextState state =
-            tester.state<EditableTextState>(find.byType(EditableText));
+        final EditableTextState state = tester.state<EditableTextState>(
+          find.byType(EditableText),
+        );
         state.userUpdateTextEditingValue(
           controller.value.copyWith(
             selection: const TextSelection(baseOffset: 0, extentOffset: 5),

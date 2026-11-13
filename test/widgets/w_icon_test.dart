@@ -18,13 +18,17 @@ void main() {
     });
 
     group('Inline foregroundColor', () {
-      testWidgets('applies foregroundColor when className has no color class',
-          (tester) async {
+      testWidgets('applies foregroundColor when className has no color class', (
+        tester,
+      ) async {
         const color = Color(0xFF112233);
         await tester.pumpWidget(
           wrapWithTheme(
-            const WIcon(Icons.star,
-                className: 'text-lg', foregroundColor: color),
+            const WIcon(
+              Icons.star,
+              className: 'text-lg',
+              foregroundColor: color,
+            ),
           ),
         );
 
@@ -32,8 +36,9 @@ void main() {
         expect(icon.color, color);
       });
 
-      testWidgets('foregroundColor wins over text-red-500 in className',
-          (tester) async {
+      testWidgets('foregroundColor wins over text-red-500 in className', (
+        tester,
+      ) async {
         const override = Color(0xFFCC00CC);
         await tester.pumpWidget(
           wrapWithTheme(
@@ -49,8 +54,7 @@ void main() {
         expect(icon.color, override);
       });
 
-      testWidgets(
-          'parser cache entry is shared across WIcons with different '
+      testWidgets('parser cache entry is shared across WIcons with different '
           'foregroundColor but identical className', (tester) async {
         const sameClass = 'text-lg';
 
@@ -253,31 +257,28 @@ void main() {
     });
 
     group('Animated Opacity', () {
-      testWidgets('wraps in AnimatedOpacity when opacity and duration combined',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WIcon(
-              Icons.star,
-              className: 'opacity-50 duration-300',
+      testWidgets(
+        'wraps in AnimatedOpacity when opacity and duration combined',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WIcon(Icons.star, className: 'opacity-50 duration-300'),
             ),
-          ),
-        );
+          );
 
-        // AnimatedOpacity is used when transitionDuration is set alongside opacity
-        expect(find.byType(AnimatedOpacity), findsOneWidget);
-        final animated = tester.widget<AnimatedOpacity>(
-          find.byType(AnimatedOpacity),
-        );
-        expect(animated.opacity, 0.5);
-        expect(animated.duration, const Duration(milliseconds: 300));
-      });
+          // AnimatedOpacity is used when transitionDuration is set alongside opacity
+          expect(find.byType(AnimatedOpacity), findsOneWidget);
+          final animated = tester.widget<AnimatedOpacity>(
+            find.byType(AnimatedOpacity),
+          );
+          expect(animated.opacity, 0.5);
+          expect(animated.duration, const Duration(milliseconds: 300));
+        },
+      );
 
       testWidgets('uses plain Opacity when no duration is set', (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WIcon(Icons.star, className: 'opacity-75'),
-          ),
+          wrapWithTheme(const WIcon(Icons.star, className: 'opacity-75')),
         );
 
         expect(find.byType(Opacity), findsOneWidget);
@@ -288,12 +289,11 @@ void main() {
     });
 
     group('Animation Wrapping', () {
-      testWidgets('wraps icon with animation widget for animate-spin',
-          (tester) async {
+      testWidgets('wraps icon with animation widget for animate-spin', (
+        tester,
+      ) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WIcon(Icons.refresh, className: 'animate-spin'),
-          ),
+          wrapWithTheme(const WIcon(Icons.refresh, className: 'animate-spin')),
         );
 
         // The icon must still be present; the animation wrapper sits above it
@@ -303,8 +303,9 @@ void main() {
         expect(iconWidget.icon, Icons.refresh);
       });
 
-      testWidgets('animate-pulse wraps icon with animation widget',
-          (tester) async {
+      testWidgets('animate-pulse wraps icon with animation widget', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WIcon(Icons.favorite, className: 'animate-pulse'),
@@ -316,8 +317,9 @@ void main() {
     });
 
     group('Debug Logging', () {
-      testWidgets('debug class enables debug mode without crashing',
-          (tester) async {
+      testWidgets('debug class enables debug mode without crashing', (
+        tester,
+      ) async {
         // The debug class sets styles.debug = true, triggering the logger block
         // (lines 136-148). We verify the widget still renders correctly.
         await tester.pumpWidget(
@@ -331,15 +333,13 @@ void main() {
         expect(icon.color, isNotNull);
       });
 
-      testWidgets('debug class with opacity logs opacity wrapper',
-          (tester) async {
+      testWidgets('debug class with opacity logs opacity wrapper', (
+        tester,
+      ) async {
         // Exercises the opacity != null branch inside the debug logger block
         await tester.pumpWidget(
           wrapWithTheme(
-            const WIcon(
-              Icons.bug_report,
-              className: 'debug opacity-50',
-            ),
+            const WIcon(Icons.bug_report, className: 'debug opacity-50'),
           ),
         );
 
@@ -347,16 +347,14 @@ void main() {
         expect(find.byType(Opacity), findsOneWidget);
       });
 
-      testWidgets('debug class with animation logs animation wrapper',
-          (tester) async {
+      testWidgets('debug class with animation logs animation wrapper', (
+        tester,
+      ) async {
         // Exercises the animationType != null branch inside the debug logger block
         // (line 144-145 in w_icon.dart)
         await tester.pumpWidget(
           wrapWithTheme(
-            const WIcon(
-              Icons.bug_report,
-              className: 'debug animate-spin',
-            ),
+            const WIcon(Icons.bug_report, className: 'debug animate-spin'),
           ),
         );
 

@@ -146,10 +146,7 @@ void main() {
         final styles = WindStyle();
         final classes = ['m-primary', 'mx-foo', 'my-bar'];
 
-        expect(
-          () => parser.parse(styles, classes, context),
-          returnsNormally,
-        );
+        expect(() => parser.parse(styles, classes, context), returnsNormally);
         expect(parser.parse(styles, classes, context).margin, isNull);
       });
     });

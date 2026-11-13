@@ -16,52 +16,47 @@ WindContext createTestContext({
   Brightness brightness = Brightness.light,
   String platform = 'unknown',
   bool isMobile = false,
-}) =>
-    WindContext(
-      theme: testTheme.copyWith(brightness: brightness),
-      activeBreakpoint: activeBreakpoint,
-      platform: platform,
-      isMobile: isMobile,
-      screenWidth: 400,
-      screenHeight: 800,
-      activeStates: {
-        if (isHovering) 'hover',
-        if (isFocused) 'focus',
-        if (isDisabled) 'disabled',
-      },
-    );
+}) => WindContext(
+  theme: testTheme.copyWith(brightness: brightness),
+  activeBreakpoint: activeBreakpoint,
+  platform: platform,
+  isMobile: isMobile,
+  screenWidth: 400,
+  screenHeight: 800,
+  activeStates: {
+    if (isHovering) 'hover',
+    if (isFocused) 'focus',
+    if (isDisabled) 'disabled',
+  },
+);
 
 void main() {
   setUp(WindParser.clearCache);
   tearDown(WindParser.clearCache);
 
   group('WindParser regression', () {
-    test(
-      'findAndGroupClasses preserves duplicate tokens so last-class-wins still works on repeated overrides',
-      () {
-        // top-8 top-4 top-8: the trailing top-8 must override the intermediate
-        // top-4. Set-based dedup loses the trailing occurrence and picks top-4.
-        final result = WindParser.findAndGroupClasses(
-            'top-8 top-4 top-8', createTestContext());
+    test('findAndGroupClasses preserves duplicate tokens so last-class-wins still works on repeated overrides', () {
+      // top-8 top-4 top-8: the trailing top-8 must override the intermediate
+      // top-4. Set-based dedup loses the trailing occurrence and picks top-4.
+      final result = WindParser.findAndGroupClasses(
+        'top-8 top-4 top-8',
+        createTestContext(),
+      );
 
-        expect(result['position'], ['top-8', 'top-4', 'top-8']);
-      },
-    );
+      expect(result['position'], ['top-8', 'top-4', 'top-8']);
+    });
 
-    test(
-      'findAndGroupClasses still routes duplicates the same way as unique tokens',
-      () {
-        final result = WindParser.findAndGroupClasses(
-          'bg-red-500 text-lg md:bg-blue-500',
-          createTestContext(),
-        );
+    test('findAndGroupClasses still routes duplicates the same way as unique tokens', () {
+      final result = WindParser.findAndGroupClasses(
+        'bg-red-500 text-lg md:bg-blue-500',
+        createTestContext(),
+      );
 
-        expect(result, {
-          'background': ['bg-red-500'],
-          'text': ['text-lg'],
-        });
-      },
-    );
+      expect(result, {
+        'background': ['bg-red-500'],
+        'text': ['text-lg'],
+      });
+    });
 
     testWidgets(
       'parse with non-null baseStyle bypasses the cache (no stale hit, no write-back pollution)',

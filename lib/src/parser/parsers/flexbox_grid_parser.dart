@@ -382,7 +382,8 @@ class FlexboxGridParser implements WindParserInterface {
       }
     }
 
-    final bool didChange = displayType != null ||
+    final bool didChange =
+        displayType != null ||
         flexDirection != null ||
         flexReverse != null ||
         mainAxisAlignment != null ||

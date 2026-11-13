@@ -2,8 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
-List<String> visibleTextsInOrder(WidgetTester tester,
-    {bool horizontal = true}) {
+List<String> visibleTextsInOrder(
+  WidgetTester tester, {
+  bool horizontal = true,
+}) {
   final texts = tester.widgetList<Text>(find.byType(Text)).toList();
   final entries = <({double pos, String text})>[];
   for (final t in texts) {
@@ -82,8 +84,9 @@ void main() {
       expect(visibleTextsInOrder(tester), ['B', 'C', 'A']);
     });
 
-    testWidgets('children without order-* default to 0 (stable)',
-        (tester) async {
+    testWidgets('children without order-* default to 0 (stable)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -123,8 +126,9 @@ void main() {
       expect(visibleTextsInOrder(tester), ['A', 'B', 'C']);
     });
 
-    testWidgets('mixed Wind and non-Wind children reorder correctly',
-        (tester) async {
+    testWidgets('mixed Wind and non-Wind children reorder correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(

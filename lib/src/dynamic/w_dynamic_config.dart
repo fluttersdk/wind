@@ -59,7 +59,7 @@ class WDynamicConfig {
 
   /// Called when a widget type is not allowed or unknown.
   final Widget Function(String type, Map<String, dynamic> props)?
-      onUnknownWidget;
+  onUnknownWidget;
 
   /// Called when a widget build throws an error.
   final Widget Function(String type, Object error)? onError;

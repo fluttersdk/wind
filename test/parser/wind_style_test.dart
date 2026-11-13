@@ -31,8 +31,10 @@ void main() {
       );
 
       expect(updated.decoration?.color, Colors.red);
-      expect(updated.decoration?.borderRadius,
-          const BorderRadius.all(Radius.circular(8)));
+      expect(
+        updated.decoration?.borderRadius,
+        const BorderRadius.all(Radius.circular(8)),
+      );
     });
   });
 
@@ -126,7 +128,9 @@ void main() {
       expect(updated.letterSpacing, 0.05);
       expect(updated.letterSpacingUnit, WindLetterSpacingUnit.em);
       expect(
-          base.copyWith(width: 1).letterSpacingUnit, WindLetterSpacingUnit.px);
+        base.copyWith(width: 1).letterSpacingUnit,
+        WindLetterSpacingUnit.px,
+      );
     });
   });
 }

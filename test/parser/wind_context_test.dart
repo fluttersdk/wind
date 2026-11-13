@@ -338,9 +338,7 @@ void main() {
         final int builds = WindPerfCounters.wDivBuilds;
 
         await tester.pumpWidget(
-          tree(
-            closed.copyWith(viewInsets: const EdgeInsets.only(bottom: 300)),
-          ),
+          tree(closed.copyWith(viewInsets: const EdgeInsets.only(bottom: 300))),
         );
 
         expect(WindPerfCounters.wDivBuilds, builds);

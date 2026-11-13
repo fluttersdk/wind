@@ -18,13 +18,12 @@ void main() {
 
   group('WTabs Widget Tests', () {
     group('Full-width tab list (issue #128)', () {
-      Finder listRow() => find.descendant(
-            of: find.byType(WTabs),
-            matching: find.byType(Row),
-          );
+      Finder listRow() =>
+          find.descendant(of: find.byType(WTabs), matching: find.byType(Row));
 
-      testWidgets('tab list spans the full container width by default',
-          (tester) async {
+      testWidgets('tab list spans the full container width by default', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             SizedBox(
@@ -33,8 +32,7 @@ void main() {
                 tabs: const ['A', 'B'],
                 selectedIndex: 0,
                 onChanged: (_) {},
-                listClassName:
-                    'flex flex-row border-b border-gray-200 dark:border-gray-700',
+                listClassName: 'flex flex-row border-b border-gray-200 dark:border-gray-700',
                 panelBuilder: (i) => const Text('panel'),
               ),
             ),
@@ -44,8 +42,9 @@ void main() {
         expect(tester.getSize(listRow()).width, 400);
       });
 
-      testWidgets('fullWidthList: false keeps the list content-width',
-          (tester) async {
+      testWidgets('fullWidthList: false keeps the list content-width', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             SizedBox(
@@ -66,50 +65,52 @@ void main() {
       });
 
       testWidgets(
-          'fullWidthList: false honors an explicit width in listClassName',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            SizedBox(
-              width: 400,
-              child: WTabs(
-                tabs: const ['A', 'B'],
-                selectedIndex: 0,
-                onChanged: (_) {},
-                fullWidthList: false,
-                listClassName: 'flex flex-row w-32 border-b',
-                panelBuilder: (i) => const Text('panel'),
+        'fullWidthList: false honors an explicit width in listClassName',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              SizedBox(
+                width: 400,
+                child: WTabs(
+                  tabs: const ['A', 'B'],
+                  selectedIndex: 0,
+                  onChanged: (_) {},
+                  fullWidthList: false,
+                  listClassName: 'flex flex-row w-32 border-b',
+                  panelBuilder: (i) => const Text('panel'),
+                ),
               ),
             ),
-          ),
-        );
+          );
 
-        // w-32 -> 128px, no prepended w-full to conflict with it.
-        expect(tester.getSize(listRow()).width, 128);
-      });
+          // w-32 -> 128px, no prepended w-full to conflict with it.
+          expect(tester.getSize(listRow()).width, 128);
+        },
+      );
 
       testWidgets(
-          'an explicit width in listClassName wins even with fullWidthList true',
-          (tester) async {
-        // The default fullWidthList: true must NOT prepend w-full when the
-        // caller already set a width token, so the explicit width wins cleanly.
-        await tester.pumpWidget(
-          wrapWithTheme(
-            SizedBox(
-              width: 400,
-              child: WTabs(
-                tabs: const ['A', 'B'],
-                selectedIndex: 0,
-                onChanged: (_) {},
-                listClassName: 'flex flex-row w-32 border-b',
-                panelBuilder: (i) => const Text('panel'),
+        'an explicit width in listClassName wins even with fullWidthList true',
+        (tester) async {
+          // The default fullWidthList: true must NOT prepend w-full when the
+          // caller already set a width token, so the explicit width wins cleanly.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              SizedBox(
+                width: 400,
+                child: WTabs(
+                  tabs: const ['A', 'B'],
+                  selectedIndex: 0,
+                  onChanged: (_) {},
+                  listClassName: 'flex flex-row w-32 border-b',
+                  panelBuilder: (i) => const Text('panel'),
+                ),
               ),
             ),
-          ),
-        );
+          );
 
-        expect(tester.getSize(listRow()).width, 128);
-      });
+          expect(tester.getSize(listRow()).width, 128);
+        },
+      );
     });
 
     group('Construction', () {
@@ -195,9 +196,7 @@ void main() {
         expect(find.text('Gamma'), findsOneWidget);
       });
 
-      testWidgets('renders panel content for the selected tab', (
-        tester,
-      ) async {
+      testWidgets('renders panel content for the selected tab', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WTabs(
@@ -230,9 +229,7 @@ void main() {
     });
 
     group('Selected state', () {
-      testWidgets('active tab WAnchor carries selected state', (
-        tester,
-      ) async {
+      testWidgets('active tab WAnchor carries selected state', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WTabs(
@@ -264,8 +261,9 @@ void main() {
         );
         await tester.pump();
 
-        final anchors =
-            tester.widgetList<WAnchor>(find.byType(WAnchor)).toList();
+        final anchors = tester
+            .widgetList<WAnchor>(find.byType(WAnchor))
+            .toList();
         // Second anchor (index 1) is not selected.
         expect(anchors[1].states?.contains('selected') ?? false, isFalse);
       });
@@ -380,8 +378,9 @@ void main() {
           );
           await tester.pump();
 
-          final anchors =
-              tester.widgetList<WAnchor>(find.byType(WAnchor)).toList();
+          final anchors = tester
+              .widgetList<WAnchor>(find.byType(WAnchor))
+              .toList();
           expect(anchors, isNotEmpty);
           for (final anchor in anchors) {
             expect(anchor.onTap, isNull);
@@ -420,9 +419,7 @@ void main() {
     });
 
     group('className threading', () {
-      testWidgets('listClassName applied to the tab list WDiv', (
-        tester,
-      ) async {
+      testWidgets('listClassName applied to the tab list WDiv', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WTabs(

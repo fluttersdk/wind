@@ -150,10 +150,7 @@ void main() {
                   Expanded(
                     child: WDiv(
                       className: 'overflow-y-auto',
-                      children: List.generate(
-                        20,
-                        (i) => WText('Item $i'),
-                      ),
+                      children: List.generate(20, (i) => WText('Item $i')),
                     ),
                   ),
                   const WText('Fixed Footer'),
@@ -203,9 +200,7 @@ void main() {
             child: const Scaffold(
               body: WDiv(
                 className: 'overflow-y-auto max-h-[300px]',
-                children: [
-                  WDiv(className: 'h-[500px]', child: Text('Tall')),
-                ],
+                children: [WDiv(className: 'h-[500px]', child: Text('Tall'))],
               ),
             ),
           ),

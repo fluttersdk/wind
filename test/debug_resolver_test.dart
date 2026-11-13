@@ -89,11 +89,13 @@ void main() {
       'returns a non-empty map for WButton (one of the 17 supported widgets)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(WButton(
-            className: 'bg-blue-500 text-white',
-            onTap: () {},
-            child: const Text('Click'),
-          )),
+          wrapWithTheme(
+            WButton(
+              className: 'bg-blue-500 text-white',
+              onTap: () {},
+              child: const Text('Click'),
+            ),
+          ),
         );
         final element = _firstElementOf<WButton>(tester);
 
@@ -195,9 +197,7 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        wrapWithTheme(
-          const WDiv(className: 'bg-blue-500', child: SizedBox()),
-        ),
+        wrapWithTheme(const WDiv(className: 'bg-blue-500', child: SizedBox())),
       );
       final element = _firstElementOf<WDiv>(tester);
 
@@ -208,23 +208,20 @@ void main() {
       expect(data['bgColor'] as String, startsWith('#'));
     });
 
-    testWidgets(
-      'emits textColor as a #RRGGBB hex when text-* class resolves',
-      (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WText('hello', className: 'text-red-500'),
-          ),
-        );
-        final element = _firstElementOf<WText>(tester);
+    testWidgets('emits textColor as a #RRGGBB hex when text-* class resolves', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithTheme(const WText('hello', className: 'text-red-500')),
+      );
+      final element = _firstElementOf<WText>(tester);
 
-        final data = const WindDebugResolverImpl().resolve(element);
-        expect(data, isNotEmpty);
-        expect(data.containsKey('textColor'), isTrue);
-        expect(data['textColor'], isA<String>());
-        expect(data['textColor'] as String, startsWith('#'));
-      },
-    );
+      final data = const WindDebugResolverImpl().resolve(element);
+      expect(data, isNotEmpty);
+      expect(data.containsKey('textColor'), isTrue);
+      expect(data['textColor'], isA<String>());
+      expect(data['textColor'] as String, startsWith('#'));
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -282,9 +279,7 @@ void main() {
       'does not emit gapX / gapY (v1.0 emits only 6 core fields, drops layout fields)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'flex gap-4', child: SizedBox()),
-          ),
+          wrapWithTheme(const WDiv(className: 'flex gap-4', child: SizedBox())),
         );
         final element = _firstElementOf<WDiv>(tester);
 
@@ -301,9 +296,7 @@ void main() {
         await tester.pumpWidget(
           wrapWithTheme(
             const Row(
-              children: [
-                WDiv(className: 'flex-1', child: SizedBox()),
-              ],
+              children: [WDiv(className: 'flex-1', child: SizedBox())],
             ),
           ),
         );
@@ -325,9 +318,7 @@ void main() {
       'does not emit width (v1.0 emits only 6 core fields, drops sizing fields)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'w-[100px]', child: SizedBox()),
-          ),
+          wrapWithTheme(const WDiv(className: 'w-[100px]', child: SizedBox())),
         );
         final element = _firstElementOf<WDiv>(tester);
 
@@ -341,9 +332,7 @@ void main() {
       'does not emit height (v1.0 emits only 6 core fields, drops sizing fields)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'h-[200px]', child: SizedBox()),
-          ),
+          wrapWithTheme(const WDiv(className: 'h-[200px]', child: SizedBox())),
         );
         final element = _firstElementOf<WDiv>(tester);
 
@@ -489,9 +478,7 @@ void main() {
       'does not emit ringWidth (v1.0 emits only 6 core fields, drops ring fields)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'ring-4', child: SizedBox()),
-          ),
+          wrapWithTheme(const WDiv(className: 'ring-4', child: SizedBox())),
         );
         final element = _firstElementOf<WDiv>(tester);
 
@@ -511,9 +498,7 @@ void main() {
       'does not emit opacity (v1.0 emits only 6 core fields, drops effects fields)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'opacity-50', child: SizedBox()),
-          ),
+          wrapWithTheme(const WDiv(className: 'opacity-50', child: SizedBox())),
         );
         final element = _firstElementOf<WDiv>(tester);
 
@@ -543,9 +528,7 @@ void main() {
       'does not emit boxShadow (v1.0 emits only 6 core fields, drops effects fields)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'shadow-md', child: SizedBox()),
-          ),
+          wrapWithTheme(const WDiv(className: 'shadow-md', child: SizedBox())),
         );
         final element = _firstElementOf<WDiv>(tester);
 
@@ -565,9 +548,7 @@ void main() {
       'does not emit positionType (v1.0 emits only 6 core fields, drops position fields)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'absolute', child: SizedBox()),
-          ),
+          wrapWithTheme(const WDiv(className: 'absolute', child: SizedBox())),
         );
         final element = _firstElementOf<WDiv>(tester);
 
@@ -582,10 +563,7 @@ void main() {
       (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            const WDiv(
-              className: 'absolute top-4 left-2',
-              child: SizedBox(),
-            ),
+            const WDiv(className: 'absolute top-4 left-2', child: SizedBox()),
           ),
         );
         final element = _firstElementOf<WDiv>(tester);
@@ -671,26 +649,23 @@ void main() {
       },
     );
 
-    testWidgets(
-      'omits flex-related keys when className has no flex tokens',
-      (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'bg-red-500', child: SizedBox()),
-          ),
-        );
-        final element = _firstElementOf<WDiv>(tester);
+    testWidgets('omits flex-related keys when className has no flex tokens', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithTheme(const WDiv(className: 'bg-red-500', child: SizedBox())),
+      );
+      final element = _firstElementOf<WDiv>(tester);
 
-        final data = const WindDebugResolverImpl().resolve(element);
-        // Alpha-10 does not emit any layout keys regardless of className.
-        expect(data.containsKey('displayType'), isFalse);
-        expect(data.containsKey('flexDirection'), isFalse);
-        expect(data.containsKey('mainAxisAlignment'), isFalse);
-        expect(data.containsKey('gapX'), isFalse);
-        expect(data.containsKey('gapY'), isFalse);
-        expect(data.containsKey('flex'), isFalse);
-      },
-    );
+      final data = const WindDebugResolverImpl().resolve(element);
+      // Alpha-10 does not emit any layout keys regardless of className.
+      expect(data.containsKey('displayType'), isFalse);
+      expect(data.containsKey('flexDirection'), isFalse);
+      expect(data.containsKey('mainAxisAlignment'), isFalse);
+      expect(data.containsKey('gapX'), isFalse);
+      expect(data.containsKey('gapY'), isFalse);
+      expect(data.containsKey('flex'), isFalse);
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -702,9 +677,7 @@ void main() {
       'resolver returns valid map for shadow-2xl (no boxShadow key in v1.0)',
       (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'shadow-2xl', child: SizedBox()),
-          ),
+          wrapWithTheme(const WDiv(className: 'shadow-2xl', child: SizedBox())),
         );
         final element = _firstElementOf<WDiv>(tester);
 
@@ -731,9 +704,7 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        wrapWithTheme(
-          const WDiv(className: 'bg-red-500', child: SizedBox()),
-        ),
+        wrapWithTheme(const WDiv(className: 'bg-red-500', child: SizedBox())),
       );
       final firstElement = _firstElementOf<WDiv>(tester);
       final firstData = const WindDebugResolverImpl().resolve(firstElement);
@@ -741,9 +712,7 @@ void main() {
 
       // Re-pump a fresh tree with a different W widget.
       await tester.pumpWidget(
-        wrapWithTheme(
-          const WText('hi', className: 'text-green-500'),
-        ),
+        wrapWithTheme(const WText('hi', className: 'text-green-500')),
       );
       final secondElement = _firstElementOf<WText>(tester);
       final secondData = const WindDebugResolverImpl().resolve(secondElement);

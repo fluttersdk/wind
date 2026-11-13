@@ -50,12 +50,12 @@ void main() {
   group('activation', () {
     for (final (String name, LogicalKeyboardKey key)
         in <(String, LogicalKeyboardKey)>[
-      ('the D-pad centre', LogicalKeyboardKey.select),
-      ('Enter', LogicalKeyboardKey.enter),
-      ('the numeric keypad Enter', LogicalKeyboardKey.numpadEnter),
-      ('Space', LogicalKeyboardKey.space),
-      ('the gamepad A button', LogicalKeyboardKey.gameButtonA),
-    ]) {
+          ('the D-pad centre', LogicalKeyboardKey.select),
+          ('Enter', LogicalKeyboardKey.enter),
+          ('the numeric keypad Enter', LogicalKeyboardKey.numpadEnter),
+          ('Space', LogicalKeyboardKey.space),
+          ('the gamepad A button', LogicalKeyboardKey.gameButtonA),
+        ]) {
       testWidgets('$name activates a focused anchor', (tester) async {
         int taps = 0;
 
@@ -173,10 +173,7 @@ void main() {
         tester,
         WAnchor(
           onTap: () => outerTaps++,
-          child: WAnchor(
-            onLongPress: () {},
-            child: const WText('Options'),
-          ),
+          child: WAnchor(onLongPress: () {}, child: const WText('Options')),
         ),
       );
 
@@ -205,11 +202,7 @@ void main() {
       // enabled and the key would stop rather than travel on.
       await pump(
         tester,
-        WAnchor(
-          onTap: () {},
-          isDisabled: true,
-          child: const WText('Save'),
-        ),
+        WAnchor(onTap: () {}, isDisabled: true, child: const WText('Save')),
       );
 
       expect(
@@ -440,15 +433,15 @@ void main() {
                 .first,
           )
           .focusNode!;
-      final FocusNode field =
-          tester.widget<EditableText>(find.byType(EditableText)).focusNode;
+      final FocusNode field = tester
+          .widget<EditableText>(find.byType(EditableText))
+          .focusNode;
 
       // Re-resolved on each read rather than captured once. An element held
       // across a rebuild answers from the frame it was captured in, which made
       // the second read below report the first read's value.
-      bool decorationIsFocused() => WindAnchorStateProvider.of(
-            tester.element(find.text('Card')),
-          )!
+      bool decorationIsFocused() =>
+          WindAnchorStateProvider.of(tester.element(find.text('Card')))!
               .isFocused;
 
       card.requestFocus();
@@ -534,13 +527,13 @@ void main() {
       // inherits `hasPrimaryFocus`, which is what turned a private staleness
       // into a ring drawn around a control the user can no longer activate.
       Widget build(bool disabled) => WAnchor(
-            onTap: () {},
-            isDisabled: disabled,
-            child: const WDiv(
-              className: 'p-2 focus:ring-2 disabled:opacity-50',
-              child: WText('Play'),
-            ),
-          );
+        onTap: () {},
+        isDisabled: disabled,
+        child: const WDiv(
+          className: 'p-2 focus:ring-2 disabled:opacity-50',
+          child: WText('Play'),
+        ),
+      );
 
       await pump(tester, build(false));
       traversalStops(tester).single.requestFocus();
@@ -644,8 +637,7 @@ void main() {
       ('p-2 hover:bg-gray-50', false),
       ('p-2 hover:bg-gray-50 focus:bg-gray-50', true),
     ]) {
-      testWidgets(
-          'a sibling label under "$className" '
+      testWidgets('a sibling label under "$className" '
           '${lights ? 'reads' : 'does not read'} the field\'s focus', (
         tester,
       ) async {

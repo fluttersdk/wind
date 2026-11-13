@@ -153,10 +153,7 @@ void main() {
         // initial and stays lowercase.
         await pumpCapitalized(tester, '4th of july and _underscore lead');
 
-        expect(
-          find.text('4th Of July And _underscore Lead'),
-          findsOneWidget,
-        );
+        expect(find.text('4th Of July And _underscore Lead'), findsOneWidget);
       });
 
       testWidgets('opens a new word on a hyphen, a slash or a dot', (
@@ -374,8 +371,9 @@ void main() {
           ?.letterSpacing;
     }
 
-    testWidgets('resolves named tracking against its own text size',
-        (tester) async {
+    testWidgets('resolves named tracking against its own text size', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         themed(const WText('Title', className: 'text-sm tracking-tight')),
       );
@@ -383,8 +381,9 @@ void main() {
       expect(renderedLetterSpacing(tester, 'Title'), closeTo(-0.35, 1e-9));
     });
 
-    testWidgets('resolves named tracking against the inherited text size',
-        (tester) async {
+    testWidgets('resolves named tracking against the inherited text size', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         themed(
           const DefaultTextStyle(
@@ -398,22 +397,24 @@ void main() {
     });
 
     testWidgets(
-        'resolves named tracking against the size it paints at when no size '
-        'is set anywhere', (tester) async {
-      // The theme's `base` of 20 is not the size this text paints at: a
-      // DefaultTextStyle with no size paints at kDefaultFontSize (14).
-      await tester.pumpWidget(
-        themed(
-          const DefaultTextStyle(
-            style: TextStyle(),
-            child: WText('Base', className: 'tracking-widest'),
+      'resolves named tracking against the size it paints at when no size '
+      'is set anywhere',
+      (tester) async {
+        // The theme's `base` of 20 is not the size this text paints at: a
+        // DefaultTextStyle with no size paints at kDefaultFontSize (14).
+        await tester.pumpWidget(
+          themed(
+            const DefaultTextStyle(
+              style: TextStyle(),
+              child: WText('Base', className: 'tracking-widest'),
+            ),
+            data: WindThemeData(fontSizes: {'base': 20}),
           ),
-          data: WindThemeData(fontSizes: {'base': 20}),
-        ),
-      );
+        );
 
-      expect(renderedLetterSpacing(tester, 'Base'), closeTo(1.4, 1e-9));
-    });
+        expect(renderedLetterSpacing(tester, 'Base'), closeTo(1.4, 1e-9));
+      },
+    );
 
     testWidgets('resolves negative arbitrary em tracking', (tester) async {
       await tester.pumpWidget(
@@ -423,8 +424,9 @@ void main() {
       expect(renderedLetterSpacing(tester, 'Hero'), closeTo(-0.6, 1e-9));
     });
 
-    testWidgets('resolves em tracking against a responsive text size',
-        (tester) async {
+    testWidgets('resolves em tracking against a responsive text size', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1024, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -444,8 +446,9 @@ void main() {
       expect(renderedLetterSpacing(tester, 'Wide'), closeTo(-0.6, 1e-9));
     });
 
-    testWidgets('keeps arbitrary px tracking in logical pixels',
-        (tester) async {
+    testWidgets('keeps arbitrary px tracking in logical pixels', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         themed(const WText('Pixel', className: 'text-3xl tracking-[1px]')),
       );
@@ -453,8 +456,9 @@ void main() {
       expect(renderedLetterSpacing(tester, 'Pixel'), 1.0);
     });
 
-    testWidgets('resolves em tracking against a textStyle font size',
-        (tester) async {
+    testWidgets('resolves em tracking against a textStyle font size', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         themed(
           const WText(

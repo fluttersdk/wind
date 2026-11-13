@@ -13,10 +13,8 @@ const String _kBenchClassName =
     'bg-white p-4 m-2 text-lg font-bold rounded-md shadow-sm';
 
 /// Returns a [WDiv] node with [className] wrapping [child].
-Widget _styledNode(String className, Widget? child) => WDiv(
-      className: className,
-      child: child,
-    );
+Widget _styledNode(String className, Widget? child) =>
+    WDiv(className: className, child: child);
 
 /// Builds a balanced wide/deep tree of [WDiv] nodes.
 ///
@@ -63,8 +61,9 @@ void main() {
     /// Assertion: warm total time must be less than cold total time / 3,
     /// i.e. the cache must deliver at least a 3x speedup. The multiplier is
     /// deliberately generous to stay stable across CI environments.
-    testWidgets('cache warm path is at least 3x faster than cold path',
-        (tester) async {
+    testWidgets('cache warm path is at least 3x faster than cold path', (
+      tester,
+    ) async {
       // 1. Capture a real BuildContext from inside the widget tree.
       late BuildContext capturedCtx;
       await tester.pumpWidget(
@@ -94,8 +93,11 @@ void main() {
       final coldTotal = coldWatch.elapsedMicroseconds;
 
       // 3. Verify the cache received exactly one entry after the last miss.
-      expect(WindParser.cacheSize, 1,
-          reason: 'cold bench must leave one cache entry after the last miss');
+      expect(
+        WindParser.cacheSize,
+        1,
+        reason: 'cold bench must leave one cache entry after the last miss',
+      );
 
       // 4. Warm bench: prime the cache once, then hit it [_kBenchIterations]
       //    times without clearing between iterations.
@@ -114,14 +116,21 @@ void main() {
       final warmTotal = warmWatch.elapsedMicroseconds;
 
       // 5. Cache must NOT grow during warm iterations (pure hits, no new misses).
-      expect(WindParser.cacheSize, cacheSizeAfterPrime,
-          reason: 'cache size must be stable during warm iterations');
+      expect(
+        WindParser.cacheSize,
+        cacheSizeAfterPrime,
+        reason: 'cache size must be stable during warm iterations',
+      );
 
       // 6. Report raw numbers.
-      debugPrint('PERF: cache cold total = ${coldTotal}us '
-          '($_kBenchIterations iters)');
-      debugPrint('PERF: cache warm total = ${warmTotal}us '
-          '($_kBenchIterations iters)');
+      debugPrint(
+        'PERF: cache cold total = ${coldTotal}us '
+        '($_kBenchIterations iters)',
+      );
+      debugPrint(
+        'PERF: cache warm total = ${warmTotal}us '
+        '($_kBenchIterations iters)',
+      );
       final ratio = coldTotal / (warmTotal == 0 ? 1 : warmTotal);
       debugPrint('PERF: cache speedup ratio = ${ratio.toStringAsFixed(2)}x');
 
@@ -129,7 +138,8 @@ void main() {
       expect(
         warmTotal,
         lessThan(coldTotal ~/ 3),
-        reason: 'warm cache must be at least 3x faster than cold '
+        reason:
+            'warm cache must be at least 3x faster than cold '
             '(cold=${coldTotal}us warm=${warmTotal}us)',
       );
     });

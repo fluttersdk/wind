@@ -136,10 +136,7 @@ final class WindRecipe {
   ///
   /// [variants] is the caller's selection (axis -> value, or `null` to clear a
   /// default). [className] is an extra caller className appended last.
-  String call({
-    Map<String, String?>? variants,
-    String? className,
-  }) {
+  String call({Map<String, String?>? variants, String? className}) {
     // 1. Merge defaults with the selection; null in the selection clears.
     final resolved = _resolveSelection(
       this.variants,
@@ -367,9 +364,9 @@ final Set<String> _lintedKeys = <String>{};
 bool _lintShorthandLonghand(List<String> parts) {
   if (parts.isEmpty) return true;
 
-  final tokens = parts.expand((part) => part.split(RegExp(r'\s+'))).where(
-        (token) => token.isNotEmpty,
-      );
+  final tokens = parts
+      .expand((part) => part.split(RegExp(r'\s+')))
+      .where((token) => token.isNotEmpty);
 
   // Track which granularities of each family appear, keeping the actual
   // offending tokens so two distinct recipes mixing the same family (but

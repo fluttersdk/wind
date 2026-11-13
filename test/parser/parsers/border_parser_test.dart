@@ -100,26 +100,20 @@ void main() {
 
     group('border color', () {
       test('parses theme color', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'border',
-              'border-red-500',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'border',
+          'border-red-500',
+        ], context);
 
         final border = result.decoration!.border as Border;
         expect(border.top.color, context.theme.getColor('red', 500));
       });
 
       test('parses theme color with opacity', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'border',
-              'border-red-500/50',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'border',
+          'border-red-500/50',
+        ], context);
 
         final border = result.decoration!.border as Border;
         final expectedColor = applyOpacity(
@@ -130,27 +124,21 @@ void main() {
       });
 
       test('parses arbitrary hex color', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'border',
-              'border-[#FF5733]',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'border',
+          'border-[#FF5733]',
+        ], context);
 
         final border = result.decoration!.border as Border;
         expect(border.top.color, const Color(0xFFFF5733));
       });
 
       test('resolves border-transparent to a fully transparent color', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'border',
-              'border-primary',
-              'border-transparent',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'border',
+          'border-primary',
+          'border-transparent',
+        ], context);
 
         final border = result.decoration!.border as Border;
         expect(border.top.color, const Color(0x00000000));
@@ -172,23 +160,17 @@ void main() {
       });
 
       test('parses rounded-full', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'rounded-full',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'rounded-full',
+        ], context);
 
         expect(result.decoration!.borderRadius, BorderRadius.circular(9999.0));
       });
 
       test('parses rounded-none', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'rounded-none',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'rounded-none',
+        ], context);
 
         expect(result.decoration!.borderRadius, BorderRadius.circular(0.0));
       });
@@ -208,12 +190,9 @@ void main() {
       });
 
       test('parses rounded-tl-lg', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'rounded-tl-lg',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'rounded-tl-lg',
+        ], context);
 
         expect(
           result.decoration!.borderRadius,
@@ -224,39 +203,30 @@ void main() {
 
     group('last class wins', () {
       test('later border width overrides earlier', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'border-2',
-              'border-4',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'border-2',
+          'border-4',
+        ], context);
 
         final border = result.decoration!.border as Border;
         expect(border.top.width, 4.0);
       });
 
       test('later radius overrides earlier', () {
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'rounded-sm',
-              'rounded-xl',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'rounded-sm',
+          'rounded-xl',
+        ], context);
 
         expect(result.decoration!.borderRadius, BorderRadius.circular(12.0));
       });
 
       test('directional border overrides uniform border', () {
         // border-2 border-t-4 should result in only top border
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'border-2',
-              'border-t-4',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'border-2',
+          'border-t-4',
+        ], context);
 
         final border = result.decoration!.border as Border;
         expect(border.top.width, 4.0);
@@ -267,13 +237,10 @@ void main() {
 
       test('directional radius overrides uniform radius', () {
         // rounded-lg rounded-t-sm should result in only top radius
-        final result = parser.parse(
-            const WindStyle(),
-            [
-              'rounded-lg',
-              'rounded-t-sm',
-            ],
-            context);
+        final result = parser.parse(const WindStyle(), [
+          'rounded-lg',
+          'rounded-t-sm',
+        ], context);
 
         expect(
           result.decoration!.borderRadius,
@@ -291,13 +258,10 @@ void main() {
           decoration: const BoxDecoration(color: Colors.blue),
         );
 
-        final result = parser.parse(
-            existingStyle,
-            [
-              'border-2',
-              'rounded-lg',
-            ],
-            context);
+        final result = parser.parse(existingStyle, [
+          'border-2',
+          'rounded-lg',
+        ], context);
 
         expect(result.decoration!.color, Colors.blue);
         expect(result.decoration!.border, isNotNull);

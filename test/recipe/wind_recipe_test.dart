@@ -10,56 +10,51 @@ void main() {
       expect(recipe(), 'inline-flex rounded-full px-2 py-1');
     });
 
-    test('appends a selected variant class after the base in definition order',
-        () {
-      final recipe = WindRecipe(
-        base: 'rounded',
-        variants: {
-          'tone': {
-            'primary': 'bg-blue-500 text-white',
-            'ghost': 'bg-transparent text-blue-500',
+    test(
+      'appends a selected variant class after the base in definition order',
+      () {
+        final recipe = WindRecipe(
+          base: 'rounded',
+          variants: {
+            'tone': {
+              'primary': 'bg-blue-500 text-white',
+              'ghost': 'bg-transparent text-blue-500',
+            },
           },
-        },
-      );
+        );
 
-      expect(
-        recipe(variants: {'tone': 'primary'}),
-        'rounded bg-blue-500 text-white',
-      );
-    });
+        expect(
+          recipe(variants: {'tone': 'primary'}),
+          'rounded bg-blue-500 text-white',
+        );
+      },
+    );
 
-    test('joins multiple variant axes in the variants-map definition order',
-        () {
-      final recipe = WindRecipe(
-        base: 'btn',
-        variants: {
-          'intent': {
-            'primary': 'bg-blue-500',
-            'secondary': 'bg-gray-200',
+    test(
+      'joins multiple variant axes in the variants-map definition order',
+      () {
+        final recipe = WindRecipe(
+          base: 'btn',
+          variants: {
+            'intent': {'primary': 'bg-blue-500', 'secondary': 'bg-gray-200'},
+            'size': {'sm': 'px-2 py-1', 'lg': 'px-4 py-2'},
           },
-          'size': {
-            'sm': 'px-2 py-1',
-            'lg': 'px-4 py-2',
-          },
-        },
-      );
+        );
 
-      // 'intent' is declared before 'size', so its classes emit first
-      // regardless of the selection map's iteration order.
-      expect(
-        recipe(variants: {'size': 'lg', 'intent': 'primary'}),
-        'btn bg-blue-500 px-4 py-2',
-      );
-    });
+        // 'intent' is declared before 'size', so its classes emit first
+        // regardless of the selection map's iteration order.
+        expect(
+          recipe(variants: {'size': 'lg', 'intent': 'primary'}),
+          'btn bg-blue-500 px-4 py-2',
+        );
+      },
+    );
 
     test('falls back to defaultVariants when an axis is not selected', () {
       final recipe = WindRecipe(
         base: 'btn',
         variants: {
-          'intent': {
-            'primary': 'bg-blue-500',
-            'secondary': 'bg-gray-200',
-          },
+          'intent': {'primary': 'bg-blue-500', 'secondary': 'bg-gray-200'},
         },
         defaultVariants: {'intent': 'primary'},
       );
@@ -71,10 +66,7 @@ void main() {
       final recipe = WindRecipe(
         base: 'btn',
         variants: {
-          'intent': {
-            'primary': 'bg-blue-500',
-            'secondary': 'bg-gray-200',
-          },
+          'intent': {'primary': 'bg-blue-500', 'secondary': 'bg-gray-200'},
         },
         defaultVariants: {'intent': 'primary'},
       );
@@ -86,9 +78,7 @@ void main() {
       final recipe = WindRecipe(
         base: 'btn',
         variants: {
-          'intent': {
-            'primary': 'bg-blue-500',
-          },
+          'intent': {'primary': 'bg-blue-500'},
         },
         defaultVariants: {'intent': 'primary'},
       );
@@ -127,10 +117,7 @@ void main() {
       final recipe = WindRecipe(
         base: 'btn',
         variants: {
-          'intent': {
-            'primary': 'bg-blue-500',
-            'destructive': 'bg-red-500',
-          },
+          'intent': {'primary': 'bg-blue-500', 'destructive': 'bg-red-500'},
         },
         compoundVariants: [
           WindCompoundVariant(
@@ -152,30 +139,32 @@ void main() {
       );
     });
 
-    test('emits matched compound variants in array order, after the variants',
-        () {
-      final recipe = WindRecipe(
-        base: 'btn',
-        variants: {
-          'intent': {'primary': 'bg-blue-500'},
-        },
-        compoundVariants: [
-          WindCompoundVariant(
-            conditions: {'intent': 'primary'},
-            className: 'first-compound',
-          ),
-          WindCompoundVariant(
-            conditions: {'intent': 'primary'},
-            className: 'second-compound',
-          ),
-        ],
-      );
+    test(
+      'emits matched compound variants in array order, after the variants',
+      () {
+        final recipe = WindRecipe(
+          base: 'btn',
+          variants: {
+            'intent': {'primary': 'bg-blue-500'},
+          },
+          compoundVariants: [
+            WindCompoundVariant(
+              conditions: {'intent': 'primary'},
+              className: 'first-compound',
+            ),
+            WindCompoundVariant(
+              conditions: {'intent': 'primary'},
+              className: 'second-compound',
+            ),
+          ],
+        );
 
-      expect(
-        recipe(variants: {'intent': 'primary'}),
-        'btn bg-blue-500 first-compound second-compound',
-      );
-    });
+        expect(
+          recipe(variants: {'intent': 'primary'}),
+          'btn bg-blue-500 first-compound second-compound',
+        );
+      },
+    );
 
     test('appends the caller extraClass last, in strict order', () {
       final recipe = WindRecipe(
@@ -191,25 +180,22 @@ void main() {
       );
     });
 
-    test(
-      'preserves a caller hover: token after a base hover: token without '
-      'dedupe (order-preservation proof)',
-      () {
-        // Both tokens survive to parse-time; wind per-family last-wins lets the
-        // trailing caller hover:bg-blue-700 override the base hover:bg-blue-500.
-        final recipe = WindRecipe(base: 'px-4 hover:bg-blue-500');
+    test('preserves a caller hover: token after a base hover: token without '
+        'dedupe (order-preservation proof)', () {
+      // Both tokens survive to parse-time; wind per-family last-wins lets the
+      // trailing caller hover:bg-blue-700 override the base hover:bg-blue-500.
+      final recipe = WindRecipe(base: 'px-4 hover:bg-blue-500');
 
-        final result = recipe(className: 'hover:bg-blue-700');
+      final result = recipe(className: 'hover:bg-blue-700');
 
-        expect(result, 'px-4 hover:bg-blue-500 hover:bg-blue-700');
-        // Never deduped: both occurrences are present.
-        expect(
-          'hover:bg-blue-500'.allMatches(result).length +
-              'hover:bg-blue-700'.allMatches(result).length,
-          2,
-        );
-      },
-    );
+      expect(result, 'px-4 hover:bg-blue-500 hover:bg-blue-700');
+      // Never deduped: both occurrences are present.
+      expect(
+        'hover:bg-blue-500'.allMatches(result).length +
+            'hover:bg-blue-700'.allMatches(result).length,
+        2,
+      );
+    });
 
     test('never sorts or dedupes repeated tokens', () {
       final recipe = WindRecipe(base: 'p-2 p-4');
@@ -244,10 +230,7 @@ void main() {
         },
       );
 
-      expect(
-        () => recipe(variants: {'unknown': 'x'}),
-        throwsArgumentError,
-      );
+      expect(() => recipe(variants: {'unknown': 'x'}), throwsArgumentError);
     });
 
     test('an undeclared value emits no class for its axis (tv-permissive)', () {
@@ -265,38 +248,10 @@ void main() {
     });
 
     group('shorthand/longhand debug lint', () {
-      test(
-        'warns when base and a resolved variant touch a shorthand+longhand '
-        'pair of the same family',
-        () {
-          final recipe = WindRecipe(
-            base: 'p-4',
-            variants: {
-              'pad': {'tight': 'px-2'},
-            },
-          );
-
-          final logs = <String>[];
-          final original = debugPrint;
-          debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
-          try {
-            recipe(variants: {'pad': 'tight'});
-          } finally {
-            debugPrint = original;
-          }
-
-          expect(
-            logs.any((l) => l.contains('p-') && l.contains('px-')),
-            isTrue,
-            reason: 'expected a shorthand/longhand override warning',
-          );
-        },
-      );
-
-      test('does not warn when base and variant touch the same granularity',
-          () {
+      test('warns when base and a resolved variant touch a shorthand+longhand '
+          'pair of the same family', () {
         final recipe = WindRecipe(
-          base: 'px-4',
+          base: 'p-4',
           variants: {
             'pad': {'tight': 'px-2'},
           },
@@ -311,8 +266,35 @@ void main() {
           debugPrint = original;
         }
 
-        expect(logs, isEmpty);
+        expect(
+          logs.any((l) => l.contains('p-') && l.contains('px-')),
+          isTrue,
+          reason: 'expected a shorthand/longhand override warning',
+        );
       });
+
+      test(
+        'does not warn when base and variant touch the same granularity',
+        () {
+          final recipe = WindRecipe(
+            base: 'px-4',
+            variants: {
+              'pad': {'tight': 'px-2'},
+            },
+          );
+
+          final logs = <String>[];
+          final original = debugPrint;
+          debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+          try {
+            recipe(variants: {'pad': 'tight'});
+          } finally {
+            debugPrint = original;
+          }
+
+          expect(logs, isEmpty);
+        },
+      );
 
       test(
         'two DISTINCT offending recipes of the same family each warn once',
@@ -333,8 +315,9 @@ void main() {
             debugPrint = original;
           }
 
-          final warnings =
-              logs.where((l) => l.contains('m-') && l.contains('my-')).toList();
+          final warnings = logs
+              .where((l) => l.contains('m-') && l.contains('my-'))
+              .toList();
           expect(
             warnings.length,
             2,
@@ -386,16 +369,10 @@ void main() {
 
     test('appends per-slot variant classes after each slot base', () {
       final recipe = WindSlotRecipe(
-        slots: {
-          'root': 'flex',
-          'item': 'block',
-        },
+        slots: {'root': 'flex', 'item': 'block'},
         variants: {
           'active': {
-            'true': {
-              'root': 'bg-blue-50',
-              'item': 'text-blue-600',
-            },
+            'true': {'root': 'bg-blue-50', 'item': 'text-blue-600'},
           },
         },
       );
@@ -447,9 +424,7 @@ void main() {
     });
 
     test('appends caller per-slot extraClasses last', () {
-      final recipe = WindSlotRecipe(
-        slots: {'root': 'flex'},
-      );
+      final recipe = WindSlotRecipe(slots: {'root': 'flex'});
 
       final result = recipe(classNames: {'root': 'mt-4'});
 

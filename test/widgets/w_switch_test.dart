@@ -42,11 +42,7 @@ void main() {
       });
 
       test('stores disabled', () {
-        final widget = WSwitch(
-          value: false,
-          onChanged: (_) {},
-          disabled: true,
-        );
+        final widget = WSwitch(value: false, onChanged: (_) {}, disabled: true);
         expect(widget.disabled, isTrue);
       });
     });
@@ -83,8 +79,7 @@ void main() {
               WSwitch(
                 value: true,
                 onChanged: (_) {},
-                className:
-                    'w-11 h-6 flex items-center justify-start checked:justify-end',
+                className: 'w-11 h-6 flex items-center justify-start checked:justify-end',
                 thumbClassName: 'w-5 h-5',
               ),
             ),
@@ -220,31 +215,29 @@ void main() {
         expect(trackDiv.states, contains('checked'));
       });
 
-      testWidgets('does not include checked state in track when value is false',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WSwitch(
-              value: false,
-              onChanged: (_) {},
-              className: 'checked:bg-blue-500',
+      testWidgets(
+        'does not include checked state in track when value is false',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WSwitch(
+                value: false,
+                onChanged: (_) {},
+                className: 'checked:bg-blue-500',
+              ),
             ),
-          ),
-        );
-        await tester.pump();
+          );
+          await tester.pump();
 
-        final trackDiv = tester.widgetList<WDiv>(find.byType(WDiv)).first;
-        expect(trackDiv.states?.contains('checked') ?? false, isFalse);
-      });
+          final trackDiv = tester.widgetList<WDiv>(find.byType(WDiv)).first;
+          expect(trackDiv.states?.contains('checked') ?? false, isFalse);
+        },
+      );
 
       testWidgets('passes disabled state to track WDiv', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WSwitch(
-              value: false,
-              disabled: true,
-              onChanged: (_) {},
-            ),
+            WSwitch(value: false, disabled: true, onChanged: (_) {}),
           ),
         );
         await tester.pump();

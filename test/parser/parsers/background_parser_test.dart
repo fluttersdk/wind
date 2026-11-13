@@ -284,7 +284,7 @@ void main() {
       final classes = [
         'bg-gradient-to-r',
         'from-[#80FF0000]',
-        'to-transparent'
+        'to-transparent',
       ];
       final updatedStyles = parser.parse(styles, classes, context);
 

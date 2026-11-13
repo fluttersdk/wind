@@ -20,18 +20,15 @@ void main() {
   });
 
   group('Wind.installDebugResolver()', () {
-    test(
-      'registers a WindDebugResolverImpl instance in WindDebugRegistry',
-      () {
-        // Precondition: registry starts empty.
-        expect(WindDebugRegistry.current, isNull);
+    test('registers a WindDebugResolverImpl instance in WindDebugRegistry', () {
+      // Precondition: registry starts empty.
+      expect(WindDebugRegistry.current, isNull);
 
-        Wind.installDebugResolver();
+      Wind.installDebugResolver();
 
-        expect(WindDebugRegistry.current, isNotNull);
-        expect(WindDebugRegistry.current, isA<WindDebugResolverImpl>());
-      },
-    );
+      expect(WindDebugRegistry.current, isNotNull);
+      expect(WindDebugRegistry.current, isA<WindDebugResolverImpl>());
+    });
 
     test(
       'is idempotent: second call does not replace the registered instance',
@@ -47,23 +44,20 @@ void main() {
       },
     );
 
-    test(
-      'resetForTesting() makes the install gate re-entrant',
-      () {
-        // 1. First install registers the resolver.
-        Wind.installDebugResolver();
-        expect(WindDebugRegistry.current, isNotNull);
+    test('resetForTesting() makes the install gate re-entrant', () {
+      // 1. First install registers the resolver.
+      Wind.installDebugResolver();
+      expect(WindDebugRegistry.current, isNotNull);
 
-        // 2. Reset both the flag and the registry.
-        Wind.resetForTesting();
-        WindDebugRegistry.resetForTesting();
-        expect(WindDebugRegistry.current, isNull);
+      // 2. Reset both the flag and the registry.
+      Wind.resetForTesting();
+      WindDebugRegistry.resetForTesting();
+      expect(WindDebugRegistry.current, isNull);
 
-        // 3. Re-installing after reset registers a fresh resolver.
-        Wind.installDebugResolver();
-        expect(WindDebugRegistry.current, isNotNull);
-        expect(WindDebugRegistry.current, isA<WindDebugResolverImpl>());
-      },
-    );
+      // 3. Re-installing after reset registers a fresh resolver.
+      Wind.installDebugResolver();
+      expect(WindDebugRegistry.current, isNotNull);
+      expect(WindDebugRegistry.current, isA<WindDebugResolverImpl>());
+    });
   });
 }

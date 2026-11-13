@@ -46,7 +46,10 @@ typedef SelectedChipBuilder<T> = Widget Function(
 
 /// Signature for building the "create option" button.
 typedef CreateOptionBuilder = Widget Function(
-    BuildContext context, String query, VoidCallback onCreate);
+  BuildContext context,
+  String query,
+  VoidCallback onCreate,
+);
 
 /// Signature for building the empty state.
 typedef EmptyStateBuilder = Widget Function(BuildContext context, String query);
@@ -373,7 +376,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
   void _onHighlightModeChange(FocusHighlightMode mode) => _syncKeyboardFocus();
 
   void _syncKeyboardFocus() {
-    final bool hasKeyboardFocus = !widget.disabled &&
+    final bool hasKeyboardFocus =
+        !widget.disabled &&
         _focusNode.hasFocus &&
         FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
 
@@ -675,8 +679,10 @@ class _WSelectState<T> extends State<WSelect<T>> {
             // A custom trigger can carry its own focus node.
             descendantsAreFocusable: !widget.disabled,
             child: ExcludeSemantics(
-              child:
-                  KeyedSubtree(key: _triggerKey, child: _buildTrigger(context)),
+              child: KeyedSubtree(
+                key: _triggerKey,
+                child: _buildTrigger(context),
+              ),
             ),
           ),
         ),
@@ -858,11 +864,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
         WText(option.label, className: 'text-primary-800 text-sm'),
         GestureDetector(
           onTap: () => _removeValue(option.value),
-          child: Icon(
-            Icons.close,
-            size: 14,
-            color: _primaryShade(700),
-          ),
+          child: Icon(Icons.close, size: 14, color: _primaryShade(700)),
         ),
       ],
     );
@@ -883,7 +885,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
         menuStyles.constraints?.maxHeight ?? widget.maxMenuHeight;
     final BorderRadius borderRadius =
         (menuStyles.decoration?.borderRadius as BorderRadius?) ??
-            BorderRadius.circular(8);
+        BorderRadius.circular(8);
 
     // Logger integration for Menu
     final logger = WindLogger(
@@ -915,7 +917,8 @@ class _WSelectState<T> extends State<WSelect<T>> {
             child: Container(
               width: menuWidth,
               constraints: BoxConstraints(maxHeight: maxHeight),
-              decoration: menuStyles.decoration ??
+              decoration:
+                  menuStyles.decoration ??
                   BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: Colors.grey.shade200),
@@ -1017,11 +1020,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           else
-            Icon(
-              Icons.add,
-              size: 16,
-              color: _primaryShade(400),
-            ),
+            Icon(Icons.add, size: 16, color: _primaryShade(400)),
           WText(
             'Create "$_searchQuery"',
             className: 'text-primary-500 dark:text-primary-400 font-medium',
@@ -1080,13 +1079,13 @@ class _WSelectState<T> extends State<WSelect<T>> {
     final String bgClass = isSelected
         ? 'bg-primary-50 dark:bg-primary-900/30'
         : isHovered
-            ? 'bg-gray-100 dark:bg-slate-700'
-            : '';
+        ? 'bg-gray-100 dark:bg-slate-700'
+        : '';
     final String textColorClass = option.disabled
         ? 'text-gray-400 dark:text-gray-500'
         : isSelected
-            ? 'text-primary-700 dark:text-primary-300 font-medium'
-            : 'text-gray-800 dark:text-gray-200';
+        ? 'text-primary-700 dark:text-primary-300 font-medium'
+        : 'text-gray-800 dark:text-gray-200';
 
     return WindAnchorStateProvider(
       state: WindAnchorState(
@@ -1117,11 +1116,7 @@ class _WSelectState<T> extends State<WSelect<T>> {
                 child: WText(option.label, className: textColorClass),
               ),
               if (!widget.isMulti && isSelected)
-                Icon(
-                  Icons.check,
-                  size: 18,
-                  color: _primaryShade(600),
-                ),
+                Icon(Icons.check, size: 18, color: _primaryShade(600)),
             ],
           ),
         ),

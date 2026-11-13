@@ -135,14 +135,15 @@ class WDiv extends StatelessWidget {
     this.scrollPrimary = false,
     this.backgroundColor,
   }) : assert(
-          child == null || children == null,
-          'WDiv Violation: You cannot provide both `child` and `children`. Please select one strategy.',
-        );
+         child == null || children == null,
+         'WDiv Violation: You cannot provide both `child` and `children`. Please select one strategy.',
+       );
 
   @override
   Widget build(BuildContext context) {
     // Check if we need to wrap with WAnchor for interactive states
-    final bool isInteractive = className != null &&
+    final bool isInteractive =
+        className != null &&
         (className!.contains('hover:') ||
             className!.contains('focus:') ||
             className!.contains('active:'));
@@ -238,8 +239,9 @@ class WDiv extends StatelessWidget {
     /// An em `tracking-*` resolves here, at this element's font size, and
     /// descendants inherit the resulting pixels, as CSS computes it.
     final TextStyle textStyle = styles.toTextStyle(
-      inheritedFontSize:
-          styles.needsInheritedFontSize ? wInheritedFontSize(context) : null,
+      inheritedFontSize: styles.needsInheritedFontSize
+          ? wInheritedFontSize(context)
+          : null,
     );
     final bool hasTextStyle = textStyle != const TextStyle(); // Check if empty
     final bool hasTextAlign = styles.textAlign != null;
@@ -353,10 +355,7 @@ class WDiv extends StatelessWidget {
             children: [_buildPositionedChild(child!, context)],
           );
         }
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [child!],
-        );
+        return Stack(clipBehavior: Clip.none, children: [child!]);
       }
 
       // If flex display is specified, wrap single child in Row/Column for alignment
@@ -366,7 +365,8 @@ class WDiv extends StatelessWidget {
 
         // Determine mainAxisSize based on sizing
         // Column with h-full or min-h-full needs .max for centering
-        final hasMinHeight = styles.constraints?.minHeight != null &&
+        final hasMinHeight =
+            styles.constraints?.minHeight != null &&
             styles.constraints!.minHeight > 0;
 
         MainAxisSize effectiveMainAxisSize;
@@ -451,14 +451,14 @@ class WDiv extends StatelessWidget {
         if (normalChildren.isNotEmpty) {
           final type = styles.displayType ?? WindDisplayType.block;
           // Temporarily use normalChildren for layout building
-          final tempDiv = WDiv(
-            className: className,
-            children: normalChildren,
-          );
+          final tempDiv = WDiv(className: className, children: normalChildren);
           switch (type) {
             case WindDisplayType.flex:
-              normalLayout =
-                  tempDiv._buildFlexStructure(styles, logger, context);
+              normalLayout = tempDiv._buildFlexStructure(
+                styles,
+                logger,
+                context,
+              );
             case WindDisplayType.grid:
               normalLayout = tempDiv._buildGridStructure(styles, logger);
             case WindDisplayType.wrap:
@@ -528,10 +528,7 @@ class WDiv extends StatelessWidget {
     // resolved order (children without `order-*` default to 0). `flex-*-reverse`
     // is applied via Row.textDirection / Column.verticalDirection below so the
     // main-axis semantics (justify-start etc.) mirror correctly, matching CSS.
-    final orderedChildren = _applyChildOrder(
-      children!,
-      context: context,
-    );
+    final orderedChildren = _applyChildOrder(children!, context: context);
 
     // `gap-*` goes to the render layer through `Flex.spacing` wherever the two
     // forms lay out identically, and falls back to injected `SizedBox`
@@ -563,7 +560,8 @@ class WDiv extends StatelessWidget {
     MainAxisSize effectiveMainAxisSize;
 
     // Check if Row needs space distribution (justify-between, space-around, etc)
-    final needsSpaceDistribution = !isColumn &&
+    final needsSpaceDistribution =
+        !isColumn &&
         (styles.mainAxisAlignment == MainAxisAlignment.spaceBetween ||
             styles.mainAxisAlignment == MainAxisAlignment.spaceAround ||
             styles.mainAxisAlignment == MainAxisAlignment.spaceEvenly);
@@ -663,7 +661,8 @@ class WDiv extends StatelessWidget {
       // intrinsic queries (so a stretched column renders under `IntrinsicHeight`
       // / a grid cell without asserting) and never forces an infinite width on
       // an unbounded slot. An explicit `items-start`/`center`/`end` disables it.
-      final bool stretchActive = styles.crossAxisAlignment == null ||
+      final bool stretchActive =
+          styles.crossAxisAlignment == null ||
           styles.crossAxisAlignment == CrossAxisAlignment.stretch;
 
       final List<Widget> columnChildren = stretchActive
@@ -721,7 +720,7 @@ class WDiv extends StatelessWidget {
       final bool hasGrowingChild = basisChildren.any(_claimsGrowShare);
       final needsFlexible =
           ((needsSpaceDistribution && !hasGrowingChild) || hasOverflowClip) &&
-              !isMainAxisScrollable;
+          !isMainAxisScrollable;
       // A Row hands non-flex children an UNBOUNDED main-axis constraint, so a
       // direct child carrying `w-full` (-> SizedBox(width: infinity)) asserts
       // "RenderBox was not laid out". Treat a bare `w-full` child as flex-1:
@@ -778,8 +777,8 @@ class WDiv extends StatelessWidget {
       // width (the caller can still force min via axis-min).
       final MainAxisSize rowMainAxisSize =
           (hasFullWidthChild && styles.mainAxisSize == null)
-              ? MainAxisSize.max
-              : effectiveMainAxisSize;
+          ? MainAxisSize.max
+          : effectiveMainAxisSize;
 
       TextDirection? rowTextDirection;
       if (styles.flexReverse) {
@@ -816,7 +815,8 @@ class WDiv extends StatelessWidget {
     WindStyle styles, {
     required bool isColumn,
   }) {
-    final bool bothAxes = styles.overflow == WindOverflow.auto ||
+    final bool bothAxes =
+        styles.overflow == WindOverflow.auto ||
         styles.overflow == WindOverflow.scroll;
     if (bothAxes) return true;
     if (isColumn) {
@@ -1196,8 +1196,9 @@ class WDiv extends StatelessWidget {
     TextDirection textDirection,
   ) {
     final BoxBorder? border = decoration?.border;
-    final BorderRadius? radius =
-        decoration?.borderRadius?.resolve(textDirection);
+    final BorderRadius? radius = decoration?.borderRadius?.resolve(
+      textDirection,
+    );
     if (border == null || radius == null || radius == BorderRadius.zero) {
       return null;
     }
@@ -1264,7 +1265,8 @@ class WDiv extends StatelessWidget {
     final gapY = styles.gapY ?? 0;
 
     // Check if horizontal scroll is enabled - use Row for horizontal layout
-    final hasHorizontalScroll = styles.overflowX == WindOverflow.scroll ||
+    final hasHorizontalScroll =
+        styles.overflowX == WindOverflow.scroll ||
         styles.overflowX == WindOverflow.auto;
 
     if (hasHorizontalScroll) {
@@ -1310,7 +1312,8 @@ class WDiv extends StatelessWidget {
         } else {
           availableWidth = MediaQuery.sizeOf(context).width;
           WindPerfCounters.recordInheritedRead(
-              WindInheritedRead.mediaQuerySize);
+            WindInheritedRead.mediaQuerySize,
+          );
         }
         final itemWidth = (availableWidth - totalGapWidth) / cols;
 
@@ -1454,9 +1457,9 @@ class WDiv extends StatelessWidget {
   }) {
     final BoxConstraints? effectiveConstraints =
         (width != null || height != null)
-            ? constraints?.tighten(width: width, height: height) ??
-                BoxConstraints.tightFor(width: width, height: height)
-            : constraints;
+        ? constraints?.tighten(width: width, height: height) ??
+              BoxConstraints.tightFor(width: width, height: height)
+        : constraints;
 
     Widget? current = child;
     if (child == null &&
@@ -1480,8 +1483,9 @@ class WDiv extends StatelessWidget {
     )) {
       (null, final EdgeInsetsGeometry? inset) => inset,
       (final EdgeInsetsGeometry? own, null) => own,
-      (final EdgeInsetsGeometry own, final EdgeInsetsGeometry inset) =>
-        own.add(inset),
+      (final EdgeInsetsGeometry own, final EdgeInsetsGeometry inset) => own.add(
+        inset,
+      ),
     };
     if (effectivePadding != null && effectivePadding != EdgeInsets.zero) {
       logger.wrapWith("Padding", "$effectivePadding");
@@ -1524,7 +1528,8 @@ class WDiv extends StatelessWidget {
 
     // Check if we have overflow behavior that needs special handling
     final bool hasOverflowClip = styles.clipBehavior == Clip.hardEdge;
-    final bool hasOverflowScroll = styles.overflow == WindOverflow.scroll ||
+    final bool hasOverflowScroll =
+        styles.overflow == WindOverflow.scroll ||
         styles.overflow == WindOverflow.auto ||
         styles.overflowX == WindOverflow.scroll ||
         styles.overflowX == WindOverflow.auto ||
@@ -1537,19 +1542,22 @@ class WDiv extends StatelessWidget {
 
     // Determine constraints (combining direct width/height with box constraints)
     // IMPORTANT: Do NOT let styles.width override maxWidth constraints (e.g. max-w-sm)
-    BoxConstraints? constraints = (styles.width != null ||
+    BoxConstraints? constraints =
+        (styles.width != null ||
             styles.height != null ||
             styles.constraints != null)
         ? (styles.constraints ?? const BoxConstraints()).copyWith(
             minWidth: styles.width ?? styles.constraints?.minWidth,
             // maxWidth should be the SMALLER of width and maxWidth constraint
-            maxWidth: styles.constraints?.maxWidth != null &&
+            maxWidth:
+                styles.constraints?.maxWidth != null &&
                     styles.constraints!.maxWidth != double.infinity
                 ? styles.constraints!.maxWidth
                 : styles.width ?? styles.constraints?.maxWidth,
             minHeight: styles.height ?? styles.constraints?.minHeight,
             // maxHeight should be the SMALLER of height and maxHeight constraint
-            maxHeight: styles.constraints?.maxHeight != null &&
+            maxHeight:
+                styles.constraints?.maxHeight != null &&
                     styles.constraints!.maxHeight != double.infinity
                 ? styles.constraints!.maxHeight
                 : styles.height ?? styles.constraints?.maxHeight,
@@ -1575,7 +1583,8 @@ class WDiv extends StatelessWidget {
     // An empty shadow list (`shadow-none`) carries no visual and must not, on
     // its own, force a Container; that mirrors the `combinedShadows.isNotEmpty`
     // guard below where empty shadows never reach the decoration.
-    final bool needsContainer = styles.decoration != null ||
+    final bool needsContainer =
+        styles.decoration != null ||
         innerConstraints != null ||
         (styles.boxShadow?.isNotEmpty ?? false) ||
         (styles.ringShadow?.isNotEmpty ?? false) ||
@@ -1867,8 +1876,9 @@ class WDiv extends StatelessWidget {
       // Use ClipRRect to clip content that overflows
       // This respects the container's border radius if present
       final borderRadius = styles.decoration?.borderRadius;
-      final BorderRadius resolvedRadius =
-          borderRadius is BorderRadius ? borderRadius : BorderRadius.zero;
+      final BorderRadius resolvedRadius = borderRadius is BorderRadius
+          ? borderRadius
+          : BorderRadius.zero;
 
       // Anti-alias a ROUNDED clip, hard-edge a square one.
       //
@@ -1932,9 +1942,11 @@ class WDiv extends StatelessWidget {
     if (styles.widthFactor != null || styles.heightFactor != null) {
       final innerChild = widgetToBuild;
 
-      final hasMaxWidthConstraint = styles.constraints?.maxWidth != null &&
+      final hasMaxWidthConstraint =
+          styles.constraints?.maxWidth != null &&
           styles.constraints!.maxWidth != double.infinity;
-      final hasMaxHeightConstraint = styles.constraints?.maxHeight != null &&
+      final hasMaxHeightConstraint =
+          styles.constraints?.maxHeight != null &&
           styles.constraints!.maxHeight != double.infinity;
 
       final bool isFullWidth = styles.widthFactor == 1.0;
@@ -1975,10 +1987,7 @@ class WDiv extends StatelessWidget {
           // w-full: expand to fill available width
           logger.wrapWith("SizedBox", "w-full (no LayoutBuilder)");
           WindPerfCounters.recordWrapperEmission('SizedBox');
-          widgetToBuild = SizedBox(
-            width: double.infinity,
-            child: innerChild,
-          );
+          widgetToBuild = SizedBox(width: double.infinity, child: innerChild);
         } else {
           // w-1/2, w-1/3, etc: use FractionallySizedBox (render-layer, no LayoutBuilder)
           logger.wrapWith("FractionallySizedBox", "w-fraction");
@@ -2019,13 +2028,15 @@ class WDiv extends StatelessWidget {
           // of them in one eight-scroll session against 258 widget builds.
           final double fallbackHeight = MediaQuery.sizeOf(context).height;
           WindPerfCounters.recordInheritedRead(
-              WindInheritedRead.mediaQuerySize);
+            WindInheritedRead.mediaQuerySize,
+          );
           logger.wrapWith("WindFullHeightBox", "h-full");
           WindPerfCounters.recordWrapperEmission('WindFullHeightBox');
           widgetToBuild = WindFullHeightBox(
             fallbackHeight: fallbackHeight,
-            maxHeight:
-                hasMaxHeightConstraint ? styles.constraints!.maxHeight : null,
+            maxHeight: hasMaxHeightConstraint
+                ? styles.constraints!.maxHeight
+                : null,
             child: innerChild,
           );
         } else {
@@ -2055,16 +2066,19 @@ class WDiv extends StatelessWidget {
           // height-only path, carrying the width factor too.
           final double fallbackHeight = MediaQuery.sizeOf(context).height;
           WindPerfCounters.recordInheritedRead(
-              WindInheritedRead.mediaQuerySize);
+            WindInheritedRead.mediaQuerySize,
+          );
           logger.wrapWith("WindFullHeightBox", "w+h-full");
           WindPerfCounters.recordWrapperEmission('WindFullHeightBox');
           widgetToBuild = WindFullHeightBox(
             fallbackHeight: fallbackHeight,
             widthFactor: styles.widthFactor,
-            maxWidth:
-                hasMaxWidthConstraint ? styles.constraints!.maxWidth : null,
-            maxHeight:
-                hasMaxHeightConstraint ? styles.constraints!.maxHeight : null,
+            maxWidth: hasMaxWidthConstraint
+                ? styles.constraints!.maxWidth
+                : null,
+            maxHeight: hasMaxHeightConstraint
+                ? styles.constraints!.maxHeight
+                : null,
             child: innerChild,
           );
         } else {

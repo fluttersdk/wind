@@ -53,8 +53,9 @@ void main() {
   // 1 — Navbar: justify-between pins brand left + actions right; items-center
   // vertically centers. Verifies the two end clusters sit at opposite edges.
   group('1 navbar', () {
-    testWidgets('justify-between pins brand left and actions right',
-        (tester) async {
+    testWidgets('justify-between pins brand left and actions right', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -65,10 +66,7 @@ void main() {
                 WDiv(child: Text('Brand')),
                 WDiv(
                   className: 'flex flex-row gap-4',
-                  children: [
-                    Text('Docs'),
-                    Text('Login'),
-                  ],
+                  children: [Text('Docs'), Text('Login')],
                 ),
               ],
             ),
@@ -89,8 +87,9 @@ void main() {
   // 2 — Media object: a fixed avatar (shrink-0) next to a flex-1 body. The body
   // takes all remaining width; the avatar keeps its intrinsic size.
   group('2 media object', () {
-    testWidgets('shrink-0 avatar keeps size, flex-1 body fills remainder',
-        (tester) async {
+    testWidgets('shrink-0 avatar keeps size, flex-1 body fills remainder', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -122,8 +121,9 @@ void main() {
   // 3 — Holy-grail sidebar: w-64 flex-none sidebar + flex-1 main. Sidebar keeps
   // its fixed 256px; main consumes the rest.
   group('3 holy-grail sidebar', () {
-    testWidgets('flex-none sidebar fixed, flex-1 main fills remainder',
-        (tester) async {
+    testWidgets('flex-none sidebar fixed, flex-1 main fills remainder', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -135,10 +135,7 @@ void main() {
                   className: 'flex-none w-64 bg-slate-100',
                   child: Text('Sidebar'),
                 ),
-                WDiv(
-                  className: 'flex-1',
-                  child: Text('Main content'),
-                ),
+                WDiv(className: 'flex-1', child: Text('Main content')),
               ],
             ),
           ),
@@ -165,10 +162,7 @@ void main() {
               className: 'flex flex-col h-full',
               children: [
                 WDiv(child: Text('Header')),
-                WDiv(
-                  className: 'flex-1',
-                  child: Text('Content'),
-                ),
+                WDiv(className: 'flex-1', child: Text('Content')),
                 WDiv(child: Text('Footer')),
               ],
             ),
@@ -177,8 +171,11 @@ void main() {
       );
 
       expect(tester.takeException(), isNull);
-      expect(visibleTextsInOrder(tester, horizontal: false),
-          ['Header', 'Content', 'Footer']);
+      expect(visibleTextsInOrder(tester, horizontal: false), [
+        'Header',
+        'Content',
+        'Footer',
+      ]);
       // Header at top; footer pinned near the 500px bottom edge.
       expect(tester.getTopLeft(find.text('Header')).dy, closeTo(0, 0.5));
       expect(tester.getBottomLeft(find.text('Footer')).dy, closeTo(500, 0.5));
@@ -188,8 +185,9 @@ void main() {
   // 5 — Centered card: items-center + justify-center centers a single child on
   // both axes inside a bounded box.
   group('5 centered card', () {
-    testWidgets('items-center + justify-center centers child both axes',
-        (tester) async {
+    testWidgets('items-center + justify-center centers child both axes', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -220,8 +218,9 @@ void main() {
   // 6 — Responsive stack -> row: flex-col on mobile, md:flex-row on desktop.
   // The two flex-1 panels stack vertically below md and split width at md.
   group('6 responsive stack to row', () {
-    testWidgets('flex-col stacks below md, md:flex-row splits width at md',
-        (tester) async {
+    testWidgets('flex-col stacks below md, md:flex-row splits width at md', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -248,8 +247,10 @@ void main() {
       await tester.pumpWidget(tree);
       expect(tester.takeException(), isNull);
       expect(find.byType(Column), findsOneWidget);
-      expect(visibleTextsInOrder(tester, horizontal: false),
-          ['Panel A', 'Panel B']);
+      expect(visibleTextsInOrder(tester, horizontal: false), [
+        'Panel A',
+        'Panel B',
+      ]);
 
       // Desktop: md:flex-row -> side by side, A left of B.
       tester.view.physicalSize = const Size(1000, 800);
@@ -263,8 +264,9 @@ void main() {
   // stays at the bottom. Each direct column child also fills the card width
   // (Wave-1 smart-stretch, no w-full needed).
   group('7 card pinned footer', () {
-    testWidgets('flex-col children fill width and footer is pinned',
-        (tester) async {
+    testWidgets('flex-col children fill width and footer is pinned', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -273,18 +275,9 @@ void main() {
             child: WDiv(
               className: 'flex flex-col h-full',
               children: [
-                WDiv(
-                  className: 'bg-slate-100',
-                  child: Text('Card title'),
-                ),
-                WDiv(
-                  className: 'flex-1',
-                  child: Text('Card body'),
-                ),
-                WDiv(
-                  className: 'bg-slate-200',
-                  child: Text('Card footer'),
-                ),
+                WDiv(className: 'bg-slate-100', child: Text('Card title')),
+                WDiv(className: 'flex-1', child: Text('Card body')),
+                WDiv(className: 'bg-slate-200', child: Text('Card footer')),
               ],
             ),
           ),
@@ -296,15 +289,18 @@ void main() {
       // WITHOUT a w-full token.
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 320);
       expect(
-          tester.getBottomLeft(find.text('Card footer')).dy, closeTo(400, 0.5));
+        tester.getBottomLeft(find.text('Card footer')).dy,
+        closeTo(400, 0.5),
+      );
     });
   });
 
   // 8 — Toolbar: items-center row with gap-2. Buttons keep intrinsic width and
   // are laid left to right with the gap between them.
   group('8 toolbar', () {
-    testWidgets('items-center row keeps buttons intrinsic and ordered',
-        (tester) async {
+    testWidgets('items-center row keeps buttons intrinsic and ordered', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -362,8 +358,9 @@ void main() {
   // 10 — Form row: fixed-width label (w-24 shrink-0) + flex-1 input. Label keeps
   // 96px; the input fills the remaining width.
   group('10 form row', () {
-    testWidgets('shrink-0 label fixed, flex-1 input fills remainder',
-        (tester) async {
+    testWidgets('shrink-0 label fixed, flex-1 input fills remainder', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -371,10 +368,7 @@ void main() {
             child: WDiv(
               className: 'flex flex-row items-center gap-4',
               children: [
-                WDiv(
-                  className: 'w-24 shrink-0',
-                  child: Text('Email'),
-                ),
+                WDiv(className: 'w-24 shrink-0', child: Text('Email')),
                 WDiv(
                   className: 'flex-1 h-10 bg-slate-100',
                   child: SizedBox(height: 40),
@@ -433,13 +427,17 @@ void main() {
               className: 'wrap gap-2',
               children: [
                 WDiv(
-                    className: 'px-4 py-1 bg-slate-200', child: Text('Design')),
+                  className: 'px-4 py-1 bg-slate-200',
+                  child: Text('Design'),
+                ),
                 WDiv(
-                    className: 'px-4 py-1 bg-slate-200',
-                    child: Text('Flutter')),
+                  className: 'px-4 py-1 bg-slate-200',
+                  child: Text('Flutter'),
+                ),
                 WDiv(
-                    className: 'px-4 py-1 bg-slate-200',
-                    child: Text('Tailwind')),
+                  className: 'px-4 py-1 bg-slate-200',
+                  child: Text('Tailwind'),
+                ),
                 WDiv(className: 'px-4 py-1 bg-slate-200', child: Text('Dart')),
               ],
             ),
@@ -483,8 +481,9 @@ void main() {
   // 14 — List item: leading icon (shrink-0) + flex-1 text + trailing action
   // (shrink-0). Both ends keep intrinsic size; the text fills the middle.
   group('14 list item', () {
-    testWidgets('icon + flex-1 text + action: ends fixed, text fills middle',
-        (tester) async {
+    testWidgets('icon + flex-1 text + action: ends fixed, text fills middle', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -496,10 +495,7 @@ void main() {
                   className: 'shrink-0 w-6 h-6 bg-slate-300',
                   child: SizedBox(width: 24, height: 24),
                 ),
-                WDiv(
-                  className: 'flex-1',
-                  child: Text('Notification title'),
-                ),
+                WDiv(className: 'flex-1', child: Text('Notification title')),
                 WDiv(
                   className: 'shrink-0 w-8 h-8 bg-slate-300',
                   child: SizedBox(width: 32, height: 32),
@@ -522,33 +518,37 @@ void main() {
   // 15 — Hero: flex-col items-center justify-center centers a stacked headline +
   // subcopy on both axes inside a tall section.
   group('15 hero', () {
-    testWidgets('flex-col items-center justify-center centers stacked content',
-        (tester) async {
-      await tester.pumpWidget(
-        wrapWithTheme(
-          const SizedBox(
-            width: 600,
-            height: 400,
-            child: WDiv(
-              className:
-                  'flex flex-col items-center justify-center gap-2 h-full',
-              children: [
-                WDiv(child: Text('Headline')),
-                WDiv(child: Text('Subcopy')),
-              ],
+    testWidgets(
+      'flex-col items-center justify-center centers stacked content',
+      (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const SizedBox(
+              width: 600,
+              height: 400,
+              child: WDiv(
+                className:
+                    'flex flex-col items-center justify-center gap-2 h-full',
+                children: [
+                  WDiv(child: Text('Headline')),
+                  WDiv(child: Text('Subcopy')),
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      expect(tester.takeException(), isNull);
-      // Headline sits above subcopy and both are horizontally centered.
-      expect(visibleTextsInOrder(tester, horizontal: false),
-          ['Headline', 'Subcopy']);
-      final headlineCenter = tester.getCenter(find.text('Headline')).dx;
-      final subcopyCenter = tester.getCenter(find.text('Subcopy')).dx;
-      expect(headlineCenter, closeTo(300, 1.0));
-      expect(subcopyCenter, closeTo(300, 1.0));
-    });
+        expect(tester.takeException(), isNull);
+        // Headline sits above subcopy and both are horizontally centered.
+        expect(visibleTextsInOrder(tester, horizontal: false), [
+          'Headline',
+          'Subcopy',
+        ]);
+        final headlineCenter = tester.getCenter(find.text('Headline')).dx;
+        final subcopyCenter = tester.getCenter(find.text('Subcopy')).dx;
+        expect(headlineCenter, closeTo(300, 1.0));
+        expect(subcopyCenter, closeTo(300, 1.0));
+      },
+    );
   });
 }

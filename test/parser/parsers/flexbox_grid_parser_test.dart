@@ -59,38 +59,29 @@ void main() {
       });
 
       test('parses gap-x and gap-y classes', () {
-        final styles = parser.parse(
-            WindStyle(),
-            [
-              'gap-x-4',
-              'gap-y-2',
-            ],
-            context);
+        final styles = parser.parse(WindStyle(), [
+          'gap-x-4',
+          'gap-y-2',
+        ], context);
         expect(styles.gapX, 16.0); // Assuming theme spacing of 4 = 16.0
         expect(styles.gapY, 8.0); // Assuming theme spacing of 2 = 8.0
       });
 
       test('applies last class wins rule', () {
-        final styles = parser.parse(
-            WindStyle(),
-            [
-              'flex',
-              'grid',
-              'flex',
-            ],
-            context);
+        final styles = parser.parse(WindStyle(), [
+          'flex',
+          'grid',
+          'flex',
+        ], context);
         expect(styles.displayType, WindDisplayType.flex);
       });
 
       test('returns unchanged styles if no relevant classes', () {
         final initialStyles = WindStyle();
-        final styles = parser.parse(
-            initialStyles,
-            [
-              'text-center',
-              'bg-red-500',
-            ],
-            context);
+        final styles = parser.parse(initialStyles, [
+          'text-center',
+          'bg-red-500',
+        ], context);
         expect(styles, initialStyles);
       });
 
@@ -106,16 +97,13 @@ void main() {
       });
 
       test('parses multiple classes correctly', () {
-        final styles = parser.parse(
-            WindStyle(),
-            [
-              'flex',
-              'flex-col',
-              'justify-center',
-              'items-end',
-              'gap-2',
-            ],
-            context);
+        final styles = parser.parse(WindStyle(), [
+          'flex',
+          'flex-col',
+          'justify-center',
+          'items-end',
+          'gap-2',
+        ], context);
         expect(styles.displayType, WindDisplayType.flex);
         expect(styles.flexDirection, Axis.vertical);
         expect(styles.mainAxisAlignment, MainAxisAlignment.center);
@@ -130,12 +118,9 @@ void main() {
       });
 
       test('parses align-self class', () {
-        final styles = parser.parse(
-            WindStyle(),
-            [
-              'align-self-center',
-            ],
-            context);
+        final styles = parser.parse(WindStyle(), [
+          'align-self-center',
+        ], context);
         expect(styles.alignment, Alignment.center);
       });
 
@@ -160,8 +145,7 @@ void main() {
         expect(styles.flexFit, FlexFit.loose);
       });
 
-      test('shrink-0 sets no flexFit (no-shrink is a widget-level concern)',
-          () {
+      test('shrink-0 sets no flexFit (no-shrink is a widget-level concern)', () {
         // shrink-0 must NOT set flexFit: a non-null flexFit self-wraps the
         // widget in Flexible(fit: ...) and forces a fill (the opposite of
         // shrink-0), and asserts outside a Flex. WDiv._hasShrinkZero reads the
@@ -180,8 +164,10 @@ void main() {
         // `shrink-0` is a no-shrink reset: when it appears after `shrink` it
         // claims the flexFit slot with a null (intrinsic) value, so the later
         // token wins. shrink-0's no-shrink effect lives in the widget guard.
-        final styles =
-            parser.parse(WindStyle(), ['shrink', 'shrink-0'], context);
+        final styles = parser.parse(WindStyle(), [
+          'shrink',
+          'shrink-0',
+        ], context);
         expect(styles.flexFit, isNull);
       });
 
@@ -203,9 +189,7 @@ void main() {
         expect(styles.flexFit, isNull);
       });
 
-      test(
-          'items-baseline -> CrossAxisAlignment.baseline and TextBaseline.alphabetic',
-          () {
+      test('items-baseline -> CrossAxisAlignment.baseline and TextBaseline.alphabetic', () {
         final styles = parser.parse(WindStyle(), ['items-baseline'], context);
         expect(styles.crossAxisAlignment, CrossAxisAlignment.baseline);
         expect(styles.textBaseline, TextBaseline.alphabetic);
@@ -226,19 +210,17 @@ void main() {
         );
 
         // Baseline overrides
-        final baselineStyles = parser.parse(
-          WindStyle(),
-          ['items-center', 'items-baseline'],
-          context,
-        );
+        final baselineStyles = parser.parse(WindStyle(), [
+          'items-center',
+          'items-baseline',
+        ], context);
         expect(baselineStyles.crossAxisAlignment, CrossAxisAlignment.baseline);
         expect(baselineStyles.textBaseline, TextBaseline.alphabetic);
 
-        final centerStyles = parser.parse(
-          WindStyle(),
-          ['items-baseline', 'items-center'],
-          context,
-        );
+        final centerStyles = parser.parse(WindStyle(), [
+          'items-baseline',
+          'items-center',
+        ], context);
         expect(centerStyles.crossAxisAlignment, CrossAxisAlignment.center);
         expect(centerStyles.textBaseline, isNull);
       });
@@ -247,56 +229,64 @@ void main() {
     group('self-* align-self alias', () {
       test('self-start matches align-self-start', () {
         final selfStyles = parser.parse(WindStyle(), ['self-start'], context);
-        final aliasStyles =
-            parser.parse(WindStyle(), ['align-self-start'], context);
+        final aliasStyles = parser.parse(WindStyle(), [
+          'align-self-start',
+        ], context);
         expect(selfStyles.alignment, aliasStyles.alignment);
         expect(selfStyles.alignment, Alignment.topCenter);
       });
 
       test('self-end matches align-self-end', () {
         final selfStyles = parser.parse(WindStyle(), ['self-end'], context);
-        final aliasStyles =
-            parser.parse(WindStyle(), ['align-self-end'], context);
+        final aliasStyles = parser.parse(WindStyle(), [
+          'align-self-end',
+        ], context);
         expect(selfStyles.alignment, aliasStyles.alignment);
         expect(selfStyles.alignment, Alignment.bottomCenter);
       });
 
       test('self-center matches align-self-center', () {
         final selfStyles = parser.parse(WindStyle(), ['self-center'], context);
-        final aliasStyles =
-            parser.parse(WindStyle(), ['align-self-center'], context);
+        final aliasStyles = parser.parse(WindStyle(), [
+          'align-self-center',
+        ], context);
         expect(selfStyles.alignment, aliasStyles.alignment);
         expect(selfStyles.alignment, Alignment.center);
       });
 
       test('self-stretch matches align-self-stretch', () {
         final selfStyles = parser.parse(WindStyle(), ['self-stretch'], context);
-        final aliasStyles =
-            parser.parse(WindStyle(), ['align-self-stretch'], context);
+        final aliasStyles = parser.parse(WindStyle(), [
+          'align-self-stretch',
+        ], context);
         expect(selfStyles.alignment, aliasStyles.alignment);
         expect(selfStyles.alignment, Alignment.center);
       });
 
       test('self-auto matches align-self-auto', () {
         final selfStyles = parser.parse(WindStyle(), ['self-auto'], context);
-        final aliasStyles =
-            parser.parse(WindStyle(), ['align-self-auto'], context);
+        final aliasStyles = parser.parse(WindStyle(), [
+          'align-self-auto',
+        ], context);
         expect(selfStyles.alignment, aliasStyles.alignment);
         expect(selfStyles.alignment, Alignment.center);
       });
 
       test('self-baseline matches align-self-baseline (both unmapped)', () {
-        final selfStyles =
-            parser.parse(WindStyle(), ['self-baseline'], context);
-        final aliasStyles =
-            parser.parse(WindStyle(), ['align-self-baseline'], context);
+        final selfStyles = parser.parse(WindStyle(), [
+          'self-baseline',
+        ], context);
+        final aliasStyles = parser.parse(WindStyle(), [
+          'align-self-baseline',
+        ], context);
         expect(selfStyles.alignment, aliasStyles.alignment);
         expect(selfStyles.alignment, isNull);
       });
 
       test('self-* alias does not break align-self-*', () {
-        final styles =
-            parser.parse(WindStyle(), ['align-self-center'], context);
+        final styles = parser.parse(WindStyle(), [
+          'align-self-center',
+        ], context);
         expect(styles.alignment, Alignment.center);
       });
     });
@@ -353,8 +343,9 @@ void main() {
 
       test('grow and flex-grow resolve identically', () {
         final growStyles = parser.parse(WindStyle(), ['grow'], context);
-        final flexGrowStyles =
-            parser.parse(WindStyle(), ['flex-grow'], context);
+        final flexGrowStyles = parser.parse(WindStyle(), [
+          'flex-grow',
+        ], context);
         expect(growStyles.flex, flexGrowStyles.flex);
       });
     });

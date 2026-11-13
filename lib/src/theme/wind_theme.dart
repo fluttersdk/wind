@@ -104,10 +104,7 @@ class WindThemeController extends ChangeNotifier {
   void resetToSystem() {
     final systemBrightness =
         WidgetsBinding.instance.platformDispatcher.platformBrightness;
-    _data = _data.copyWith(
-      syncWithSystem: true,
-      brightness: systemBrightness,
-    );
+    _data = _data.copyWith(syncWithSystem: true, brightness: systemBrightness);
     notifyListeners();
   }
 }
@@ -177,7 +174,7 @@ class WindTheme extends StatefulWidget {
   /// )
   /// ```
   final Widget Function(BuildContext context, WindThemeController controller)?
-      builder;
+  builder;
 
   /// Callback fired when the brightness changes and the change did not come
   /// from the operating system sync.
@@ -208,9 +205,9 @@ class WindTheme extends StatefulWidget {
     this.builder,
     this.onThemeChanged,
   }) : assert(
-          child != null || builder != null,
-          'Either child or builder must be provided',
-        );
+         child != null || builder != null,
+         'Either child or builder must be provided',
+       );
 
   /// Returns the [WindThemeController] from the closest [WindTheme] ancestor.
   ///
@@ -222,8 +219,8 @@ class WindTheme extends StatefulWidget {
   /// WindTheme.of(context).data.colors['primary'];
   /// ```
   static WindThemeController of(BuildContext context) {
-    final inherited =
-        context.dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
+    final inherited = context
+        .dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
     assert(inherited != null, 'No WindTheme found in context');
     return inherited!.controller;
   }
@@ -233,8 +230,8 @@ class WindTheme extends StatefulWidget {
   /// Use this when you only need to read theme data without rebuilding
   /// when the theme changes.
   static WindThemeData dataOf(BuildContext context) {
-    final inherited =
-        context.dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
+    final inherited = context
+        .dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
     assert(inherited != null, 'No WindTheme found in context');
     return inherited!.controller.data;
   }
@@ -247,8 +244,8 @@ class WindTheme extends StatefulWidget {
   /// brightness when a [WindTheme] is present, yet still render under a bare
   /// root with no theme at all.
   static WindThemeData? maybeDataOf(BuildContext context) {
-    final inherited =
-        context.dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
+    final inherited = context
+        .dependOnInheritedWidgetOfExactType<_WindThemeInherited>();
     return inherited?.controller.data;
   }
 

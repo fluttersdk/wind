@@ -3,11 +3,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 Widget wrapWithTheme(Widget child) => MaterialApp(
-      home: WindTheme(
-        data: WindThemeData(),
-        child: Scaffold(body: Center(child: child)),
-      ),
-    );
+  home: WindTheme(
+    data: WindThemeData(),
+    child: Scaffold(body: Center(child: child)),
+  ),
+);
 
 WPopover _popover({double? width, double? maxWidth, String? className}) {
   return WPopover(
@@ -18,10 +18,8 @@ WPopover _popover({double? width, double? maxWidth, String? className}) {
       className: 'px-4 py-2 bg-slate-100',
       child: WText('Trigger'),
     ),
-    contentBuilder: (context, close) => const WDiv(
-      className: 'flex flex-col',
-      child: WText('PopoverBody'),
-    ),
+    contentBuilder: (context, close) =>
+        const WDiv(className: 'flex flex-col', child: WText('PopoverBody')),
   );
 }
 
@@ -52,12 +50,14 @@ void main() {
   }
 
   group('WPopover width (issue #127)', () {
-    testWidgets('defaults maxWidth to the screen width (no unbounded stretch)',
-        (tester) async {
-      await open(tester, _popover());
-      // Default test surface is 800px wide.
-      expect(_overlayConstraints(tester).maxWidth, 800);
-    });
+    testWidgets(
+      'defaults maxWidth to the screen width (no unbounded stretch)',
+      (tester) async {
+        await open(tester, _popover());
+        // Default test surface is 800px wide.
+        expect(_overlayConstraints(tester).maxWidth, 800);
+      },
+    );
 
     testWidgets('honors an explicit maxWidth', (tester) async {
       await open(tester, _popover(maxWidth: 300));
@@ -73,18 +73,16 @@ void main() {
     });
 
     testWidgets('a w-* token in className pins a fixed width', (tester) async {
-      await open(
-        tester,
-        _popover(className: 'w-64 bg-white dark:bg-gray-800'),
-      );
+      await open(tester, _popover(className: 'w-64 bg-white dark:bg-gray-800'));
       final c = _overlayConstraints(tester);
       // w-64 -> 64 * 4 = 256
       expect(c.minWidth, 256);
       expect(c.maxWidth, 256);
     });
 
-    testWidgets('a max-w-* token in className bounds the width',
-        (tester) async {
+    testWidgets('a max-w-* token in className bounds the width', (
+      tester,
+    ) async {
       await open(
         tester,
         _popover(className: 'max-w-sm bg-white dark:bg-gray-800'),
@@ -103,8 +101,7 @@ void main() {
       expect(c.maxWidth, 200);
     });
 
-    testWidgets(
-        'a trigger wider than maxWidth opens without error (auto-flip '
+    testWidgets('a trigger wider than maxWidth opens without error (auto-flip '
         'width is clamped)', (tester) async {
       // Wide trigger + small maxWidth: the auto-flip width estimate must clamp
       // to maxWidth rather than the trigger width, and the popover still opens.
@@ -132,8 +129,9 @@ void main() {
       expect(_overlayConstraints(tester).maxWidth, 120);
     });
 
-    testWidgets('a negative width is ignored instead of asserting',
-        (tester) async {
+    testWidgets('a negative width is ignored instead of asserting', (
+      tester,
+    ) async {
       await open(tester, _popover(width: -50));
       final c = _overlayConstraints(tester);
       // The invalid fixed width is dropped: the overlay falls back to flexible
@@ -143,8 +141,9 @@ void main() {
       expect(c.minWidth, greaterThanOrEqualTo(0));
     });
 
-    testWidgets('an infinite maxWidth falls back to the screen width',
-        (tester) async {
+    testWidgets('an infinite maxWidth falls back to the screen width', (
+      tester,
+    ) async {
       await open(tester, _popover(maxWidth: double.infinity));
       final c = _overlayConstraints(tester);
       expect(tester.takeException(), isNull);

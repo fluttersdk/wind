@@ -85,10 +85,7 @@ void main() {
         wrapWithTheme(
           WAnchor(
             onTap: () => tapped = true,
-            child: const WDiv(
-              className: 'p-4 bg-white',
-              child: Text('Anchor'),
-            ),
+            child: const WDiv(className: 'p-4 bg-white', child: Text('Anchor')),
           ),
         ),
       );
@@ -107,10 +104,7 @@ void main() {
           WAnchor(
             onTap: () => tapped = true,
             isDisabled: true,
-            child: const WDiv(
-              className: 'p-4 bg-white',
-              child: Text('Anchor'),
-            ),
+            child: const WDiv(className: 'p-4 bg-white', child: Text('Anchor')),
           ),
         ),
       );
@@ -140,8 +134,9 @@ void main() {
       expect(received, isTrue);
     });
 
-    testWidgets('WCheckbox does NOT fire onChanged when disabled',
-        (tester) async {
+    testWidgets('WCheckbox does NOT fire onChanged when disabled', (
+      tester,
+    ) async {
       bool? received;
 
       await tester.pumpWidget(
@@ -161,8 +156,9 @@ void main() {
       expect(received, isNull);
     });
 
-    testWidgets('WSelect fires onChange when an option is tapped',
-        (tester) async {
+    testWidgets('WSelect fires onChange when an option is tapped', (
+      tester,
+    ) async {
       String? selected;
 
       await tester.pumpWidget(
@@ -191,8 +187,9 @@ void main() {
       expect(selected, 'b');
     });
 
-    testWidgets('WDatePicker fires onChanged when a day is tapped',
-        (tester) async {
+    testWidgets('WDatePicker fires onChanged when a day is tapped', (
+      tester,
+    ) async {
       DateTime? picked;
       final DateTime anchor = DateTime(2024, 6, 15);
 

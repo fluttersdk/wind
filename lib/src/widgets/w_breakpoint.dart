@@ -108,10 +108,11 @@ class WBreakpoint extends StatelessWidget {
     if (builders.isEmpty) return base;
 
     final screens = ctx.theme.screens;
-    final sortedActive = screens.entries
-        .where((e) => e.value <= (screens[ctx.activeBreakpoint] ?? 0))
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final sortedActive =
+        screens.entries
+            .where((e) => e.value <= (screens[ctx.activeBreakpoint] ?? 0))
+            .toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
 
     assert(() {
       for (final key in custom.keys) {

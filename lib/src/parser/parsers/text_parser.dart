@@ -414,8 +414,8 @@ class TextParser implements WindParserInterface {
             letterSpacing = parsedValue;
             letterSpacingUnit =
                 arbitrary != null && match.namedGroup('unit') != 'em'
-                    ? WindLetterSpacingUnit.px
-                    : WindLetterSpacingUnit.em;
+                ? WindLetterSpacingUnit.px
+                : WindLetterSpacingUnit.em;
             continue;
           }
         }

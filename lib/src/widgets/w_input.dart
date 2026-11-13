@@ -299,15 +299,15 @@ class WInput extends StatefulWidget {
     this.prefix,
     this.suffix,
     this.semanticLabel,
-  })  : assert(
-          decimalSeparator.length == 1,
-          'decimalSeparator must be a single character.',
-        ),
-        assert(
-          value == null || controller == null,
-          'WInput: pass value (controlled) or controller (external), not both; '
-          'value is ignored when controller is set.',
-        );
+  }) : assert(
+         decimalSeparator.length == 1,
+         'decimalSeparator must be a single character.',
+       ),
+       assert(
+         value == null || controller == null,
+         'WInput: pass value (controlled) or controller (external), not both; '
+         'value is ignored when controller is set.',
+       );
 
   @override
   State<WInput> createState() => _WInputState();
@@ -318,8 +318,10 @@ class _WInputState extends State<WInput>
     implements TextSelectionGestureDetectorBuilderDelegate {
   /// Default content padding (12 horizontal / 8 vertical) used when className
   /// supplies no `p-*`.
-  static const EdgeInsets _defaultContentPadding =
-      EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+  static const EdgeInsets _defaultContentPadding = EdgeInsets.symmetric(
+    horizontal: 12,
+    vertical: 8,
+  );
 
   /// Default visual box matching the previous Material defaults: a 1px grey
   /// border at a 4px radius. Applied when className resolves no decoration.
@@ -354,7 +356,7 @@ class _WInputState extends State<WInput>
   /// hit-tests against the EditableText's [RenderEditable] in global coords, so
   /// it handles glyph-level selection AND whole-box taps in one detector.
   late final _WInputSelectionGestureDetectorBuilder
-      _selectionGestureDetectorBuilder;
+  _selectionGestureDetectorBuilder;
 
   // === TextSelectionGestureDetectorBuilderDelegate ===
 
@@ -379,8 +381,9 @@ class _WInputState extends State<WInput>
     super.initState();
     _initController();
     _initFocusNode();
-    _selectionGestureDetectorBuilder =
-        _WInputSelectionGestureDetectorBuilder(state: this);
+    _selectionGestureDetectorBuilder = _WInputSelectionGestureDetectorBuilder(
+      state: this,
+    );
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -486,11 +489,11 @@ class _WInputState extends State<WInput>
   /// composer showing half of its first line was. Zero wherever no toolbar is
   /// mounted, which is every platform it is gated off.
   EdgeInsets get _scrollPadding => EdgeInsets.fromLTRB(
-        20,
-        20,
-        20,
-        20 + _clearanceAtLastBuild + WKeyboardToolbarInset.of(context),
-      );
+    20,
+    20,
+    20,
+    20 + _clearanceAtLastBuild + WKeyboardToolbarInset.of(context),
+  );
 
   /// How much of the field extends BELOW the caret, right now.
   ///
@@ -699,18 +702,20 @@ class _WInputState extends State<WInput>
 
     // Determine max/min lines. Password/single-line types force maxLines == 1,
     // which EditableText asserts when obscureText is true.
-    final int? maxLines =
-        widget.type == InputType.multiline ? widget.maxLines : 1;
-    final int minLines =
-        widget.type == InputType.multiline ? widget.minLines : 1;
+    final int? maxLines = widget.type == InputType.multiline
+        ? widget.maxLines
+        : 1;
+    final int minLines = widget.type == InputType.multiline
+        ? widget.minLines
+        : 1;
 
     // Build text style from WindStyle, with a brightness-aware baseline color
     // so text stays legible under a bare root with no Material/Cupertino theme.
     // Prefer Wind's effective brightness (the source `dark:` classes resolve
     // against) so the default color matches the rendered background; fall back
     // to the platform brightness only when no WindTheme is present.
-    final Brightness? windBrightness =
-        WindTheme.maybeDataOf(context)?.brightness;
+    final Brightness? windBrightness = WindTheme.maybeDataOf(context)
+        ?.brightness;
     WindPerfCounters.recordInheritedRead(WindInheritedRead.windTheme);
     Brightness? platformBrightness;
     if (windBrightness == null) {
@@ -740,7 +745,8 @@ class _WInputState extends State<WInput>
 
     // Selection highlight must be visible without a theme: prefer the ring
     // color, else a translucent platform-aware default.
-    final Color selectionColor = styles.ringColor?.withValues(alpha: 0.4) ??
+    final Color selectionColor =
+        styles.ringColor?.withValues(alpha: 0.4) ??
         (brightness == Brightness.dark
             ? const Color(0x66FFFFFF)
             : const Color(0x663B82F6));
@@ -788,7 +794,8 @@ class _WInputState extends State<WInput>
       // through [textInputAction], which is the only place that intent can be
       // stated correctly: only the form knows its own field order.
       scrollPadding: _scrollPadding,
-      textInputAction: widget.textInputAction ??
+      textInputAction:
+          widget.textInputAction ??
           (widget.type == InputType.multiline
               ? TextInputAction.newline
               : TextInputAction.done),
@@ -827,12 +834,14 @@ class _WInputState extends State<WInput>
           ? cupertinoTextSelectionHandleControls
           : null,
       enableInteractiveSelection: hasOverlay && widget.enabled,
-      contextMenuBuilder:
-          hasOverlay && widget.enabled ? _buildContextMenu : null,
+      contextMenuBuilder: hasOverlay && widget.enabled
+          ? _buildContextMenu
+          : null,
       // Caller-supplied formatters win outright; otherwise InputType.number
       // gets a signed-decimal filter so it is actually numeric on every
       // platform (the keyboard type alone enforces nothing on web).
-      inputFormatters: widget.inputFormatters ??
+      inputFormatters:
+          widget.inputFormatters ??
           (widget.type == InputType.number
               ? [_SignedDecimalTextInputFormatter(widget.decimalSeparator)]
               : null),
@@ -853,8 +862,12 @@ class _WInputState extends State<WInput>
 
     // Stack the placeholder behind the EditableText so it shows only when the
     // field is empty (the EditableText-in-Container recipe; no Material hint).
-    Widget field =
-        _wrapWithPlaceholder(editable, hintStyle, strutStyle, maxLines);
+    Widget field = _wrapWithPlaceholder(
+      editable,
+      hintStyle,
+      strutStyle,
+      maxLines,
+    );
 
     // Content padding wraps the text on every side. With a prefix/suffix the
     // text keeps an 8px gap to the adornment while the adornment carries the
@@ -974,7 +987,8 @@ class _WInputState extends State<WInput>
 
     // Apply Box Model (Margin, Width, Height)
     // WInput needs to respect standard Wind utility classes for sizing and spacing
-    final bool hasBoxProps = styles.margin != null ||
+    final bool hasBoxProps =
+        styles.margin != null ||
         styles.width != null ||
         styles.height != null ||
         styles.widthFactor != null ||
@@ -1027,9 +1041,9 @@ class _WInputState extends State<WInput>
       InputType.password => (TextInputType.visiblePassword, true),
       InputType.email => (TextInputType.emailAddress, false),
       InputType.number => (
-          const TextInputType.numberWithOptions(decimal: true, signed: true),
-          false
-        ),
+        const TextInputType.numberWithOptions(decimal: true, signed: true),
+        false,
+      ),
       InputType.multiline => (TextInputType.multiline, false),
     };
   }
@@ -1222,8 +1236,8 @@ class _WInputState extends State<WInput>
 class _WInputSelectionGestureDetectorBuilder
     extends TextSelectionGestureDetectorBuilder {
   _WInputSelectionGestureDetectorBuilder({required _WInputState state})
-      : _state = state,
-        super(delegate: state);
+    : _state = state,
+      super(delegate: state);
 
   final _WInputState _state;
 
@@ -1243,13 +1257,11 @@ class _WInputSelectionGestureDetectorBuilder
 /// [WInput.inputFormatters], which then take over entirely.
 class _SignedDecimalTextInputFormatter extends TextInputFormatter {
   _SignedDecimalTextInputFormatter(String decimalSeparator)
-      : assert(
-          !RegExp(r'[\d+-]').hasMatch(decimalSeparator),
-          'decimalSeparator cannot be a digit, "+" or "-".',
-        ),
-        _pattern = RegExp(
-          '^-?\\d*${RegExp.escape(decimalSeparator)}?\\d*\$',
-        );
+    : assert(
+        !RegExp(r'[\d+-]').hasMatch(decimalSeparator),
+        'decimalSeparator cannot be a digit, "+" or "-".',
+      ),
+      _pattern = RegExp('^-?\\d*${RegExp.escape(decimalSeparator)}?\\d*\$');
 
   final RegExp _pattern;
 

@@ -38,9 +38,7 @@ void main() {
       MaterialApp(
         home: WindTheme(
           data: WindThemeData(),
-          child: Center(
-            child: SizedBox(width: 300, height: 400, child: child),
-          ),
+          child: Center(child: SizedBox(width: 300, height: 400, child: child)),
         ),
       ),
     );
@@ -65,14 +63,18 @@ void main() {
   group('h-full in a bounded height', () {
     testWidgets('fills the incoming height', (tester) async {
       await pumpBounded(
-          tester, const WDiv(className: 'h-full', child: _Probe()));
+        tester,
+        const WDiv(className: 'h-full', child: _Probe()),
+      );
 
       expect(tester.getSize(find.byType(_Probe)).height, 400);
     });
 
     testWidgets('with w-full fills both axes', (tester) async {
       await pumpBounded(
-          tester, const WDiv(className: 'w-full h-full', child: _Probe()));
+        tester,
+        const WDiv(className: 'w-full h-full', child: _Probe()),
+      );
 
       expect(tester.getSize(find.byType(_Probe)), const Size(300, 400));
     });
@@ -105,8 +107,10 @@ void main() {
             child: Align(
               alignment: Alignment.topLeft,
               child: ConstrainedBox(
-                constraints:
-                    const BoxConstraints(maxWidth: 300, maxHeight: 400),
+                constraints: const BoxConstraints(
+                  maxWidth: 300,
+                  maxHeight: 400,
+                ),
                 child: const WDiv(
                   className: 'h-full max-h-[120px]',
                   child: _Probe(),
@@ -146,9 +150,10 @@ void main() {
       );
 
       // Both boxes fill: the inner one sees the outer's 400 as its own bound.
-      for (final Size size in tester.widgetList<WDiv>(find.byType(WDiv)).map(
-            (WDiv w) => tester.getSize(find.byWidget(w)),
-          )) {
+      for (final Size size
+          in tester
+              .widgetList<WDiv>(find.byType(WDiv))
+              .map((WDiv w) => tester.getSize(find.byWidget(w)))) {
         expect(size.height, 400);
       }
     });
@@ -159,7 +164,9 @@ void main() {
       tester,
     ) async {
       await pumpUnbounded(
-          tester, const WDiv(className: 'h-full', child: _Probe()));
+        tester,
+        const WDiv(className: 'h-full', child: _Probe()),
+      );
 
       final double screen =
           tester.view.physicalSize.height / tester.view.devicePixelRatio;
@@ -177,7 +184,9 @@ void main() {
 
     testWidgets('with w-full still fills the bounded width', (tester) async {
       await pumpUnbounded(
-          tester, const WDiv(className: 'w-full h-full', child: _Probe()));
+        tester,
+        const WDiv(className: 'w-full h-full', child: _Probe()),
+      );
 
       expect(tester.getSize(find.byType(_Probe)).width, 300);
     });
@@ -192,7 +201,9 @@ void main() {
       tester,
     ) async {
       await pumpBounded(
-          tester, const WDiv(className: 'h-full', child: _Probe()));
+        tester,
+        const WDiv(className: 'h-full', child: _Probe()),
+      );
 
       expect(tester.getSize(find.byType(WDiv)), const Size(300, 400));
     });
@@ -201,7 +212,9 @@ void main() {
       tester,
     ) async {
       await pumpUnbounded(
-          tester, const WDiv(className: 'h-full', child: _Probe()));
+        tester,
+        const WDiv(className: 'h-full', child: _Probe()),
+      );
 
       final double screen =
           tester.view.physicalSize.height / tester.view.devicePixelRatio;
@@ -212,14 +225,18 @@ void main() {
   group('h-fraction is unaffected, in either context', () {
     testWidgets('h-1/2 takes half a bounded height', (tester) async {
       await pumpBounded(
-          tester, const WDiv(className: 'h-1/2', child: _Probe()));
+        tester,
+        const WDiv(className: 'h-1/2', child: _Probe()),
+      );
 
       expect(tester.getSize(find.byType(_Probe)).height, 200);
     });
 
     testWidgets('w-1/2 h-1/2 takes half of both', (tester) async {
       await pumpBounded(
-          tester, const WDiv(className: 'w-1/2 h-1/2', child: _Probe()));
+        tester,
+        const WDiv(className: 'w-1/2 h-1/2', child: _Probe()),
+      );
 
       expect(tester.getSize(find.byType(_Probe)), const Size(150, 200));
     });
@@ -281,12 +298,16 @@ void main() {
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
       await pumpUnbounded(
-          tester, const WDiv(className: 'h-full', child: _Probe()));
+        tester,
+        const WDiv(className: 'h-full', child: _Probe()),
+      );
       expect(tester.getSize(find.byType(_Probe)).height, 800);
 
       tester.view.physicalSize = const Size(400, 500);
       await pumpUnbounded(
-          tester, const WDiv(className: 'h-full', child: _Probe()));
+        tester,
+        const WDiv(className: 'h-full', child: _Probe()),
+      );
       expect(tester.getSize(find.byType(_Probe)).height, 500);
     });
   });
@@ -321,9 +342,7 @@ void main() {
         const WDiv(className: 'w-full h-full', child: _Probe()),
       );
 
-      final RenderBox box = tester.renderObject<RenderBox>(
-        find.byType(WDiv),
-      );
+      final RenderBox box = tester.renderObject<RenderBox>(find.byType(WDiv));
       const BoxConstraints incoming = BoxConstraints(
         maxWidth: 300,
         maxHeight: 400,
@@ -335,9 +354,7 @@ void main() {
     testWidgets('with no child, and with an unbounded height', (tester) async {
       await pumpUnbounded(tester, const WDiv(className: 'h-full'));
 
-      final RenderBox box = tester.renderObject<RenderBox>(
-        find.byType(WDiv),
-      );
+      final RenderBox box = tester.renderObject<RenderBox>(find.byType(WDiv));
 
       expect(
         box.getDryLayout(const BoxConstraints(maxWidth: 300)).height,

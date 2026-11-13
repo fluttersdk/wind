@@ -46,8 +46,9 @@ void main() {
         WindParser.clearCache();
       });
 
-      testWidgets('icon-only button exposes semanticLabel as its label',
-          (tester) async {
+      testWidgets('icon-only button exposes semanticLabel as its label', (
+        tester,
+      ) async {
         // An icon-only button has no text child for MergeSemantics to absorb,
         // so without an explicit label it would be a nameless button. The
         // semanticLabel must surface as the button's accessible name.
@@ -67,40 +68,42 @@ void main() {
       });
 
       testWidgets(
-          'icon-only button with semanticLabel still fires onTap (Builder path)',
-          (tester) async {
-        // WButton routes through WAnchor via a Builder indirection. The
-        // excludeSemantics: true branch drops the descendant GestureDetector
-        // tap action, so onTap must be lifted onto the Semantics node for
-        // activation to survive across the Builder boundary.
-        var tapped = false;
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WButton(
-              onTap: () => tapped = true,
-              semanticLabel: 'Add item',
-              child: const Icon(Icons.add),
+        'icon-only button with semanticLabel still fires onTap (Builder path)',
+        (tester) async {
+          // WButton routes through WAnchor via a Builder indirection. The
+          // excludeSemantics: true branch drops the descendant GestureDetector
+          // tap action, so onTap must be lifted onto the Semantics node for
+          // activation to survive across the Builder boundary.
+          var tapped = false;
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WButton(
+                onTap: () => tapped = true,
+                semanticLabel: 'Add item',
+                child: const Icon(Icons.add),
+              ),
             ),
-          ),
-        );
+          );
 
-        final SemanticsNode node = tester.getSemantics(find.byType(WButton));
-        expect(node.label, 'Add item');
-        expect(
-          node.getSemanticsData().hasAction(SemanticsAction.tap),
-          isTrue,
-        );
+          final SemanticsNode node = tester.getSemantics(find.byType(WButton));
+          expect(node.label, 'Add item');
+          expect(
+            node.getSemanticsData().hasAction(SemanticsAction.tap),
+            isTrue,
+          );
 
-        await tester.tap(find.byType(WButton));
-        await tester.pump();
-        expect(tapped, isTrue);
-      });
+          await tester.tap(find.byType(WButton));
+          await tester.pump();
+          expect(tapped, isTrue);
+        },
+      );
 
       // A disabled or loading button dropped its callbacks before reaching
       // WAnchor, which then took it for a styling wrapper and published no
       // button node at all: screen readers and tapir lost the control.
-      testWidgets('disabled button is a disabled button node with its label',
-          (tester) async {
+      testWidgets('disabled button is a disabled button node with its label', (
+        tester,
+      ) async {
         final SemanticsHandle handle = tester.ensureSemantics();
         try {
           var tapped = false;
@@ -134,8 +137,9 @@ void main() {
         }
       });
 
-      testWidgets('loading button is a disabled button node with its label',
-          (tester) async {
+      testWidgets('loading button is a disabled button node with its label', (
+        tester,
+      ) async {
         final SemanticsHandle handle = tester.ensureSemantics();
         try {
           var tapped = false;
@@ -170,8 +174,9 @@ void main() {
         }
       });
 
-      testWidgets('loading button with semanticLabel lifts no tap action',
-          (tester) async {
+      testWidgets('loading button with semanticLabel lifts no tap action', (
+        tester,
+      ) async {
         final SemanticsHandle handle = tester.ensureSemantics();
         try {
           await tester.pumpWidget(
@@ -234,16 +239,40 @@ void main() {
       // The dominant call site is `disabled: !canSubmit, onTap: canSubmit ?
       // submit : null`, so an inert button usually has no callback at all, and
       // a gestureless WAnchor publishes nothing: the label read as plain text.
-      testWidgets('button without a callback is one disabled button node',
-          (tester) async {
+      testWidgets('button without a callback is one disabled button node', (
+        tester,
+      ) async {
+        final SemanticsHandle handle = tester.ensureSemantics();
+        try {
+          await tester.pumpWidget(
+            wrapWithTheme(const WButton(onTap: null, child: WText('Save'))),
+          );
+
+          final List<SemanticsNode> buttons = _buttonNodes(tester);
+          expect(buttons, hasLength(1));
+          expect(
+            buttons.single,
+            isSemantics(
+              isButton: true,
+              hasEnabledState: true,
+              isEnabled: false,
+              label: 'Save',
+              hasTapAction: false,
+            ),
+          );
+        } finally {
+          handle.dispose();
+        }
+      });
+
+      testWidgets('disabled button without a callback is one disabled node', (
+        tester,
+      ) async {
         final SemanticsHandle handle = tester.ensureSemantics();
         try {
           await tester.pumpWidget(
             wrapWithTheme(
-              const WButton(
-                onTap: null,
-                child: WText('Save'),
-              ),
+              const WButton(disabled: true, onTap: null, child: WText('Save')),
             ),
           );
 
@@ -264,39 +293,9 @@ void main() {
         }
       });
 
-      testWidgets('disabled button without a callback is one disabled node',
-          (tester) async {
-        final SemanticsHandle handle = tester.ensureSemantics();
-        try {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              const WButton(
-                disabled: true,
-                onTap: null,
-                child: WText('Save'),
-              ),
-            ),
-          );
-
-          final List<SemanticsNode> buttons = _buttonNodes(tester);
-          expect(buttons, hasLength(1));
-          expect(
-            buttons.single,
-            isSemantics(
-              isButton: true,
-              hasEnabledState: true,
-              isEnabled: false,
-              label: 'Save',
-              hasTapAction: false,
-            ),
-          );
-        } finally {
-          handle.dispose();
-        }
-      });
-
-      testWidgets('labelled button without a callback is not enabled',
-          (tester) async {
+      testWidgets('labelled button without a callback is not enabled', (
+        tester,
+      ) async {
         final SemanticsHandle handle = tester.ensureSemantics();
         try {
           await tester.pumpWidget(
@@ -326,17 +325,13 @@ void main() {
         }
       });
 
-      testWidgets('enabled button is still exactly one button node',
-          (tester) async {
+      testWidgets('enabled button is still exactly one button node', (
+        tester,
+      ) async {
         final SemanticsHandle handle = tester.ensureSemantics();
         try {
           await tester.pumpWidget(
-            wrapWithTheme(
-              WButton(
-                onTap: () {},
-                child: const WText('Save'),
-              ),
-            ),
+            wrapWithTheme(WButton(onTap: () {}, child: const WText('Save'))),
           );
 
           final List<SemanticsNode> buttons = _buttonNodes(tester);
@@ -444,7 +439,9 @@ void main() {
 
         final Opacity opacity = tester.widget<Opacity>(
           find.ancestor(
-              of: find.text('Disabled'), matching: find.byType(Opacity)),
+            of: find.text('Disabled'),
+            matching: find.byType(Opacity),
+          ),
         );
         expect(opacity.opacity, 0.5);
       });
@@ -464,7 +461,9 @@ void main() {
 
         expect(
           find.ancestor(
-              of: find.text('Enabled'), matching: find.byType(Opacity)),
+            of: find.text('Enabled'),
+            matching: find.byType(Opacity),
+          ),
           findsNothing,
         );
       });
@@ -890,8 +889,7 @@ void main() {
           expect(
             spinnerColor,
             isNot(equals(Colors.white)),
-            reason:
-                'Loading spinner should use a contrasting color, not white on white bg',
+            reason: 'Loading spinner should use a contrasting color, not white on white bg',
           );
         },
       );
@@ -927,37 +925,34 @@ void main() {
         },
       );
 
-      testWidgets(
-        'uses explicit text color from className for spinner',
-        (tester) async {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WButton(
-                onTap: () {},
-                isLoading: true,
-                className: 'bg-white text-blue-600 p-3 rounded-xl',
-                child: const Text('Styled Button'),
-              ),
+      testWidgets('uses explicit text color from className for spinner', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              isLoading: true,
+              className: 'bg-white text-blue-600 p-3 rounded-xl',
+              child: const Text('Styled Button'),
             ),
-          );
+          ),
+        );
 
-          final indicator = tester.widget<CircularProgressIndicator>(
-            find.byType(CircularProgressIndicator),
-          );
+        final indicator = tester.widget<CircularProgressIndicator>(
+          find.byType(CircularProgressIndicator),
+        );
 
-          final animation =
-              indicator.valueColor as AlwaysStoppedAnimation<Color>;
-          final spinnerColor = animation.value;
+        final animation = indicator.valueColor as AlwaysStoppedAnimation<Color>;
+        final spinnerColor = animation.value;
 
-          // When text color is set, spinner should use it.
-          expect(
-            spinnerColor,
-            isNot(equals(Colors.white)),
-            reason:
-                'Loading spinner should use the explicit text color from className',
-          );
-        },
-      );
+        // When text color is set, spinner should use it.
+        expect(
+          spinnerColor,
+          isNot(equals(Colors.white)),
+          reason: 'Loading spinner should use the explicit text color from className',
+        );
+      });
 
       testWidgets(
         'falls through to contrast when the text color is transparent',
@@ -990,59 +985,55 @@ void main() {
         },
       );
 
-      testWidgets(
-        'an explicit transparent loadingColor is still honoured',
-        (tester) async {
-          // The fall-through above reads a text color, never an explicit ask.
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WButton(
-                onTap: () {},
-                isLoading: true,
-                loadingColor: const Color(0x00000000),
-                className: 'bg-gray-900 p-3 rounded-xl',
-                child: const Text('Invisible Spinner'),
-              ),
+      testWidgets('an explicit transparent loadingColor is still honoured', (
+        tester,
+      ) async {
+        // The fall-through above reads a text color, never an explicit ask.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              isLoading: true,
+              loadingColor: const Color(0x00000000),
+              className: 'bg-gray-900 p-3 rounded-xl',
+              child: const Text('Invisible Spinner'),
             ),
-          );
+          ),
+        );
 
-          final indicator = tester.widget<CircularProgressIndicator>(
-            find.byType(CircularProgressIndicator),
-          );
-          final animation =
-              indicator.valueColor as AlwaysStoppedAnimation<Color>;
+        final indicator = tester.widget<CircularProgressIndicator>(
+          find.byType(CircularProgressIndicator),
+        );
+        final animation = indicator.valueColor as AlwaysStoppedAnimation<Color>;
 
-          expect(animation.value, equals(const Color(0x00000000)));
-        },
-      );
+        expect(animation.value, equals(const Color(0x00000000)));
+      });
 
-      testWidgets(
-        'uses explicit loadingColor over all fallbacks',
-        (tester) async {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WButton(
-                onTap: () {},
-                isLoading: true,
-                loadingColor: Colors.red,
-                className: 'bg-white p-3 rounded-xl',
-                child: const Text('Custom Color'),
-              ),
+      testWidgets('uses explicit loadingColor over all fallbacks', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WButton(
+              onTap: () {},
+              isLoading: true,
+              loadingColor: Colors.red,
+              className: 'bg-white p-3 rounded-xl',
+              child: const Text('Custom Color'),
             ),
-          );
+          ),
+        );
 
-          final indicator = tester.widget<CircularProgressIndicator>(
-            find.byType(CircularProgressIndicator),
-          );
+        final indicator = tester.widget<CircularProgressIndicator>(
+          find.byType(CircularProgressIndicator),
+        );
 
-          final animation =
-              indicator.valueColor as AlwaysStoppedAnimation<Color>;
-          final spinnerColor = animation.value;
+        final animation = indicator.valueColor as AlwaysStoppedAnimation<Color>;
+        final spinnerColor = animation.value;
 
-          // Explicit loadingColor should take precedence.
-          expect(spinnerColor, equals(Colors.red));
-        },
-      );
+        // Explicit loadingColor should take precedence.
+        expect(spinnerColor, equals(Colors.red));
+      });
     });
 
     group('Letter Spacing', () {
@@ -1050,8 +1041,9 @@ void main() {
         WindParser.clearCache();
       });
 
-      testWidgets('resolves em tracking against the label text size',
-          (tester) async {
+      testWidgets('resolves em tracking against the label text size', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WButton(

@@ -33,9 +33,9 @@ class WindEqualHeightRow extends MultiChildRenderObjectWidget {
     this.spacing = 0,
     required super.children,
   }) : assert(
-          spacing >= 0 && spacing < double.infinity,
-          'WindEqualHeightRow.spacing must be finite and non-negative.',
-        );
+         spacing >= 0 && spacing < double.infinity,
+         'WindEqualHeightRow.spacing must be finite and non-negative.',
+       );
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
@@ -56,7 +56,7 @@ class _RenderEqualHeightRow extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, _EqualHeightParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, _EqualHeightParentData> {
-  _RenderEqualHeightRow({required double spacing}) : _spacing = spacing;
+  _RenderEqualHeightRow({required this._spacing});
 
   double _spacing;
   set spacing(double value) {
@@ -89,7 +89,7 @@ class _RenderEqualHeightRow extends RenderBox
     // never in practice) rather than an infinite width if it does not.
     final double raw =
         (constraints.maxWidth.isFinite ? constraints.maxWidth : 0.0) -
-            totalSpacing;
+        totalSpacing;
     final double cellWidth = raw > 0 ? raw / count : 0.0;
 
     // Pass 1: lay each cell out at its natural height (loose height) to find the
@@ -112,8 +112,10 @@ class _RenderEqualHeightRow extends RenderBox
     // Honor the incoming height constraint: if the parent forces a taller (or
     // caps at a shorter) row, cells stretch to that height, not just the
     // measured tallest, so the row and its cells stay consistent.
-    final double target =
-        maxHeight.clamp(constraints.minHeight, constraints.maxHeight);
+    final double target = maxHeight.clamp(
+      constraints.minHeight,
+      constraints.maxHeight,
+    );
 
     // Pass 2: re-lay each cell with a MIN height of `target` (never a tight
     // height) to settle the true row height. A tight height would squeeze a

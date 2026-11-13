@@ -714,11 +714,7 @@ class WindStyle {
 
     return BoxDecoration(
       borderRadius: decoration?.borderRadius,
-      border: Border.all(
-        color: color,
-        width: width,
-        strokeAlign: strokeAlign,
-      ),
+      border: Border.all(color: color, width: width, strokeAlign: strokeAlign),
     );
   }
 

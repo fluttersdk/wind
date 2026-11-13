@@ -53,8 +53,9 @@ void main() {
       expect(find.byType(Row), findsOneWidget);
     });
 
-    testWidgets('lg: prefix gates a style above the lg breakpoint',
-        (tester) async {
+    testWidgets('lg: prefix gates a style above the lg breakpoint', (
+      tester,
+    ) async {
       const targetKey = ValueKey('lg-target');
 
       // 800 -> md (below lg): lg:bg-gray-100 must NOT apply, base bg-white wins.
@@ -70,10 +71,7 @@ void main() {
         ),
       );
 
-      expect(
-        _bgColor(tester, find.byKey(targetKey)),
-        const Color(0xFFFFFFFF),
-      );
+      expect(_bgColor(tester, find.byKey(targetKey)), const Color(0xFFFFFFFF));
 
       // 1100 -> lg: lg:bg-gray-100 applies.
       tester.view.physicalSize = const Size(1100, 900);
@@ -85,8 +83,9 @@ void main() {
       );
     });
 
-    testWidgets('breakpoint ladder resolves base/md/lg/xl/2xl in WindContext',
-        (tester) async {
+    testWidgets('breakpoint ladder resolves base/md/lg/xl/2xl in WindContext', (
+      tester,
+    ) async {
       // Assert the computed activeBreakpoint at each bracketed width using the
       // public WindContext.build resolver, which is the single source of truth
       // the parser consumes for responsive gating.

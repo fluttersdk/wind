@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import '../state/wind_anchor_state.dart';
 import '../state/wind_anchor_state_provider.dart';
 import '../utils/wind_perf_counters.dart';
@@ -148,8 +149,9 @@ class _WAnchorState extends State<WAnchor> {
   /// `Actions` a new [Action] instance each time and defeats its own caching.
   late final Map<Type, Action<Intent>> _actions = <Type, Action<Intent>>{
     ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: _activate),
-    ButtonActivateIntent:
-        CallbackAction<ButtonActivateIntent>(onInvoke: _activate),
+    ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+      onInvoke: _activate,
+    ),
   };
 
   /// Runs the primary action, which is [WAnchor.onTap] and only that.
@@ -248,7 +250,8 @@ class _WAnchorState extends State<WAnchor> {
   Widget build(BuildContext context) {
     WindPerfCounters.recordWidgetBuild('WAnchor');
 
-    final hasGestures = widget.onTap != null ||
+    final hasGestures =
+        widget.onTap != null ||
         widget.onLongPress != null ||
         widget.onDoubleTap != null;
 
@@ -272,8 +275,9 @@ class _WAnchorState extends State<WAnchor> {
     //
     // Hover is not inherited at all. It is a pointer position, and two siblings
     // inside one anchor legitimately highlight independently.
-    final WindAnchorState? inherited =
-        hasGestures ? null : WindAnchorStateProvider.of(context);
+    final WindAnchorState? inherited = hasGestures
+        ? null
+        : WindAnchorStateProvider.of(context);
 
     // `hasPrimaryFocus` is republished with the inherited value ORed in, so the
     // signal passes THROUGH a wrapper rather than stopping at it. A wrapper's
@@ -375,12 +379,13 @@ class _WAnchorState extends State<WAnchor> {
         // gestureless anchor defers: it is the styling wrapper `WDiv` adds
         // for `hover:` / `focus:`, deeper than the control around it, so a
         // cursor of its own would outrank that control's click cursor.
-        cursor: widget.mouseCursor ??
+        cursor:
+            widget.mouseCursor ??
             (widget.isDisabled
                 ? SystemMouseCursors.basic
                 : hasGestures
-                    ? SystemMouseCursors.click
-                    : MouseCursor.defer),
+                ? SystemMouseCursors.click
+                : MouseCursor.defer),
         onEnter: widget.isDisabled ? null : (_) => _onHover(true),
         onExit: widget.isDisabled ? null : (_) => _onHover(false),
         child: innerChild,

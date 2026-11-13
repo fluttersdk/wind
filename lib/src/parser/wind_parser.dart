@@ -259,8 +259,9 @@ class WindParser {
     for (final key in aliases.keys) {
       if (!_warnedAliases.add('shadow:$key')) continue;
 
-      final shadowsBuiltIn =
-          _parserMap.values.any((parser) => parser.canParse(key));
+      final shadowsBuiltIn = _parserMap.values.any(
+        (parser) => parser.canParse(key),
+      );
       if (shadowsBuiltIn) {
         debugPrint(
           "Wind alias '$key' shadows a built-in token; "
@@ -354,7 +355,7 @@ class WindParser {
     // would drop the trailing occurrence and pick `top-4` instead.
     final classes =
         className?.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList() ??
-            <String>[];
+        <String>[];
     final resolvedClasses = resolveClasses(classes, windContext);
 
     for (final cls in resolvedClasses) {
@@ -453,8 +454,9 @@ class WindParser {
 
     for (final cls in classes) {
       final parts = cls.split(':');
-      final prefixes =
-          parts.length > 1 ? parts.sublist(0, parts.length - 1) : <String>[];
+      final prefixes = parts.length > 1
+          ? parts.sublist(0, parts.length - 1)
+          : <String>[];
 
       bool isActive = true;
 

@@ -3,8 +3,10 @@ import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/src/widgets/wind_equal_height_row.dart';
 
 Widget wrapWithTheme(Widget child, {double width = 600}) => MaterialApp(
-      home: Scaffold(body: SizedBox(width: width, child: child)),
-    );
+  home: Scaffold(
+    body: SizedBox(width: width, child: child),
+  ),
+);
 
 void main() {
   group('WindEqualHeightRow', () {
@@ -50,14 +52,14 @@ void main() {
     testWidgets('updates layout when spacing changes (setter)', (tester) async {
       const aKey = Key('a');
       Widget build(double spacing) => wrapWithTheme(
-            WindEqualHeightRow(
-              spacing: spacing,
-              children: const [
-                SizedBox(key: aKey, height: 10),
-                SizedBox(height: 10),
-              ],
-            ),
-          );
+        WindEqualHeightRow(
+          spacing: spacing,
+          children: const [
+            SizedBox(key: aKey, height: 10),
+            SizedBox(height: 10),
+          ],
+        ),
+      );
 
       await tester.pumpWidget(build(0));
       expect(tester.getSize(find.byKey(aKey)).width, 300); // 600/2
@@ -66,8 +68,9 @@ void main() {
       expect(tester.getSize(find.byKey(aKey)).width, 280); // (600-40)/2
     });
 
-    testWidgets('lays out a LayoutBuilder child without asserting',
-        (tester) async {
+    testWidgets('lays out a LayoutBuilder child without asserting', (
+      tester,
+    ) async {
       // The whole point: a child that cannot answer intrinsic queries still
       // lays out (real layout), so no "LayoutBuilder does not support returning
       // intrinsic dimensions" assert.

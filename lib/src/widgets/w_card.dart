@@ -90,9 +90,6 @@ class WCard extends StatelessWidget {
     ];
 
     // 3. Render via WDiv, which handles all layout + decoration.
-    return WDiv(
-      className: effectiveClassName,
-      children: slotChildren,
-    );
+    return WDiv(className: effectiveClassName, children: slotChildren);
   }
 }

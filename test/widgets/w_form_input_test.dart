@@ -395,8 +395,9 @@ void main() {
           ),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.obscureText, isTrue);
       });
 
@@ -405,8 +406,9 @@ void main() {
           wrapWithTheme(Form(child: WFormInput(type: InputType.email))),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.keyboardType, TextInputType.emailAddress);
       });
 
@@ -443,8 +445,9 @@ void main() {
           ),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.minLines, 3);
         expect(editableText.maxLines, 5);
       });
@@ -464,8 +467,9 @@ void main() {
           wrapWithTheme(Form(child: WFormInput(readOnly: true))),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.readOnly, isTrue);
       });
 
@@ -476,8 +480,9 @@ void main() {
 
         // WInput maps enabled:false to EditableText.readOnly:true (no enabled
         // field on EditableText; the field is non-interactable when read-only).
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.readOnly, isTrue);
       });
 
@@ -486,8 +491,9 @@ void main() {
           wrapWithTheme(Form(child: WFormInput(autofocus: true))),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.autofocus, isTrue);
       });
 
@@ -498,8 +504,9 @@ void main() {
           ),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.textInputAction, TextInputAction.search);
       });
 
@@ -510,17 +517,20 @@ void main() {
           ),
         );
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.autofillHints, [AutofillHints.password]);
       });
 
-      testWidgets('a field with no hints keeps platform autofill on',
-          (tester) async {
+      testWidgets('a field with no hints keeps platform autofill on', (
+        tester,
+      ) async {
         await tester.pumpWidget(wrapWithTheme(Form(child: WFormInput())));
 
-        final editableText =
-            tester.widget<EditableText>(find.byType(EditableText));
+        final editableText = tester.widget<EditableText>(
+          find.byType(EditableText),
+        );
         expect(editableText.autofillHints, isEmpty);
         expect(editableText.autofillHints, isNotNull);
       });
@@ -786,8 +796,9 @@ void main() {
     // `placeholder` (fallback), so Playwright `getByLabel(...)` resolves.
     // -------------------------------------------------------------------------
     group('Semantics', () {
-      testWidgets('emits textField role with label prop as Semantics label',
-          (tester) async {
+      testWidgets('emits textField role with label prop as Semantics label', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             Form(
@@ -804,14 +815,11 @@ void main() {
         expect(node.label, 'Email Address');
       });
 
-      testWidgets('falls back to placeholder when label is null',
-          (tester) async {
+      testWidgets('falls back to placeholder when label is null', (
+        tester,
+      ) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            Form(
-              child: WFormInput(placeholder: 'Search...'),
-            ),
-          ),
+          wrapWithTheme(Form(child: WFormInput(placeholder: 'Search...'))),
         );
 
         final SemanticsNode node = tester.getSemantics(find.byType(WInput));

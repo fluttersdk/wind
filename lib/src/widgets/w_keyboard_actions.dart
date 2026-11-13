@@ -198,11 +198,11 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
     super.didUpdateWidget(oldWidget);
 
     // Re-wire listeners only when the focusNodes list identity changed.
-    final changed = widget.focusNodes.length != oldWidget.focusNodes.length ||
-        widget.focusNodes
-            .asMap()
-            .entries
-            .any((e) => !identical(e.value, oldWidget.focusNodes[e.key]));
+    final changed =
+        widget.focusNodes.length != oldWidget.focusNodes.length ||
+        widget.focusNodes.asMap().entries.any(
+          (e) => !identical(e.value, oldWidget.focusNodes[e.key]),
+        );
 
     if (changed) {
       _detachListeners(oldWidget.focusNodes);
@@ -447,9 +447,6 @@ class _WKeyboardActionsState extends State<WKeyboardActions> {
   @override
   Widget build(BuildContext context) {
     WindPerfCounters.recordWidgetBuild('WKeyboardActions');
-    return WKeyboardToolbarInset(
-      height: _toolbarHeight,
-      child: widget.child,
-    );
+    return WKeyboardToolbarInset(height: _toolbarHeight, child: widget.child);
   }
 }
