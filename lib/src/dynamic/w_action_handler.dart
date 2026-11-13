@@ -135,10 +135,9 @@ class WActionHandler {
   final WDynamicState _state;
 
   WActionHandler({
-    required Map<String, Function> actions,
-    required WDynamicState state,
-  })  : _actions = actions,
-        _state = state;
+    required this._actions,
+    required this._state,
+  });
 
   /// Dispatch a registered action handler with the provided arguments.
   ///

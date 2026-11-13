@@ -56,7 +56,7 @@ class _RenderEqualHeightRow extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, _EqualHeightParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, _EqualHeightParentData> {
-  _RenderEqualHeightRow({required double spacing}) : _spacing = spacing;
+  _RenderEqualHeightRow({required this._spacing});
 
   double _spacing;
   set spacing(double value) {

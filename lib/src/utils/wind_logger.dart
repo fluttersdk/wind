@@ -46,9 +46,8 @@ class WindLogger {
 
   /// Initializes the logger with the `debug` flag and the
   /// name of the widget calling it (`runtimeType.toString()`).
-  WindLogger({required bool debug, required String widgetName})
-      : _isDebug = debug,
-        _widgetName = widgetName {
+  WindLogger({required bool debug, required this._widgetName})
+      : _isDebug = debug {
     if (!_isDebug) return;
     debugPrint("--- [WIND DEBUG] START: $_widgetName ---");
     // Start the stopwatch as soon as the logger is created
