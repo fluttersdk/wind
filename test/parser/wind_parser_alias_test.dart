@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
-import 'package:fluttersdk_wind/src/parser/wind_style.dart';
-import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
-import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
-import 'package:fluttersdk_wind/src/widgets/w_div.dart';
+import 'package:wind_kit/src/parser/wind_parser.dart';
+import 'package:wind_kit/src/parser/wind_style.dart';
+import 'package:wind_kit/src/theme/wind_theme.dart';
+import 'package:wind_kit/src/theme/wind_theme_data.dart';
+import 'package:wind_kit/src/widgets/w_div.dart';
 
 /// Wraps [child] in a [WindTheme] carrying the supplied [aliases] so
 /// `WindParser.parse` resolves them through the real `parse()` path.

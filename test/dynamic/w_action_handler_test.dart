@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/dynamic/w_action_handler.dart';
-import 'package:fluttersdk_wind/src/dynamic/w_dynamic_state.dart';
+import 'package:wind_kit/src/dynamic/w_action_handler.dart';
+import 'package:wind_kit/src/dynamic/w_dynamic_state.dart';
 
 void main() {
   late WDynamicState state;

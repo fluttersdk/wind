@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/dynamic/w_dynamic_config.dart';
+import 'package:wind_kit/src/dynamic/w_dynamic_config.dart';
 
 void main() {
   group('WDynamicConfig', () {
