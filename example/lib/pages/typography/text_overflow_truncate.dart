@@ -10,14 +10,12 @@ class TextOverflowTruncateExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Truncate',
-      description:
-          'truncate is shorthand for maxLines 1 + softWrap false + TextOverflow.ellipsis. The most common overflow pattern.',
+      description: 'truncate is shorthand for maxLines 1 + softWrap false + TextOverflow.ellipsis. The most common overflow pattern.',
       gradient: 'from-amber-500 to-yellow-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Force a single-line ellipsis on long text. The container width drives the cut-off point.',
+          description: 'Force a single-line ellipsis on long text. The container width drives the cut-off point.',
           child: WDiv(
             className: 'w-64',
             child: const WText(
@@ -28,17 +26,14 @@ class TextOverflowTruncateExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Inside a Row',
-          description:
-              'Combine truncate with flex-1 to make a child shrink while siblings stay at their intrinsic width.',
+          description: 'Combine truncate with flex-1 to make a child shrink while siblings stay at their intrinsic width.',
           child: WDiv(
             className: '''
               flex items-center gap-3 p-3 rounded
               bg-slate-50 dark:bg-slate-700/40
             ''',
             children: [
-              WDiv(
-                className: 'w-10 h-10 rounded-full bg-amber-500 shrink-0',
-              ),
+              WDiv(className: 'w-10 h-10 rounded-full bg-amber-500 shrink-0'),
               WDiv(
                 className: 'flex-1 min-w-0',
                 child: const WText(
@@ -47,8 +42,7 @@ class TextOverflowTruncateExamplePage extends StatelessWidget {
                 ),
               ),
               WDiv(
-                className:
-                    'px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/40 shrink-0',
+                className: 'px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/40 shrink-0',
                 child: const WText(
                   'NEW',
                   className:

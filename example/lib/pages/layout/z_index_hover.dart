@@ -10,14 +10,12 @@ class ZIndexHoverExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Paint Order and Hover',
-      description:
-          'Overlapping children paint in source order: the last child sits on top. Hover changes the shadow, not the stacking.',
+      description: 'Overlapping children paint in source order: the last child sits on top. Hover changes the shadow, not the stacking.',
       gradient: 'from-violet-600 to-purple-700',
       children: [
         ExampleSection(
           title: 'Source Order',
-          description:
-              'Card 4 is declared last, so it paints over Card 3, and so on down the row. Hovering a card deepens its shadow but does not bring it forward.',
+          description: 'Card 4 is declared last, so it paints over Card 3, and so on down the row. Hovering a card deepens its shadow but does not bring it forward.',
           child: SizedBox(
             height: 160,
             child: Stack(
@@ -48,8 +46,7 @@ class ZIndexHoverExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Hover Shadow',
-          description:
-              'A hover: variant can still deepen the shadow, which gives a lifted feel without changing the paint order.',
+          description: 'A hover: variant can still deepen the shadow, which gives a lifted feel without changing the paint order.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(
@@ -91,16 +88,14 @@ class _HoverCard extends StatelessWidget {
       child: WAnchor(
         onTap: () {},
         child: WDiv(
-          className: '''
+          className:
+              '''
             w-24 h-24 rounded-lg duration-200
             $color
             shadow-md hover:shadow-2xl
             flex items-center justify-center
           ''',
-          child: WText(
-            label,
-            className: 'text-white font-bold text-sm',
-          ),
+          child: WText(label, className: 'text-white font-bold text-sm'),
         ),
       ),
     );

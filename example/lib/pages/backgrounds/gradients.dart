@@ -12,8 +12,7 @@ class BackgroundGradientsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             WDiv(
-              className:
-                  "h-32 w-64 bg-gradient-to-r from-cyan-500 to-blue-500 mb-4 rounded-lg flex items-center justify-center",
+              className: "h-32 w-64 bg-gradient-to-r from-cyan-500 to-blue-500 mb-4 rounded-lg flex items-center justify-center",
               children: [
                 Text(
                   "To Right (Cyan -> Blue)",
@@ -22,8 +21,7 @@ class BackgroundGradientsPage extends StatelessWidget {
               ],
             ),
             WDiv(
-              className:
-                  "h-32 w-64 bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500 mb-4 rounded-lg flex items-center justify-center",
+              className: "h-32 w-64 bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500 mb-4 rounded-lg flex items-center justify-center",
               children: [
                 Text(
                   "To Bottom (Yellow -> Orange -> Red)",
@@ -32,8 +30,7 @@ class BackgroundGradientsPage extends StatelessWidget {
               ],
             ),
             WDiv(
-              className:
-                  "h-32 w-64 bg-gradient-to-tr from-purple-500 to-pink-500 mb-4 rounded-lg flex items-center justify-center",
+              className: "h-32 w-64 bg-gradient-to-tr from-purple-500 to-pink-500 mb-4 rounded-lg flex items-center justify-center",
               children: [
                 Text("To Top Right", style: TextStyle(color: Colors.white)),
               ],

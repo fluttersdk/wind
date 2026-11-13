@@ -10,14 +10,12 @@ class TextOverflowLineClampExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Line Clamp',
-      description:
-          'line-clamp-{n} caps the paragraph at n lines and ends with an ellipsis. Any positive integer works.',
+      description: 'line-clamp-{n} caps the paragraph at n lines and ends with an ellipsis. Any positive integer works.',
       gradient: 'from-amber-500 to-yellow-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Same source text, different clamp counts. Compare 2, 3, and 5 lines.',
+          description: 'Same source text, different clamp counts. Compare 2, 3, and 5 lines.',
           child: WDiv(
             className: 'grid grid-cols-1 md:grid-cols-3 gap-3',
             children: const [
@@ -29,12 +27,10 @@ class TextOverflowLineClampExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Responsive Clamp',
-          description:
-              '2 lines on mobile, 4 on md+, unlimited on lg+. One className handles all three.',
+          description: '2 lines on mobile, 4 on md+, unlimited on lg+. One className handles all three.',
           child: const WText(
             'Responsive line clamping is a powerful pattern. On small screens, the reader sees only a teaser; on larger screens, the entire body shows. The line-clamp-{n} utility accepts breakpoint prefixes so you can compose the cascade in one declaration. Resize the viewport to watch the cap change at 768px and again at 1024px.',
-            className:
-                'line-clamp-2 md:line-clamp-4 lg:line-clamp-none text-slate-900 dark:text-white',
+            className: 'line-clamp-2 md:line-clamp-4 lg:line-clamp-none text-slate-900 dark:text-white',
           ),
         ),
       ],

@@ -19,8 +19,7 @@ class _WSelectMultiExamplePageState extends State<WSelectMultiExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Multi-Select',
-      description:
-          'isMulti: true turns WSelect into a chip-based multi picker. values + onMultiChange for controlled state.',
+      description: 'isMulti: true turns WSelect into a chip-based multi picker. values + onMultiChange for controlled state.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(

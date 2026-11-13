@@ -54,6 +54,9 @@ app.*.map.json
 # Local sibling-package path wiring (dev only)
 pubspec_overrides.yaml
 
+# A library does not commit its lockfile: consumers resolve their own.
+/pubspec.lock
+
 # Worktrees Claude Code creates for parallel sessions and isolated subagents.
 # Only this subdirectory: the rest of `.claude/` is tracked, because the rules
 # under it are part of the repository.

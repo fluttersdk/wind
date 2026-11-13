@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wind_kit/wind_kit.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/src/state/wind_flex_overflow_scope.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 Widget wrapWithTheme(Widget child) {
   return MaterialApp(

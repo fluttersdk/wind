@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wind_kit/wind_kit.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/src/debug_resolver.dart';
+import 'package:wind_kit/wind_kit.dart';
 import 'package:wind_kit_diagnostics_contracts/wind_kit_diagnostics_contracts.dart';
 
 /// Tests for the Wind v1.0 debug resolver.

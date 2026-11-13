@@ -10,14 +10,12 @@ class PositioningExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Positioning',
-      description:
-          'relative + absolute compose Flutter Stack and Positioned. Offsets (top/right/bottom/left), inset shortcuts, and negative pulls.',
+      description: 'relative + absolute compose Flutter Stack and Positioned. Offsets (top/right/bottom/left), inset shortcuts, and negative pulls.',
       gradient: 'from-slate-600 to-slate-800',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'A relative parent becomes a Stack. Each absolute child becomes a Positioned widget.',
+          description: 'A relative parent becomes a Stack. Each absolute child becomes a Positioned widget.',
           child: WDiv(
             className: 'flex items-center justify-center p-4',
             child: WDiv(
@@ -40,8 +38,7 @@ class PositioningExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Offset Utilities',
-          description:
-              'top-{n}, right-{n}, bottom-{n}, left-{n} take values from the spacing scale (base 4px).',
+          description: 'top-{n}, right-{n}, bottom-{n}, left-{n} take values from the spacing scale (base 4px).',
           child: WDiv(
             className: '''
               relative h-48 rounded-lg
@@ -54,40 +51,47 @@ class PositioningExamplePage extends StatelessWidget {
                   absolute top-2 left-2 px-3 py-1 rounded
                   bg-blue-500
                 ''',
-                child: const WText('top-2 left-2',
-                    className: 'text-white text-sm font-mono'),
+                child: const WText(
+                  'top-2 left-2',
+                  className: 'text-white text-sm font-mono',
+                ),
               ),
               WDiv(
                 className: '''
                   absolute top-2 right-2 px-3 py-1 rounded
                   bg-emerald-500
                 ''',
-                child: const WText('top-2 right-2',
-                    className: 'text-white text-sm font-mono'),
+                child: const WText(
+                  'top-2 right-2',
+                  className: 'text-white text-sm font-mono',
+                ),
               ),
               WDiv(
                 className: '''
                   absolute bottom-2 left-2 px-3 py-1 rounded
                   bg-amber-500
                 ''',
-                child: const WText('bottom-2 left-2',
-                    className: 'text-white text-sm font-mono'),
+                child: const WText(
+                  'bottom-2 left-2',
+                  className: 'text-white text-sm font-mono',
+                ),
               ),
               WDiv(
                 className: '''
                   absolute bottom-2 right-2 px-3 py-1 rounded
                   bg-rose-500
                 ''',
-                child: const WText('bottom-2 right-2',
-                    className: 'text-white text-sm font-mono'),
+                child: const WText(
+                  'bottom-2 right-2',
+                  className: 'text-white text-sm font-mono',
+                ),
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Inset Shortcuts',
-          description:
-              'inset-0 fills all four sides. inset-x-{n} and inset-y-{n} target a single axis.',
+          description: 'inset-0 fills all four sides. inset-x-{n} and inset-y-{n} target a single axis.',
           child: WDiv(
             className: '''
               relative w-full h-48 rounded-xl overflow-hidden
@@ -114,8 +118,7 @@ class PositioningExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Negative Offsets',
-          description:
-              'Prefix with - to pull a child outside its parent. Classic for notification badges that overlap an icon corner.',
+          description: 'Prefix with - to pull a child outside its parent. Classic for notification badges that overlap an icon corner.',
           child: WDiv(
             className: 'flex items-center justify-center p-6',
             child: WDiv(
@@ -164,8 +167,7 @@ class PositioningExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Arbitrary Pixels',
-          description:
-              'Bracket notation accepts exact pixel values. Percentages are not supported (Positioned uses logical pixels).',
+          description: 'Bracket notation accepts exact pixel values. Percentages are not supported (Positioned uses logical pixels).',
           child: WDiv(
             className: '''
               relative h-24 rounded-lg

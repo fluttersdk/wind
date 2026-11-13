@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
@@ -57,8 +58,8 @@ class _SelectPaginationExamplePageState
     var filtered = query.isEmpty
         ? allUsers
         : allUsers
-            .where((u) => u.label.toLowerCase().contains(query.toLowerCase()))
-            .toList();
+              .where((u) => u.label.toLowerCase().contains(query.toLowerCase()))
+              .toList();
     final end = (start + 10).clamp(0, filtered.length);
     if (start >= filtered.length) return [];
     return filtered.sublist(start, end);

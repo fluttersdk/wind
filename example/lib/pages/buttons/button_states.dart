@@ -44,8 +44,7 @@ class _ButtonStatesExamplePageState extends State<ButtonStatesExamplePage> {
                 const WText('Hover State', className: 'text-sm text-gray-600'),
                 WButton(
                   onTap: () {},
-                  className:
-                      'bg-blue-600 hover:bg-blue-800 hover:scale-105 text-white px-6 py-3 rounded-lg font-medium duration-200',
+                  className: 'bg-blue-600 hover:bg-blue-800 hover:scale-105 text-white px-6 py-3 rounded-lg font-medium duration-200',
                   child: const Text('Hover Me'),
                 ),
               ],
@@ -62,8 +61,7 @@ class _ButtonStatesExamplePageState extends State<ButtonStatesExamplePage> {
                 WButton(
                   onTap: () {},
                   disabled: true,
-                  className:
-                      'bg-blue-600 disabled:bg-gray-400 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-medium',
+                  className: 'bg-blue-600 disabled:bg-gray-400 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-medium',
                   child: const Text('Disabled Button'),
                 ),
               ],
@@ -81,8 +79,7 @@ class _ButtonStatesExamplePageState extends State<ButtonStatesExamplePage> {
                   onTap: _simulateLoading,
                   isLoading: _isLoading,
                   loadingText: 'Processing...',
-                  className:
-                      'bg-green-600 hover:bg-green-700 loading:opacity-70 text-white px-6 py-3 rounded-lg font-medium',
+                  className: 'bg-green-600 hover:bg-green-700 loading:opacity-70 text-white px-6 py-3 rounded-lg font-medium',
                   child: const Text('Click to Load'),
                 ),
               ],
@@ -111,8 +108,7 @@ class _ButtonStatesExamplePageState extends State<ButtonStatesExamplePage> {
                       const Text('Please wait...'),
                     ],
                   ),
-                  className:
-                      'bg-purple-600 text-white px-6 py-3 rounded-lg font-medium',
+                  className: 'bg-purple-600 text-white px-6 py-3 rounded-lg font-medium',
                   child: const Text('Submit'),
                 ),
               ],

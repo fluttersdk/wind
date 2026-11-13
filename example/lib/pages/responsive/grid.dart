@@ -26,8 +26,7 @@ class ResponsiveGridExamplePage extends StatelessWidget {
 
   Widget _buildBreakpointIndicator(double width) {
     return WDiv(
-      className:
-          'w-full p-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500',
+      className: 'w-full p-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500',
       children: [
         WDiv(
           className: 'flex wrap items-center gap-2',
@@ -52,7 +51,8 @@ class ResponsiveGridExamplePage extends StatelessWidget {
 
   Widget _buildBreakpointBadge(String label, bool isActive) {
     return WDiv(
-      className: '''
+      className:
+          '''
         px-2 py-1 rounded text-xs font-bold
         ${isActive ? 'bg-white text-indigo-600' : 'bg-white/10 text-white/50'}
       ''',
@@ -68,10 +68,7 @@ class ResponsiveGridExamplePage extends StatelessWidget {
   }
 
   Widget _buildDescription(String text) {
-    return WText(
-      text,
-      className: 'text-sm text-gray-600 dark:text-gray-400',
-    );
+    return WText(text, className: 'text-sm text-gray-600 dark:text-gray-400');
   }
 
   Widget _buildResponsiveGrid() {
@@ -96,7 +93,8 @@ class ResponsiveGridExamplePage extends StatelessWidget {
       ''',
       children: List.generate(8, (index) {
         return WDiv(
-          className: '''
+          className:
+              '''
             ${colors[index]} rounded-xl
             h-24 md:h-32
             flex items-center justify-center

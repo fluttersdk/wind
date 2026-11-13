@@ -10,14 +10,12 @@ class UtilityFirstHeroExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Utility-First Fundamentals',
-      description:
-          'Build UIs by composing small, single-purpose utility classes directly on widgets. No more deeply nested decoration trees.',
+      description: 'Build UIs by composing small, single-purpose utility classes directly on widgets. No more deeply nested decoration trees.',
       gradient: 'from-violet-500 to-fuchsia-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'A single WDiv composes layout, spacing, background, radius, shadow, and border in one className string.',
+          description: 'A single WDiv composes layout, spacing, background, radius, shadow, and border in one className string.',
           child: WDiv(
             className: '''
               flex flex-col gap-4 p-6 rounded-xl
@@ -42,86 +40,77 @@ class UtilityFirstHeroExamplePage extends StatelessWidget {
                   text-white px-4 py-2 rounded-lg
                   self-start
                 ''',
-                child: const WText('Get Started',
-                    className: 'text-white font-medium'),
+                child: const WText(
+                  'Get Started',
+                  className: 'text-white font-medium',
+                ),
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'The Shift in Thinking',
-          description:
-              'Traditional Flutter nests Container + BoxDecoration + TextStyle. Wind flattens it to a single className string.',
+          description: 'Traditional Flutter nests Container + BoxDecoration + TextStyle. Wind flattens it to a single className string.',
           child: WDiv(
             className: 'grid grid-cols-1 lg:grid-cols-2 gap-4',
             children: const [
               _CodeCard(
                 label: 'Standard Flutter',
                 accent: _CodeAccent.muted,
-                code:
-                    'Container(\n  padding: EdgeInsets.all(16),\n  decoration: BoxDecoration(\n    color: Colors.white,\n    borderRadius: BorderRadius.circular(12),\n    boxShadow: [\n      BoxShadow(\n        color: Colors.black.withOpacity(0.1),\n        blurRadius: 10,\n      ),\n    ],\n  ),\n  child: Text(\n    "Hello World",\n    style: TextStyle(\n      fontSize: 18,\n      fontWeight: FontWeight.bold,\n    ),\n  ),\n)',
+                code: 'Container(\n  padding: EdgeInsets.all(16),\n  decoration: BoxDecoration(\n    color: Colors.white,\n    borderRadius: BorderRadius.circular(12),\n    boxShadow: [\n      BoxShadow(\n        color: Colors.black.withOpacity(0.1),\n        blurRadius: 10,\n      ),\n    ],\n  ),\n  child: Text(\n    "Hello World",\n    style: TextStyle(\n      fontSize: 18,\n      fontWeight: FontWeight.bold,\n    ),\n  ),\n)',
               ),
               _CodeCard(
                 label: 'With Wind',
                 accent: _CodeAccent.win,
-                code:
-                    'WDiv(\n  className: "p-4 bg-white rounded-xl shadow-lg",\n  child: WText(\n    "Hello World",\n    className: "text-lg font-bold",\n  ),\n)',
+                code: 'WDiv(\n  className: "p-4 bg-white rounded-xl shadow-lg",\n  child: WText(\n    "Hello World",\n    className: "text-lg font-bold",\n  ),\n)',
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Why Utility-First',
-          description:
-              'Four architectural advantages over the traditional decoration-tree approach.',
+          description: 'Four architectural advantages over the traditional decoration-tree approach.',
           child: WDiv(
             className: 'grid grid-cols-1 md:grid-cols-2 gap-3',
             children: const [
               _BenefitTile(
                 icon: Icons.bolt_outlined,
                 title: 'Development Velocity',
-                body:
-                    'Stay in your widget tree. No jumping between files to adjust styling.',
+                body: 'Stay in your widget tree. No jumping between files to adjust styling.',
               ),
               _BenefitTile(
                 icon: Icons.tune_outlined,
                 title: 'Design Consistency',
-                body:
-                    'Standardized scale (p-4 = 16px) replaces magic numbers everywhere.',
+                body: 'Standardized scale (p-4 = 16px) replaces magic numbers everywhere.',
               ),
               _BenefitTile(
                 icon: Icons.handyman_outlined,
                 title: 'Improved Maintainability',
-                body:
-                    'Styles are local to the widget. No CSS-like global side effects.',
+                body: 'Styles are local to the widget. No CSS-like global side effects.',
               ),
               _BenefitTile(
                 icon: Icons.layers_outlined,
                 title: 'Declarative Modifiers',
-                body:
-                    'Responsive (md:), dark mode (dark:), states (hover:) as simple prefixes.',
+                body: 'Responsive (md:), dark mode (dark:), states (hover:) as simple prefixes.',
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'How It Works',
-          description:
-              'Wind transforms strings into Flutter styles through a cached, four-step pipeline.',
+          description: 'Wind transforms strings into Flutter styles through a cached, four-step pipeline.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
               _PipelineStep(
                 step: 1,
                 title: 'Context Initialization',
-                body:
-                    'WindContext captures breakpoint, brightness, platform, and theme scales.',
+                body: 'WindContext captures breakpoint, brightness, platform, and theme scales.',
               ),
               _PipelineStep(
                 step: 2,
                 title: 'Parsing',
-                body:
-                    'WindParser tokenizes className and delegates to 17 specialized parsers.',
+                body: 'WindParser tokenizes className and delegates to 17 specialized parsers.',
               ),
               _PipelineStep(
                 step: 3,
@@ -131,16 +120,14 @@ class UtilityFirstHeroExamplePage extends StatelessWidget {
               _PipelineStep(
                 step: 4,
                 title: 'Widget Application',
-                body:
-                    'W-prefixed widgets build the optimal Flutter tree (Padding, DecoratedBox, ...) only when needed.',
+                body: 'W-prefixed widgets build the optimal Flutter tree (Padding, DecoratedBox, ...) only when needed.',
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Five categories cover the bulk of everyday styling. Each example resolves through a dedicated parser.',
+          description: 'Five categories cover the bulk of everyday styling. Each example resolves through a dedicated parser.',
           child: WDiv(
             className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3',
             children: const [
@@ -154,8 +141,7 @@ class UtilityFirstHeroExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Syntax Guide',
-          description:
-              'Five syntactic patterns cover every utility class shape Wind accepts.',
+          description: 'Five syntactic patterns cover every utility class shape Wind accepts.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -238,18 +224,9 @@ class _BenefitTile extends StatelessWidget {
         border border-slate-200 dark:border-slate-700
       ''',
       children: [
-        WIcon(
-          icon,
-          className: 'w-5 h-5 text-violet-600 dark:text-violet-400',
-        ),
-        WText(
-          title,
-          className: 'font-semibold text-slate-900 dark:text-white',
-        ),
-        WText(
-          body,
-          className: 'text-sm text-slate-600 dark:text-slate-400',
-        ),
+        WIcon(icon, className: 'w-5 h-5 text-violet-600 dark:text-violet-400'),
+        WText(title, className: 'font-semibold text-slate-900 dark:text-white'),
+        WText(body, className: 'text-sm text-slate-600 dark:text-slate-400'),
       ],
     );
   }
@@ -280,10 +257,7 @@ class _PipelineStep extends StatelessWidget {
             flex items-center justify-center
             bg-violet-600 dark:bg-violet-500
           ''',
-          child: WText(
-            '$step',
-            className: 'text-white text-sm font-bold',
-          ),
+          child: WText('$step', className: 'text-white text-sm font-bold'),
         ),
         WDiv(
           className: 'flex flex-col flex-1 gap-1',
@@ -318,10 +292,7 @@ class _CategoryChip extends StatelessWidget {
         border border-slate-200 dark:border-slate-700
       ''',
       children: [
-        WText(
-          label,
-          className: 'font-semibold text-slate-900 dark:text-white',
-        ),
+        WText(label, className: 'font-semibold text-slate-900 dark:text-white'),
         WText(
           sample,
           className: 'font-mono text-xs text-violet-600 dark:text-violet-400',

@@ -10,14 +10,12 @@ class OpacityExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Opacity',
-      description:
-          'opacity-{N} fades the entire element (content + background + borders). For background-only alpha use the color slash modifier instead.',
+      description: 'opacity-{N} fades the entire element (content + background + borders). For background-only alpha use the color slash modifier instead.',
       gradient: 'from-violet-500 to-purple-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'A 20-step scale from opacity-0 (invisible) to opacity-100 (fully opaque). Pickable in increments of 5.',
+          description: 'A 20-step scale from opacity-0 (invisible) to opacity-100 (fully opaque). Pickable in increments of 5.',
           child: WDiv(
             className: 'wrap gap-3',
             children: const [
@@ -31,8 +29,7 @@ class OpacityExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Interactive States',
-          description:
-              'Combine with hover: / disabled: / focus: to fade on interaction.',
+          description: 'Combine with hover: / disabled: / focus: to fade on interaction.',
           child: WDiv(
             className: 'wrap gap-3',
             children: [
@@ -51,16 +48,17 @@ class OpacityExamplePage extends StatelessWidget {
                   bg-violet-500 disabled:opacity-40
                   text-white px-4 py-2 rounded
                 ''',
-                child:
-                    const WText('disabled:opacity-40', className: 'text-white'),
+                child: const WText(
+                  'disabled:opacity-40',
+                  className: 'text-white',
+                ),
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Element vs Background Opacity',
-          description:
-              'opacity-50 fades EVERYTHING (text and bg). bg-{color}/50 fades only the background, keeping text crisp.',
+          description: 'opacity-50 fades EVERYTHING (text and bg). bg-{color}/50 fades only the background, keeping text crisp.',
           child: WDiv(
             className: 'grid grid-cols-1 sm:grid-cols-2 gap-3',
             children: const [
@@ -133,10 +131,7 @@ class _CompareCard extends StatelessWidget {
       children: [
         WDiv(
           className: '$cls rounded-lg',
-          child: WText(
-            'Sample Text: $note',
-            className: 'font-medium',
-          ),
+          child: WText('Sample Text: $note', className: 'font-medium'),
         ),
         WText(
           label,

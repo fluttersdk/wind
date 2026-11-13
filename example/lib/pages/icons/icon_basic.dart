@@ -34,8 +34,7 @@ class _IconBasicExamplePageState extends State<IconBasicExamplePage> {
 
     return ExampleScaffold(
       title: 'WIcon',
-      description:
-          'Utility-styled icon. text-{size} sets the size, text-{color} sets the tint. Inherits from the surrounding DefaultTextStyle when unset.',
+      description: 'Utility-styled icon. text-{size} sets the size, text-{color} sets the tint. Inherits from the surrounding DefaultTextStyle when unset.',
       gradient: 'from-amber-500 to-orange-500',
       children: [
         ExampleSection(
@@ -44,10 +43,7 @@ class _IconBasicExamplePageState extends State<IconBasicExamplePage> {
           child: WDiv(
             className: 'flex items-center gap-4',
             children: [
-              WIcon(
-                Icons.star,
-                className: 'text-yellow-400 text-3xl',
-              ),
+              WIcon(Icons.star, className: 'text-yellow-400 text-3xl'),
               const WText(
                 'text-yellow-400 text-3xl',
                 className:
@@ -58,8 +54,7 @@ class _IconBasicExamplePageState extends State<IconBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Color Palette',
-          description:
-              'text-{color} picks from the theme palette. Same icon, different tints.',
+          description: 'text-{color} picks from the theme palette. Same icon, different tints.',
           child: WDiv(
             className: 'wrap gap-6 items-center',
             children: [
@@ -78,13 +73,19 @@ class _IconBasicExamplePageState extends State<IconBasicExamplePage> {
           child: WDiv(
             className: 'wrap gap-8 items-center py-2',
             children: [
-              WIcon(Icons.refresh,
-                  className:
-                      'text-blue-600 dark:text-blue-400 text-3xl animate-spin'),
-              WIcon(Icons.notifications,
-                  className: 'text-amber-500 text-3xl animate-pulse'),
-              WIcon(Icons.arrow_downward,
-                  className: 'text-emerald-500 text-3xl animate-bounce'),
+              WIcon(
+                Icons.refresh,
+                className:
+                    'text-blue-600 dark:text-blue-400 text-3xl animate-spin',
+              ),
+              WIcon(
+                Icons.notifications,
+                className: 'text-amber-500 text-3xl animate-pulse',
+              ),
+              WIcon(
+                Icons.arrow_downward,
+                className: 'text-emerald-500 text-3xl animate-bounce',
+              ),
             ],
           ),
         ),
@@ -126,8 +127,7 @@ class _IconBasicExamplePageState extends State<IconBasicExamplePage> {
               'The className keeps text-{size} for sizing; foregroundColor overrides the tint at runtime '
               'without creating a new parser-cache entry per value.',
           child: WDiv(
-            className:
-                'flex flex-col gap-4 p-4 bg-gray-50 dark:bg-slate-800 rounded-lg',
+            className: 'flex flex-col gap-4 p-4 bg-gray-50 dark:bg-slate-800 rounded-lg',
             children: [
               WDiv(
                 className: 'flex flex-row items-center gap-4',
@@ -142,13 +142,11 @@ class _IconBasicExamplePageState extends State<IconBasicExamplePage> {
                     children: [
                       WText(
                         categoryName,
-                        className:
-                            'text-base font-semibold text-gray-900 dark:text-white',
+                        className: 'text-base font-semibold text-gray-900 dark:text-white',
                       ),
                       WText(
                         '#${categoryColor.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}',
-                        className:
-                            'text-xs font-mono text-gray-500 dark:text-gray-400',
+                        className: 'text-xs font-mono text-gray-500 dark:text-gray-400',
                       ),
                     ],
                   ),

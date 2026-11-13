@@ -10,8 +10,7 @@ class DecorationColorExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Decoration Color',
-      description:
-          'decoration-{color}-{shade} sets the underline / overline color independent of the text color.',
+      description: 'decoration-{color}-{shade} sets the underline / overline color independent of the text color.',
       gradient: 'from-orange-500 to-amber-600',
       children: [
         ExampleSection(
@@ -42,12 +41,10 @@ class DecorationColorExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Independent of Text Color',
-          description:
-              'text-* and decoration-* resolve separately. Slate text with an amber underline is one short string.',
+          description: 'text-* and decoration-* resolve separately. Slate text with an amber underline is one short string.',
           child: const WText(
             'Body text with a brand-accent underline',
-            className:
-                'underline decoration-amber-500 text-slate-700 dark:text-slate-200 text-lg',
+            className: 'underline decoration-amber-500 text-slate-700 dark:text-slate-200 text-lg',
           ),
         ),
         ExampleSection(
@@ -55,8 +52,7 @@ class DecorationColorExamplePage extends StatelessWidget {
           description: 'decoration-[#RRGGBB] for exact hex values.',
           child: const WText(
             'decoration-[#50d71e]',
-            className:
-                'underline decoration-[#50d71e] text-slate-900 dark:text-white text-lg font-mono',
+            className: 'underline decoration-[#50d71e] text-slate-900 dark:text-white text-lg font-mono',
           ),
         ),
       ],

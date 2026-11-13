@@ -31,14 +31,12 @@ class _SelectBasicExamplePageState extends State<SelectBasicExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WSelect',
-      description:
-          'Utility-first dropdown built on WPopover. Single + multi + searchable + async load + tagging: all from one widget.',
+      description: 'Utility-first dropdown built on WPopover. Single + multi + searchable + async load + tagging: all from one widget.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Single-select with three static options. value + onChange for controlled state.',
+          description: 'Single-select with three static options. value + onChange for controlled state.',
           child: WSelect<String>(
             value: _language,
             options: const [
@@ -78,8 +76,7 @@ class _SelectBasicExamplePageState extends State<SelectBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Multi-Select',
-          description:
-              'isMulti: true switches to chips. values + onMultiChange for controlled state.',
+          description: 'isMulti: true switches to chips. values + onMultiChange for controlled state.',
           child: WSelect<String>(
             isMulti: true,
             values: _tags,
@@ -105,7 +102,8 @@ class _SelectBasicExamplePageState extends State<SelectBasicExamplePage> {
             disabled: true,
             options: const [SelectOption(value: 'dart', label: 'Dart')],
             onChange: (_) {},
-            className: '''
+            className:
+                '''
               $_triggerCls
               disabled:opacity-60 disabled:bg-slate-100
               dark:disabled:bg-slate-700

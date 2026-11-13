@@ -10,8 +10,7 @@ class SizingWidthExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Width',
-      description:
-          'w-{n} uses the spacing scale (base 4px). Fractions (w-1/2) map to percentages. w-full fills the parent.',
+      description: 'w-{n} uses the spacing scale (base 4px). Fractions (w-1/2) map to percentages. w-full fills the parent.',
       gradient: 'from-yellow-500 to-orange-500',
       children: [
         ExampleSection(
@@ -44,8 +43,7 @@ class SizingWidthExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Full and Screen',
-          description:
-              'w-full fills the parent. w-screen ignores the parent and stretches to the viewport.',
+          description: 'w-full fills the parent. w-screen ignores the parent and stretches to the viewport.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -86,9 +84,7 @@ class _Bar extends StatelessWidget {
           label,
           className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
         ),
-        WDiv(
-          className: '$widthClass h-8 rounded bg-yellow-500',
-        ),
+        WDiv(className: '$widthClass h-8 rounded bg-yellow-500'),
       ],
     );
   }

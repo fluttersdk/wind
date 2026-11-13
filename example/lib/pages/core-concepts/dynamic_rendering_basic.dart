@@ -19,20 +19,17 @@ class _DynamicRenderingBasicExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Dynamic Rendering',
-      description:
-          'Render Flutter widget trees from JSON at runtime via WDynamic. Server-driven UI, A/B layouts, white-label apps from a single binary.',
+      description: 'Render Flutter widget trees from JSON at runtime via WDynamic. Server-driven UI, A/B layouts, white-label apps from a single binary.',
       gradient: 'from-fuchsia-500 to-purple-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Pass a JSON map to WDynamic. Every Wind utility, dark mode prefix, and state modifier works exactly like it does in static Dart.',
+          description: 'Pass a JSON map to WDynamic. Every Wind utility, dark mode prefix, and state modifier works exactly like it does in static Dart.',
           child: WDynamic(
             json: {
               'type': 'WDiv',
               'props': {
-                'className':
-                    'p-6 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700',
+                'className': 'p-6 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700',
               },
               'children': [
                 {
@@ -57,10 +54,10 @@ class _DynamicRenderingBasicExamplePageState
         ),
         ExampleSection(
           title: 'JSON Schema',
-          description:
-              'Three keys: type names the widget, props maps to constructor parameters, children nests subtrees.',
+          description: 'Three keys: type names the widget, props maps to constructor parameters, children nests subtrees.',
           child: _CodeBlock(
-            code: '{\n'
+            code:
+                '{\n'
                 '  "type": "WidgetType",\n'
                 '  "props": { /* className, text, id, onTap, ... */ },\n'
                 '  "children": [ /* nested widgets */ ]\n'
@@ -69,8 +66,7 @@ class _DynamicRenderingBasicExamplePageState
         ),
         ExampleSection(
           title: 'Action System',
-          description:
-              'Interactive widgets reference named handlers. Tap the JSON button below; the handler updates Dart state.',
+          description: 'Interactive widgets reference named handlers. Tap the JSON button below; the handler updates Dart state.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
@@ -78,8 +74,7 @@ class _DynamicRenderingBasicExamplePageState
                 json: {
                   'type': 'WButton',
                   'props': {
-                    'className':
-                        'bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded self-start',
+                    'className': 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded self-start',
                     'onTap': {
                       'action': 'recordTap',
                       'args': {'source': 'json-button'},
@@ -117,8 +112,7 @@ class _DynamicRenderingBasicExamplePageState
         ),
         ExampleSection(
           title: 'Form State Management',
-          description:
-              'Widgets with an id automatically register their value in a shared store. Read it inside any action handler.',
+          description: 'Widgets with an id automatically register their value in a shared store. Read it inside any action handler.',
           child: WDynamic(
             json: {
               'type': 'WDiv',
@@ -129,15 +123,13 @@ class _DynamicRenderingBasicExamplePageState
                   'props': {
                     'id': 'username',
                     'placeholder': 'Type your name…',
-                    'className':
-                        'px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-fuchsia-500/30',
+                    'className': 'px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-fuchsia-500/30',
                   },
                 },
                 {
                   'type': 'WButton',
                   'props': {
-                    'className':
-                        'bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded self-start',
+                    'className': 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded self-start',
                     'onTap': {'action': 'greet'},
                   },
                   'children': [
@@ -162,10 +154,10 @@ class _DynamicRenderingBasicExamplePageState
         ),
         ExampleSection(
           title: 'Security & Whitelisting',
-          description:
-              'Only widgets on the default whitelist render. Use denyWidgets to remove types from the allow list at runtime.',
+          description: 'Only widgets on the default whitelist render. Use denyWidgets to remove types from the allow list at runtime.',
           child: _CodeBlock(
-            code: 'WDynamic(\n'
+            code:
+                'WDynamic(\n'
                 '  json: untrustedJson,\n'
                 '  denyWidgets: {"WButton", "Stack"},\n'
                 ')',
@@ -173,10 +165,10 @@ class _DynamicRenderingBasicExamplePageState
         ),
         ExampleSection(
           title: 'Custom Widget Builders',
-          description:
-              'Register a builder under any type name. The closure receives parsed props and resolved children.',
+          description: 'Register a builder under any type name. The closure receives parsed props and resolved children.',
           child: _CodeBlock(
-            code: 'WDynamic(\n'
+            code:
+                'WDynamic(\n'
                 '  json: {"type": "ProfileCard", "props": {"name": "Alice"}},\n'
                 '  builders: {\n'
                 '    "ProfileCard": (props, children) {\n'
@@ -191,10 +183,10 @@ class _DynamicRenderingBasicExamplePageState
         ),
         ExampleSection(
           title: 'Error Handling',
-          description:
-              'Unknown types and build exceptions fall through to optional callbacks. maxDepth guards against runaway recursion.',
+          description: 'Unknown types and build exceptions fall through to optional callbacks. maxDepth guards against runaway recursion.',
           child: _CodeBlock(
-            code: 'WDynamic(\n'
+            code:
+                'WDynamic(\n'
                 '  json: myJson,\n'
                 '  maxDepth: 100,\n'
                 '  onUnknownWidget: (type, props) => WText("Unknown: \$type"),\n'
@@ -221,10 +213,7 @@ class _CodeBlock extends StatelessWidget {
         text-emerald-400
         overflow-x-auto
       ''',
-      child: WText(
-        code,
-        className: 'whitespace-pre text-emerald-400',
-      ),
+      child: WText(code, className: 'whitespace-pre text-emerald-400'),
     );
   }
 }

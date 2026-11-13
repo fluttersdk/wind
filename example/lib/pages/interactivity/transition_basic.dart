@@ -10,14 +10,12 @@ class TransitionBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Transitions',
-      description:
-          'duration-{ms} + ease-{curve} make state changes smooth. Pair with hover:, focus:, active: for tactile reactions.',
+      description: 'duration-{ms} + ease-{curve} make state changes smooth. Pair with hover:, focus:, active: for tactile reactions.',
       gradient: 'from-indigo-500 to-violet-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'duration-300 ease-in-out smooths a hover: bg color change over 300ms with a soft start and finish.',
+          description: 'duration-300 ease-in-out smooths a hover: bg color change over 300ms with a soft start and finish.',
           child: WDiv(
             className: '''
               bg-blue-500 hover:bg-orange-500
@@ -32,8 +30,7 @@ class TransitionBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Duration',
-          description:
-              'Compare 75ms, 200ms, 500ms, 1000ms on the same hover. Watch how the snap softens as the duration grows.',
+          description: 'Compare 75ms, 200ms, 500ms, 1000ms on the same hover. Watch how the snap softens as the duration grows.',
           child: WDiv(
             className: 'wrap gap-3',
             children: const [
@@ -59,8 +56,7 @@ class TransitionBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Combined With Other Properties',
-          description:
-              'Transitions apply to every animatable property change at once: color, shadow, transform, border, opacity.',
+          description: 'Transitions apply to every animatable property change at once: color, shadow, transform, border, opacity.',
           child: WDiv(
             className: '''
               p-6 rounded-xl duration-300 ease-out
@@ -83,8 +79,7 @@ class TransitionBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Eight built-in durations and four easing curves. Compose freely.',
+          description: 'Eight built-in durations and four easing curves. Compose freely.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -129,10 +124,7 @@ class _HoverPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return WDiv(
       className: 'bg-indigo-500 hover:bg-orange-500 $cls px-4 py-2 rounded',
-      child: WText(
-        label,
-        className: 'text-white font-mono text-sm',
-      ),
+      child: WText(label, className: 'text-white font-mono text-sm'),
     );
   }
 }
@@ -152,11 +144,14 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className:
-                'font-mono text-sm text-indigo-700 dark:text-indigo-400'),
-        WText(val,
-            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-indigo-700 dark:text-indigo-400',
+        ),
+        WText(
+          val,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }
