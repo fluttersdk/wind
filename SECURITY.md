@@ -21,7 +21,7 @@ The primary security boundary is the `WDynamic` JSON renderer:
 - **Deny list** (`config.denyWidgets`): callers can shrink the allowed surface further by naming types that must be blocked even if they appear in the default sets.
 - **Depth limit** (`config.maxDepth`, default 50): caps recursion to prevent deeply nested JSON from becoming a stack-exhaustion vector.
 
-What the allowlist does not restrict is what an allowed widget loads. A className such as `bg-[url(https://host/x.png)]` becomes a `NetworkImage` and `bg-[url(/path)]` a file image on native platforms (`lib/src/parser/parsers/background_parser.dart`), and `WImage` fetches its `src` with `Image.network` (`lib/src/widgets/w_image.dart`). Untrusted JSON can therefore make the app request arbitrary hosts or read local image files. Sanitise `className` and `src` values from untrusted sources, or add `WImage` to `denyWidgets`.
+What the allowlist does not restrict is what an allowed widget loads. A `className` on any widget that accepts one (`WDiv` is allowed by default) is parsed by `WindParser`, and `bg-[url(...)]` becomes an asset or a file image on native platforms (`lib/src/parser/parsers/background_parser.dart`), while `WImage` fetches its `src` with `Image.network` (`lib/src/widgets/w_image.dart`). Untrusted JSON can therefore make the app read local image files, and request a host through `WImage`. `denyWidgets` filters widget types only, so denying `WImage` stops the `src` fetch and does not stop a `className` on another widget: sanitise `className` and `src` values from untrusted sources before they reach `WDynamic`.
 
 Consumers rendering JSON from untrusted sources should review the default allowlist, tighten it with `denyWidgets`, and set an appropriate `maxDepth`.
 
