@@ -23,11 +23,13 @@ typedef ImageLoadingBuilder = Widget Function(
 ///
 /// ### Supported Features:
 /// - **Sources:** Network URLs or `asset://` paths
-/// - **Sizing:** `w-32`, `h-32`, `w-full`, `max-w-md`
+/// - **Sizing:** fixed `w-32`, `h-32` (a fractional `w-full` or a `max-w-*` /
+///   `min-h-*` constraint is not applied; give the image a sized parent)
 /// - **Fit:** `object-cover`, `object-contain`, `object-fill`
 /// - **Position:** `object-top`, `object-left-bottom`, `object-center`, ...
 /// - **Aspect Ratio:** `aspect-video`, `aspect-square`, `aspect-[4/3]`
-/// - **Decoration:** `rounded-lg`, `shadow-md`, `border-2`, `opacity-90`
+/// - **Decoration:** `rounded-lg`, `border-2`, `opacity-90` (`shadow-*` is not
+///   applied)
 ///
 /// ### Example Usage:
 ///
@@ -35,7 +37,7 @@ typedef ImageLoadingBuilder = Widget Function(
 /// WImage(
 ///   src: 'https://example.com/photo.jpg',
 ///   alt: 'User Avatar',
-///   className: 'w-24 h-24 rounded-full object-cover border-2 border-white shadow-sm',
+///   className: 'w-24 h-24 rounded-full object-cover border-2 border-white dark:border-slate-800',
 /// )
 /// ```
 ///
@@ -66,15 +68,17 @@ class WImage extends StatelessWidget {
   /// Tailwind-like utility classes for styling.
   ///
   /// Supports:
-  /// - **Dimensions:** `w-full`, `h-64`, `min-h-[200px]`
+  /// - **Dimensions:** fixed `w-64`, `h-64` (`w-full`, `max-w-*` and `min-h-*`
+  ///   are not applied)
   /// - **Object Fit:** `object-cover` (default), `object-contain`
   /// - **Object Position:** `object-top`, `object-bottom`, `object-left`,
   ///   `object-right`, the four corners (`object-left-top`, ...) and
   ///   `object-center` (default)
   /// - **Aspect Ratio:** `aspect-video`, `aspect-square`
-  /// - **Appearance:** `rounded-lg`, `shadow-xl`, `opacity-75`
+  /// - **Appearance:** `rounded-lg`, `border`, `opacity-75` (`shadow-*` is not
+  ///   applied)
   ///
-  /// Example: `'w-full aspect-video object-cover rounded-xl shadow-sm'`
+  /// Example: `'w-64 aspect-video object-cover rounded-xl'`
   final String? className;
 
   /// Custom states for dynamic styling.

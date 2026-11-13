@@ -14,7 +14,7 @@ import 'wind_animation_wrapper.dart';
 ///
 /// ### Supported Features:
 /// - **Sizing:** `text-xl`, `w-6`, `h-6`
-/// - **Coloring:** `text-red-500`, `text-opacity-50`
+/// - **Coloring:** `text-red-500`, `text-red-500/50`
 /// - **Effects:** `opacity-75`, `animate-spin`
 /// - **Inheritance:** Inherits color/size from parent `WDiv` text styles
 ///
@@ -38,7 +38,7 @@ class WIcon extends StatelessWidget {
   /// - **Animation:** `animate-spin`, `animate-pulse`
   /// - **States:** `hover:text-blue-600`
   ///
-  /// Example: `'text-red-500 text-xl hover:scale-110'`
+  /// Example: `'text-red-500 text-xl hover:text-red-600'`
   final String? className;
 
   /// Custom states for dynamic styling.

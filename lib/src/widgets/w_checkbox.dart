@@ -44,7 +44,7 @@ class WCheckbox extends StatelessWidget {
   /// Utility classes for styling.
   ///
   /// Supports:
-  /// - **Dimensions:** `w-5`, `h-5` (Required)
+  /// - **Dimensions:** `w-5`, `h-5` (the defaults supply them)
   /// - **Appearance:** `rounded-md`, `border`, `border-gray-300`
   /// - **States:** `checked:bg-primary`, `hover:border-primary-400`, `disabled:bg-gray-100`
   ///

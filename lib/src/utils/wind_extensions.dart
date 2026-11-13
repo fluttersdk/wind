@@ -49,7 +49,7 @@ WindowSizeClass wWindowClassOf(BuildContext context) {
 /// ### Shortcuts:
 /// - `context.windColors` -> Access theme colors
 /// - `context.wIsMobile` -> Check for mobile breakpoint
-/// - `context.wColorExt('red', 500)` -> Resolve color safely
+/// - `context.wColorExt('red', shade: 500)` -> Resolve color safely
 ///
 /// Example:
 /// ```dart

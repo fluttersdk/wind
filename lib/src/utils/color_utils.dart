@@ -3,7 +3,8 @@ import 'package:material_ui/material_ui.dart';
 /// **Color Utility: Inverter**
 ///
 /// Inverts a MaterialColor palette by swapping shades.
-/// Used automatically by [WindTheme] to generate dark mode variants.
+/// A standalone helper: [WindTheme] does not call it, so dark mode variants
+/// come from explicit `dark:` classes, not from an inverted palette.
 ///
 /// Mapping:
 /// - 50 <-> 900
