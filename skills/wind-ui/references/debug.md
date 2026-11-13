@@ -1,6 +1,6 @@
-# Wind 1.5: Debug bridge, parser cache, logger
+# Debug bridge, parser cache, logger
 
-Wiring `Wind.installDebugResolver()` and `Wind.installPerfResolver()` for E2E tooling (Dusk, Telescope, Playwright), understanding the parser cache (and why tests need `WindParser.clearCache()`), and reading `WindLogger` output for performance / composition debugging.
+Wiring `Wind.installDebugResolver()` and `Wind.installPerfResolver()` for E2E tooling (tapir), understanding the parser cache (and why tests need `WindParser.clearCache()`), and reading `WindLogger` output for performance / composition debugging.
 
 ## Contents
 
@@ -11,17 +11,18 @@ Wiring `Wind.installDebugResolver()` and `Wind.installPerfResolver()` for E2E to
 5. [WindLogger and the `debug` token](#5-windlogger-and-the-debug-token)
 6. [Tree-shake guarantees](#6-tree-shake-guarantees)
 7. [Diagnostics in tests](#7-diagnostics-in-tests)
+8. [Aggregate counters (`WindPerfCounters`)](#8-aggregate-counters-windperfcounters)
 
 ---
 
 ## 1. Wind.installDebugResolver()
 
 ```dart
-import 'package:flutter/foundation.dart' show kDebugMode;
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:wind_kit/wind_kit.dart';
 
 void main() {
-  if (kDebugMode) {
+  if (!kReleaseMode) {
     Wind.installDebugResolver();
   }
   runApp(const MyApp());
@@ -29,17 +30,16 @@ void main() {
 ```
 
 - Idempotent: safe to call multiple times; second call is a no-op.
-- `kDebugMode`-gated externally. The function itself also checks `kDebugMode` internally and returns immediately in release; tree-shake compounds.
+- Gate the call with `!kReleaseMode` as well. The function itself returns immediately in a release build (`!kReleaseMode`, not `kDebugMode`, so a profile build still registers for a profiling session), and the gate lets the call tree-shake.
 - Registers a `WindDebugResolverImpl` instance into the static `WindDebugRegistry`.
-- Once registered, any consumer of `fluttersdk_wind_diagnostics_contracts` (Dusk, Telescope, custom inspector) can read live Wind state per widget without importing `fluttersdk_wind`.
+- Once registered, any consumer of `wind_kit_diagnostics_contracts` (tapir, a custom inspector) can read live Wind state per widget without importing `wind_kit`.
 
-Replaces the alpha-9 era `WindDuskIntegration.install()` and the `lib/dusk_integration.dart` sub-barrel. Both were removed in alpha-10.
 
 ---
 
 ## 2. What the resolver exposes
 
-For each W-prefix widget with a non-empty `className`, the resolver returns a `Map<String, Object?>` with up to 7 fields (5 always present, plus `bgColor` / `textColor` when non-null):
+For each W-prefix widget with a non-empty `className`, the resolver returns a `Map<String, Object?>` with the fields below (`bgColor` and `textColor` are present only when non-null):
 
 | Field | Type | Source |
 |---|---|---|
@@ -48,27 +48,34 @@ For each W-prefix widget with a non-empty `className`, the resolver returns a `M
 | `brightness` | `String` | `'light'` or `'dark'` |
 | `platform` | `String` | `'web'`, `'ios'`, `'android'`, `'macos'`, `'windows'`, `'linux'`, or `'unknown'` |
 | `states` | `List<String>` | Active states (e.g. `['hover', 'focus']`) |
-| `bgColor` | `String?` | Resolved background color as uppercase hex RGB (`#3B82F6`); present only when non-null |
-| `textColor` | `String?` | Resolved text color as uppercase hex RGB; present only when non-null |
+| `bgColor` | `String?` | Resolved background colour as uppercase hex RGB (`#3B82F6`); present only when non-null |
+| `textColor` | `String?` | Resolved text colour as uppercase hex RGB; present only when non-null |
 
-Non-Wind elements (a Material `Container`, a `ListTile`) return an empty map. So do W-widgets that have no `className` field (`WAnchor`, `WBreakpoint`, `WindAnimationWrapper`, `WKeyboardActions`): the resolver skips them safely instead of throwing, so a bare `WAnchor` in the tree never aborts a dusk / telescope snapshot. The resolver walks `Element` (which IS-A `BuildContext`) and parses the className through `WindParser.parse(className, element)`.
+Non-Wind elements (a Material `Container`, a `ListTile`) return an empty map. So do W-widgets that have no `className` field (`WAnchor`, `WBreakpoint`, `WindAnimationWrapper`, `WKeyboardActions`): the resolver skips them safely instead of throwing, so a bare `WAnchor` in the tree never aborts a tapir snapshot. The resolver walks `Element` (which is a `BuildContext`) and parses the className through `WindParser.parse(className, element)`.
 
 ---
 
 ## 3. WindDebugRegistry contract
 
-Lives in `fluttersdk_wind_diagnostics_contracts` (zero-dependency package; depends only on `flutter` and `meta`).
+Lives in `wind_kit_diagnostics_contracts` (zero-dependency package; depends only on `flutter` and `meta`).
 
 ```dart
 abstract class WindDebugResolver {
   Map<String, Object?> resolve(Element element);
 }
 
+abstract class WindPerfResolver {
+  Map<String, Object?> stats();
+}
+
 class WindDebugRegistry {
   static WindDebugResolver? get current;
-  static void register(WindDebugResolver resolver);     // idempotent
+  static WindPerfResolver? get currentPerf;
+  static void register(WindDebugResolver resolver);      // replaces the previous resolver
+  static void registerPerf(WindPerfResolver resolver);   // replaces the previous perf resolver
   static void resetForTesting();                         // @visibleForTesting
   static void registerForTesting(WindDebugResolver r);   // @visibleForTesting
+  static void registerPerfForTesting(WindPerfResolver r); // @visibleForTesting
 }
 ```
 
@@ -77,7 +84,7 @@ External tooling reads:
 final fields = WindDebugRegistry.current?.resolve(element) ?? const {};
 ```
 
-Consumers do not import Wind. They import only the contracts package. When Wind is installed AND `Wind.installDebugResolver()` ran, `current` is set. Otherwise it's `null` and tooling gracefully skips the Wind enrichment.
+Consumers do not import Wind. They import only the contracts package. When Wind is installed and `Wind.installDebugResolver()` ran, `current` is set. Otherwise it's `null` and tooling gracefully skips the Wind enrichment.
 
 ---
 
@@ -89,14 +96,15 @@ The parser caches every resolved `WindStyle` keyed by:
 className + activeBreakpoint + brightness + platform + sorted(activeStates).join(',')
 ```
 
-Cache hit rate is near 100% in production. The same className renders the same `WindStyle` regardless of how many times it's used. The cache survives hot reload (className edits during hot reload pick up the new value on the next frame because the key changes).
+Once warm, nearly every parse is a cache hit. The same className renders the same `WindStyle` regardless of how many times it's used. The cache survives hot reload (className edits during hot reload pick up the new value on the next frame because the key changes).
 
 **Test discipline.** The cache is a global static `Map<String, WindStyle>`. It persists between tests within the same process. A test that primes the cache with a specific theme can produce false-positive PASSes in a sibling test that uses a different theme.
 
-Mandatory `setUp()` for parser tests AND widget tests that pump Wind widgets:
+Mandatory `setUp()` for parser tests and widget tests that pump Wind widgets:
 
 ```dart
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 void main() {
   setUp(() {
@@ -109,7 +117,7 @@ void main() {
 }
 ```
 
-Skipping this is the single largest source of false-positive Wind tests. The cache key includes brightness, so a dark-mode test polluting the cache will not directly fail a light-mode test, but theme customizations (custom colors) cross-pollute. Clear unconditionally.
+Skipping this is the single largest source of false-positive Wind tests. The cache key includes brightness, so a dark-mode test polluting the cache will not directly fail a light-mode test, but theme customisations (custom colours) cross-pollute. Clear unconditionally.
 
 When `WindParser.parse` is called with a non-null `baseStyle`, the cache is bypassed in both directions (no read, no write). The result is per-call and would otherwise either return a stale entry computed against a different `baseStyle` or poison the cache slot for default-flag callers.
 
@@ -126,13 +134,22 @@ WDiv(
 );
 ```
 
-Output (sample):
+Output (shape; the wrapper list and the style fields depend on the className):
 ```
-[Wind] WDiv:
-  className: 'flex flex-col gap-4 p-6 bg-white dark:bg-gray-800'
-  composition: DecoratedBox(decoration) → Padding(EdgeInsets.all(24)) → Column(crossAxisAlignment: start, mainAxisSize: max, children: [...])
-  final style: WindStyle(displayType: flex, flexDirection: vertical, gapY: 16, padding: EdgeInsets.all(24), color: 0xFFFFFFFF, ...)
-  build: 142µs
+--- [WIND DEBUG] START: WDiv ---
+--- [WIND DEBUG] Composition Tree: ---
+DecoratedBox(
+  ...,
+  child:
+  Padding(
+    ...,
+    child:
+    Column(...),
+  )
+)
+--- [WIND DEBUG] Final Styles: WindStyle(...) ---
+--- [WIND DEBUG] Build Time: 142µs ---
+--- [WIND DEBUG] END: WDiv ---
 ```
 
 What it shows:
@@ -140,7 +157,7 @@ What it shows:
 2. **Final WindStyle**: the immutable value object after all parsers have run.
 3. **Build time**: microseconds from className-receive to widget-return.
 
-The `debug` token does NOT draw visual borders or wireframes. For visual debugging, reach for Flutter's `debugPaintSizeEnabled = true` (set in `main()` inside `kDebugMode`).
+The `debug` token does not draw visual borders or wireframes. For visual debugging, reach for Flutter's `debugPaintSizeEnabled = true` (set in `main()` inside `kDebugMode`).
 
 Remove the `debug` token before production. It runs `debugPrint` on every build of every widget that has it; the cost is visible in DevTools.
 
@@ -148,17 +165,16 @@ Remove the `debug` token before production. It runs `debugPrint` on every build 
 
 ## 6. Tree-shake guarantees
 
-Wind's debug machinery is `kDebugMode`-gated at two levels:
+wind_kit's debug machinery is gated at two levels:
 
-- `Wind.installDebugResolver()` exits early when `!kDebugMode`. Dart's constant propagation eliminates the entire `WindDebugRegistry.register(...)` call in release AOT.
-- `WindLogger` instance methods check `_isDebug` before doing anything; instantiate with `debug: false` and every call is a no-op.
+- `Wind.installDebugResolver()` exits early when `kReleaseMode`. Dart's constant propagation eliminates the entire `WindDebugRegistry.register(...)` call in release AOT.
+- `WindLogger` is internal (it is not exported from the barrel). Its methods check the `debug` token's flag before doing anything and have no `kReleaseMode` check of their own.
 
 Release builds (dart2js for web, dart2native for desktop and mobile AOT) eliminate:
-- The `WindDebugResolverImpl` class (only referenced from inside the `kDebugMode` branch in `Wind.installDebugResolver`).
+- The `WindDebugResolverImpl` class (only referenced from behind the `!kReleaseMode` gate in `Wind.installDebugResolver`).
 - The `WindDebugRegistry` registration.
-- All `WindLogger` calls gated by `debug` token (only fire when the token is present, and the token sets `WindStyle.debug = true` which controls the call site).
 
-The `debug` token itself does parse into `WindStyle.debug = true` in release builds, but the consuming `WindLogger` is a no-op. The token has no visible effect outside debug; it's safe (but useless) to ship a `debug` token to production.
+The `debug` token is not stripped from release builds: it parses into `WindStyle.debug = true` and `WindLogger` prints through `debugPrint` for every build of a widget that carries it. `debugPrint` still writes to the console of a release build, so a shipped `debug` token is noise at best, and costs time on every build. Remove it before production.
 
 ---
 
@@ -171,7 +187,7 @@ Standard test scaffolding for a className-styled widget:
 ```dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 Widget wrapWithTheme(Widget child, {WindThemeData? data}) {
   return WindTheme(
@@ -215,24 +231,24 @@ Discipline:
 - `wrapWithTheme` helper duplicated per test file (intentional; avoids cross-file coupling).
 - Size the viewport explicitly when testing responsive layouts; default 800×600 collapses multi-column layouts and may not match the breakpoint you expect.
 - `addTearDown(...)` for `FocusNode` / `TextEditingController` / `AnimationController` disposal.
-- Assert behavioral outputs (`find.text`, `find.byType(WDiv)`, callback flags), not internal `WindStyle` fields.
+- Assert behavioural outputs (`find.text`, `find.byType(WDiv)`, callback flags), not internal `WindStyle` fields.
 
 For testing dark mode, pass `WindThemeData(brightness: Brightness.dark, syncWithSystem: false)` to `wrapWithTheme`. For testing breakpoints, set the viewport size to bracket each breakpoint.
 
-For E2E testing inside a running app (Dusk / Telescope / Playwright), `Wind.installDebugResolver()` exposes the 7-field snapshot per W-widget; consumers read via `WindDebugRegistry.current?.resolve(element)` without needing Wind as a direct dep.
+For E2E testing inside a running app (tapir), `Wind.installDebugResolver()` exposes the per-widget snapshot from section 2; consumers read via `WindDebugRegistry.current?.resolve(element)` without needing Wind as a direct dep.
 
-## Aggregate counters (`WindPerfCounters`)
+## 8. Aggregate counters (`WindPerfCounters`)
 
 A per-`Element` resolver has nowhere to put a number that belongs to no element, so the counters get a second contract and a second registry slot.
 
-`WindPerfCounters.enabled` is `false` by default and every increment sits behind it, so a disabled counter is one static bool load. The parse path has THREE outcomes, not two:
+`WindPerfCounters.enabled` is `false` by default and every increment sits behind it, so a disabled counter is one static bool load. The parse path has three outcomes, not two:
 
 - **hit**: no `baseStyle`, key present.
 - **miss**: no `baseStyle`, key absent, parses and caches.
 - **bypass**: a `baseStyle` was supplied, so it parses on every rebuild and never caches.
 
-A bypass is a property of a caller writing `style:`, NOT of using `WDiv` / `WText`: both pass `baseStyle: style` and that property is null in ordinary use. Measured on a real app, bypasses were zero across 1613 W-widget builds at a 99%+ hit rate.
+A bypass is a property of a caller writing `style:`, not of using `WDiv` / `WText`: both pass `baseStyle: style` and that property is null in ordinary use. In a measured real app, bypasses were zero and the hit rate was above 99%.
 
 `WindParser.clearCache()` resets the counters too, which is why a theme change mid-measurement zeroes them.
 
-`Wind.installPerfResolver()` publishes nine keys through `WindDebugRegistry.currentPerf?.stats()`: the six `int` counters above plus three `Map<String, int>` counters: `widgetBuilds` (every W-widget with a build method, by type name: `'WButton'`, `'WDiv'`, ...), `wrapperEmissions` (the Flutter or Wind-authored render-layer wrapper widget inserted at each composition-pipeline branch: `'DecoratedBox'`, `'ConstrainedBox'`, `'Padding'`, `'MouseRegion'`, `'Semantics'`, `'DefaultTextStyle'`, ...), `inheritedReads` (fixed to `mediaQuerySize`, `mediaQueryBrightness`, `windTheme`, `defaultTextStyle`). A `null` there means no resolver was installed, which is deliberately distinguishable from "the counters are zero". Both `installDebugResolver()` and `installPerfResolver()` gate on `!kReleaseMode`, not `kDebugMode`, so a profile build still carries them.
+`Wind.installPerfResolver()` publishes a map through `WindDebugRegistry.currentPerf?.stats()`: the `int` values `cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds` and `wTextBuilds`, plus these `Map<String, int>` counters: `widgetBuilds` (every W-widget with a build method, by type name: `'WButton'`, `'WDiv'`, ...), `wrapperEmissions` (the Flutter or Wind-authored render-layer wrapper widget inserted at each composition-pipeline branch: `'DecoratedBox'`, `'ConstrainedBox'`, `'Padding'`, `'MouseRegion'`, `'Semantics'`, `'DefaultTextStyle'`, ...), `inheritedReads` (fixed to `mediaQuerySize`, `mediaQueryBrightness`, `windTheme`, `defaultTextStyle`). A `null` there means no resolver was installed, which is deliberately distinguishable from "the counters are zero". Both `installDebugResolver()` and `installPerfResolver()` gate on `!kReleaseMode`, not `kDebugMode`, so a profile build still carries them.

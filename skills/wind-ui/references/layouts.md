@@ -1,4 +1,4 @@
-# Wind 1.5: Layouts
+# Layouts
 
 12+ canonical layout recipes plus the Flutter constraint model that drives every overflow. Reach for this file when picking a layout pattern or recovering from RenderFlex / unbounded-height assertions.
 
@@ -13,6 +13,7 @@
 7. [items-stretch inside a scroll](#7-items-stretch-inside-a-scroll)
 8. [Touch targets](#8-touch-targets)
 9. [Responsive cascade examples](#9-responsive-cascade-examples)
+10. [Anti-patterns](#anti-patterns)
 
 ---
 
@@ -24,15 +25,15 @@ Every `RenderBox` receives a `BoxConstraints` (`minWidth`, `maxWidth`, `minHeigh
 
 Four consequences drive almost every Wind layout footgun:
 
-1. **`Row` and `Column` pass UNBOUNDED constraints to non-flex children in step 1.** A child that responds with `double.infinity` (e.g. `h-full` inside a Column inside a scroll) blows up the parent's bounded layout. `flex-1` is the canonical fix because it moves the child to step 2 (bounded share of remaining space). (A bare `w-full` on a direct Row child is auto-handled: Wind wraps it in `Expanded` so it behaves as `flex-1` instead of asserting; prefer `flex-1` for clarity.)
+1. **`Row` and `Column` pass unbounded constraints to non-flex children in step 1.** A child that responds with `double.infinity` (a raw `SizedBox.expand`, for example) blows up the parent's bounded layout. `flex-1` is the canonical fix because it moves the child to step 2 (bounded share of remaining space). Wind handles the two common cases itself: a bare `w-full` on a direct Row child is wrapped in `Expanded` so it behaves as `flex-1` instead of asserting (prefer `flex-1` for clarity), and `h-full` under an unbounded height takes the screen height rather than asserting, which usually overflows the parent instead.
 
-2. **Scrollables remove the max on their axis.** A `SingleChildScrollView` (Wind's `overflow-y-auto`) passes `maxHeight: double.infinity` to its child. A child that asserts on finite height (`Column` with `Expanded` children) throws "Vertical viewport was given unbounded height".
+2. **Scrollables remove the max on their axis.** A `SingleChildScrollView` (Wind's `overflow-y-auto`) passes `maxHeight: double.infinity` to its child. A child that needs a finite height, such as a `Column` with `Expanded` children or a `flex-1` child, throws "RenderFlex children have non-zero flex but incoming height constraints are unbounded".
 
-3. **`flex flex-col` stretches `WDiv`, `WAnchor` (any child), and `WButton` children to the column width by default.** With NO explicit `items-*` token, each such child that does not control its own width is wrapped in `SizedBox(width: double.infinity)`, mirroring CSS `align-items: stretch`. For `WAnchor`: when the anchor wraps a `WDiv`, the inner `WDiv`'s className decides; when it wraps a `WText` or raw widget, it always stretches. Left untouched: children with an explicit width (`w-*` / `min-w-*` / `max-w-*` / `w-full`, in any state/breakpoint variant), children that self-wrap in `Expanded`/`Flexible` (`grow`, `flex-grow`, `flex-auto`, `flex-initial`, `shrink`, `flex-shrink`, `flex-N`), absolute children, bare `WText` leaves, and raw Flutter widgets. `shrink-0` / `flex-none` children still stretch on the cross axis: `flex-shrink` is main-axis only, matching CSS. Add any `items-*` token (e.g. `items-start`) to disable the stretch and let children size to content. This is column-only; rows are never auto-stretched on the cross axis.
+3. **`flex flex-col` stretches `WDiv`, `WAnchor` (any child), and `WButton` children to the column width by default.** With no explicit `items-*` token, each such child that does not control its own width is wrapped in `SizedBox(width: double.infinity)`, mirroring CSS `align-items: stretch`. For `WAnchor`: when the anchor wraps a `WDiv`, the inner `WDiv`'s className decides; when it wraps a `WText` or raw widget, it always stretches. Left untouched: children with an explicit width (`w-*` / `min-w-*` / `max-w-*` / `w-full`, in any state/breakpoint variant), children that self-wrap in `Expanded`/`Flexible` (`grow`, `flex-grow`, `flex-auto`, `flex-initial`, `shrink`, `flex-shrink`, `flex-N`), absolute children, bare `WText` leaves, and raw Flutter widgets. `shrink-0` / `flex-none` children still stretch on the cross axis: `flex-shrink` is main-axis only, matching CSS. Add any `items-*` token (e.g. `items-start`) to disable the stretch and let children size to content. This is column-only; rows are never auto-stretched on the cross axis.
 
-4. **`justify-*` on a row wraps every child in a `Flexible` so it can shrink, UNLESS a child claims a grow share.** Flutter splits free space equally between flex children, so the shrink wrap also hands a share to a sibling that never asked for one: a `justify-between` row holding a `flex-1` title next to a 24 px icon split 400 px down the middle and rendered the title at 200 px. A grow claim (`flex-1`, `flex-{n}`, `grow`, `flex-grow`, `flex-auto`, a bare `w-full`, or a raw `Expanded` / `Flexible`) therefore turns the wrap off for the whole row: the growing child takes the remainder, its siblings keep their content width, and that matches CSS `justify-content: space-between`. `overflow-hidden` keeps the wrap unconditionally (it asks for shrinking on purpose), `shrink` / `flex-shrink` / `flex-initial` are not a grow claim, and neither is a PREFIXED grow token: `hover:flex-1` and `md:grow` are conditional, so they never speak for the row. Reach for an unprefixed `flex-1` when you want the child to own the remainder.
+4. **`justify-*` on a row wraps every child in a `Flexible` so it can shrink, unless a child claims a grow share.** Flutter splits free space equally between flex children, so the shrink wrap also hands a share to a sibling that never asked for one: a `justify-between` row holding a `flex-1` title next to a 24 px icon would split 400 px down the middle and render the title at 200 px. A grow claim (`flex-1`, `flex-{n}`, `grow`, `flex-grow`, `flex-auto`, a bare `w-full`, or a raw `Expanded` / `Flexible`) therefore turns the wrap off for the whole row: with `flex-1`, `grow`, `flex-grow`, a bare `w-full` or a raw `Expanded` the growing child takes the remainder (title 376, icon 24) and its siblings keep their content width, which matches CSS `justify-content: space-between`. `flex-auto` also turns the wrap off but its child stays content-sized (loose fit), so it does not fill the remainder; the icon is still pushed to the far edge by the space distribution. `overflow-hidden` keeps the wrap unconditionally (it asks for shrinking on purpose), `shrink` / `flex-shrink` / `flex-initial` are not a grow claim, and neither is a prefixed grow token: `hover:flex-1` and `md:grow` are conditional, so they never speak for the row. Reach for an unprefixed `flex-1` when you want the child to own the remainder.
 
-Memorize these and the rest follows.
+Memorise these and the rest follows.
 
 ---
 
@@ -54,7 +55,7 @@ When Flutter throws, map the error to a Wind-shaped fix.
 
 ## 3. Layout recipes
 
-### Centered card
+### Centred card
 
 ```dart
 WDiv(
@@ -82,7 +83,7 @@ WDiv(
 WDiv(
   className: 'flex flex-row items-center gap-3',
   children: [
-    WIcon(Icons.alarm_outlined, className: 'text-gray-500'),
+    WIcon(Icons.alarm_outlined, className: 'text-gray-500 dark:text-gray-400'),
     WDiv(
       className: 'flex-1 min-w-0',          // min-w-0 lets truncate work
       child: WText('Long title that may need to truncate', className: 'truncate'),
@@ -109,7 +110,7 @@ WDiv(
 );
 ```
 
-Note: Wind's `grid` renders as `Wrap` with computed column widths; it is NOT virtualized. For large or dynamic item counts, use Flutter's `GridView.builder` with W-widgets inside. Add `items-stretch` for equal-height rows (cells match the tallest per row via a real-layout equal-height row, NOT `IntrinsicHeight`, so cells containing a `flex flex-col`, `h-full`, or `basis-*` stretch without the intrinsic-sizing assert; #139).
+Note: Wind's `grid` renders as `Wrap` with computed column widths; it is not virtualised. For large or dynamic item counts, use Flutter's `GridView.builder` with W-widgets inside. Add `items-stretch` for equal-height rows (cells match the tallest per row via a real-layout equal-height row, not `IntrinsicHeight`, so cells containing a `flex flex-col`, `h-full`, or `basis-*` stretch without the intrinsic-sizing assert; #139).
 
 ### Sticky header + scrollable body
 
@@ -249,6 +250,7 @@ WPopover(
     bg-white dark:bg-gray-800
   ''',
   triggerBuilder: (context, isOpen, isHovering) => WButton(
+    semanticLabel: 'More actions',
     className: '''
       p-2 rounded-lg
       hover:bg-gray-100 dark:hover:bg-gray-700
@@ -293,11 +295,11 @@ WDiv(
 
 There is no className for `scrollPrimary`. Omit it and iOS users lose tap-to-top.
 
-If the page has multiple scroll views, only ONE should be `scrollPrimary: true` (the dominant outer scroll). `Scaffold` itself injects a `PrimaryScrollController`; the scroll view nearest the Scaffold body should be primary.
+If the page has multiple scroll views, only one should be `scrollPrimary: true` (the dominant outer scroll). `Scaffold` itself injects a `PrimaryScrollController`; the scroll view nearest the Scaffold body should be primary.
 
 **Nested scrolls.** A vertical `WDiv(className: 'overflow-y-auto')` directly inside another vertical scroll is rarely correct (only inner needed; outer is wasted). Both being primary causes controller conflicts.
 
-**`h-full` inside a scroll = bug.** The scrollable removes the max height; the inner widget cannot resolve `h-full` to a finite value. Use `flex-1` on the body inside a `flex flex-col h-full` parent instead (recipe: Sticky header + scrollable body, §3).
+**`h-full` inside a scroll is a bug.** A scrollable removes the max height, so the child has no height to fill. Wind asserts in debug when a child of a `WDiv` vertical scroll (`overflow-y-auto` / `overflow-y-scroll`) carries `h-full`: "`h-full` on a child inside a vertical scroll ... resolves to an unbounded height. Use `flex-1` ...". Under a plain `SingleChildScrollView` nothing is raised, and `h-full` falls back to the screen height instead of the viewport height. Either way, use `flex-1` on the body inside a `flex flex-col h-full` parent (recipe: Sticky header + scrollable body, §3).
 
 **Reverse: `flex-1` inside an unbounded parent.** Putting `WDiv(className: 'flex-1')` inside a `SingleChildScrollView` directly throws "non-zero flex but incoming constraints unbounded". Either remove `flex-1` or constrain the parent.
 
@@ -324,7 +326,7 @@ WDiv(
 );
 ```
 
-Negative offsets work (`-top-2`, `-inset-1`). Percentage offsets (`top-[50%]`) do NOT work.
+Negative offsets work (`-top-2`, `-inset-1`). Percentage offsets (`top-[50%]`) do not work.
 
 `fixed` and `sticky` position types are recognised by the parser but produce no visual effect; reach for Material `SliverAppBar` or `Scaffold(persistentFooterButtons:)` for scroll-relative positioning.
 
@@ -375,8 +377,8 @@ WDiv(
     child: WDiv(
       className: 'flex flex-row items-stretch gap-2',
       children: [
-        WDiv(className: 'flex-1 bg-blue-100 p-4'),
-        WDiv(className: 'flex-1 bg-red-100 p-4'),
+        WDiv(className: 'flex-1 bg-blue-100 dark:bg-blue-900 p-4'),
+        WDiv(className: 'flex-1 bg-red-100 dark:bg-red-900 p-4'),
       ],
     ),
   ),
@@ -385,7 +387,7 @@ WDiv(
 
 `IntrinsicHeight` is documented as relatively expensive (it runs a speculative layout pass). Reach for it only when this exact row height-match-inside-scroll pattern is required.
 
-> **Column width-stretch is intrinsic-free (no `IntrinsicHeight` needed).** The reverse case, a `flex flex-col items-stretch` (equal child WIDTHS), needs no `IntrinsicHeight`: Wind's column cross-axis stretch is a real render object (`WindCrossStretch`), and `basis-*` resolves without a `LayoutBuilder`. So a `flex flex-col` (with or without `basis-*`) renders under an `IntrinsicHeight`, a `Table`, or an `items-stretch` grid cell without asserting. Only the ROW height-match above still uses `IntrinsicHeight`.
+> **Column width-stretch is intrinsic-free (no `IntrinsicHeight` needed).** The reverse case, a `flex flex-col items-stretch` (equal child widths), needs no `IntrinsicHeight`: Wind's column cross-axis stretch is a real render object (`WindCrossStretch`), and `basis-*` resolves without a `LayoutBuilder`. So a `flex flex-col` (with or without `basis-*`) renders under an `IntrinsicHeight`, a `Table`, or an `items-stretch` grid cell without asserting. Only the row height-match above still uses `IntrinsicHeight`.
 
 > **`h-full` is intrinsic-safe now.** It used to resolve through a Wind-internal `LayoutBuilder` and throw `LayoutBuilder does not support returning intrinsic dimensions` under an `IntrinsicHeight`; it is the `WindFullHeightBox` render object now, so it renders there, in a `Table` cell, and in an `items-stretch` grid cell without asserting, and it reports its child's intrinsic height so it matches the tallest sibling rather than the screen. The one remaining `LayoutBuilder` path is `grid`. For equal-height cards outside a scroll, `h-full` under an `IntrinsicHeight` now works; a `Stack` + `Positioned(top:0,bottom:0)` remains the cheaper shape.
 
@@ -399,6 +401,7 @@ Material design recommends ≥48 dp; Cupertino recommends ≥44 pt. Wind has no 
 // 24 dp icon, 48 dp tap target via p-3
 WButton(
   onTap: _close,
+  semanticLabel: 'Close',
   className: 'p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700',
   child: const WIcon(Icons.close_outlined),
 );
@@ -461,7 +464,7 @@ For very different mobile vs desktop layouts (not just sizing), reach for `WBrea
 | Wrong | Why | Right |
 |---|---|---|
 | `WDiv(className: 'w-full')` inside a Row (works, treated as `flex-1`) | No failure, just intent clarity | `'flex-1'` (clearer) |
-| `WDiv(className: 'h-full overflow-y-auto')` inside a Column | Unbounded height assertion | `'flex-1 overflow-y-auto'` + `scrollPrimary: true`, parent has `h-full` |
+| `WDiv(className: 'h-full overflow-y-auto')` inside a Column | `h-full` takes the screen height, so the Column overflows | `'flex-1 overflow-y-auto'` + `scrollPrimary: true`, parent has `h-full` |
 | `WDiv(className: 'absolute top-0')` without `relative` ancestor | No Stack to anchor | wrap parent in `'relative'` |
 | `WText(..., className: 'truncate')` directly inside a Row | Unbounded width; ellipsis never fires | wrap in `WDiv(className: 'flex-1 min-w-0')` |
 | `overflow-y-auto` without `scrollPrimary: true` | iOS tap-to-top broken | add the constructor prop |
@@ -469,4 +472,4 @@ For very different mobile vs desktop layouts (not just sizing), reach for `WBrea
 | `Wrap(children: ...)` instead of `WDiv(className: 'wrap gap-2')` | Cannot consume className from outside | use `WDiv` |
 | `Stack` + `Positioned` directly | Same; loses className | use `relative` + `absolute` tokens on `WDiv` |
 | `GridView.builder` for a 6-item static grid | Overhead for nothing | `WDiv(className: 'grid grid-cols-3 gap-4', children: [...])` |
-| `WDiv(className: 'grid grid-cols-3')` for 200 dynamic items | Not virtualized; renders all at once | `GridView.builder` |
+| `WDiv(className: 'grid grid-cols-3')` for 200 dynamic items | Not virtualised; renders all at once | `GridView.builder` |

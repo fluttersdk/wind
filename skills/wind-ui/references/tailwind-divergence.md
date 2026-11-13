@@ -1,4 +1,4 @@
-# Wind 1.5: Wind ≠ Tailwind divergence catalog
+# Wind ≠ Tailwind divergence catalogue
 
 Comprehensive map of where Wind diverges from Tailwind CSS v3 and v4. Reach for this file when migrating a className from web, recovering from a "this token does not seem to do anything" stall, or auditing a Tailwind-trained codebase.
 
@@ -12,6 +12,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 4. [Tokens that Wind has, Tailwind does not](#4-tokens-that-wind-has-tailwind-does-not)
 5. [Tailwind v3 → v4 changes Wind has not adopted](#5-tailwind-v3--v4-changes-wind-has-not-adopted)
 6. [Migration playbook (Tailwind className → Wind className)](#6-migration-playbook-tailwind-classname--wind-classname)
+7. [Unsupported Tailwind classes (use the wind equivalent)](#7-unsupported-tailwind-classes-use-the-wind-equivalent)
 
 ---
 
@@ -23,8 +24,8 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | Spacing unit | `0.25rem` (depends on root font-size) | Logical pixels (4 px per step by default; `WindThemeData.baseSpacingUnit`) |
 | Wrapping | `flex-wrap` (CSS flex-wrap property) | `wrap` (Flutter `Wrap` widget is structurally separate from `flex`) |
 | Container layout | `flex` works on any element | `flex` requires `WDiv`; raw `Container` does not parse className |
-| `dark:` opt-in | Optional (use only when needed) | Required for every color token; missing peer is a bug |
-| Unknown tokens | Build-time warning OR ignored depending on config | No-op at runtime (dropped). A one-time `kDebugMode` `debugPrint` names the token only when NO parser recognizes it (its prefix matches no parser); a recognized family with an unsupported value (e.g. `text-7xl`, claimed by `text-*`) drops silently with no hint. Valid tokens handled outside the parser map (widget-consumed `object-*`, the `inline-flex`/`inline-block`/`inline` display keywords, inert compat tokens like `transition-colors` / `antialiased` / `sr-only` / `tabular-nums`) are exempt, so the hint targets genuine unknown-family typos |
+| `dark:` opt-in | Optional (use only when needed) | Required for every colour token; missing peer is a bug |
+| Unknown tokens | Build-time warning or ignored depending on config | No-op at runtime (dropped). A one-time `kDebugMode` `debugPrint` names the token only when no parser recognises it (its prefix matches no parser); a recognised family with an unsupported value (e.g. `text-7xl`, claimed by `text-*`) drops silently with no hint. Valid tokens handled outside the parser map (widget-consumed `object-*`, the `inline-flex`/`inline-block`/`inline` display keywords, inert compat tokens like `transition-colors` / `antialiased` / `sr-only` / `tabular-nums`) are exempt, so the hint targets genuine unknown-family typos |
 | Important modifier | `!flex` (v3) or `flex!` (v4) | Not implemented |
 | Container queries | `@container`, `@sm:`, `@max-md:` | Not implemented; viewport-only |
 | Group / peer state | `group-hover:`, `peer-focus:` | Not implemented; use `states: Set<String>` |
@@ -40,21 +41,21 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | `flex-wrap` | Enables wrapping on a flex container | Aliased directly to `wrap` (the canonical token); emits a one-time `kDebugMode` hint pointing at `wrap` |
 | `text-{xs..6xl}` | Sizes go to `9xl` (128 px) | Stops at `6xl` (60 px). `7xl` / `8xl` / `9xl` silently no-op |
 | `text-7xl`+ | Larger sizes available | No-op |
-| `text-{color}` | Pure font color | Overloaded across color / alignment / size / weight; resolves in order |
+| `text-{color}` | Pure font colour | Overloaded across colour / alignment / size / weight; resolves in order |
 | `w-full` inside a flex Row | Works (max-width: 100%) | A bare `w-full` row child is treated as `flex-1` (wrapped in `Expanded`) and fills the row; `flex-1` is the clearer, idiomatic choice. `md:w-full` is not auto-expanded. |
 | `h-full` inside a vertical scroll | Works (max-height: 100%) | Raises an actionable dev assert ("use `flex-1` inside a `flex flex-col` instead of `h-full` inside a vertical scroll"); the scrollable parent threads a vertical-unbounded flag so the child can fail fast. Stripped in release. |
-| `overflow-x-auto` + `w-full min-w-[Npx]` (shadcn Table pattern) | Fills container, scrolls when content exceeds it | Same behavior, composed from existing tokens (no new token). `w-full` inside a horizontal scroll is sized to `max(viewport, min-w-*)` via the threaded viewport width instead of asserting on the scroll's unbounded width: fills on wide, scrolls on narrow. |
-| `IntrinsicHeight` / `IntrinsicWidth` (Flutter widget, not a token) | N/A | Wind's own flex is intrinsic-safe, and so is `h-full` (the `WindFullHeightBox` render object): a `flex flex-col` (smart stretch, explicit `items-stretch`, or `basis-*`) uses NO `LayoutBuilder` (column stretch is the `WindCrossStretch` render object; `basis-*` resolves against the flex extent via `WindMainExtentProvider`), so it renders under an `IntrinsicHeight`/`Table`/grid cell without asserting. Still avoid wrapping ARBITRARY subtrees in `IntrinsicHeight`/`IntrinsicWidth` inside sheet/route open animations (they can raise `RenderBox was not laid out`); for a connector or rail prefer a `Stack` + `Positioned(top: 0, bottom: 0)` line or wind's `items-stretch` column. Wind itself uses no `IntrinsicHeight` or `IntrinsicWidth`. |
+| `overflow-x-auto` + `w-full min-w-[Npx]` (shadcn Table pattern) | Fills container, scrolls when content exceeds it | Same behaviour, composed from existing tokens (no new token). `w-full` inside a horizontal scroll is sized to `max(viewport, min-w-*)` via the threaded viewport width instead of asserting on the scroll's unbounded width: fills on wide, scrolls on narrow. |
+| `IntrinsicHeight` / `IntrinsicWidth` (Flutter widget, not a token) | N/A | Wind's own flex is intrinsic-safe, and so is `h-full` (the `WindFullHeightBox` render object): a `flex flex-col` (smart stretch, explicit `items-stretch`, or `basis-*`) uses no `LayoutBuilder` (column stretch is the `WindCrossStretch` render object; `basis-*` resolves against the flex extent via `WindMainExtentProvider`), so it renders under an `IntrinsicHeight`/`Table`/grid cell without asserting. Still avoid wrapping arbitrary subtrees in `IntrinsicHeight`/`IntrinsicWidth` inside sheet/route open animations (they can raise `RenderBox was not laid out`); for a connector or rail prefer a `Stack` + `Positioned(top: 0, bottom: 0)` line or wind's `items-stretch` column. Wind itself uses no `IntrinsicHeight` or `IntrinsicWidth`. |
 | `overflow-y-auto` | Native browser scrollbar | Renders Flutter scroll view; needs constructor `scrollPrimary: true` for iOS tap-to-top |
-| `bg-red-500/50` | Color with 50% opacity (v3.x+) | Same syntax, same semantics |
-| `dark:bg-gray-900` | Active only when dark mode is enabled | Active only when `WindThemeData.brightness == Brightness.dark`; required to pair every color |
+| `bg-red-500/50` | Colour with 50% opacity (v3.x+) | Same syntax, same semantics |
+| `dark:bg-gray-900` | Active only when dark mode is enabled | Active only when `WindThemeData.brightness == Brightness.dark`; required to pair every colour |
 | `divide-x-N` | Inserts borders between children | Not implemented; use explicit borders on children |
-| Spacing scale | 0, 0.5, 1, 1.5, ..., 96 with gaps; `0.25rem` per step | Same scale, but unit is 4 px (`baseSpacingUnit`); arbitrary values do NOT support percentages for padding / margin / positioning |
-| Color shade scale | 50, 100, 200, ..., 950 (11 steps) | Same (50 through 950) |
+| Spacing scale | 0, 0.5, 1, 1.5, ..., 96 with gaps; `0.25rem` per step | Same scale, but unit is 4 px (`baseSpacingUnit`); arbitrary values do not support percentages for padding / margin / positioning |
+| Colour shade scale | 50, 100, 200, ..., 950 (11 steps) | Same (50 through 950) |
 | Default breakpoints | sm 640, md 768, lg 1024, xl 1280, 2xl 1536 (px) | Identical |
 | `transition` / `transition-all` | Implicit transitions on all properties | Bare `transition` not wired; pair `duration-N` + `ease-*` instead |
 | `animate-spin` / `pulse` / `bounce` / `ping` | CSS keyframes; finite or infinite | All infinite loops in Wind |
-| `rounded-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3; Wind has NOT adopted the v4 rename shift |
+| `rounded-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3; Wind has not adopted the v4 rename shift |
 | `shadow-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3 |
 | `ring` (bare) | v3 default 3 px; v4 default 1 px | Wind matches v3 (default 3 px) |
 | `tracking-{tighter..widest}` | em fractions (`tracking-wide` = 0.025em, scales with font size) | Identical em scale, converted to px at build against the element's `text-*` size, else the inherited `DefaultTextStyle` size, else 14 (`kDefaultFontSize`, the size unsized text paints at). A `WDiv` publishes the resolved px to its children, as CSS inherits the computed length. `WInput` with no `text-*` resolves against 14 (`kDefaultFontSize`). |
@@ -81,7 +82,7 @@ When a className inherited from a web project includes any of these, expect sile
 - `w-min` / `w-max` / `w-fit`
 
 ### Position
-- `fixed` / `sticky` (recognised, no visual effect; use Material `SliverAppBar` for sticky behavior)
+- `fixed` / `sticky` (recognised, no visual effect; use Material `SliverAppBar` for sticky behaviour)
 - `%` for offsets (`left-[50%]`)
 
 ### Border
@@ -96,7 +97,7 @@ When a className inherited from a web project includes any of these, expect sile
 - `filter` / `backdrop-filter`
 
 ### Interactivity
-- `cursor-*` IS supported (`cursor-pointer`, `cursor-not-allowed`, resize/zoom/grab, etc.) via a `MouseRegion` `WDiv` adds; see `tokens.md` §16. `WAnchor` also exposes a `mouseCursor:` constructor prop for imperative control.
+- `cursor-*` is supported (`cursor-pointer`, `cursor-not-allowed`, resize/zoom/grab, etc.) via a `MouseRegion` `WDiv` adds; see `tokens.md` §16. `WAnchor` also exposes a `mouseCursor:` constructor prop for imperative control.
 - `pointer-events-none`: wrap in `IgnorePointer`
 - `select-none` / `select-text`
 - `scroll-smooth`
@@ -136,7 +137,7 @@ When a className inherited from a web project includes any of these, expect sile
 - `selection:` / `placeholder:` / `marker:` / `file:`
 - `motion-safe:` / `motion-reduce:` / `print:`
 - `focus-within:` / `focus-visible:`
-- `active:` (reserved, NOT wired; WAnchor tracks hover and focus only)
+- `active:` (reserved, not wired; WAnchor tracks hover and focus only)
 
 ### Container queries
 - `@container`, `@sm:`, `@md:`, `@lg:`, `@max-md:`, named containers (`@sm/sidebar:`): viewport-only in Wind
@@ -154,7 +155,7 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 
 ### Platform prefixes (Flutter targets multiple platforms)
 - `ios:` / `android:` / `macos:` / `windows:` / `linux:` (specific platform)
-- `mobile:` (iOS OR Android)
+- `mobile:` (iOS or Android)
 - `web:` (web build)
 
 ### Order scale starts at zero
@@ -164,7 +165,7 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 - `axis-min`: sets `MainAxisSize.min` on the parent flex
 - `axis-max`: sets `MainAxisSize.max`
 
-### Inline color escape hatches (bypass cache key for runtime-dynamic colors)
+### Inline colour escape hatches (bypass cache key for runtime-dynamic colours)
 - `WDiv(backgroundColor: Color)`: Dart prop, overrides className `bg-*`
 - `WText(foregroundColor: Color)`: Dart prop, overrides className `text-*`
 - `WIcon(foregroundColor: Color)` (Dart prop) overrides className `text-*`
@@ -176,14 +177,14 @@ Wind adds a small set of tokens for Flutter-specific scenarios.
 - `WDynamic(json: ...)`: renders a JSON node tree into Wind widgets
 
 ### SVG fill preservation
-- `preserve-colors`: disables Wind's color filter; renders embedded SVG colors unchanged (QR codes, logos, multi-color illustrations)
+- `preserve-colors`: disables Wind's colour filter; renders embedded SVG colours unchanged (QR codes, logos, multi-colour illustrations)
 
 ### className aliases (runtime shorthand expansion)
 - `WindThemeData.aliases` (`Map<String, String>`) maps bare-token keys to className strings, expanded recursively by `WindParser.parse` before any parser runs. Closest Tailwind analogue: `@layer components` / UnoCSS shortcuts; unlike those, there is no CSS cascade and expansion is a pure string substitution at runtime. Keys are bare tokens only (no prefix, no colon). An alias that shadows a real token wins and emits a debug warning. Empty by default; works in every widget and in `WDynamic` without additional wiring.
 
 ### Debug instrumentation
 - `debug` token: triggers `WindLogger` to log composition tree + final styles
-- `Wind.installDebugResolver()` (Dart API): exposes 7 fields per widget to external tooling
+- `Wind.installDebugResolver()` (Dart API): exposes per-widget className and state to external tooling
 
 ---
 
@@ -208,7 +209,7 @@ Wind 1.0 is anchored to Tailwind v3 semantics for shadow / radius / blur / ring 
 | `outline-hidden` | not implemented (use `outline-none` if you need it; not wired either) |
 | `ring-3` (explicit width to get the v3 default) | `ring` produces 3 px (matches v3) |
 | `bg-black/50` (opacity modifier) | Same; `bg-opacity-50` removed in v4, also not in Wind |
-| Spacing multiplier (any whole number works in v4) | Wind uses explicit theme scale; `p-13` is not in the default scale (use arbitrary `p-[13]` instead) |
+| Spacing multiplier (any whole number works in v4) | Any number works on the 4 px scale too: `p-13` is 52 px. Arbitrary `p-[13]` is 13 px, a different value |
 | Important suffix `bg-red-500!` | Not implemented |
 | 3D transforms | Not implemented |
 
@@ -232,7 +233,7 @@ focus-within:* /       → drop
 print:* /              → drop
   motion-safe:* /
   motion-reduce:*
-cursor-*               → SUPPORTED (WDiv adds MouseRegion; tokens.md §16)
+cursor-*               → supported (WDiv adds MouseRegion; tokens.md §16)
 pointer-events-none    → wrap in IgnorePointer
 select-none            → drop (set selectable: false on WText)
 scroll-smooth /        → drop
@@ -266,7 +267,7 @@ rounded-*              → same name, same semantics (v3 scale)
 bg-opacity-N           → bg-{color}-{shade}/N (slash modifier)
 ```
 
-**Step 2: pair every color with `dark:`.** Wind contract; not optional.
+**Step 2: pair every colour with `dark:`.** Wind contract; not optional.
 
 **Step 3: re-express conditional styling via `states:`.** Where the original Tailwind used `group-hover:` or `peer-focus:` or imperative DOM class flips, route through `states: Set<String>?` plus prefixed classes.
 
@@ -323,28 +324,28 @@ WDiv(
 Notes on the port:
 - `group-hover:text-blue-600` (parent-state-driven child styling) became `hover:text-blue-600` on the text directly. If genuine parent-driven hover is needed, build it via `WAnchor` on the outer `WDiv`, capture state in the consumer, and pass `states: {'hovered'}` to the inner WText with a custom prefix.
 - `truncate` on the `<p>` became `truncate` inside a `flex-1 min-w-0` wrapper.
-- Every color paired with `dark:`.
+- Every colour paired with `dark:`.
 - Outer `shadow-sm hover:shadow-md` kept; would auto-wrap in `WAnchor` because of the `hover:` prefix.
 
-## Unsupported Tailwind classes (use the wind equivalent)
+---
+
+## 7. Unsupported Tailwind classes (use the wind equivalent)
 
 These canonical Tailwind classes are silently ignored by wind (unknown tokens are dropped). Use the listed equivalent:
 
 | Tailwind | Status | wind equivalent |
 |----------|--------|-----------------|
-| `inline-flex` | unsupported (Flutter has no inline layout) | `flex` + `self-start` |
+| `inline-flex` | recognised, no effect (Flutter has no inline layout) | `flex` |
 | `rounded-s-*` / `rounded-e-*` | unsupported (logical start/end radius) | `rounded-l-*` / `rounded-r-*` |
 | `ms-*` / `me-*` | unsupported (logical inline margin) | `ml-*` / `mr-*` |
 | `start-*` / `end-*` | unsupported (logical inset) | `left-*` / `right-*` |
 | `-space-x-*` / `-space-y-*` | unsupported (negative gap; no overlap primitive) | none |
-| `self-*` | supported (alias of `align-self-*`) | `self-center` etc. work directly |
-| `shrink-0` | supported (preserves intrinsic size, no Flexible wrap) | works directly |
-| `flex-none` | supported as CSS `flex: 0 0 auto` (no grow AND no shrink; keeps intrinsic size) | works directly |
-| `basis-*` | supported as a MAIN-axis initial size (`basis-1/2`, `basis-full`, `basis-[Npx]`); ignores grow/shrink interplay | works directly |
-| `text-7xl` / `8xl` / `9xl` | silently capped (max is `text-6xl`) | `text-6xl` or arbitrary `text-[96px]` |
+| `text-7xl` / `8xl` / `9xl` | silently dropped (max is `text-6xl`) | `text-6xl` or arbitrary `text-[96px]` |
 
-Note: `WText` is self-contained regarding its baseline rendering. When no Material/Scaffold ancestor supplies a `DefaultTextStyle` color, `WText` applies a brightness-aware fallback (`Colors.white` on dark platforms, `Colors.black` on light, read from `MediaQuery.platformBrightness`) instead of Flutter's debug yellow-underline; it also injects a `Directionality(ltr)` wrapper when no `Directionality` is inherited. Resolution precedence over that fallback (highest first): an explicit `text-*` className color, the `foregroundColor` / `textStyle` props, then an inherited ancestor `DefaultTextStyle` color. The brightness fallback applies only when none of those supply a color.
+The supported flex-child tokens (`shrink-0`, `flex-none`, `basis-*`) are listed in `tokens.md` §2.
+
+Note: `WText` is self-contained regarding its baseline rendering. When no Material/Scaffold ancestor supplies a `DefaultTextStyle` colour, `WText` applies a brightness-aware fallback (`Colors.white` on dark platforms, `Colors.black` on light, read from `MediaQuery.platformBrightness`) instead of Flutter's debug yellow-underline; it also injects a `Directionality(ltr)` wrapper when no `Directionality` is inherited. Resolution precedence over that fallback (highest first): an explicit `text-*` className colour, the `foregroundColor` / `textStyle` props, then an inherited ancestor `DefaultTextStyle` colour. The brightness fallback applies only when none of those supply a colour.
 
 Note: Wind's smart column cross-axis stretch now covers clickable container rows (`WAnchor` and `WButton`) in addition to plain `WDiv` children, narrowing the divergence from CSS `align-items: stretch` (where element type is irrelevant). A `WAnchor`-wrapped nav row in a `flex flex-col` fills the column width by default without an explicit `items-stretch` or `w-full`.
 
-State-shadowing edge: a disabled outer `WAnchor` does NOT suppress a `hover:` class that a nested `WDiv` carries on itself. `WDiv` auto-wraps in its own non-disabled `WAnchor` whose state provider shadows the ancestor's `isDisabled`, so the inner `hover:` still fires. This is an edge case (a disabled control wrapping a separately-hover-styled child); style the disabled state on the same element that owns the `hover:` class, or drive `disabled:` on the inner `WDiv` directly.
+State-inheritance edge: a disabled outer `WAnchor` does not suppress a `hover:` class that a nested `WDiv` carries on itself. The gestureless `WAnchor` that `WDiv` wraps itself in inherits the ancestor's `isDisabled`, so `disabled:` classes on the inner div apply, but hover is a pointer position and is not inherited, so the inner `hover:` still fires. This is an edge case (a disabled control wrapping a separately-hover-styled child); list the `disabled:` class after the `hover:` class on the inner div so it wins when both are active.
