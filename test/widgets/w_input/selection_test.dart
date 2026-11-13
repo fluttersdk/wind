@@ -430,7 +430,10 @@ void main() {
                 initialEntries: [
                   OverlayEntry(
                     builder: (context) => WindTheme(
-                      data: WindThemeData(brightness: brightness),
+                      data: WindThemeData(
+                        brightness: brightness,
+                        syncWithSystem: false,
+                      ),
                       child: WInput(controller: controller),
                     ),
                   ),
