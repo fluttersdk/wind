@@ -7,11 +7,9 @@ class ThemeModeExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className:
-          "w-full h-full flex items-center justify-center p-4 transition-colors duration-300 overflow-y-auto",
+      className: "w-full h-full flex items-center justify-center p-4 transition-colors duration-300 overflow-y-auto",
       child: WDiv(
-        className:
-            "w-full max-w-sm bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xl transition-all duration-300",
+        className: "w-full max-w-sm bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xl transition-all duration-300",
         children: [
           // Header
           WDiv(
@@ -22,8 +20,7 @@ class ThemeModeExamplePage extends StatelessWidget {
                 className: "text-xl font-bold text-gray-900 dark:text-white",
               ),
               WDiv(
-                className:
-                    "w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center",
+                className: "w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center",
                 child: WIcon(
                   Icons.brightness_6,
                   className: "text-blue-600 dark:text-blue-400",
@@ -47,16 +44,18 @@ class ThemeModeExamplePage extends StatelessWidget {
                 icon: Icons.light_mode,
                 label: "Light Mode",
                 isActive: !context.windIsDark,
-                onTap: () => context.windTheme
-                    .setTheme(WindThemeData(brightness: Brightness.light)),
+                onTap: () => context.windTheme.setTheme(
+                  WindThemeData(brightness: Brightness.light),
+                ),
               ),
               _buildOption(
                 context,
                 icon: Icons.dark_mode,
                 label: "Dark Mode",
                 isActive: context.windIsDark,
-                onTap: () => context.windTheme
-                    .setTheme(WindThemeData(brightness: Brightness.dark)),
+                onTap: () => context.windTheme.setTheme(
+                  WindThemeData(brightness: Brightness.dark),
+                ),
               ),
             ],
           ),

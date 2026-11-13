@@ -10,8 +10,7 @@ class WInputMultilineExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Multiline Input',
-      description:
-          'type: InputType.multiline + minLines/maxLines turns WInput into a text area. Grows with content up to maxLines.',
+      description: 'type: InputType.multiline + minLines/maxLines turns WInput into a text area. Grows with content up to maxLines.',
       gradient: 'from-blue-500 to-cyan-600',
       children: [
         ExampleSection(
@@ -32,8 +31,7 @@ class WInputMultilineExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Unlimited Growth',
-          description:
-              'maxLines: null grows indefinitely as the user types. Wrap in a scroll if needed.',
+          description: 'maxLines: null grows indefinitely as the user types. Wrap in a scroll if needed.',
           child: WInput(
             type: InputType.multiline,
             minLines: 2,

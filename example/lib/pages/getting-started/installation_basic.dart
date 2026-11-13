@@ -42,8 +42,7 @@ class _InstallationBasicExamplePageState
   /// Hero section with animated gradient
   Widget _buildHero() {
     return WDiv(
-      className:
-          'w-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl p-8 shadow-2xl',
+      className: 'w-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl p-8 shadow-2xl',
       child: WDiv(
         className: 'flex flex-col md:flex-row items-center gap-6',
         children: [
@@ -51,12 +50,8 @@ class _InstallationBasicExamplePageState
           WDiv(
             className: 'flex-shrink-0',
             child: WDiv(
-              className:
-                  'w-24 h-24 bg-white/20 rounded-2xl flex items-center justify-center shadow-lg',
-              child: WIcon(
-                Icons.air,
-                className: 'text-5xl text-white',
-              ),
+              className: 'w-24 h-24 bg-white/20 rounded-2xl flex items-center justify-center shadow-lg',
+              child: WIcon(Icons.air, className: 'text-5xl text-white'),
             ),
           ),
           // Text content
@@ -93,8 +88,7 @@ class _InstallationBasicExamplePageState
 
   Widget _buildBadge(String label, IconData icon) {
     return WDiv(
-      className:
-          'flex items-center gap-2 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full transition-colors',
+      className: 'flex items-center gap-2 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full transition-colors',
       children: [
         WIcon(icon, className: 'text-sm text-white'),
         WText(label, className: 'text-sm font-medium text-white'),
@@ -110,8 +104,7 @@ class _InstallationBasicExamplePageState
         _buildFeatureCard(
           icon: Icons.palette,
           title: 'Tailwind Syntax',
-          description:
-              'Use familiar utility classes like bg-blue-500, p-4, flex, rounded-lg',
+          description: 'Use familiar utility classes like bg-blue-500, p-4, flex, rounded-lg',
           color: 'blue',
         ),
         _buildFeatureCard(
@@ -165,8 +158,10 @@ class _InstallationBasicExamplePageState
         WDiv(
           className:
               'w-12 h-12 bg-$color-100 dark:bg-$color-900/30 rounded-xl flex items-center justify-center mb-4',
-          child: WIcon(icon,
-              className: 'text-2xl text-$color-600 dark:text-$color-400'),
+          child: WIcon(
+            icon,
+            className: 'text-2xl text-$color-600 dark:text-$color-400',
+          ),
         ),
         WText(
           title,
@@ -184,8 +179,7 @@ class _InstallationBasicExamplePageState
   /// Interactive demo section
   Widget _buildInteractiveDemo() {
     return WDiv(
-      className:
-          'p-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700',
+      className: 'p-6 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700',
       children: [
         WText(
           'Interactive Demo',
@@ -200,21 +194,22 @@ class _InstallationBasicExamplePageState
           children: [
             // Hover card
             WDiv(
-              className:
-                  'p-4 bg-white dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-indigo-500 hover:shadow-xl transition-all cursor-pointer',
+              className: 'p-4 bg-white dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-indigo-500 hover:shadow-xl transition-all cursor-pointer',
               children: [
                 WDiv(
                   className: 'flex items-center gap-3 mb-3',
                   children: [
                     WDiv(
-                      className:
-                          'w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center',
-                      child: WIcon(Icons.mouse,
-                          className: 'text-indigo-600 dark:text-indigo-400'),
+                      className: 'w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center',
+                      child: WIcon(
+                        Icons.mouse,
+                        className: 'text-indigo-600 dark:text-indigo-400',
+                      ),
                     ),
-                    WText('Hover Me',
-                        className:
-                            'font-semibold text-slate-900 dark:text-white'),
+                    WText(
+                      'Hover Me',
+                      className: 'font-semibold text-slate-900 dark:text-white',
+                    ),
                   ],
                 ),
                 WText(
@@ -226,27 +221,27 @@ class _InstallationBasicExamplePageState
 
             // Button with loading
             WDiv(
-              className:
-                  'p-4 bg-white dark:bg-slate-800 rounded-xl flex flex-col gap-3',
+              className: 'p-4 bg-white dark:bg-slate-800 rounded-xl flex flex-col gap-3',
               children: [
                 WDiv(
                   className: 'flex items-center gap-3 mb-1',
                   children: [
                     WDiv(
-                      className:
-                          'w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center',
-                      child: WIcon(Icons.bolt,
-                          className: 'text-emerald-600 dark:text-emerald-400'),
+                      className: 'w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center',
+                      child: WIcon(
+                        Icons.bolt,
+                        className: 'text-emerald-600 dark:text-emerald-400',
+                      ),
                     ),
-                    WText('Click Action',
-                        className:
-                            'font-semibold text-slate-900 dark:text-white'),
+                    WText(
+                      'Click Action',
+                      className: 'font-semibold text-slate-900 dark:text-white',
+                    ),
                   ],
                 ),
                 WButton(
                   onTap: _isLoading ? null : _simulateAction,
-                  className:
-                      'w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-800 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center',
+                  className: 'w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-800 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center',
                   child: _isLoading
                       ? WDiv(
                           className: 'flex items-center justify-center gap-2',
@@ -269,21 +264,22 @@ class _InstallationBasicExamplePageState
 
             // Animation showcase
             WDiv(
-              className:
-                  'p-4 bg-white dark:bg-slate-800 rounded-xl flex flex-col gap-3',
+              className: 'p-4 bg-white dark:bg-slate-800 rounded-xl flex flex-col gap-3',
               children: [
                 WDiv(
                   className: 'flex items-center gap-3 mb-1',
                   children: [
                     WDiv(
-                      className:
-                          'w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center',
-                      child: WIcon(Icons.animation,
-                          className: 'text-pink-600 dark:text-pink-400'),
+                      className: 'w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center',
+                      child: WIcon(
+                        Icons.animation,
+                        className: 'text-pink-600 dark:text-pink-400',
+                      ),
                     ),
-                    WText('Animations',
-                        className:
-                            'font-semibold text-slate-900 dark:text-white'),
+                    WText(
+                      'Animations',
+                      className: 'font-semibold text-slate-900 dark:text-white',
+                    ),
                   ],
                 ),
                 WDiv(
@@ -294,12 +290,16 @@ class _InstallationBasicExamplePageState
                       children: [
                         WDiv(
                           className: 'animate-spin',
-                          child: WIcon(Icons.settings,
-                              className: 'text-2xl text-pink-500'),
+                          child: WIcon(
+                            Icons.settings,
+                            className: 'text-2xl text-pink-500',
+                          ),
                         ),
-                        WText('spin',
-                            className:
-                                'text-xs text-slate-500 dark:text-slate-400'),
+                        WText(
+                          'spin',
+                          className:
+                              'text-xs text-slate-500 dark:text-slate-400',
+                        ),
                       ],
                     ),
                     WDiv(
@@ -311,9 +311,11 @@ class _InstallationBasicExamplePageState
                             className: 'w-6 h-6 bg-pink-500 rounded-full',
                           ),
                         ),
-                        WText('pulse',
-                            className:
-                                'text-xs text-slate-500 dark:text-slate-400'),
+                        WText(
+                          'pulse',
+                          className:
+                              'text-xs text-slate-500 dark:text-slate-400',
+                        ),
                       ],
                     ),
                     WDiv(
@@ -321,12 +323,16 @@ class _InstallationBasicExamplePageState
                       children: [
                         WDiv(
                           className: 'animate-bounce',
-                          child: WIcon(Icons.arrow_downward,
-                              className: 'text-2xl text-pink-500'),
+                          child: WIcon(
+                            Icons.arrow_downward,
+                            className: 'text-2xl text-pink-500',
+                          ),
                         ),
-                        WText('bounce',
-                            className:
-                                'text-xs text-slate-500 dark:text-slate-400'),
+                        WText(
+                          'bounce',
+                          className:
+                              'text-xs text-slate-500 dark:text-slate-400',
+                        ),
                       ],
                     ),
                   ],
@@ -342,13 +348,9 @@ class _InstallationBasicExamplePageState
   /// Responsive showcase
   Widget _buildResponsiveShowcase() {
     return WDiv(
-      className:
-          'p-6 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl text-white',
+      className: 'p-6 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl text-white',
       children: [
-        WText(
-          'Responsive by Design',
-          className: 'text-xl font-bold mb-2',
-        ),
+        WText('Responsive by Design', className: 'text-xl font-bold mb-2'),
         WText(
           'Resize your browser to see how these boxes adapt using sm:, md:, lg: prefixes.',
           className: 'text-white/90 mb-6',
@@ -357,8 +359,7 @@ class _InstallationBasicExamplePageState
           className: 'grid grid-cols-2 md:grid-cols-4 gap-3',
           children: [
             WDiv(
-              className:
-                  'bg-white/20 p-4 rounded-lg text-center hidden sm:flex flex-col items-center',
+              className: 'bg-white/20 p-4 rounded-lg text-center hidden sm:flex flex-col items-center',
               children: [
                 WIcon(Icons.smartphone, className: 'text-2xl mb-1'),
                 WText('sm:', className: 'font-mono text-sm'),
@@ -366,8 +367,7 @@ class _InstallationBasicExamplePageState
               ],
             ),
             WDiv(
-              className:
-                  'bg-white/20 p-4 rounded-lg text-center hidden md:flex flex-col items-center',
+              className: 'bg-white/20 p-4 rounded-lg text-center hidden md:flex flex-col items-center',
               children: [
                 WIcon(Icons.tablet, className: 'text-2xl mb-1'),
                 WText('md:', className: 'font-mono text-sm'),
@@ -375,8 +375,7 @@ class _InstallationBasicExamplePageState
               ],
             ),
             WDiv(
-              className:
-                  'bg-white/20 p-4 rounded-lg text-center hidden lg:flex flex-col items-center',
+              className: 'bg-white/20 p-4 rounded-lg text-center hidden lg:flex flex-col items-center',
               children: [
                 WIcon(Icons.laptop, className: 'text-2xl mb-1'),
                 WText('lg:', className: 'font-mono text-sm'),
@@ -384,8 +383,7 @@ class _InstallationBasicExamplePageState
               ],
             ),
             WDiv(
-              className:
-                  'bg-white/20 p-4 rounded-lg text-center hidden xl:flex flex-col items-center',
+              className: 'bg-white/20 p-4 rounded-lg text-center hidden xl:flex flex-col items-center',
               children: [
                 WIcon(Icons.desktop_windows, className: 'text-2xl mb-1'),
                 WText('xl:', className: 'font-mono text-sm'),
@@ -408,8 +406,7 @@ class _InstallationBasicExamplePageState
   /// Code comparison section
   Widget _buildCodeComparison() {
     return WDiv(
-      className:
-          'p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700',
+      className: 'p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700',
       children: [
         WText(
           'Traditional Flutter vs Wind',
@@ -429,19 +426,17 @@ class _InstallationBasicExamplePageState
                 WDiv(
                   className: 'flex items-center gap-2',
                   children: [
-                    WDiv(
-                      className: 'w-3 h-3 bg-red-500 rounded-full',
+                    WDiv(className: 'w-3 h-3 bg-red-500 rounded-full'),
+                    WText(
+                      'Traditional Flutter',
+                      className:
+                          'font-medium text-slate-700 dark:text-slate-300',
                     ),
-                    WText('Traditional Flutter',
-                        className:
-                            'font-medium text-slate-700 dark:text-slate-300'),
                   ],
                 ),
                 WDiv(
-                  className:
-                      'bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-300 overflow-x-auto',
-                  child: WText(
-                    '''Container(
+                  className: 'bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-300 overflow-x-auto',
+                  child: WText('''Container(
   padding: EdgeInsets.all(16),
   decoration: BoxDecoration(
     color: Colors.blue[500],
@@ -460,9 +455,7 @@ class _InstallationBasicExamplePageState
       fontWeight: FontWeight.bold,
     ),
   ),
-)''',
-                    className: 'text-xs text-green-400 whitespace-pre',
-                  ),
+)''', className: 'text-xs text-green-400 whitespace-pre'),
                 ),
               ],
             ),
@@ -473,39 +466,37 @@ class _InstallationBasicExamplePageState
                 WDiv(
                   className: 'flex items-center gap-2',
                   children: [
-                    WDiv(
-                      className: 'w-3 h-3 bg-emerald-500 rounded-full',
+                    WDiv(className: 'w-3 h-3 bg-emerald-500 rounded-full'),
+                    WText(
+                      'With Wind',
+                      className:
+                          'font-medium text-slate-700 dark:text-slate-300',
                     ),
-                    WText('With Wind',
-                        className:
-                            'font-medium text-slate-700 dark:text-slate-300'),
                   ],
                 ),
                 WDiv(
-                  className:
-                      'bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-300 overflow-x-auto',
-                  child: WText(
-                    '''WDiv(
+                  className: 'bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-300 overflow-x-auto',
+                  child: WText('''WDiv(
   className: 'p-4 bg-blue-500 rounded-xl shadow-lg',
   child: WText(
     'Hello World',
     className: 'text-white font-bold',
   ),
-)''',
-                    className: 'text-xs text-green-400 whitespace-pre',
-                  ),
+)''', className: 'text-xs text-green-400 whitespace-pre'),
                 ),
                 WDiv(
-                  className:
-                      'bg-emerald-100 dark:bg-emerald-900/30 rounded-lg p-3 mt-2',
+                  className: 'bg-emerald-100 dark:bg-emerald-900/30 rounded-lg p-3 mt-2',
                   child: WDiv(
                     className: 'flex items-center gap-2',
                     children: [
-                      WIcon(Icons.check_circle,
-                          className: 'text-emerald-600 dark:text-emerald-400'),
-                      WText('70% less code, same result!',
-                          className:
-                              'text-sm font-medium text-emerald-700 dark:text-emerald-300'),
+                      WIcon(
+                        Icons.check_circle,
+                        className: 'text-emerald-600 dark:text-emerald-400',
+                      ),
+                      WText(
+                        '70% less code, same result!',
+                        className: 'text-sm font-medium text-emerald-700 dark:text-emerald-300',
+                      ),
                     ],
                   ),
                 ),

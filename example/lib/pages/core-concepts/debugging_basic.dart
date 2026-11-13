@@ -18,14 +18,12 @@ class _DebuggingBasicExamplePageState extends State<DebuggingBasicExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Debugging',
-      description:
-          'Add the debug class to any className to see the resolved widget composition, final styles, and build time in the dev console.',
+      description: 'Add the debug class to any className to see the resolved widget composition, final styles, and build time in the dev console.',
       gradient: 'from-amber-500 to-orange-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Drop debug anywhere in the className. The Wind parser prints a full report to the dev console on next build.',
+          description: 'Drop debug anywhere in the className. The Wind parser prints a full report to the dev console on next build.',
           child: WDiv(
             className: '''
               debug flex p-4 rounded-lg
@@ -43,29 +41,23 @@ class _DebuggingBasicExamplePageState extends State<DebuggingBasicExamplePage> {
         ),
         ExampleSection(
           title: 'What Debug Prints',
-          description:
-              'Each toggle produces three sections in the console output. Each one peels back one layer of the resolution pipeline.',
+          description: 'Each toggle produces three sections in the console output. Each one peels back one layer of the resolution pipeline.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: const [
               _OutputCard(
                 title: 'Composition Tree',
-                body:
-                    'Final Flutter widget hierarchy after Wind expands className into Padding / DecoratedBox / Row / ...',
-                sample:
-                    'Padding(\n  padding: EdgeInsets.all(16.0),\n  child: DecoratedBox(\n    decoration: BoxDecoration(\n      color: Color(0xFF3B82F6),\n      borderRadius: BorderRadius.circular(8.0),\n    ),\n  ),\n)',
+                body: 'Final Flutter widget hierarchy after Wind expands className into Padding / DecoratedBox / Row / ...',
+                sample: 'Padding(\n  padding: EdgeInsets.all(16.0),\n  child: DecoratedBox(\n    decoration: BoxDecoration(\n      color: Color(0xFF3B82F6),\n      borderRadius: BorderRadius.circular(8.0),\n    ),\n  ),\n)',
               ),
               _OutputCard(
                 title: 'Final Styles',
-                body:
-                    'Resolved WindStyle. Already merged across base, responsive, dark, and state prefixes.',
-                sample:
-                    'WindStyle(\n  padding: EdgeInsets.all(16.0),\n  backgroundColor: Color(0xFF3B82F6),\n  borderRadius: BorderRadius.circular(8.0),\n  isFlex: true,\n)',
+                body: 'Resolved WindStyle. Already merged across base, responsive, dark, and state prefixes.',
+                sample: 'WindStyle(\n  padding: EdgeInsets.all(16.0),\n  backgroundColor: Color(0xFF3B82F6),\n  borderRadius: BorderRadius.circular(8.0),\n  isFlex: true,\n)',
               ),
               _OutputCard(
                 title: 'Build Time',
-                body:
-                    'Microseconds spent parsing className and building the tree. Spikes over 1ms hint at heavy class complexity.',
+                body: 'Microseconds spent parsing className and building the tree. Spikes over 1ms hint at heavy class complexity.',
                 sample: 'Build Time: 142µs',
               ),
             ],
@@ -73,52 +65,50 @@ class _DebuggingBasicExamplePageState extends State<DebuggingBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Three pieces of output, one knob. The debug class is widget-scoped: parents and children stay quiet.',
+          description: 'Three pieces of output, one knob. The debug class is widget-scoped: parents and children stay quiet.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
               _RefRow(field: 'debug', purpose: 'Utility class on any widget'),
               _RefRow(
-                  field: 'Composition Tree', purpose: 'Pseudo-Dart hierarchy'),
+                field: 'Composition Tree',
+                purpose: 'Pseudo-Dart hierarchy',
+              ),
               _RefRow(field: 'Final Styles', purpose: 'WindStyle field dump'),
               _RefRow(
-                  field: 'Build Time',
-                  purpose: 'Microsecond performance audit'),
+                field: 'Build Time',
+                purpose: 'Microsecond performance audit',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Common Scenarios',
-          description:
-              'Add debug to confirm responsive resolution, state propagation, or unexpected wrapper widgets.',
+          description: 'Add debug to confirm responsive resolution, state propagation, or unexpected wrapper widgets.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
               _ScenarioRow(
                 title: 'Inspecting responsive styles',
-                body:
-                    'Resize the viewport with debug active. The logger re-fires with the new active breakpoint.',
+                body: 'Resize the viewport with debug active. The logger re-fires with the new active breakpoint.',
               ),
               _ScenarioRow(
                 title: 'Verifying state variants',
-                body:
-                    'Hover or focus a widget. The log updates to show the merged hover: / focus: styles.',
+                body: 'Hover or focus a widget. The log updates to show the merged hover: / focus: styles.',
               ),
               _ScenarioRow(
                 title: 'Analyzing layout layers',
-                body:
-                    'Use the composition tree to find which utility produced an unexpected Padding or DecoratedBox.',
+                body: 'Use the composition tree to find which utility produced an unexpected Padding or DecoratedBox.',
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'External Tooling',
-          description:
-              'For E2E drivers and inspectors, call Wind.installDebugResolver() inside kDebugMode at startup. Tree-shaken in release.',
+          description: 'For E2E drivers and inspectors, call Wind.installDebugResolver() inside kDebugMode at startup. Tree-shaken in release.',
           child: _CodeBlock(
-            code: 'import "package:flutter/foundation.dart";\n'
+            code:
+                'import "package:flutter/foundation.dart";\n'
                 'import "package:wind_kit/wind_kit.dart";\n\n'
                 'void main() {\n'
                 '  if (kDebugMode) {\n'
@@ -147,8 +137,7 @@ class _ToggleSection extends StatelessWidget {
 
     return ExampleSection(
       title: 'Try It Live',
-      description:
-          'Toggle debug on the demo widget. With the dev console open, hover or rebuild to watch the report appear.',
+      description: 'Toggle debug on the demo widget. With the dev console open, hover or rebuild to watch the report appear.',
       child: WDiv(
         className: 'flex flex-col gap-4',
         children: [
@@ -215,24 +204,15 @@ class _OutputCard extends StatelessWidget {
         border border-slate-200 dark:border-slate-700
       ''',
       children: [
-        WText(
-          title,
-          className: 'font-semibold text-slate-900 dark:text-white',
-        ),
-        WText(
-          body,
-          className: 'text-sm text-slate-600 dark:text-slate-400',
-        ),
+        WText(title, className: 'font-semibold text-slate-900 dark:text-white'),
+        WText(body, className: 'text-sm text-slate-600 dark:text-slate-400'),
         WDiv(
           className: '''
             mt-1 p-3 rounded font-mono text-xs
             bg-slate-900 dark:bg-slate-950
             overflow-x-auto
           ''',
-          child: WText(
-            sample,
-            className: 'whitespace-pre text-emerald-400',
-          ),
+          child: WText(sample, className: 'whitespace-pre text-emerald-400'),
         ),
       ],
     );
@@ -258,10 +238,7 @@ class _RefRow extends StatelessWidget {
           field,
           className: 'font-mono text-sm text-amber-600 dark:text-amber-400',
         ),
-        WText(
-          purpose,
-          className: 'text-sm text-slate-600 dark:text-slate-400',
-        ),
+        WText(purpose, className: 'text-sm text-slate-600 dark:text-slate-400'),
       ],
     );
   }
@@ -281,14 +258,8 @@ class _ScenarioRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(
-          title,
-          className: 'font-medium text-slate-900 dark:text-white',
-        ),
-        WText(
-          body,
-          className: 'text-sm text-slate-600 dark:text-slate-400',
-        ),
+        WText(title, className: 'font-medium text-slate-900 dark:text-white'),
+        WText(body, className: 'text-sm text-slate-600 dark:text-slate-400'),
       ],
     );
   }
@@ -308,10 +279,7 @@ class _CodeBlock extends StatelessWidget {
         text-emerald-400
         overflow-x-auto
       ''',
-      child: WText(
-        code,
-        className: 'whitespace-pre text-emerald-400',
-      ),
+      child: WText(code, className: 'whitespace-pre text-emerald-400'),
     );
   }
 }

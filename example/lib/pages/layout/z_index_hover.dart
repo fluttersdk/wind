@@ -10,14 +10,12 @@ class ZIndexHoverExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Z-Index on Hover',
-      description:
-          'Combine z-* with hover: to bring an overlapping card to the front when the pointer enters it.',
+      description: 'Combine z-* with hover: to bring an overlapping card to the front when the pointer enters it.',
       gradient: 'from-violet-600 to-purple-700',
       children: [
         ExampleSection(
           title: 'Pop on Hover',
-          description:
-              'Each card sits at z-0 but lifts to z-50 on hover. Try moving the mouse across the row.',
+          description: 'Each card sits at z-0 but lifts to z-50 on hover. Try moving the mouse across the row.',
           child: SizedBox(
             height: 160,
             child: Stack(
@@ -32,8 +30,7 @@ class ZIndexHoverExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Shadow Pairing',
-          description:
-              'Lifting the card on hover usually pairs with a stronger shadow. Same className technique.',
+          description: 'Lifting the card on hover usually pairs with a stronger shadow. Same className technique.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(
@@ -76,17 +73,15 @@ class _HoverCard extends StatelessWidget {
       child: WAnchor(
         onTap: () {},
         child: WDiv(
-          className: '''
+          className:
+              '''
             z-0 hover:z-50
             w-24 h-24 rounded-lg duration-200
             $color
             shadow-md hover:shadow-2xl
             flex items-center justify-center
           ''',
-          child: WText(
-            label,
-            className: 'text-white font-bold text-sm',
-          ),
+          child: WText(label, className: 'text-white font-bold text-sm'),
         ),
       ),
     );

@@ -14,48 +14,54 @@ class ContextExtensionsBasicExamplePage extends StatelessWidget {
 
     return ExampleScaffold(
       title: 'Context Extensions',
-      description:
-          'BuildContext getters expose Wind theme + responsive + helpers ergonomically: context.windTheme, context.windIsDark, context.wIsMobile, context.wColorExt, ...',
+      description: 'BuildContext getters expose Wind theme + responsive + helpers ergonomically: context.windTheme, context.windIsDark, context.wIsMobile, context.wColorExt, ...',
       gradient: 'from-sky-500 to-blue-600',
       children: [
         ExampleSection(
           title: 'Live Readout',
-          description:
-              'Resize and toggle dark mode to see these getters update in real time.',
+          description: 'Resize and toggle dark mode to see these getters update in real time.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: [
               _ReadoutRow(
-                  label: 'context.windIsDark', value: isDark.toString()),
+                label: 'context.windIsDark',
+                value: isDark.toString(),
+              ),
               _ReadoutRow(
-                  label: 'context.wActiveBreakpoint', value: breakpoint),
+                label: 'context.wActiveBreakpoint',
+                value: breakpoint,
+              ),
               _ReadoutRow(
-                  label: 'context.wIsMobile',
-                  value: context.wIsMobile.toString()),
+                label: 'context.wIsMobile',
+                value: context.wIsMobile.toString(),
+              ),
               _ReadoutRow(
-                  label: 'context.wIsTablet',
-                  value: context.wIsTablet.toString()),
+                label: 'context.wIsTablet',
+                value: context.wIsTablet.toString(),
+              ),
               _ReadoutRow(
-                  label: 'context.wIsDesktop',
-                  value: context.wIsDesktop.toString()),
+                label: 'context.wIsDesktop',
+                value: context.wIsDesktop.toString(),
+              ),
               _ReadoutRow(
-                  label: 'MediaQuery width', value: '${width.toInt()}px'),
+                label: 'MediaQuery width',
+                value: '${width.toInt()}px',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'context.windTheme: Toggle from Anywhere',
-          description:
-              'The header toggle uses this exact call. Available globally without provider drilling.',
+          description: 'The header toggle uses this exact call. Available globally without provider drilling.',
           child: _CodeBlock(
-            code: 'context.windTheme.toggleTheme();\n'
+            code:
+                'context.windTheme.toggleTheme();\n'
                 'context.windTheme.setBrightness(Brightness.dark);',
           ),
         ),
         ExampleSection(
           title: 'context.wColorExt: Color Resolver',
-          description:
-              'Resolves a theme color in one call. The block below shows three live resolutions.',
+          description: 'Resolves a theme color in one call. The block below shows three live resolutions.',
           child: WDiv(
             className: 'wrap gap-3',
             children: const [
@@ -67,8 +73,7 @@ class ContextExtensionsBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'context.wStyleExt: Parse className',
-          description:
-              'Parse any utility string into a WindStyle to apply on plain Flutter widgets.',
+          description: 'Parse any utility string into a WindStyle to apply on plain Flutter widgets.',
           child: _CodeBlock(
             code:
                 'final style = context.wStyleExt("p-4 bg-blue-500 rounded-lg");\n\n'
@@ -100,10 +105,14 @@ class _ReadoutRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(label,
-            className: 'font-mono text-sm text-sky-700 dark:text-sky-400'),
-        WText(value,
-            className: 'font-mono text-sm text-slate-700 dark:text-slate-200'),
+        WText(
+          label,
+          className: 'font-mono text-sm text-sky-700 dark:text-sky-400',
+        ),
+        WText(
+          value,
+          className: 'font-mono text-sm text-slate-700 dark:text-slate-200',
+        ),
       ],
     );
   }

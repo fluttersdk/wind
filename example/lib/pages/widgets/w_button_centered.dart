@@ -10,14 +10,12 @@ class WButtonCenteredExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WButton Layouts',
-      description:
-          'WButton uses flexbox semantics internally. Add justify-center / items-center to control content alignment.',
+      description: 'WButton uses flexbox semantics internally. Add justify-center / items-center to control content alignment.',
       gradient: 'from-blue-600 to-indigo-700',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'w-full + justify-center renders a full-width button with centered content.',
+          description: 'w-full + justify-center renders a full-width button with centered content.',
           child: WButton(
             onTap: () {},
             className: '''
@@ -32,8 +30,7 @@ class WButtonCenteredExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Icon + Label',
-          description:
-              'Center an icon next to a label with flex items-center justify-center gap-N.',
+          description: 'Center an icon next to a label with flex items-center justify-center gap-N.',
           child: WButton(
             onTap: () {},
             className: '''
@@ -51,8 +48,7 @@ class WButtonCenteredExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Asymmetric Layout',
-          description:
-              'justify-between pushes icon and text to opposite ends. Useful for "next" / "previous" patterns.',
+          description: 'justify-between pushes icon and text to opposite ends. Useful for "next" / "previous" patterns.',
           child: WButton(
             onTap: () {},
             className: '''
@@ -68,8 +64,10 @@ class WButtonCenteredExamplePage extends StatelessWidget {
                   'Next step',
                   className: 'text-slate-900 dark:text-white font-medium',
                 ),
-                WIcon(Icons.arrow_forward,
-                    className: 'text-slate-700 dark:text-slate-200'),
+                WIcon(
+                  Icons.arrow_forward,
+                  className: 'text-slate-700 dark:text-slate-200',
+                ),
               ],
             ),
           ),

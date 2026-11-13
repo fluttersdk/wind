@@ -10,14 +10,12 @@ class ResponsiveBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Responsive Design',
-      description:
-          'Mobile-first breakpoints. Prefix any utility with sm:, md:, lg:, xl:, or 2xl: and it activates at that width and above.',
+      description: 'Mobile-first breakpoints. Prefix any utility with sm:, md:, lg:, xl:, or 2xl: and it activates at that width and above.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Stacked on mobile, horizontal on md+. The same className resolves a different layout per breakpoint.',
+          description: 'Stacked on mobile, horizontal on md+. The same className resolves a different layout per breakpoint.',
           child: WDiv(
             className: '''
               flex flex-col md:flex-row gap-4 p-4 rounded-lg
@@ -33,8 +31,7 @@ class ResponsiveBasicExamplePage extends StatelessWidget {
         const _BreakpointIndicator(),
         ExampleSection(
           title: 'Mobile-First Approach',
-          description:
-              'Classes without a prefix apply to every screen. Add lg: to override only on large screens and up.',
+          description: 'Classes without a prefix apply to every screen. Add lg: to override only on large screens and up.',
           child: WDiv(
             className: '''
               p-6 rounded-lg text-white text-center font-medium
@@ -45,8 +42,7 @@ class ResponsiveBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Breakpoint Reference',
-          description:
-              'Five built-in breakpoints. Each value is the MINIMUM width at which the modifier activates.',
+          description: 'Five built-in breakpoints. Each value is the MINIMUM width at which the modifier activates.',
           child: WDiv(
             className: '''
               grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3
@@ -62,8 +58,7 @@ class ResponsiveBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Platform Prefixes',
-          description:
-              'Wind also recognizes platform modifiers. Apply styles per operating system or runtime.',
+          description: 'Wind also recognizes platform modifiers. Apply styles per operating system or runtime.',
           child: WDiv(
             className: '''
               grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3
@@ -81,8 +76,7 @@ class ResponsiveBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Combining Modifiers',
-          description:
-              'Chain breakpoint, mode, and state prefixes. Order is strict: breakpoint first, then state.',
+          description: 'Chain breakpoint, mode, and state prefixes. Order is strict: breakpoint first, then state.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
@@ -92,8 +86,10 @@ class ResponsiveBasicExamplePage extends StatelessWidget {
                   bg-blue-500 lg:dark:hover:bg-indigo-600
                   text-white px-4 py-3 rounded-lg self-start
                 ''',
-                child: const WText('lg:dark:hover:bg-indigo-600',
-                    className: 'text-white font-mono text-sm'),
+                child: const WText(
+                  'lg:dark:hover:bg-indigo-600',
+                  className: 'text-white font-mono text-sm',
+                ),
               ),
               WDiv(
                 className: '''
@@ -111,8 +107,7 @@ class ResponsiveBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Customizing Breakpoints',
-          description:
-              'Override the default scale via WindThemeData.screens. Custom keys become new prefixes.',
+          description: 'Override the default scale via WindThemeData.screens. Custom keys become new prefixes.',
           child: WDiv(
             className: '''
               p-4 rounded-lg font-mono text-xs
@@ -150,17 +145,13 @@ class _BreakpointIndicator extends StatelessWidget {
 
     return ExampleSection(
       title: 'Current Breakpoint',
-      description:
-          'Resize the window. The badge updates whenever your width crosses a threshold.',
+      description: 'Resize the window. The badge updates whenever your width crosses a threshold.',
       child: WDiv(
         className: 'flex items-center gap-3',
         children: [
           WDiv(
             className: '$badgeClass px-4 py-2 rounded-lg',
-            child: WText(
-              label,
-              className: 'text-white font-bold font-mono',
-            ),
+            child: WText(label, className: 'text-white font-bold font-mono'),
           ),
           WText(
             'Width: ${width.toInt()}px',
@@ -209,10 +200,7 @@ class _BreakpointTile extends StatelessWidget {
           width,
           className: 'text-sm font-mono text-slate-700 dark:text-slate-300',
         ),
-        WText(
-          use,
-          className: 'text-xs text-slate-500 dark:text-slate-400',
-        ),
+        WText(use, className: 'text-xs text-slate-500 dark:text-slate-400'),
       ],
     );
   }
@@ -233,10 +221,7 @@ class _PlatformTile extends StatelessWidget {
         border border-slate-200 dark:border-slate-700
       ''',
       children: [
-        WIcon(
-          icon,
-          className: 'w-5 h-5 text-slate-600 dark:text-slate-400',
-        ),
+        WIcon(icon, className: 'w-5 h-5 text-slate-600 dark:text-slate-400'),
         WText(
           prefix,
           className:

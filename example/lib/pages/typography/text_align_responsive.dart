@@ -10,14 +10,12 @@ class TextAlignResponsiveExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Responsive Text Align',
-      description:
-          'Switch alignment per breakpoint. Mobile readers expect centered hero text; desktop layouts often go left-aligned.',
+      description: 'Switch alignment per breakpoint. Mobile readers expect centered hero text; desktop layouts often go left-aligned.',
       gradient: 'from-rose-500 to-red-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Center on mobile, left on md+. Resize the window to see the alignment flip.',
+          description: 'Center on mobile, left on md+. Resize the window to see the alignment flip.',
           child: WDiv(
             className: '''
               w-full p-4 rounded
@@ -25,15 +23,13 @@ class TextAlignResponsiveExamplePage extends StatelessWidget {
             ''',
             child: const WText(
               'Responsive Alignment',
-              className:
-                  'text-center md:text-left text-lg text-slate-900 dark:text-white',
+              className: 'text-center md:text-left text-lg text-slate-900 dark:text-white',
             ),
           ),
         ),
         ExampleSection(
           title: 'Three-Stage Cascade',
-          description:
-              'left → center → right as the viewport grows. Useful for editorial layouts that re-balance across screen sizes.',
+          description: 'left → center → right as the viewport grows. Useful for editorial layouts that re-balance across screen sizes.',
           child: WDiv(
             className: '''
               w-full p-4 rounded
@@ -41,8 +37,7 @@ class TextAlignResponsiveExamplePage extends StatelessWidget {
             ''',
             child: const WText(
               'text-left sm:text-center lg:text-right',
-              className:
-                  'text-left sm:text-center lg:text-right font-mono text-slate-900 dark:text-white',
+              className: 'text-left sm:text-center lg:text-right font-mono text-slate-900 dark:text-white',
             ),
           ),
         ),

@@ -12,8 +12,7 @@ class SpacingHelpersBasicExamplePage extends StatelessWidget {
 
     return ExampleScaffold(
       title: 'Spacing Helpers',
-      description:
-          'Dart API for the spacing scale: wSpacing(context, N) and context.wSpacingExt(N). Both return N × baseSpacingUnit.',
+      description: 'Dart API for the spacing scale: wSpacing(context, N) and context.wSpacingExt(N). Both return N × baseSpacingUnit.',
       gradient: 'from-orange-500 to-red-600',
       children: [
         ExampleSection(
@@ -36,8 +35,7 @@ class SpacingHelpersBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Fractional Multipliers',
-          description:
-              'wSpacing also accepts decimals, useful for tight spacings that the className scale does not include.',
+          description: 'wSpacing also accepts decimals, useful for tight spacings that the className scale does not include.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -50,10 +48,10 @@ class SpacingHelpersBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Mixing With Material Widgets',
-          description:
-              'Wind values plug straight into standard EdgeInsets and SizedBox.',
+          description: 'Wind values plug straight into standard EdgeInsets and SizedBox.',
           child: _CodeBlock(
-            code: 'Container(\n'
+            code:
+                'Container(\n'
                 '  padding: EdgeInsets.all(context.wSpacingExt(4)), // 16px\n'
                 '  child: Text("Hello"),\n'
                 ')\n\n'

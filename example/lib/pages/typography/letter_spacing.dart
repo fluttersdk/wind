@@ -10,14 +10,12 @@ class LetterSpacingExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Letter Spacing',
-      description:
-          'tracking-{key} controls letterSpacing in em, as in Tailwind: a multiple of the font size, from tighter (-0.05em) to widest (0.1em).',
+      description: 'tracking-{key} controls letterSpacing in em, as in Tailwind: a multiple of the font size, from tighter (-0.05em) to widest (0.1em).',
       gradient: 'from-purple-500 to-fuchsia-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each row demonstrates a different tracking value. Watch the gaps between characters change.',
+          description: 'Each row demonstrates a different tracking value. Watch the gaps between characters change.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -36,14 +34,12 @@ class LetterSpacingExamplePage extends StatelessWidget {
               'Wide tracking with uppercase makes for striking section labels.',
           child: const WText(
             'TYPOGRAPHIC SCALE',
-            className:
-                'tracking-widest text-sm font-bold uppercase text-purple-700 dark:text-purple-400',
+            className: 'tracking-widest text-sm font-bold uppercase text-purple-700 dark:text-purple-400',
           ),
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Six built-in em steps. The pixels shown are for 14px text (text-sm).',
+          description: 'Six built-in em steps. The pixels shown are for 14px text (text-sm).',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -58,20 +54,17 @@ class LetterSpacingExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Arbitrary Tracking',
-          description:
-              'tracking-[6px] applies exact logical pixels at any size; tracking-[-0.02em] scales with the font size.',
+          description: 'tracking-[6px] applies exact logical pixels at any size; tracking-[-0.02em] scales with the font size.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
               WText(
                 'B R A N D',
-                className:
-                    'tracking-[6px] text-xl font-bold text-slate-900 dark:text-white',
+                className: 'tracking-[6px] text-xl font-bold text-slate-900 dark:text-white',
               ),
               WText(
                 'Quarterly results',
-                className:
-                    'tracking-[-0.02em] text-3xl font-semibold text-slate-900 dark:text-white',
+                className: 'tracking-[-0.02em] text-3xl font-semibold text-slate-900 dark:text-white',
               ),
             ],
           ),

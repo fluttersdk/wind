@@ -142,8 +142,9 @@ class _OpacityBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final opacityClass =
-        opacity == '100' ? 'border-rose-500' : 'border-rose-500/$opacity';
+    final opacityClass = opacity == '100'
+        ? 'border-rose-500'
+        : 'border-rose-500/$opacity';
     return WDiv(
       className: 'flex flex-col items-center gap-2',
       children: [

@@ -31,8 +31,7 @@ class FlexAlignExamplePage extends StatelessWidget {
           // items-start
           _buildExample(
             label: 'items-start',
-            className:
-                'flex items-start gap-2 h-24 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex items-start gap-2 h-24 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
             boxes: [
               _buildBox('1', height: 'h-8'),
               _buildBox('2', height: 'h-12'),
@@ -43,8 +42,7 @@ class FlexAlignExamplePage extends StatelessWidget {
           // items-center
           _buildExample(
             label: 'items-center',
-            className:
-                'flex items-center gap-2 h-24 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex items-center gap-2 h-24 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
             boxes: [
               _buildBox('1', height: 'h-8'),
               _buildBox('2', height: 'h-12'),
@@ -55,8 +53,7 @@ class FlexAlignExamplePage extends StatelessWidget {
           // items-end
           _buildExample(
             label: 'items-end',
-            className:
-                'flex items-end gap-2 h-24 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex items-end gap-2 h-24 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
             boxes: [
               _buildBox('1', height: 'h-8'),
               _buildBox('2', height: 'h-12'),
@@ -67,8 +64,7 @@ class FlexAlignExamplePage extends StatelessWidget {
           // items-stretch
           _buildExample(
             label: 'items-stretch',
-            className:
-                'flex items-stretch gap-2 h-24 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex items-stretch gap-2 h-24 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
             boxes: [
               _buildStretchBox('1'),
               _buildStretchBox('2'),

@@ -10,8 +10,7 @@ class TypographyDecorationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Text Decoration',
-      description:
-          'underline, overline, line-through. Combine with decoration-{color}, decoration-{style}, decoration-{thickness} for fine control.',
+      description: 'underline, overline, line-through. Combine with decoration-{color}, decoration-{style}, decoration-{thickness} for fine control.',
       gradient: 'from-orange-500 to-amber-600',
       children: [
         ExampleSection(
@@ -30,12 +29,10 @@ class TypographyDecorationPage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Composed Styling',
-          description:
-              'underline + decoration-blue-500 + decoration-wavy + decoration-2 is one className that combines color, style, and thickness.',
+          description: 'underline + decoration-blue-500 + decoration-wavy + decoration-2 is one className that combines color, style, and thickness.',
           child: const WText(
             'Styled Decoration',
-            className:
-                'underline decoration-blue-500 decoration-wavy decoration-2 text-lg text-slate-900 dark:text-white',
+            className: 'underline decoration-blue-500 decoration-wavy decoration-2 text-lg text-slate-900 dark:text-white',
           ),
         ),
         ExampleSection(
@@ -99,11 +96,14 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className:
-                'font-mono text-sm text-orange-700 dark:text-orange-400'),
-        WText(val,
-            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-orange-700 dark:text-orange-400',
+        ),
+        WText(
+          val,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }

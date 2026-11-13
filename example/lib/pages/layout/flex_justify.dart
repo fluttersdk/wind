@@ -34,43 +34,37 @@ class FlexJustifyExamplePage extends StatelessWidget {
           // justify-start
           _buildExample(
             label: 'justify-start',
-            className:
-                'flex justify-start gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex justify-start gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
           ),
 
           // justify-center
           _buildExample(
             label: 'justify-center',
-            className:
-                'flex justify-center gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex justify-center gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
           ),
 
           // justify-end
           _buildExample(
             label: 'justify-end',
-            className:
-                'flex justify-end gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex justify-end gap-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
           ),
 
           // justify-between
           _buildExample(
             label: 'justify-between',
-            className:
-                'flex justify-between p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex justify-between p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
           ),
 
           // justify-around
           _buildExample(
             label: 'justify-around',
-            className:
-                'flex justify-around p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex justify-around p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
           ),
 
           // justify-evenly
           _buildExample(
             label: 'justify-evenly',
-            className:
-                'flex justify-evenly p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+            className: 'flex justify-evenly p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
           ),
         ],
       ),

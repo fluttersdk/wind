@@ -99,8 +99,7 @@ class SizingOverviewExamplePage extends StatelessWidget {
                 className: 'flex flex-col gap-2',
                 children: [
                   WDiv(
-                    className:
-                        'min-w-32 h-10 bg-amber-500 rounded-lg px-3 flex items-center',
+                    className: 'min-w-32 h-10 bg-amber-500 rounded-lg px-3 flex items-center',
                     child: WText(
                       'min-w-32 (128px min)',
                       className: 'text-white text-xs font-mono',
@@ -126,16 +125,14 @@ class SizingOverviewExamplePage extends StatelessWidget {
                 className: 'flex flex-col gap-2',
                 children: [
                   WDiv(
-                    className:
-                        'w-[100px] h-10 bg-purple-500 rounded-lg flex items-center justify-center',
+                    className: 'w-[100px] h-10 bg-purple-500 rounded-lg flex items-center justify-center',
                     child: WText(
                       'w-[100px]',
                       className: 'text-white text-xs font-mono',
                     ),
                   ),
                   WDiv(
-                    className:
-                        'w-[50%] h-10 bg-fuchsia-500 rounded-lg flex items-center justify-center',
+                    className: 'w-[50%] h-10 bg-fuchsia-500 rounded-lg flex items-center justify-center',
                     child: WText(
                       'w-[50%]',
                       className: 'text-white text-xs font-mono',

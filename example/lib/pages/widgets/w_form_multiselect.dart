@@ -34,14 +34,12 @@ class _WFormMultiSelectExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WFormMultiSelect',
-      description:
-          'Multi-value variant of WFormSelect. values: List<T>; validator receives the list. Selected values render as removable chips.',
+      description: 'Multi-value variant of WFormSelect. values: List<T>; validator receives the list. Selected values render as removable chips.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Pick at least one interest. Validator runs against the selected list.',
+          description: 'Pick at least one interest. Validator runs against the selected list.',
           child: Form(
             key: _formKey,
             child: WDiv(
@@ -69,9 +67,7 @@ class _WFormMultiSelectExamplePageState
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                            'Selected: ${_interests.join(", ")}',
-                          ),
+                          content: Text('Selected: ${_interests.join(", ")}'),
                           duration: const Duration(seconds: 2),
                         ),
                       );
@@ -81,8 +77,10 @@ class _WFormMultiSelectExamplePageState
                     bg-indigo-600 hover:bg-indigo-700
                     text-white px-4 py-2 rounded-lg self-start
                   ''',
-                  child: const WText('Submit',
-                      className: 'text-white font-medium'),
+                  child: const WText(
+                    'Submit',
+                    className: 'text-white font-medium',
+                  ),
                 ),
               ],
             ),
@@ -90,8 +88,7 @@ class _WFormMultiSelectExamplePageState
         ),
         ExampleSection(
           title: 'Min Selection',
-          description:
-              'Validate against length. Auto-validate mode shows the error as soon as the user opens and closes the menu.',
+          description: 'Validate against length. Auto-validate mode shows the error as soon as the user opens and closes the menu.',
           child: Form(
             child: WFormMultiSelect<String>(
               label: 'Skills (pick at least 2)',

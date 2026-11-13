@@ -96,8 +96,7 @@ class PaddingExamplePage extends StatelessWidget {
       className: 'flex items-center gap-3',
       children: [
         WDiv(
-          className:
-              'border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg',
+          className: 'border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg',
           child: WDiv(
             className: '$className rounded-lg',
             child: WText(label, className: 'text-white text-xs font-mono'),

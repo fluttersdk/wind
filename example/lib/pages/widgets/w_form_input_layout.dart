@@ -18,14 +18,12 @@ class WFormInputLayoutExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Form Input Layout',
-      description:
-          'WFormInput stacks label + input + (hint or error) vertically. Each slot has its own className for fine-tuning.',
+      description: 'WFormInput stacks label + input + (hint or error) vertically. Each slot has its own className for fine-tuning.',
       gradient: 'from-blue-500 to-cyan-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Label above, hint below. The hint is hidden when an error is present.',
+          description: 'Label above, hint below. The hint is hidden when an error is present.',
           child: WFormInput(
             label: 'Account Number',
             placeholder: '12 digits',
@@ -35,13 +33,11 @@ class WFormInputLayoutExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Custom Label & Error',
-          description:
-              'labelClassName and errorClassName override the defaults for tighter visual control.',
+          description: 'labelClassName and errorClassName override the defaults for tighter visual control.',
           child: WFormInput(
             label: 'Password',
             type: InputType.password,
-            labelClassName:
-                'text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-300 mb-2',
+            labelClassName: 'text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-300 mb-2',
             className: _inputCls,
             errorClassName:
                 'text-red-600 dark:text-red-400 font-bold italic mt-2',
@@ -52,8 +48,7 @@ class WFormInputLayoutExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Hide Error String',
-          description:
-              'showError: false keeps the error: prefix active on the input but suppresses the message text; useful when you render your own.',
+          description: 'showError: false keeps the error: prefix active on the input but suppresses the message text; useful when you render your own.',
           child: WFormInput(
             label: 'Email',
             placeholder: 'you@example.com',

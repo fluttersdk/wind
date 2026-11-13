@@ -10,14 +10,12 @@ class SizingBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Sizing',
-      description:
-          'w-{n} and h-{n} set explicit dimensions. Fractions (w-1/2), full (w-full), screen (w-screen), and arbitrary pixels are all supported.',
+      description: 'w-{n} and h-{n} set explicit dimensions. Fractions (w-1/2), full (w-full), screen (w-screen), and arbitrary pixels are all supported.',
       gradient: 'from-yellow-500 to-orange-500',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Fixed pixel widths follow the spacing scale (base 4px). Percentages and viewport units are aliases.',
+          description: 'Fixed pixel widths follow the spacing scale (base 4px). Percentages and viewport units are aliases.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: const [
@@ -38,9 +36,7 @@ class SizingBasicExamplePage extends StatelessWidget {
               WDiv(
                 className: 'size-2 rounded-full bg-green-500 dark:bg-green-400',
               ),
-              WDiv(
-                className: 'size-8 rounded-lg bg-blue-500 dark:bg-blue-400',
-              ),
+              WDiv(className: 'size-8 rounded-lg bg-blue-500 dark:bg-blue-400'),
               WDiv(
                 className:
                     'size-12 rounded-full bg-purple-500 dark:bg-purple-400',
@@ -54,8 +50,7 @@ class SizingBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Max-Width Scale',
-          description:
-              'max-w-{key} caps the width. Combine with mx-auto for a centered, readable column.',
+          description: 'max-w-{key} caps the width. Combine with mx-auto for a centered, readable column.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -68,8 +63,7 @@ class SizingBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Fixed sizes follow the spacing scale; fractions take CSS-like keys.',
+          description: 'Fixed sizes follow the spacing scale; fractions take CSS-like keys.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -85,8 +79,7 @@ class SizingBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Responsive Sizing',
-          description:
-              'Full width on mobile, half on md, third on lg. The same element shrinks as the viewport grows.',
+          description: 'Full width on mobile, half on md, third on lg. The same element shrinks as the viewport grows.',
           child: WDiv(
             className: 'flex justify-center',
             child: WDiv(
@@ -110,13 +103,17 @@ class SizingBasicExamplePage extends StatelessWidget {
             children: [
               WDiv(
                 className: 'w-[350px] h-12 bg-yellow-500 rounded-lg',
-                child: const WText('w-[350px]',
-                    className: 'text-white text-sm font-mono pl-3 self-center'),
+                child: const WText(
+                  'w-[350px]',
+                  className: 'text-white text-sm font-mono pl-3 self-center',
+                ),
               ),
               WDiv(
                 className: 'w-[33%] h-12 bg-orange-500 rounded-lg',
-                child: const WText('w-[33%]',
-                    className: 'text-white text-sm font-mono pl-3 self-center'),
+                child: const WText(
+                  'w-[33%]',
+                  className: 'text-white text-sm font-mono pl-3 self-center',
+                ),
               ),
             ],
           ),
@@ -141,9 +138,7 @@ class _SizingRow extends StatelessWidget {
           label,
           className: 'text-xs font-mono text-slate-500 dark:text-slate-400',
         ),
-        WDiv(
-          className: '$sizeClass h-12 bg-yellow-500 rounded-lg',
-        ),
+        WDiv(className: '$sizeClass h-12 bg-yellow-500 rounded-lg'),
       ],
     );
   }
@@ -165,7 +160,8 @@ class _MaxWidthRow extends StatelessWidget {
           className: 'text-xs font-mono text-slate-500 dark:text-slate-400',
         ),
         WDiv(
-          className: '''
+          className:
+              '''
             $maxClass h-8 rounded
             bg-gradient-to-r from-yellow-400 to-orange-500
           ''',

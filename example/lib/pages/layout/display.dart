@@ -10,24 +10,22 @@ class DisplayExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Display',
-      description:
-          'Pick the layout mode for a WDiv: block, flex, grid, wrap, or hidden. Each maps to a Flutter widget.',
+      description: 'Pick the layout mode for a WDiv: block, flex, grid, wrap, or hidden. Each maps to a Flutter widget.',
       gradient: 'from-blue-500 to-indigo-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'The display utility decides whether WDiv renders a Container, Row/Column, GridView, Wrap, or SizedBox.shrink.',
+          description: 'The display utility decides whether WDiv renders a Container, Row/Column, GridView, Wrap, or SizedBox.shrink.',
           child: _CodeBlock(
-            code: 'WDiv(className: "flex gap-4", children: [...])\n'
+            code:
+                'WDiv(className: "flex gap-4", children: [...])\n'
                 'WDiv(className: "grid grid-cols-3", children: [...])\n'
                 'WDiv(className: "hidden", child: ...)',
           ),
         ),
         ExampleSection(
           title: 'Block',
-          description:
-              'Default mode. WDiv lays children out vertically when no display utility is set.',
+          description: 'Default mode. WDiv lays children out vertically when no display utility is set.',
           child: WDiv(
             className: '''
               block p-4 rounded-lg
@@ -42,8 +40,7 @@ class DisplayExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Flex',
-          description:
-              'flex turns WDiv into a Row by default. Add flex-col for vertical.',
+          description: 'flex turns WDiv into a Row by default. Add flex-col for vertical.',
           child: WDiv(
             className: '''
               flex items-center gap-4 p-4 rounded-lg
@@ -60,8 +57,7 @@ class DisplayExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Grid',
-          description:
-              'grid resolves to a GridView with crossAxisCount = grid-cols-{n}.',
+          description: 'grid resolves to a GridView with crossAxisCount = grid-cols-{n}.',
           child: WDiv(
             className: 'grid grid-cols-3 gap-3',
             children: const [
@@ -73,8 +69,7 @@ class DisplayExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Wrap',
-          description:
-              'wrap renders a Flutter Wrap. Children flow to the next line when they run out of room.',
+          description: 'wrap renders a Flutter Wrap. Children flow to the next line when they run out of room.',
           child: WDiv(
             className: 'wrap gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg',
             children: List.generate(8, (i) {
@@ -93,8 +88,7 @@ class DisplayExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Hidden',
-          description:
-              'hidden replaces the subtree with SizedBox.shrink(). Conditional rendering with no layout shift.',
+          description: 'hidden replaces the subtree with SizedBox.shrink(). Conditional rendering with no layout shift.',
           child: WDiv(
             className: 'flex gap-4',
             children: const [
@@ -108,10 +102,7 @@ class DisplayExamplePage extends StatelessWidget {
                   className: 'text-emerald-700 dark:text-emerald-300',
                 ),
               ),
-              WDiv(
-                className: 'hidden',
-                child: WText('You will not see me'),
-              ),
+              WDiv(className: 'hidden', child: WText('You will not see me')),
               WDiv(
                 className: '''
                   px-4 py-2 rounded
@@ -137,7 +128,9 @@ class DisplayExamplePage extends StatelessWidget {
               _RefRow(cls: 'grid', body: 'GridView with grid-cols-{n}.'),
               _RefRow(cls: 'wrap', body: 'Wrap widget: multi-line flow.'),
               _RefRow(
-                  cls: 'hidden', body: 'SizedBox.shrink: removes from tree.'),
+                cls: 'hidden',
+                body: 'SizedBox.shrink: removes from tree.',
+              ),
             ],
           ),
         ),
@@ -202,10 +195,7 @@ class _CodeBlock extends StatelessWidget {
         text-emerald-400
         overflow-x-auto
       ''',
-      child: WText(
-        code,
-        className: 'whitespace-pre text-emerald-400',
-      ),
+      child: WText(code, className: 'whitespace-pre text-emerald-400'),
     );
   }
 }
