@@ -72,7 +72,7 @@ No production code without a failing test first. Zero analyzer issues, no format
 
 | Mistake | Fix |
 |---------|-----|
-| A colour token without its `dark:` pair | Every `bg-` / `text-` / `border-` / `ring-` / `shadow-` / `fill-` carries its `dark:` peer in the same className |
+| A colour token without its `dark:` pair | Every `bg-` / `text-` / `border-` / `ring-` / `shadow-` / `fill-` carries its `dark:` peer in the same className, except a colour that reads the same in both modes (a solid `-500` status fill, white text on a saturated button) |
 | Interpolating Dart into a className | Route conditions through `states:` and prefixed classes; interpolation breaks the parser cache |
 | A new sub-barrel | The package has one barrel, `wind_kit.dart` |
 | Renaming a `doc/` page or an example route | The docs site embeds the gallery and links pages by path; keep them stable |
