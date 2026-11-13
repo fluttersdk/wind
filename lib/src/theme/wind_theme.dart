@@ -176,10 +176,13 @@ class WindTheme extends StatefulWidget {
   final Widget Function(BuildContext context, WindThemeController controller)?
   builder;
 
-  /// Callback fired when the user manually changes the theme.
+  /// Callback fired when the brightness changes and the change did not come
+  /// from the operating system sync.
   ///
-  /// This is called when [toggleTheme] is invoked on the controller,
-  /// NOT when the system brightness changes automatically.
+  /// This is called for `toggleTheme`, `setTheme`, `updateTheme(brightness:)`,
+  /// `resetToSystem`, and a new `data:` handed down by a parent rebuild, as
+  /// long as the brightness actually differs. It is NOT called when the system
+  /// brightness changes automatically.
   ///
   /// Use this to persist the user's theme preference externally:
   /// ```dart

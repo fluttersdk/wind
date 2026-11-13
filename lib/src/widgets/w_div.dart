@@ -24,7 +24,8 @@ import 'wind_min_width_scroll.dart';
 ///
 /// Instead of blindly wrapping content in a `Container`, `WDiv` inspects
 /// the [className] and selectively applies specialized widgets like `Padding`,
-/// `Align`, `Row`, or `GridView` only when necessary.
+/// `Align`, `Row`, or a `Wrap` inside a `LayoutBuilder` (for grids) only when
+/// necessary.
 ///
 /// ### Supported Features:
 /// - **Flexbox:** `flex`, `flex-row`, `items-center`, `justify-between`

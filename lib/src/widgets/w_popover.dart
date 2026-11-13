@@ -234,7 +234,8 @@ class WPopover extends StatefulWidget {
 
   /// Maximum height for the popover content.
   ///
-  /// Content will scroll if it exceeds this height.
+  /// Caps the overlay height. Content taller than this does not scroll on its
+  /// own: give the popover [className] `overflow-y-auto` for that.
   /// Default: `400`
   final double maxHeight;
 

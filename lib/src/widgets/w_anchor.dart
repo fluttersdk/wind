@@ -67,6 +67,7 @@ class WAnchor extends StatefulWidget {
   /// Example:
   /// - If `states` contains `'error'`, then `error:border-red-500` will activate.
   /// - If `states` contains `'active'`, then `active:bg-blue-600` will activate.
+  ///   No widget tracks a press, so `active` only appears when you pass it.
   final Set<String>? states;
 
   /// The cursor to use when the mouse pointer is over the widget.

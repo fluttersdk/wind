@@ -93,7 +93,7 @@ class WKeyboardActions extends StatefulWidget {
 
   /// Platform targeting: 'ios', 'android', or 'all' (default).
   ///
-  /// - `'all'` - Show on both iOS and Android
+  /// - `'all'` - Show on every platform
   /// - `'ios'` - Only show on iOS (recommended for numeric keyboard fix)
   /// - `'android'` - Only show on Android
   final String platform;
@@ -114,7 +114,8 @@ class WKeyboardActions extends StatefulWidget {
 
   /// Custom close widget builder.
   ///
-  /// If provided, replaces the default "Done" text button.
+  /// If provided, replaces the default text button, whose label is the
+  /// localised `MaterialLocalizations.okButtonLabel` ("OK" in English).
   final Widget Function(FocusNode)? closeWidgetBuilder;
 
   /// Creates a Wind keyboard actions wrapper.
