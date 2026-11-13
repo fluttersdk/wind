@@ -4,7 +4,7 @@ paths: example/lib/pages/**
 
 # Example page conventions (`example/lib/pages/`)
 
-Each page demonstrates ONE widget or ONE concept thoroughly. Files are referenced by `doc/` via `<x-preview source="...">` - stable file paths matter.
+Each page demonstrates ONE widget or ONE concept thoroughly. Files are referenced by `doc/` via `<x-preview source="...">` - stable file paths matter. Before restyling a page or the scaffold, read `DESIGN.md`.
 
 ## Naming
 

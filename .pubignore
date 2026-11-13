@@ -88,6 +88,8 @@ tool/
 .mcp.json
 CLAUDE.md
 CLAUDE.local.md
+PROJECT.md
+DESIGN.md
 .sync-agents-cache.json
 pubspec_overrides.yaml
 
