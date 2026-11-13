@@ -27,7 +27,7 @@ The package was renamed to `wind_kit`. To move an app over, replace the previous
 import 'package:wind_kit/wind_kit.dart';
 ```
 
-No `W*` or `Wind*` class changes, and every className token behaves as before. Do not depend on both packages in one app: each has its own `WindTheme` and `WindDebugRegistry`, so a `WDiv` from one finds no theme from the other.
+No `W*` or `Wind*` class changes, and every className token behaves as before. `WInput`'s selection handles and toolbar are now drawn by the package: lollipop handles, and a toolbar that scrolls sideways when its actions do not fit and has no arrow. Do not depend on both packages in one app: each has its own `WindTheme` and `WindDebugRegistry`, so a `WDiv` from one finds no theme from the other.
 
 <a name="moving-to-material-ui"></a>
 ### Moving to material_ui
@@ -70,7 +70,7 @@ MaterialApp(
 )
 ```
 
-If a third-party package or a subtree still imports `package:flutter/material.dart`, `material_ui` ships `MaterialUiCompatibilityBridge`, which bridges `ThemeData` and `MaterialLocalizations` for that subtree; see Step 3 of the `material_ui` README.
+If a third-party package or a subtree still imports `package:flutter/material.dart`, `material_ui` ships `MaterialUiCompatibilityBridge`, which bridges `ThemeData` and `MaterialLocalizations` for that subtree; see Step 3 of the `material_ui` README. `material_ui` marks it deprecated as a temporary migration utility that a future release removes, so treat it as a stopgap until that subtree moves to `material_ui` too.
 
 <a name="one-eight-to-one-nine"></a>
 ## 1.8.x to 1.9.0
