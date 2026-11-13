@@ -1,5 +1,5 @@
-import '../wind_style.dart';
 import '../wind_context.dart';
+import '../wind_style.dart';
 
 /// Interface for specialized Wind CSS parsers.
 ///

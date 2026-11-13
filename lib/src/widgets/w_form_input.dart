@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../utils/wind_perf_counters.dart';
+import 'w_div.dart';
 import 'w_input.dart';
 import 'w_text.dart';
-import 'w_div.dart';
 
 /// A Wind-styled input that integrates with Flutter's Form validation.
 ///

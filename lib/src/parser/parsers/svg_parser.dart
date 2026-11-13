@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-import 'wind_parser_interface.dart';
-import '../wind_style.dart';
-import '../wind_context.dart';
-import '../../utils/color_utils.dart';
 import '../../theme/wind_theme_data.dart';
+import '../../utils/color_utils.dart';
+import '../wind_context.dart';
+import '../wind_style.dart';
+import 'wind_parser_interface.dart';
 
 /// **SVG Parser**
 ///

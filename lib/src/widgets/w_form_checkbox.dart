@@ -3,8 +3,8 @@ import 'package:flutter/widgets.dart';
 import '../utils/wind_perf_counters.dart';
 import 'w_anchor.dart';
 import 'w_checkbox.dart';
-import 'w_text.dart';
 import 'w_div.dart';
+import 'w_text.dart';
 
 /// A Wind-styled checkbox that integrates with Flutter's Form validation.
 ///
