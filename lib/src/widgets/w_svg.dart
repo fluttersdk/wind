@@ -12,17 +12,26 @@ import '../utils/wind_perf_counters.dart';
 /// classes for styling. Like `WIcon`, it inherits color/size from parent styles.
 ///
 /// ### Supported Features:
-/// - **Sources:** Asset paths (`src`) or raw Strings (`svgString`)
+/// - **Sources:** Asset paths (`WSvg(src: ...)`) or raw strings (`WSvg.string(...)`)
 /// - **Coloring:** `fill-blue-500`, `stroke-red-500`, `text-green-500` (fallback)
 /// - **Sizing:** `w-6`, `h-6`, `text-xl`
-/// - **Effects:** `opacity-50`, `animate-spin`
+/// - **Effects:** `opacity-50` (animated when a `duration-*` is set)
+///
+/// WSvg applies no animation, transform or stroke width: `animate-*`,
+/// `scale-*` and `stroke-2` have no effect here. A `stroke-*` class is read as
+/// a colour, so a width such as `stroke-2` resolves to no colour and replaces
+/// an earlier `stroke-blue-500`. State variants such as `hover:` only apply
+/// under a `WAnchor` ancestor, or through the `states` parameter.
 ///
 /// ### Example Usage:
 ///
 /// ```dart
-/// WSvg(
-///   src: 'assets/icons/star.svg',
-///   className: 'fill-yellow-500 w-6 h-6 hover:scale-110 transition-transform',
+/// WAnchor(
+///   onTap: () {},
+///   child: WSvg(
+///     src: 'assets/icons/star.svg',
+///     className: 'fill-yellow-500 hover:fill-yellow-400 w-6 h-6',
+///   ),
 /// )
 /// ```
 ///
@@ -31,7 +40,7 @@ import '../utils/wind_perf_counters.dart';
 /// ```dart
 /// WSvg.string(
 ///   '<svg>...</svg>',
-///   className: 'stroke-blue-500 stroke-2 w-8 h-8',
+///   className: 'stroke-blue-500 w-8 h-8',
 /// )
 /// ```
 class WSvg extends StatelessWidget {
