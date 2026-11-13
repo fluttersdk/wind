@@ -130,4 +130,4 @@ print(wind.platform); // 'ios', 'android', 'web', 'macos', etc.
 
 For more details on responsive styling using class names, see the [Responsive Design](../core-concepts/responsive-design.md) guide.
 
-> **Defaults:** the `md` breakpoint starts at 800px; `wScreenIs(context, 'md')` is true from there up.
+> **Defaults:** the `md` breakpoint starts at 768px; `wScreenIs(context, 'md')` is true from there up.
