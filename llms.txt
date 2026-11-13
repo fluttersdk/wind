@@ -173,6 +173,7 @@ Android, iOS, web, macOS, Windows and Linux; the web build is WebAssembly-ready.
 - [API reference](https://pub.dev/documentation/wind_kit/latest/): generated from the doc comments.
 - [Changelog](https://github.com/anilcancakir/wind_kit/blob/master/CHANGELOG.md): what changed in each version.
 - [Architecture](https://github.com/anilcancakir/wind_kit/blob/master/ARCHITECTURE.md): module layout, data flow, the parser cache and a change guide.
+- [Project](https://github.com/anilcancakir/wind_kit/blob/master/PROJECT.md): what is in and out of scope, and the decisions already made.
 - [Skill](https://github.com/anilcancakir/wind_kit/tree/master/skills/wind-ui): the `wind-ui` skill source, mirrored to `anilcancakir/ai`.
 - [Docs MCP server](https://mcp.anilcancakir.com/): Streamable HTTP, no auth; tools `list_packages`, `list_docs`, `search_docs`, `read_doc`.
 - [Source](https://github.com/anilcancakir/wind_kit): issues and pull requests.
