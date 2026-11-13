@@ -4,6 +4,7 @@ What changed between wind_kit versions and what to edit in your app when you upg
 
 - [Overview](#overview)
 - [Moving to wind_kit](#moving-to-wind-kit)
+  - [Moving to material_ui](#moving-to-material-ui)
 - [1.8.x to 1.9.0](#one-eight-to-one-nine)
 - [1.3.x to 1.4.0](#one-three-to-one-four)
 - [1.0.x to 1.1.0](#one-zero-to-one-one)
@@ -27,6 +28,49 @@ import 'package:wind_kit/wind_kit.dart';
 ```
 
 No `W*` or `Wind*` class changes, and every className token behaves as before. Do not depend on both packages in one app: each has its own `WindTheme` and `WindDebugRegistry`, so a `WDiv` from one finds no theme from the other.
+
+<a name="moving-to-material-ui"></a>
+### Moving to material_ui
+
+Flutter 3.50 deprecates `package:flutter/material.dart` and `package:flutter/cupertino.dart`, and wind_kit builds on `material_ui`, the package that replaces the Material barrel. The floor is now Dart 3.13 and Flutter 3.47, and an app on Flutter 3.47 to 3.49 can already make the move.
+
+**Action required for an app that imports `package:flutter/material.dart`.** Add `material_ui` to the dependencies and replace the import:
+
+```bash
+flutter pub add material_ui
+```
+
+```dart
+// Before
+import 'package:flutter/material.dart';
+
+// After
+import 'package:material_ui/material_ui.dart';
+```
+
+`dart fix --apply --code=migrate_design_widgets` performs the import change for you, as the `material_ui` README describes. It also rewrites `package:flutter/cupertino.dart` to `package:cupertino_ui/cupertino_ui.dart`, so an app that uses Cupertino types directly adds `cupertino_ui` too (`flutter pub add cupertino_ui`); `cupertino_ui` types and the framework's Cupertino types are distinct to Dart, so do not mix the two. `material_ui` defines its own `MaterialApp`, `ThemeData` and localisations, so an app that keeps importing `package:flutter/material.dart` for its `MaterialApp` hits two symptoms:
+
+- Wind input widgets throw "No MaterialLocalizations found".
+- `WindThemeData.toThemeData()` returns a `ThemeData` that does not match the `ThemeData` type the old `MaterialApp` expects.
+
+The fix leaves `export` directives alone in the reported Dart 3.13.5 cases ([dart-lang/sdk#64560](https://github.com/dart-lang/sdk/issues/64560), still open when this guide was written), so a barrel file that re-exports `package:flutter/material.dart` or `package:flutter/cupertino.dart` needs its directive replaced by hand with the `material_ui` or `cupertino_ui` barrel. Search for `export 'package:flutter/material.dart'` after running it.
+
+**Action required for an app that uses the `flutter_localizations` delegates.** Replace `GlobalMaterialLocalizations` and `GlobalCupertinoLocalizations` from `flutter_localizations` with the delegates from `material_ui`, and remove the `package:flutter_localizations/flutter_localizations.dart` import from the same file: both libraries export a `GlobalMaterialLocalizations`, so keeping both makes the name ambiguous and the build fails. `GlobalMaterialLocalizations.delegates` already holds the Cupertino, Material and Widgets delegates, so delete separate `GlobalWidgetsLocalizations.delegate`, `GlobalMaterialLocalizations.delegate` and `GlobalCupertinoLocalizations.delegate` entries instead of listing them again. Keep your app's own delegates in the list:
+
+```dart
+// Before: the delegates of GlobalMaterialLocalizations and GlobalCupertinoLocalizations
+// from package:flutter_localizations
+
+// After: the delegates from package:material_ui, next to your own
+MaterialApp(
+  localizationsDelegates: [
+    AppLocalizations.delegate, // Keep your app's own delegates.
+    ...GlobalMaterialLocalizations.delegates,
+  ],
+)
+```
+
+If a third-party package or a subtree still imports `package:flutter/material.dart`, `material_ui` ships `MaterialUiCompatibilityBridge`, which bridges `ThemeData` and `MaterialLocalizations` for that subtree; see Step 3 of the `material_ui` README.
 
 <a name="one-eight-to-one-nine"></a>
 ## 1.8.x to 1.9.0

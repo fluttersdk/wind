@@ -19,24 +19,32 @@ Before adding Wind to your project, ensure your environment meets these minimum 
 
 | Dependency | Minimum Version | Recommended |
 |:-----------|:----------------|:------------|
-| Flutter    | `>= 3.27.0`     | `3.27.0+`   |
-| Dart       | `>= 3.4.0`      | `3.6.0+`    |
+| Flutter    | `>= 3.47.0`     | `3.50.0+`   |
+| Dart       | `>= 3.13.0`     | `3.13.0+`   |
 
 <a name="installation-step"></a>
 ## Installation
 
-Add `wind_kit` to your `pubspec.yaml` using the Flutter CLI:
+Add `wind_kit` and `material_ui` to your `pubspec.yaml` using the Flutter CLI:
 
 ```bash
-flutter pub add wind_kit
+flutter pub add wind_kit material_ui
 ```
 
-Alternatively, add it manually to your dependencies:
+Your app imports `material_ui` for its `MaterialApp`, so it declares the package itself rather than relying on `wind_kit` to bring it in.
+
+Existing apps that still import `package:flutter/material.dart` need extra steps. See the [upgrade guide](upgrade-guide.md#moving-to-material-ui) for the import change and for `MaterialUiCompatibilityBridge`, which covers legacy packages and subtrees.
+
+Alternatively, add both manually to your dependencies:
 
 ```yaml
 dependencies:
   wind_kit: any  # or pin to latest stable from pub.dev/packages/wind_kit
+  material_ui: any  # or pin to latest stable from pub.dev/packages/material_ui
 ```
+
+> [!NOTE]
+> An app on Flutter 3.47 to 3.49 can use the same imports. Flutter 3.50 deprecates `package:flutter/material.dart`, and `package:material_ui/material_ui.dart` is its replacement.
 
 <a name="basic-setup"></a>
 ## Basic Setup
@@ -45,12 +53,12 @@ To use Wind utilities, you must wrap your application with the `WindTheme` widge
 
 ### The Builder Pattern (Recommended)
 
-The `builder` pattern is the preferred way to initialise Wind. It provides a `controller` that synchronises Wind's theme state (like dark mode) directly with your `MaterialApp`.
+The `builder` pattern is the preferred way to initialise Wind. It provides a `controller` that synchronises Wind's theme state (like dark mode) directly with `material_ui`'s `MaterialApp`.
 
 Let's look at a typical implementation:
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 void main() => runApp(const MyApp());

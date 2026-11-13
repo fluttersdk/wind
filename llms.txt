@@ -2,17 +2,17 @@
 
 > Tailwind CSS for Flutter: `className` strings such as `flex p-4 bg-white dark:bg-gray-800` become optimised Flutter widget trees. W-prefix widgets, token parsers, a `WindThemeData` of token scales, responsive, `dark:`, state and platform prefixes, `WindRecipe` variant composition and `WDynamic` server-driven UI. Stable 1.x, MIT.
 
-**Stack**: Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `wind_kit_diagnostics_contracts`. No state management library, no router, no mocking library.
+**Stack**: Flutter >=3.47.0 · Dart >=3.13.0 · Runtime deps: `flutter_svg`, `material_ui`, `wind_kit_diagnostics_contracts`. No state management library, no router, no mocking library.
 
 **Setup**:
 
 ```bash
-flutter pub add wind_kit
+flutter pub add wind_kit material_ui
 ```
 
 ```dart
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 void main() {

@@ -25,12 +25,13 @@ Customising `WindThemeData`, brightness control, breakpoint scale, platform pref
 # pubspec.yaml
 dependencies:
   wind_kit: ^1.12.0
+  material_ui: ^1.11.0
 ```
 
 ```dart
 // lib/main.dart
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 void main() {
