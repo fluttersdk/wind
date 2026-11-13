@@ -19,13 +19,13 @@ WText('Leading tight', className: 'leading-tight')
 WText('Leading loose', className: 'leading-loose')
 
 // Fixed line-heights
-WText('Leading 6', className: 'leading-6')
+WText('Leading 6', className: 'text-base leading-6')
 ```
 
 <a name="basic-usage"></a>
 ## Basic Usage
 
-Use `leading-{value}` to control the line height of an element. Relative line heights (like `normal`, `loose`) depend on the font size, while fixed line heights (like `leading-6`) set a specific height independent of the font size.
+Use `leading-{value}` to control the line height of an element. Relative line heights (like `normal`, `loose`) are multipliers of the font size, while fixed line heights (like `leading-6`) are logical pixels. A fixed line height needs a font size on the same widget (a `text-*` class): Wind divides the pixels by that size to get Flutter's height factor, and without one the line height is not applied.
 
 ```dart
 WDiv(

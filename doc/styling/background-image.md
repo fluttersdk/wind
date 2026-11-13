@@ -117,6 +117,7 @@ The `bg-[...]` syntax allows you to pass any string value.
 WDiv(className: 'bg-[url(images/hero.png)]')
 
 // Direct path syntax (also supported)
+// An absolute path loads a FileImage: native platforms only, no background on web or WASM
 WDiv(className: 'bg-[/path/to/local/file.png]')
 ```
 

@@ -4,6 +4,8 @@ A `tv()` (tailwind-variants) equivalent for Wind. Composes a className from a `b
 
 `WindSlotRecipe` extends the same model to multi-part components: instead of a single string, each call returns a `Map<String, String>` of slot-name to className.
 
+## Table of Contents
+
 - [Basic Usage](#basic-usage)
 - [Props: WindRecipe](#props-windrecipe)
 - [Props: WindSlotRecipe](#props-windslotrecipe)

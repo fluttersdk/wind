@@ -57,10 +57,10 @@ Use `shadow-{color}` utilities to change the colour of the shadow. This preserve
 
 ```dart
 // Blue tinted shadow
-WDiv(className: 'shadow-lg shadow-blue-500')
+WDiv(className: 'shadow-lg shadow-blue-500 dark:shadow-blue-400')
 
 // Red tinted shadow
-WDiv(className: 'shadow-md shadow-red-500')
+WDiv(className: 'shadow-md shadow-red-500 dark:shadow-red-400')
 ```
 
 | Class | Description |
