@@ -1,12 +1,14 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/src/parser/wind_parser.dart';
 import 'package:wind_kit/src/theme/wind_theme.dart';
 import 'package:wind_kit/src/theme/wind_theme_data.dart';
 import 'package:wind_kit/src/widgets/w_input.dart';
+import 'package:wind_kit/src/widgets/w_text_selection.dart';
 
 /// Bare harness mirroring [material_free_test.dart]: [Directionality] >
 /// [WindTheme] > child, with NO Material ancestor. Selection that needs an
@@ -297,12 +299,12 @@ void main() {
       });
     });
 
-    // QA (7): WInput wires Cupertino handle controls on EVERY platform (it stays
-    // cupertino-only / no package:material_ui/material_ui.dart import), and the bare
-    // harness never trips debugCheckHasMaterialLocalizations on any platform.
-    group('cupertino-only handle controls', () {
+    // QA (7): WInput wires its own widgets-layer handle controls on EVERY
+    // platform (no Material or Cupertino import), and the bare harness never
+    // trips debugCheckHasMaterialLocalizations on any platform.
+    group('widgets-layer handle controls', () {
       for (final TargetPlatform platform in TargetPlatform.values) {
-        testWidgets('wires Cupertino handle controls on $platform', (
+        testWidgets('wires the package handle controls on $platform', (
           tester,
         ) async {
           debugDefaultTargetPlatformOverride = platform;
@@ -321,11 +323,11 @@ void main() {
               find.byType(EditableText),
             );
             expect(
-              editable.selectionControls.runtimeType,
-              cupertinoTextSelectionHandleControls.runtimeType,
+              editable.selectionControls,
+              isA<WindTextSelectionHandleControls>(),
               reason:
-                  'WInput must wire Cupertino handle controls on every '
-                  'platform (cupertino-only, no material.dart import).',
+                  'WInput must wire its own handle controls on every '
+                  'platform (no Material or Cupertino import).',
             );
             expect(tester.takeException(), isNull);
           } finally {
@@ -334,7 +336,231 @@ void main() {
         });
       }
     });
+
+    // QA (8): the toolbar is the package's own and renders under both a bare
+    // WidgetsApp root and a MaterialApp root, with localized labels.
+    group('selection toolbar', () {
+      testWidgets('renders the package toolbar under a bare WidgetsApp', (
+        tester,
+      ) async {
+        final controller = TextEditingController(text: 'hello world');
+        addTearDown(controller.dispose);
+
+        await tester.pumpWidget(
+          _overlayHarness(WInput(controller: controller)),
+        );
+        await _selectHelloAndShowToolbar(tester, controller);
+
+        expect(find.byType(WindTextSelectionToolbar), findsOneWidget);
+        expect(find.text('Copy'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('renders the package toolbar under a MaterialApp', (
+        tester,
+      ) async {
+        final controller = TextEditingController(text: 'hello world');
+        addTearDown(controller.dispose);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: Scaffold(body: WInput(controller: controller)),
+            ),
+          ),
+        );
+        await _selectHelloAndShowToolbar(tester, controller);
+
+        expect(find.byType(WindTextSelectionToolbar), findsOneWidget);
+        expect(find.text('Copy'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('tapping Copy keeps the field focused and copies', (
+        tester,
+      ) async {
+        final List<MethodCall> clipboard = [];
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          (call) async {
+            clipboard.add(call);
+            return null;
+          },
+        );
+        addTearDown(
+          () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            SystemChannels.platform,
+            null,
+          ),
+        );
+        final controller = TextEditingController(text: 'hello world');
+        addTearDown(controller.dispose);
+        final focusNode = FocusNode();
+        addTearDown(focusNode.dispose);
+
+        await tester.pumpWidget(
+          _overlayHarness(WInput(controller: controller, focusNode: focusNode)),
+        );
+        await _selectHelloAndShowToolbar(tester, controller);
+        // A mouse tap outside the field's tap region unfocuses it on every
+        // platform (a touch tap does not on Android and iOS), so this fails if
+        // the toolbar ever falls outside the region.
+        await tester.tap(find.text('Copy'), kind: PointerDeviceKind.mouse);
+        await tester.pump();
+
+        expect(focusNode.hasFocus, isTrue);
+        expect(
+          clipboard.where((call) => call.method == 'Clipboard.setData'),
+          isNotEmpty,
+        );
+      });
+
+      for (final (Brightness brightness, Color surface, Color text) in [
+        (Brightness.light, const Color(0xFFFFFFFF), const Color(0xFF111827)),
+        (Brightness.dark, const Color(0xFF1E293B), const Color(0xFFFFFFFF)),
+      ]) {
+        testWidgets('paints the ${brightness.name} toolbar palette', (
+          tester,
+        ) async {
+          final controller = TextEditingController(text: 'hello world');
+          addTearDown(controller.dispose);
+
+          await tester.pumpWidget(
+            WidgetsApp(
+              color: const Color(0xFF000000),
+              builder: (context, _) => Overlay(
+                initialEntries: [
+                  OverlayEntry(
+                    builder: (context) => WindTheme(
+                      data: WindThemeData(
+                        brightness: brightness,
+                        syncWithSystem: false,
+                      ),
+                      child: WInput(controller: controller),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+          await _selectHelloAndShowToolbar(tester, controller);
+
+          final WindTextSelectionToolbar toolbar = tester
+              .widget<WindTextSelectionToolbar>(
+                find.byType(WindTextSelectionToolbar),
+              );
+          expect(toolbar.backgroundColor, surface);
+          expect(toolbar.foregroundColor, text);
+        });
+      }
+
+      testWidgets('repaints the open toolbar when the Wind theme toggles', (
+        tester,
+      ) async {
+        final controller = TextEditingController(text: 'hello world');
+        addTearDown(controller.dispose);
+        final ValueNotifier<Brightness> brightness = ValueNotifier(
+          Brightness.light,
+        );
+        addTearDown(brightness.dispose);
+
+        await tester.pumpWidget(
+          WidgetsApp(
+            color: const Color(0xFF000000),
+            builder: (context, _) => Overlay(
+              initialEntries: [
+                OverlayEntry(
+                  builder: (context) => ValueListenableBuilder<Brightness>(
+                    valueListenable: brightness,
+                    builder: (context, value, _) => WindTheme(
+                      data: WindThemeData(
+                        brightness: value,
+                        syncWithSystem: false,
+                      ),
+                      child: WInput(controller: controller),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+        await _selectHelloAndShowToolbar(tester, controller);
+        Color surface() => tester
+            .widget<WindTextSelectionToolbar>(
+              find.byType(WindTextSelectionToolbar),
+            )
+            .backgroundColor;
+        expect(surface(), const Color(0xFFFFFFFF));
+
+        brightness.value = Brightness.dark;
+        await tester.pump();
+        await tester.pump();
+
+        expect(surface(), const Color(0xFF1E293B));
+      });
+
+      testWidgets('labels and reaches every iOS action on a 320px screen', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        try {
+          final controller = TextEditingController(text: 'hello world');
+          addTearDown(controller.dispose);
+
+          await tester.pumpWidget(
+            _overlayHarness(WInput(controller: controller)),
+          );
+          await _selectHelloAndShowToolbar(tester, controller);
+
+          expect(tester.takeException(), isNull, reason: 'no overflow');
+          for (final String label in ['Look Up', 'Search Web', 'Share']) {
+            expect(find.text(label), findsOneWidget, reason: label);
+          }
+          expect(
+            find.descendant(
+              of: find.byType(WindTextSelectionToolbarButton),
+              matching: find.text(''),
+            ),
+            findsNothing,
+            reason: 'no blank button',
+          );
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      });
+    });
   });
+}
+
+/// Focuses the field, selects "hello" and asks the EditableText to show its
+/// context menu, the same path a long-press or a right click takes.
+Future<void> _selectHelloAndShowToolbar(
+  WidgetTester tester,
+  TextEditingController controller,
+) async {
+  await tester.tap(find.byType(EditableText));
+  await tester.pump();
+
+  final EditableTextState state = tester.state<EditableTextState>(
+    find.byType(EditableText),
+  );
+  state.userUpdateTextEditingValue(
+    controller.value.copyWith(
+      selection: const TextSelection(baseOffset: 0, extentOffset: 5),
+    ),
+    SelectionChangedCause.tap,
+  );
+  await tester.pump();
+  state.showToolbar();
+  await tester.pumpAndSettle();
 }
 
 /// Walks down from [object] to the first [RenderEditable] (the EditableText's
