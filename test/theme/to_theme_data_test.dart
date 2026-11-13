@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wind_kit/src/theme/wind_theme_data.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/src/theme/defaults/colors.dart' as default_colors;
+import 'package:wind_kit/src/theme/wind_theme_data.dart';
 
 void main() {
   group('WindThemeData.toThemeData', () {
