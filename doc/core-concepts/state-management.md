@@ -38,7 +38,7 @@ WButton(
 )
 ```
 
-In this case, the background colour transitions smoothly between shades based on the interaction state.
+In this case, the background shifts between shades based on the interaction state. A `WButton` applies the new colour at once and `duration-200` only fades its opacity; to animate the colour itself, put the same classes on a `WDiv`, which wraps its decoration in an `AnimatedContainer` when a duration is set.
 
 > [!NOTE]
 > For state prefixes to work, the widget must be wrapped in an interactive component like `WAnchor`, `WButton`, or `WInput`. `WDiv` wraps itself in a `WAnchor` when its className has `hover:`, `focus:` or `active:`; hover is per anchor and is not inherited by a nested `WDiv`.
