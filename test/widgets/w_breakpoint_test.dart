@@ -24,8 +24,9 @@ void main() {
   });
 
   group('WBreakpoint resolution', () {
-    testWidgets('falls back to base when no higher builder matches',
-        (tester) async {
+    testWidgets('falls back to base when no higher builder matches', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           size: const Size(320, 800),
@@ -54,8 +55,9 @@ void main() {
       expect(find.text('SM'), findsOneWidget);
     });
 
-    testWidgets('picks highest defined builder ≤ active breakpoint',
-        (tester) async {
+    testWidgets('picks highest defined builder ≤ active breakpoint', (
+      tester,
+    ) async {
       // lg width (>=1024), but only sm and md defined → md wins
       await tester.pumpWidget(
         wrapWithTheme(
@@ -103,8 +105,9 @@ void main() {
       expect(find.text('2XL'), findsOneWidget);
     });
 
-    testWidgets('custom breakpoint from WindThemeData.screens resolves',
-        (tester) async {
+    testWidgets('custom breakpoint from WindThemeData.screens resolves', (
+      tester,
+    ) async {
       final theme = WindThemeData().copyWith(
         screens: const {
           'sm': 640,
@@ -131,8 +134,9 @@ void main() {
       expect(find.text('TABLET'), findsOneWidget);
     });
 
-    testWidgets('custom key falls through to lower built-in when undefined',
-        (tester) async {
+    testWidgets('custom key falls through to lower built-in when undefined', (
+      tester,
+    ) async {
       final theme = WindThemeData().copyWith(
         screens: const {
           'sm': 640,
@@ -172,12 +176,12 @@ void main() {
 
     testWidgets('rebuilds when size crosses breakpoint', (tester) async {
       Widget app(Size size) => wrapWithTheme(
-            size: size,
-            child: WBreakpoint(
-              base: (_) => const Text('BASE'),
-              md: (_) => const Text('MD'),
-            ),
-          );
+        size: size,
+        child: WBreakpoint(
+          base: (_) => const Text('BASE'),
+          md: (_) => const Text('MD'),
+        ),
+      );
 
       await tester.pumpWidget(app(const Size(400, 800)));
       expect(find.text('BASE'), findsOneWidget);
@@ -188,13 +192,7 @@ void main() {
 
     testWidgets('respects nested WindTheme override', (tester) async {
       final innerTheme = WindThemeData().copyWith(
-        screens: const {
-          'sm': 100,
-          'md': 200,
-          'lg': 300,
-          'xl': 400,
-          '2xl': 500,
-        },
+        screens: const {'sm': 100, 'md': 200, 'lg': 300, 'xl': 400, '2xl': 500},
       );
 
       await tester.pumpWidget(
@@ -221,8 +219,9 @@ void main() {
       expect(find.text('MD'), findsOneWidget);
     });
 
-    testWidgets('asserts when custom key is missing from theme screens',
-        (tester) async {
+    testWidgets('asserts when custom key is missing from theme screens', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           size: const Size(800, 800),

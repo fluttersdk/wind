@@ -12,11 +12,7 @@ Widget wrapWithTheme(Widget child) {
   return MaterialApp(
     home: WindTheme(
       data: WindThemeData(),
-      child: Scaffold(
-        body: Center(
-          child: child,
-        ),
-      ),
+      child: Scaffold(body: Center(child: child)),
     ),
   );
 }
@@ -42,9 +38,7 @@ void main() {
     group('Rendering & Structure', () {
       testWidgets('renders child content', (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(child: const Text('Anchor Content')),
-          ),
+          wrapWithTheme(WAnchor(child: const Text('Anchor Content'))),
         );
         expect(find.text('Anchor Content'), findsOneWidget);
       });
@@ -52,10 +46,7 @@ void main() {
       testWidgets('includes Focus widget internally', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WAnchor(
-              key: const Key('anchor'),
-              child: const Text('Content'),
-            ),
+            WAnchor(key: const Key('anchor'), child: const Text('Content')),
           ),
         );
 
@@ -71,33 +62,31 @@ void main() {
         expect(focusFinder, findsOneWidget);
       });
 
-      testWidgets('includes GestureDetector ONLY when callbacks provided',
-          (tester) async {
+      testWidgets('includes GestureDetector ONLY when callbacks provided', (
+        tester,
+      ) async {
         // Case A: No callbacks -> No GestureDetector
         await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(child: const Text('No Gesture')),
-          ),
+          wrapWithTheme(WAnchor(child: const Text('No Gesture'))),
         );
 
         // Look for GestureDetector wrapping the specific text
         final gestureFinder = find.ancestor(
-            of: find.text('No Gesture'),
-            matching: find.byType(GestureDetector));
+          of: find.text('No Gesture'),
+          matching: find.byType(GestureDetector),
+        );
         expect(gestureFinder, findsNothing);
 
         // Case B: With callback -> Has GestureDetector
         await tester.pumpWidget(
           wrapWithTheme(
-            WAnchor(
-              onTap: () {},
-              child: const Text('Has Gesture'),
-            ),
+            WAnchor(onTap: () {}, child: const Text('Has Gesture')),
           ),
         );
         final gestureFinder2 = find.ancestor(
-            of: find.text('Has Gesture'),
-            matching: find.byType(GestureDetector));
+          of: find.text('Has Gesture'),
+          matching: find.byType(GestureDetector),
+        );
         expect(gestureFinder2, findsOneWidget);
       });
     });
@@ -121,8 +110,9 @@ void main() {
         expect(find.text('Hover: false'), findsOneWidget);
 
         // Simulate Mouse Enter
-        final gesture =
-            await tester.createGesture(kind: PointerDeviceKind.mouse);
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
         await gesture.addPointer(location: Offset.zero);
         addTearDown(gesture.removePointer);
         await gesture.moveTo(tester.getCenter(find.text('Hover: false')));
@@ -150,7 +140,9 @@ void main() {
         // We look up from the text widget
         final focusFinder = find
             .ancestor(
-                of: find.text('Focus: false'), matching: find.byType(Focus))
+              of: find.text('Focus: false'),
+              matching: find.byType(Focus),
+            )
             .first;
 
         final focusWidget = tester.widget<Focus>(focusFinder);
@@ -209,8 +201,9 @@ void main() {
         expect(tapped, isTrue);
       });
 
-      testWidgets('onTap fires when tapping a transparent region of the anchor',
-          (tester) async {
+      testWidgets('onTap fires when tapping a transparent region of the anchor', (
+        tester,
+      ) async {
         // A settings-row-style anchor: the interactive content (a label) sits
         // on the left, leaving the centre/right transparent. With the
         // GestureDetector defaulting to deferToChild, a tap on the transparent
@@ -305,8 +298,9 @@ void main() {
           ),
         );
 
-        final gesture =
-            await tester.createGesture(kind: PointerDeviceKind.mouse);
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
         await gesture.addPointer(location: Offset.zero);
         addTearDown(gesture.removePointer);
         await gesture.moveTo(tester.getCenter(find.text('Hover: false')));
@@ -351,10 +345,14 @@ void main() {
         );
 
         // Find MouseRegion ancestor of the SizedBox
-        final mouseRegion = tester.widget<MouseRegion>(find
-            .ancestor(
-                of: find.byType(SizedBox), matching: find.byType(MouseRegion))
-            .first);
+        final mouseRegion = tester.widget<MouseRegion>(
+          find
+              .ancestor(
+                of: find.byType(SizedBox),
+                matching: find.byType(MouseRegion),
+              )
+              .first,
+        );
         expect(mouseRegion.cursor, equals(SystemMouseCursors.basic));
       });
     });
@@ -373,34 +371,41 @@ void main() {
           ),
         );
 
-        final mouseRegion = tester.widget<MouseRegion>(find
-            .ancestor(
-                of: find.byType(SizedBox), matching: find.byType(MouseRegion))
-            .first);
+        final mouseRegion = tester.widget<MouseRegion>(
+          find
+              .ancestor(
+                of: find.byType(SizedBox),
+                matching: find.byType(MouseRegion),
+              )
+              .first,
+        );
         expect(mouseRegion.cursor, equals(SystemMouseCursors.click));
       });
 
       testWidgets('defers the cursor when non-interactive', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WAnchor(
-              child: const SizedBox(width: 100, height: 100),
-            ),
+            WAnchor(child: const SizedBox(width: 100, height: 100)),
           ),
         );
 
-        final mouseRegion = tester.widget<MouseRegion>(find
-            .ancestor(
-                of: find.byType(SizedBox), matching: find.byType(MouseRegion))
-            .first);
+        final mouseRegion = tester.widget<MouseRegion>(
+          find
+              .ancestor(
+                of: find.byType(SizedBox),
+                matching: find.byType(MouseRegion),
+              )
+              .first,
+        );
         expect(mouseRegion.cursor, equals(MouseCursor.defer));
       });
 
       // `WDiv` wraps itself in a gestureless anchor for `hover:` / `focus:`,
       // and that wrapper sits deeper than the tappable anchor around it. A
       // cursor of its own outranked the click cursor of the control.
-      testWidgets('a styling wrapper keeps the click cursor of its control',
-          (tester) async {
+      testWidgets('a styling wrapper keeps the click cursor of its control', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             Center(
@@ -431,8 +436,9 @@ void main() {
       // `WSwitch`, `WCheckbox` and `WTabs` pass `onTap: null` while disabled,
       // so a disabled control is gestureless; it must still read as not
       // clickable inside a tappable row.
-      testWidgets('a disabled anchor with no gesture shows the basic cursor',
-          (tester) async {
+      testWidgets('a disabled anchor with no gesture shows the basic cursor', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WAnchor(
@@ -442,20 +448,23 @@ void main() {
           ),
         );
 
-        final mouseRegion = tester.widget<MouseRegion>(find
-            .ancestor(
-                of: find.byType(SizedBox), matching: find.byType(MouseRegion))
-            .first);
+        final mouseRegion = tester.widget<MouseRegion>(
+          find
+              .ancestor(
+                of: find.byType(SizedBox),
+                matching: find.byType(MouseRegion),
+              )
+              .first,
+        );
         expect(mouseRegion.cursor, equals(SystemMouseCursors.basic));
       });
 
-      testWidgets('a lone styling wrapper shows the basic cursor',
-          (tester) async {
+      testWidgets('a lone styling wrapper shows the basic cursor', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            Center(
-              child: WDiv(className: 'w-24 h-24 hover:bg-gray-100'),
-            ),
+            Center(child: WDiv(className: 'w-24 h-24 hover:bg-gray-100')),
           ),
         );
 
@@ -504,8 +513,9 @@ void main() {
           ),
         );
 
-        final gesture =
-            await tester.createGesture(kind: PointerDeviceKind.mouse);
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
         await gesture.addPointer(location: Offset.zero);
         addTearDown(gesture.removePointer);
 
@@ -523,8 +533,36 @@ void main() {
     // -------------------------------------------------------------------------
     group('Regression Tests', () {
       testWidgets(
-          'updates hover state synchronously without post-frame callback',
-          (tester) async {
+        'updates hover state synchronously without post-frame callback',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WAnchor(
+                child: AnchorStateReader(
+                  builder: (context, state) =>
+                      Text('Hover: ${state?.isHovering}'),
+                ),
+              ),
+            ),
+          );
+
+          final gesture = await tester.createGesture(
+            kind: PointerDeviceKind.mouse,
+          );
+          await gesture.addPointer(location: Offset.zero);
+          addTearDown(gesture.removePointer);
+
+          await gesture.moveTo(tester.getCenter(find.text('Hover: false')));
+
+          // Sync update - pump() should be enough
+          await tester.pump();
+          expect(find.text('Hover: true'), findsOneWidget);
+        },
+      );
+
+      testWidgets('rapid enter-exit does not get stuck (race condition fix)', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WAnchor(
@@ -536,33 +574,9 @@ void main() {
           ),
         );
 
-        final gesture =
-            await tester.createGesture(kind: PointerDeviceKind.mouse);
-        await gesture.addPointer(location: Offset.zero);
-        addTearDown(gesture.removePointer);
-
-        await gesture.moveTo(tester.getCenter(find.text('Hover: false')));
-
-        // Sync update - pump() should be enough
-        await tester.pump();
-        expect(find.text('Hover: true'), findsOneWidget);
-      });
-
-      testWidgets('rapid enter-exit does not get stuck (race condition fix)',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(
-              child: AnchorStateReader(
-                builder: (context, state) =>
-                    Text('Hover: ${state?.isHovering}'),
-              ),
-            ),
-          ),
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
         );
-
-        final gesture =
-            await tester.createGesture(kind: PointerDeviceKind.mouse);
         await gesture.addPointer(location: Offset.zero);
         addTearDown(gesture.removePointer);
 
@@ -594,76 +608,75 @@ void main() {
         WindParser.clearCache();
       });
 
-      testWidgets('semanticLabel does not double the label when child has text',
-          (tester) async {
-        // Branch: semanticLabel != null with a visible Text child. The label
-        // must be the explicit semanticLabel exactly once, never the doubled
-        // "Save\nSave" produced by merging the explicit label with the child
-        // text. Activation must still fire because onTap is lifted onto the
-        // Semantics node alongside excludeSemantics: true.
-        var tapped = false;
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(
-              onTap: () => tapped = true,
-              semanticLabel: 'Save',
-              child: const Text('Save'),
+      testWidgets(
+        'semanticLabel does not double the label when child has text',
+        (tester) async {
+          // Branch: semanticLabel != null with a visible Text child. The label
+          // must be the explicit semanticLabel exactly once, never the doubled
+          // "Save\nSave" produced by merging the explicit label with the child
+          // text. Activation must still fire because onTap is lifted onto the
+          // Semantics node alongside excludeSemantics: true.
+          var tapped = false;
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WAnchor(
+                onTap: () => tapped = true,
+                semanticLabel: 'Save',
+                child: const Text('Save'),
+              ),
             ),
-          ),
-        );
+          );
 
-        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
-        expect(node.flagsCollection.isButton, isTrue);
-        expect(node.flagsCollection.isEnabled, Tristate.isTrue);
-        expect(node.label, 'Save');
-        expect(
-          node.getSemanticsData().hasAction(SemanticsAction.tap),
-          isTrue,
-        );
+          final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+          expect(node.flagsCollection.isButton, isTrue);
+          expect(node.flagsCollection.isEnabled, Tristate.isTrue);
+          expect(node.label, 'Save');
+          expect(
+            node.getSemanticsData().hasAction(SemanticsAction.tap),
+            isTrue,
+          );
 
-        await tester.tap(find.byType(WAnchor));
-        await tester.pump();
-        expect(tapped, isTrue);
-      });
+          await tester.tap(find.byType(WAnchor));
+          await tester.pump();
+          expect(tapped, isTrue);
+        },
+      );
 
       testWidgets(
-          'disabled anchor with semanticLabel announces disabled and has no tap action',
-          (tester) async {
-        // Branch: semanticLabel != null AND isDisabled. The node keeps the
-        // explicit label but must announce as disabled and expose no tap
-        // SemanticsAction, since onTap is null-gated when disabled.
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WAnchor(
-              isDisabled: true,
-              onTap: null,
-              semanticLabel: 'Save',
-              child: Text('Save'),
+        'disabled anchor with semanticLabel announces disabled and has no tap action',
+        (tester) async {
+          // Branch: semanticLabel != null AND isDisabled. The node keeps the
+          // explicit label but must announce as disabled and expose no tap
+          // SemanticsAction, since onTap is null-gated when disabled.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              const WAnchor(
+                isDisabled: true,
+                onTap: null,
+                semanticLabel: 'Save',
+                child: Text('Save'),
+              ),
             ),
-          ),
-        );
+          );
 
-        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
-        expect(node.flagsCollection.isButton, isTrue);
-        expect(node.flagsCollection.isEnabled, Tristate.isFalse);
-        expect(node.label, 'Save');
-        expect(
-          node.getSemanticsData().hasAction(SemanticsAction.tap),
-          isFalse,
-        );
-      });
+          final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+          expect(node.flagsCollection.isButton, isTrue);
+          expect(node.flagsCollection.isEnabled, Tristate.isFalse);
+          expect(node.label, 'Save');
+          expect(
+            node.getSemanticsData().hasAction(SemanticsAction.tap),
+            isFalse,
+          );
+        },
+      );
 
-      testWidgets('label resolves from child text when semanticLabel is null',
-          (tester) async {
+      testWidgets('label resolves from child text when semanticLabel is null', (
+        tester,
+      ) async {
         // Branch: semanticLabel == null keeps the MergeSemantics path so the
         // descendant Text merges in as the accessible name.
         await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(
-              onTap: () {},
-              child: const Text('Continue'),
-            ),
-          ),
+          wrapWithTheme(WAnchor(onTap: () {}, child: const Text('Continue'))),
         );
 
         final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
@@ -671,15 +684,11 @@ void main() {
         expect(node.label, 'Continue');
       });
 
-      testWidgets('emits button role with label resolved from child text',
-          (tester) async {
+      testWidgets('emits button role with label resolved from child text', (
+        tester,
+      ) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(
-              onTap: () {},
-              child: const Text('Sign in'),
-            ),
-          ),
+          wrapWithTheme(WAnchor(onTap: () {}, child: const Text('Sign in'))),
         );
 
         final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
@@ -688,8 +697,9 @@ void main() {
         expect(node.label, 'Sign in');
       });
 
-      testWidgets('reports disabled state when isDisabled is true',
-          (tester) async {
+      testWidgets('reports disabled state when isDisabled is true', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WAnchor(
@@ -707,46 +717,42 @@ void main() {
       });
 
       testWidgets(
-          'concatenates multiple Text descendants into single-line label',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(
-              onTap: () {},
-              child: const Row(
-                children: [
-                  Text('Save'),
-                  Text(' '),
-                  Text('Changes'),
-                ],
+        'concatenates multiple Text descendants into single-line label',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WAnchor(
+                onTap: () {},
+                child: const Row(
+                  children: [Text('Save'), Text(' '), Text('Changes')],
+                ),
               ),
             ),
-          ),
-        );
+          );
 
-        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
-        expect(node.label, contains('Save'));
-        expect(node.label, contains('Changes'));
-      });
+          final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+          expect(node.label, contains('Save'));
+          expect(node.label, contains('Changes'));
+        },
+      );
 
       testWidgets(
-          'emits button without label when child has no Text descendants',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(
-              onTap: () {},
-              child: const Icon(Icons.close),
+        'emits button without label when child has no Text descendants',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WAnchor(onTap: () {}, child: const Icon(Icons.close)),
             ),
-          ),
-        );
+          );
 
-        final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
-        expect(node.flagsCollection.isButton, isTrue);
-      });
+          final SemanticsNode node = tester.getSemantics(find.byType(WAnchor));
+          expect(node.flagsCollection.isButton, isTrue);
+        },
+      );
 
-      testWidgets('a hoverable WDiv keeps its name and drops the button role',
-          (tester) async {
+      testWidgets('a hoverable WDiv keeps its name and drops the button role', (
+        tester,
+      ) async {
         final SemanticsHandle handle = tester.ensureSemantics();
 
         // `WDiv` auto-wraps itself in a gestureless `WAnchor` whenever its
@@ -768,24 +774,22 @@ void main() {
         handle.dispose();
       });
 
-      testWidgets('a gestureless anchor is not announced as a button',
-          (tester) async {
+      testWidgets('a gestureless anchor is not announced as a button', (
+        tester,
+      ) async {
         final SemanticsHandle handle = tester.ensureSemantics();
 
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WAnchor(
-              child: WText('Decoration'),
-            ),
-          ),
+          wrapWithTheme(const WAnchor(child: WText('Decoration'))),
         );
 
         expect(_buttonNodes(tester), isEmpty);
         handle.dispose();
       });
 
-      testWidgets('an explicit semanticLabel publishes the node either way',
-          (tester) async {
+      testWidgets('an explicit semanticLabel publishes the node either way', (
+        tester,
+      ) async {
         // The documented exception to the rule above, and the reason the guard
         // is not extended to cover it: the label branch is checked FIRST, so a
         // labelled anchor is announced as a button with or without a gesture.
@@ -796,10 +800,7 @@ void main() {
 
         await tester.pumpWidget(
           wrapWithTheme(
-            const WAnchor(
-              semanticLabel: 'Close',
-              child: Icon(Icons.close),
-            ),
+            const WAnchor(semanticLabel: 'Close', child: Icon(Icons.close)),
           ),
         );
 
@@ -813,36 +814,37 @@ void main() {
       });
 
       testWidgets(
-          'a tappable anchor around a hover: WDiv still announces once, named',
-          (tester) async {
-        final SemanticsHandle handle = tester.ensureSemantics();
+        'a tappable anchor around a hover: WDiv still announces once, named',
+        (tester) async {
+          final SemanticsHandle handle = tester.ensureSemantics();
 
-        // A regression guard, not a reproducer: this shape published one
-        // platform node before the change too, because the inner gestureless
-        // anchor's node was `isMergedIntoParent` and folded into the real tap
-        // surface. It is here so the early return cannot take the name or the
-        // tap action with it.
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WAnchor(
-              onTap: () {},
-              child: const WDiv(
-                className: 'px-4 py-3 rounded-lg hover:bg-slate-100',
-                child: WText('Monitors'),
+          // A regression guard, not a reproducer: this shape published one
+          // platform node before the change too, because the inner gestureless
+          // anchor's node was `isMergedIntoParent` and folded into the real tap
+          // surface. It is here so the early return cannot take the name or the
+          // tap action with it.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WAnchor(
+                onTap: () {},
+                child: const WDiv(
+                  className: 'px-4 py-3 rounded-lg hover:bg-slate-100',
+                  child: WText('Monitors'),
+                ),
               ),
             ),
-          ),
-        );
+          );
 
-        final List<SemanticsNode> buttons = _buttonNodes(tester);
-        expect(buttons, hasLength(1));
-        // The merged data, not `node.label`: a merging node's own label stays
-        // empty and the absorbed descendants supply the name.
-        final SemanticsData data = buttons.single.getSemanticsData();
-        expect(data.label, contains('Monitors'));
-        expect(data.hasAction(SemanticsAction.tap), isTrue);
-        handle.dispose();
-      });
+          final List<SemanticsNode> buttons = _buttonNodes(tester);
+          expect(buttons, hasLength(1));
+          // The merged data, not `node.label`: a merging node's own label stays
+          // empty and the absorbed descendants supply the name.
+          final SemanticsData data = buttons.single.getSemanticsData();
+          expect(data.label, contains('Monitors'));
+          expect(data.hasAction(SemanticsAction.tap), isTrue);
+          handle.dispose();
+        },
+      );
     });
   });
 }

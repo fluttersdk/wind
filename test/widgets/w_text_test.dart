@@ -11,8 +11,9 @@ void main() {
       WindParser.clearCache();
     });
 
-    testWidgets('applies foregroundColor to Text style when no text-* class',
-        (tester) async {
+    testWidgets('applies foregroundColor to Text style when no text-* class', (
+      tester,
+    ) async {
       const color = Color(0xFF112233);
       await tester.pumpWidget(
         MaterialApp(
@@ -76,8 +77,9 @@ void main() {
       WindParser.clearCache();
     });
 
-    testWidgets('lowercase className transforms text to lower case',
-        (tester) async {
+    testWidgets('lowercase className transforms text to lower case', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(

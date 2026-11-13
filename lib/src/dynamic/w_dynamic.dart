@@ -66,7 +66,7 @@ class WDynamic extends StatefulWidget {
 
   /// Called when a widget type is not allowed or unknown.
   final Widget Function(String type, Map<String, dynamic> props)?
-      onUnknownWidget;
+  onUnknownWidget;
 
   const WDynamic({
     super.key,

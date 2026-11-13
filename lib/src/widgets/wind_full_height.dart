@@ -54,12 +54,8 @@ class WindFullHeightBox extends SingleChildRenderObjectWidget {
   });
 
   @override
-  RenderObject createRenderObject(BuildContext context) => _RenderFullHeight(
-        fallbackHeight,
-        widthFactor,
-        maxWidth,
-        maxHeight,
-      );
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderFullHeight(fallbackHeight, widthFactor, maxWidth, maxHeight);
 
   @override
   void updateRenderObject(
@@ -126,10 +122,12 @@ class _RenderFullHeight extends RenderProxyBox {
   /// exact size, and no className overrides it. `constrainHeight` is what keeps
   /// this box honest about that.
   double _heightFor(BoxConstraints constraints) {
-    final double available =
-        constraints.hasBoundedHeight ? constraints.maxHeight : _fallbackHeight;
-    final double capped =
-        _maxHeight == null ? available : math.min(available, _maxHeight!);
+    final double available = constraints.hasBoundedHeight
+        ? constraints.maxHeight
+        : _fallbackHeight;
+    final double capped = _maxHeight == null
+        ? available
+        : math.min(available, _maxHeight!);
 
     return constraints.constrainHeight(capped);
   }

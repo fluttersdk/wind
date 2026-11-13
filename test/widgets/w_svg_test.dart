@@ -96,7 +96,8 @@ void main() {
                 expect(
                   style.fillColor,
                   const Color(0x00000000),
-                  reason: 'fill-transparent resolves through the palette, '
+                  reason:
+                      'fill-transparent resolves through the palette, '
                       'unlike fill-none which the parser special-cases',
                 );
                 return const SizedBox();
@@ -118,7 +119,8 @@ void main() {
                 expect(
                   style.strokeColor,
                   const Color(0x00000000),
-                  reason: 'stroke-transparent resolves through the palette, '
+                  reason:
+                      'stroke-transparent resolves through the palette, '
                       'unlike stroke-none which the parser special-cases',
                 );
                 return const SizedBox();
@@ -164,8 +166,9 @@ void main() {
       expect(find.byType(WSvg), findsOneWidget);
     });
 
-    testWidgets('renders from asset src and produces SvgPicture',
-        (tester) async {
+    testWidgets('renders from asset src and produces SvgPicture', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const WSvg(src: 'assets/icons/test.svg', className: 'w-8 h-8'),
@@ -177,8 +180,9 @@ void main() {
       expect(find.byType(SvgPicture), findsOneWidget);
     });
 
-    testWidgets('wraps with Opacity widget when opacity class is applied',
-        (tester) async {
+    testWidgets('wraps with Opacity widget when opacity class is applied', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const WSvg.string(testSvg, className: 'opacity-50 w-8 h-8'),
@@ -192,33 +196,38 @@ void main() {
     });
 
     testWidgets(
-        'wraps with AnimatedOpacity when opacity + duration classes are applied',
-        (tester) async {
-      await tester.pumpWidget(
-        wrapWithTheme(
-          const WSvg.string(testSvg,
-              className: 'opacity-75 duration-300 w-8 h-8'),
-        ),
-      );
-      await tester.pump();
+      'wraps with AnimatedOpacity when opacity + duration classes are applied',
+      (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WSvg.string(
+              testSvg,
+              className: 'opacity-75 duration-300 w-8 h-8',
+            ),
+          ),
+        );
+        await tester.pump();
 
-      // The animated opacity branch produces AnimatedOpacity, not plain Opacity.
-      expect(find.byType(AnimatedOpacity), findsOneWidget);
-      expect(find.byType(SvgPicture), findsOneWidget);
-    });
+        // The animated opacity branch produces AnimatedOpacity, not plain Opacity.
+        expect(find.byType(AnimatedOpacity), findsOneWidget);
+        expect(find.byType(SvgPicture), findsOneWidget);
+      },
+    );
 
-    testWidgets('applies colorFilter to SvgPicture when fill className is set',
-        (tester) async {
-      await tester.pumpWidget(
-        wrapWithTheme(
-          const WSvg.string(testSvg, className: 'fill-blue-500 w-8 h-8'),
-        ),
-      );
-      await tester.pump();
+    testWidgets(
+      'applies colorFilter to SvgPicture when fill className is set',
+      (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WSvg.string(testSvg, className: 'fill-blue-500 w-8 h-8'),
+          ),
+        );
+        await tester.pump();
 
-      // The SvgPicture must carry a non-null colorFilter derived from fill-blue-500.
-      final svgPicture = tester.widget<SvgPicture>(find.byType(SvgPicture));
-      expect(svgPicture.colorFilter, isNotNull);
-    });
+        // The SvgPicture must carry a non-null colorFilter derived from fill-blue-500.
+        final svgPicture = tester.widget<SvgPicture>(find.byType(SvgPicture));
+        expect(svgPicture.colorFilter, isNotNull);
+      },
+    );
   });
 }

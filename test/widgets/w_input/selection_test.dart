@@ -15,10 +15,7 @@ import 'package:wind_kit/src/widgets/w_input.dart';
 Widget _bareHarness(Widget child) {
   return Directionality(
     textDirection: TextDirection.ltr,
-    child: WindTheme(
-      data: WindThemeData(),
-      child: child,
-    ),
+    child: WindTheme(data: WindThemeData(), child: child),
   );
 }
 
@@ -37,10 +34,7 @@ Widget _overlayHarness(Widget child) {
     builder: (context, _) => Overlay(
       initialEntries: [
         OverlayEntry(
-          builder: (context) => WindTheme(
-            data: WindThemeData(),
-            child: child,
-          ),
+          builder: (context) => WindTheme(data: WindThemeData(), child: child),
         ),
       ],
     ),
@@ -53,64 +47,62 @@ void main() {
   group('WInput native selection', () {
     // QA (1): mouse drag across "hello" produces a non-collapsed selection.
     group('mouse drag selection', () {
-      testWidgets(
-        'dragging the mouse across "hello" selects it',
-        (tester) async {
-          final controller = TextEditingController();
-          addTearDown(controller.dispose);
+      testWidgets('dragging the mouse across "hello" selects it', (
+        tester,
+      ) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
 
-          await tester.pumpWidget(
-            _overlayHarness(
-              WInput(
-                controller: controller,
-                className: 'text-base',
-              ),
-            ),
-          );
+        await tester.pumpWidget(
+          _overlayHarness(
+            WInput(controller: controller, className: 'text-base'),
+          ),
+        );
 
-          await tester.enterText(find.byType(EditableText), 'hello world');
-          await tester.pump();
+        await tester.enterText(find.byType(EditableText), 'hello world');
+        await tester.pump();
 
-          // Anchor at the very start of the text, drag to just past "hello".
-          final RenderEditable renderEditable = _findRenderEditable(
-              tester.renderObject(find.byType(EditableText)));
-          final Offset startGlyph = renderEditable.localToGlobal(
-            renderEditable
-                .getLocalRectForCaret(const TextPosition(offset: 0))
-                .center,
-          );
-          final Offset endOfHello = renderEditable.localToGlobal(
-            renderEditable
-                .getLocalRectForCaret(const TextPosition(offset: 5))
-                .center,
-          );
+        // Anchor at the very start of the text, drag to just past "hello".
+        final RenderEditable renderEditable = _findRenderEditable(
+          tester.renderObject(find.byType(EditableText)),
+        );
+        final Offset startGlyph = renderEditable.localToGlobal(
+          renderEditable
+              .getLocalRectForCaret(const TextPosition(offset: 0))
+              .center,
+        );
+        final Offset endOfHello = renderEditable.localToGlobal(
+          renderEditable
+              .getLocalRectForCaret(const TextPosition(offset: 5))
+              .center,
+        );
 
-          final TestGesture gesture =
-              await tester.createGesture(kind: PointerDeviceKind.mouse);
-          addTearDown(gesture.removePointer);
-          await gesture.addPointer(location: startGlyph);
-          await gesture.down(startGlyph);
-          await tester.pump();
-          await gesture.moveTo(endOfHello);
-          await tester.pump();
-          await gesture.up();
-          await tester.pump();
+        final TestGesture gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        addTearDown(gesture.removePointer);
+        await gesture.addPointer(location: startGlyph);
+        await gesture.down(startGlyph);
+        await tester.pump();
+        await gesture.moveTo(endOfHello);
+        await tester.pump();
+        await gesture.up();
+        await tester.pump();
 
-          expect(
-            controller.selection.isCollapsed,
-            isFalse,
-            reason: 'A mouse drag must produce a non-collapsed selection.',
-          );
-          expect(
-            controller.text.substring(
-              controller.selection.start,
-              controller.selection.end,
-            ),
-            'hello',
-            reason: 'The drag must cover exactly the dragged-over "hello".',
-          );
-        },
-      );
+        expect(
+          controller.selection.isCollapsed,
+          isFalse,
+          reason: 'A mouse drag must produce a non-collapsed selection.',
+        );
+        expect(
+          controller.text.substring(
+            controller.selection.start,
+            controller.selection.end,
+          ),
+          'hello',
+          reason: 'The drag must cover exactly the dragged-over "hello".',
+        );
+      });
     });
 
     // QA (2): double-tap selects the tapped word.
@@ -120,16 +112,15 @@ void main() {
         addTearDown(controller.dispose);
 
         await tester.pumpWidget(
-          _overlayHarness(
-            WInput(controller: controller),
-          ),
+          _overlayHarness(WInput(controller: controller)),
         );
 
         await tester.enterText(find.byType(EditableText), 'hello world');
         await tester.pump();
 
-        final RenderEditable renderEditable =
-            _findRenderEditable(tester.renderObject(find.byType(EditableText)));
+        final RenderEditable renderEditable = _findRenderEditable(
+          tester.renderObject(find.byType(EditableText)),
+        );
         // Center of the first word "hello" (offset 2 sits inside it).
         final Offset insideHello = renderEditable.localToGlobal(
           renderEditable
@@ -239,17 +230,13 @@ void main() {
         addTearDown(controller.dispose);
 
         await tester.pumpWidget(
-          _overlayHarness(
-            WInput(
-              controller: controller,
-              readOnly: true,
-            ),
-          ),
+          _overlayHarness(WInput(controller: controller, readOnly: true)),
         );
         await tester.pump();
 
-        final RenderEditable renderEditable =
-            _findRenderEditable(tester.renderObject(find.byType(EditableText)));
+        final RenderEditable renderEditable = _findRenderEditable(
+          tester.renderObject(find.byType(EditableText)),
+        );
         final Offset startGlyph = renderEditable.localToGlobal(
           renderEditable
               .getLocalRectForCaret(const TextPosition(offset: 0))
@@ -261,8 +248,9 @@ void main() {
               .center,
         );
 
-        final TestGesture gesture =
-            await tester.createGesture(kind: PointerDeviceKind.mouse);
+        final TestGesture gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
         addTearDown(gesture.removePointer);
         await gesture.addPointer(location: startGlyph);
         await gesture.down(startGlyph);
@@ -283,9 +271,7 @@ void main() {
 
     // QA (6): no Overlay ancestor — typing works, long-press does not crash.
     group('no Overlay ancestor', () {
-      testWidgets('typing works and long-press does not crash', (
-        tester,
-      ) async {
+      testWidgets('typing works and long-press does not crash', (tester) async {
         final controller = TextEditingController();
         addTearDown(controller.dispose);
 
@@ -316,8 +302,9 @@ void main() {
     // harness never trips debugCheckHasMaterialLocalizations on any platform.
     group('cupertino-only handle controls', () {
       for (final TargetPlatform platform in TargetPlatform.values) {
-        testWidgets('wires Cupertino handle controls on $platform',
-            (tester) async {
+        testWidgets('wires Cupertino handle controls on $platform', (
+          tester,
+        ) async {
           debugDefaultTargetPlatformOverride = platform;
           try {
             final controller = TextEditingController(text: 'sample');
@@ -327,17 +314,17 @@ void main() {
             // toolbar off the buildToolbar path so MaterialLocalizations is
             // never required under this Material-free root.
             await tester.pumpWidget(
-              _overlayHarness(
-                WInput(controller: controller),
-              ),
+              _overlayHarness(WInput(controller: controller)),
             );
 
-            final EditableText editable =
-                tester.widget<EditableText>(find.byType(EditableText));
+            final EditableText editable = tester.widget<EditableText>(
+              find.byType(EditableText),
+            );
             expect(
               editable.selectionControls.runtimeType,
               cupertinoTextSelectionHandleControls.runtimeType,
-              reason: 'WInput must wire Cupertino handle controls on every '
+              reason:
+                  'WInput must wire Cupertino handle controls on every '
                   'platform (cupertino-only, no material.dart import).',
             );
             expect(tester.takeException(), isNull);

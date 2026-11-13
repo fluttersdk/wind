@@ -20,9 +20,7 @@ void main() {
   });
 
   group('WDiv Overflow Feature Tests', () {
-    testWidgets('overflow-hidden uses ClipRRect', (
-      tester,
-    ) async {
+    testWidgets('overflow-hidden uses ClipRRect', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -74,7 +72,8 @@ void main() {
             child: RepaintBoundary(
               key: boundary,
               child: const WDiv(
-                className: 'overflow-hidden rounded-2xl border-4 '
+                className:
+                    'overflow-hidden rounded-2xl border-4 '
                     'border-blue-500 bg-white w-32 h-32',
                 child: WDiv(className: 'w-full h-full bg-red-500'),
               ),
@@ -108,7 +107,8 @@ void main() {
       expect(
         blue,
         greaterThan(red),
-        reason: 'the corner stroke pixel is rgb($red, ?, $blue); the child '
+        reason:
+            'the corner stroke pixel is rgb($red, ?, $blue); the child '
             'painted over the border instead of being clipped inside it',
       );
     });
@@ -139,20 +139,16 @@ void main() {
       tester,
     ) async {
       Future<void> pumpClass(String className) => tester.pumpWidget(
-            wrapWithTheme(
-              WDiv(
-                className: className,
-                children: const [Text('Content')],
-              ),
-            ),
-          );
-      Finder alignInClip<T>() => find.descendant(
-            of: find.byType(ClipRRect),
-            matching: find.byType(T),
-          );
+        wrapWithTheme(
+          WDiv(className: className, children: const [Text('Content')]),
+        ),
+      );
+      Finder alignInClip<T>() =>
+          find.descendant(of: find.byType(ClipRRect), matching: find.byType(T));
 
       await pumpClass(
-          'overflow-hidden rounded-lg border self-center w-32 h-32');
+        'overflow-hidden rounded-lg border self-center w-32 h-32',
+      );
       expect(alignInClip<Align>(), findsWidgets);
       expect(alignInClip<AnimatedAlign>(), findsNothing);
 
@@ -170,7 +166,8 @@ void main() {
       await tester.pumpWidget(
         wrapWithTheme(
           const WDiv(
-            className: 'overflow-hidden rounded border-4 border-gray-300 '
+            className:
+                'overflow-hidden rounded border-4 border-gray-300 '
                 'w-32 h-32',
             children: [Text('Content')],
           ),
@@ -372,67 +369,64 @@ void main() {
       expect(find.byType(ClipRRect), findsOneWidget);
     });
 
-    testWidgets(
-      'flex-1 children inside overflow-x-auto row do not assert',
-      (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(
-              className: 'flex flex-row overflow-x-auto',
-              children: [
-                WDiv(className: 'flex-1', child: Text('a')),
-                WDiv(className: 'flex-1', child: Text('b')),
-              ],
-            ),
+    testWidgets('flex-1 children inside overflow-x-auto row do not assert', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className: 'flex flex-row overflow-x-auto',
+            children: [
+              WDiv(className: 'flex-1', child: Text('a')),
+              WDiv(className: 'flex-1', child: Text('b')),
+            ],
           ),
-        );
+        ),
+      );
 
-        expect(tester.takeException(), isNull);
-        expect(find.byType(Expanded), findsNothing);
-        expect(find.text('a'), findsOneWidget);
-        expect(find.text('b'), findsOneWidget);
-      },
-    );
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Expanded), findsNothing);
+      expect(find.text('a'), findsOneWidget);
+      expect(find.text('b'), findsOneWidget);
+    });
 
-    testWidgets(
-      'flex-1 children inside overflow-y-auto column do not assert',
-      (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(
-              className: 'flex flex-col overflow-y-auto',
-              children: [
-                WDiv(className: 'flex-1', child: Text('a')),
-                WDiv(className: 'flex-1', child: Text('b')),
-              ],
-            ),
+    testWidgets('flex-1 children inside overflow-y-auto column do not assert', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className: 'flex flex-col overflow-y-auto',
+            children: [
+              WDiv(className: 'flex-1', child: Text('a')),
+              WDiv(className: 'flex-1', child: Text('b')),
+            ],
           ),
-        );
+        ),
+      );
 
-        expect(tester.takeException(), isNull);
-        expect(find.byType(Expanded), findsNothing);
-      },
-    );
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Expanded), findsNothing);
+    });
 
-    testWidgets(
-      'flex-1 in non-scrolling row still wraps with Expanded',
-      (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(
-              className: 'flex flex-row',
-              children: [
-                WDiv(className: 'flex-1', child: Text('a')),
-                WDiv(className: 'flex-1', child: Text('b')),
-              ],
-            ),
+    testWidgets('flex-1 in non-scrolling row still wraps with Expanded', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className: 'flex flex-row',
+            children: [
+              WDiv(className: 'flex-1', child: Text('a')),
+              WDiv(className: 'flex-1', child: Text('b')),
+            ],
           ),
-        );
+        ),
+      );
 
-        expect(tester.takeException(), isNull);
-        expect(find.byType(Expanded), findsNWidgets(2));
-      },
-    );
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Expanded), findsNWidgets(2));
+    });
 
     testWidgets(
       'nested non-scrolling flex subtree re-enables Expanded under scroll',
@@ -444,9 +438,7 @@ void main() {
               children: [
                 WDiv(
                   className: 'flex flex-row w-96',
-                  children: [
-                    WDiv(className: 'flex-1', child: Text('inner')),
-                  ],
+                  children: [WDiv(className: 'flex-1', child: Text('inner'))],
                 ),
               ],
             ),
@@ -482,41 +474,40 @@ void main() {
       // The box that paints the className's `border-b`, wherever the
       // pipeline put it (a Container or a bare DecoratedBox).
       Finder borderBox() => find.byWidgetPredicate((widget) {
-            final Decoration? decoration = switch (widget) {
-              Container(:final decoration) => decoration,
-              DecoratedBox(:final decoration) => decoration,
-              _ => null,
-            };
+        final Decoration? decoration = switch (widget) {
+          Container(:final decoration) => decoration,
+          DecoratedBox(:final decoration) => decoration,
+          _ => null,
+        };
 
-            return decoration is BoxDecoration && decoration.border != null;
-          });
+        return decoration is BoxDecoration && decoration.border != null;
+      });
 
       Widget strip(
         List<Widget> children, {
         String overflow = 'overflow-x-auto',
-      }) =>
-          wrapWithTheme(
-            SizedBox(
-              width: 800,
-              height: 200,
-              child: WDiv(
-                className: '''
+      }) => wrapWithTheme(
+        SizedBox(
+          width: 800,
+          height: 200,
+          child: WDiv(
+            className:
+                '''
                   w-full flex flex-row $overflow
                   border-b border-gray-200 dark:border-gray-700
                 ''',
-                children: children,
-              ),
-            ),
-          );
+            children: children,
+          ),
+        ),
+      );
 
       testWidgets(
         'scrolling on both axes draws the border across the viewport too',
         (tester) async {
           await tester.pumpWidget(
-            strip(
-              const [SizedBox(width: 100, height: 40)],
-              overflow: 'overflow-auto',
-            ),
+            strip(const [
+              SizedBox(width: 100, height: 40),
+            ], overflow: 'overflow-auto'),
           );
 
           expect(tester.takeException(), isNull);

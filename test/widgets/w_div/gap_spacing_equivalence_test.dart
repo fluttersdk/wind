@@ -20,10 +20,7 @@ Widget wrapWithTheme(Widget child) {
   return MaterialApp(
     home: WindTheme(
       data: WindThemeData(),
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: child,
-      ),
+      child: Directionality(textDirection: TextDirection.ltr, child: child),
     ),
   );
 }
@@ -37,8 +34,10 @@ void main() {
   /// Left edge of each lettered box, in order.
   List<double> childLefts(WidgetTester tester) {
     return <String>['a', 'b', 'c']
-        .map((String key) =>
-            tester.getTopLeft(find.byKey(ValueKey<String>(key))).dx)
+        .map(
+          (String key) =>
+              tester.getTopLeft(find.byKey(ValueKey<String>(key))).dx,
+        )
         .toList();
   }
 
@@ -67,12 +66,16 @@ void main() {
     // logical px per step, so `gap-4` is 16px and a packed pair sits 56 apart.
     // Every assertion is a DISTANCE between children rather than an absolute
     // x, so the test does not encode the surface width or the centring.
-    testWidgets('justify-start packs left with one gap between each pair',
-        (WidgetTester tester) async {
+    testWidgets('justify-start packs left with one gap between each pair', (
+      WidgetTester tester,
+    ) async {
       await pumpRow(tester, 'justify-start');
       final List<double> x = childLefts(tester);
-      expect(x[1] - x[0], 56.0,
-          reason: '40 wide plus a gap-4 of 16 logical px');
+      expect(
+        x[1] - x[0],
+        56.0,
+        reason: '40 wide plus a gap-4 of 16 logical px',
+      );
       expect(x[2] - x[1], 56.0);
     });
 
@@ -90,8 +93,9 @@ void main() {
       expect(x[2] - x[1], 56.0);
     });
 
-    testWidgets('justify-between spreads to the edges and stays symmetric',
-        (WidgetTester tester) async {
+    testWidgets('justify-between spreads to the edges and stays symmetric', (
+      WidgetTester tester,
+    ) async {
       await pumpRow(tester, 'justify-between');
       final List<double> x = childLefts(tester);
       // Whatever the free space works out to, the two inner distances match
@@ -100,8 +104,9 @@ void main() {
       expect(x[2] + 40 - x[0], 400.0);
     });
 
-    testWidgets('justify-evenly keeps the distribution it has always had',
-        (WidgetTester tester) async {
+    testWidgets('justify-evenly keeps the distribution it has always had', (
+      WidgetTester tester,
+    ) async {
       // The excluded case. With injected gaps the row has FIVE children, so
       // `spaceEvenly` divides the free space into six slots and the real
       // children land 138.67 apart. Handing the gap to `Flex.spacing` would
@@ -117,8 +122,9 @@ void main() {
       expect(x[2] - x[1], closeTo(138.667, 0.01));
     });
 
-    testWidgets('justify-around keeps the distribution it has always had',
-        (WidgetTester tester) async {
+    testWidgets('justify-around keeps the distribution it has always had', (
+      WidgetTester tester,
+    ) async {
       // Same exclusion, same reason: `spaceAround` gives each of the five
       // children its own half-share on both sides, which lands the real ones
       // 155.2 apart. A distance, not a symmetry check, for the reason above.
@@ -128,8 +134,9 @@ void main() {
       expect(x[2] - x[1], closeTo(155.2, 0.01));
     });
 
-    testWidgets('an excluded alignment keeps the old path on a COLUMN too',
-        (WidgetTester tester) async {
+    testWidgets('an excluded alignment keeps the old path on a COLUMN too', (
+      WidgetTester tester,
+    ) async {
       // The exclusion is expressed once, for both axes, but every other case
       // here pumps a row. This is the vertical half: `SizedBox(height: gap)`
       // rather than `SizedBox(width: gap)`, and nothing exercised it.
@@ -180,10 +187,12 @@ void main() {
         ),
       );
 
-      final double ay =
-          tester.getTopLeft(find.byKey(const ValueKey<String>('a'))).dy;
-      final double by =
-          tester.getTopLeft(find.byKey(const ValueKey<String>('b'))).dy;
+      final double ay = tester
+          .getTopLeft(find.byKey(const ValueKey<String>('a')))
+          .dy;
+      final double by = tester
+          .getTopLeft(find.byKey(const ValueKey<String>('b')))
+          .dy;
       expect(by - ay, 56.0);
     });
 

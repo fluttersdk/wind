@@ -118,11 +118,11 @@ class WTabs extends StatelessWidget {
     this.selectedTabClassName,
     this.panelClassName,
     this.fullWidthList = true,
-  })  : assert(tabs.isNotEmpty, 'WTabs: tabs must not be empty.'),
-        assert(
-          selectedIndex >= 0 && selectedIndex < tabs.length,
-          'WTabs: selectedIndex must be within the tabs range.',
-        );
+  }) : assert(tabs.isNotEmpty, 'WTabs: tabs must not be empty.'),
+       assert(
+         selectedIndex >= 0 && selectedIndex < tabs.length,
+         'WTabs: selectedIndex must be within the tabs range.',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -170,12 +170,7 @@ class WTabs extends StatelessWidget {
     );
 
     // 4. Compose the full tabs widget (list above panel).
-    return WDiv(
-      children: [
-        tabList,
-        panel,
-      ],
-    );
+    return WDiv(children: [tabList, panel]);
   }
 
   /// Builds a single tab at [index], threading the [selected] state into the

@@ -26,35 +26,34 @@ void main() {
   });
 
   group('WindParser alias expansion', () {
-    testWidgets('expands an alias before parsing so it yields a flex/row style',
-        (tester) async {
-      late WindStyle style;
+    testWidgets(
+      'expands an alias before parsing so it yields a flex/row style',
+      (tester) async {
+        late WindStyle style;
 
-      await tester.pumpWidget(
-        wrapWithAliases(
-          const {'row': 'flex flex-row'},
-          Builder(
-            builder: (context) {
-              style = WindParser.parse('row', context);
-              return const SizedBox.shrink();
-            },
+        await tester.pumpWidget(
+          wrapWithAliases(
+            const {'row': 'flex flex-row'},
+            Builder(
+              builder: (context) {
+                style = WindParser.parse('row', context);
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(style.displayType, WindDisplayType.flex);
-      expect(style.flexDirection, Axis.horizontal);
-    });
+        expect(style.displayType, WindDisplayType.flex);
+        expect(style.flexDirection, Axis.horizontal);
+      },
+    );
 
     testWidgets('expands recursively before parsing', (tester) async {
       late WindStyle style;
 
       await tester.pumpWidget(
         wrapWithAliases(
-          const {
-            'row': 'flex flex-row',
-            'row-c': 'row items-center',
-          },
+          const {'row': 'flex flex-row', 'row-c': 'row items-center'},
           Builder(
             builder: (context) {
               style = WindParser.parse('row-c', context);
@@ -70,58 +69,56 @@ void main() {
     });
 
     testWidgets(
-        'two themes with different alias maps keep distinct cache entries',
-        (tester) async {
-      late WindStyle rowStyle;
+      'two themes with different alias maps keep distinct cache entries',
+      (tester) async {
+        late WindStyle rowStyle;
 
-      await tester.pumpWidget(
-        wrapWithAliases(
-          const {'box': 'flex flex-row'},
-          Builder(
-            builder: (context) {
-              rowStyle = WindParser.parse('box', context);
-              return const SizedBox.shrink();
-            },
+        await tester.pumpWidget(
+          wrapWithAliases(
+            const {'box': 'flex flex-row'},
+            Builder(
+              builder: (context) {
+                rowStyle = WindParser.parse('box', context);
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(rowStyle.flexDirection, Axis.horizontal);
-      final sizeAfterRow = WindParser.cacheSize;
+        expect(rowStyle.flexDirection, Axis.horizontal);
+        final sizeAfterRow = WindParser.cacheSize;
 
-      late WindStyle colStyle;
+        late WindStyle colStyle;
 
-      await tester.pumpWidget(
-        wrapWithAliases(
-          const {'box': 'flex flex-col'},
-          Builder(
-            builder: (context) {
-              colStyle = WindParser.parse('box', context);
-              return const SizedBox.shrink();
-            },
+        await tester.pumpWidget(
+          wrapWithAliases(
+            const {'box': 'flex flex-col'},
+            Builder(
+              builder: (context) {
+                colStyle = WindParser.parse('box', context);
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      // Same raw className `box`, different alias values: the cache key is
-      // computed from the expanded string, so the two produce distinct entries
-      // and distinct results rather than a stale cache hit.
-      expect(colStyle.flexDirection, Axis.vertical);
-      expect(WindParser.cacheSize, greaterThan(sizeAfterRow));
-    });
+        // Same raw className `box`, different alias values: the cache key is
+        // computed from the expanded string, so the two produce distinct entries
+        // and distinct results rather than a stale cache hit.
+        expect(colStyle.flexDirection, Axis.vertical);
+        expect(WindParser.cacheSize, greaterThan(sizeAfterRow));
+      },
+    );
 
-    testWidgets('a WDiv with className:row renders a horizontal Flex',
-        (tester) async {
+    testWidgets('a WDiv with className:row renders a horizontal Flex', (
+      tester,
+    ) async {
       // The central-injection smoke: a real widget, not just a parse() call,
       // proves the alias resolves through the rendering path.
       await tester.pumpWidget(
-        wrapWithAliases(
-          const {'row': 'flex flex-row'},
-          const WDiv(
-            className: 'row',
-            children: [Text('a'), Text('b')],
-          ),
-        ),
+        wrapWithAliases(const {
+          'row': 'flex flex-row',
+        }, const WDiv(className: 'row', children: [Text('a'), Text('b')])),
       );
 
       // A horizontal flex renders as a concrete Row (find.byType matches the
@@ -134,8 +131,9 @@ void main() {
   group('WindParser alias debug diagnostics', () {
     // These diagnostics are kDebugMode-gated; flutter test runs in debug mode,
     // so the branches execute. We capture debugPrint to assert they fire.
-    testWidgets('warns once when an alias key shadows a built-in token',
-        (tester) async {
+    testWidgets('warns once when an alias key shadows a built-in token', (
+      tester,
+    ) async {
       final logs = <String>[];
       final original = debugPrint;
       debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
@@ -162,8 +160,9 @@ void main() {
       );
     });
 
-    testWidgets('warns when a cyclic alias is expanded through parse',
-        (tester) async {
+    testWidgets('warns when a cyclic alias is expanded through parse', (
+      tester,
+    ) async {
       final logs = <String>[];
       final original = debugPrint;
       debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');

@@ -67,35 +67,37 @@ class WFormDatePicker extends FormField<DateTime> {
     this.errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
     this.hint,
     this.hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
-  })  : assert(minuteStep > 0 && minuteStep < 60,
-            'WFormDatePicker: minuteStep must be between 1 and 59.'),
-        super(
-          builder: (FormFieldState<DateTime> state) {
-            return _WFormDatePickerContent(
-              state: state,
-              mode: mode,
-              initialRange: initialRange,
-              onChanged: onChanged,
-              onRangeChanged: onRangeChanged,
-              minDate: minDate,
-              maxDate: maxDate,
-              className: className,
-              placeholder: placeholder,
-              enabled: enabled,
-              states: states,
-              displayFormat: displayFormat,
-              minuteStep: minuteStep,
-              timeLabel: timeLabel,
-              doneLabel: doneLabel,
-              label: label,
-              labelClassName: labelClassName,
-              showError: showError,
-              errorClassName: errorClassName,
-              hint: hint,
-              hintClassName: hintClassName,
-            );
-          },
-        );
+  }) : assert(
+         minuteStep > 0 && minuteStep < 60,
+         'WFormDatePicker: minuteStep must be between 1 and 59.',
+       ),
+       super(
+         builder: (FormFieldState<DateTime> state) {
+           return _WFormDatePickerContent(
+             state: state,
+             mode: mode,
+             initialRange: initialRange,
+             onChanged: onChanged,
+             onRangeChanged: onRangeChanged,
+             minDate: minDate,
+             maxDate: maxDate,
+             className: className,
+             placeholder: placeholder,
+             enabled: enabled,
+             states: states,
+             displayFormat: displayFormat,
+             minuteStep: minuteStep,
+             timeLabel: timeLabel,
+             doneLabel: doneLabel,
+             label: label,
+             labelClassName: labelClassName,
+             showError: showError,
+             errorClassName: errorClassName,
+             hint: hint,
+             hintClassName: hintClassName,
+           );
+         },
+       );
 
   /// Selection mode: single date, date range, or date plus time of day.
   final WDatePickerMode mode;

@@ -197,16 +197,19 @@ class WDynamicRenderer {
     // defensively: a non-string `type` falls back to 'Unknown' (which the
     // whitelist then rejects) rather than throwing an implicit-downcast
     // TypeError out of build().
-    final String type =
-        safeJson['type'] is String ? safeJson['type'] as String : 'Unknown';
+    final String type = safeJson['type'] is String
+        ? safeJson['type'] as String
+        : 'Unknown';
     final dynamic propsRaw = safeJson['props'];
-    final Map<String, dynamic> props =
-        propsRaw is Map ? _deepConvertMap(propsRaw) : <String, dynamic>{};
+    final Map<String, dynamic> props = propsRaw is Map
+        ? _deepConvertMap(propsRaw)
+        : <String, dynamic>{};
 
     // Extract children. A non-list `children` is treated as no children
     // instead of throwing on the implicit List cast.
-    final List<dynamic> childrenRaw =
-        safeJson['children'] is List ? safeJson['children'] as List : const [];
+    final List<dynamic> childrenRaw = safeJson['children'] is List
+        ? safeJson['children'] as List
+        : const [];
     final List<Widget> children = childrenRaw
         .map((child) => _buildRecursive(child, depth: depth + 1))
         .toList();
@@ -358,8 +361,8 @@ class WDynamicRenderer {
     final child = children.isEmpty
         ? const SizedBox.shrink()
         : children.length == 1
-            ? children.first
-            : WDiv(children: children);
+        ? children.first
+        : WDiv(children: children);
     return WAnchor(onTap: onTap, child: child);
   }
 
@@ -392,8 +395,9 @@ class WDynamicRenderer {
         props['checked'] == true || props['value'] == true;
 
     // Read current value from state if id exists
-    final bool value =
-        id != null && state.has(id) ? (state.get(id) == true) : initialValue;
+    final bool value = id != null && state.has(id)
+        ? (state.get(id) == true)
+        : initialValue;
 
     // Parse onChange action, falling back to the plain `id` state binding
     final onChanged = _valueBinding<bool>(props['onChange'], id);
@@ -439,8 +443,9 @@ class WDynamicRenderer {
     }).toList();
 
     // Read current value from state if id exists
-    final dynamic value =
-        id != null && state.has(id) ? state.get(id) : initialValue;
+    final dynamic value = id != null && state.has(id)
+        ? state.get(id)
+        : initialValue;
 
     // Parse onChange action, falling back to the plain `id` state binding
     final onChanged = _valueBinding<dynamic>(props['onChange'], id);
@@ -456,10 +461,12 @@ class WDynamicRenderer {
 
   Widget _buildWPopover(Map<String, dynamic> props, List<Widget> children) {
     // First child is trigger, second is content
-    final Widget triggerWidget =
-        children.isNotEmpty ? children.first : const SizedBox.shrink();
-    final Widget contentWidget =
-        children.length > 1 ? children[1] : const SizedBox.shrink();
+    final Widget triggerWidget = children.isNotEmpty
+        ? children.first
+        : const SizedBox.shrink();
+    final Widget contentWidget = children.length > 1
+        ? children[1]
+        : const SizedBox.shrink();
 
     return WPopover(
       triggerBuilder: (context, isOpen, isHovering) => triggerWidget,
@@ -632,8 +639,9 @@ class WDynamicRenderer {
 
   Widget _buildClipRRect(Map<String, dynamic> props, List<Widget> children) {
     return ClipRRect(
-      borderRadius:
-          BorderRadius.circular(_parseDouble(props['borderRadius']) ?? 0),
+      borderRadius: BorderRadius.circular(
+        _parseDouble(props['borderRadius']) ?? 0,
+      ),
       child: children.isNotEmpty ? children.first : null,
     );
   }

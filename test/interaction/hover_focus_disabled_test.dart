@@ -35,8 +35,9 @@ void main() {
   setUp(WindParser.clearCache);
 
   group('HOVER characterization', () {
-    testWidgets('hover:bg-* flips the resolved background color',
-        (tester) async {
+    testWidgets('hover:bg-* flips the resolved background color', (
+      tester,
+    ) async {
       const targetKey = ValueKey('hover-target');
 
       await tester.pumpWidget(
@@ -79,8 +80,9 @@ void main() {
   });
 
   group('FOCUS characterization', () {
-    testWidgets('focus:bg-* applies when the anchor gains focus',
-        (tester) async {
+    testWidgets('focus:bg-* applies when the anchor gains focus', (
+      tester,
+    ) async {
       const targetKey = ValueKey('focus-target');
 
       await tester.pumpWidget(
@@ -189,8 +191,9 @@ void main() {
   });
 
   group('RESERVED active: prefix', () {
-    testWidgets('active: resolves when the state is passed manually',
-        (tester) async {
+    testWidgets('active: resolves when the state is passed manually', (
+      tester,
+    ) async {
       const targetKey = ValueKey('active-target');
 
       // `active:` is reserved-not-wired: WAnchor does not auto-populate the

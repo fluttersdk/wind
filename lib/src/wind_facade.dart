@@ -18,16 +18,16 @@ class WindPerfResolverImpl implements WindPerfResolver {
 
   @override
   Map<String, Object?> stats() => <String, Object?>{
-        'cacheHits': WindPerfCounters.cacheHits,
-        'cacheMisses': WindPerfCounters.cacheMisses,
-        'cacheBypasses': WindPerfCounters.cacheBypasses,
-        'cacheSize': WindParser.cacheSize,
-        'wDivBuilds': WindPerfCounters.wDivBuilds,
-        'wTextBuilds': WindPerfCounters.wTextBuilds,
-        'widgetBuilds': WindPerfCounters.widgetBuilds,
-        'wrapperEmissions': WindPerfCounters.wrapperEmissions,
-        'inheritedReads': WindPerfCounters.inheritedReads,
-      };
+    'cacheHits': WindPerfCounters.cacheHits,
+    'cacheMisses': WindPerfCounters.cacheMisses,
+    'cacheBypasses': WindPerfCounters.cacheBypasses,
+    'cacheSize': WindParser.cacheSize,
+    'wDivBuilds': WindPerfCounters.wDivBuilds,
+    'wTextBuilds': WindPerfCounters.wTextBuilds,
+    'widgetBuilds': WindPerfCounters.widgetBuilds,
+    'wrapperEmissions': WindPerfCounters.wrapperEmissions,
+    'inheritedReads': WindPerfCounters.inheritedReads,
+  };
 }
 
 /// Wind framework-level facade for debug-tooling integration.

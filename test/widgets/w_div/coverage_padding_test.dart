@@ -13,10 +13,7 @@ import 'package:wind_kit/wind_kit.dart';
 /// - WindFlexOverflowScope interaction
 Widget wrapWithTheme(Widget child) {
   return MaterialApp(
-    home: WindTheme(
-      data: WindThemeData(),
-      child: child,
-    ),
+    home: WindTheme(data: WindThemeData(), child: child),
   );
 }
 
@@ -86,10 +83,7 @@ void main() {
         (tester) async {
           await tester.pumpWidget(
             wrapWithTheme(
-              const WDiv(
-                className: 'opacity-25',
-                child: Text('Quiet'),
-              ),
+              const WDiv(className: 'opacity-25', child: Text('Quiet')),
             ),
           );
 
@@ -108,10 +102,7 @@ void main() {
           // Align(alignment: Alignment.topCenter) branch.
           await tester.pumpWidget(
             wrapWithTheme(
-              const WDiv(
-                className: 'mx-auto w-32',
-                child: Text('Centered'),
-              ),
+              const WDiv(className: 'mx-auto w-32', child: Text('Centered')),
             ),
           );
 
@@ -141,10 +132,7 @@ void main() {
             wrapWithTheme(
               Row(
                 children: const [
-                  WDiv(
-                    className: 'shrink',
-                    child: Text('Shrinkable'),
-                  ),
+                  WDiv(className: 'shrink', child: Text('Shrinkable')),
                 ],
               ),
             ),
@@ -184,30 +172,26 @@ void main() {
         },
       );
 
-      testWidgets(
-        'hidden short-circuits to SizedBox.shrink (line 188)',
-        (tester) async {
-          // styles.isHidden routes to the early-return SizedBox.shrink branch.
-          await tester.pumpWidget(
-            wrapWithTheme(
-              const WDiv(
-                className: 'hidden',
-                child: Text('You cannot see me'),
-              ),
-            ),
-          );
+      testWidgets('hidden short-circuits to SizedBox.shrink (line 188)', (
+        tester,
+      ) async {
+        // styles.isHidden routes to the early-return SizedBox.shrink branch.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDiv(className: 'hidden', child: Text('You cannot see me')),
+          ),
+        );
 
-          expect(tester.takeException(), isNull);
-          expect(find.text('You cannot see me'), findsNothing);
-          expect(
-            find.descendant(
-              of: find.byType(WDiv),
-              matching: find.byType(SizedBox),
-            ),
-            findsOneWidget,
-          );
-        },
-      );
+        expect(tester.takeException(), isNull);
+        expect(find.text('You cannot see me'), findsNothing);
+        expect(
+          find.descendant(
+            of: find.byType(WDiv),
+            matching: find.byType(SizedBox),
+          ),
+          findsOneWidget,
+        );
+      });
 
       testWidgets(
         'scroll-primary stored without overflow leaves no scroll widget',
@@ -242,11 +226,7 @@ void main() {
             wrapWithTheme(
               const WDiv(
                 className: 'wrap justify-between items-center gap-2',
-                children: [
-                  Text('A'),
-                  Text('B'),
-                  Text('C'),
-                ],
+                children: [Text('A'), Text('B'), Text('C')],
               ),
             ),
           );
@@ -258,29 +238,25 @@ void main() {
         },
       );
 
-      testWidgets(
-        'wrap with justify-center + items-end maps to center / end',
-        (tester) async {
-          // Hits the MainAxisAlignment.center and CrossAxisAlignment.end
-          // arms of the wrap-translation switches (lines 1330 + 1341).
-          await tester.pumpWidget(
-            wrapWithTheme(
-              const WDiv(
-                className: 'wrap justify-center items-end',
-                children: [
-                  Text('A'),
-                  Text('B'),
-                ],
-              ),
+      testWidgets('wrap with justify-center + items-end maps to center / end', (
+        tester,
+      ) async {
+        // Hits the MainAxisAlignment.center and CrossAxisAlignment.end
+        // arms of the wrap-translation switches (lines 1330 + 1341).
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDiv(
+              className: 'wrap justify-center items-end',
+              children: [Text('A'), Text('B')],
             ),
-          );
+          ),
+        );
 
-          expect(tester.takeException(), isNull);
-          final wrap = tester.widget<Wrap>(find.byType(Wrap));
-          expect(wrap.alignment, WrapAlignment.center);
-          expect(wrap.crossAxisAlignment, WrapCrossAlignment.end);
-        },
-      );
+        expect(tester.takeException(), isNull);
+        final wrap = tester.widget<Wrap>(find.byType(Wrap));
+        expect(wrap.alignment, WrapAlignment.center);
+        expect(wrap.crossAxisAlignment, WrapCrossAlignment.end);
+      });
 
       testWidgets(
         'wrap with justify-around exercises spaceAround arm (line 1332)',
@@ -290,10 +266,7 @@ void main() {
             wrapWithTheme(
               const WDiv(
                 className: 'wrap justify-around',
-                children: [
-                  Text('A'),
-                  Text('B'),
-                ],
+                children: [Text('A'), Text('B')],
               ),
             ),
           );
@@ -313,10 +286,7 @@ void main() {
           // animation-wrapper branch in _buildImpl.
           await tester.pumpWidget(
             wrapWithTheme(
-              const WDiv(
-                className: 'animate-spin',
-                child: Icon(Icons.refresh),
-              ),
+              const WDiv(className: 'animate-spin', child: Icon(Icons.refresh)),
             ),
           );
 
@@ -453,12 +423,7 @@ void main() {
                 height: 200,
                 child: WDiv(
                   className: 'grid grid-cols-3 overflow-x-scroll gap-4',
-                  children: [
-                    Text('A'),
-                    Text('B'),
-                    Text('C'),
-                    Text('D'),
-                  ],
+                  children: [Text('A'), Text('B'), Text('C'), Text('D')],
                 ),
               ),
             ),

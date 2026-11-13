@@ -269,8 +269,9 @@ void main() {
       });
 
       testWidgets('a size change still rebuilds it', (tester) async {
-        await tester
-            .pumpWidget(tree(const MediaQueryData(size: Size(390, 800))));
+        await tester.pumpWidget(
+          tree(const MediaQueryData(size: Size(390, 800))),
+        );
         final int builds = _ScreenReader.builds;
 
         await tester.pumpWidget(
@@ -321,8 +322,9 @@ void main() {
     });
 
     group('wInheritedFontSize', () {
-      testWidgets('reads the ambient DefaultTextStyle font size',
-          (tester) async {
+      testWidgets('reads the ambient DefaultTextStyle font size', (
+        tester,
+      ) async {
         double? result;
         await tester.pumpWidget(
           createTestApp(
@@ -342,33 +344,35 @@ void main() {
       });
 
       testWidgets(
-          'falls back to the size Flutter paints at, not the theme base size',
-          (tester) async {
-        // A DefaultTextStyle with no size paints text at kDefaultFontSize,
-        // whatever the theme's `base` says, so em tracking resolves there too.
-        double? result;
-        await tester.pumpWidget(
-          MaterialApp(
-            home: WindTheme(
-              data: WindThemeData(fontSizes: {'base': 18}),
-              child: DefaultTextStyle(
-                style: const TextStyle(),
-                child: Builder(
-                  builder: (context) {
-                    result = wInheritedFontSize(context);
-                    return const SizedBox();
-                  },
+        'falls back to the size Flutter paints at, not the theme base size',
+        (tester) async {
+          // A DefaultTextStyle with no size paints text at kDefaultFontSize,
+          // whatever the theme's `base` says, so em tracking resolves there too.
+          double? result;
+          await tester.pumpWidget(
+            MaterialApp(
+              home: WindTheme(
+                data: WindThemeData(fontSizes: {'base': 18}),
+                child: DefaultTextStyle(
+                  style: const TextStyle(),
+                  child: Builder(
+                    builder: (context) {
+                      result = wInheritedFontSize(context);
+                      return const SizedBox();
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
-        );
+          );
 
-        expect(result, kDefaultFontSize);
-      });
+          expect(result, kDefaultFontSize);
+        },
+      );
 
-      testWidgets('falls back to kDefaultFontSize without a WindTheme',
-          (tester) async {
+      testWidgets('falls back to kDefaultFontSize without a WindTheme', (
+        tester,
+      ) async {
         double? result;
         await tester.pumpWidget(
           DefaultTextStyle(

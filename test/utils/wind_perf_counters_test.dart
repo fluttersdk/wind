@@ -112,127 +112,119 @@ void main() {
       // The inherited-reads map keeps its four fixed keys, all zeroed, rather
       // than being cleared: the resolver's `stats()` output always carries
       // the same four keys whether or not a session has run yet.
-      expect(
-        WindPerfCounters.inheritedReads,
-        <String, int>{
-          'mediaQuerySize': 0,
-          'mediaQueryBrightness': 0,
-          'windTheme': 0,
-          'defaultTextStyle': 0,
-        },
-      );
+      expect(WindPerfCounters.inheritedReads, <String, int>{
+        'mediaQuerySize': 0,
+        'mediaQueryBrightness': 0,
+        'windTheme': 0,
+        'defaultTextStyle': 0,
+      });
       // A measurement session outlives a cache clear: clearCache() calls
       // reset(), and turning the flag off there would end the session that
       // asked for the numbers.
       expect(WindPerfCounters.enabled, isTrue);
     });
 
-    testWidgets(
-      'widgetBuilds and wrapperEmissions count a pumped WButton',
-      (tester) async {
-        WindPerfCounters.enabled = true;
+    testWidgets('widgetBuilds and wrapperEmissions count a pumped WButton', (
+      tester,
+    ) async {
+      WindPerfCounters.enabled = true;
 
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WButton(
-              onTap: () {},
-              className: 'bg-blue-600',
-              child: const WText('x'),
-            ),
+      await tester.pumpWidget(
+        wrapWithTheme(
+          WButton(
+            onTap: () {},
+            className: 'bg-blue-600',
+            child: const WText('x'),
           ),
-        );
+        ),
+      );
 
-        // w_button.dart:184 (Container) and w_anchor.dart:336 (MouseRegion,
-        // unconditional) are the two cited emission sites.
-        expect(WindPerfCounters.widgetBuilds['WButton'], 1);
-        expect(
-          WindPerfCounters.wrapperEmissions['Container'],
-          greaterThanOrEqualTo(1),
-        );
-        expect(
-          WindPerfCounters.wrapperEmissions['MouseRegion'],
-          greaterThanOrEqualTo(1),
-        );
-      },
-    );
+      // w_button.dart:184 (Container) and w_anchor.dart:336 (MouseRegion,
+      // unconditional) are the two cited emission sites.
+      expect(WindPerfCounters.widgetBuilds['WButton'], 1);
+      expect(
+        WindPerfCounters.wrapperEmissions['Container'],
+        greaterThanOrEqualTo(1),
+      );
+      expect(
+        WindPerfCounters.wrapperEmissions['MouseRegion'],
+        greaterThanOrEqualTo(1),
+      );
+    });
 
-    testWidgets(
-      'a decorated WDiv counts its box primitives, not a Container',
-      (tester) async {
-        WindPerfCounters.enabled = true;
+    testWidgets('a decorated WDiv counts its box primitives, not a Container', (
+      tester,
+    ) async {
+      WindPerfCounters.enabled = true;
 
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(
-              className: 'w-20 p-2 bg-white border rounded-lg',
-              child: WText('Box'),
-            ),
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className: 'w-20 p-2 bg-white border rounded-lg',
+            child: WText('Box'),
           ),
-        );
+        ),
+      );
 
-        final Map<String, int> emitted = WindPerfCounters.wrapperEmissions;
-        expect(emitted['Container'], isNull);
-        expect(emitted['DecoratedBox'], 1);
-        expect(emitted['Padding'], 1);
-        expect(emitted['ConstrainedBox'], 1);
-      },
-    );
+      final Map<String, int> emitted = WindPerfCounters.wrapperEmissions;
+      expect(emitted['Container'], isNull);
+      expect(emitted['DecoratedBox'], 1);
+      expect(emitted['Padding'], 1);
+      expect(emitted['ConstrainedBox'], 1);
+    });
 
-    testWidgets(
-      'a transitioned WDiv still counts one AnimatedContainer',
-      (tester) async {
-        WindPerfCounters.enabled = true;
+    testWidgets('a transitioned WDiv still counts one AnimatedContainer', (
+      tester,
+    ) async {
+      WindPerfCounters.enabled = true;
 
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(
-              className: 'p-2 bg-white duration-300',
-              child: WText('Box'),
-            ),
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(
+            className: 'p-2 bg-white duration-300',
+            child: WText('Box'),
           ),
-        );
+        ),
+      );
 
-        expect(WindPerfCounters.wrapperEmissions['AnimatedContainer'], 1);
-        expect(WindPerfCounters.wrapperEmissions['DecoratedBox'], isNull);
-      },
-    );
+      expect(WindPerfCounters.wrapperEmissions['AnimatedContainer'], 1);
+      expect(WindPerfCounters.wrapperEmissions['DecoratedBox'], isNull);
+    });
 
-    testWidgets(
-      'a hover-only WDiv counts no Focus, a focus: WDiv counts one',
-      (tester) async {
-        WindPerfCounters.enabled = true;
+    testWidgets('a hover-only WDiv counts no Focus, a focus: WDiv counts one', (
+      tester,
+    ) async {
+      WindPerfCounters.enabled = true;
 
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'hover:bg-gray-100', child: WText('Row')),
-          ),
-        );
-        expect(WindPerfCounters.wrapperEmissions['Focus'], isNull);
-        expect(WindPerfCounters.wrapperEmissions['MouseRegion'], 1);
-        expect(WindPerfCounters.wrapperEmissions['WindAnchorStateProvider'], 1);
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(className: 'hover:bg-gray-100', child: WText('Row')),
+        ),
+      );
+      expect(WindPerfCounters.wrapperEmissions['Focus'], isNull);
+      expect(WindPerfCounters.wrapperEmissions['MouseRegion'], 1);
+      expect(WindPerfCounters.wrapperEmissions['WindAnchorStateProvider'], 1);
 
-        WindPerfCounters.reset();
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'focus:ring-2', child: WText('Row')),
-          ),
-        );
-        expect(WindPerfCounters.wrapperEmissions['Focus'], 1);
-      },
-    );
+      WindPerfCounters.reset();
+      await tester.pumpWidget(
+        wrapWithTheme(
+          const WDiv(className: 'focus:ring-2', child: WText('Row')),
+        ),
+      );
+      expect(WindPerfCounters.wrapperEmissions['Focus'], 1);
+    });
 
-    testWidgets(
-      'a WText with its own colour reads no DefaultTextStyle',
-      (tester) async {
-        WindPerfCounters.enabled = true;
+    testWidgets('a WText with its own colour reads no DefaultTextStyle', (
+      tester,
+    ) async {
+      WindPerfCounters.enabled = true;
 
-        await tester.pumpWidget(
-          wrapWithTheme(const WText('Latency', className: 'text-gray-900')),
-        );
+      await tester.pumpWidget(
+        wrapWithTheme(const WText('Latency', className: 'text-gray-900')),
+      );
 
-        expect(WindPerfCounters.inheritedReads['defaultTextStyle'], 0);
-      },
-    );
+      expect(WindPerfCounters.inheritedReads['defaultTextStyle'], 0);
+    });
 
     testWidgets(
       'inheritedReads counts windTheme/mediaQueryBrightness on a pumped WInput',
@@ -311,31 +303,33 @@ void main() {
         // added, removed or reordered a wrapper would show up as a differing
         // widget-type inventory below.
         Widget buildTree() => wrapWithTheme(
+          WDiv(
+            className: 'flex flex-col p-4 gap-2 items-center',
+            children: const [
               WDiv(
-                className: 'flex flex-col p-4 gap-2 items-center',
-                children: const [
-                  WDiv(
-                    className:
-                        'bg-blue-500 rounded-lg shadow-md m-2 flex-1 text-white',
-                    child: WText('Row 1', className: 'text-sm font-bold'),
-                  ),
-                  WDiv(
-                    className: 'w-1/2 self-center opacity-75',
-                    child: WText('Row 2'),
-                  ),
-                ],
+                className:
+                    'bg-blue-500 rounded-lg shadow-md m-2 flex-1 text-white',
+                child: WText('Row 1', className: 'text-sm font-bold'),
               ),
-            );
+              WDiv(
+                className: 'w-1/2 self-center opacity-75',
+                child: WText('Row 2'),
+              ),
+            ],
+          ),
+        );
 
         WindPerfCounters.enabled = false;
         await tester.pumpWidget(buildTree());
-        final List<Type> typesOff =
-            tester.allWidgets.map((Widget w) => w.runtimeType).toList();
+        final List<Type> typesOff = tester.allWidgets
+            .map((Widget w) => w.runtimeType)
+            .toList();
 
         WindPerfCounters.enabled = true;
         await tester.pumpWidget(buildTree());
-        final List<Type> typesOn =
-            tester.allWidgets.map((Widget w) => w.runtimeType).toList();
+        final List<Type> typesOn = tester.allWidgets
+            .map((Widget w) => w.runtimeType)
+            .toList();
 
         expect(typesOn, typesOff);
       },
@@ -371,9 +365,7 @@ void main() {
       expect(WindDebugRegistry.currentPerf, isA<WindPerfResolverImpl>());
     });
 
-    testWidgets('stats() reports exactly the nine pinned keys', (
-      tester,
-    ) async {
+    testWidgets('stats() reports exactly the nine pinned keys', (tester) async {
       WindPerfCounters.enabled = true;
       await tester.pumpWidget(
         wrapWithTheme(
@@ -389,20 +381,17 @@ void main() {
 
       // The key set is the cross-repo contract tapir reads; an extra
       // or renamed key is a silently empty section in its report.
-      expect(
-        stats.keys.toList(),
-        <String>[
-          'cacheHits',
-          'cacheMisses',
-          'cacheBypasses',
-          'cacheSize',
-          'wDivBuilds',
-          'wTextBuilds',
-          'widgetBuilds',
-          'wrapperEmissions',
-          'inheritedReads',
-        ],
-      );
+      expect(stats.keys.toList(), <String>[
+        'cacheHits',
+        'cacheMisses',
+        'cacheBypasses',
+        'cacheSize',
+        'wDivBuilds',
+        'wTextBuilds',
+        'widgetBuilds',
+        'wrapperEmissions',
+        'inheritedReads',
+      ]);
       expect(stats['wDivBuilds'], 1);
       expect(stats['wTextBuilds'], 1);
       expect(stats['cacheSize'], WindParser.cacheSize);
@@ -413,15 +402,12 @@ void main() {
       expect(stats['cacheMisses'], greaterThanOrEqualTo(2));
       expect((stats['widgetBuilds'] as Map)['WDiv'], 1);
       expect((stats['widgetBuilds'] as Map)['WText'], 1);
-      expect(
-        (stats['inheritedReads'] as Map).keys.toSet(),
-        <String>{
-          'mediaQuerySize',
-          'mediaQueryBrightness',
-          'windTheme',
-          'defaultTextStyle',
-        },
-      );
+      expect((stats['inheritedReads'] as Map).keys.toSet(), <String>{
+        'mediaQuerySize',
+        'mediaQueryBrightness',
+        'windTheme',
+        'defaultTextStyle',
+      });
     });
 
     testWidgets('a widget given an explicit style bypasses the cache', (
@@ -440,11 +426,7 @@ void main() {
           const WDiv(
             className: 'p-4',
             style: WindStyle(),
-            child: WText(
-              'Latency',
-              className: 'text-sm',
-              style: WindStyle(),
-            ),
+            child: WText('Latency', className: 'text-sm', style: WindStyle()),
           ),
         ),
       );
@@ -469,9 +451,7 @@ void main() {
       await tester.pumpWidget(app);
     }
 
-    testWidgets('WText padding and margin each emit a Padding', (
-      tester,
-    ) async {
+    testWidgets('WText padding and margin each emit a Padding', (tester) async {
       await measure(
         tester,
         wrapWithTheme(const WText('Latency', className: 'p-2 m-2')),
@@ -480,8 +460,9 @@ void main() {
       expect(WindPerfCounters.wrapperEmissions['Padding'], 2);
     });
 
-    testWidgets('WText align-self and flex emit Align, Expanded and Flexible',
-        (tester) async {
+    testWidgets('WText align-self and flex emit Align, Expanded and Flexible', (
+      tester,
+    ) async {
       await measure(
         tester,
         wrapWithTheme(
@@ -547,9 +528,9 @@ void main() {
       tester,
     ) async {
       Widget grid() => const WDiv(
-            className: 'grid grid-cols-2 gap-2',
-            children: <Widget>[WText('A'), WText('B')],
-          );
+        className: 'grid grid-cols-2 gap-2',
+        children: <Widget>[WText('A'), WText('B')],
+      );
 
       await measure(tester, wrapWithTheme(grid()));
       final int bounded = WindPerfCounters.inheritedReads['mediaQuerySize']!;
@@ -572,7 +553,9 @@ void main() {
     ) async {
       await measure(
         tester,
-        const MaterialApp(home: Scaffold(body: WInput(placeholder: 'Email'))),
+        const MaterialApp(
+          home: Scaffold(body: WInput(placeholder: 'Email')),
+        ),
       );
 
       expect(

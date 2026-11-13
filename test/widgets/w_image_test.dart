@@ -20,14 +20,14 @@ Widget _silentErrorBuilder(
   BuildContext context,
   Object error,
   StackTrace? stackTrace,
-) =>
-    const SizedBox.shrink();
+) => const SizedBox.shrink();
 
 void main() {
   group('WImage Widget Tests', () {
     group('Source', () {
-      testWidgets('renders network image when src is HTTPS URL',
-          (tester) async {
+      testWidgets('renders network image when src is HTTPS URL', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WImage(
@@ -40,14 +40,12 @@ void main() {
         expect(find.byType(Image), findsOneWidget);
       });
 
-      testWidgets('renders asset image when src uses asset:// prefix',
-          (tester) async {
+      testWidgets('renders asset image when src uses asset:// prefix', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            WImage(
-              src: 'asset://logo.png',
-              errorBuilder: _silentErrorBuilder,
-            ),
+            WImage(src: 'asset://logo.png', errorBuilder: _silentErrorBuilder),
           ),
         );
 
@@ -56,8 +54,9 @@ void main() {
         expect(image.image, isA<AssetImage>());
       });
 
-      testWidgets('renders from ImageProvider when image param is supplied',
-          (tester) async {
+      testWidgets('renders from ImageProvider when image param is supplied', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WImage(
@@ -74,8 +73,9 @@ void main() {
     });
 
     group('Object Fit', () {
-      testWidgets('defaults to BoxFit.cover when no object-* token',
-          (tester) async {
+      testWidgets('defaults to BoxFit.cover when no object-* token', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WImage(
@@ -90,8 +90,9 @@ void main() {
         expect(image.fit, equals(BoxFit.cover));
       });
 
-      testWidgets('applies BoxFit.cover for object-cover token',
-          (tester) async {
+      testWidgets('applies BoxFit.cover for object-cover token', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WImage(
@@ -106,8 +107,9 @@ void main() {
         expect(image.fit, equals(BoxFit.cover));
       });
 
-      testWidgets('applies BoxFit.contain for object-contain token',
-          (tester) async {
+      testWidgets('applies BoxFit.contain for object-contain token', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WImage(
@@ -152,8 +154,9 @@ void main() {
         expect(image.fit, equals(BoxFit.none));
       });
 
-      testWidgets('applies BoxFit.scaleDown for object-scale-down token',
-          (tester) async {
+      testWidgets('applies BoxFit.scaleDown for object-scale-down token', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WImage(
@@ -183,36 +186,43 @@ void main() {
         return tester.widget<Image>(find.byType(Image));
       }
 
-      testWidgets('defaults to Alignment.center when no object-* position',
-          (tester) async {
+      testWidgets('defaults to Alignment.center when no object-* position', (
+        tester,
+      ) async {
         final image = await pumpImage(tester, 'w-32 h-32 object-cover');
 
         expect(image.alignment, equals(Alignment.center));
       });
 
-      testWidgets('defaults to Alignment.center when className is null',
-          (tester) async {
+      testWidgets('defaults to Alignment.center when className is null', (
+        tester,
+      ) async {
         final image = await pumpImage(tester, null);
 
         expect(image.alignment, equals(Alignment.center));
       });
 
-      testWidgets('object-top with object-cover aligns the crop to topCenter',
-          (tester) async {
-        final image =
-            await pumpImage(tester, 'w-full h-full object-cover object-top');
+      testWidgets('object-top with object-cover aligns the crop to topCenter', (
+        tester,
+      ) async {
+        final image = await pumpImage(
+          tester,
+          'w-full h-full object-cover object-top',
+        );
 
         expect(image.fit, equals(BoxFit.cover));
         expect(image.alignment, equals(Alignment.topCenter));
       });
 
-      testWidgets('position token order does not matter against the fit token',
-          (tester) async {
-        final image = await pumpImage(tester, 'object-top object-contain');
+      testWidgets(
+        'position token order does not matter against the fit token',
+        (tester) async {
+          final image = await pumpImage(tester, 'object-top object-contain');
 
-        expect(image.fit, equals(BoxFit.contain));
-        expect(image.alignment, equals(Alignment.topCenter));
-      });
+          expect(image.fit, equals(BoxFit.contain));
+          expect(image.alignment, equals(Alignment.topCenter));
+        },
+      );
 
       const positions = <String, Alignment>{
         'object-bottom': Alignment.bottomCenter,
@@ -234,8 +244,9 @@ void main() {
         });
       }
 
-      testWidgets('applies the alignment to asset and provider images',
-          (tester) async {
+      testWidgets('applies the alignment to asset and provider images', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             Column(
@@ -260,8 +271,9 @@ void main() {
         expect(images[1].alignment, equals(Alignment.bottomRight));
       });
 
-      testWidgets('keeps Alignment.center for an unknown object-* token',
-          (tester) async {
+      testWidgets('keeps Alignment.center for an unknown object-* token', (
+        tester,
+      ) async {
         final image = await pumpImage(tester, 'object-nowhere');
 
         expect(image.alignment, equals(Alignment.center));
@@ -269,8 +281,9 @@ void main() {
     });
 
     group('Decoration', () {
-      testWidgets('wraps with SizedBox when w-32 h-32 tokens are present',
-          (tester) async {
+      testWidgets('wraps with SizedBox when w-32 h-32 tokens are present', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WImage(
@@ -283,7 +296,9 @@ void main() {
 
         final sizedBoxes = tester.widgetList<SizedBox>(
           find.ancestor(
-              of: find.byType(Image), matching: find.byType(SizedBox)),
+            of: find.byType(Image),
+            matching: find.byType(SizedBox),
+          ),
         );
         expect(sizedBoxes, isNotEmpty);
 
@@ -292,46 +307,56 @@ void main() {
         expect(sizedBox.height, equals(128.0));
       });
 
-      testWidgets('wraps with AspectRatio when aspect-square token is present',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WImage(
-              src: 'https://example.com/x.jpg',
-              className: 'aspect-square',
-              errorBuilder: _silentErrorBuilder,
+      testWidgets(
+        'wraps with AspectRatio when aspect-square token is present',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WImage(
+                src: 'https://example.com/x.jpg',
+                className: 'aspect-square',
+                errorBuilder: _silentErrorBuilder,
+              ),
             ),
-          ),
-        );
+          );
 
-        expect(
-          find.ancestor(
-              of: find.byType(Image), matching: find.byType(AspectRatio)),
-          findsOneWidget,
-        );
-      });
-
-      testWidgets('wraps with Opacity at 0.75 when opacity-75 token is present',
-          (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            WImage(
-              src: 'https://example.com/x.jpg',
-              className: 'opacity-75',
-              errorBuilder: _silentErrorBuilder,
+          expect(
+            find.ancestor(
+              of: find.byType(Image),
+              matching: find.byType(AspectRatio),
             ),
-          ),
-        );
+            findsOneWidget,
+          );
+        },
+      );
 
-        final opacityWidgets = tester.widgetList<Opacity>(
-          find.ancestor(of: find.byType(Image), matching: find.byType(Opacity)),
-        );
-        expect(opacityWidgets, isNotEmpty);
-        expect(opacityWidgets.first.opacity, closeTo(0.75, 0.01));
-      });
+      testWidgets(
+        'wraps with Opacity at 0.75 when opacity-75 token is present',
+        (tester) async {
+          await tester.pumpWidget(
+            wrapWithTheme(
+              WImage(
+                src: 'https://example.com/x.jpg',
+                className: 'opacity-75',
+                errorBuilder: _silentErrorBuilder,
+              ),
+            ),
+          );
 
-      testWidgets('wraps with ClipRRect when rounded-lg token is present',
-          (tester) async {
+          final opacityWidgets = tester.widgetList<Opacity>(
+            find.ancestor(
+              of: find.byType(Image),
+              matching: find.byType(Opacity),
+            ),
+          );
+          expect(opacityWidgets, isNotEmpty);
+          expect(opacityWidgets.first.opacity, closeTo(0.75, 0.01));
+        },
+      );
+
+      testWidgets('wraps with ClipRRect when rounded-lg token is present', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WImage(
@@ -344,7 +369,9 @@ void main() {
 
         expect(
           find.ancestor(
-              of: find.byType(Image), matching: find.byType(ClipRRect)),
+            of: find.byType(Image),
+            matching: find.byType(ClipRRect),
+          ),
           findsOneWidget,
         );
       });
@@ -367,10 +394,11 @@ void main() {
 
     group('Validation', () {
       testWidgets(
-          'throws AssertionError when neither src nor image is provided',
-          (tester) async {
-        expect(() => WImage(), throwsAssertionError);
-      });
+        'throws AssertionError when neither src nor image is provided',
+        (tester) async {
+          expect(() => WImage(), throwsAssertionError);
+        },
+      );
     });
   });
 }

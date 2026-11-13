@@ -35,29 +35,49 @@ void main() {
     });
 
     testWidgets('maps cursor-default and cursor-auto to basic', (tester) async {
-      expect((await parse(tester, 'cursor-default')).mouseCursor,
-          SystemMouseCursors.basic);
-      expect((await parse(tester, 'cursor-auto')).mouseCursor,
-          SystemMouseCursors.basic);
+      expect(
+        (await parse(tester, 'cursor-default')).mouseCursor,
+        SystemMouseCursors.basic,
+      );
+      expect(
+        (await parse(tester, 'cursor-auto')).mouseCursor,
+        SystemMouseCursors.basic,
+      );
     });
 
     testWidgets('maps representative cursors', (tester) async {
-      expect((await parse(tester, 'cursor-text')).mouseCursor,
-          SystemMouseCursors.text);
-      expect((await parse(tester, 'cursor-wait')).mouseCursor,
-          SystemMouseCursors.wait);
-      expect((await parse(tester, 'cursor-grab')).mouseCursor,
-          SystemMouseCursors.grab);
-      expect((await parse(tester, 'cursor-grabbing')).mouseCursor,
-          SystemMouseCursors.grabbing);
-      expect((await parse(tester, 'cursor-zoom-in')).mouseCursor,
-          SystemMouseCursors.zoomIn);
-      expect((await parse(tester, 'cursor-col-resize')).mouseCursor,
-          SystemMouseCursors.resizeColumn);
-      expect((await parse(tester, 'cursor-ew-resize')).mouseCursor,
-          SystemMouseCursors.resizeLeftRight);
-      expect((await parse(tester, 'cursor-none')).mouseCursor,
-          SystemMouseCursors.none);
+      expect(
+        (await parse(tester, 'cursor-text')).mouseCursor,
+        SystemMouseCursors.text,
+      );
+      expect(
+        (await parse(tester, 'cursor-wait')).mouseCursor,
+        SystemMouseCursors.wait,
+      );
+      expect(
+        (await parse(tester, 'cursor-grab')).mouseCursor,
+        SystemMouseCursors.grab,
+      );
+      expect(
+        (await parse(tester, 'cursor-grabbing')).mouseCursor,
+        SystemMouseCursors.grabbing,
+      );
+      expect(
+        (await parse(tester, 'cursor-zoom-in')).mouseCursor,
+        SystemMouseCursors.zoomIn,
+      );
+      expect(
+        (await parse(tester, 'cursor-col-resize')).mouseCursor,
+        SystemMouseCursors.resizeColumn,
+      );
+      expect(
+        (await parse(tester, 'cursor-ew-resize')).mouseCursor,
+        SystemMouseCursors.resizeLeftRight,
+      );
+      expect(
+        (await parse(tester, 'cursor-none')).mouseCursor,
+        SystemMouseCursors.none,
+      );
     });
 
     testWidgets('last cursor token wins', (tester) async {
@@ -77,8 +97,9 @@ void main() {
   });
 
   group('WDiv cursor integration', () {
-    testWidgets('WDiv with cursor-pointer wraps in a MouseRegion with click',
-        (tester) async {
+    testWidgets('WDiv with cursor-pointer wraps in a MouseRegion with click', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -97,10 +118,7 @@ void main() {
           matching: find.byType(MouseRegion),
         ),
       );
-      expect(
-        regions.any((r) => r.cursor == SystemMouseCursors.click),
-        isTrue,
-      );
+      expect(regions.any((r) => r.cursor == SystemMouseCursors.click), isTrue);
     });
 
     testWidgets('cursor wins on an interactive (hover:) WDiv', (tester) async {
@@ -129,13 +147,15 @@ void main() {
       expect(
         regions.any((r) => r.cursor == SystemMouseCursors.text),
         isTrue,
-        reason: 'the cursor-text MouseRegion must be present and distinct from '
+        reason:
+            'the cursor-text MouseRegion must be present and distinct from '
             "the WAnchor's own click/basic cursor",
       );
     });
 
-    testWidgets('WDiv without a cursor token adds no cursor MouseRegion',
-        (tester) async {
+    testWidgets('WDiv without a cursor token adds no cursor MouseRegion', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(

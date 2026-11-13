@@ -15,10 +15,7 @@ void main() {
           home: WindTheme(
             child: Scaffold(
               body: Form(
-                child: WFormInput(
-                  focusNode: focusNode,
-                  label: 'Test Input',
-                ),
+                child: WFormInput(focusNode: focusNode, label: 'Test Input'),
               ),
             ),
           ),
@@ -26,8 +23,9 @@ void main() {
       );
 
       // Find EditableText and verify it has the focusNode
-      final editableText =
-          tester.widget<EditableText>(find.byType(EditableText));
+      final editableText = tester.widget<EditableText>(
+        find.byType(EditableText),
+      );
       expect(editableText.focusNode, equals(focusNode));
     });
 
@@ -36,17 +34,16 @@ void main() {
         MaterialApp(
           home: WindTheme(
             child: Scaffold(
-              body: Form(
-                child: WFormInput(label: 'Test Input'),
-              ),
+              body: Form(child: WFormInput(label: 'Test Input')),
             ),
           ),
         ),
       );
 
       // Find EditableText and verify it has a focusNode (internally created)
-      final editableText =
-          tester.widget<EditableText>(find.byType(EditableText));
+      final editableText = tester.widget<EditableText>(
+        find.byType(EditableText),
+      );
       expect(editableText.focusNode, isNotNull);
     });
 
@@ -59,10 +56,7 @@ void main() {
           home: WindTheme(
             child: Scaffold(
               body: Form(
-                child: WFormInput(
-                  focusNode: focusNode,
-                  label: 'Test Input',
-                ),
+                child: WFormInput(focusNode: focusNode, label: 'Test Input'),
               ),
             ),
           ),

@@ -134,10 +134,7 @@ class WActionHandler {
   final Map<String, Function> _actions;
   final WDynamicState _state;
 
-  WActionHandler({
-    required this._actions,
-    required this._state,
-  });
+  WActionHandler({required this._actions, required this._state});
 
   /// Dispatch a registered action handler with the provided arguments.
   ///
@@ -182,8 +179,8 @@ class WActionHandler {
     final safeArgs = args is Map<String, dynamic>
         ? args
         : args is Map
-            ? Map<String, dynamic>.from(args)
-            : <String, dynamic>{};
+        ? Map<String, dynamic>.from(args)
+        : <String, dynamic>{};
     return () => dispatch(actionName, safeArgs);
   }
 
@@ -208,8 +205,8 @@ class WActionHandler {
     final safeBaseArgs = baseArgs is Map<String, dynamic>
         ? baseArgs
         : baseArgs is Map
-            ? Map<String, dynamic>.from(baseArgs)
-            : <String, dynamic>{};
+        ? Map<String, dynamic>.from(baseArgs)
+        : <String, dynamic>{};
 
     return (T value) {
       // Update state if this widget has an id

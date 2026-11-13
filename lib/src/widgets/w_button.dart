@@ -196,16 +196,18 @@ class WButton extends StatelessWidget {
           final List<BoxShadow>? shadows = styles.boxShadow;
           final BoxDecoration? decoration = shadows == null || shadows.isEmpty
               ? styles.decoration
-              : (styles.decoration ?? const BoxDecoration())
-                  .copyWith(boxShadow: shadows);
+              : (styles.decoration ?? const BoxDecoration()).copyWith(
+                  boxShadow: shadows,
+                );
 
           // Wrap in styled container
           WindPerfCounters.recordWrapperEmission('Container');
           WindPerfCounters.recordWrapperEmission('DefaultTextStyle');
           Widget styledButton = Container(
             width: styles.widthFactor != null ? double.infinity : styles.width,
-            height:
-                styles.heightFactor != null ? double.infinity : styles.height,
+            height: styles.heightFactor != null
+                ? double.infinity
+                : styles.height,
             constraints: styles.constraints,
             padding: styles.padding,
             decoration: decoration,
@@ -302,7 +304,8 @@ class WButton extends StatelessWidget {
     //    (e.g., white spinner on white button).
     // 4. Final fallback: white.
     final Color? textColor = styles.color;
-    final Color spinnerColor = loadingColor ??
+    final Color spinnerColor =
+        loadingColor ??
         ((textColor != null && textColor.a > 0)
             ? textColor
             : _contrastColor(styles));

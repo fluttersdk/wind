@@ -82,8 +82,11 @@ void main() {
       });
 
       test('last class wins', () {
-        final styles = parser.parse(
-            WindStyle(), ['order-1', 'order-5', 'order-3'], context);
+        final styles = parser.parse(WindStyle(), [
+          'order-1',
+          'order-5',
+          'order-3',
+        ], context);
         expect(styles.order, 3);
       });
 

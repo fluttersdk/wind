@@ -3,18 +3,19 @@ import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 Widget wrapWithTheme(Widget child) => MaterialApp(
-      home: WindTheme(
-        data: WindThemeData(),
-        child: Scaffold(body: child),
-      ),
-    );
+  home: WindTheme(
+    data: WindThemeData(),
+    child: Scaffold(body: child),
+  ),
+);
 
 void main() {
   setUp(WindParser.clearCache);
 
   group('w-full inside a flex-row (issue #122)', () {
-    testWidgets('a w-full child does not assert and fills the row',
-        (tester) async {
+    testWidgets('a w-full child does not assert and fills the row', (
+      tester,
+    ) async {
       const fillKey = Key('wfull-fill');
       await tester.pumpWidget(
         wrapWithTheme(
@@ -43,9 +44,7 @@ void main() {
         wrapWithTheme(
           WDiv(
             className: 'flex flex-row',
-            children: [
-              WDiv(className: 'w-full', child: const Text('Fill')),
-            ],
+            children: [WDiv(className: 'w-full', child: const Text('Fill'))],
           ),
         ),
       );
@@ -56,8 +55,9 @@ void main() {
       );
     });
 
-    testWidgets('w-full coexists with a fixed-width sibling without crashing',
-        (tester) async {
+    testWidgets('w-full coexists with a fixed-width sibling without crashing', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WDiv(
@@ -75,8 +75,9 @@ void main() {
       expect(find.text('Grow'), findsOneWidget);
     });
 
-    testWidgets('a nested w-full inside a fixed-width child stays bounded',
-        (tester) async {
+    testWidgets('a nested w-full inside a fixed-width child stays bounded', (
+      tester,
+    ) async {
       // Regression guard: the inner w-full is NOT a direct row child, so it must
       // keep its SizedBox(infinity) behavior bounded by the w-32 parent, not be
       // turned into an Expanded (which would assert outside a Flex).
@@ -108,13 +109,16 @@ void main() {
       // row child); doing so would assert outside a Flex.
       expect(
         find.ancestor(
-            of: find.byKey(nestedKey), matching: find.byType(Expanded)),
+          of: find.byKey(nestedKey),
+          matching: find.byType(Expanded),
+        ),
         findsNothing,
       );
     });
 
-    testWidgets('w-full combined with flex-1 does not double-wrap',
-        (tester) async {
+    testWidgets('w-full combined with flex-1 does not double-wrap', (
+      tester,
+    ) async {
       // flex-1 self-wraps in Expanded; the w-full path must defer to it.
       await tester.pumpWidget(
         wrapWithTheme(
@@ -134,8 +138,9 @@ void main() {
       );
     });
 
-    testWidgets('a non-WDiv Wind child (WButton) with w-full also expands',
-        (tester) async {
+    testWidgets('a non-WDiv Wind child (WButton) with w-full also expands', (
+      tester,
+    ) async {
       // WButton (and WInput etc.) also turn w-full into an infinite width, so
       // the Row expand must key off the className of any Wind widget, not just
       // WDiv.
@@ -158,13 +163,16 @@ void main() {
       expect(find.text('Save'), findsOneWidget);
       expect(
         find.ancestor(
-            of: find.byType(WButton), matching: find.byType(Expanded)),
+          of: find.byType(WButton),
+          matching: find.byType(Expanded),
+        ),
         findsOneWidget,
       );
     });
 
-    testWidgets('w-full inside a column is unaffected (no crash)',
-        (tester) async {
+    testWidgets('w-full inside a column is unaffected (no crash)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WDiv(

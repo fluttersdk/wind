@@ -197,9 +197,7 @@ void main() {
         // className. It was inert while `transparent` was missing from the
         // palette, so a checked box kept the grey outline it is written to
         // shed; this pins the shipped appearance against that returning.
-        await tester.pumpWidget(
-          wrapWithTheme(const WCheckbox(value: true)),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WCheckbox(value: true)));
         await tester.pump();
 
         final box = tester.widget<DecoratedBox>(
@@ -215,9 +213,7 @@ void main() {
       });
 
       testWidgets('an unchecked box keeps its outline', (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(const WCheckbox(value: false)),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WCheckbox(value: false)));
         await tester.pump();
 
         final box = tester.widget<DecoratedBox>(
@@ -250,12 +246,9 @@ void main() {
     });
 
     group('Theme-driven selection color (WIND-3)', () {
-      testWidgets(
-          'checked background uses the default primary (blue) when '
+      testWidgets('checked background uses the default primary (blue) when '
           'the theme is unchanged', (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(const WCheckbox(value: true)),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WCheckbox(value: true)));
         await tester.pump();
 
         expect(
@@ -295,9 +288,7 @@ void main() {
         );
         await tester.pump();
 
-        final SemanticsNode node = tester.getSemantics(
-          find.byType(WCheckbox),
-        );
+        final SemanticsNode node = tester.getSemantics(find.byType(WCheckbox));
         expect(node.flagsCollection.isChecked, CheckedState.isTrue);
       });
 
@@ -307,9 +298,7 @@ void main() {
         );
         await tester.pump();
 
-        final SemanticsNode node = tester.getSemantics(
-          find.byType(WCheckbox),
-        );
+        final SemanticsNode node = tester.getSemantics(find.byType(WCheckbox));
         expect(node.flagsCollection.isChecked, CheckedState.isFalse);
       });
 
@@ -321,9 +310,7 @@ void main() {
         // pressable control whose activation runs a no-op. Measured in a
         // consumer's region picker: a 16x16 nameless node with a tap action
         // inside a tile that was doing the work itself.
-        await tester.pumpWidget(
-          wrapWithTheme(const WCheckbox(value: false)),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WCheckbox(value: false)));
         await tester.pump();
 
         // The tap lives on the inner anchor's node, not on the outer
@@ -331,14 +318,13 @@ void main() {
         // question is whether ANY node in the checkbox's subtree offers it.
         expect(_subtreeOffersTap(tester), isFalse);
         // The state is still reported; only the false affordance is gone.
-        final SemanticsNode node = tester.getSemantics(
-          find.byType(WCheckbox),
-        );
+        final SemanticsNode node = tester.getSemantics(find.byType(WCheckbox));
         expect(node.flagsCollection.isChecked, CheckedState.isFalse);
       });
 
-      testWidgets('a non-null onChanged still publishes a tap action',
-          (tester) async {
+      testWidgets('a non-null onChanged still publishes a tap action', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(WCheckbox(value: false, onChanged: (_) {})),
         );
@@ -351,19 +337,16 @@ void main() {
         // A control with no callback is unavailable, and assistive technology
         // needs to hear that rather than reading it as an enabled checkbox
         // that happens to do nothing.
-        await tester.pumpWidget(
-          wrapWithTheme(const WCheckbox(value: false)),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WCheckbox(value: false)));
         await tester.pump();
 
-        final SemanticsNode node = tester.getSemantics(
-          find.byType(WCheckbox),
-        );
+        final SemanticsNode node = tester.getSemantics(find.byType(WCheckbox));
         expect(node.flagsCollection.isEnabled, Tristate.isFalse);
       });
 
-      testWidgets('MergeSemantics folds a sibling label into the checkbox node',
-          (tester) async {
+      testWidgets('MergeSemantics folds a sibling label into the checkbox node', (
+        tester,
+      ) async {
         // WCheckbox renders its check glyph as the only child, so it has no
         // name of its own. This is the composition the doc recommends for a
         // labelled checkbox: the label and the box become one node carrying
@@ -403,9 +386,7 @@ void main() {
         );
         await tester.pump();
 
-        final SemanticsNode node = tester.getSemantics(
-          find.byType(WCheckbox),
-        );
+        final SemanticsNode node = tester.getSemantics(find.byType(WCheckbox));
         expect(node.flagsCollection.isEnabled, Tristate.isTrue);
       });
     });

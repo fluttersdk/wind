@@ -136,19 +136,17 @@ class WRadio<T> extends StatelessWidget {
 
     // 3. The indicator dot is visible only when selected.
     final Widget indicator = WDiv(
-      className: indicatorClassName ??
+      className:
+          indicatorClassName ??
           'w-2.5 h-2.5 rounded-full bg-primary selected:opacity-100',
       states: activeStates,
     );
 
     // 4. Compose the radio shell with an optional indicator.
     final Widget shell = WDiv(
-      className: className ??
-          'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-primary-500',
+      className: className ?? 'w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center selected:border-primary-500',
       states: activeStates,
-      children: [
-        if (_isSelected) indicator,
-      ],
+      children: [if (_isSelected) indicator],
     );
 
     // 5. Wrap shell in WAnchor for interaction + state propagation.

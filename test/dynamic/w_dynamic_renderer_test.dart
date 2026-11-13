@@ -40,9 +40,7 @@ void main() {
       testWidgets('renders WDiv with className from JSON', (tester) async {
         final json = {
           'type': 'WDiv',
-          'props': {
-            'className': 'flex gap-4 p-6 bg-blue-500',
-          },
+          'props': {'className': 'flex gap-4 p-6 bg-blue-500'},
         };
 
         await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
@@ -53,10 +51,7 @@ void main() {
       testWidgets('renders WText with text prop', (tester) async {
         final json = {
           'type': 'WText',
-          'props': {
-            'text': 'Hello World',
-            'className': 'text-xl font-bold',
-          },
+          'props': {'text': 'Hello World', 'className': 'text-xl font-bold'},
         };
 
         await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
@@ -104,9 +99,7 @@ void main() {
 
     group('Security - Whitelist', () {
       testWidgets('rejects denied widget types', (tester) async {
-        final customConfig = const WDynamicConfig(
-          denyWidgets: {'WButton'},
-        );
+        final customConfig = const WDynamicConfig(denyWidgets: {'WButton'});
         final customRenderer = WDynamicRenderer(
           config: customConfig,
           actionHandler: actionHandler,
@@ -141,10 +134,7 @@ void main() {
           state: state,
         );
 
-        final json = {
-          'type': 'WButton',
-          'props': {},
-        };
+        final json = {'type': 'WButton', 'props': {}};
 
         await tester.pumpWidget(wrapWithTheme(customRenderer.build(json)));
 
@@ -229,10 +219,7 @@ void main() {
           state: state,
         );
 
-        final json = {
-          'type': 'ErrorWidget',
-          'props': {},
-        };
+        final json = {'type': 'ErrorWidget', 'props': {}};
 
         await tester.pumpWidget(wrapWithTheme(customRenderer.build(json)));
 
@@ -314,10 +301,7 @@ void main() {
             'id': 'email',
             'value': '',
             'placeholder': 'Enter email',
-            'onChange': {
-              'action': 'inputChanged',
-              'args': {},
-            },
+            'onChange': {'action': 'inputChanged', 'args': {}},
           },
         };
 
@@ -355,10 +339,7 @@ void main() {
           'props': {
             'id': 'agree',
             'checked': false,
-            'onChange': {
-              'action': 'checkboxChanged',
-              'args': {},
-            },
+            'onChange': {'action': 'checkboxChanged', 'args': {}},
           },
         };
 
@@ -384,10 +365,7 @@ void main() {
       ) async {
         final json = {
           'type': 'WCheckbox',
-          'props': {
-            'id': 'agree',
-            'checked': false,
-          },
+          'props': {'id': 'agree', 'checked': false},
         };
 
         await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
@@ -403,11 +381,7 @@ void main() {
       ) async {
         final json = {
           'type': 'WInput',
-          'props': {
-            'id': 'email',
-            'value': '',
-            'placeholder': 'Enter email',
-          },
+          'props': {'id': 'email', 'value': '', 'placeholder': 'Enter email'},
         };
 
         await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
@@ -472,10 +446,7 @@ void main() {
 
         final json = {
           'type': 'WInput',
-          'props': {
-            'id': 'username',
-            'value': 'fallback_value',
-          },
+          'props': {'id': 'username', 'value': 'fallback_value'},
         };
 
         await tester.pumpWidget(wrapWithTheme(renderer.build(json)));
@@ -489,17 +460,15 @@ void main() {
       testWidgets('renders Column with children', (tester) async {
         final json = {
           'type': 'Column',
-          'props': {
-            'mainAxisAlignment': 'center',
-          },
+          'props': {'mainAxisAlignment': 'center'},
           'children': [
             {
               'type': 'WText',
-              'props': {'text': 'Item 1'}
+              'props': {'text': 'Item 1'},
             },
             {
               'type': 'WText',
-              'props': {'text': 'Item 2'}
+              'props': {'text': 'Item 2'},
             },
           ],
         };
@@ -514,17 +483,15 @@ void main() {
       testWidgets('renders Row with children', (tester) async {
         final json = {
           'type': 'Row',
-          'props': {
-            'mainAxisAlignment': 'spaceBetween',
-          },
+          'props': {'mainAxisAlignment': 'spaceBetween'},
           'children': [
             {
               'type': 'WText',
-              'props': {'text': 'Left'}
+              'props': {'text': 'Left'},
             },
             {
               'type': 'WText',
-              'props': {'text': 'Right'}
+              'props': {'text': 'Right'},
             },
           ],
         };
@@ -539,14 +506,11 @@ void main() {
       testWidgets('renders SizedBox with dimensions', (tester) async {
         final json = {
           'type': 'SizedBox',
-          'props': {
-            'width': 100,
-            'height': 50,
-          },
+          'props': {'width': 100, 'height': 50},
           'children': [
             {
               'type': 'WText',
-              'props': {'text': 'Content'}
+              'props': {'text': 'Content'},
             },
           ],
         };
@@ -568,7 +532,7 @@ void main() {
               'children': [
                 {
                   'type': 'WText',
-                  'props': {'text': 'Flex 2'}
+                  'props': {'text': 'Flex 2'},
                 },
               ],
             },
@@ -578,7 +542,7 @@ void main() {
               'children': [
                 {
                   'type': 'WText',
-                  'props': {'text': 'Flex 1'}
+                  'props': {'text': 'Flex 1'},
                 },
               ],
             },
@@ -612,10 +576,7 @@ void main() {
           state: state,
         );
 
-        final json = {
-          'type': 'BrokenWidget',
-          'props': {},
-        };
+        final json = {'type': 'BrokenWidget', 'props': {}};
 
         await tester.pumpWidget(wrapWithTheme(customRenderer.build(json)));
 
@@ -623,24 +584,22 @@ void main() {
         expect(find.text('Error in BrokenWidget'), findsOneWidget);
       });
 
-      testWidgets('degrades gracefully when type is not a string',
-          (tester) async {
+      testWidgets('degrades gracefully when type is not a string', (
+        tester,
+      ) async {
         // Untrusted JSON must never throw past build(); a non-string type
         // routes through the whitelist and emits the denied error widget.
-        await tester.pumpWidget(
-          wrapWithTheme(renderer.build({'type': 123})),
-        );
+        await tester.pumpWidget(wrapWithTheme(renderer.build({'type': 123})));
 
         expect(tester.takeException(), isNull);
         expect(find.textContaining('Error: Denied'), findsOneWidget);
       });
 
-      testWidgets('degrades gracefully when children is not a list',
-          (tester) async {
+      testWidgets('degrades gracefully when children is not a list', (
+        tester,
+      ) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            renderer.build({'type': 'WDiv', 'children': 'oops'}),
-          ),
+          wrapWithTheme(renderer.build({'type': 'WDiv', 'children': 'oops'})),
         );
 
         expect(tester.takeException(), isNull);
@@ -720,8 +679,9 @@ void main() {
         expect(find.byType(WImage), findsOneWidget);
       });
 
-      testWidgets('dispatches WImage to SizedBox.shrink for empty src',
-          (tester) async {
+      testWidgets('dispatches WImage to SizedBox.shrink for empty src', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WDynamic(
@@ -776,16 +736,15 @@ void main() {
 
       testWidgets('dispatches WAnchor with no children', (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDynamic(json: {'type': 'WAnchor'}),
-          ),
+          wrapWithTheme(const WDynamic(json: {'type': 'WAnchor'})),
         );
 
         expect(find.byType(WAnchor), findsOneWidget);
       });
 
-      testWidgets('dispatches WAnchor with multiple children wraps in WDiv',
-          (tester) async {
+      testWidgets('dispatches WAnchor with multiple children wraps in WDiv', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WDynamic(
@@ -826,8 +785,9 @@ void main() {
         expect(find.byType(WInput), findsOneWidget);
       });
 
-      testWidgets('dispatches WInput with each InputType variant',
-          (tester) async {
+      testWidgets('dispatches WInput with each InputType variant', (
+        tester,
+      ) async {
         for (final variant in const [
           'email',
           'password',
@@ -847,8 +807,11 @@ void main() {
             ),
           );
 
-          expect(find.byType(WInput), findsOneWidget,
-              reason: 'WInput type=$variant should still render');
+          expect(
+            find.byType(WInput),
+            findsOneWidget,
+            reason: 'WInput type=$variant should still render',
+          );
         }
       });
 
@@ -900,12 +863,11 @@ void main() {
         expect(find.byType(WSvg), findsOneWidget);
       });
 
-      testWidgets('dispatches WSvg fallback to WIcon when no source',
-          (tester) async {
+      testWidgets('dispatches WSvg fallback to WIcon when no source', (
+        tester,
+      ) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WDynamic(json: {'type': 'WSvg'}),
-          ),
+          wrapWithTheme(const WDynamic(json: {'type': 'WSvg'})),
         );
 
         // Fallback is a WIcon, not a WSvg.
@@ -936,8 +898,7 @@ void main() {
         expect(find.byWidgetPredicate((w) => w is WSelect), findsOneWidget);
       });
 
-      testWidgets(
-          'dispatches WSelect with simple string options and catches '
+      testWidgets('dispatches WSelect with simple string options and catches '
           'downstream type error', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
@@ -985,8 +946,9 @@ void main() {
         expect(find.text('trigger'), findsOneWidget);
       });
 
-      testWidgets('dispatches WDatePicker with ISO initial value',
-          (tester) async {
+      testWidgets('dispatches WDatePicker with ISO initial value', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WDynamic(
@@ -1174,10 +1136,7 @@ void main() {
             const WDynamic(
               json: {
                 'type': 'Stack',
-                'props': {
-                  'alignment': 'top-right',
-                  'fit': 'expand',
-                },
+                'props': {'alignment': 'top-right', 'fit': 'expand'},
                 'children': [
                   {
                     'type': 'WText',
@@ -1209,12 +1168,7 @@ void main() {
                 'children': [
                   {
                     'type': 'Positioned',
-                    'props': {
-                      'top': 4,
-                      'left': 8,
-                      'width': 20,
-                      'height': 20,
-                    },
+                    'props': {'top': 4, 'left': 8, 'width': 20, 'height': 20},
                   },
                 ],
               },
@@ -1382,8 +1336,9 @@ void main() {
     });
 
     group('Security and error paths', () {
-      testWidgets('denyWidgets blocks default-whitelisted type via WDynamic',
-          (tester) async {
+      testWidgets('denyWidgets blocks default-whitelisted type via WDynamic', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WDynamic(
@@ -1400,8 +1355,9 @@ void main() {
         expect(find.text('Error: Denied'), findsOneWidget);
       });
 
-      testWidgets('custom builder takes precedence over default type',
-          (tester) async {
+      testWidgets('custom builder takes precedence over default type', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WDynamic(
@@ -1427,8 +1383,9 @@ void main() {
         expect(find.text('inside card'), findsOneWidget);
       });
 
-      testWidgets('maxDepth ceiling renders MaxDepth error widget',
-          (tester) async {
+      testWidgets('maxDepth ceiling renders MaxDepth error widget', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             const WDynamic(
@@ -1457,15 +1414,13 @@ void main() {
         expect(find.text('Recursion depth exceeded 2'), findsOneWidget);
       });
 
-      testWidgets('onError callback receives type when builder throws',
-          (tester) async {
+      testWidgets('onError callback receives type when builder throws', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WDynamic(
-              json: const {
-                'type': 'Broken',
-                'props': {},
-              },
+              json: const {'type': 'Broken', 'props': {}},
               builders: {
                 'Broken': (props, children) {
                   throw StateError('boom');
@@ -1479,8 +1434,9 @@ void main() {
         expect(find.text('handled Broken'), findsOneWidget);
       });
 
-      testWidgets('onUnknownWidget callback receives unknown type and props',
-          (tester) async {
+      testWidgets('onUnknownWidget callback receives unknown type and props', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WDynamic(
@@ -1500,8 +1456,9 @@ void main() {
     });
 
     group('Value action and state binding', () {
-      testWidgets('WInput with id pushes entered text into state',
-          (tester) async {
+      testWidgets('WInput with id pushes entered text into state', (
+        tester,
+      ) async {
         late WDynamicState capturedState;
         late Map<String, dynamic> capturedArgs;
 
@@ -1512,10 +1469,7 @@ void main() {
                 'type': 'WInput',
                 'props': {
                   'id': 'name',
-                  'onChange': {
-                    'action': 'capture',
-                    'args': {},
-                  },
+                  'onChange': {'action': 'capture', 'args': {}},
                 },
               },
               actions: {
@@ -1535,8 +1489,9 @@ void main() {
         expect(capturedArgs['_value'], 'Anilcan');
       });
 
-      testWidgets('WCheckbox with id flips state to true on tap',
-          (tester) async {
+      testWidgets('WCheckbox with id flips state to true on tap', (
+        tester,
+      ) async {
         late WDynamicState capturedState;
         late Map<String, dynamic> capturedArgs;
 
@@ -1547,10 +1502,7 @@ void main() {
                 'type': 'WCheckbox',
                 'props': {
                   'id': 'agree',
-                  'onChange': {
-                    'action': 'capture',
-                    'args': {},
-                  },
+                  'onChange': {'action': 'capture', 'args': {}},
                 },
               },
               actions: {
@@ -1570,8 +1522,9 @@ void main() {
         expect(capturedArgs['_value'], true);
       });
 
-      testWidgets('value action merges args + _value injection',
-          (tester) async {
+      testWidgets('value action merges args + _value injection', (
+        tester,
+      ) async {
         Map<String, dynamic>? captured;
 
         await tester.pumpWidget(

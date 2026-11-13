@@ -31,49 +31,47 @@ void main() {
 
     group('Basic Rendering', () {
       testWidgets(
-          'a callback-less WButton trigger is one enabled, named button', (
-        tester,
-      ) async {
-        final SemanticsHandle handle = tester.ensureSemantics();
+        'a callback-less WButton trigger is one enabled, named button',
+        (tester) async {
+          final SemanticsHandle handle = tester.ensureSemantics();
 
-        try {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WPopover(
-                triggerBuilder: (context, isOpen, isHovering) => WButton(
-                  onTap: null,
-                  child: const WText('Open Menu'),
+          try {
+            await tester.pumpWidget(
+              wrapWithTheme(
+                WPopover(
+                  triggerBuilder: (context, isOpen, isHovering) =>
+                      WButton(onTap: null, child: const WText('Open Menu')),
+                  contentBuilder: (context, close) => const Text('Content'),
                 ),
-                contentBuilder: (context, close) => const Text('Content'),
               ),
-            ),
-          );
+            );
 
-          // What assistive technology sees: nodes merged up into a parent are
-          // not separate, so only the surviving nodes count.
-          final List<SemanticsData> buttons = <SemanticsData>[];
-          void collect(SemanticsNode node) {
-            final SemanticsData data = node.getSemanticsData();
-            if (!node.isMergedIntoParent && data.flagsCollection.isButton) {
-              buttons.add(data);
+            // What assistive technology sees: nodes merged up into a parent are
+            // not separate, so only the surviving nodes count.
+            final List<SemanticsData> buttons = <SemanticsData>[];
+            void collect(SemanticsNode node) {
+              final SemanticsData data = node.getSemanticsData();
+              if (!node.isMergedIntoParent && data.flagsCollection.isButton) {
+                buttons.add(data);
+              }
+              node.visitChildren((SemanticsNode child) {
+                collect(child);
+                return true;
+              });
             }
-            node.visitChildren((SemanticsNode child) {
-              collect(child);
-              return true;
-            });
+
+            collect(tester.getSemantics(find.byType(WPopover)));
+
+            expect(buttons, hasLength(1));
+            final SemanticsData trigger = buttons.single;
+            expect(trigger.label, 'Open Menu');
+            expect(trigger.hasAction(SemanticsAction.tap), isTrue);
+            expect(trigger.flagsCollection.isEnabled, isNot(Tristate.isFalse));
+          } finally {
+            handle.dispose();
           }
-
-          collect(tester.getSemantics(find.byType(WPopover)));
-
-          expect(buttons, hasLength(1));
-          final SemanticsData trigger = buttons.single;
-          expect(trigger.label, 'Open Menu');
-          expect(trigger.hasAction(SemanticsAction.tap), isTrue);
-          expect(trigger.flagsCollection.isEnabled, isNot(Tristate.isFalse));
-        } finally {
-          handle.dispose();
-        }
-      });
+        },
+      );
 
       testWidgets('renders trigger widget', (tester) async {
         await tester.pumpWidget(
@@ -246,8 +244,9 @@ void main() {
         expect(openCount, 1);
       });
 
-      testWidgets('onClose fires when popover closes via second trigger tap',
-          (tester) async {
+      testWidgets('onClose fires when popover closes via second trigger tap', (
+        tester,
+      ) async {
         int closeCount = 0;
 
         await tester.pumpWidget(
@@ -273,8 +272,9 @@ void main() {
     });
 
     group('Mouse hover state', () {
-      testWidgets('isHovering becomes true when mouse enters trigger region',
-          (tester) async {
+      testWidgets('isHovering becomes true when mouse enters trigger region', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             WPopover(
@@ -555,8 +555,9 @@ void main() {
       expect(find.text('Content'), findsNothing);
     });
 
-    testWidgets('controller swapped via didUpdateWidget wires new controller',
-        (tester) async {
+    testWidgets('controller swapped via didUpdateWidget wires new controller', (
+      tester,
+    ) async {
       final controllerA = PopoverController();
       final controllerB = PopoverController();
 
@@ -630,19 +631,21 @@ void main() {
         expect(result, PopoverAlignment.bottomLeft);
       });
 
-      test('bottomRight where popover overflows left edge returns bottomLeft',
-          () {
-        final result = computeEffectiveAlignment(
-          requested: PopoverAlignment.bottomRight,
-          triggerPosition: const Offset(5, 50),
-          triggerSize: const Size(20, 30),
-          popoverSize: const Size(60, 80),
-          screenSize: const Size(400, 300),
-          offset: const Offset(0, 4),
-        );
+      test(
+        'bottomRight where popover overflows left edge returns bottomLeft',
+        () {
+          final result = computeEffectiveAlignment(
+            requested: PopoverAlignment.bottomRight,
+            triggerPosition: const Offset(5, 50),
+            triggerSize: const Size(20, 30),
+            popoverSize: const Size(60, 80),
+            screenSize: const Size(400, 300),
+            offset: const Offset(0, 4),
+          );
 
-        expect(result, PopoverAlignment.bottomLeft);
-      });
+          expect(result, PopoverAlignment.bottomLeft);
+        },
+      );
 
       test('bottomLeft where popover overflows bottom returns topLeft', () {
         final result = computeEffectiveAlignment(
@@ -658,19 +661,20 @@ void main() {
       });
 
       test(
-          'bottomRight where popover overflows left and bottom returns topLeft',
-          () {
-        final result = computeEffectiveAlignment(
-          requested: PopoverAlignment.bottomRight,
-          triggerPosition: const Offset(0, 210),
-          triggerSize: const Size(20, 30),
-          popoverSize: const Size(80, 80),
-          screenSize: const Size(200, 250),
-          offset: const Offset(0, 4),
-        );
+        'bottomRight where popover overflows left and bottom returns topLeft',
+        () {
+          final result = computeEffectiveAlignment(
+            requested: PopoverAlignment.bottomRight,
+            triggerPosition: const Offset(0, 210),
+            triggerSize: const Size(20, 30),
+            popoverSize: const Size(80, 80),
+            screenSize: const Size(200, 250),
+            offset: const Offset(0, 4),
+          );
 
-        expect(result, PopoverAlignment.topLeft);
-      });
+          expect(result, PopoverAlignment.topLeft);
+        },
+      );
 
       test('topLeft where popover overflows above returns bottomLeft', () {
         final result = computeEffectiveAlignment(
@@ -724,19 +728,21 @@ void main() {
         expect(result, PopoverAlignment.bottomCenter);
       });
 
-      test('bottomLeft with offset pushing off right edge flips to bottomRight',
-          () {
-        final result = computeEffectiveAlignment(
-          requested: PopoverAlignment.bottomLeft,
-          triggerPosition: const Offset(220, 100),
-          triggerSize: const Size(40, 30),
-          popoverSize: const Size(80, 60),
-          screenSize: const Size(300, 300),
-          offset: const Offset(20, 4),
-        );
+      test(
+        'bottomLeft with offset pushing off right edge flips to bottomRight',
+        () {
+          final result = computeEffectiveAlignment(
+            requested: PopoverAlignment.bottomLeft,
+            triggerPosition: const Offset(220, 100),
+            triggerSize: const Size(40, 30),
+            popoverSize: const Size(80, 60),
+            screenSize: const Size(300, 300),
+            offset: const Offset(20, 4),
+          );
 
-        expect(result, PopoverAlignment.bottomRight);
-      });
+          expect(result, PopoverAlignment.bottomRight);
+        },
+      );
 
       test('trigger at center of large screen returns requested unchanged', () {
         final result = computeEffectiveAlignment(
@@ -751,9 +757,7 @@ void main() {
         expect(result, PopoverAlignment.bottomRight);
       });
 
-      test(
-          'topRight where popover overflows above and bottom has more space returns bottomRight',
-          () {
+      test('topRight where popover overflows above and bottom has more space returns bottomRight', () {
         // Trigger near top of screen, topRight requested.
         // spaceAbove = 20 - 4 = 16
         // spaceBelow = 600 - 20 - 40 - 4 = 536
@@ -773,9 +777,7 @@ void main() {
     });
 
     group('Smart Flip - prefer direction with more space', () {
-      test(
-          'bottomLeft stays when bottom overflows but top has LESS space (iPhone SE regression)',
-          () {
+      test('bottomLeft stays when bottom overflows but top has LESS space (iPhone SE regression)', () {
         // iPhone SE: 375×667, trigger at y=300, height=48
         // spaceBelow = 667 - 300 - 48 - 4 = 315
         // spaceAbove = 300 - 4 = 296
@@ -811,28 +813,28 @@ void main() {
         expect(result, PopoverAlignment.topLeft);
       });
 
-      test('bottomCenter stays when bottom overflows but top has less space',
-          () {
-        // trigger at y=180, height=40, screen height=500
-        // spaceBelow = 500 - 180 - 40 - 4 = 276
-        // spaceAbove = 180 - 4 = 176
-        // bottomEdge = 180 + 40 + 4 + 300 = 524 > 500 (overflows)
-        // spaceAbove (176) < spaceBelow (276) → DO NOT flip
-        final result = computeEffectiveAlignment(
-          requested: PopoverAlignment.bottomCenter,
-          triggerPosition: const Offset(100, 180),
-          triggerSize: const Size(200, 40),
-          popoverSize: const Size(250, 300),
-          screenSize: const Size(400, 500),
-          offset: const Offset(0, 4),
-        );
-
-        expect(result, PopoverAlignment.bottomCenter);
-      });
-
       test(
-          'bottomLeft DOES flip to topLeft when bottom overflows and top has MORE space',
-          () {
+        'bottomCenter stays when bottom overflows but top has less space',
+        () {
+          // trigger at y=180, height=40, screen height=500
+          // spaceBelow = 500 - 180 - 40 - 4 = 276
+          // spaceAbove = 180 - 4 = 176
+          // bottomEdge = 180 + 40 + 4 + 300 = 524 > 500 (overflows)
+          // spaceAbove (176) < spaceBelow (276) → DO NOT flip
+          final result = computeEffectiveAlignment(
+            requested: PopoverAlignment.bottomCenter,
+            triggerPosition: const Offset(100, 180),
+            triggerSize: const Size(200, 40),
+            popoverSize: const Size(250, 300),
+            screenSize: const Size(400, 500),
+            offset: const Offset(0, 4),
+          );
+
+          expect(result, PopoverAlignment.bottomCenter);
+        },
+      );
+
+      test('bottomLeft DOES flip to topLeft when bottom overflows and top has MORE space', () {
         // Trigger near bottom: y=500, height=40, screen=600
         // spaceBelow = 600 - 500 - 40 - 4 = 56
         // spaceAbove = 500 - 4 = 496
@@ -850,9 +852,7 @@ void main() {
         expect(result, PopoverAlignment.topLeft);
       });
 
-      test(
-          'topCenter DOES flip to bottomCenter when top overflows and bottom has MORE space',
-          () {
+      test('topCenter DOES flip to bottomCenter when top overflows and bottom has MORE space', () {
         // Trigger near top: y=30, height=40, screen=600
         // spaceAbove = 30 - 4 = 26
         // spaceBelow = 600 - 30 - 40 - 4 = 526
@@ -870,9 +870,7 @@ void main() {
         expect(result, PopoverAlignment.bottomCenter);
       });
 
-      test(
-          'bottomLeft stays when both directions overflow with exactly equal space',
-          () {
+      test('bottomLeft stays when both directions overflow with exactly equal space', () {
         // Trigger exactly at center: y=280, height=40, screen=600
         // spaceBelow = 600 - 280 - 40 - 4 = 276
         // spaceAbove = 280 - 4 = 276
@@ -952,21 +950,23 @@ void main() {
         expect(result, closeTo(183, 0.001));
       });
 
-      test('popover wider than the viewport keeps its start (left) on-screen',
-          () {
-        // followerLeft = 100, followerRight = 600 > 400 -> corr = 392 - 600 = -208;
-        // then left + corr = -108 < 0 -> corr = 8 - 100 = -92 so left seats at 8.
-        final result = computeHorizontalClamp(
-          alignment: PopoverAlignment.bottomLeft,
-          triggerPosition: const Offset(100, 50),
-          triggerSize: const Size(50, 30),
-          popoverWidth: 500,
-          screenSize: const Size(400, 300),
-          offset: Offset.zero,
-        );
+      test(
+        'popover wider than the viewport keeps its start (left) on-screen',
+        () {
+          // followerLeft = 100, followerRight = 600 > 400 -> corr = 392 - 600 = -208;
+          // then left + corr = -108 < 0 -> corr = 8 - 100 = -92 so left seats at 8.
+          final result = computeHorizontalClamp(
+            alignment: PopoverAlignment.bottomLeft,
+            triggerPosition: const Offset(100, 50),
+            triggerSize: const Size(50, 30),
+            popoverWidth: 500,
+            screenSize: const Size(400, 300),
+            offset: Offset.zero,
+          );
 
-        expect(result, closeTo(-92, 0.001));
-      });
+          expect(result, closeTo(-92, 0.001));
+        },
+      );
 
       test('center-anchored popover overflowing right is pulled in', () {
         // bottomCenter: followerLeft = 340 + (40 - 320) / 2 = 200, right = 520 > 375.
@@ -983,8 +983,7 @@ void main() {
         expect(result, closeTo(-153, 0.001));
       });
 
-      test(
-          'panel too wide for both margins seats flush to the viewport edge, '
+      test('panel too wide for both margins seats flush to the viewport edge, '
           'not past it', () {
         // popoverWidth (396) > screenWidth - margin (392) but still < screenWidth
         // (400), so both 8px margins cannot hold. followerLeft = 30,
@@ -1010,97 +1009,107 @@ void main() {
 
     group('Auto-Flip Widget Integration', () {
       testWidgets(
-          'near-centered trigger with a wide panel stays on-screen (clamp)',
-          (tester) async {
-        // Regression for the notification-bell bug: a w-80 (320px) panel next to
-        // a near-centered bell on a narrow phone flips bottomRight -> bottomLeft
-        // and then overflows the right edge. The horizontal clamp must pull it
-        // fully back inside the viewport.
-        tester.view.physicalSize = const Size(390, 800);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-        });
+        'near-centered trigger with a wide panel stays on-screen (clamp)',
+        (tester) async {
+          // Regression for the notification-bell bug: a w-80 (320px) panel next to
+          // a near-centered bell on a narrow phone flips bottomRight -> bottomLeft
+          // and then overflows the right edge. The horizontal clamp must pull it
+          // fully back inside the viewport.
+          tester.view.physicalSize = const Size(390, 800);
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(() {
+            tester.view.resetPhysicalSize();
+            tester.view.resetDevicePixelRatio();
+          });
 
-        await tester.pumpWidget(
-          wrapWithTheme(
-            Stack(
-              children: [
-                Positioned(
-                  left: 190,
-                  top: 40,
-                  child: WPopover(
-                    alignment: PopoverAlignment.bottomRight,
-                    className: 'w-80 max-w-full',
-                    triggerBuilder: (context, isOpen, isHovering) => Container(
-                      width: 36,
-                      height: 36,
-                      color: Colors.blue,
-                      child: const Text('Trigger'),
+          await tester.pumpWidget(
+            wrapWithTheme(
+              Stack(
+                children: [
+                  Positioned(
+                    left: 190,
+                    top: 40,
+                    child: WPopover(
+                      alignment: PopoverAlignment.bottomRight,
+                      className: 'w-80 max-w-full',
+                      triggerBuilder: (context, isOpen, isHovering) =>
+                          Container(
+                            width: 36,
+                            height: 36,
+                            color: Colors.blue,
+                            child: const Text('Trigger'),
+                          ),
+                      contentBuilder: (context, close) =>
+                          const Text('Notifications'),
                     ),
-                    contentBuilder: (context, close) =>
-                        const Text('Notifications'),
                   ),
-                ),
-              ],
-            ),
-          ),
-        );
-
-        await tester.tap(find.text('Trigger'));
-        await tester.pumpAndSettle();
-
-        final renderBox =
-            tester.renderObject<RenderBox>(find.text('Notifications'));
-        final Offset topLeft = renderBox.localToGlobal(Offset.zero);
-        final Offset bottomRight =
-            renderBox.localToGlobal(renderBox.size.bottomRight(Offset.zero));
-        expect(topLeft.dx, greaterThanOrEqualTo(0));
-        expect(bottomRight.dx, lessThanOrEqualTo(390));
-      });
-
-      testWidgets('right edge trigger with bottomRight and w-56 stays visible',
-          (tester) async {
-        tester.view.physicalSize = const Size(400, 300);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-        });
-
-        await tester.pumpWidget(
-          wrapWithTheme(
-            Align(
-              alignment: Alignment.centerRight,
-              child: WPopover(
-                alignment: PopoverAlignment.bottomRight,
-                className: 'w-56',
-                triggerBuilder: (context, isOpen, isHovering) => Container(
-                  width: 40,
-                  height: 40,
-                  color: Colors.blue,
-                  child: const Text('Trigger'),
-                ),
-                contentBuilder: (context, close) => const Text('Popover'),
+                ],
               ),
             ),
-          ),
-        );
+          );
 
-        await tester.tap(find.text('Trigger'));
-        await tester.pumpAndSettle();
+          await tester.tap(find.text('Trigger'));
+          await tester.pumpAndSettle();
 
-        final renderBox = tester.renderObject<RenderBox>(find.text('Popover'));
-        final Offset topLeft = renderBox.localToGlobal(Offset.zero);
-        final Offset bottomRight =
-            renderBox.localToGlobal(renderBox.size.bottomRight(Offset.zero));
-        expect(topLeft.dy, greaterThanOrEqualTo(0));
-        expect(bottomRight.dy, lessThanOrEqualTo(300));
-      });
+          final renderBox = tester.renderObject<RenderBox>(
+            find.text('Notifications'),
+          );
+          final Offset topLeft = renderBox.localToGlobal(Offset.zero);
+          final Offset bottomRight = renderBox.localToGlobal(
+            renderBox.size.bottomRight(Offset.zero),
+          );
+          expect(topLeft.dx, greaterThanOrEqualTo(0));
+          expect(bottomRight.dx, lessThanOrEqualTo(390));
+        },
+      );
 
-      testWidgets('bottom edge trigger with bottomCenter flips to topCenter',
-          (tester) async {
+      testWidgets(
+        'right edge trigger with bottomRight and w-56 stays visible',
+        (tester) async {
+          tester.view.physicalSize = const Size(400, 300);
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(() {
+            tester.view.resetPhysicalSize();
+            tester.view.resetDevicePixelRatio();
+          });
+
+          await tester.pumpWidget(
+            wrapWithTheme(
+              Align(
+                alignment: Alignment.centerRight,
+                child: WPopover(
+                  alignment: PopoverAlignment.bottomRight,
+                  className: 'w-56',
+                  triggerBuilder: (context, isOpen, isHovering) => Container(
+                    width: 40,
+                    height: 40,
+                    color: Colors.blue,
+                    child: const Text('Trigger'),
+                  ),
+                  contentBuilder: (context, close) => const Text('Popover'),
+                ),
+              ),
+            ),
+          );
+
+          await tester.tap(find.text('Trigger'));
+          await tester.pumpAndSettle();
+
+          final renderBox = tester.renderObject<RenderBox>(
+            find.text('Popover'),
+          );
+          final Offset topLeft = renderBox.localToGlobal(Offset.zero);
+          final Offset bottomRight = renderBox.localToGlobal(
+            renderBox.size.bottomRight(Offset.zero),
+          );
+          expect(topLeft.dy, greaterThanOrEqualTo(0));
+          expect(bottomRight.dy, lessThanOrEqualTo(300));
+        },
+      );
+
+      testWidgets('bottom edge trigger with bottomCenter flips to topCenter', (
+        tester,
+      ) async {
         tester.view.physicalSize = const Size(400, 300);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(() {
@@ -1121,10 +1130,8 @@ void main() {
                   color: Colors.green,
                   child: const Text('Trigger'),
                 ),
-                contentBuilder: (context, close) => const SizedBox(
-                  height: 160,
-                  child: Text('Popover'),
-                ),
+                contentBuilder: (context, close) =>
+                    const SizedBox(height: 160, child: Text('Popover')),
               ),
             ),
           ),
@@ -1135,8 +1142,9 @@ void main() {
 
         final renderBox = tester.renderObject<RenderBox>(find.text('Popover'));
         final Offset topLeft = renderBox.localToGlobal(Offset.zero);
-        final Offset bottomRight =
-            renderBox.localToGlobal(renderBox.size.bottomRight(Offset.zero));
+        final Offset bottomRight = renderBox.localToGlobal(
+          renderBox.size.bottomRight(Offset.zero),
+        );
 
         // Verify it flipped to top (above trigger which is at bottomCenter)
         expect(topLeft.dy, greaterThanOrEqualTo(0));
@@ -1148,8 +1156,9 @@ void main() {
         expect(popoverCenter.dx, closeTo(triggerCenter.dx, 0.1));
       });
 
-      testWidgets('bottom edge trigger with bottomLeft flips to top',
-          (tester) async {
+      testWidgets('bottom edge trigger with bottomLeft flips to top', (
+        tester,
+      ) async {
         tester.view.physicalSize = const Size(400, 300);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(() {
@@ -1170,10 +1179,8 @@ void main() {
                   color: Colors.green,
                   child: const Text('Trigger'),
                 ),
-                contentBuilder: (context, close) => const SizedBox(
-                  height: 160,
-                  child: Text('Popover'),
-                ),
+                contentBuilder: (context, close) =>
+                    const SizedBox(height: 160, child: Text('Popover')),
               ),
             ),
           ),
@@ -1184,14 +1191,16 @@ void main() {
 
         final renderBox = tester.renderObject<RenderBox>(find.text('Popover'));
         final Offset topLeft = renderBox.localToGlobal(Offset.zero);
-        final Offset bottomRight =
-            renderBox.localToGlobal(renderBox.size.bottomRight(Offset.zero));
+        final Offset bottomRight = renderBox.localToGlobal(
+          renderBox.size.bottomRight(Offset.zero),
+        );
         expect(topLeft.dy, greaterThanOrEqualTo(0));
         expect(bottomRight.dy, lessThanOrEqualTo(300));
       });
 
-      testWidgets('top-left trigger with topLeft flips to bottom',
-          (tester) async {
+      testWidgets('top-left trigger with topLeft flips to bottom', (
+        tester,
+      ) async {
         tester.view.physicalSize = const Size(400, 300);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(() {
@@ -1212,10 +1221,8 @@ void main() {
                   color: Colors.orange,
                   child: const Text('Trigger'),
                 ),
-                contentBuilder: (context, close) => const SizedBox(
-                  height: 120,
-                  child: Text('Popover'),
-                ),
+                contentBuilder: (context, close) =>
+                    const SizedBox(height: 120, child: Text('Popover')),
               ),
             ),
           ),
@@ -1226,14 +1233,16 @@ void main() {
 
         final renderBox = tester.renderObject<RenderBox>(find.text('Popover'));
         final Offset topLeft = renderBox.localToGlobal(Offset.zero);
-        final Offset bottomRight =
-            renderBox.localToGlobal(renderBox.size.bottomRight(Offset.zero));
+        final Offset bottomRight = renderBox.localToGlobal(
+          renderBox.size.bottomRight(Offset.zero),
+        );
         expect(topLeft.dy, greaterThanOrEqualTo(0));
         expect(bottomRight.dy, lessThanOrEqualTo(300));
       });
 
-      testWidgets('center trigger with bottomLeft stays visible',
-          (tester) async {
+      testWidgets('center trigger with bottomLeft stays visible', (
+        tester,
+      ) async {
         tester.view.physicalSize = const Size(400, 300);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(() {
@@ -1254,10 +1263,8 @@ void main() {
                   color: Colors.purple,
                   child: const Text('Trigger'),
                 ),
-                contentBuilder: (context, close) => const SizedBox(
-                  height: 80,
-                  child: Text('Popover'),
-                ),
+                contentBuilder: (context, close) =>
+                    const SizedBox(height: 80, child: Text('Popover')),
               ),
             ),
           ),
@@ -1268,8 +1275,9 @@ void main() {
 
         final renderBox = tester.renderObject<RenderBox>(find.text('Popover'));
         final Offset topLeft = renderBox.localToGlobal(Offset.zero);
-        final Offset bottomRight =
-            renderBox.localToGlobal(renderBox.size.bottomRight(Offset.zero));
+        final Offset bottomRight = renderBox.localToGlobal(
+          renderBox.size.bottomRight(Offset.zero),
+        );
         expect(topLeft.dx, greaterThanOrEqualTo(0));
         expect(topLeft.dy, greaterThanOrEqualTo(0));
         expect(bottomRight.dx, lessThanOrEqualTo(400));
@@ -1277,62 +1285,66 @@ void main() {
       });
 
       testWidgets(
-          'autoFlip respects fixed width in className (Regression Test)',
-          (tester) async {
-        // Screen width 400.
-        // Trigger at x=300 (near right edge).
-        // Trigger width 40.
-        // Popover width 300 (via className).
-        // If it doesn't flip, right edge = 300 + 300 = 600 (> 400).
-        // It SHOULD flip to bottomRight.
-        tester.view.physicalSize = const Size(400, 300);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-        });
+        'autoFlip respects fixed width in className (Regression Test)',
+        (tester) async {
+          // Screen width 400.
+          // Trigger at x=300 (near right edge).
+          // Trigger width 40.
+          // Popover width 300 (via className).
+          // If it doesn't flip, right edge = 300 + 300 = 600 (> 400).
+          // It SHOULD flip to bottomRight.
+          tester.view.physicalSize = const Size(400, 300);
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(() {
+            tester.view.resetPhysicalSize();
+            tester.view.resetDevicePixelRatio();
+          });
 
-        await tester.pumpWidget(
-          wrapWithTheme(
-            Stack(
-              children: [
-                Positioned(
-                  left: 300,
-                  top: 100,
-                  child: WPopover(
-                    alignment: PopoverAlignment.bottomLeft,
-                    className: 'w-[300px]',
-                    triggerBuilder: (context, isOpen, isHovering) => Container(
-                      width: 40,
-                      height: 40,
-                      color: Colors.blue,
-                      child: const Text('Trigger'),
+          await tester.pumpWidget(
+            wrapWithTheme(
+              Stack(
+                children: [
+                  Positioned(
+                    left: 300,
+                    top: 100,
+                    child: WPopover(
+                      alignment: PopoverAlignment.bottomLeft,
+                      className: 'w-[300px]',
+                      triggerBuilder: (context, isOpen, isHovering) =>
+                          Container(
+                            width: 40,
+                            height: 40,
+                            color: Colors.blue,
+                            child: const Text('Trigger'),
+                          ),
+                      contentBuilder: (context, close) =>
+                          const Text('Wide Popover'),
                     ),
-                    contentBuilder: (context, close) =>
-                        const Text('Wide Popover'),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
+          );
 
-        await tester.tap(find.text('Trigger'));
-        await tester.pumpAndSettle();
+          await tester.tap(find.text('Trigger'));
+          await tester.pumpAndSettle();
 
-        final renderBox =
-            tester.renderObject<RenderBox>(find.text('Wide Popover'));
-        final Offset topLeft = renderBox.localToGlobal(Offset.zero);
-        final Offset bottomRight =
-            renderBox.localToGlobal(renderBox.size.bottomRight(Offset.zero));
+          final renderBox = tester.renderObject<RenderBox>(
+            find.text('Wide Popover'),
+          );
+          final Offset topLeft = renderBox.localToGlobal(Offset.zero);
+          final Offset bottomRight = renderBox.localToGlobal(
+            renderBox.size.bottomRight(Offset.zero),
+          );
 
-        // It should have flipped to bottomRight to fit.
-        // bottomRight alignment means popover right edge aligns with trigger right edge.
-        // Trigger right edge is at 340. Popover width 300. Popover left should be 40.
-        expect(bottomRight.dx, lessThanOrEqualTo(400));
-        expect(topLeft.dx, greaterThanOrEqualTo(0));
-        expect(find.text('Wide Popover'), findsOneWidget);
-      });
+          // It should have flipped to bottomRight to fit.
+          // bottomRight alignment means popover right edge aligns with trigger right edge.
+          // Trigger right edge is at 340. Popover width 300. Popover left should be 40.
+          expect(bottomRight.dx, lessThanOrEqualTo(400));
+          expect(topLeft.dx, greaterThanOrEqualTo(0));
+          expect(find.text('Wide Popover'), findsOneWidget);
+        },
+      );
 
       testWidgets('open/close cycle works after flip', (tester) async {
         tester.view.physicalSize = const Size(400, 300);
@@ -1372,8 +1384,9 @@ void main() {
     });
 
     group('autoFlip parameter', () {
-      testWidgets('autoFlip defaults to true and flips when near bottom',
-          (tester) async {
+      testWidgets('autoFlip defaults to true and flips when near bottom', (
+        tester,
+      ) async {
         tester.view.physicalSize = const Size(400, 300);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(() {
@@ -1395,10 +1408,8 @@ void main() {
                   color: Colors.blue,
                   child: const Text('Trigger'),
                 ),
-                contentBuilder: (context, close) => const SizedBox(
-                  height: 150,
-                  child: Text('Popover'),
-                ),
+                contentBuilder: (context, close) =>
+                    const SizedBox(height: 150, child: Text('Popover')),
               ),
             ),
           ),
@@ -1414,12 +1425,15 @@ void main() {
         final triggerPos = triggerBox.localToGlobal(Offset.zero);
 
         // Popover should be ABOVE the trigger (popover bottom < trigger top)
-        expect(popoverPos.dy + popoverBox.size.height,
-            lessThanOrEqualTo(triggerPos.dy + 10)); // Allow small offset
+        expect(
+          popoverPos.dy + popoverBox.size.height,
+          lessThanOrEqualTo(triggerPos.dy + 10),
+        ); // Allow small offset
       });
 
-      testWidgets('autoFlip: false disables automatic flipping',
-          (tester) async {
+      testWidgets('autoFlip: false disables automatic flipping', (
+        tester,
+      ) async {
         tester.view.physicalSize = const Size(400, 300);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(() {
@@ -1441,10 +1455,8 @@ void main() {
                   color: Colors.blue,
                   child: const Text('Trigger'),
                 ),
-                contentBuilder: (context, close) => const SizedBox(
-                  height: 150,
-                  child: Text('Popover'),
-                ),
+                contentBuilder: (context, close) =>
+                    const SizedBox(height: 150, child: Text('Popover')),
               ),
             ),
           ),
@@ -1460,12 +1472,15 @@ void main() {
         final triggerPos = triggerBox.localToGlobal(Offset.zero);
 
         // Popover should be BELOW the trigger (popover top > trigger bottom)
-        expect(popoverPos.dy,
-            greaterThanOrEqualTo(triggerPos.dy + triggerBox.size.height - 10));
+        expect(
+          popoverPos.dy,
+          greaterThanOrEqualTo(triggerPos.dy + triggerBox.size.height - 10),
+        );
       });
 
-      testWidgets('stays bottom when trigger is near top of screen',
-          (tester) async {
+      testWidgets('stays bottom when trigger is near top of screen', (
+        tester,
+      ) async {
         tester.view.physicalSize = const Size(400, 400);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(() {
@@ -1486,10 +1501,8 @@ void main() {
                   color: Colors.green,
                   child: const Text('Trigger'),
                 ),
-                contentBuilder: (context, close) => const SizedBox(
-                  height: 80,
-                  child: Text('Popover'),
-                ),
+                contentBuilder: (context, close) =>
+                    const SizedBox(height: 80, child: Text('Popover')),
               ),
             ),
           ),
@@ -1505,271 +1518,293 @@ void main() {
         final triggerPos = triggerBox.localToGlobal(Offset.zero);
 
         // Popover should be BELOW the trigger
-        expect(popoverPos.dy,
-            greaterThanOrEqualTo(triggerPos.dy + triggerBox.size.height - 10));
+        expect(
+          popoverPos.dy,
+          greaterThanOrEqualTo(triggerPos.dy + triggerBox.size.height - 10),
+        );
       });
 
-      testWidgets('calculates direction before opening (pre-open calculation)',
-          (tester) async {
-        tester.view.physicalSize = const Size(400, 300);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-        });
+      testWidgets(
+        'calculates direction before opening (pre-open calculation)',
+        (tester) async {
+          tester.view.physicalSize = const Size(400, 300);
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(() {
+            tester.view.resetPhysicalSize();
+            tester.view.resetDevicePixelRatio();
+          });
 
-        bool? wasOpenCallbackInvoked;
+          bool? wasOpenCallbackInvoked;
 
-        await tester.pumpWidget(
-          wrapWithTheme(
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: WPopover(
-                alignment: PopoverAlignment.bottomLeft,
-                maxHeight: 200,
-                onOpen: () {
-                  wasOpenCallbackInvoked = true;
-                },
-                triggerBuilder: (context, isOpen, isHovering) => Container(
-                  width: 100,
-                  height: 40,
-                  color: Colors.blue,
-                  child: const Text('Trigger'),
-                ),
-                contentBuilder: (context, close) => const SizedBox(
-                  height: 150,
-                  child: Text('Popover'),
+          await tester.pumpWidget(
+            wrapWithTheme(
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: WPopover(
+                  alignment: PopoverAlignment.bottomLeft,
+                  maxHeight: 200,
+                  onOpen: () {
+                    wasOpenCallbackInvoked = true;
+                  },
+                  triggerBuilder: (context, isOpen, isHovering) => Container(
+                    width: 100,
+                    height: 40,
+                    color: Colors.blue,
+                    child: const Text('Trigger'),
+                  ),
+                  contentBuilder: (context, close) =>
+                      const SizedBox(height: 150, child: Text('Popover')),
                 ),
               ),
             ),
-          ),
-        );
+          );
 
-        await tester.tap(find.text('Trigger'));
-        await tester.pumpAndSettle();
+          await tester.tap(find.text('Trigger'));
+          await tester.pumpAndSettle();
 
-        expect(wasOpenCallbackInvoked, isTrue);
-        // Verify popover is positioned correctly on first frame
-        expect(find.text('Popover'), findsOneWidget);
+          expect(wasOpenCallbackInvoked, isTrue);
+          // Verify popover is positioned correctly on first frame
+          expect(find.text('Popover'), findsOneWidget);
 
-        final popoverBox = tester.renderObject<RenderBox>(find.text('Popover'));
-        final popoverPos = popoverBox.localToGlobal(Offset.zero);
+          final popoverBox = tester.renderObject<RenderBox>(
+            find.text('Popover'),
+          );
+          final popoverPos = popoverBox.localToGlobal(Offset.zero);
 
-        // Should be on screen (not clipped off bottom)
-        expect(popoverPos.dy, greaterThanOrEqualTo(0));
-        expect(popoverPos.dy + popoverBox.size.height, lessThanOrEqualTo(300));
-      });
+          // Should be on screen (not clipped off bottom)
+          expect(popoverPos.dy, greaterThanOrEqualTo(0));
+          expect(
+            popoverPos.dy + popoverBox.size.height,
+            lessThanOrEqualTo(300),
+          );
+        },
+      );
 
       group('Desktop Resolution Auto-Flip (1440×900)', () {
         testWidgets(
-            'should flip bottomLeft to topLeft when trigger near bottom edge at 1440×900',
-            (tester) async {
-          tester.view.physicalSize = const Size(1440, 900);
-          tester.view.devicePixelRatio = 1.0;
-          addTearDown(() {
-            tester.view.resetPhysicalSize();
-            tester.view.resetDevicePixelRatio();
-          });
+          'should flip bottomLeft to topLeft when trigger near bottom edge at 1440×900',
+          (tester) async {
+            tester.view.physicalSize = const Size(1440, 900);
+            tester.view.devicePixelRatio = 1.0;
+            addTearDown(() {
+              tester.view.resetPhysicalSize();
+              tester.view.resetDevicePixelRatio();
+            });
 
-          await tester.pumpWidget(
-            wrapWithTheme(
-              Stack(
-                children: [
-                  Positioned(
-                    left: 100,
-                    top: 850,
-                    child: WPopover(
-                      alignment: PopoverAlignment.bottomLeft,
-                      maxHeight: 400,
-                      triggerBuilder: (context, isOpen, isHovering) =>
-                          Container(
-                        width: 100,
-                        height: 40,
-                        color: Colors.blue,
-                        child: const Text('Trigger'),
-                      ),
-                      contentBuilder: (context, close) => const SizedBox(
-                        height: 350,
-                        child: Text('Popover Content'),
+            await tester.pumpWidget(
+              wrapWithTheme(
+                Stack(
+                  children: [
+                    Positioned(
+                      left: 100,
+                      top: 850,
+                      child: WPopover(
+                        alignment: PopoverAlignment.bottomLeft,
+                        maxHeight: 400,
+                        triggerBuilder: (context, isOpen, isHovering) =>
+                            Container(
+                              width: 100,
+                              height: 40,
+                              color: Colors.blue,
+                              child: const Text('Trigger'),
+                            ),
+                        contentBuilder: (context, close) => const SizedBox(
+                          height: 350,
+                          child: Text('Popover Content'),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
+            );
 
-          await tester.tap(find.text('Trigger'));
-          await tester.pumpAndSettle();
+            await tester.tap(find.text('Trigger'));
+            await tester.pumpAndSettle();
 
-          final popoverBox =
-              tester.renderObject<RenderBox>(find.text('Popover Content'));
-          final triggerBox =
-              tester.renderObject<RenderBox>(find.text('Trigger'));
-          final popoverPos = popoverBox.localToGlobal(Offset.zero);
-          final triggerPos = triggerBox.localToGlobal(Offset.zero);
+            final popoverBox = tester.renderObject<RenderBox>(
+              find.text('Popover Content'),
+            );
+            final triggerBox = tester.renderObject<RenderBox>(
+              find.text('Trigger'),
+            );
+            final popoverPos = popoverBox.localToGlobal(Offset.zero);
+            final triggerPos = triggerBox.localToGlobal(Offset.zero);
 
-          // Popover should be ABOVE trigger
-          expect(popoverPos.dy + popoverBox.size.height,
-              lessThanOrEqualTo(triggerPos.dy + 1));
-          expect(popoverPos.dy, greaterThanOrEqualTo(0));
-        });
+            // Popover should be ABOVE trigger
+            expect(
+              popoverPos.dy + popoverBox.size.height,
+              lessThanOrEqualTo(triggerPos.dy + 1),
+            );
+            expect(popoverPos.dy, greaterThanOrEqualTo(0));
+          },
+        );
 
         testWidgets(
-            'should flip bottomLeft to bottomRight when trigger near right edge at 1440×900',
-            (tester) async {
-          tester.view.physicalSize = const Size(1440, 900);
-          tester.view.devicePixelRatio = 1.0;
-          addTearDown(() {
-            tester.view.resetPhysicalSize();
-            tester.view.resetDevicePixelRatio();
-          });
+          'should flip bottomLeft to bottomRight when trigger near right edge at 1440×900',
+          (tester) async {
+            tester.view.physicalSize = const Size(1440, 900);
+            tester.view.devicePixelRatio = 1.0;
+            addTearDown(() {
+              tester.view.resetPhysicalSize();
+              tester.view.resetDevicePixelRatio();
+            });
 
-          await tester.pumpWidget(
-            wrapWithTheme(
-              Stack(
-                children: [
-                  Positioned(
-                    left: 1200,
-                    top: 100,
-                    child: WPopover(
-                      alignment: PopoverAlignment.bottomLeft,
-                      className: 'w-[320px]',
-                      triggerBuilder: (context, isOpen, isHovering) =>
-                          Container(
-                        width: 100,
-                        height: 40,
-                        color: Colors.blue,
-                        child: const Text('Trigger'),
-                      ),
-                      contentBuilder: (context, close) =>
-                          const Text('Popover Content'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-
-          await tester.tap(find.text('Trigger'));
-          await tester.pumpAndSettle();
-
-          final popoverBox =
-              tester.renderObject<RenderBox>(find.text('Popover Content'));
-          final popoverPos = popoverBox.localToGlobal(Offset.zero);
-
-          // Popover right edge (popoverPos.dx + 320) should be within 1440
-          expect(popoverPos.dx + 320, lessThanOrEqualTo(1440));
-          // Should have flipped to bottomRight (right alignment)
-          expect(popoverPos.dx, lessThanOrEqualTo(1200 + 100 - 320 + 1));
-        });
-
-        testWidgets('popover never exceeds screen edges at bottom-right corner',
-            (tester) async {
-          tester.view.physicalSize = const Size(1440, 900);
-          tester.view.devicePixelRatio = 1.0;
-          addTearDown(() {
-            tester.view.resetPhysicalSize();
-            tester.view.resetDevicePixelRatio();
-          });
-
-          await tester.pumpWidget(
-            wrapWithTheme(
-              Stack(
-                children: [
-                  Positioned(
-                    left: 1100,
-                    top: 850,
-                    child: WPopover(
-                      alignment: PopoverAlignment.bottomLeft,
-                      className: 'w-[400px]',
-                      maxHeight: 400,
-                      triggerBuilder: (context, isOpen, isHovering) =>
-                          Container(
-                        width: 100,
-                        height: 40,
-                        color: Colors.blue,
-                        child: const Text('Trigger'),
-                      ),
-                      contentBuilder: (context, close) => const SizedBox(
-                        height: 300,
-                        child: Text('Popover Content'),
+            await tester.pumpWidget(
+              wrapWithTheme(
+                Stack(
+                  children: [
+                    Positioned(
+                      left: 1200,
+                      top: 100,
+                      child: WPopover(
+                        alignment: PopoverAlignment.bottomLeft,
+                        className: 'w-[320px]',
+                        triggerBuilder: (context, isOpen, isHovering) =>
+                            Container(
+                              width: 100,
+                              height: 40,
+                              color: Colors.blue,
+                              child: const Text('Trigger'),
+                            ),
+                        contentBuilder: (context, close) =>
+                            const Text('Popover Content'),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
+            );
 
-          await tester.tap(find.text('Trigger'));
-          await tester.pumpAndSettle();
+            await tester.tap(find.text('Trigger'));
+            await tester.pumpAndSettle();
 
-          final popoverBox =
-              tester.renderObject<RenderBox>(find.text('Popover Content'));
-          final popoverPos = popoverBox.localToGlobal(Offset.zero);
-          final popoverSize = popoverBox.size;
+            final popoverBox = tester.renderObject<RenderBox>(
+              find.text('Popover Content'),
+            );
+            final popoverPos = popoverBox.localToGlobal(Offset.zero);
 
-          expect(popoverPos.dx, greaterThanOrEqualTo(0));
-          expect(popoverPos.dy, greaterThanOrEqualTo(0));
-          expect(popoverPos.dx + popoverSize.width, lessThanOrEqualTo(1440));
-          expect(popoverPos.dy + popoverSize.height, lessThanOrEqualTo(900));
-        });
+            // Popover right edge (popoverPos.dx + 320) should be within 1440
+            expect(popoverPos.dx + 320, lessThanOrEqualTo(1440));
+            // Should have flipped to bottomRight (right alignment)
+            expect(popoverPos.dx, lessThanOrEqualTo(1200 + 100 - 320 + 1));
+          },
+        );
 
         testWidgets(
-            'center trigger stays bottomLeft (no flip needed) at 1440×900',
-            (tester) async {
-          tester.view.physicalSize = const Size(1440, 900);
-          tester.view.devicePixelRatio = 1.0;
-          addTearDown(() {
-            tester.view.resetPhysicalSize();
-            tester.view.resetDevicePixelRatio();
-          });
+          'popover never exceeds screen edges at bottom-right corner',
+          (tester) async {
+            tester.view.physicalSize = const Size(1440, 900);
+            tester.view.devicePixelRatio = 1.0;
+            addTearDown(() {
+              tester.view.resetPhysicalSize();
+              tester.view.resetDevicePixelRatio();
+            });
 
-          await tester.pumpWidget(
-            wrapWithTheme(
-              Stack(
-                children: [
-                  Positioned(
-                    left: 720,
-                    top: 450,
-                    child: WPopover(
-                      alignment: PopoverAlignment.bottomLeft,
-                      className: 'w-[200px]',
-                      maxHeight: 200,
-                      triggerBuilder: (context, isOpen, isHovering) =>
-                          Container(
-                        width: 100,
-                        height: 40,
-                        color: Colors.blue,
-                        child: const Text('Trigger'),
-                      ),
-                      contentBuilder: (context, close) => const SizedBox(
-                        height: 100,
-                        child: Text('Popover Content'),
+            await tester.pumpWidget(
+              wrapWithTheme(
+                Stack(
+                  children: [
+                    Positioned(
+                      left: 1100,
+                      top: 850,
+                      child: WPopover(
+                        alignment: PopoverAlignment.bottomLeft,
+                        className: 'w-[400px]',
+                        maxHeight: 400,
+                        triggerBuilder: (context, isOpen, isHovering) =>
+                            Container(
+                              width: 100,
+                              height: 40,
+                              color: Colors.blue,
+                              child: const Text('Trigger'),
+                            ),
+                        contentBuilder: (context, close) => const SizedBox(
+                          height: 300,
+                          child: Text('Popover Content'),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
+            );
 
-          await tester.tap(find.text('Trigger'));
-          await tester.pumpAndSettle();
+            await tester.tap(find.text('Trigger'));
+            await tester.pumpAndSettle();
 
-          final popoverBox =
-              tester.renderObject<RenderBox>(find.text('Popover Content'));
-          final triggerBox =
-              tester.renderObject<RenderBox>(find.text('Trigger'));
-          final popoverPos = popoverBox.localToGlobal(Offset.zero);
-          final triggerPos = triggerBox.localToGlobal(Offset.zero);
+            final popoverBox = tester.renderObject<RenderBox>(
+              find.text('Popover Content'),
+            );
+            final popoverPos = popoverBox.localToGlobal(Offset.zero);
+            final popoverSize = popoverBox.size;
 
-          // Popover should be BELOW trigger (bottomLeft)
-          expect(popoverPos.dy,
-              greaterThanOrEqualTo(triggerPos.dy + triggerBox.size.height - 1));
-          expect(popoverPos.dx, closeTo(triggerPos.dx, 0.1));
-        });
+            expect(popoverPos.dx, greaterThanOrEqualTo(0));
+            expect(popoverPos.dy, greaterThanOrEqualTo(0));
+            expect(popoverPos.dx + popoverSize.width, lessThanOrEqualTo(1440));
+            expect(popoverPos.dy + popoverSize.height, lessThanOrEqualTo(900));
+          },
+        );
+
+        testWidgets(
+          'center trigger stays bottomLeft (no flip needed) at 1440×900',
+          (tester) async {
+            tester.view.physicalSize = const Size(1440, 900);
+            tester.view.devicePixelRatio = 1.0;
+            addTearDown(() {
+              tester.view.resetPhysicalSize();
+              tester.view.resetDevicePixelRatio();
+            });
+
+            await tester.pumpWidget(
+              wrapWithTheme(
+                Stack(
+                  children: [
+                    Positioned(
+                      left: 720,
+                      top: 450,
+                      child: WPopover(
+                        alignment: PopoverAlignment.bottomLeft,
+                        className: 'w-[200px]',
+                        maxHeight: 200,
+                        triggerBuilder: (context, isOpen, isHovering) =>
+                            Container(
+                              width: 100,
+                              height: 40,
+                              color: Colors.blue,
+                              child: const Text('Trigger'),
+                            ),
+                        contentBuilder: (context, close) => const SizedBox(
+                          height: 100,
+                          child: Text('Popover Content'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+
+            await tester.tap(find.text('Trigger'));
+            await tester.pumpAndSettle();
+
+            final popoverBox = tester.renderObject<RenderBox>(
+              find.text('Popover Content'),
+            );
+            final triggerBox = tester.renderObject<RenderBox>(
+              find.text('Trigger'),
+            );
+            final popoverPos = popoverBox.localToGlobal(Offset.zero);
+            final triggerPos = triggerBox.localToGlobal(Offset.zero);
+
+            // Popover should be BELOW trigger (bottomLeft)
+            expect(
+              popoverPos.dy,
+              greaterThanOrEqualTo(triggerPos.dy + triggerBox.size.height - 1),
+            );
+            expect(popoverPos.dx, closeTo(triggerPos.dx, 0.1));
+          },
+        );
       });
     });
   });

@@ -101,26 +101,23 @@ void main() {
         expect(styles.height, 8);
       });
 
-      test(
-        'a caller-appended w-full wins over a base w-1/2 (WIND-1 proof: '
-        'per-family last-wins resolves an appended className without '
-        'twMerge)',
-        () {
-          // Mirrors WindRecipe(base: 'w-1/2')(className: 'w-full'): the
-          // recipe only APPENDS (see wind_recipe_test.dart), both tokens
-          // reach the parser in order, and reverse-iteration last-wins here
-          // picks the trailing (caller) token.
-          final classes = WindParser.findAndGroupClasses(
-            'w-1/2 w-full',
-            context,
-          )['sizing']!;
-          expect(classes, ['w-1/2', 'w-full']);
+      test('a caller-appended w-full wins over a base w-1/2 (WIND-1 proof: '
+          'per-family last-wins resolves an appended className without '
+          'twMerge)', () {
+        // Mirrors WindRecipe(base: 'w-1/2')(className: 'w-full'): the
+        // recipe only APPENDS (see wind_recipe_test.dart), both tokens
+        // reach the parser in order, and reverse-iteration last-wins here
+        // picks the trailing (caller) token.
+        final classes = WindParser.findAndGroupClasses(
+          'w-1/2 w-full',
+          context,
+        )['sizing']!;
+        expect(classes, ['w-1/2', 'w-full']);
 
-          final styles = parser.parse(WindStyle(), classes, context);
+        final styles = parser.parse(WindStyle(), classes, context);
 
-          expect(styles.widthFactor, 1.0);
-        },
-      );
+        expect(styles.widthFactor, 1.0);
+      });
 
       test('parses max-width classes correctly', () {
         final styles = WindStyle();
@@ -155,9 +152,7 @@ void main() {
         expect(styles2xl.constraints?.maxWidth, 672);
       });
 
-      test(
-          'max-w-prose resolves to 512px fixed, not Tailwind font-relative 65ch',
-          () {
+      test('max-w-prose resolves to 512px fixed, not Tailwind font-relative 65ch', () {
         // Deliberate fixed-px divergence from Tailwind: 512px matches max-w-lg
         // and avoids font-size dependency; Tailwind's 65ch ≈ 1040px at 16px/ch.
         final styles = parser.parse(WindStyle(), ['max-w-prose'], context);

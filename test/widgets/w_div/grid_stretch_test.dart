@@ -3,15 +3,17 @@ import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 Widget wrapWithTheme(Widget child, {double width = 600}) => MaterialApp(
-      home: WindTheme(
-        data: WindThemeData(),
-        child: Scaffold(body: SizedBox(width: width, child: child)),
-      ),
-    );
+  home: WindTheme(
+    data: WindThemeData(),
+    child: Scaffold(
+      body: SizedBox(width: width, child: child),
+    ),
+  ),
+);
 
 Size cellOf(WidgetTester tester, String text) => tester.getSize(
-      find.ancestor(of: find.text(text), matching: find.byType(WDiv)).first,
-    );
+  find.ancestor(of: find.text(text), matching: find.byType(WDiv)).first,
+);
 
 void main() {
   setUp(WindParser.clearCache);
@@ -41,8 +43,9 @@ void main() {
       expect(cellOf(tester, 'tall').height, 120);
     });
 
-    testWidgets('cells divide the row width evenly (minus the gap)',
-        (tester) async {
+    testWidgets('cells divide the row width evenly (minus the gap)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WDiv(
@@ -60,8 +63,9 @@ void main() {
       expect(cellOf(tester, 'b').width, 292);
     });
 
-    testWidgets('a ragged final row does not crash and keeps columns aligned',
-        (tester) async {
+    testWidgets('a ragged final row does not crash and keeps columns aligned', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WDiv(
@@ -80,8 +84,9 @@ void main() {
       expect(cellOf(tester, 'c3').width, 292);
     });
 
-    testWidgets('default grid (no items-stretch) keeps intrinsic heights',
-        (tester) async {
+    testWidgets('default grid (no items-stretch) keeps intrinsic heights', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WDiv(
@@ -105,8 +110,9 @@ void main() {
       expect(cellOf(tester, 'ds').height, 40);
     });
 
-    testWidgets('grid-cols-0 is clamped to 1 and does not hang',
-        (tester) async {
+    testWidgets('grid-cols-0 is clamped to 1 and does not hang', (
+      tester,
+    ) async {
       // The parser allows grid-cols-0; cols must clamp to 1 so the stretch row
       // loop advances (start += cols) and the Wrap width math avoids /0.
       await tester.pumpWidget(
@@ -126,8 +132,7 @@ void main() {
       expect(find.text('z2'), findsOneWidget);
     });
 
-    testWidgets(
-        'stretches UNEQUAL flex-col cells (with nested WDiv) without asserting '
+    testWidgets('stretches UNEQUAL flex-col cells (with nested WDiv) without asserting '
         '(#139)', (tester) async {
       // The regression: an unequal `flex flex-col` cell carries a LayoutBuilder,
       // which IntrinsicHeight could not measure. The real-layout stretch row
@@ -161,40 +166,43 @@ void main() {
       expect(tester.takeException(), isNull);
       // The shorter cell is stretched to the taller cell's height.
       expect(
-          cellOf(tester, 'Revenue').height, cellOf(tester, 'Signups').height);
+        cellOf(tester, 'Revenue').height,
+        cellOf(tester, 'Signups').height,
+      );
       expect(cellOf(tester, 'Revenue').height, greaterThan(0));
     });
 
     testWidgets(
-        'stretching an unequal flex-col cell emits no overflow warning (#141)',
-        (tester) async {
-      // Follow-up to #139: the stretch must not leave a residual RenderFlex
-      // overflow on the stretched row. WindEqualHeightRow uses a min-height
-      // (never a tight squeeze), so a stretched cell's content is never forced
-      // below its own height.
-      await tester.pumpWidget(
-        wrapWithTheme(
-          WDiv(
-            className: 'grid grid-cols-2 gap-4 items-stretch',
-            children: [
-              // taller (3 rows)
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: const [WText('A'), WText('1'), WText('note')],
-              ),
-              // shorter (2 rows) -> stretched to the taller
-              WDiv(
-                className: 'flex flex-col gap-1',
-                children: const [WText('B'), WText('2')],
-              ),
-            ],
+      'stretching an unequal flex-col cell emits no overflow warning (#141)',
+      (tester) async {
+        // Follow-up to #139: the stretch must not leave a residual RenderFlex
+        // overflow on the stretched row. WindEqualHeightRow uses a min-height
+        // (never a tight squeeze), so a stretched cell's content is never forced
+        // below its own height.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WDiv(
+              className: 'grid grid-cols-2 gap-4 items-stretch',
+              children: [
+                // taller (3 rows)
+                WDiv(
+                  className: 'flex flex-col gap-1',
+                  children: const [WText('A'), WText('1'), WText('note')],
+                ),
+                // shorter (2 rows) -> stretched to the taller
+                WDiv(
+                  className: 'flex flex-col gap-1',
+                  children: const [WText('B'), WText('2')],
+                ),
+              ],
+            ),
           ),
-        ),
-      );
+        );
 
-      // No "RenderFlex overflowed" (or any) exception, and heights match.
-      expect(tester.takeException(), isNull);
-      expect(cellOf(tester, 'A').height, cellOf(tester, 'B').height);
-    });
+        // No "RenderFlex overflowed" (or any) exception, and heights match.
+        expect(tester.takeException(), isNull);
+        expect(cellOf(tester, 'A').height, cellOf(tester, 'B').height);
+      },
+    );
   });
 }

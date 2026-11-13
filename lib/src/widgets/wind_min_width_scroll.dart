@@ -193,8 +193,10 @@ class _RenderMinWidthBox extends RenderProxyBox {
       // an unbounded axis. The floor is clamped into the INCOMING width range
       // (and the size re-constrained) so the box still respects a finite parent
       // constraint if it is ever laid out outside a scroll.
-      final double childMin =
-          _floorMinWidth.clamp(constraints.minWidth, constraints.maxWidth);
+      final double childMin = _floorMinWidth.clamp(
+        constraints.minWidth,
+        constraints.maxWidth,
+      );
       child.layout(
         BoxConstraints(
           minWidth: childMin,

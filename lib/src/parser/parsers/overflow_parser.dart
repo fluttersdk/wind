@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import '../wind_context.dart';
 import '../wind_style.dart';
 import 'wind_parser_interface.dart';
@@ -21,15 +22,12 @@ class OverflowParser implements WindParserInterface {
     // Only accept fully valid overflow utility classes to avoid
     // confusing behavior where canParse returns true but parsing
     // produces null because the value is unsupported.
-    return RegExp(
-          r'^overflow-(hidden|visible|scroll|auto)$',
-        ).hasMatch(className) ||
-        RegExp(
-          r'^overflow-x-(hidden|visible|scroll|auto)$',
-        ).hasMatch(className) ||
-        RegExp(
-          r'^overflow-y-(hidden|visible|scroll|auto)$',
-        ).hasMatch(className);
+    return RegExp(r'^overflow-(hidden|visible|scroll|auto)$')
+            .hasMatch(className) ||
+        RegExp(r'^overflow-x-(hidden|visible|scroll|auto)$')
+            .hasMatch(className) ||
+        RegExp(r'^overflow-y-(hidden|visible|scroll|auto)$')
+            .hasMatch(className);
   }
 
   @override

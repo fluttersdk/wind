@@ -19,23 +19,22 @@ void main() {
 
   group('WDynamic Widget Tests', () {
     group('Self-Owned State', () {
-      testWidgets(
-        'renders WText from JSON without external controller',
-        (tester) async {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              const WDynamic(
-                json: {
-                  'type': 'WText',
-                  'props': {'text': 'hi'},
-                },
-              ),
+      testWidgets('renders WText from JSON without external controller', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDynamic(
+              json: {
+                'type': 'WText',
+                'props': {'text': 'hi'},
+              },
             ),
-          );
+          ),
+        );
 
-          expect(find.text('hi'), findsOneWidget);
-        },
-      );
+        expect(find.text('hi'), findsOneWidget);
+      });
     });
 
     group('Documented form-state example', () {
@@ -183,64 +182,59 @@ void main() {
       // The other direction: a host writing through the controller is the whole
       // point of exposing one, and it reached the state without reaching the
       // screen.
-      testWidgets(
-        'a write through the controller reaches the screen',
-        (tester) async {
-          final controller = WDynamicController();
-          addTearDown(controller.dispose);
+      testWidgets('a write through the controller reaches the screen', (
+        tester,
+      ) async {
+        final controller = WDynamicController();
+        addTearDown(controller.dispose);
 
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WDynamic(
-                json: const {
-                  'type': 'WCheckbox',
-                  'props': {'id': 'agree'},
-                },
-                controller: controller,
-              ),
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WDynamic(
+              json: const {
+                'type': 'WCheckbox',
+                'props': {'id': 'agree'},
+              },
+              controller: controller,
             ),
-          );
+          ),
+        );
 
-          controller.setValue('agree', true);
-          await tester.pump();
+        controller.setValue('agree', true);
+        await tester.pump();
 
-          expect(
-            tester.widget<WCheckbox>(find.byType(WCheckbox)).value,
-            isTrue,
-          );
-        },
-      );
+        expect(tester.widget<WCheckbox>(find.byType(WCheckbox)).value, isTrue);
+      });
 
       // A borrowed state outlives the widget that read it, so the listener has to
       // come off on dispose. The `mounted` guard inside the callback would keep a
       // leaked listener from throwing, which is exactly why this asserts the
       // subscription itself rather than the absence of an exception.
-      testWidgets(
-        'the listener comes off a state the widget only borrowed',
-        (tester) async {
-          final state = _ObservableDynamicState();
-          final controller = WDynamicController.fromState(state);
-          addTearDown(state.dispose);
+      testWidgets('the listener comes off a state the widget only borrowed', (
+        tester,
+      ) async {
+        final state = _ObservableDynamicState();
+        final controller = WDynamicController.fromState(state);
+        addTearDown(state.dispose);
 
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WDynamic(
-                json: const {
-                  'type': 'WCheckbox',
-                  'props': {'id': 'agree'},
-                },
-                controller: controller,
-              ),
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WDynamic(
+              json: const {
+                'type': 'WCheckbox',
+                'props': {'id': 'agree'},
+              },
+              controller: controller,
             ),
-          );
+          ),
+        );
 
-          expect(state.isObserved, isTrue);
+        expect(state.isObserved, isTrue);
 
-          await tester.pumpWidget(wrapWithTheme(const SizedBox.shrink()));
+        await tester.pumpWidget(wrapWithTheme(const SizedBox.shrink()));
 
-          expect(state.isObserved, isFalse);
-        },
-      );
+        expect(state.isObserved, isFalse);
+      });
     });
 
     group('Default Parameters', () {
@@ -288,139 +282,126 @@ void main() {
     });
 
     group('Depth Limiting', () {
-      testWidgets(
-        'shows MaxDepth error when nesting exceeds maxDepth',
-        (tester) async {
-          // 4-level deep structure with maxDepth: 2 forces depth exceeded.
-          await tester.pumpWidget(
-            wrapWithTheme(
-              const WDynamic(
-                maxDepth: 2,
-                json: {
-                  'type': 'WDiv',
-                  'children': [
-                    {
-                      'type': 'WDiv',
-                      'children': [
-                        {
-                          'type': 'WDiv',
-                          'children': [
-                            {
-                              'type': 'WText',
-                              'props': {'text': 'too deep'},
-                            },
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ),
+      testWidgets('shows MaxDepth error when nesting exceeds maxDepth', (
+        tester,
+      ) async {
+        // 4-level deep structure with maxDepth: 2 forces depth exceeded.
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDynamic(
+              maxDepth: 2,
+              json: {
+                'type': 'WDiv',
+                'children': [
+                  {
+                    'type': 'WDiv',
+                    'children': [
+                      {
+                        'type': 'WDiv',
+                        'children': [
+                          {
+                            'type': 'WText',
+                            'props': {'text': 'too deep'},
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
             ),
-          );
+          ),
+        );
 
-          expect(find.text('Error: MaxDepth'), findsOneWidget);
-        },
-      );
+        expect(find.text('Error: MaxDepth'), findsOneWidget);
+      });
     });
 
     group('Error Callback', () {
-      testWidgets(
-        'calls onError when a custom builder throws',
-        (tester) async {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WDynamic(
-                json: const {
-                  'type': 'BrokenWidget',
-                  'props': {},
+      testWidgets('calls onError when a custom builder throws', (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WDynamic(
+              json: const {'type': 'BrokenWidget', 'props': {}},
+              builders: {
+                'BrokenWidget': (props, children) {
+                  throw Exception('builder exploded');
                 },
-                builders: {
-                  'BrokenWidget': (props, children) {
-                    throw Exception('builder exploded');
-                  },
-                },
-                onError: (type, error) => Text('handled $type'),
-              ),
+              },
+              onError: (type, error) => Text('handled $type'),
             ),
-          );
+          ),
+        );
 
-          expect(find.text('handled BrokenWidget'), findsOneWidget);
-        },
-      );
+        expect(find.text('handled BrokenWidget'), findsOneWidget);
+      });
     });
 
     group('Unknown Widget Callback', () {
-      testWidgets(
-        'calls onUnknownWidget for an unregistered type',
-        (tester) async {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WDynamic(
-                json: const {
-                  'type': 'NonExistentWidget',
-                  'props': {},
-                },
-                onUnknownWidget: (type, props) => Text('unknown $type'),
-              ),
+      testWidgets('calls onUnknownWidget for an unregistered type', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WDynamic(
+              json: const {'type': 'NonExistentWidget', 'props': {}},
+              onUnknownWidget: (type, props) => Text('unknown $type'),
             ),
-          );
+          ),
+        );
 
-          expect(find.text('unknown NonExistentWidget'), findsOneWidget);
-        },
-      );
+        expect(find.text('unknown NonExistentWidget'), findsOneWidget);
+      });
     });
 
     group('Dispose Behaviour', () {
-      testWidgets(
-        'disposes owned state on unmount without errors',
-        (tester) async {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              const WDynamic(
-                json: {
-                  'type': 'WText',
-                  'props': {'text': 'disposable'},
-                },
-              ),
+      testWidgets('disposes owned state on unmount without errors', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WDynamic(
+              json: {
+                'type': 'WText',
+                'props': {'text': 'disposable'},
+              },
             ),
-          );
+          ),
+        );
 
-          // Replace the widget tree to trigger dispose.
-          await tester.pumpWidget(wrapWithTheme(const SizedBox.shrink()));
+        // Replace the widget tree to trigger dispose.
+        await tester.pumpWidget(wrapWithTheme(const SizedBox.shrink()));
 
-          // No exception = owned state was disposed cleanly.
-          expect(find.byType(SizedBox), findsOneWidget);
-        },
-      );
+        // No exception = owned state was disposed cleanly.
+        expect(find.byType(SizedBox), findsOneWidget);
+      });
 
-      testWidgets(
-        'does not dispose external controller state on unmount',
-        (tester) async {
-          final controller = WDynamicController();
-          controller.state.set('persist', 'yes');
+      testWidgets('does not dispose external controller state on unmount', (
+        tester,
+      ) async {
+        final controller = WDynamicController();
+        controller.state.set('persist', 'yes');
 
-          await tester.pumpWidget(
-            wrapWithTheme(
-              WDynamic(
-                json: const {
-                  'type': 'WText',
-                  'props': {'text': 'external dispose'},
-                },
-                controller: controller,
-              ),
+        await tester.pumpWidget(
+          wrapWithTheme(
+            WDynamic(
+              json: const {
+                'type': 'WText',
+                'props': {'text': 'external dispose'},
+              },
+              controller: controller,
             ),
-          );
+          ),
+        );
 
-          // Unmount the WDynamic widget.
-          await tester.pumpWidget(wrapWithTheme(const SizedBox.shrink()));
+        // Unmount the WDynamic widget.
+        await tester.pumpWidget(wrapWithTheme(const SizedBox.shrink()));
 
-          // Controller state must still be accessible after widget disposal.
-          expect(controller.state.get('persist'), 'yes');
+        // Controller state must still be accessible after widget disposal.
+        expect(controller.state.get('persist'), 'yes');
 
-          controller.dispose();
-        },
-      );
+        controller.dispose();
+      });
     });
   });
 }

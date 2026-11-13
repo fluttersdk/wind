@@ -136,7 +136,8 @@ class MarginParser implements WindParserInterface {
       }
     }
 
-    final bool didChange = mTop != null ||
+    final bool didChange =
+        mTop != null ||
         mBottom != null ||
         mLeft != null ||
         mRight != null ||
@@ -150,13 +151,13 @@ class MarginParser implements WindParserInterface {
     return styles.copyWith(
       margin:
           (mTop != null || mBottom != null || mLeft != null || mRight != null)
-              ? EdgeInsets.only(
-                  top: mTop ?? 0.0,
-                  bottom: mBottom ?? 0.0,
-                  left: mLeft ?? 0.0,
-                  right: mRight ?? 0.0,
-                )
-              : null,
+          ? EdgeInsets.only(
+              top: mTop ?? 0.0,
+              bottom: mBottom ?? 0.0,
+              left: mLeft ?? 0.0,
+              right: mRight ?? 0.0,
+            )
+          : null,
       marginXAuto: marginXAuto,
     );
   }

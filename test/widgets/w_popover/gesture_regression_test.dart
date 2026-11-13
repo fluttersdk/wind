@@ -103,8 +103,9 @@ void main() {
         expect(find.text('Content Item'), findsNothing);
       });
 
-      testWidgets('re-tapping the trigger while open toggles it closed',
-          (tester) async {
+      testWidgets('re-tapping the trigger while open toggles it closed', (
+        tester,
+      ) async {
         await tester.pumpWidget(wrapWithTheme(Center(child: build())));
 
         await tester.tap(find.text('Trigger'));
@@ -129,8 +130,9 @@ void main() {
     // the same tap. The popover opens on pointer-down (Listener), the trigger's
     // own onTap completes on pointer-up. A consumer that does not want the
     // co-fire uses a non-interactive WDiv trigger or an empty/null onTap.
-    testWidgets('interactive trigger opens the popover AND co-fires its onTap',
-        (tester) async {
+    testWidgets('interactive trigger opens the popover AND co-fires its onTap', (
+      tester,
+    ) async {
       int triggerTaps = 0;
       await tester.pumpWidget(
         wrapWithTheme(
@@ -141,10 +143,8 @@ void main() {
                 className: 'bg-purple-600 text-white px-4 py-2 rounded-lg',
                 child: const WText('Trigger', className: 'text-white'),
               ),
-              contentBuilder: (context, close) => const SizedBox(
-                height: 40,
-                child: Text('Content Item'),
-              ),
+              contentBuilder: (context, close) =>
+                  const SizedBox(height: 40, child: Text('Content Item')),
             ),
           ),
         ),
@@ -164,47 +164,48 @@ void main() {
     // Defect B guard must not eat a genuine outside tap on a controller-opened
     // popover. open() arms the one-shot suppress flag and disarms it one frame
     // later; a later, separate outside tap on a subsequent frame still closes.
-    testWidgets('a later outside tap still closes a controller-opened popover',
-        (tester) async {
-      final controller = PopoverController();
-      addTearDown(controller.dispose);
+    testWidgets(
+      'a later outside tap still closes a controller-opened popover',
+      (tester) async {
+        final controller = PopoverController();
+        addTearDown(controller.dispose);
 
-      await tester.pumpWidget(
-        wrapWithTheme(
-          Center(
-            child: WPopover(
-              controller: controller,
-              enableTriggerOnTap: false,
-              triggerBuilder: (context, isOpen, isHovering) => const WDiv(
-                className: 'px-4 py-2 rounded-lg bg-slate-100',
-                child: WText('Trigger'),
-              ),
-              contentBuilder: (context, close) => const SizedBox(
-                height: 40,
-                child: Text('Content Item'),
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Center(
+              child: WPopover(
+                controller: controller,
+                enableTriggerOnTap: false,
+                triggerBuilder: (context, isOpen, isHovering) => const WDiv(
+                  className: 'px-4 py-2 rounded-lg bg-slate-100',
+                  child: WText('Trigger'),
+                ),
+                contentBuilder: (context, close) =>
+                    const SizedBox(height: 40, child: Text('Content Item')),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      controller.show();
-      await tester.pumpAndSettle();
-      expect(find.text('Content Item'), findsOneWidget);
+        controller.show();
+        await tester.pumpAndSettle();
+        expect(find.text('Content Item'), findsOneWidget);
 
-      await tester.tapAt(const Offset(5, 5));
-      await tester.pumpAndSettle();
+        await tester.tapAt(const Offset(5, 5));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Content Item'), findsNothing);
-    });
+        expect(find.text('Content Item'), findsNothing);
+      },
+    );
   });
 
   group('WPopover trigger accessibility', () {
     // The trigger toggles on raw pointer events (to bypass the gesture arena),
     // which is invisible to assistive tech. A Semantics tap action must keep
     // the trigger reachable by screen readers and keyboard activation.
-    testWidgets('semantic tap action opens the popover (assistive-tech path)',
-        (tester) async {
+    testWidgets('semantic tap action opens the popover (assistive-tech path)', (
+      tester,
+    ) async {
       final handle = tester.ensureSemantics();
 
       await tester.pumpWidget(
@@ -215,10 +216,8 @@ void main() {
                 className: 'px-4 py-2 rounded-lg bg-slate-100',
                 child: WText('Trigger'),
               ),
-              contentBuilder: (context, close) => const SizedBox(
-                height: 40,
-                child: Text('Content Item'),
-              ),
+              contentBuilder: (context, close) =>
+                  const SizedBox(height: 40, child: Text('Content Item')),
             ),
           ),
         ),
@@ -238,10 +237,12 @@ void main() {
 
     // A secondary (right) button press must not toggle the popover; only the
     // primary button does.
-    testWidgets('a secondary (right) button press does not open the popover',
-        (tester) async {
-      await tester
-          .pumpWidget(wrapWithTheme(Center(child: _divTriggerPopover())));
+    testWidgets('a secondary (right) button press does not open the popover', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithTheme(Center(child: _divTriggerPopover())),
+      );
 
       expect(find.text('Content Item'), findsNothing);
 

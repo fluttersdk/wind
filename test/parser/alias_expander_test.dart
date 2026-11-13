@@ -14,18 +14,17 @@ void main() {
       );
     });
 
-    test('expands recursively when an alias value references another alias',
-        () {
-      final result = expandAliases(
-        'row-c',
-        const {
+    test(
+      'expands recursively when an alias value references another alias',
+      () {
+        final result = expandAliases('row-c', const {
           'row': 'flex flex-row',
           'row-c': 'row items-center',
-        },
-      );
+        });
 
-      expect(result, 'flex flex-row items-center');
-    });
+        expect(result, 'flex flex-row items-center');
+      },
+    );
 
     test('terminates on a self-cycle without hanging', () {
       // A self-referential alias must not loop; the offending token is left
@@ -43,8 +42,7 @@ void main() {
       expect(expandAliases('foo', const {'row': 'flex flex-row'}), 'foo');
     });
 
-    test(
-        'expands a prefixed token whose body is an alias, re-applying the '
+    test('expands a prefixed token whose body is an alias, re-applying the '
         'prefix to each produced token', () {
       // The prefix is peeled off, the bare body matches the key, and the prefix
       // is re-applied to every produced token (#124).
@@ -54,17 +52,15 @@ void main() {
       );
     });
 
-    test(
-        're-applies a state prefix across an alias value that has its own '
+    test('re-applies a state prefix across an alias value that has its own '
         'dark pair', () {
       // hover:bg-surface -> the surface alias tokens, each carrying hover:.
       // hover: over the value's dark: yields hover:dark:..., which the parser
       // resolves regardless of prefix order.
       expect(
-        expandAliases(
-          'hover:bg-surface',
-          const {'bg-surface': 'bg-gray-100 dark:bg-gray-800'},
-        ),
+        expandAliases('hover:bg-surface', const {
+          'bg-surface': 'bg-gray-100 dark:bg-gray-800',
+        }),
         'hover:bg-gray-100 hover:dark:bg-gray-800',
       );
     });
@@ -80,11 +76,9 @@ void main() {
       // a -> hover:a re-enters key 'a' on the chain; the repeat is left as the
       // original prefixed token rather than looping.
       final warnings = <String>[];
-      final result = expandAliases(
-        'a',
-        const {'a': 'hover:a'},
-        onWarn: warnings.add,
-      );
+      final result = expandAliases('a', const {
+        'a': 'hover:a',
+      }, onWarn: warnings.add);
       expect(result, 'hover:a');
       expect(warnings.any((w) => w.contains('cycle')), isTrue);
     });
@@ -113,10 +107,7 @@ void main() {
     });
 
     test('preserves duplicate tokens and their order (no dedup)', () {
-      expect(
-        expandAliases('p-2 p-4 p-2', const {}),
-        'p-2 p-4 p-2',
-      );
+      expect(expandAliases('p-2 p-4 p-2', const {}), 'p-2 p-4 p-2');
     });
 
     test('preserves order when expanding alongside non-alias tokens', () {
@@ -129,11 +120,7 @@ void main() {
     test('invokes onWarn when a cycle is detected', () {
       final warnings = <String>[];
 
-      expandAliases(
-        'a',
-        const {'a': 'a'},
-        onWarn: warnings.add,
-      );
+      expandAliases('a', const {'a': 'a'}, onWarn: warnings.add);
 
       expect(warnings, hasLength(1));
       expect(warnings.single, contains('cycle'));

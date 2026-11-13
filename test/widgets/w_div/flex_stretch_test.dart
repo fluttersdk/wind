@@ -22,8 +22,9 @@ void main() {
   setUp(WindParser.clearCache);
 
   group('smart column stretch', () {
-    testWidgets('flex-col child with no width stretches to parent width',
-        (tester) async {
+    testWidgets('flex-col child with no width stretches to parent width', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -42,8 +43,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 300);
     });
 
-    testWidgets('w-32 child keeps its explicit width (no stretch)',
-        (tester) async {
+    testWidgets('w-32 child keeps its explicit width (no stretch)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -72,7 +74,9 @@ void main() {
               className: 'flex flex-col',
               children: [
                 WDiv(
-                    className: 'w-1/2 bg-red-500', child: SizedBox(height: 10)),
+                  className: 'w-1/2 bg-red-500',
+                  child: SizedBox(height: 10),
+                ),
               ],
             ),
           ),
@@ -83,8 +87,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 150);
     });
 
-    testWidgets('w-full child stays full and is NOT double-wrapped',
-        (tester) async {
+    testWidgets('w-full child stays full and is NOT double-wrapped', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -112,12 +117,16 @@ void main() {
           .whereType<SizedBox>()
           .where((box) => box.width == double.infinity)
           .length;
-      expect(infinityBoxes, 0,
-          reason: 'w-full child is treated as explicit cross-width');
+      expect(
+        infinityBoxes,
+        0,
+        reason: 'w-full child is treated as explicit cross-width',
+      );
     });
 
-    testWidgets('items-start disables stretch (child sizes to content)',
-        (tester) async {
+    testWidgets('items-start disables stretch (child sizes to content)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -139,8 +148,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 40);
     });
 
-    testWidgets('items-center disables stretch (child sizes to content)',
-        (tester) async {
+    testWidgets('items-center disables stretch (child sizes to content)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -162,8 +172,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 40);
     });
 
-    testWidgets('raw Flutter Container child is left untouched (no stretch)',
-        (tester) async {
+    testWidgets('raw Flutter Container child is left untouched (no stretch)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -172,9 +183,10 @@ void main() {
               className: 'flex flex-col',
               children: [
                 SizedBox(
-                    width: 40,
-                    height: 10,
-                    child: ColoredBox(color: Color(0xFFFF0000))),
+                  width: 40,
+                  height: 10,
+                  child: ColoredBox(color: Color(0xFFFF0000)),
+                ),
               ],
             ),
           ),
@@ -191,8 +203,9 @@ void main() {
       expect(stretched, 0, reason: 'non-Wind children must not be stretched');
     });
 
-    testWidgets('flex-row child with no height is NOT stretched',
-        (tester) async {
+    testWidgets('flex-row child with no height is NOT stretched', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -217,8 +230,9 @@ void main() {
       expect(stretched, 0, reason: 'Row cross-axis must stay unchanged');
     });
 
-    testWidgets('Expanded/Flexible candidate (flex-1) is not stretch-wrapped',
-        (tester) async {
+    testWidgets('Expanded/Flexible candidate (flex-1) is not stretch-wrapped', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -227,10 +241,7 @@ void main() {
             child: WDiv(
               className: 'flex flex-col',
               children: [
-                WDiv(
-                  className: 'flex-1 bg-red-500',
-                  child: SizedBox(),
-                ),
+                WDiv(className: 'flex-1 bg-red-500', child: SizedBox()),
               ],
             ),
           ),
@@ -258,8 +269,9 @@ void main() {
   });
 
   group('smart column stretch (interaction wrappers)', () {
-    testWidgets('WAnchor wrapping a no-width WDiv stretches to parent width',
-        (tester) async {
+    testWidgets('WAnchor wrapping a no-width WDiv stretches to parent width', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           SizedBox(
@@ -284,20 +296,16 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 300);
     });
 
-    testWidgets('WAnchor wrapping a WText stretches to parent width',
-        (tester) async {
+    testWidgets('WAnchor wrapping a WText stretches to parent width', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           SizedBox(
             width: 300,
             child: WDiv(
               className: 'flex flex-col',
-              children: [
-                WAnchor(
-                  onTap: () {},
-                  child: const WText('x'),
-                ),
-              ],
+              children: [WAnchor(onTap: () {}, child: const WText('x'))],
             ),
           ),
         ),
@@ -314,12 +322,7 @@ void main() {
             width: 300,
             child: WDiv(
               className: 'flex flex-col',
-              children: [
-                WButton(
-                  onTap: () {},
-                  child: const WText('x'),
-                ),
-              ],
+              children: [WButton(onTap: () {}, child: const WText('x'))],
             ),
           ),
         ),
@@ -329,8 +332,9 @@ void main() {
       expect(tester.getSize(find.byType(WButton)).width, 300);
     });
 
-    testWidgets('WAnchor wrapping a w-32 WDiv keeps its width (no stretch)',
-        (tester) async {
+    testWidgets('WAnchor wrapping a w-32 WDiv keeps its width (no stretch)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           SizedBox(
@@ -356,8 +360,7 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 128);
     });
 
-    testWidgets(
-        'stretch-eligible WAnchor in an unbounded-width column does not crash '
+    testWidgets('stretch-eligible WAnchor in an unbounded-width column does not crash '
         '(degrades to content size)', (tester) async {
       // A flex-col in a bare Row main-axis slot has unbounded width. A
       // stretch-eligible WAnchor would otherwise be wrapped in
@@ -372,10 +375,7 @@ void main() {
               WDiv(
                 className: 'flex flex-col',
                 children: [
-                  WAnchor(
-                    onTap: () {},
-                    child: const WText('content'),
-                  ),
+                  WAnchor(onTap: () {}, child: const WText('content')),
                 ],
               ),
             ],
@@ -383,12 +383,16 @@ void main() {
         ),
       );
 
-      expect(tester.takeException(), isNull,
-          reason: 'WAnchor smart stretch must not throw on unbounded width');
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'WAnchor smart stretch must not throw on unbounded width',
+      );
     });
 
-    testWidgets('WButton with explicit width keeps its width (no stretch)',
-        (tester) async {
+    testWidgets('WButton with explicit width keeps its width (no stretch)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           SizedBox(
@@ -412,8 +416,9 @@ void main() {
       expect(tester.getSize(find.byType(WButton)).width, 128);
     });
 
-    testWidgets('self-flexing WButton (grow) is not stretch-wrapped',
-        (tester) async {
+    testWidgets('self-flexing WButton (grow) is not stretch-wrapped', (
+      tester,
+    ) async {
       // A WButton whose className carries a self-flex token (grow) is excluded
       // from the stretch pass by _selfWrapsInFlex, mirroring the direct-WDiv
       // rule. WButton itself does not wrap in Expanded; the exclusion keeps the
@@ -437,22 +442,21 @@ void main() {
         ),
       );
 
-      expect(tester.takeException(), isNull,
-          reason: 'self-flexing WButton must not be stretch-wrapped');
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'self-flexing WButton must not be stretch-wrapped',
+      );
     });
 
-    testWidgets('bare WText direct column child is still NOT stretched',
-        (tester) async {
+    testWidgets('bare WText direct column child is still NOT stretched', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
             width: 300,
-            child: WDiv(
-              className: 'flex flex-col',
-              children: [
-                WText('x'),
-              ],
-            ),
+            child: WDiv(className: 'flex flex-col', children: [WText('x')]),
           ),
         ),
       );
@@ -464,14 +468,18 @@ void main() {
           .whereType<SizedBox>()
           .where((box) => box.width == double.infinity)
           .length;
-      expect(stretched, 0,
-          reason: 'bare WText leaf stays unstretched (existing exclusion)');
+      expect(
+        stretched,
+        0,
+        reason: 'bare WText leaf stays unstretched (existing exclusion)',
+      );
     });
   });
 
   group('smart column stretch — edge cases', () {
-    testWidgets('bounded-width column in a vertical scroll still stretches',
-        (tester) async {
+    testWidgets('bounded-width column in a vertical scroll still stretches', (
+      tester,
+    ) async {
       // Height is unbounded (scroll), width is bounded → child fills width.
       await tester.pumpWidget(
         wrapWithTheme(
@@ -493,8 +501,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 280);
     });
 
-    testWidgets('unbounded-width column does not crash (degrades gracefully)',
-        (tester) async {
+    testWidgets('unbounded-width column does not crash (degrades gracefully)', (
+      tester,
+    ) async {
       // A flex-col placed where width is unbounded (a bare Row main-axis slot).
       // The stretch wrap must not force an infinite-width render error.
       await tester.pumpWidget(
@@ -513,12 +522,16 @@ void main() {
         ),
       );
 
-      expect(tester.takeException(), isNull,
-          reason: 'smart stretch must not throw on an unbounded-width column');
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'smart stretch must not throw on an unbounded-width column',
+      );
     });
 
-    testWidgets('basis-* column child is not additionally width-stretched',
-        (tester) async {
+    testWidgets('basis-* column child is not additionally width-stretched', (
+      tester,
+    ) async {
       // A basis-* child resolves to a sized SizedBox; the stretch pass skips
       // SizedBox children, so it is not double-wrapped to full width.
       await tester.pumpWidget(

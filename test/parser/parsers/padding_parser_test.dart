@@ -135,10 +135,7 @@ void main() {
         final styles = WindStyle();
         final classes = ['p-primary', 'mx-foo', 'py-bar'];
 
-        expect(
-          () => parser.parse(styles, classes, context),
-          returnsNormally,
-        );
+        expect(() => parser.parse(styles, classes, context), returnsNormally);
         expect(parser.parse(styles, classes, context).padding, isNull);
       });
     });

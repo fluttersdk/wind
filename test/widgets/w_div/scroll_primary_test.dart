@@ -17,9 +17,7 @@ void main() {
             child: const Scaffold(
               body: WDiv(
                 className: 'overflow-y-auto h-64',
-                children: [
-                  WDiv(className: 'h-[500px]', child: Text('Tall')),
-                ],
+                children: [WDiv(className: 'h-[500px]', child: Text('Tall'))],
               ),
             ),
           ),
@@ -45,9 +43,7 @@ void main() {
               body: WDiv(
                 className: 'overflow-y-auto h-64',
                 scrollPrimary: true,
-                children: [
-                  WDiv(className: 'h-[500px]', child: Text('Tall')),
-                ],
+                children: [WDiv(className: 'h-[500px]', child: Text('Tall'))],
               ),
             ),
           ),
@@ -109,9 +105,7 @@ void main() {
               body: WDiv(
                 className: 'overflow-y-auto h-64',
                 scrollPrimary: false,
-                children: [
-                  WDiv(className: 'h-[500px]', child: Text('Tall')),
-                ],
+                children: [WDiv(className: 'h-[500px]', child: Text('Tall'))],
               ),
             ),
           ),
@@ -135,9 +129,7 @@ void main() {
               body: WDiv(
                 className: 'h-64 bg-gray-100',
                 scrollPrimary: true, // Should be ignored
-                children: [
-                  Text('Not scrollable'),
-                ],
+                children: [Text('Not scrollable')],
               ),
             ),
           ),
@@ -159,9 +151,7 @@ void main() {
               body: WDiv(
                 className: 'overflow-x-auto h-32 w-64',
                 scrollPrimary: true,
-                children: [
-                  WDiv(className: 'w-[500px]', child: Text('Wide')),
-                ],
+                children: [WDiv(className: 'w-[500px]', child: Text('Wide'))],
               ),
             ),
           ),
@@ -189,10 +179,7 @@ void main() {
               body: WDiv(
                 className: 'overflow-y-auto',
                 scrollPrimary: true,
-                children: List.generate(
-                  50,
-                  (i) => WText('Item $i'),
-                ),
+                children: List.generate(50, (i) => WText('Item $i')),
               ),
             ),
           ),

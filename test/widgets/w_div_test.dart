@@ -215,9 +215,7 @@ void main() {
     expect(size, Size.zero);
   });
 
-  testWidgets('gap-4 puts 16 logical px between flex children', (
-    tester,
-  ) async {
+  testWidgets('gap-4 puts 16 logical px between flex children', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: WindTheme(
@@ -282,8 +280,7 @@ void main() {
       WindParser.clearCache();
     });
 
-    testWidgets(
-        'paints the box color when backgroundColor is provided '
+    testWidgets('paints the box color when backgroundColor is provided '
         'without any bg-* className', (tester) async {
       const color = Color(0xFF123456);
       const testKey = Key('bg-only');
@@ -311,8 +308,9 @@ void main() {
       expect(containerFinder, findsOneWidget);
     });
 
-    testWidgets('inline backgroundColor wins over bg-* className',
-        (tester) async {
+    testWidgets('inline backgroundColor wins over bg-* className', (
+      tester,
+    ) async {
       const override = Color(0xFFABCDEF);
       const testKey = Key('bg-override');
       await tester.pumpWidget(
@@ -340,37 +338,39 @@ void main() {
     });
 
     testWidgets(
-        'inline backgroundColor clears className gradient so solid color '
-        'is not painted over', (tester) async {
-      const override = Color(0xFF00AA00);
-      const testKey = Key('bg-vs-gradient');
-      await tester.pumpWidget(
-        MaterialApp(
-          home: WindTheme(
-            data: WindThemeData(),
-            child: const WDiv(
-              key: testKey,
-              className: 'w-10 h-10 bg-gradient-to-r from-red-500 to-blue-500',
-              backgroundColor: override,
+      'inline backgroundColor clears className gradient so solid color '
+      'is not painted over',
+      (tester) async {
+        const override = Color(0xFF00AA00);
+        const testKey = Key('bg-vs-gradient');
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WindTheme(
+              data: WindThemeData(),
+              child: const WDiv(
+                key: testKey,
+                className:
+                    'w-10 h-10 bg-gradient-to-r from-red-500 to-blue-500',
+                backgroundColor: override,
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      final box = tester.widget<DecoratedBox>(
-        find.descendant(
-          of: find.byKey(testKey),
-          matching: find.byType(DecoratedBox),
-        ),
-      );
-      final decoration = box.decoration as BoxDecoration;
-      expect(decoration.color, override);
-      expect(decoration.gradient, isNull);
-      expect(decoration.image, isNull);
-    });
+        final box = tester.widget<DecoratedBox>(
+          find.descendant(
+            of: find.byKey(testKey),
+            matching: find.byType(DecoratedBox),
+          ),
+        );
+        final decoration = box.decoration as BoxDecoration;
+        expect(decoration.color, override);
+        expect(decoration.gradient, isNull);
+        expect(decoration.image, isNull);
+      },
+    );
 
-    testWidgets(
-        'parser cache entry is shared across WDivs with different '
+    testWidgets('parser cache entry is shared across WDivs with different '
         'backgroundColor but identical className', (tester) async {
       WindParser.clearCache();
       const sameClass = 'w-8 h-8 rounded-md';
@@ -403,8 +403,9 @@ void main() {
           ?.letterSpacing;
     }
 
-    testWidgets('publishes em tracking resolved at its own text size',
-        (tester) async {
+    testWidgets('publishes em tracking resolved at its own text size', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(
@@ -420,8 +421,9 @@ void main() {
       expect(renderedLetterSpacing(tester, 'Row'), closeTo(0.35, 1e-9));
     });
 
-    testWidgets('publishes em tracking resolved at the inherited text size',
-        (tester) async {
+    testWidgets('publishes em tracking resolved at the inherited text size', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: WindTheme(

@@ -29,10 +29,7 @@ Widget wrapWithTheme(Widget child) {
 Widget wrapWithDarkTheme(Widget child) {
   return MaterialApp(
     home: WindTheme(
-      data: WindThemeData(
-        brightness: Brightness.dark,
-        syncWithSystem: false,
-      ),
+      data: WindThemeData(brightness: Brightness.dark, syncWithSystem: false),
       child: Scaffold(body: child),
     ),
   );
@@ -46,10 +43,7 @@ Widget wrapWithDarkTheme(Widget child) {
 BoxDecoration _decorationOf(WidgetTester tester) {
   final render = tester.renderObject<RenderDecoratedBox>(
     find
-        .descendant(
-          of: find.byType(WDiv),
-          matching: find.byType(DecoratedBox),
-        )
+        .descendant(of: find.byType(WDiv), matching: find.byType(DecoratedBox))
         .first,
   );
   return render.decoration as BoxDecoration;
@@ -68,41 +62,33 @@ void main() {
     });
 
     testWidgets('bg-white resolves to opaque white', (tester) async {
-      await tester.pumpWidget(
-        wrapWithTheme(const WDiv(className: 'bg-white')),
-      );
+      await tester.pumpWidget(wrapWithTheme(const WDiv(className: 'bg-white')));
 
       expect(_decorationOf(tester).color, const Color(0xFFFFFFFF));
     });
   });
 
   group('Dark-mode color resolution (F05: syncWithSystem false)', () {
-    testWidgets(
-      'light theme keeps the base bg, ignores dark: peer',
-      (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(
-            const WDiv(className: 'bg-white dark:bg-blue-500'),
-          ),
-        );
+    testWidgets('light theme keeps the base bg, ignores dark: peer', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithTheme(const WDiv(className: 'bg-white dark:bg-blue-500')),
+      );
 
-        // Light brightness: the dark: peer stays inert.
-        expect(_decorationOf(tester).color, const Color(0xFFFFFFFF));
-      },
-    );
+      // Light brightness: the dark: peer stays inert.
+      expect(_decorationOf(tester).color, const Color(0xFFFFFFFF));
+    });
 
-    testWidgets(
-      'dark theme applies dark:bg-blue-500 = #3B82F6',
-      (tester) async {
-        await tester.pumpWidget(
-          wrapWithDarkTheme(
-            const WDiv(className: 'bg-white dark:bg-blue-500'),
-          ),
-        );
+    testWidgets('dark theme applies dark:bg-blue-500 = #3B82F6', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWithDarkTheme(const WDiv(className: 'bg-white dark:bg-blue-500')),
+      );
 
-        // Dark brightness with syncWithSystem:false: dark: peer wins.
-        expect(_decorationOf(tester).color, const Color(0xFF3B82F6));
-      },
-    );
+      // Dark brightness with syncWithSystem:false: dark: peer wins.
+      expect(_decorationOf(tester).color, const Color(0xFF3B82F6));
+    });
   });
 }

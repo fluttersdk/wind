@@ -96,39 +96,39 @@ void main() {
     expect(find.byType(WInput), findsOneWidget);
   });
 
-  testWidgets('a field pushed in under a transition renders and does not throw',
-      (
-    tester,
-  ) async {
-    tester.view.devicePixelRatio = 1.0;
-    tester.view.physicalSize = const Size(390, 900);
-    addTearDown(tester.view.reset);
+  testWidgets(
+    'a field pushed in under a transition renders and does not throw',
+    (tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(390, 900);
+      addTearDown(tester.view.reset);
 
-    final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
 
-    await tester.pumpWidget(
-      WindTheme(
-        data: WindThemeData(),
-        child: MaterialApp(
-          navigatorKey: navigator,
-          home: const Scaffold(body: SizedBox()),
+      await tester.pumpWidget(
+        WindTheme(
+          data: WindThemeData(),
+          child: MaterialApp(
+            navigatorKey: navigator,
+            home: const Scaffold(body: SizedBox()),
+          ),
         ),
-      ),
-    );
+      );
 
-    navigator.currentState!.push(
-      MaterialPageRoute<void>(
-        builder: (_) =>
-            const Scaffold(body: WInput(autofocus: true, minLines: 1)),
-      ),
-    );
+      navigator.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (_) =>
+              const Scaffold(body: WInput(autofocus: true, minLines: 1)),
+        ),
+      );
 
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 16));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 16));
 
-    expect(tester.takeException(), isNull);
+      expect(tester.takeException(), isNull);
 
-    await tester.pumpAndSettle();
-    expect(find.byType(WInput), findsOneWidget);
-  });
+      await tester.pumpAndSettle();
+      expect(find.byType(WInput), findsOneWidget);
+    },
+  );
 }

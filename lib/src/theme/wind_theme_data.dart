@@ -199,52 +199,52 @@ class WindThemeData {
     Map<String, Curve>? transitionCurves,
     Map<String, WindAnimationType>? animations,
     Map<String, String>? aliases,
-  })  : colors = (Map<String, MaterialColor>.from(_initColors())
-          ..addAll(colors ?? {})),
-        fontSizes = (Map<String, double>.from(default_font_sizes.fontSizes)
-          ..addAll(fontSizes ?? {})),
-        fontWeights = (Map<String, FontWeight>.from(
-          default_font_weights.fontWeights,
-        )..addAll(fontWeights ?? {})),
-        tracking = (Map<String, double>.from(default_tracking.tracking)
-          ..addAll(tracking ?? {})),
-        leading = (Map<String, double>.from(default_leading.leading)
-          ..addAll(leading ?? {})),
-        borderWidths = (Map<String, double>.from(
-          default_border_widths.borderWidths,
-        )..addAll(borderWidths ?? {})),
-        borderRadius = (Map<String, double>.from(
-          default_border_radius.borderRadius,
-        )..addAll(borderRadius ?? {})),
-        fontFamilies = (Map<String, String>.from(
-          default_font_families.fontFamilies,
-        )..addAll(fontFamilies ?? {})),
-        ringWidths = (Map<String, double>.from(
-          default_ring_widths.WindRingWidths.widths,
-        )..addAll(ringWidths ?? {})),
-        ringOffsets = (Map<String, double>.from(
-          default_ring_widths.WindRingWidths.offsets,
-        )..addAll(ringOffsets ?? {})),
-        containers = (Map<String, int>.from(default_containers.containers)
-          ..addAll(containers ?? {})),
-        screens = (Map<String, int>.from(default_screens.screens)
-          ..addAll(screens ?? {})),
-        opacities = (Map<String, double>.from(default_opacities.opacities)
-          ..addAll(opacities ?? {})),
-        zIndices = (Map<String, int>.from(default_z_indices.zIndices)
-          ..addAll(zIndices ?? {})),
-        shadows = (Map<String, List<BoxShadow>>.from(WindBoxShadows.shadows)
-          ..addAll(shadows ?? {})),
-        transitionDurations = (Map<String, Duration>.from(
-          default_transitions.transitionDurations,
-        )..addAll(transitionDurations ?? {})),
-        transitionCurves = (Map<String, Curve>.from(
-          default_transitions.transitionCurves,
-        )..addAll(transitionCurves ?? {})),
-        animations = (Map<String, WindAnimationType>.from(
-          default_animations.animations,
-        )..addAll(animations ?? {})),
-        aliases = Map<String, String>.from(aliases ?? const {});
+  }) : colors = (Map<String, MaterialColor>.from(_initColors())
+         ..addAll(colors ?? {})),
+       fontSizes = (Map<String, double>.from(default_font_sizes.fontSizes)
+         ..addAll(fontSizes ?? {})),
+       fontWeights = (Map<String, FontWeight>.from(
+         default_font_weights.fontWeights,
+       )..addAll(fontWeights ?? {})),
+       tracking = (Map<String, double>.from(default_tracking.tracking)
+         ..addAll(tracking ?? {})),
+       leading = (Map<String, double>.from(default_leading.leading)
+         ..addAll(leading ?? {})),
+       borderWidths = (Map<String, double>.from(
+         default_border_widths.borderWidths,
+       )..addAll(borderWidths ?? {})),
+       borderRadius = (Map<String, double>.from(
+         default_border_radius.borderRadius,
+       )..addAll(borderRadius ?? {})),
+       fontFamilies = (Map<String, String>.from(
+         default_font_families.fontFamilies,
+       )..addAll(fontFamilies ?? {})),
+       ringWidths = (Map<String, double>.from(
+         default_ring_widths.WindRingWidths.widths,
+       )..addAll(ringWidths ?? {})),
+       ringOffsets = (Map<String, double>.from(
+         default_ring_widths.WindRingWidths.offsets,
+       )..addAll(ringOffsets ?? {})),
+       containers = (Map<String, int>.from(default_containers.containers)
+         ..addAll(containers ?? {})),
+       screens = (Map<String, int>.from(default_screens.screens)
+         ..addAll(screens ?? {})),
+       opacities = (Map<String, double>.from(default_opacities.opacities)
+         ..addAll(opacities ?? {})),
+       zIndices = (Map<String, int>.from(default_z_indices.zIndices)
+         ..addAll(zIndices ?? {})),
+       shadows = (Map<String, List<BoxShadow>>.from(WindBoxShadows.shadows)
+         ..addAll(shadows ?? {})),
+       transitionDurations = (Map<String, Duration>.from(
+         default_transitions.transitionDurations,
+       )..addAll(transitionDurations ?? {})),
+       transitionCurves = (Map<String, Curve>.from(
+         default_transitions.transitionCurves,
+       )..addAll(transitionCurves ?? {})),
+       animations = (Map<String, WindAnimationType>.from(
+         default_animations.animations,
+       )..addAll(animations ?? {})),
+       aliases = Map<String, String>.from(aliases ?? const {});
 
   /// Initializes the default colors from the predefined color map.
   ///
@@ -463,8 +463,9 @@ class WindThemeData {
   /// If currently light, returns dark. If currently dark, returns light.
   WindThemeData toggleTheme() {
     return copyWith(
-      brightness:
-          brightness == Brightness.light ? Brightness.dark : Brightness.light,
+      brightness: brightness == Brightness.light
+          ? Brightness.dark
+          : Brightness.light,
     );
   }
 
@@ -537,7 +538,8 @@ class WindThemeData {
     final seededPrimary =
         (default_colors.colors['primary'] as Map<int, Color>)[500]!.toARGB32();
     final MaterialColor? configuredPrimary = colors['primary'];
-    final primary = (configuredPrimary != null &&
+    final primary =
+        (configuredPrimary != null &&
             configuredPrimary.toARGB32() != seededPrimary)
         ? configuredPrimary
         : getDefault('indigo');
@@ -588,9 +590,8 @@ class WindThemeData {
     final defaultFontFamily = fontFamilies['sans'];
     TextTheme? textTheme;
     if (defaultFontFamily != null) {
-      textTheme = ThemeData(
-        brightness: brightness,
-      ).textTheme.apply(fontFamily: defaultFontFamily);
+      textTheme = ThemeData(brightness: brightness).textTheme
+          .apply(fontFamily: defaultFontFamily);
     }
 
     return ThemeData(
@@ -643,10 +644,10 @@ class WindThemeData {
   // collisions between themes that differ only in their maps, which is fine.
   @override
   int get hashCode => Object.hash(
-        brightness,
-        applyDefaultFontFamily,
-        syncWithSystem,
-        baseSpacingUnit,
-        ringColor,
-      );
+    brightness,
+    applyDefaultFontFamily,
+    syncWithSystem,
+    baseSpacingUnit,
+    ringColor,
+  );
 }

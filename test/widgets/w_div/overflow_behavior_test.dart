@@ -172,10 +172,7 @@ void main() {
                     Expanded(
                       child: WDiv(
                         className: 'overflow-y-auto',
-                        children: List.generate(
-                          30,
-                          (i) => WText('Item $i'),
-                        ),
+                        children: List.generate(30, (i) => WText('Item $i')),
                       ),
                     ),
                     Container(height: 50, color: Colors.red),
@@ -211,10 +208,7 @@ void main() {
                   height: 300,
                   child: WDiv(
                     className: 'overflow-y-auto h-full',
-                    children: List.generate(
-                      30,
-                      (i) => WText('Item $i'),
-                    ),
+                    children: List.generate(30, (i) => WText('Item $i')),
                   ),
                 ),
               ),
@@ -303,10 +297,7 @@ void main() {
             home: WindTheme(
               data: WindThemeData(),
               child: const Scaffold(
-                body: WDiv(
-                  className: 'overflow-y-auto h-64',
-                  children: [],
-                ),
+                body: WDiv(className: 'overflow-y-auto h-64', children: []),
               ),
             ),
           ),
@@ -331,9 +322,7 @@ void main() {
                     // Wind UI should handle this gracefully
                     WDiv(
                       className: 'overflow-y-auto',
-                      children: [
-                        WText('Content'),
-                      ],
+                      children: [WText('Content')],
                     ),
                   ],
                 ),

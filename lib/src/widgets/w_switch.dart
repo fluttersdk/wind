@@ -171,10 +171,7 @@ class WSwitch extends StatelessWidget {
             // (supplied by the caller className) actually slides the thumb.
             className: trackClassName,
             states: activeStates,
-            child: WDiv(
-              className: thumbClassName,
-              states: activeStates,
-            ),
+            child: WDiv(className: thumbClassName, states: activeStates),
           ),
         ),
       ),

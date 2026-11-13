@@ -75,8 +75,10 @@ void main() {
 
       test('returns true for arbitrary value tokens', () {
         expect(parser.canParse('top-[24px]'), isTrue);
-        expect(parser.canParse('left-[50%]'),
-            isTrue); // canParse only checks prefix, not value format
+        expect(
+          parser.canParse('left-[50%]'),
+          isTrue,
+        ); // canParse only checks prefix, not value format
         expect(parser.canParse('-top-[10px]'), isTrue);
       });
 
@@ -196,13 +198,15 @@ void main() {
           expect(result.positionTop, 24.0);
         });
 
-        test('left-[50%] is ignored when percentage offsets are unsupported',
-            () {
-          final styles = WindStyle();
-          final result = parser.parse(styles, ['left-[50%]'], context);
+        test(
+          'left-[50%] is ignored when percentage offsets are unsupported',
+          () {
+            final styles = WindStyle();
+            final result = parser.parse(styles, ['left-[50%]'], context);
 
-          expect(result.positionLeft, isNull);
-        });
+            expect(result.positionLeft, isNull);
+          },
+        );
       });
 
       group('negative offsets', () {
@@ -252,11 +256,11 @@ void main() {
       group('mixed tokens', () {
         test('absolute top-4 right-2 sets type and offsets', () {
           final styles = WindStyle();
-          final result = parser.parse(
-            styles,
-            ['absolute', 'top-4', 'right-2'],
-            context,
-          );
+          final result = parser.parse(styles, [
+            'absolute',
+            'top-4',
+            'right-2',
+          ], context);
 
           expect(result.positionType, WindPositionType.absolute);
           expect(result.positionTop, 16.0);
@@ -269,10 +273,7 @@ void main() {
           final styles = WindStyle();
           final classes = ['top-abc', 'left-foo', 'inset-x-bar'];
 
-          expect(
-            () => parser.parse(styles, classes, context),
-            returnsNormally,
-          );
+          expect(() => parser.parse(styles, classes, context), returnsNormally);
           final result = parser.parse(styles, classes, context);
           expect(result.positionTop, isNull);
           expect(result.positionLeft, isNull);

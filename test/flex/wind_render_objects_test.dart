@@ -9,25 +9,26 @@ import 'package:wind_kit/wind_kit.dart';
 /// directly and through a `flex flex-col` so both the bounded/unbounded stretch
 /// branches and the column (vertical main-axis) basis path are covered.
 Widget host(Widget child) => Directionality(
-      textDirection: TextDirection.ltr,
-      child: Align(alignment: Alignment.topLeft, child: child),
-    );
+  textDirection: TextDirection.ltr,
+  child: Align(alignment: Alignment.topLeft, child: child),
+);
 
 Widget wrapWind(Widget child, {double? width, double? height}) => MaterialApp(
-      home: WindTheme(
-        data: WindThemeData(),
-        child: Scaffold(
-          body: SizedBox(width: width, height: height, child: child),
-        ),
-      ),
-    );
+  home: WindTheme(
+    data: WindThemeData(),
+    child: Scaffold(
+      body: SizedBox(width: width, height: height, child: child),
+    ),
+  ),
+);
 
 void main() {
   setUp(WindParser.clearCache);
 
   group('WindCrossStretch', () {
-    testWidgets('stretches the child to a bounded incoming width',
-        (tester) async {
+    testWidgets('stretches the child to a bounded incoming width', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         host(
           const SizedBox(
@@ -40,8 +41,9 @@ void main() {
       expect(tester.getSize(find.byType(WindCrossStretch)).width, 300);
     });
 
-    testWidgets('passes the child through at content width when unbounded',
-        (tester) async {
+    testWidgets('passes the child through at content width when unbounded', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         host(
           Row(
@@ -57,8 +59,7 @@ void main() {
     });
   });
 
-  group('column fractional basis (WindMainExtentProvider / WindFractionBasis)',
-      () {
+  group('column fractional basis (WindMainExtentProvider / WindFractionBasis)', () {
     testWidgets('basis-1/2 resolves against the column height', (tester) async {
       await tester.pumpWidget(
         wrapWind(
@@ -77,20 +78,18 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).height, 200);
     });
 
-    testWidgets('rebuilding with a new basis factor re-lays the child',
-        (tester) async {
+    testWidgets('rebuilding with a new basis factor re-lays the child', (
+      tester,
+    ) async {
       Widget tree(String basis) => wrapWind(
-            height: 400,
-            WDiv(
-              className: 'flex flex-col',
-              children: [
-                WDiv(
-                  className: '$basis w-10 bg-red-500',
-                  child: const SizedBox(),
-                ),
-              ],
-            ),
-          );
+        height: 400,
+        WDiv(
+          className: 'flex flex-col',
+          children: [
+            WDiv(className: '$basis w-10 bg-red-500', child: const SizedBox()),
+          ],
+        ),
+      );
 
       await tester.pumpWidget(tree('basis-1/2'));
       expect(tester.getSize(find.byType(WDiv).at(1)).height, 200);
@@ -100,21 +99,22 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).height, 100);
     });
 
-    testWidgets('flipping the flex direction re-lays the basis child',
-        (tester) async {
+    testWidgets('flipping the flex direction re-lays the basis child', (
+      tester,
+    ) async {
       Widget tree(String direction) => wrapWind(
-            width: 400,
-            height: 400,
+        width: 400,
+        height: 400,
+        WDiv(
+          className: 'flex $direction',
+          children: [
             WDiv(
-              className: 'flex $direction',
-              children: [
-                WDiv(
-                  className: 'basis-1/2 bg-red-500',
-                  child: const SizedBox(width: 10, height: 10),
-                ),
-              ],
+              className: 'basis-1/2 bg-red-500',
+              child: const SizedBox(width: 10, height: 10),
             ),
-          );
+          ],
+        ),
+      );
 
       // Column: basis sizes height. Flipping to row (same widget position)
       // exercises the isColumn setters on the extent provider and fraction box.

@@ -388,8 +388,9 @@ void main() {
     });
 
     group('External Value Updates', () {
-      testWidgets('syncs when parent updates value from false to true',
-          (tester) async {
+      testWidgets('syncs when parent updates value from false to true', (
+        tester,
+      ) async {
         bool externalValue = false;
 
         await tester.pumpWidget(
@@ -398,10 +399,7 @@ void main() {
               builder: (context, setState) {
                 return Column(
                   children: [
-                    WFormCheckbox(
-                      value: externalValue,
-                      className: 'w-5 h-5',
-                    ),
+                    WFormCheckbox(value: externalValue, className: 'w-5 h-5'),
                     WButton(
                       onTap: () => setState(() => externalValue = true),
                       child: const Text('Set True'),
@@ -421,8 +419,9 @@ void main() {
         expect(tester.widget<WCheckbox>(find.byType(WCheckbox)).value, isTrue);
       });
 
-      testWidgets('syncs when parent updates value from true to false',
-          (tester) async {
+      testWidgets('syncs when parent updates value from true to false', (
+        tester,
+      ) async {
         bool externalValue = true;
 
         await tester.pumpWidget(
@@ -431,10 +430,7 @@ void main() {
               builder: (context, setState) {
                 return Column(
                   children: [
-                    WFormCheckbox(
-                      value: externalValue,
-                      className: 'w-5 h-5',
-                    ),
+                    WFormCheckbox(value: externalValue, className: 'w-5 h-5'),
                     WButton(
                       onTap: () => setState(() => externalValue = false),
                       child: const Text('Set False'),

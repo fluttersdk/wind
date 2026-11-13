@@ -8,8 +8,11 @@ void main() {
       const config = WDynamicConfig();
 
       for (final type in WDynamicConfig.defaultWindWidgets) {
-        expect(config.isAllowed(type), isTrue,
-            reason: '$type should be allowed');
+        expect(
+          config.isAllowed(type),
+          isTrue,
+          reason: '$type should be allowed',
+        );
       }
     });
 
@@ -17,8 +20,11 @@ void main() {
       const config = WDynamicConfig();
 
       for (final type in WDynamicConfig.defaultFlutterWidgets) {
-        expect(config.isAllowed(type), isTrue,
-            reason: '$type should be allowed');
+        expect(
+          config.isAllowed(type),
+          isTrue,
+          reason: '$type should be allowed',
+        );
       }
     });
 
@@ -28,9 +34,7 @@ void main() {
     });
 
     test('denyWidgets blocks specific widgets', () {
-      const config = WDynamicConfig(
-        denyWidgets: {'WInput', 'WSelect'},
-      );
+      const config = WDynamicConfig(denyWidgets: {'WInput', 'WSelect'});
 
       expect(config.isAllowed('WInput'), isFalse);
       expect(config.isAllowed('WSelect'), isFalse);
@@ -40,9 +44,7 @@ void main() {
 
     test('custom builders are always allowed', () {
       final config = WDynamicConfig(
-        builders: {
-          'ProductCard': (props, children) => const SizedBox(),
-        },
+        builders: {'ProductCard': (props, children) => const SizedBox()},
       );
 
       expect(config.isAllowed('ProductCard'), isTrue);
@@ -51,9 +53,7 @@ void main() {
     test('custom builders bypass deny list', () {
       final config = WDynamicConfig(
         denyWidgets: {'ProductCard'},
-        builders: {
-          'ProductCard': (props, children) => const SizedBox(),
-        },
+        builders: {'ProductCard': (props, children) => const SizedBox()},
       );
 
       expect(config.isAllowed('ProductCard'), isTrue);

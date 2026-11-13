@@ -37,13 +37,18 @@ enum PopoverAlignment {
 /// - [isOpen]: Whether the popover is currently open
 /// - [isHovering]: Whether the mouse is hovering over the trigger
 typedef PopoverTriggerBuilder = Widget Function(
-    BuildContext context, bool isOpen, bool isHovering);
+  BuildContext context,
+  bool isOpen,
+  bool isHovering,
+);
 
 /// Builder for the popover content.
 ///
 /// - [close]: Callback to programmatically close the popover
 typedef PopoverContentBuilder = Widget Function(
-    BuildContext context, VoidCallback close);
+  BuildContext context,
+  VoidCallback close,
+);
 
 /// Computes effective alignment by flipping when overflow would occur.
 ///
@@ -107,16 +112,17 @@ double computeAvailableHeight({
   required Offset offset,
   double margin = 8,
 }) {
-  final bool isTop = alignment == PopoverAlignment.topLeft ||
+  final bool isTop =
+      alignment == PopoverAlignment.topLeft ||
       alignment == PopoverAlignment.topCenter ||
       alignment == PopoverAlignment.topRight;
   final double available = isTop
       ? triggerPosition.dy - offset.dy - margin
       : screenSize.height -
-          triggerPosition.dy -
-          triggerSize.height -
-          offset.dy -
-          margin;
+            triggerPosition.dy -
+            triggerSize.height -
+            offset.dy -
+            margin;
 
   return available < 0 ? 0 : available;
 }
@@ -341,10 +347,11 @@ class _WPopoverState extends State<WPopover> {
   /// once: a map rebuilt every frame hands `Actions` a new [Action] each time.
   late final Map<Type, Action<Intent>> _activateActions =
       <Type, Action<Intent>>{
-    ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: _activate),
-    ButtonActivateIntent:
-        CallbackAction<ButtonActivateIntent>(onInvoke: _activate),
-  };
+        ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: _activate),
+        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+          onInvoke: _activate,
+        ),
+      };
 
   /// Unique group ID for TapRegion to link trigger and overlay
   late final Object _tapRegionGroupId = Object();
@@ -380,13 +387,16 @@ class _WPopoverState extends State<WPopover> {
   }) {
     PopoverAlignment effective = requested;
 
-    final bool isRight = effective == PopoverAlignment.bottomRight ||
+    final bool isRight =
+        effective == PopoverAlignment.bottomRight ||
         effective == PopoverAlignment.topRight;
-    final bool isLeft = effective == PopoverAlignment.bottomLeft ||
+    final bool isLeft =
+        effective == PopoverAlignment.bottomLeft ||
         effective == PopoverAlignment.topLeft;
 
     if (isRight) {
-      final double leftEdge = triggerPosition.dx +
+      final double leftEdge =
+          triggerPosition.dx +
           triggerSize.width -
           popoverSize.width +
           offset.dx;
@@ -405,10 +415,12 @@ class _WPopoverState extends State<WPopover> {
       }
     }
 
-    final bool isBottom = effective == PopoverAlignment.bottomLeft ||
+    final bool isBottom =
+        effective == PopoverAlignment.bottomLeft ||
         effective == PopoverAlignment.bottomCenter ||
         effective == PopoverAlignment.bottomRight;
-    final bool isTop = effective == PopoverAlignment.topLeft ||
+    final bool isTop =
+        effective == PopoverAlignment.topLeft ||
         effective == PopoverAlignment.topCenter ||
         effective == PopoverAlignment.topRight;
 
@@ -418,7 +430,8 @@ class _WPopoverState extends State<WPopover> {
     final double spaceAbove = triggerPosition.dy - offset.dy;
 
     if (isBottom) {
-      final double bottomEdge = triggerPosition.dy +
+      final double bottomEdge =
+          triggerPosition.dy +
           triggerSize.height +
           offset.dy +
           popoverSize.height;
@@ -468,18 +481,20 @@ class _WPopoverState extends State<WPopover> {
     required Offset offset,
     double margin = 8,
   }) {
-    final bool isRight = alignment == PopoverAlignment.bottomRight ||
+    final bool isRight =
+        alignment == PopoverAlignment.bottomRight ||
         alignment == PopoverAlignment.topRight;
-    final bool isCenter = alignment == PopoverAlignment.bottomCenter ||
+    final bool isCenter =
+        alignment == PopoverAlignment.bottomCenter ||
         alignment == PopoverAlignment.topCenter;
 
     final double followerLeft = isRight
         ? triggerPosition.dx + triggerSize.width - popoverWidth + offset.dx
         : isCenter
-            ? triggerPosition.dx +
-                (triggerSize.width - popoverWidth) / 2 +
-                offset.dx
-            : triggerPosition.dx + offset.dx;
+        ? triggerPosition.dx +
+              (triggerSize.width - popoverWidth) / 2 +
+              offset.dx
+        : triggerPosition.dx + offset.dx;
     final double followerRight = followerLeft + popoverWidth;
 
     // Only intervene on genuine off-screen overflow; a popover already fully
@@ -671,7 +686,8 @@ class _WPopoverState extends State<WPopover> {
       }
       final double effectiveMaxWidth =
           widget.maxWidth ?? classMaxWidth ?? screenSize.width;
-      final double popoverWidth = fixedWidth ??
+      final double popoverWidth =
+          fixedWidth ??
           (triggerBox.size.width > effectiveMaxWidth
               ? effectiveMaxWidth
               : triggerBox.size.width);
@@ -818,10 +834,7 @@ class _WPopoverState extends State<WPopover> {
         child: OverlayPortal(
           controller: _overlayController,
           overlayChildBuilder: _buildOverlay,
-          child: CompositedTransformTarget(
-            link: _layerLink,
-            child: trigger,
-          ),
+          child: CompositedTransformTarget(link: _layerLink, child: trigger),
         ),
       ),
     );
@@ -897,7 +910,8 @@ class _WPopoverState extends State<WPopover> {
         : 200;
 
     // Default className if none provided
-    final String effectiveClassName = widget.className ??
+    final String effectiveClassName =
+        widget.className ??
         '''
         bg-white dark:bg-gray-800
         border border-gray-200 dark:border-gray-700
@@ -930,16 +944,17 @@ class _WPopoverState extends State<WPopover> {
     final double? rawFixedWidth = widget.width ?? styles.width;
     final double? fixedWidth =
         (rawFixedWidth != null && rawFixedWidth.isFinite && rawFixedWidth > 0)
-            ? rawFixedWidth
-            : null;
+        ? rawFixedWidth
+        : null;
     final double screenWidth = MediaQuery.sizeOf(context).width;
     // A `max-w-*` token surfaces as a finite constraints.maxWidth; an absent one
     // is either null or infinity, both of which fall back to the screen width.
     final double? classMaxWidth =
         (styles.constraints?.maxWidth.isFinite ?? false)
-            ? styles.constraints!.maxWidth
-            : null;
-    final double? propMaxWidth = (widget.maxWidth != null &&
+        ? styles.constraints!.maxWidth
+        : null;
+    final double? propMaxWidth =
+        (widget.maxWidth != null &&
             widget.maxWidth!.isFinite &&
             widget.maxWidth! > 0)
         ? widget.maxWidth
@@ -960,7 +975,8 @@ class _WPopoverState extends State<WPopover> {
         // Defensive fallback (the alignment is normally pre-computed in
         // _calculateEffectiveAlignment, which applies the same clamp). Keep the
         // estimate within the overlay's actual bound here too.
-        final double popoverWidth = fixedWidth ??
+        final double popoverWidth =
+            fixedWidth ??
             (triggerWidth > effectiveMaxWidth
                 ? effectiveMaxWidth
                 : triggerWidth);
@@ -979,8 +995,8 @@ class _WPopoverState extends State<WPopover> {
     // For top alignments, invert the Y offset
     final bool isTopAlignment =
         effectiveAlignment == PopoverAlignment.topLeft ||
-            effectiveAlignment == PopoverAlignment.topCenter ||
-            effectiveAlignment == PopoverAlignment.topRight;
+        effectiveAlignment == PopoverAlignment.topCenter ||
+        effectiveAlignment == PopoverAlignment.topRight;
     final Offset baseOffset = isTopAlignment
         ? Offset(widget.offset.dx, -widget.offset.dy)
         : widget.offset;
@@ -992,7 +1008,8 @@ class _WPopoverState extends State<WPopover> {
     // renders. Gated on autoFlip: that flag already promises "keep me on screen".
     Offset effectiveOffset = baseOffset;
     if (widget.autoFlip && triggerBox != null && triggerBox.hasSize) {
-      final double popoverWidth = fixedWidth ??
+      final double popoverWidth =
+          fixedWidth ??
           (triggerWidth > effectiveMaxWidth ? effectiveMaxWidth : triggerWidth);
       final double dxCorrection = computeHorizontalClamp(
         alignment: effectiveAlignment,

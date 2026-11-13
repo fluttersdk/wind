@@ -24,10 +24,8 @@ Widget popover({
   return WPopover(
     disabled: disabled,
     enableTriggerOnTap: enableTriggerOnTap,
-    triggerBuilder: (context, isOpen, isHovering) => WDiv(
-      className: triggerClassName,
-      child: const Text('Trigger'),
-    ),
+    triggerBuilder: (context, isOpen, isHovering) =>
+        WDiv(className: triggerClassName, child: const Text('Trigger')),
     contentBuilder: (context, close) => content,
   );
 }
@@ -37,10 +35,7 @@ Widget popover({
 Color? triggerColor(WidgetTester tester) {
   final DecoratedBox box = tester.widget<DecoratedBox>(
     find
-        .ancestor(
-          of: find.text('Trigger'),
-          matching: find.byType(DecoratedBox),
-        )
+        .ancestor(of: find.text('Trigger'), matching: find.byType(DecoratedBox))
         .first,
   );
 
@@ -52,8 +47,9 @@ void main() {
 
   group('WPopover keyboard', () {
     group('Activation', () {
-      testWidgets('Tab reaches the trigger and Enter opens the popover',
-          (tester) async {
+      testWidgets('Tab reaches the trigger and Enter opens the popover', (
+        tester,
+      ) async {
         await tester.pumpWidget(wrapWithTheme(popover()));
 
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
@@ -64,8 +60,9 @@ void main() {
         expect(find.text('Content'), findsOneWidget);
       });
 
-      testWidgets('Space opens the popover and Enter closes it again',
-          (tester) async {
+      testWidgets('Space opens the popover and Enter closes it again', (
+        tester,
+      ) async {
         await tester.pumpWidget(wrapWithTheme(popover()));
 
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
@@ -97,8 +94,9 @@ void main() {
         );
       });
 
-      testWidgets('enableTriggerOnTap false leaves the keys to the caller',
-          (tester) async {
+      testWidgets('enableTriggerOnTap false leaves the keys to the caller', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(popover(enableTriggerOnTap: false)),
         );
@@ -129,15 +127,13 @@ void main() {
         expect(find.text('Content'), findsNothing);
       });
 
-      testWidgets('Escape closes it from a focused item inside the panel',
-          (tester) async {
+      testWidgets('Escape closes it from a focused item inside the panel', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             popover(
-              content: WAnchor(
-                onTap: () {},
-                child: const Text('Item'),
-              ),
+              content: WAnchor(onTap: () {}, child: const Text('Item')),
             ),
           ),
         );
@@ -167,8 +163,9 @@ void main() {
         );
       });
 
-      testWidgets('Escape on a closed popover travels on to the page',
-          (tester) async {
+      testWidgets('Escape on a closed popover travels on to the page', (
+        tester,
+      ) async {
         int dismissed = 0;
         await tester.pumpWidget(
           wrapWithTheme(
@@ -234,44 +231,43 @@ void main() {
         expect(trigger.hasPrimaryFocus, isFalse);
       });
 
-      testWidgets('Escape in a dialog closes the popover and keeps the dialog',
-          (tester) async {
-        // One press, one layer. A key handler outside the focus tree cannot
-        // consume the key, so the dialog's own Escape popped it as well.
-        await tester.pumpWidget(
-          wrapWithTheme(
-            Builder(
-              builder: (context) => TextButton(
-                onPressed: () => showDialog<void>(
-                  context: context,
-                  builder: (_) => Dialog(
-                    child: WindTheme(
-                      data: WindThemeData(),
-                      child: popover(),
+      testWidgets(
+        'Escape in a dialog closes the popover and keeps the dialog',
+        (tester) async {
+          // One press, one layer. A key handler outside the focus tree cannot
+          // consume the key, so the dialog's own Escape popped it as well.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              Builder(
+                builder: (context) => TextButton(
+                  onPressed: () => showDialog<void>(
+                    context: context,
+                    builder: (_) => Dialog(
+                      child: WindTheme(data: WindThemeData(), child: popover()),
                     ),
                   ),
+                  child: const Text('Open dialog'),
                 ),
-                child: const Text('Open dialog'),
               ),
             ),
-          ),
-        );
-        await tester.tap(find.text('Open dialog'));
-        await tester.pumpAndSettle();
+          );
+          await tester.tap(find.text('Open dialog'));
+          await tester.pumpAndSettle();
 
-        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-        await tester.pump();
-        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-        await tester.pumpAndSettle();
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
+          await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+          await tester.pumpAndSettle();
 
-        expect(find.text('Content'), findsOneWidget);
+          expect(find.text('Content'), findsOneWidget);
 
-        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-        await tester.pumpAndSettle();
+          await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+          await tester.pumpAndSettle();
 
-        expect(find.text('Content'), findsNothing);
-        expect(find.byType(Dialog), findsOneWidget);
-      });
+          expect(find.text('Content'), findsNothing);
+          expect(find.byType(Dialog), findsOneWidget);
+        },
+      );
 
       testWidgets('Escape on a route pushed over an open popover leaves it', (
         tester,
@@ -318,44 +314,44 @@ void main() {
         expect(FocusManager.instance.primaryFocus, same(onPage));
       });
 
-      testWidgets('Tab goes into the panel before a control beside the trigger',
-          (
-        tester,
-      ) async {
-        // Reading order alone ranks by position: the control on the trigger's
-        // row comes before the panel below it, so a keyboard user left the
-        // open panel behind. A host app's phone shell never reached its rows.
-        await tester.pumpWidget(
-          wrapWithTheme(
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                popover(
-                  content: WAnchor(onTap: () {}, child: const Text('Item')),
-                ),
-                WAnchor(onTap: () {}, child: const Text('Beside')),
-              ],
+      testWidgets(
+        'Tab goes into the panel before a control beside the trigger',
+        (tester) async {
+          // Reading order alone ranks by position: the control on the trigger's
+          // row comes before the panel below it, so a keyboard user left the
+          // open panel behind. A host app's phone shell never reached its rows.
+          await tester.pumpWidget(
+            wrapWithTheme(
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  popover(
+                    content: WAnchor(onTap: () {}, child: const Text('Item')),
+                  ),
+                  WAnchor(onTap: () {}, child: const Text('Beside')),
+                ],
+              ),
             ),
-          ),
-        );
+          );
 
-        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-        await tester.pump();
-        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-        await tester.pumpAndSettle();
-        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-        await tester.pump();
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
+          await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+          await tester.pumpAndSettle();
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
 
-        final BuildContext focused =
-            FocusManager.instance.primaryFocus!.context!;
-        expect(
-          find.descendant(
-            of: find.byWidget(focused.widget),
-            matching: find.text('Item'),
-          ),
-          findsOneWidget,
-        );
-      });
+          final BuildContext focused =
+              FocusManager.instance.primaryFocus!.context!;
+          expect(
+            find.descendant(
+              of: find.byWidget(focused.widget),
+              matching: find.text('Item'),
+            ),
+            findsOneWidget,
+          );
+        },
+      );
 
       testWidgets('Tab goes into a panel that opened above the trigger', (
         tester,
@@ -445,13 +441,12 @@ void main() {
     });
 
     group('Focus state', () {
-      testWidgets('a focus: class on the trigger lights while it has focus',
-          (tester) async {
+      testWidgets('a focus: class on the trigger lights while it has focus', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            popover(
-              triggerClassName: 'w-10 h-10 bg-white focus:bg-black',
-            ),
+            popover(triggerClassName: 'w-10 h-10 bg-white focus:bg-black'),
           ),
         );
 
@@ -463,15 +458,14 @@ void main() {
         expect(triggerColor(tester), Colors.black);
       });
 
-      testWidgets('the focus: class goes dark again when focus leaves',
-          (tester) async {
+      testWidgets('the focus: class goes dark again when focus leaves', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrapWithTheme(
             Column(
               children: [
-                popover(
-                  triggerClassName: 'w-10 h-10 bg-white focus:bg-black',
-                ),
+                popover(triggerClassName: 'w-10 h-10 bg-white focus:bg-black'),
                 WAnchor(onTap: () {}, child: const Text('Next')),
               ],
             ),

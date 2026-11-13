@@ -32,9 +32,7 @@ class WDynamicController {
   final bool _ownsState;
 
   /// Creates a controller with a new internal state.
-  WDynamicController()
-      : state = WDynamicState(),
-        _ownsState = true;
+  WDynamicController() : state = WDynamicState(), _ownsState = true;
 
   /// Creates a controller wrapping an existing state.
   WDynamicController.fromState(this.state) : _ownsState = false;

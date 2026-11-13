@@ -39,18 +39,14 @@ void main() {
 
     group('Rendering', () {
       testWidgets('renders the label text', (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(const WBadge('Beta')),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WBadge('Beta')));
         await tester.pump();
 
         expect(find.text('Beta'), findsOneWidget);
       });
 
       testWidgets('renders a WDiv and a WText', (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(const WBadge('New')),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WBadge('New')));
         await tester.pump();
 
         expect(find.byType(WDiv), findsOneWidget);
@@ -60,9 +56,7 @@ void main() {
       testWidgets('WDiv.className contains the default layout classes', (
         tester,
       ) async {
-        await tester.pumpWidget(
-          wrapWithTheme(const WBadge('Info')),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WBadge('Info')));
         await tester.pump();
 
         final div = tester.widget<WDiv>(find.byType(WDiv));
@@ -77,10 +71,7 @@ void main() {
       ) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            const WBadge(
-              'Error',
-              className: 'bg-red-100 text-red-800',
-            ),
+            const WBadge('Error', className: 'bg-red-100 text-red-800'),
           ),
         );
         await tester.pump();
@@ -91,9 +82,7 @@ void main() {
       });
 
       testWidgets('WText carries text-xs class', (tester) async {
-        await tester.pumpWidget(
-          wrapWithTheme(const WBadge('Small')),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WBadge('Small')));
         await tester.pump();
 
         final text = tester.widget<WText>(find.byType(WText));
@@ -103,9 +92,7 @@ void main() {
       testWidgets('renders without className when not provided', (
         tester,
       ) async {
-        await tester.pumpWidget(
-          wrapWithTheme(const WBadge('Plain')),
-        );
+        await tester.pumpWidget(wrapWithTheme(const WBadge('Plain')));
         await tester.pump();
 
         expect(find.byType(WBadge), findsOneWidget);
@@ -114,41 +101,38 @@ void main() {
     });
 
     group('className pass-through', () {
-      testWidgets(
-        'dark: variant class is threaded into WDiv.className',
-        (tester) async {
-          await tester.pumpWidget(
-            wrapWithTheme(
-              const WBadge(
-                'Dark',
-                className:
-                    'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100',
-              ),
+      testWidgets('dark: variant class is threaded into WDiv.className', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            const WBadge(
+              'Dark',
+              className: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100',
             ),
-          );
-          await tester.pump();
+          ),
+        );
+        await tester.pump();
 
-          final div = tester.widget<WDiv>(find.byType(WDiv));
-          expect(div.className, contains('dark:bg-gray-700'));
-          expect(div.className, contains('dark:text-gray-100'));
-        },
-      );
+        final div = tester.widget<WDiv>(find.byType(WDiv));
+        expect(div.className, contains('dark:bg-gray-700'));
+        expect(div.className, contains('dark:text-gray-100'));
+      });
 
-      testWidgets(
-        'multiple caller classes all appear in WDiv.className',
-        (tester) async {
-          const extraClass = 'bg-blue-500 text-white font-semibold';
-          await tester.pumpWidget(
-            wrapWithTheme(const WBadge('Multi', className: extraClass)),
-          );
-          await tester.pump();
+      testWidgets('multiple caller classes all appear in WDiv.className', (
+        tester,
+      ) async {
+        const extraClass = 'bg-blue-500 text-white font-semibold';
+        await tester.pumpWidget(
+          wrapWithTheme(const WBadge('Multi', className: extraClass)),
+        );
+        await tester.pump();
 
-          final div = tester.widget<WDiv>(find.byType(WDiv));
-          expect(div.className, contains('bg-blue-500'));
-          expect(div.className, contains('text-white'));
-          expect(div.className, contains('font-semibold'));
-        },
-      );
+        final div = tester.widget<WDiv>(find.byType(WDiv));
+        expect(div.className, contains('bg-blue-500'));
+        expect(div.className, contains('text-white'));
+        expect(div.className, contains('font-semibold'));
+      });
     });
   });
 }

@@ -31,10 +31,7 @@ Widget wrapWithTheme(Widget child) {
 BoxDecoration _decorationOf(WidgetTester tester) {
   final render = tester.renderObject<RenderDecoratedBox>(
     find
-        .descendant(
-          of: find.byType(WDiv),
-          matching: find.byType(DecoratedBox),
-        )
+        .descendant(of: find.byType(WDiv), matching: find.byType(DecoratedBox))
         .first,
   );
   return render.decoration as BoxDecoration;

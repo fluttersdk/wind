@@ -256,24 +256,21 @@ void main() {
         );
       });
 
-      test(
-        'toThemeData keeps its indigo Material baseline when primary is '
-        'left at the seeded default',
-        () {
-          final themeData = WindThemeData().toThemeData();
+      test('toThemeData keeps its indigo Material baseline when primary is '
+          'left at the seeded default', () {
+        final themeData = WindThemeData().toThemeData();
 
-          // The seeded `primary` token drives Wind widgets only; the Material
-          // ColorScheme retains indigo unless the consumer sets a brand color.
-          expect(
-            themeData.colorScheme.primary.toARGB32(),
-            default_colors.colors['indigo'][500].toARGB32(),
-          );
-        },
-      );
+        // The seeded `primary` token drives Wind widgets only; the Material
+        // ColorScheme retains indigo unless the consumer sets a brand color.
+        expect(
+          themeData.colorScheme.primary.toARGB32(),
+          default_colors.colors['indigo'][500].toARGB32(),
+        );
+      });
 
       test('toThemeData seeds the Material scheme from a custom primary', () {
-        final themeData =
-            WindThemeData(colors: {'primary': Colors.purple}).toThemeData();
+        final themeData = WindThemeData(colors: {'primary': Colors.purple})
+            .toThemeData();
 
         expect(
           themeData.colorScheme.primary.toARGB32(),

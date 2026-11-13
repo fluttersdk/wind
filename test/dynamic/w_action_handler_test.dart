@@ -17,9 +17,7 @@ void main() {
     test('dispatch calls simple action with args', () {
       Map<String, dynamic>? receivedArgs;
       final handler = WActionHandler(
-        actions: {
-          'test': (Map<String, dynamic> args) => receivedArgs = args,
-        },
+        actions: {'test': (Map<String, dynamic> args) => receivedArgs = args},
         state: state,
       );
 
@@ -57,9 +55,7 @@ void main() {
     test('parseAction returns VoidCallback from JSON', () {
       bool called = false;
       final handler = WActionHandler(
-        actions: {
-          'doSomething': (Map<String, dynamic> args) => called = true,
-        },
+        actions: {'doSomething': (Map<String, dynamic> args) => called = true},
         state: state,
       );
 
@@ -91,13 +87,10 @@ void main() {
         state: state,
       );
 
-      final callback = handler.parseValueAction<String>(
-        {
-          'action': 'inputChanged',
-          'args': {'field': 'email'}
-        },
-        stateId: 'email',
-      );
+      final callback = handler.parseValueAction<String>({
+        'action': 'inputChanged',
+        'args': {'field': 'email'},
+      }, stateId: 'email');
 
       expect(callback, isNotNull);
       callback!('new@email.com');
@@ -109,15 +102,11 @@ void main() {
 
     test('parseValueAction without stateId does not update state', () {
       final handler = WActionHandler(
-        actions: {
-          'test': (Map<String, dynamic> args) {},
-        },
+        actions: {'test': (Map<String, dynamic> args) {}},
         state: state,
       );
 
-      final callback = handler.parseValueAction<String>(
-        {'action': 'test'},
-      );
+      final callback = handler.parseValueAction<String>({'action': 'test'});
 
       callback!('value');
       expect(state.has('test'), isFalse);

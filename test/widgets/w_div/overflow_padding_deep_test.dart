@@ -63,10 +63,7 @@ void main() {
       expect(topMarkerAfter.dy, lessThan(topMarkerInitial.dy));
 
       // The difference should be approximately 100 (scroll amount)
-      expect(
-        topMarkerInitial.dy - topMarkerAfter.dy,
-        closeTo(100, 10),
-      );
+      expect(topMarkerInitial.dy - topMarkerAfter.dy, closeTo(100, 10));
     });
 
     testWidgets('scroll indicator starts at container edge not content', (
@@ -84,9 +81,7 @@ void main() {
                   color: Colors.yellow, // Visual marker for container bounds
                   child: WDiv(
                     className: 'overflow-y-auto h-48 w-48 p-6 bg-gray-200',
-                    children: [
-                      WDiv(className: 'h-[400px] bg-blue-500'),
-                    ],
+                    children: [WDiv(className: 'h-[400px] bg-blue-500')],
                   ),
                 ),
               ),

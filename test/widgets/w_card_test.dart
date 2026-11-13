@@ -48,9 +48,7 @@ void main() {
     group('Rendering', () {
       testWidgets('renders child body', (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WCard(child: Text('body content')),
-          ),
+          wrapWithTheme(const WCard(child: Text('body content'))),
         );
         await tester.pump();
 
@@ -61,9 +59,7 @@ void main() {
         tester,
       ) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WCard(child: Text('body')),
-          ),
+          wrapWithTheme(const WCard(child: Text('body'))),
         );
         await tester.pump();
 
@@ -76,10 +72,7 @@ void main() {
       testWidgets('renders header slot when provided', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            const WCard(
-              header: Text('card header'),
-              child: Text('body'),
-            ),
+            const WCard(header: Text('card header'), child: Text('body')),
           ),
         );
         await tester.pump();
@@ -91,10 +84,7 @@ void main() {
       testWidgets('renders footer slot when provided', (tester) async {
         await tester.pumpWidget(
           wrapWithTheme(
-            const WCard(
-              footer: Text('card footer'),
-              child: Text('body'),
-            ),
+            const WCard(footer: Text('card footer'), child: Text('body')),
           ),
         );
         await tester.pump();
@@ -142,9 +132,7 @@ void main() {
 
       testWidgets('uses default className when none provided', (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            const WCard(child: Text('body')),
-          ),
+          wrapWithTheme(const WCard(child: Text('body'))),
         );
         await tester.pump();
 

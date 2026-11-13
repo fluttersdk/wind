@@ -17,11 +17,11 @@ import 'package:wind_kit/wind_kit.dart';
 /// tokens (`grow-0`, `shrink-0`, `flex-none`).
 
 Widget wrap(Widget child) => MaterialApp(
-      home: WindTheme(
-        data: WindThemeData(),
-        child: Scaffold(body: child),
-      ),
-    );
+  home: WindTheme(
+    data: WindThemeData(),
+    child: Scaffold(body: child),
+  ),
+);
 
 void main() {
   setUp(WindParser.clearCache);

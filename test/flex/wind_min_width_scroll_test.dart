@@ -8,9 +8,9 @@ import 'package:wind_kit/src/widgets/wind_min_width_scroll.dart';
 /// must degrade to the child's content width (honoring the `min-w-*` floor)
 /// rather than collapsing to 0 when the viewport is unknown or unbounded.
 Widget host(Widget child) => Directionality(
-      textDirection: TextDirection.ltr,
-      child: Align(alignment: Alignment.topLeft, child: child),
-    );
+  textDirection: TextDirection.ltr,
+  child: Align(alignment: Alignment.topLeft, child: child),
+);
 
 void main() {
   testWidgets('fills a finite published viewport width', (tester) async {
@@ -31,44 +31,45 @@ void main() {
   });
 
   testWidgets(
-      'a loose box fills the viewport but lets wider content keep its width',
-      (tester) async {
-    final port = WindViewportWidthPort()..value = 400;
-    Widget loose(double contentWidth) => host(
-          UnconstrainedBox(
-            alignment: Alignment.topLeft,
-            child: WindMinWidthBox(
-              port: port,
-              floorMinWidth: 0,
-              loose: true,
-              child: SizedBox(width: contentWidth, height: 20),
-            ),
+    'a loose box fills the viewport but lets wider content keep its width',
+    (tester) async {
+      final port = WindViewportWidthPort()..value = 400;
+      Widget loose(double contentWidth) => host(
+        UnconstrainedBox(
+          alignment: Alignment.topLeft,
+          child: WindMinWidthBox(
+            port: port,
+            floorMinWidth: 0,
+            loose: true,
+            child: SizedBox(width: contentWidth, height: 20),
           ),
-        );
+        ),
+      );
 
-    await tester.pumpWidget(loose(50));
-    expect(tester.takeException(), isNull);
-    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
+      await tester.pumpWidget(loose(50));
+      expect(tester.takeException(), isNull);
+      expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
 
-    // Wider than the 400px viewport, inside the 800px test surface.
-    await tester.pumpWidget(loose(700));
-    expect(tester.takeException(), isNull);
-    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 700);
-  });
+      // Wider than the 400px viewport, inside the 800px test surface.
+      await tester.pumpWidget(loose(700));
+      expect(tester.takeException(), isNull);
+      expect(tester.getSize(find.byType(WindMinWidthBox)).width, 700);
+    },
+  );
 
   testWidgets('switching loose re-lays out the child', (tester) async {
     final port = WindViewportWidthPort()..value = 400;
     Widget box({required bool loose}) => host(
-          UnconstrainedBox(
-            alignment: Alignment.topLeft,
-            child: WindMinWidthBox(
-              port: port,
-              floorMinWidth: 0,
-              loose: loose,
-              child: const SizedBox(width: 700, height: 20),
-            ),
-          ),
-        );
+      UnconstrainedBox(
+        alignment: Alignment.topLeft,
+        child: WindMinWidthBox(
+          port: port,
+          floorMinWidth: 0,
+          loose: loose,
+          child: const SizedBox(width: 700, height: 20),
+        ),
+      ),
+    );
 
     await tester.pumpWidget(box(loose: true));
     expect(tester.getSize(find.byType(WindMinWidthBox)).width, 700);
@@ -82,8 +83,9 @@ void main() {
     expect(tester.getSize(find.byType(WindMinWidthBox)).width, 400);
   });
 
-  testWidgets('honors the min-w floor over a narrower viewport',
-      (tester) async {
+  testWidgets('honors the min-w floor over a narrower viewport', (
+    tester,
+  ) async {
     final port = WindViewportWidthPort()..value = 120;
     await tester.pumpWidget(
       host(
@@ -101,78 +103,82 @@ void main() {
   });
 
   testWidgets(
-      'degrades to content width (not 0) when the viewport is unpublished',
-      (tester) async {
-    // Regression: a null viewport with no floor used to force a tight 0 width,
-    // collapsing the content. It must degrade to the child's content width.
-    final port = WindViewportWidthPort(); // value == null
-    await tester.pumpWidget(
-      host(
-        WindMinWidthBox(
-          port: port,
-          floorMinWidth: 0,
-          child: const SizedBox(width: 120, height: 20),
-        ),
-      ),
-    );
-
-    expect(tester.takeException(), isNull);
-    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 120);
-  });
-
-  testWidgets(
-      'degrades to the floor when the viewport is infinite (unbounded scroll)',
-      (tester) async {
-    final port = WindViewportWidthPort()..value = double.infinity;
-    await tester.pumpWidget(
-      host(
-        WindMinWidthBox(
-          port: port,
-          floorMinWidth: 200,
-          child: const SizedBox(width: 120, height: 20),
-        ),
-      ),
-    );
-
-    expect(tester.takeException(), isNull);
-    // Infinite viewport: no fill target, so the child takes its content width
-    // clamped up to the min-w floor (200), never a tight 0.
-    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 200);
-  });
-
-  testWidgets('respects a finite parent width instead of violating constraints',
-      (tester) async {
-    // If the box is ever laid out under a finite width (outside a scroll, or
-    // before a finite viewport is published), it must not size past the
-    // incoming constraint even when the child wants more.
-    final port = WindViewportWidthPort(); // value == null
-    await tester.pumpWidget(
-      host(
-        SizedBox(
-          width: 300,
-          child: WindMinWidthBox(
+    'degrades to content width (not 0) when the viewport is unpublished',
+    (tester) async {
+      // Regression: a null viewport with no floor used to force a tight 0 width,
+      // collapsing the content. It must degrade to the child's content width.
+      final port = WindViewportWidthPort(); // value == null
+      await tester.pumpWidget(
+        host(
+          WindMinWidthBox(
             port: port,
             floorMinWidth: 0,
-            child: const SizedBox(width: 500, height: 20),
+            child: const SizedBox(width: 120, height: 20),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(tester.takeException(), isNull);
-    // Child wants 500 but the parent only allows 300: the box stays at 300.
-    expect(tester.getSize(find.byType(WindMinWidthBox)).width, 300);
-  });
+      expect(tester.takeException(), isNull);
+      expect(tester.getSize(find.byType(WindMinWidthBox)).width, 120);
+    },
+  );
+
+  testWidgets(
+    'degrades to the floor when the viewport is infinite (unbounded scroll)',
+    (tester) async {
+      final port = WindViewportWidthPort()..value = double.infinity;
+      await tester.pumpWidget(
+        host(
+          WindMinWidthBox(
+            port: port,
+            floorMinWidth: 200,
+            child: const SizedBox(width: 120, height: 20),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      // Infinite viewport: no fill target, so the child takes its content width
+      // clamped up to the min-w floor (200), never a tight 0.
+      expect(tester.getSize(find.byType(WindMinWidthBox)).width, 200);
+    },
+  );
+
+  testWidgets(
+    'respects a finite parent width instead of violating constraints',
+    (tester) async {
+      // If the box is ever laid out under a finite width (outside a scroll, or
+      // before a finite viewport is published), it must not size past the
+      // incoming constraint even when the child wants more.
+      final port = WindViewportWidthPort(); // value == null
+      await tester.pumpWidget(
+        host(
+          SizedBox(
+            width: 300,
+            child: WindMinWidthBox(
+              port: port,
+              floorMinWidth: 0,
+              child: const SizedBox(width: 500, height: 20),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      // Child wants 500 but the parent only allows 300: the box stays at 300.
+      expect(tester.getSize(find.byType(WindMinWidthBox)).width, 300);
+    },
+  );
 
   testWidgets('re-lays out when the min-w floor changes', (tester) async {
     final port = WindViewportWidthPort()..value = 50;
     Widget tree(double floor) => host(
-          WindMinWidthBox(
-            port: port,
-            floorMinWidth: floor,
-            child: const SizedBox(width: 20, height: 20),
-          ),
-        );
+      WindMinWidthBox(
+        port: port,
+        floorMinWidth: floor,
+        child: const SizedBox(width: 20, height: 20),
+      ),
+    );
 
     await tester.pumpWidget(tree(100));
     // Floor 100 > viewport 50.
@@ -182,40 +188,39 @@ void main() {
     expect(tester.getSize(find.byType(WindMinWidthBox)).width, 250);
   });
 
-  test('WindMinWidthScrollScope.updateShouldNotify tracks port and axis flag',
-      () {
-    const child = SizedBox();
-    final portA = WindViewportWidthPort();
-    final portB = WindViewportWidthPort();
-    final base = WindMinWidthScrollScope(
-      horizontalPort: portA,
-      child: child,
-    );
+  test(
+    'WindMinWidthScrollScope.updateShouldNotify tracks port and axis flag',
+    () {
+      const child = SizedBox();
+      final portA = WindViewportWidthPort();
+      final portB = WindViewportWidthPort();
+      final base = WindMinWidthScrollScope(horizontalPort: portA, child: child);
 
-    // Same port and flag: no rebuild.
-    expect(
-      base.updateShouldNotify(
-        WindMinWidthScrollScope(horizontalPort: portA, child: child),
-      ),
-      isFalse,
-    );
-    // Different port: rebuild.
-    expect(
-      base.updateShouldNotify(
-        WindMinWidthScrollScope(horizontalPort: portB, child: child),
-      ),
-      isTrue,
-    );
-    // Different vertical-unbounded flag: rebuild.
-    expect(
-      base.updateShouldNotify(
-        WindMinWidthScrollScope(
-          horizontalPort: portA,
-          verticalUnbounded: true,
-          child: child,
+      // Same port and flag: no rebuild.
+      expect(
+        base.updateShouldNotify(
+          WindMinWidthScrollScope(horizontalPort: portA, child: child),
         ),
-      ),
-      isTrue,
-    );
-  });
+        isFalse,
+      );
+      // Different port: rebuild.
+      expect(
+        base.updateShouldNotify(
+          WindMinWidthScrollScope(horizontalPort: portB, child: child),
+        ),
+        isTrue,
+      );
+      // Different vertical-unbounded flag: rebuild.
+      expect(
+        base.updateShouldNotify(
+          WindMinWidthScrollScope(
+            horizontalPort: portA,
+            verticalUnbounded: true,
+            child: child,
+          ),
+        ),
+        isTrue,
+      );
+    },
+  );
 }

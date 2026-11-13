@@ -68,23 +68,22 @@ void main() {
   });
 
   group('WindParser cache counters', () {
-    testWidgets(
-      'counts a repeated default parse as one miss and one hit',
-      (tester) async {
-        final BuildContext context = await pumpAndCaptureContext(tester);
-        WindPerfCounters.enabled = true;
+    testWidgets('counts a repeated default parse as one miss and one hit', (
+      tester,
+    ) async {
+      final BuildContext context = await pumpAndCaptureContext(tester);
+      WindPerfCounters.enabled = true;
 
-        WindParser.parse('p-4', context);
-        expect(WindPerfCounters.cacheMisses, 1);
-        expect(WindPerfCounters.cacheHits, 0);
+      WindParser.parse('p-4', context);
+      expect(WindPerfCounters.cacheMisses, 1);
+      expect(WindPerfCounters.cacheHits, 0);
 
-        WindParser.parse('p-4', context);
-        expect(WindPerfCounters.cacheMisses, 1);
-        expect(WindPerfCounters.cacheHits, 1);
-        expect(WindPerfCounters.cacheBypasses, 0);
-        expect(WindParser.cacheSize, 1);
-      },
-    );
+      WindParser.parse('p-4', context);
+      expect(WindPerfCounters.cacheMisses, 1);
+      expect(WindPerfCounters.cacheHits, 1);
+      expect(WindPerfCounters.cacheBypasses, 0);
+      expect(WindParser.cacheSize, 1);
+    });
 
     testWidgets(
       'counts a baseStyle parse as a bypass, never as a miss or a hit',
@@ -129,20 +128,19 @@ void main() {
       expect(WindPerfCounters.cacheBypasses, 0);
     });
 
-    testWidgets(
-      'clearCache() resets the counters without ending the session',
-      (tester) async {
-        final BuildContext context = await pumpAndCaptureContext(tester);
-        WindPerfCounters.enabled = true;
-        WindParser.parse('p-4', context);
-        expect(WindPerfCounters.cacheMisses, 1);
+    testWidgets('clearCache() resets the counters without ending the session', (
+      tester,
+    ) async {
+      final BuildContext context = await pumpAndCaptureContext(tester);
+      WindPerfCounters.enabled = true;
+      WindParser.parse('p-4', context);
+      expect(WindPerfCounters.cacheMisses, 1);
 
-        WindParser.clearCache();
+      WindParser.clearCache();
 
-        expect(WindPerfCounters.cacheMisses, 0);
-        expect(WindPerfCounters.enabled, isTrue);
-      },
-    );
+      expect(WindPerfCounters.cacheMisses, 0);
+      expect(WindPerfCounters.enabled, isTrue);
+    });
   });
 
   group('WindParser.findAndGroupClasses', () {
@@ -235,40 +233,57 @@ void main() {
 
       try {
         final context = createTestContext();
-        WindParser.findAndGroupClasses(
-          'bg-red-500 not-a-real-token',
-          context,
-        );
+        WindParser.findAndGroupClasses('bg-red-500 not-a-real-token', context);
         // Re-parsing the same unknown token must not print a second time.
         WindParser.findAndGroupClasses('not-a-real-token', context);
       } finally {
         debugPrint = original;
       }
 
-      expect(
-        logs.where((l) => l.contains("'not-a-real-token'")),
-        hasLength(1),
-      );
+      expect(logs.where((l) => l.contains("'not-a-real-token'")), hasLength(1));
     });
 
+    test('does not warn on valid tokens handled outside the parser map '
+        '(widget-consumed object-fit + inert compat tokens)', () {
+      final logs = <String>[];
+      final original = debugPrint;
+      debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
+
+      try {
+        final context = createTestContext();
+        // object-cover is consumed by WImage; transition-colors is emitted by
+        // Wind's own widget docstrings; tabular-nums is in the consumer
+        // contract; antialiased / sr-only are inert. None is a typo, so none
+        // may warn.
+        WindParser.findAndGroupClasses(
+          'object-cover transition-colors tabular-nums antialiased sr-only '
+          'inline-flex inline-block',
+          context,
+        );
+      } finally {
+        debugPrint = original;
+      }
+
+      expect(logs.where((l) => l.contains('unknown className')), isEmpty);
+    });
+  });
+
+  group('WindParser object-position tokens', () {
+    setUp(WindParser.clearCache);
+
     test(
-      'does not warn on valid tokens handled outside the parser map '
-      '(widget-consumed object-fit + inert compat tokens)',
+      'does not warn on the nine widget-consumed object-position tokens',
       () {
         final logs = <String>[];
         final original = debugPrint;
         debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
 
         try {
-          final context = createTestContext();
-          // object-cover is consumed by WImage; transition-colors is emitted by
-          // Wind's own widget docstrings; tabular-nums is in the consumer
-          // contract; antialiased / sr-only are inert. None is a typo, so none
-          // may warn.
           WindParser.findAndGroupClasses(
-            'object-cover transition-colors tabular-nums antialiased sr-only '
-            'inline-flex inline-block',
-            context,
+            'object-bottom object-center object-left object-left-bottom '
+            'object-left-top object-right object-right-bottom '
+            'object-right-top object-top md:object-top hover:object-bottom',
+            createTestContext(activeBreakpoint: 'md', isHovering: true),
           );
         } finally {
           debugPrint = original;
@@ -277,33 +292,6 @@ void main() {
         expect(logs.where((l) => l.contains('unknown className')), isEmpty);
       },
     );
-  });
-
-  group('WindParser object-position tokens', () {
-    setUp(WindParser.clearCache);
-
-    test('does not warn on the nine widget-consumed object-position tokens',
-        () {
-      final logs = <String>[];
-      final original = debugPrint;
-      debugPrint = (message, {wrapWidth}) => logs.add(message ?? '');
-
-      try {
-        WindParser.findAndGroupClasses(
-          'object-bottom object-center object-left object-left-bottom '
-          'object-left-top object-right object-right-bottom '
-          'object-right-top object-top md:object-top hover:object-bottom',
-          createTestContext(
-            activeBreakpoint: 'md',
-            isHovering: true,
-          ),
-        );
-      } finally {
-        debugPrint = original;
-      }
-
-      expect(logs.where((l) => l.contains('unknown className')), isEmpty);
-    });
   });
 
   group('WindParser.resolveClasses', () {

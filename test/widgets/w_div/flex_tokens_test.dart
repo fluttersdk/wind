@@ -17,8 +17,9 @@ void main() {
   setUp(WindParser.clearCache);
 
   group('grow / grow-0', () {
-    testWidgets('grow makes a Row child expand to fill (flex: 1)',
-        (tester) async {
+    testWidgets('grow makes a Row child expand to fill (flex: 1)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -40,8 +41,9 @@ void main() {
       expect(find.byType(Expanded), findsOneWidget);
     });
 
-    testWidgets('grow-0 child keeps intrinsic width (no Expanded)',
-        (tester) async {
+    testWidgets('grow-0 child keeps intrinsic width (no Expanded)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -66,8 +68,9 @@ void main() {
   });
 
   group('basis-*', () {
-    testWidgets('basis-1/2 in a row sets child main-size to half',
-        (tester) async {
+    testWidgets('basis-1/2 in a row sets child main-size to half', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -75,10 +78,7 @@ void main() {
             child: WDiv(
               className: 'flex flex-row',
               children: [
-                WDiv(
-                  className: 'basis-1/2 h-10 bg-red-500',
-                  child: SizedBox(),
-                ),
+                WDiv(className: 'basis-1/2 h-10 bg-red-500', child: SizedBox()),
               ],
             ),
           ),
@@ -90,8 +90,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 200);
     });
 
-    testWidgets('basis-[120px] in a row sets a fixed main-size',
-        (tester) async {
+    testWidgets('basis-[120px] in a row sets a fixed main-size', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -113,8 +114,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 120);
     });
 
-    testWidgets('basis-1/2 in a column sets child main-size (height) to half',
-        (tester) async {
+    testWidgets('basis-1/2 in a column sets child main-size (height) to half', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const SizedBox(
@@ -122,10 +124,7 @@ void main() {
             child: WDiv(
               className: 'flex flex-col',
               children: [
-                WDiv(
-                  className: 'basis-1/2 w-10 bg-red-500',
-                  child: SizedBox(),
-                ),
+                WDiv(className: 'basis-1/2 w-10 bg-red-500', child: SizedBox()),
               ],
             ),
           ),
@@ -138,8 +137,9 @@ void main() {
   });
 
   group('flex-none (CSS flex: 0 0 auto)', () {
-    testWidgets('flex-none child in a justify-between Row does NOT shrink',
-        (tester) async {
+    testWidgets('flex-none child in a justify-between Row does NOT shrink', (
+      tester,
+    ) async {
       const fixedText = 'Subscribe';
 
       await tester.pumpWidget(
@@ -149,14 +149,8 @@ void main() {
             child: WDiv(
               className: 'flex flex-row justify-between',
               children: [
-                WDiv(
-                  className: 'flex-1',
-                  child: WText('Title that grows'),
-                ),
-                WDiv(
-                  className: 'flex-none px-2',
-                  child: WText(fixedText),
-                ),
+                WDiv(className: 'flex-1', child: WText('Title that grows')),
+                WDiv(className: 'flex-none px-2', child: WText(fixedText)),
               ],
             ),
           ),
@@ -183,8 +177,9 @@ void main() {
       expect(badgeWidth, lessThan(400));
     });
 
-    testWidgets('standalone flex-none WDiv builds with no Flexible self-wrap',
-        (tester) async {
+    testWidgets('standalone flex-none WDiv builds with no Flexible self-wrap', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           const WDiv(

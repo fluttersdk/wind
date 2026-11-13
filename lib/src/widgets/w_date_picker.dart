@@ -39,10 +39,7 @@ class DateRange {
 
   /// Creates a copy with the given fields replaced.
   DateRange copyWith({DateTime? start, DateTime? end}) {
-    return DateRange(
-      start: start ?? this.start,
-      end: end ?? this.end,
-    );
+    return DateRange(start: start ?? this.start, end: end ?? this.end);
   }
 
   @override
@@ -209,8 +206,10 @@ class WDatePicker extends StatefulWidget {
     this.minuteStep = 5,
     this.timeLabel = 'Time',
     this.doneLabel = 'Done',
-  }) : assert(minuteStep > 0 && minuteStep < 60,
-            'WDatePicker: minuteStep must be between 1 and 59.');
+  }) : assert(
+         minuteStep > 0 && minuteStep < 60,
+         'WDatePicker: minuteStep must be between 1 and 59.',
+       );
 
   @override
   State<WDatePicker> createState() => _WDatePickerState();
@@ -338,7 +337,7 @@ class _WDatePickerState extends State<WDatePicker> {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
@@ -543,7 +542,8 @@ class _WDatePickerState extends State<WDatePicker> {
       if (_hasValue) 'selected',
     };
 
-    final String triggerClassName = widget.className ??
+    final String triggerClassName =
+        widget.className ??
         'bg-white border border-gray-300 rounded-lg p-3 dark:bg-gray-800 dark:border-gray-600';
 
     final WindStyle styles = WindParser.parse(
@@ -563,7 +563,8 @@ class _WDatePickerState extends State<WDatePicker> {
       textField: true,
       enabled: !widget.disabled,
       label: widget.placeholder,
-      value: widget.value?.toIso8601String() ??
+      value:
+          widget.value?.toIso8601String() ??
           (widget.mode == WDatePickerMode.range && widget.range != null
               ? widget.range!.start.toIso8601String()
               : null),
@@ -589,8 +590,7 @@ class _WDatePickerState extends State<WDatePicker> {
           ? _dateTimeMaxHeight
           : _calendarMaxHeight,
       disabled: widget.disabled,
-      className:
-          'w-[320px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4 overflow-y-auto',
+      className: 'w-[320px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4 overflow-y-auto',
       onOpen: () {
         setState(() {
           _isOpen = true;
@@ -654,10 +654,12 @@ class _WDatePickerState extends State<WDatePicker> {
             const SizedBox(height: 12),
             _CalendarGrid(
               focusedMonth: _focusedMonth,
-              selectedDate:
-                  widget.mode == WDatePickerMode.range ? null : widget.value,
-              selectedRange:
-                  widget.mode == WDatePickerMode.range ? widget.range : null,
+              selectedDate: widget.mode == WDatePickerMode.range
+                  ? null
+                  : widget.value,
+              selectedRange: widget.mode == WDatePickerMode.range
+                  ? widget.range
+                  : null,
               rangeStart: _rangeStart,
               hoveredDate: _hoveredDate,
               minDate: widget.minDate,
@@ -759,8 +761,7 @@ class _WDatePickerState extends State<WDatePicker> {
           className: 'w-8 flex flex-row justify-center',
           child: WText(
             _twoDigits(value),
-            className:
-                'text-sm font-semibold text-gray-800 dark:text-gray-100 tabular-nums',
+            className: 'text-sm font-semibold text-gray-800 dark:text-gray-100 tabular-nums',
           ),
         ),
         _buildStepControl(
@@ -792,8 +793,9 @@ class _WDatePickerState extends State<WDatePicker> {
       // can name but not activate.
       onTap: enabled ? onTap : null,
       child: MouseRegion(
-        cursor:
-            enabled ? SystemMouseCursors.click : SystemMouseCursors.forbidden,
+        cursor: enabled
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.forbidden,
         child: GestureDetector(
           onTap: enabled ? onTap : null,
           child: WDiv(
@@ -870,7 +872,7 @@ class _CalendarHeader extends StatelessWidget {
       'September',
       'October',
       'November',
-      'December'
+      'December',
     ];
     return '${months[focusedMonth.month - 1]} ${focusedMonth.year}';
   }
@@ -892,8 +894,7 @@ class _CalendarHeader extends StatelessWidget {
         ),
         WText(
           _monthYearText,
-          className:
-              'text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap',
+          className: 'text-sm font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap',
         ),
         GestureDetector(
           onTap: onNextMonth,
@@ -1071,9 +1072,7 @@ class _CalendarGrid extends StatelessWidget {
   }
 
   Widget _buildWeekRow(List<DateTime> dates) {
-    return Row(
-      children: dates.map((date) => _buildDayCell(date)).toList(),
-    );
+    return Row(children: dates.map((date) => _buildDayCell(date)).toList());
   }
 
   Widget _buildDayCell(DateTime date) {
@@ -1112,16 +1111,17 @@ class _CalendarGrid extends StatelessWidget {
     // Hover effect for selectable dates
     final hoverClass =
         isSelectable && !isSelected && !isRangeStart && !isRangeEnd
-            ? 'hover:bg-gray-100 dark:hover:bg-gray-700'
-            : '';
+        ? 'hover:bg-gray-100 dark:hover:bg-gray-700'
+        : '';
 
     final cellClassName =
         'w-full aspect-square flex items-center justify-center $bgClass $roundedClass $hoverClass';
 
     return Expanded(
       child: MouseRegion(
-        cursor:
-            isSelectable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        cursor: isSelectable
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
         onEnter: (_) {
           if (isSelectable) {
             onDateHovered(date);
@@ -1134,10 +1134,7 @@ class _CalendarGrid extends StatelessWidget {
             padding: const EdgeInsets.all(1),
             child: WDiv(
               className: cellClassName,
-              child: WText(
-                '${date.day}',
-                className: 'text-sm $textClass',
-              ),
+              child: WText('${date.day}', className: 'text-sm $textClass'),
             ),
           ),
         ),

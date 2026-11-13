@@ -11,65 +11,69 @@ void main() {
 
   group('WindTheme Sync', () {
     testWidgets(
-        'syncWithSystem=true (default) picks up platform brightness on init',
-        (tester) async {
-      // Set system to dark before pumping
-      tester.binding.platformDispatcher.platformBrightnessTestValue =
-          Brightness.dark;
+      'syncWithSystem=true (default) picks up platform brightness on init',
+      (tester) async {
+        // Set system to dark before pumping
+        tester.binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.dark;
 
-      await tester.pumpWidget(
-        WindTheme(
-          data: WindThemeData(
-              syncWithSystem:
-                  true), // Default is true, but explicit for clarity
-          builder: (context, controller) {
-            return MaterialApp(
-              theme: controller.toThemeData(),
-              home: Scaffold(body: Container()),
-            );
-          },
-        ),
-      );
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(
+              syncWithSystem: true,
+            ), // Default is true, but explicit for clarity
+            builder: (context, controller) {
+              return MaterialApp(
+                theme: controller.toThemeData(),
+                home: Scaffold(body: Container()),
+              );
+            },
+          ),
+        );
 
-      final context = tester.element(find.byType(Scaffold));
-      final theme = WindTheme.of(context);
+        final context = tester.element(find.byType(Scaffold));
+        final theme = WindTheme.of(context);
 
-      expect(theme.brightness, equals(Brightness.dark));
-    });
+        expect(theme.brightness, equals(Brightness.dark));
+      },
+    );
 
-    testWidgets('syncWithSystem=true updates when platform brightness changes',
-        (tester) async {
-      // Start with light
-      tester.binding.platformDispatcher.platformBrightnessTestValue =
-          Brightness.light;
+    testWidgets(
+      'syncWithSystem=true updates when platform brightness changes',
+      (tester) async {
+        // Start with light
+        tester.binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
 
-      await tester.pumpWidget(
-        WindTheme(
-          data: WindThemeData(syncWithSystem: true),
-          builder: (context, controller) {
-            return MaterialApp(
-              theme: controller.toThemeData(),
-              home: Scaffold(body: Container()),
-            );
-          },
-        ),
-      );
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(syncWithSystem: true),
+            builder: (context, controller) {
+              return MaterialApp(
+                theme: controller.toThemeData(),
+                home: Scaffold(body: Container()),
+              );
+            },
+          ),
+        );
 
-      // Verify initial light
-      var context = tester.element(find.byType(Scaffold));
-      expect(WindTheme.of(context).brightness, equals(Brightness.light));
+        // Verify initial light
+        var context = tester.element(find.byType(Scaffold));
+        expect(WindTheme.of(context).brightness, equals(Brightness.light));
 
-      // Change system to dark
-      setMockBrightness(tester, Brightness.dark);
-      await tester.pump();
+        // Change system to dark
+        setMockBrightness(tester, Brightness.dark);
+        await tester.pump();
 
-      // Verify update to dark
-      context = tester.element(find.byType(Scaffold));
-      expect(WindTheme.of(context).brightness, equals(Brightness.dark));
-    });
+        // Verify update to dark
+        context = tester.element(find.byType(Scaffold));
+        expect(WindTheme.of(context).brightness, equals(Brightness.dark));
+      },
+    );
 
-    testWidgets('syncWithSystem=false ignores platform changes',
-        (tester) async {
+    testWidgets('syncWithSystem=false ignores platform changes', (
+      tester,
+    ) async {
       // Start with light
       tester.binding.platformDispatcher.platformBrightnessTestValue =
           Brightness.light;
@@ -136,37 +140,38 @@ void main() {
         expect(
           WindTheme.of(context).brightness,
           equals(Brightness.dark),
-          reason:
-              'After manual toggle, system brightness changes should be ignored',
+          reason: 'After manual toggle, system brightness changes should be ignored',
         );
       },
     );
 
     testWidgets(
-        'Observer cleanup: no errors after dispose when brightness changes',
-        (tester) async {
-      tester.binding.platformDispatcher.platformBrightnessTestValue =
-          Brightness.light;
+      'Observer cleanup: no errors after dispose when brightness changes',
+      (tester) async {
+        tester.binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
 
-      await tester.pumpWidget(
-        WindTheme(
-          data: WindThemeData(syncWithSystem: true),
-          builder: (context, controller) => Container(),
-        ),
-      );
+        await tester.pumpWidget(
+          WindTheme(
+            data: WindThemeData(syncWithSystem: true),
+            builder: (context, controller) => Container(),
+          ),
+        );
 
-      // Replace widget to trigger dispose
-      await tester.pumpWidget(Container());
+        // Replace widget to trigger dispose
+        await tester.pumpWidget(Container());
 
-      // Trigger brightness change
-      setMockBrightness(tester, Brightness.dark);
-      await tester.pump();
+        // Trigger brightness change
+        setMockBrightness(tester, Brightness.dark);
+        await tester.pump();
 
-      // If we are here without exception, pass.
-    });
+        // If we are here without exception, pass.
+      },
+    );
 
-    testWidgets('Consumer rebuild: Widgets rebuild on theme change',
-        (tester) async {
+    testWidgets('Consumer rebuild: Widgets rebuild on theme change', (
+      tester,
+    ) async {
       int buildCount = 0;
 
       await tester.pumpWidget(
@@ -226,8 +231,7 @@ void main() {
         expect(
           controller.data.syncWithSystem,
           isFalse,
-          reason:
-              'toggleTheme should disable syncWithSystem so user preference sticks',
+          reason: 'toggleTheme should disable syncWithSystem so user preference sticks',
         );
       },
     );
@@ -276,72 +280,70 @@ void main() {
       },
     );
 
-    testWidgets(
-      'onThemeChanged callback fires when theme toggles',
-      (tester) async {
-        Brightness? reportedBrightness;
+    testWidgets('onThemeChanged callback fires when theme toggles', (
+      tester,
+    ) async {
+      Brightness? reportedBrightness;
 
-        await tester.pumpWidget(
-          WindTheme(
-            data: WindThemeData(brightness: Brightness.light),
-            onThemeChanged: (brightness) {
-              reportedBrightness = brightness;
-            },
-            builder: (context, controller) {
-              return MaterialApp(
-                theme: controller.toThemeData(),
-                home: Scaffold(body: Container()),
-              );
-            },
-          ),
-        );
+      await tester.pumpWidget(
+        WindTheme(
+          data: WindThemeData(brightness: Brightness.light),
+          onThemeChanged: (brightness) {
+            reportedBrightness = brightness;
+          },
+          builder: (context, controller) {
+            return MaterialApp(
+              theme: controller.toThemeData(),
+              home: Scaffold(body: Container()),
+            );
+          },
+        ),
+      );
 
-        final context = tester.element(find.byType(Scaffold));
-        WindTheme.of(context).toggleTheme();
-        await tester.pump();
+      final context = tester.element(find.byType(Scaffold));
+      WindTheme.of(context).toggleTheme();
+      await tester.pump();
 
-        expect(
-          reportedBrightness,
-          equals(Brightness.dark),
-          reason: 'onThemeChanged should fire with the new brightness',
-        );
-      },
-    );
+      expect(
+        reportedBrightness,
+        equals(Brightness.dark),
+        reason: 'onThemeChanged should fire with the new brightness',
+      );
+    });
 
-    testWidgets(
-      'onThemeChanged does NOT fire on system-initiated changes',
-      (tester) async {
-        int callCount = 0;
+    testWidgets('onThemeChanged does NOT fire on system-initiated changes', (
+      tester,
+    ) async {
+      int callCount = 0;
 
-        tester.binding.platformDispatcher.platformBrightnessTestValue =
-            Brightness.light;
+      tester.binding.platformDispatcher.platformBrightnessTestValue =
+          Brightness.light;
 
-        await tester.pumpWidget(
-          WindTheme(
-            data: WindThemeData(syncWithSystem: true),
-            onThemeChanged: (brightness) {
-              callCount++;
-            },
-            builder: (context, controller) {
-              return MaterialApp(
-                theme: controller.toThemeData(),
-                home: Scaffold(body: Container()),
-              );
-            },
-          ),
-        );
+      await tester.pumpWidget(
+        WindTheme(
+          data: WindThemeData(syncWithSystem: true),
+          onThemeChanged: (brightness) {
+            callCount++;
+          },
+          builder: (context, controller) {
+            return MaterialApp(
+              theme: controller.toThemeData(),
+              home: Scaffold(body: Container()),
+            );
+          },
+        ),
+      );
 
-        // System change should NOT trigger onThemeChanged
-        setMockBrightness(tester, Brightness.dark);
-        await tester.pump();
+      // System change should NOT trigger onThemeChanged
+      setMockBrightness(tester, Brightness.dark);
+      await tester.pump();
 
-        expect(
-          callCount,
-          equals(0),
-          reason:
-              'onThemeChanged should only fire on user-initiated theme changes',
-        );
-      },
-    );
+      expect(
+        callCount,
+        equals(0),
+        reason:
+            'onThemeChanged should only fire on user-initiated theme changes',
+      );
+    });
   });
 }

@@ -25,10 +25,10 @@ void main() {
   setUp(WindParser.clearCache);
 
   group('(a) intrinsic-safe flex under an intrinsic-measuring ancestor', () {
-    testWidgets(
-        'flex flex-col with stretch children renders under '
-        'IntrinsicHeight without the LayoutBuilder-intrinsic assert',
-        (tester) async {
+    testWidgets('flex flex-col with stretch children renders under '
+        'IntrinsicHeight without the LayoutBuilder-intrinsic assert', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           width: 600,
@@ -47,10 +47,10 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets(
-        'flex flex-col with fractional basis child renders under '
-        'IntrinsicHeight without the LayoutBuilder-intrinsic assert',
-        (tester) async {
+    testWidgets('flex flex-col with fractional basis child renders under '
+        'IntrinsicHeight without the LayoutBuilder-intrinsic assert', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           width: 600,
@@ -69,8 +69,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets(
-        'flex flex-col with basis child renders inside an '
+    testWidgets('flex flex-col with basis child renders inside an '
         'items-stretch grid cell without asserting', (tester) async {
       await tester.pumpWidget(
         wrapWithTheme(
@@ -94,8 +93,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('basis-1/2 in a bounded row still resolves to half width',
-        (tester) async {
+    testWidgets('basis-1/2 in a bounded row still resolves to half width', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           width: 400,
@@ -114,43 +114,43 @@ void main() {
   });
 
   group('fractional basis degrades gracefully on an unbounded main axis', () {
-    testWidgets('basis-1/2 in an unbounded-width row passes through (no crash)',
-        (tester) async {
-      await tester.pumpWidget(
-        wrapWithTheme(
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              WDiv(
-                className: 'flex flex-row',
-                children: [
-                  WDiv(className: 'basis-1/2 bg-red-500', child: Text('x')),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-
-      expect(tester.takeException(), isNull);
-      // Unbounded main axis: the fractional basis degrades to content width.
-      expect(tester.getSize(find.byType(WDiv).at(1)).width, greaterThan(0));
-    });
-
-    testWidgets('re-layout after a width change keeps the basis fraction',
-        (tester) async {
-      Widget tree(double width) => wrapWithTheme(
-            width: width,
-            const WDiv(
-              className: 'flex flex-row',
-              children: [
+    testWidgets(
+      'basis-1/2 in an unbounded-width row passes through (no crash)',
+      (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
                 WDiv(
-                  className: 'basis-1/2 h-10 bg-red-500',
-                  child: SizedBox(),
+                  className: 'flex flex-row',
+                  children: [
+                    WDiv(className: 'basis-1/2 bg-red-500', child: Text('x')),
+                  ],
                 ),
               ],
             ),
-          );
+          ),
+        );
+
+        expect(tester.takeException(), isNull);
+        // Unbounded main axis: the fractional basis degrades to content width.
+        expect(tester.getSize(find.byType(WDiv).at(1)).width, greaterThan(0));
+      },
+    );
+
+    testWidgets('re-layout after a width change keeps the basis fraction', (
+      tester,
+    ) async {
+      Widget tree(double width) => wrapWithTheme(
+        width: width,
+        const WDiv(
+          className: 'flex flex-row',
+          children: [
+            WDiv(className: 'basis-1/2 h-10 bg-red-500', child: SizedBox()),
+          ],
+        ),
+      );
 
       await tester.pumpWidget(tree(400));
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 200);
@@ -161,8 +161,9 @@ void main() {
   });
 
   group('(c) explicit flex flex-col items-stretch equalizes child widths', () {
-    testWidgets('two children of different content width end up equal width',
-        (tester) async {
+    testWidgets('two children of different content width end up equal width', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           width: 300,
@@ -186,32 +187,34 @@ void main() {
       expect(b, 300);
     });
 
-    testWidgets('items-stretch column does not crash under an unbounded width',
-        (tester) async {
-      await tester.pumpWidget(
-        wrapWithTheme(
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              WDiv(
-                className: 'flex flex-col items-stretch',
-                children: [
-                  WDiv(className: 'bg-red-500', child: Text('content')),
-                ],
-              ),
-            ],
+    testWidgets(
+      'items-stretch column does not crash under an unbounded width',
+      (tester) async {
+        await tester.pumpWidget(
+          wrapWithTheme(
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                WDiv(
+                  className: 'flex flex-col items-stretch',
+                  children: [
+                    WDiv(className: 'bg-red-500', child: Text('content')),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(tester.takeException(), isNull);
-    });
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 
-  group('(b) overflow-x-auto + w-full/min-w-* fill-desktop / scroll-narrow',
-      () {
-    testWidgets('fills the container on a wide surface (no scroll overflow)',
-        (tester) async {
+  group('(b) overflow-x-auto + w-full/min-w-* fill-desktop / scroll-narrow', () {
+    testWidgets('fills the container on a wide surface (no scroll overflow)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           width: 720,
@@ -233,8 +236,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 720);
     });
 
-    testWidgets('scrolls on a narrow surface (content honors the min width)',
-        (tester) async {
+    testWidgets('scrolls on a narrow surface (content honors the min width)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           width: 300,
@@ -257,8 +261,9 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 600);
     });
 
-    testWidgets('w-full without a min-w floor fills the viewport exactly',
-        (tester) async {
+    testWidgets('w-full without a min-w floor fills the viewport exactly', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           width: 320,
@@ -279,26 +284,26 @@ void main() {
       expect(tester.getSize(find.byType(WDiv).at(1)).width, 320);
     });
 
-    testWidgets('re-layout after a viewport change re-resolves the fill width',
-        (tester) async {
-      Widget tree(double width) => wrapWithTheme(
-            width: width,
-            WDiv(
-              className: 'overflow-x-auto',
-              child: WDiv(
-                className: 'w-full min-w-[600px] flex flex-row',
-                children: const [
-                  WDiv(className: 'flex-1', child: Text('c')),
-                ],
-              ),
+    testWidgets(
+      're-layout after a viewport change re-resolves the fill width',
+      (tester) async {
+        Widget tree(double width) => wrapWithTheme(
+          width: width,
+          WDiv(
+            className: 'overflow-x-auto',
+            child: WDiv(
+              className: 'w-full min-w-[600px] flex flex-row',
+              children: const [WDiv(className: 'flex-1', child: Text('c'))],
             ),
-          );
+          ),
+        );
 
-      await tester.pumpWidget(tree(720));
-      expect(tester.getSize(find.byType(WDiv).at(1)).width, 720);
-      await tester.pumpWidget(tree(300));
-      expect(tester.getSize(find.byType(WDiv).at(1)).width, 600);
-    });
+        await tester.pumpWidget(tree(720));
+        expect(tester.getSize(find.byType(WDiv).at(1)).width, 720);
+        await tester.pumpWidget(tree(300));
+        expect(tester.getSize(find.byType(WDiv).at(1)).width, 600);
+      },
+    );
   });
 
   group('(d) h-full inside a vertical scroll raises an actionable assert', () {
@@ -311,23 +316,19 @@ void main() {
           height: 400,
           const WDiv(
             className: 'overflow-y-auto',
-            children: [
-              WDiv(className: 'h-full', child: Text('fill')),
-            ],
+            children: [WDiv(className: 'h-full', child: Text('fill'))],
           ),
         ),
       );
 
       final Object? error = tester.takeException();
       expect(error, isA<AssertionError>());
-      expect(
-        error.toString(),
-        contains('flex-1'),
-      );
+      expect(error.toString(), contains('flex-1'));
     });
 
-    testWidgets('overflow-y-auto with h-full on the SAME element is allowed',
-        (tester) async {
+    testWidgets('overflow-y-auto with h-full on the SAME element is allowed', (
+      tester,
+    ) async {
       // The scroll container itself may carry h-full (it reads its parent
       // scope, not the scope it installs for its own children).
       await tester.pumpWidget(
@@ -343,17 +344,16 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('overflow-auto (both axes) asserts on an h-full child',
-        (tester) async {
+    testWidgets('overflow-auto (both axes) asserts on an h-full child', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           width: 300,
           height: 400,
           const WDiv(
             className: 'overflow-auto',
-            children: [
-              WDiv(className: 'h-full', child: Text('fill')),
-            ],
+            children: [WDiv(className: 'h-full', child: Text('fill'))],
           ),
         ),
       );

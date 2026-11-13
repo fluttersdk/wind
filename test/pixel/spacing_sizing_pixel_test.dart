@@ -164,10 +164,7 @@ void main() {
         wrapWithTheme(
           Align(
             alignment: Alignment.topLeft,
-            child: WDiv(
-              key: const ValueKey('sized'),
-              className: 'w-10 h-10',
-            ),
+            child: WDiv(key: const ValueKey('sized'), className: 'w-10 h-10'),
           ),
         ),
       );

@@ -34,37 +34,34 @@ void main() {
     );
   }
 
-  testWidgets(
-    'justify-between gives a flex-1 child the whole free space',
-    (tester) async {
-      await pumpAt(
-        tester,
-        400,
-        const WDiv(
-          className: 'flex flex-row items-center justify-between',
-          children: [
-            WDiv(
-              key: Key('grower'),
-              className: 'flex-1',
-              child: SizedBox(height: 20),
-            ),
-            WDiv(
-              key: Key('icon'),
-              child: SizedBox(width: 24, height: 24),
-            ),
-          ],
-        ),
-      );
+  testWidgets('justify-between gives a flex-1 child the whole free space', (
+    tester,
+  ) async {
+    await pumpAt(
+      tester,
+      400,
+      const WDiv(
+        className: 'flex flex-row items-center justify-between',
+        children: [
+          WDiv(
+            key: Key('grower'),
+            className: 'flex-1',
+            child: SizedBox(height: 20),
+          ),
+          WDiv(key: Key('icon'), child: SizedBox(width: 24, height: 24)),
+        ],
+      ),
+    );
 
-      expect(tester.getSize(find.byKey(const Key('icon'))).width, 24);
-      expect(
-        tester.getSize(find.byKey(const Key('grower'))).width,
-        400 - 24,
-        reason: 'the sibling keeps its content width, so everything left over '
-            'belongs to the child that asked for it',
-      );
-    },
-  );
+    expect(tester.getSize(find.byKey(const Key('icon'))).width, 24);
+    expect(
+      tester.getSize(find.byKey(const Key('grower'))).width,
+      400 - 24,
+      reason:
+          'the sibling keeps its content width, so everything left over '
+          'belongs to the child that asked for it',
+    );
+  });
 
   testWidgets(
     'justify-between gives a bare w-full child the whole free space',
@@ -84,10 +81,7 @@ void main() {
               className: 'w-full',
               child: SizedBox(height: 20),
             ),
-            WDiv(
-              key: Key('icon'),
-              child: SizedBox(width: 24, height: 24),
-            ),
+            WDiv(key: Key('icon'), child: SizedBox(width: 24, height: 24)),
           ],
         ),
       );
@@ -97,44 +91,44 @@ void main() {
     },
   );
 
-  testWidgets(
-    'an inactive prefixed grow token does not speak for the row',
-    (tester) async {
-      // A prefixed token is conditional, so it cannot be resolved from the
-      // class string alone. Counting it strips the shrink wrap off every
-      // sibling at a breakpoint or state where nothing actually grows: with
-      // `hover:flex-1` claiming the row while the hover state was inactive,
-      // this text laid out at 504 in a 100pt row and Flutter reported
-      // "A RenderFlex overflowed by 424 pixels on the right".
-      await pumpAt(
-        tester,
-        100,
-        const WDiv(
-          className: 'flex flex-row items-center justify-between',
-          children: [
-            WDiv(
-              key: Key('conditional'),
-              className: 'hover:flex-1',
-              child: SizedBox(width: 20, height: 20),
-            ),
-            WText(
-              key: Key('long'),
-              'Very Long Value Text That Cannot Fit',
-              className: 'text-sm',
-            ),
-          ],
-        ),
-      );
+  testWidgets('an inactive prefixed grow token does not speak for the row', (
+    tester,
+  ) async {
+    // A prefixed token is conditional, so it cannot be resolved from the
+    // class string alone. Counting it strips the shrink wrap off every
+    // sibling at a breakpoint or state where nothing actually grows: with
+    // `hover:flex-1` claiming the row while the hover state was inactive,
+    // this text laid out at 504 in a 100pt row and Flutter reported
+    // "A RenderFlex overflowed by 424 pixels on the right".
+    await pumpAt(
+      tester,
+      100,
+      const WDiv(
+        className: 'flex flex-row items-center justify-between',
+        children: [
+          WDiv(
+            key: Key('conditional'),
+            className: 'hover:flex-1',
+            child: SizedBox(width: 20, height: 20),
+          ),
+          WText(
+            key: Key('long'),
+            'Very Long Value Text That Cannot Fit',
+            className: 'text-sm',
+          ),
+        ],
+      ),
+    );
 
-      expect(
-        tester.getSize(find.byKey(const Key('long'))).width,
-        100 - 20,
-        reason: 'the shrink wrap stays on while the hover variant is inactive, '
-            'so the text shrinks into the row instead of overflowing it',
-      );
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(
+      tester.getSize(find.byKey(const Key('long'))).width,
+      100 - 20,
+      reason:
+          'the shrink wrap stays on while the hover variant is inactive, '
+          'so the text shrinks into the row instead of overflowing it',
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
     'justify-between still shrinks siblings when nobody claims flex',

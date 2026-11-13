@@ -141,7 +141,8 @@ class PositionParser implements WindParserInterface {
       }
     }
 
-    final bool didChange = positionType != null ||
+    final bool didChange =
+        positionType != null ||
         pTop != null ||
         pRight != null ||
         pBottom != null ||

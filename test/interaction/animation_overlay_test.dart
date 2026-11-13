@@ -64,8 +64,9 @@ void main() {
       );
     });
 
-    testWidgets('animate-ping renders an AnimatedBuilder (Transform path)',
-        (tester) async {
+    testWidgets('animate-ping renders an AnimatedBuilder (Transform path)', (
+      tester,
+    ) async {
       const key = ValueKey('ping');
       await tester.pumpWidget(
         wrapWithTheme(
@@ -88,16 +89,14 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.descendant(
-          of: find.byKey(key),
-          matching: find.byType(Transform),
-        ),
+        find.descendant(of: find.byKey(key), matching: find.byType(Transform)),
         findsWidgets,
       );
     });
 
-    testWidgets('animate-bounce renders an AnimatedBuilder (Transform path)',
-        (tester) async {
+    testWidgets('animate-bounce renders an AnimatedBuilder (Transform path)', (
+      tester,
+    ) async {
       const key = ValueKey('bounce');
       await tester.pumpWidget(
         wrapWithTheme(
@@ -118,28 +117,24 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.descendant(
-          of: find.byKey(key),
-          matching: find.byType(Transform),
-        ),
+        find.descendant(of: find.byKey(key), matching: find.byType(Transform)),
         findsWidgets,
       );
     });
   });
 
   group('OVERLAY characterization', () {
-    testWidgets('WPopover opens content and closes on the close callback',
-        (tester) async {
+    testWidgets('WPopover opens content and closes on the close callback', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         wrapWithTheme(
           WPopover(
             className: 'w-48 bg-white rounded-lg',
             triggerBuilder: (context, isOpen, isHovering) =>
                 const Text('Open menu'),
-            contentBuilder: (context, close) => WButton(
-              onTap: close,
-              child: const Text('Close menu'),
-            ),
+            contentBuilder: (context, close) =>
+                WButton(onTap: close, child: const Text('Close menu')),
           ),
         ),
       );
@@ -185,8 +180,9 @@ void main() {
       expect(find.text('Panel body'), findsNothing);
     });
 
-    testWidgets('WSelect opens the option list and closes after selecting',
-        (tester) async {
+    testWidgets('WSelect opens the option list and closes after selecting', (
+      tester,
+    ) async {
       String? selected;
 
       await tester.pumpWidget(

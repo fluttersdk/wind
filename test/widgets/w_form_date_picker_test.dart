@@ -50,13 +50,7 @@ void main() {
       testWidgets('renders with initial value', (tester) async {
         final date = DateTime(2024, 1, 1);
         await tester.pumpWidget(
-          wrapWithTheme(
-            Form(
-              child: WFormDatePicker(
-                initialValue: date,
-              ),
-            ),
-          ),
+          wrapWithTheme(Form(child: WFormDatePicker(initialValue: date))),
         );
 
         // Date format default is typically MM/DD/YYYY or similar,
@@ -167,33 +161,34 @@ void main() {
 
         await tester.pumpWidget(
           wrapWithTheme(
-            Form(
-              key: formKey,
-              child: WFormDatePicker(
-                initialValue: null,
-              ),
-            ),
+            Form(key: formKey, child: WFormDatePicker(initialValue: null)),
           ),
         );
 
         // Simulate date selection via internal state update (since we don't open picker)
-        final state = tester
-            .state<FormFieldState<DateTime>>(find.byType(WFormDatePicker));
+        final state = tester.state<FormFieldState<DateTime>>(
+          find.byType(WFormDatePicker),
+        );
         state.didChange(date);
         await tester.pump();
 
-        expect(tester.widget<WDatePicker>(find.byType(WDatePicker)).value,
-            equals(date));
+        expect(
+          tester.widget<WDatePicker>(find.byType(WDatePicker)).value,
+          equals(date),
+        );
 
         formKey.currentState!.reset();
         await tester.pump();
 
         expect(
-            tester.widget<WDatePicker>(find.byType(WDatePicker)).value, isNull);
+          tester.widget<WDatePicker>(find.byType(WDatePicker)).value,
+          isNull,
+        );
       });
 
-      testWidgets('onChanged callback is called and syncs with form',
-          (tester) async {
+      testWidgets('onChanged callback is called and syncs with form', (
+        tester,
+      ) async {
         DateTime? changedValue;
         final date = DateTime(2024, 5, 20);
 
@@ -215,15 +210,17 @@ void main() {
         expect(changedValue, equals(date));
 
         // Verify FormFieldState also updated
-        final state = tester
-            .state<FormFieldState<DateTime>>(find.byType(WFormDatePicker));
+        final state = tester.state<FormFieldState<DateTime>>(
+          find.byType(WFormDatePicker),
+        );
         expect(state.value, equals(date));
       });
     });
 
     group('Range Mode', () {
-      testWidgets('range mode syncs start date to form state for validation',
-          (tester) async {
+      testWidgets('range mode syncs start date to form state for validation', (
+        tester,
+      ) async {
         final formKey = GlobalKey<FormState>();
         final range = DateRange(
           start: DateTime(2024, 1, 1),
@@ -297,9 +294,7 @@ void main() {
           wrapWithTheme(
             Form(
               key: formKey,
-              child: WFormDatePicker(
-                mode: WDatePickerMode.range,
-              ),
+              child: WFormDatePicker(mode: WDatePickerMode.range),
             ),
           ),
         );
@@ -309,8 +304,10 @@ void main() {
         picker.onRangeChanged?.call(range);
         await tester.pump();
 
-        expect(tester.widget<WDatePicker>(find.byType(WDatePicker)).range,
-            equals(range));
+        expect(
+          tester.widget<WDatePicker>(find.byType(WDatePicker)).range,
+          equals(range),
+        );
 
         // Reset form
         formKey.currentState!.reset();
@@ -318,20 +315,16 @@ void main() {
 
         // Range should be cleared
         expect(
-            tester.widget<WDatePicker>(find.byType(WDatePicker)).range, isNull);
+          tester.widget<WDatePicker>(find.byType(WDatePicker)).range,
+          isNull,
+        );
       });
     });
 
     group('Disabled State', () {
       testWidgets('enabled=false propagates to WDatePicker', (tester) async {
         await tester.pumpWidget(
-          wrapWithTheme(
-            Form(
-              child: WFormDatePicker(
-                enabled: false,
-              ),
-            ),
-          ),
+          wrapWithTheme(Form(child: WFormDatePicker(enabled: false))),
         );
 
         final picker = tester.widget<WDatePicker>(find.byType(WDatePicker));
