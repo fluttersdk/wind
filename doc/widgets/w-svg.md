@@ -112,7 +112,7 @@ WAnchor(
   onTap: () => print('SVG clicked'),
   child: WSvg(
     src: 'assets/icon.svg',
-    className: 'hover:fill-blue-500 transition-colors',
+    className: 'hover:fill-blue-500 dark:hover:fill-blue-400 transition-colors',
   ),
 )
 ```
@@ -127,7 +127,7 @@ WAnchor(
   onTap: () {},
   child: WSvg(
     src: 'assets/icon.svg',
-    className: 'fill-gray-400 hover:fill-blue-500 dark:fill-white',
+    className: 'fill-gray-400 hover:fill-blue-500 dark:fill-white dark:hover:fill-blue-400',
   ),
 )
 ```
