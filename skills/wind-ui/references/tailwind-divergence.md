@@ -55,7 +55,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | Default breakpoints | sm 640, md 768, lg 1024, xl 1280, 2xl 1536 (px) | Identical |
 | `transition` / `transition-all` | Implicit transitions on all properties | Bare `transition` not wired; pair `duration-N` + `ease-*` instead |
 | `animate-spin` / `pulse` / `bounce` / `ping` | CSS keyframes; finite or infinite | All infinite loops in Wind |
-| `rounded-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3; Wind has not adopted the v4 rename shift |
+| `rounded-{sm\|md\|lg\|...}` | Match Tailwind v3 scale | Identical to v3; Wind has not adopted the v4 rename shift |
 | `shadow-{sm|md|lg|...}` | Match Tailwind v3 scale | Identical to v3 |
 | `ring` (bare) | v3 default 3 px; v4 default 1 px | Wind matches v3 (default 3 px) |
 | `tracking-{tighter..widest}` | em fractions (`tracking-wide` = 0.025em, scales with font size) | Identical em scale, converted to px at build against the element's `text-*` size, else the inherited `DefaultTextStyle` size, else 14 (`kDefaultFontSize`, the size unsized text paints at). A `WDiv` publishes the resolved px to its children, as CSS inherits the computed length. `WInput` with no `text-*` resolves against 14 (`kDefaultFontSize`). |
@@ -344,7 +344,7 @@ These canonical Tailwind classes are silently ignored by wind (unknown tokens ar
 
 The supported flex-child tokens (`shrink-0`, `flex-none`, `basis-*`) are listed in `tokens.md` §2.
 
-Note: `WText` is self-contained regarding its baseline rendering. When no Material/Scaffold ancestor supplies a `DefaultTextStyle` colour, `WText` applies a brightness-aware fallback (`Colors.white` on dark platforms, `Colors.black` on light, read from `MediaQuery.platformBrightness`) instead of Flutter's debug yellow-underline; it also injects a `Directionality(ltr)` wrapper when no `Directionality` is inherited. Resolution precedence over that fallback (highest first): an explicit `text-*` className colour, the `foregroundColor` / `textStyle` props, then an inherited ancestor `DefaultTextStyle` colour. The brightness fallback applies only when none of those supply a colour.
+Note: `WText` is self-contained regarding its baseline rendering. When no Material/Scaffold ancestor supplies a `DefaultTextStyle` colour, `WText` applies a brightness-aware fallback (`Colors.white` on dark platforms, `Colors.black` on light, read from `MediaQuery.platformBrightness`) instead of Flutter's debug yellow-underline; it also injects a `Directionality(ltr)` wrapper when no `Directionality` is inherited. Resolution precedence over that fallback (highest first): the `foregroundColor` prop, a colour on the `textStyle` prop (it is merged over the className), an explicit `text-*` className colour, then an inherited ancestor `DefaultTextStyle` colour. The brightness fallback applies only when none of those supply a colour.
 
 Note: Wind's smart column cross-axis stretch now covers clickable container rows (`WAnchor` and `WButton`) in addition to plain `WDiv` children, narrowing the divergence from CSS `align-items: stretch` (where element type is irrelevant). A `WAnchor`-wrapped nav row in a `flex flex-col` fills the column width by default without an explicit `items-stretch` or `w-full`.
 

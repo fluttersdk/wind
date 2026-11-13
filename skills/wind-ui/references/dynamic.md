@@ -110,6 +110,23 @@ Props keys follow the Wind widget constructor parameters, with renderer-specific
 | `WSelect` | `id`, `value`, `options`, `placeholder` (required: without it the node renders the error box), `onChange` (action), `className` |
 | `WDatePicker` | `id`, `value` (ISO string), `placeholder`, `onChange` (action), `className` |
 
+The Flutter core widgets read their own keys, all optional with the Flutter default when absent:
+
+| Node | Keys the renderer reads |
+|---|---|
+| `Column`, `Row` | `mainAxisSize` (`max`, else `min`), `mainAxisAlignment` (`center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`, also hyphenated; else `start`), `crossAxisAlignment` (`start`, `end`, `stretch`, `baseline`; else `center`) |
+| `SizedBox`, `Container` | `width`, `height` (`Container` builds a `SizedBox`: it has no colour, padding or decoration keys) |
+| `Expanded`, `Spacer` | `flex` |
+| `Wrap` | `spacing`, `runSpacing`, `alignment` |
+| `Stack` | `alignment` (`topLeft` ... `bottomRight`, also hyphenated), `fit` (`expand`, `passthrough`) |
+| `Positioned` | `top`, `bottom`, `left`, `right`, `width`, `height` |
+| `Padding` | `padding` (all sides) or `top` / `bottom` / `left` / `right` |
+| `Align` | `alignment`, `widthFactor`, `heightFactor` |
+| `Opacity`, `AspectRatio` | `opacity`, `aspectRatio` |
+| `FittedBox` | `fit` (a `BoxFit` name), `alignment` |
+| `ClipRRect` | `borderRadius` (a number) |
+| `Center` | none; the first child is the content (the single-child nodes use the first child) |
+
 The value widgets read `onChange`, not `onChanged`. Use the exact names above and in the worked examples (§9).
 
 Right:
@@ -429,6 +446,6 @@ Options accept maps with `value` and `label`, or plain strings (which become bot
 - **No subtree caching**: `WDynamic` rebuilds the whole JSON-to-widget tree on each of its own builds (every state write and every rebuild of its parent), not on every frame; the WindStyle cache still applies to the styles.
 - **`WText` is not reactive to state by `id`**: it reads `text` / `value` from its props only. To display a state value reactively, listen via `WDynamicController` from a Dart widget that wraps WDynamic.
 - **`WSelect` needs `placeholder`**: a node without it renders the error box, whatever its options or value.
-- **Several constructor props are not exposed**: the renderer maps only the keys in §4, so for example `WSelect` search, `WButton` `loadingText` and `WImage` `errorBuilder` are unreachable from JSON. Register a custom builder (§7) for those.
+- **Several Wind widget constructor props are not exposed**: the renderer reads only the Wind widget keys in §4, so for example `WSelect` search, `WButton` `loadingText` and `WImage` `errorBuilder` are unreachable from JSON. Register a custom builder (§7) for those.
 
 For static UI, Dart is faster, simpler, and easier to debug. Reach for WDynamic only when the use case actually requires runtime-defined trees.

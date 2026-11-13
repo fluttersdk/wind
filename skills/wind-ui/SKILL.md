@@ -326,7 +326,7 @@ Form(
 );
 ```
 
-For server-side or async validation the WForm* widgets take no `forceErrorText`: keep the server message in your own state, have the field's `validator` return it (`validator: (v) => _serverError ?? localCheck(v)`), run the async work after `validate()` returns `true`, then `setState(() => _serverError = result.message)` and call `_formKey.currentState!.validate()` again so the `error:` state fires.
+For server-side or async validation the WForm* widgets take no `forceErrorText`: keep the server message in your own state, have the field's `validator` return it (`validator: (v) => _serverError ?? localCheck(v)`), run the async work after `validate()` returns `true`, then `setState(() => _serverError = result.message)` and call `_formKey.currentState!.validate()` again so the `error:` state fires. Clear `_serverError` in the field's `onChanged` so the user can retry after editing, and discard a response whose submitted value no longer matches the field (compare against what you sent before applying it).
 
 `WFormDatePicker` range mode gotcha: the `FormFieldState<DateTime>` stores only `range.start`. A validator inspecting "is the range complete" must reach for the controller's internal state separately.
 
@@ -357,7 +357,7 @@ Full Form patterns + validation recipes + async error flow: `${CLAUDE_SKILL_DIR}
 
 Per change (every UI edit), verify all seven:
 
-1. **Every colour token has a `dark:` peer** in the same className block. Grep your diff for `bg-`, `text-`, `border-`, `ring-`, `fill-`, `shadow-` and confirm a `dark:` peer on each.
+1. **Every colour token has a `dark:` peer** in the same className block. Grep your diff for `bg-`, `text-`, `border-`, `ring-`, `fill-`, `shadow-` and confirm a `dark:` peer on each, except a colour that reads the same in both modes (the exemption in Core Law 2, such as a solid `-500` status fill or white text on a saturated button).
 2. **Every multi-concern className (3+ token families) is triple-quoted**, one concern per line, dark pairs grouped beside their light variant.
 3. **Every interactive surface has `hover:` and `focus:` states** (web/desktop targets) on `WButton`, `WAnchor`, `WInput`, `WSelect`, `WCheckbox`, `WDatePicker`, plus `disabled:` styling wherever the widget exposes an `enabled` / `disabled` parameter.
 4. **Every `child` XOR `children`**: never both. Construction-time assertion.

@@ -206,9 +206,11 @@ Future<void> _submit() async {
     _serverError = null;
     _isSubmitting = true;
   });
+  final submitted = _emailController.text;
   try {
-    final result = await api.createAccount(_emailController.text);
-    if (!mounted) return;
+    final result = await api.createAccount(submitted);
+    // The user may have edited the field while the request was pending: a response for an earlier value is stale.
+    if (!mounted || _emailController.text != submitted) return;
     if (!result.isOk) {
       setState(() => _serverError = result.message);  // e.g. "Email already in use"
       _formKey.currentState!.validate();               // the validator below now returns it
@@ -243,6 +245,7 @@ WFormInput(
 While `_serverError` is non-null:
 - The validator returns it, so `FormState.validate()` returns `false` and the `error:` state is active.
 - Clear it (set to `null`) when the user edits the field; with `autovalidateMode: onUserInteraction` the next keystroke re-validates and the field stops looking invalid mid-type.
+- Compare the field's current text with the value you submitted before applying a response (the `submitted` check in `_submit`), so a failure for an earlier value never lands on the one the user has since typed.
 
 ---
 
@@ -327,9 +330,14 @@ WFormDatePicker(
   onRangeChanged: (range) => setState(() => _range = range),
   validator: (_) => _range?.isComplete == true ? null : 'Pick an end date',
 )
+
+void _reset() {
+  _formKey.currentState!.reset();      // clears the picker's own range
+  setState(() => _range = null);       // and the copy the validator reads
+}
 ```
 
-The validator reads your own `_range`, so the form's `validate()` returns false until the end date is picked.
+The validator reads your own `_range`, so the form's `validate()` returns false until the end date is picked. `FormState.reset()` clears only the picker's internal range, not your copy: reset through `_reset()` (or clear `_range` wherever you call `reset()`), or the validator keeps accepting an empty picker and a submit sends the previous range.
 
 ---
 

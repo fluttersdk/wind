@@ -98,7 +98,7 @@ Destructive actions are big and red on a confirmation dialog only. On a regular 
 | Info | `bg-blue-500` | `text-blue-600 dark:text-blue-400` | `border-blue-500` |
 | Neutral | `bg-gray-500` | `text-gray-500 dark:text-gray-400` | `border-gray-300 dark:border-gray-600` |
 
-The solid `-500` backgrounds and borders read the same in both modes, so they need no peer; the text column carries its own.
+The solid `-500` backgrounds and borders are the "same in both modes" exemption of Core Law 2 in SKILL.md: Wind applies an unprefixed token in light and dark alike, so a colour you want identical in both needs no `dark:` peer. The text column differs per mode, so it carries its own.
 
 Mapped from the iOS system palette:
 
