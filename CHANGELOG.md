@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+---
+
+## [1.12.0] - 2026-11-13
+
 ### Changed
 
 - **The gallery is `wind_kit_example`, builds from the working tree and needs Dart 3.13 and Flutter 3.47.** The example package is renamed from the previous name and depends on `wind_kit` with `path: ../`, so the gallery always shows the code it ships with instead of the last published release; its native ids are `com.anilcancakir.wind_kit` (Android and the other platforms) and `com.anilcancakir.windKit` (Apple, which takes no underscore); its SDK floor matches the package's; and the unused `cupertino_ui` dependency is dropped. Pinning the gallery to a hosted `wind_kit` release was rejected because the docs site embeds it as the live demo of the current code, and a hosted pin would lag every change until a publish. `example/pubspec.yaml`, `example/lib/`, `example/android/`, `example/ios/`, `example/macos/`, `example/linux/`, `example/windows/`, `example/web/`, `.github/dependabot.yml` (#278, #282, #286)
@@ -565,36 +569,37 @@ Production deps: `flutter` (SDK), `flutter_svg ^2.0.0`, `fluttersdk_wind_diagnos
 
 The 1.0.0-alpha.1 through 1.0.0-alpha.10 release notes (Feb 2026 to May 2026) are preserved in git history and on the `v0` branch. The 0.0.x line is end-of-life; consumers pin to `^1.0.0` going forward.
 
-[Unreleased]: https://github.com/fluttersdk/wind/compare/1.11.1...HEAD
-[1.11.1]: https://github.com/fluttersdk/wind/releases/tag/1.11.1
-[1.11.0]: https://github.com/fluttersdk/wind/releases/tag/1.11.0
-[1.10.0]: https://github.com/fluttersdk/wind/releases/tag/1.10.0
-[1.9.4]: https://github.com/fluttersdk/wind/releases/tag/1.9.4
-[1.9.3]: https://github.com/fluttersdk/wind/releases/tag/1.9.3
-[1.9.2]: https://github.com/fluttersdk/wind/releases/tag/1.9.2
-[1.9.1]: https://github.com/fluttersdk/wind/releases/tag/1.9.1
-[1.9.0]: https://github.com/fluttersdk/wind/releases/tag/1.9.0
-[1.8.4]: https://github.com/fluttersdk/wind/releases/tag/1.8.4
-[1.8.3]: https://github.com/fluttersdk/wind/releases/tag/1.8.3
-[1.8.2]: https://github.com/fluttersdk/wind/releases/tag/1.8.2
-[1.8.1]: https://github.com/fluttersdk/wind/releases/tag/1.8.1
-[1.8.0]: https://github.com/fluttersdk/wind/releases/tag/1.8.0
-[1.7.0]: https://github.com/fluttersdk/wind/releases/tag/1.7.0
-[1.6.4]: https://github.com/fluttersdk/wind/releases/tag/1.6.4
-[1.6.3]: https://github.com/fluttersdk/wind/releases/tag/1.6.3
-[1.6.2]: https://github.com/fluttersdk/wind/releases/tag/1.6.2
-[1.6.1]: https://github.com/fluttersdk/wind/releases/tag/1.6.1
-[1.6.0]: https://github.com/fluttersdk/wind/releases/tag/1.6.0
-[1.5.3]: https://github.com/fluttersdk/wind/releases/tag/1.5.3
-[1.5.2]: https://github.com/fluttersdk/wind/releases/tag/1.5.2
-[1.5.1]: https://github.com/fluttersdk/wind/releases/tag/1.5.1
-[1.5.0]: https://github.com/fluttersdk/wind/releases/tag/1.5.0
-[1.4.1]: https://github.com/fluttersdk/wind/releases/tag/1.4.1
-[1.4.0]: https://github.com/fluttersdk/wind/releases/tag/1.4.0
-[1.3.0]: https://github.com/fluttersdk/wind/releases/tag/1.3.0
-[1.2.1]: https://github.com/fluttersdk/wind/releases/tag/1.2.1
-[1.2.0]: https://github.com/fluttersdk/wind/releases/tag/1.2.0
-[1.1.2]: https://github.com/fluttersdk/wind/releases/tag/1.1.2
-[1.1.1]: https://github.com/fluttersdk/wind/releases/tag/1.1.1
-[1.1.0]: https://github.com/fluttersdk/wind/releases/tag/1.1.0
-[1.0.0]: https://github.com/fluttersdk/wind/releases/tag/1.0.0
+[Unreleased]: https://github.com/anilcancakir/wind_kit/compare/1.12.0...HEAD
+[1.12.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.12.0
+[1.11.1]: https://github.com/anilcancakir/wind_kit/releases/tag/1.11.1
+[1.11.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.11.0
+[1.10.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.10.0
+[1.9.4]: https://github.com/anilcancakir/wind_kit/releases/tag/1.9.4
+[1.9.3]: https://github.com/anilcancakir/wind_kit/releases/tag/1.9.3
+[1.9.2]: https://github.com/anilcancakir/wind_kit/releases/tag/1.9.2
+[1.9.1]: https://github.com/anilcancakir/wind_kit/releases/tag/1.9.1
+[1.9.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.9.0
+[1.8.4]: https://github.com/anilcancakir/wind_kit/releases/tag/1.8.4
+[1.8.3]: https://github.com/anilcancakir/wind_kit/releases/tag/1.8.3
+[1.8.2]: https://github.com/anilcancakir/wind_kit/releases/tag/1.8.2
+[1.8.1]: https://github.com/anilcancakir/wind_kit/releases/tag/1.8.1
+[1.8.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.8.0
+[1.7.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.7.0
+[1.6.4]: https://github.com/anilcancakir/wind_kit/releases/tag/1.6.4
+[1.6.3]: https://github.com/anilcancakir/wind_kit/releases/tag/1.6.3
+[1.6.2]: https://github.com/anilcancakir/wind_kit/releases/tag/1.6.2
+[1.6.1]: https://github.com/anilcancakir/wind_kit/releases/tag/1.6.1
+[1.6.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.6.0
+[1.5.3]: https://github.com/anilcancakir/wind_kit/releases/tag/1.5.3
+[1.5.2]: https://github.com/anilcancakir/wind_kit/releases/tag/1.5.2
+[1.5.1]: https://github.com/anilcancakir/wind_kit/releases/tag/1.5.1
+[1.5.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.5.0
+[1.4.1]: https://github.com/anilcancakir/wind_kit/releases/tag/1.4.1
+[1.4.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.4.0
+[1.3.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.3.0
+[1.2.1]: https://github.com/anilcancakir/wind_kit/releases/tag/1.2.1
+[1.2.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.2.0
+[1.1.2]: https://github.com/anilcancakir/wind_kit/releases/tag/1.1.2
+[1.1.1]: https://github.com/anilcancakir/wind_kit/releases/tag/1.1.1
+[1.1.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.1.0
+[1.0.0]: https://github.com/anilcancakir/wind_kit/releases/tag/1.0.0

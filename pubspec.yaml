@@ -1,6 +1,6 @@
 name: wind_kit
 description: "Tailwind CSS for Flutter: utility-first className styling ('flex p-4 dark:bg-gray-800') with dark mode, responsive breakpoints, hover states and theming built in. No codegen."
-version: 1.11.1
+version: 1.12.0
 homepage: https://anilcancakir.com/wind_kit
 repository: https://github.com/anilcancakir/wind_kit
 issue_tracker: https://github.com/anilcancakir/wind_kit/issues
