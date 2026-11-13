@@ -253,15 +253,12 @@ WInput(
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can override the default input appearance through `WindThemeData`. This is useful for setting global border colours or padding defaults.
+`WInput` draws its default border in a fixed colour that the theme does not control. Set a border colour on each field with `border-{color}` and its `dark:` pair in `className`. The theme does scale the `p-*` spacing classes through `baseSpacingUnit`:
 
 ```dart
 WindThemeData(
-  colors: {
-    'input-border': Colors.blueGrey,
-  },
   // WInput respects global spacing units for p-x classes
-  baseSpacingUnit: 4.0, 
+  baseSpacingUnit: 4.0,
 )
 ```
 

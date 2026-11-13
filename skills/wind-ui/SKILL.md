@@ -1,11 +1,11 @@
 ---
 name: wind-ui
-description: "Tailwind-syntax className UI with wind_kit: W-widgets, dark: pairs, stacked prefixes, WindRecipe and WDynamic."
+description: "Style Flutter UI with wind_kit: Tailwind-syntax className, W-widgets, dark: pairs, stacked prefixes, WindRecipe and WDynamic."
 when_to_use: "Use when writing, editing or auditing Flutter UI in an app that uses wind_kit: a className, W-widget, theme or overflow."
-version: 2.31.0
+version: 2.32.0
 ---
 
-<!-- wind_kit 1.12.x | Skill v2.31.0 (2026-11-13) -->
+<!-- wind_kit 1.12.x | Skill v2.32.0 (2026-11-13) -->
 
 # Wind UI
 
@@ -63,7 +63,7 @@ These hold for every line of Wind code. Apply each as a hard constraint, not a s
 
 5. **`child` XOR `children` on every W-widget that accepts both.** Passing both fails an assertion at construction. Passing neither renders an empty `SizedBox`.
 
-6. **Unknown tokens are dropped; the debug hint fires only for tokens no parser recognises.** Two cases, and they behave differently. A token whose prefix matches no parser (`ps-4` logical-inline, `-m-4` negative margin, a mistyped family like `wibble-4`) is dropped and, in `kDebugMode`, prints a one-time `debugPrint` naming it (deduped per unique token per session; release builds stay silent). A token whose family is recognised but whose value is unsupported (`text-7xl`, past wind's `text-6xl` cap; `flex-cow`, which still matches `flex-*`) is claimed by that parser and drops silently, with no hint. So the hint catches unknown-family typos, not bad-value ones; spell-check values by hand or load `references/tokens.md` to verify the family.
+6. **Unknown tokens are dropped; the debug hint fires only for tokens no parser recognises.** Two cases, and they behave differently. A token that no parser claims once its prefixes are stripped (`ps-4` logical-inline, `-m-4` negative margin, a mistyped family like `wibble-4`) is dropped and, in `kDebugMode`, prints a one-time `debugPrint` naming it (deduped per unique token per session; release builds stay silent). A class with an unknown or inactive prefix (`hovr:bg-red-500`, `motion-safe:animate-spin`) is removed earlier and prints nothing. A token whose family is recognised but whose value is unsupported (`text-7xl`, past wind's `text-6xl` cap; `flex-cow`, which still matches `flex-*`) is claimed by that parser and drops silently, with no hint. So the hint catches unknown-family typos, not bad-value ones; spell-check values by hand or load `references/tokens.md` to verify the family.
 
 7. **Last class wins within a parser family.** `p-4 p-8` resolves to `p-8`. `bg-red-500 bg-blue-500` resolves to `bg-blue-500`. Conflicts inside the same property are stable but silent; conflicts across properties (`text-red-500` colour + `text-center` alignment) coexist because they target different fields.
 
@@ -71,7 +71,7 @@ These hold for every line of Wind code. Apply each as a hard constraint, not a s
 
 9. **Wind composes with Flutter, not against it.** `Scaffold`, `AppBar`, `Dialog`, `BottomSheet`, `Drawer`, `SnackBar`, `Navigator`, `Hero`, `FutureBuilder`, `StreamBuilder`, `ValueListenableBuilder` remain canonical. `ListView` / `GridView.builder` / `CustomScrollView` are the right choice for virtualised lists; `WDiv` with `grid-cols-N` produces a static `Wrap` (or, with `items-stretch`, equal-height rows), not a virtualised grid. See [Wind ≠ Flutter rules of thumb](#9-wind--flutter-rules-of-thumb).
 
-10. **`active:` prefix is reserved but not wired.** `WAnchor` tracks hover and focus only; there is no onTapDown/onTapUp tracking. Don't rely on `active:bg-blue-700` for press feedback. Use a transient state in the consumer's controller and `states: {'pressed'}` if you genuinely need press feedback today.
+10. **No widget tracks press, so `active:` applies only through `states: {'active'}`.** `WAnchor` tracks hover and focus only; there is no onTapDown/onTapUp tracking. Don't rely on `active:bg-blue-700` for press feedback from a tap. If you need it, keep a transient press flag in the consumer's state and pass `states: {'active'}`.
 
 11. **An `onTap` on `WAnchor` is reachable by keyboard and remote, and a gestureless anchor is not a stop.** `onTap` runs on `ActivateIntent`, which covers `Enter`, `Space`, the gamepad A button and `select` (the D-pad centre on Android TV, the click on the Apple TV remote). Only an anchor that carries a gesture is a traversal stop: the gestureless `WAnchor` that `WDiv` wraps itself in for `hover:` / `focus:` inherits the nearest anchor's primary focus and `disabled` instead of claiming a second stop, so `WAnchor(onTap:) > WDiv('focus:ring-2')` is one control the user tabs to once and the ring lands on the thing they activate. An anchor with only `onLongPress` binds no activation key. Do not add `Focus` or `Shortcuts` wrappers; the detail is in `${CLAUDE_SKILL_DIR}/references/widgets.md`.
 
@@ -106,7 +106,7 @@ The headline 25 (table below) are the ones an agent reaches for daily. Two more 
 | `WBadge` | Display | `label` (positional) | Inline status/label pill. Composes a rounded-full `WDiv` around `WText(text-xs)`. All tone via `className` (`bg-*`, `text-*`, `dark:` pairs). No positional child; label is the only positional param. |
 | `WCard` | Layout / container | `child:` | Surface container. `header:`, `child:` (required), `footer:` slots; delegates to `WDiv(flex-col)`. No colours baked in; all tone via `className`. |
 | `WSwitch` | Form (raw) | `value:` | Controlled toggle. `value` + `onChanged`. `className` styles the track; `thumbClassName` styles the indicator dot. `checked:` state activates when `value: true`. The thumb is a flex child of the track, so it slides via `justify-start` -> `checked:justify-end` on the track `className` (Wind has no transform parser; `translate-x-*` is a no-op). `disabled:` when `disabled: true`. |
-| `WRadio<T>` | Form (raw) | `value:`, `groupValue:` | Controlled radio. `value`, `groupValue`, `onChanged`. `selected:` activates when `value == groupValue`. Outer ring: `className`. Inner dot: `indicatorClassName` (defaults to blue filled circle). Group exclusivity is the caller's responsibility. |
+| `WRadio<T>` | Form (raw) | `value:`, `groupValue:` | Controlled radio. `value`, `groupValue`, `onChanged`. `selected:` activates when `value == groupValue`. Outer ring: `className`. Inner dot: `indicatorClassName` (defaults to `w-2.5 h-2.5 rounded-full bg-primary selected:opacity-100`, so it follows the theme's `primary` token). Group exclusivity is the caller's responsibility. |
 | `WTabs` | Form (raw) / Layout | `tabs:`, `selectedIndex:`, `panelBuilder:` | Controlled tabs. `tabs: List<String>`, `selectedIndex`, `panelBuilder`. `selected:` activates on the active tab. Slot classNames: `listClassName`, `tabClassName`, `selectedTabClassName`, `panelClassName`. `fullWidthList` (default `true`) prepends `w-full` so a `border-b` underline spans the container; set `false` for content-width / pill tabs. |
 
 Full constructor surface, every named parameter, every default: `${CLAUDE_SKILL_DIR}/references/widgets.md`.
@@ -136,6 +136,8 @@ button(className: 'w-full')                    // caller suffix, appended last
 
 Resolution order (strict, never sorted): `base ++ variant-classes(definition order) ++ matched-compound(array order) ++ caller`.
 
+A compound condition value is a `String` (exact) or a `List<String>` (OR match): `WindCompoundVariant(conditions: {'intent': ['primary', 'ghost']}, className: '...')`. `WindSlotRecipe` takes `WindSlotCompoundVariant(conditions: {...}, classNames: {'slot': '...'})`. Selecting an axis the recipe does not define throws `ArgumentError` naming the known axes.
+
 **Override contract:** a variant comes after the base, so it overrides it. Padding, margin and inset longhands compose with shorthands per side (`p-4` then `px-2` gives 8 left and right, 16 top and bottom). Border width and radius do not: `rounded-lg` then `rounded-t-none` squares every corner and `border-2` then `border-t-4` keeps only the top border, so a variant over such a base restates every side or corner.
 
 `WindSlotRecipe` returns `Map<String, String>` (slot -> className). Use the slot keys directly on widget `className:` props.
@@ -152,7 +154,7 @@ Resolution order (strict, never sorted): `base ++ variant-classes(definition ord
 | **Framework-managed** | The widget itself, from its own props | `loading:` (WButton.isLoading), `disabled:` (any widget's `disabled` / `enabled` prop), `checked:` (WCheckbox.value, WSwitch.value), `selected:` (WRadio when value==groupValue, WTabs active tab), `error:` (WForm* when `FormFieldState.hasError`) |
 | **Consumer-passed** | `states: Set<String>?` on the widget | `selected:` (card toggles), `highlighted:`, `new:`, any custom string. No registration required. |
 
-WDiv and WButton auto-wrap themselves in WAnchor whenever className contains the literal substrings `hover:`, `focus:`, or `active:`. Other widgets do not. If you need hover detection on a `WText`, wrap it in `WDiv` or `WAnchor` explicitly.
+WDiv wraps itself in WAnchor whenever className contains the literal substrings `hover:`, `focus:`, or `active:`; WButton always wraps. Other widgets do not. If you need hover detection on a `WText`, wrap it in `WDiv` or `WAnchor` explicitly.
 
 All active states merge into a single `Set<String>` inside `WindContext.activeStates` and contribute to the parser cache key. Manual `states: {'hover'}` and a real pointer hover produce the same cache entry by design.
 
@@ -173,11 +175,11 @@ Inline this catalogue as your default reach-for set. For the full per-parser reg
 
 **Layout**: `flex` `flex-row` `flex-col` `flex-row-reverse` `flex-col-reverse` `wrap` `grid` `grid-cols-N` `block` `hidden`. `justify-start` `-center` `-end` `-between` `-around` `-evenly`. `items-start` `-center` `-end` `-baseline` `-stretch`. `axis-min` `axis-max` (Wind-only, sets `MainAxisSize`). On a `grid`, `items-stretch` opts into equal-height rows (cells match the tallest per row); the default grid sizes each cell to its own content.
 
-**Flex child**: `flex-1` `flex-auto` `flex-none` `flex-N` (numeric). `shrink-0` `grow`. `self-start` / `-end` / `-center` / `-auto` (align-self shorthand; `align-self-*` long form also works). `self-stretch` currently centres the child instead of stretching it (it maps to the same alignment as `self-center`); set the height explicitly. `order-0` through `order-12`, `order-first` / `order-last` / `order-none`, arbitrary `order-[-5]`.
+**Flex child**: `flex-1` `flex-auto` `flex-none` `flex-N` (numeric). `shrink-0` `grow` `grow-0`; `flex-initial` and `flex-auto` both parse to a loose `Flexible`, but only `flex-auto` claims a grow share in a row (`flex-initial` never grows). `flex-shrink-0` and `flex-grow-0` are not wired and drop silently: write `shrink-0` / `grow-0`. `self-start` / `-end` / `-center` / `-auto` (align-self shorthand; `align-self-*` long form also works). `self-stretch` currently centres the child instead of stretching it (it maps to the same alignment as `self-center`); set the height explicitly. `order-0` through `order-12`, `order-first` / `order-last` / `order-none`, arbitrary `order-[-5]`.
 
-**Spacing**: `p-N` `px-N` `py-N` `pt-N` `pr-N` `pb-N` `pl-N` (no `ps-`/`pe-`). `m-N` and axes (no negative margin, no `ms-`/`me-`, `mx-auto` for horizontal centring). `gap-N` `gap-x-N` `gap-y-N`; `space-x-N` / `space-y-N` parse to the same gap as `gap-x-N` / `gap-y-N`. Arbitrary `p-[18px]`, `gap-[3.5]` (no `%` for spacing). Default unit: 4 px per step. `p-4` = 16 px.
+**Spacing**: `p-N` `px-N` `py-N` `pt-N` `pr-N` `pb-N` `pl-N` (no `ps-`/`pe-`). `m-N` and axes (no negative margin, no `ms-`/`me-`, `mx-auto` for horizontal centring). `gap-N` `gap-x-N` `gap-y-N`; `space-x-N` / `space-y-N` parse to the same gap as `gap-x-N` / `gap-y-N`. Arbitrary `p-[18px]`, `gap-[3.5]` (no `%` for spacing). Default unit: 4 px per step. `p-4` = 16 px. `p-px` and `w-px` are silent no-ops.
 
-**Sizing**: `w-N` `h-N` (theme scale). `w-1/2` `w-1/3` `w-2/3` `w-1/4` `w-3/4` `w-full` `w-screen`. `h-full` `h-screen`. `size-N` sets both width and height (`size-2`, `size-full`, `size-1/2`, `size-[20px]`); works on a childless `WDiv` (status dot). Arbitrary `w-[300px]` `h-[50%]` (`%` works only on `w-`, `h-` and `size-`; `min-*` / `max-*` arbitrary values take px only). `min-w-0` `min-w-full` `min-h-screen`. `max-w-xs` through `max-w-7xl`, `max-w-prose`, `max-w-full`. No `w-auto` / `h-auto` (silently skipped).
+**Sizing**: `w-N` `h-N` (theme scale). `w-1/2` `w-1/3` `w-2/3` `w-1/4` `w-3/4` `w-full` `w-screen`. `h-full` `h-screen`. `size-N` sets both width and height (`size-2`, `size-full`, `size-1/2`, `size-[20px]`); works on a childless `WDiv` (status dot). Arbitrary `w-[300px]` `h-[50%]` (`%` works only on `w-`, `h-` and `size-`; `min-*` / `max-*` arbitrary values take px only). `min-w-0` `min-w-full` `min-h-screen` (`min-w-full` is the viewport width and `min-h-full` the viewport height, not the parent's). `max-w-xs` through `max-w-7xl`, `max-w-prose`, `max-w-full`. No `w-auto` / `h-auto` (silently skipped).
 
 **Position**: `relative` `absolute`. `top-N` `right-N` `bottom-N` `left-N` `inset-N` `inset-x-N` `inset-y-N`, negative `-top-N` `-inset-N`, arbitrary `top-[24px]` (no `%` for offsets). `fixed` / `sticky` are recognised by the parser but produce no visual effect.
 
@@ -185,9 +187,9 @@ Inline this catalogue as your default reach-for set. For the full per-parser reg
 
 **Borders**: `border` `border-N` `border-t` `border-r` `border-b` `border-l` (there is no `border-x` or `border-y`: name the two sides). `border-solid` `border-none` (only these two; `border-dashed` / `border-dotted` are recognised but not wired). `rounded` `rounded-{sm|md|lg|xl|2xl|3xl|full|none}`, directional `rounded-t-lg` `rounded-tl-xl` (no arbitrary `rounded-[8px]`: pick a scale step or set the radius in the theme's `borderRadius`).
 
-**Typography** (order of resolution inside `text-*`): colour → align → size → weight → style. `text-xs` `text-sm` `text-base` `text-lg` `text-xl` `text-2xl` through `text-6xl` (60 px). `text-7xl` / `text-8xl` / `text-9xl` are no-ops; do not write them (for a larger size use `text-[72px]`). `font-thin` through `font-black`. `text-left` `text-center` `text-right` `text-justify` `text-start` `text-end` (RTL-aware). `truncate` (= `text-ellipsis` + `maxLines: 1` + `softWrap: false`). `line-clamp-N`. `whitespace-nowrap` / `text-nowrap`. `uppercase` `lowercase` `capitalize` `normal-case` (`capitalize` raises the first letter of every word and leaves the rest as typed; casing follows the ambient locale, so `tr` and `az` get the dotted and dotless `i` right). `italic` / `not-italic`. `underline` `line-through` `no-underline`, plus `decoration-{color}/{style}/{thickness}`. `leading-tight` `leading-snug` `leading-normal` `leading-relaxed` `leading-loose` or arbitrary `leading-[24px]`. `tracking-tighter` through `tracking-widest` are em (Tailwind's -0.05em to 0.1em), multiplied by the text's own `text-*` size, else the inherited size, else 14 (`kDefaultFontSize`); `tracking-[-0.02em]` is em, `tracking-[1px]` and a bare `tracking-[1]` are px. Font size + line height combined: `text-xl/8`.
+**Typography** (order of resolution inside `text-*`): colour → align → size → weight → style. `text-xs` `text-sm` `text-base` `text-lg` `text-xl` `text-2xl` through `text-6xl` (60 px). `text-7xl` / `text-8xl` / `text-9xl` are no-ops; do not write them (for a larger size use `text-[72px]`). `font-thin` through `font-black`. `text-left` `text-center` `text-right` `text-justify` `text-start` `text-end` (RTL-aware). `truncate` (= `text-ellipsis` + `maxLines: 1` + `softWrap: false`). `line-clamp-N`. `whitespace-nowrap` / `text-nowrap`. `uppercase` `lowercase` `capitalize` `normal-case` (`capitalize` raises the first letter of every word and leaves the rest as typed; casing follows the ambient locale, so `tr` and `az` get the dotted and dotless `i` right). `italic` / `not-italic`. `underline` `line-through` `no-underline`, plus `decoration-{color}/{style}/{thickness}`. `leading-tight` `leading-snug` `leading-normal` `leading-relaxed` `leading-loose` or arbitrary `leading-[24px]` (`leading-none` is not mapped; `rem` inside an arbitrary `text-[...]` or `leading-[...]` is read as px, so `text-[1.5rem]` is 1.5 px). `tracking-tighter` through `tracking-widest` are em (Tailwind's -0.05em to 0.1em), multiplied by the text's own `text-*` size, else the inherited size, else 14 (`kDefaultFontSize`); `tracking-[-0.02em]` is em, `tracking-[1px]` and a bare `tracking-[1]` are px. Font size + line height combined: `text-xl/8` (numeric only: a named leading after the slash, `text-xl/loose`, reads the theme multiplier as pixels and collapses the line height).
 
-**Effects**: `opacity-N` (5-step scale, plus arbitrary `opacity-[0.5]`). `shadow-sm` `shadow` `shadow-md` `shadow-lg` `shadow-xl` `shadow-2xl` `shadow-none` (no `shadow-inner`). Coloured shadow `shadow-lg shadow-blue-500` (needs a size preset; `/N` is ignored). `ring-N` `ring-{color}` `ring-offset-{0,1,2,4,8}` `ring-inset` (an outline over the box, never a fill: a ring on an element with no background stays empty inside; the offset gap is unpainted). `aspect-square` `aspect-video` `aspect-[4/3]`. `z-0` `z-10` through `z-50`, arbitrary `z-[100]`, `z-auto`.
+**Effects**: `opacity-N` (0, 5, 10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 95 or 100; there is no 15, 35, 45 or 55, and a missing step drops silently), plus arbitrary `opacity-[0.5]`. `shadow-sm` `shadow` `shadow-md` `shadow-lg` `shadow-xl` `shadow-2xl` `shadow-none` (no `shadow-inner`). Coloured shadow `shadow-lg shadow-blue-500` (needs a size preset; `/N` is ignored). `ring-N` `ring-{color}` `ring-offset-{0,1,2,4,8}` `ring-inset` (an outline over the box, never a fill: a ring on an element with no background stays empty inside; the offset gap is unpainted). `aspect-square` `aspect-video` `aspect-[4/3]`. `z-0` `z-10` through `z-50`, arbitrary `z-[100]`, `z-auto`.
 
 **Overflow**: `overflow-hidden` `overflow-visible` `overflow-scroll` `overflow-auto`, axis-specific `overflow-x-auto` `overflow-y-auto`. On a box with a border, `overflow-hidden` clips inside the border (the padding box, inner radius), so the border stays whole at rounded corners and the box's own `shadow-*` still paints. Scrolling requires the constructor prop `scrollPrimary: true` for iOS tap-to-top (there is no className for it).
 
@@ -375,7 +377,7 @@ Run `dart analyze` on the touched files and visually verify the change in light 
 | Vertical stack | `WDiv(className: 'flex flex-col gap-4', children: [...])` |
 | Horizontal stack | `WDiv(className: 'flex flex-row items-center gap-3', children: [...])` |
 | Responsive grid 1→2→3 | `WDiv(className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4', children: cards)` |
-| Sticky header + scrollable body | Outer `flex flex-col h-full`, header `flex-shrink-0`, body `flex-1 overflow-y-auto` + `scrollPrimary: true` |
+| Sticky header + scrollable body | Outer `flex flex-col h-full`, header `shrink-0`, body `flex-1 overflow-y-auto` + `scrollPrimary: true` |
 | Full-page scroll | `WDiv(className: 'w-full h-full overflow-y-auto p-4', scrollPrimary: true, child: ...)` |
 | Hide on mobile, show md+ | `className: 'hidden md:flex'` |
 | Gradient header banner | `bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-2xl` (paired with `dark:from-indigo-500 dark:to-purple-500`) |
@@ -411,11 +413,11 @@ Compact catalogue of consistent footguns. Each entry: what's wrong, why, the cor
 | `BoxDecoration(color: ...)` / `TextStyle(fontSize: ...)` / `EdgeInsets.all(...)` inline | Wind has tokens for these | use the className tokens |
 | `Container(child: ...)` instead of `WDiv` | Loses className surface | use `WDiv` |
 | A sub-barrel import such as `package:wind_kit/widgets.dart` | Only the main barrel exists | `import 'package:wind_kit/wind_kit.dart'` |
-| `group-hover:` / `peer-focus:` / `@container` / `@apply` / `!important` / `divide-*` / `filter` / `backdrop-blur` / `ps-*` / `pe-*` / `ms-*` / `me-*` / `-m-N` / `w-auto` | Not implemented in Wind | see `tailwind-divergence.md` for substitutes |
+| `group-hover:` / `peer-focus:` / `@container` / `@apply` / `!important` / `divide-*` / `filter` / `backdrop-blur` / `place-*` (claimed by the flex parser, no handler) / `ps-*` / `pe-*` / `ms-*` / `me-*` / `-m-N` / `w-auto` | Not implemented in Wind | see `tailwind-divergence.md` for substitutes |
 | `className: 'absolute top-0'` without `relative` ancestor | `Stack` requires sibling `relative` to anchor | wrap parent in `relative` |
 | `WText` with `truncate` inside Row without bounded width | Overflow | wrap in `WDiv(className: 'flex-1')` |
 | Putting `dark:` peers at the bottom of a long className | Hard to audit; missing pairs slip through | group beside the light variant on the same line |
-| `active:bg-blue-700` for press feedback | Not wired (Core Law §10); WAnchor tracks hover and focus only | track press in consumer state, pass via `states: {'pressed'}` if needed |
+| `active:bg-blue-700` for press feedback | No widget tracks press (Core Law §10); `active:` applies only through `states: {'active'}` | track press in consumer state and pass `states: {'active'}` |
 | Adding a `Focus` or `Shortcuts` wrapper to make a `WAnchor` keyboard-reachable | Already wired (Core Law §11); `onTap` answers `ActivateIntent` | pass `onTap` and let `Enter` / `Space` / D-pad `select` reach it |
 | Expecting `focus:ring-*` on a `WDiv` inside a tappable `WAnchor` to need its own focus node | The gestureless wrapper inherits focus from the anchor (Core Law §11) | style the div, put the gesture on the anchor, leave the nodes alone |
 | Inline `Padding(padding: EdgeInsets.all(16))` around a `WDiv` | Duplicates work | move the padding into the `WDiv` className as `p-4` |

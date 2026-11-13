@@ -62,9 +62,9 @@ WText(
 
 | Class | Font Family | Description |
 |:------|:------------|:------------|
-| `font-sans` | `ui-sans-serif, system-ui, ...` | Default sans-serif stack. |
-| `font-serif` | `ui-serif, Georgia, ...` | Default serif stack. |
-| `font-mono` | `ui-monospace, SFMono-Regular, ...` | Default monospace stack. |
+| `font-sans` | `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` | Default sans-serif stack. |
+| `font-serif` | `Georgia, Cambria, "Times New Roman", Times, serif` | Default serif stack. |
+| `font-mono` | `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace` | Default monospace stack. |
 
 <a name="variants"></a>
 ## Variants

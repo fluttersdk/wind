@@ -94,7 +94,7 @@ WText('Adaptive Weight', className: 'font-medium dark:font-normal')
 If you need a specific font weight that isn't included in your theme, use square bracket notation.
 
 ```dart
-// Maps to the nearest standard FontWeight (e.g. 700 -> Bold)
+// Truncates to the standard weight at or below it (700 -> bold, 550 -> medium)
 WText('Custom Weight', className: 'font-[700]')
 WText('Variable Weight', className: 'font-[550]')
 ```

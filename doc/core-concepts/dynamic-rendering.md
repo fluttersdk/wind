@@ -341,7 +341,7 @@ WDynamic(
 )
 ```
 
-Any attempt to render a denied widget will trigger the `onUnknownWidget` callback or render an empty container.
+Any attempt to render a denied widget will trigger the `onUnknownWidget` callback, or render a red error box naming the denied type when no callback is set.
 
 **Why whitelist-only?**
 
@@ -399,17 +399,17 @@ Custom builders receive the parsed `props` map and any resolved `children` widge
 <a name="custom-icons"></a>
 ## Custom Icons
 
-For `WIcon` widgets in your JSON, you can provide custom icon mappings without building a full custom widget builder. Use the `customIcons` prop to map string names to `IconData`:
+For `WIcon` widgets in your JSON, you can provide custom icon mappings without building a full custom widget builder. Use the `customIcons` prop to map string names to `IconData`. Names are matched in lowercase, so write every key in lowercase:
 
 ```dart
 WDynamic(
   json: {
     'type': 'WIcon',
-    'props': {'icon': 'myCustomIcon'},
+    'props': {'icon': 'mycustomicon'},
   },
   customIcons: {
-    'myCustomIcon': Icons.star,
-    'myOtherIcon': Icons.favorite,
+    'mycustomicon': Icons.star,
+    'myothericon': Icons.favorite,
   },
 )
 ```
@@ -449,7 +449,7 @@ WDynamic(
 )
 ```
 
-Both callbacks are optional. If not provided, WDynamic renders an empty `SizedBox.shrink()` for failures.
+Both callbacks are optional. If one is not provided, WDynamic renders a red error box instead: it names the denied type for `onUnknownWidget`, and shows the exception text for `onError`.
 
 **Maximum depth protection:**
 

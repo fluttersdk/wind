@@ -62,7 +62,7 @@ Handler signatures `WActionHandler` accepts:
 - `(Map<String, dynamic> args)` - most common
 - `(Map<String, dynamic> args, WDynamicState state)` - when the handler needs state access
 
-Unknown action names are silently ignored (debugPrint only). Handler exceptions are caught + logged.
+Unknown action names are silently ignored (debugPrint only). A synchronous handler exception is caught + logged; an async handler's Future error escapes.
 
 ## Error handling
 

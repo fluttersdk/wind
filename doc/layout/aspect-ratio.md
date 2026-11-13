@@ -69,7 +69,7 @@ Wind supports standard state variants for aspect ratios.
 
 ```dart
 // Change aspect ratio on hover
-WDiv(className: 'aspect-square hover:aspect-video transition-all')
+WDiv(className: 'aspect-square hover:aspect-video')
 ```
 
 <a name="responsive-design"></a>

@@ -40,15 +40,15 @@ void main() {
 
 **Prefix stack** in a className: `<state>:<breakpoint>:<dark>:<platform>:<utility>`. The last class in a family wins. An unknown family is dropped with a one-time `kDebugMode` hint (release builds stay silent); a known family with an unsupported value drops silently. Every colour token (`bg-` / `text-` / `border-` / `fill-` / `ring-` / `shadow-`) carries a `dark:` pair in the same className.
 
-**Parser cache key**: `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. Call `WindParser.clearCache()` in test `setUp` only, never in production.
+**Parser cache key**: the alias-expanded `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. A call that passes a `baseStyle` skips the cache. Call `WindParser.clearCache()` in test `setUp` only, never in production.
 
 ## API
 
-- Widgets (one barrel, `package:wind_kit/wind_kit.dart`): layout `WDiv`, `WSpacer`, `WBreakpoint`, `WCard`, `WBadge`; display `WText`, `WIcon`, `WImage`, `WSvg`; interactive `WAnchor`, `WButton`, `WPopover`, `WTabs`, `WKeyboardActions`, `WindAnimationWrapper`; form `WInput`, `WSelect`, `WCheckbox`, `WSwitch`, `WRadio`, `WDatePicker`, `WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`; server-driven `WDynamic` (an allowlist of wind_kit and Flutter core widgets by default, `WDynamicConfig` extends or restricts). `child` XOR `children` on every widget that takes both.
+- Widgets (one barrel, `package:wind_kit/wind_kit.dart`): layout `WDiv`, `WSpacer`, `WBreakpoint`, `WCard`, `WBadge`; display `WText`, `WIcon`, `WImage`, `WSvg`; interactive `WAnchor`, `WButton`, `WPopover`, `WTabs`, `WKeyboardActions` (`platform:` takes the string `'all'`, `'ios'` or `'android'`), `WindAnimationWrapper`; form `WInput`, `WSelect`, `WCheckbox`, `WSwitch`, `WRadio`, `WDatePicker`, `WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`; server-driven `WDynamic` (an allowlist of wind_kit and Flutter core widgets by default; its `builders:`, `denyWidgets:` and `customIcons:` extend or restrict it). `child` XOR `children` on every widget that takes both.
 - Theme: `WindTheme` (takes `child` or `builder`), `WindThemeData` (token scales merged over the defaults), `WindThemeController` (`toggleTheme()`, `resetToSystem()`, `toThemeData()`), context extensions `context.windTheme`, `windThemeData`, `windBrightness`, `windIsDark`, `windColors`, `windScreens`, `wActiveBreakpoint`, `wIsMobile`, `wIsTablet`, `wIsDesktop`.
-- Parsing: `WindParser.parse(className, context, states:)` returns an immutable `WindStyle`; `WindThemeData.aliases` maps bare tokens to className strings.
+- Parsing: `WindParser.parse(className, context, states:, baseStyle:)` returns an immutable `WindStyle`; `WindThemeData.aliases` maps bare tokens to className strings.
 - Composition: `WindRecipe` and `WindSlotRecipe` (base, variant axes, `WindCompoundVariant`, caller className appended last, no dedupe).
-- Debug: `Wind.installDebugResolver()` and `Wind.installPerfResolver()` register resolvers in `wind_kit_diagnostics_contracts` (both no-ops in release builds), `WindPerfCounters` (opt-in counters; counting is off until a measurement session turns it on).
+- Debug: `Wind.installDebugResolver()` and `Wind.installPerfResolver()` register resolvers in `wind_kit_diagnostics_contracts` (both no-ops in release builds), `WindPerfCounters` (opt-in counters; counting stays off until the host sets `WindPerfCounters.enabled`).
 
 ## Platforms
 
@@ -56,12 +56,12 @@ Android, iOS, web, macOS, Windows and Linux; the web build is WebAssembly-ready.
 
 ## Rules for agents
 
-- Import only `package:wind_kit/wind_kit.dart`; there are no sub-barrels.
+- Import only `package:wind_kit/wind_kit.dart` for wind_kit; there are no sub-barrels. Import `package:material_ui/material_ui.dart`, not `package:flutter/material.dart`, for `MaterialApp`, `ThemeData`, `Colors` and `MaterialColor`: the Flutter barrel gives "No MaterialLocalizations found" and type mismatches against `WindThemeData` and `controller.toThemeData()`.
 - Pair every colour token with its `dark:` peer in the same className, on the same line.
 - Never interpolate Dart into a className: route conditions through `states:` and prefixed classes.
 - Inside a Row give the child `flex-1`; inside a bounded Column (`flex flex-col h-full`) give the scrolling child `flex-1 overflow-y-auto` and the constructor prop `scrollPrimary: true`. `h-full` on a child of a scrollable parent throws an unbounded height assertion.
 - Spell-check token values by hand: a known family with an unsupported value (`text-7xl`, the scale stops at `6xl`; `w-auto`) or a mistyped prefix (`hovr:`) drops silently, and an unknown family (`ps-4`, `-m-4`) drops with a one-time `kDebugMode` hint.
-- There is no `group-*`, `peer-*`, `@apply`, container query or `active:` press state; track press in your own state and pass `states: {'pressed'}`.
+- There is no `group-*`, `peer-*`, `@apply`, container query or `!important`, and no widget tracks press, so `active:` applies only through `states: {'active'}`: track press in your own state and pass it.
 - Give an icon-only `WButton` or `WAnchor` a `semanticLabel`, and use `Icons.*_outlined` glyphs.
 - In tests call `WindParser.clearCache()` in `setUp`.
 - Install the skill for the full grammar: `npx skills add anilcancakir/wind_kit`.
@@ -172,7 +172,7 @@ Android, iOS, web, macOS, Windows and Linux; the web build is WebAssembly-ready.
 - [README](https://github.com/anilcancakir/wind_kit/blob/master/README.md): install, what you get, the className rules and the agent rules table.
 - [API reference](https://pub.dev/documentation/wind_kit/latest/): generated from the doc comments.
 - [Changelog](https://github.com/anilcancakir/wind_kit/blob/master/CHANGELOG.md): what changed in each version.
-- [Architecture](https://github.com/anilcancakir/wind_kit/blob/master/ARCHITECTURE.md): module layout, data flow and the parser cache.
+- [Architecture](https://github.com/anilcancakir/wind_kit/blob/master/ARCHITECTURE.md): module layout, data flow, the parser cache and a change guide.
 - [Skill](https://github.com/anilcancakir/wind_kit/tree/master/skills/wind-ui): the `wind-ui` skill source, mirrored to `anilcancakir/ai`.
 - [Docs MCP server](https://mcp.anilcancakir.com/): Streamable HTTP, no auth; tools `list_packages`, `list_docs`, `search_docs`, `read_doc`.
 - [Source](https://github.com/anilcancakir/wind_kit): issues and pull requests.

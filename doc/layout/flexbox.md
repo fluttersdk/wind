@@ -60,7 +60,7 @@ WDiv(
 | `wrap` | `flex-wrap: wrap` | `Wrap` |
 | `flex-row` | `flex-direction: row` | `Row()` |
 | `flex-col` | `flex-direction: column` | `Column()` |
-| `flex-row-reverse` | `flex-direction: row-reverse` | `Row(textDirection: mirrored)` |
+| `flex-row-reverse` | `flex-direction: row-reverse` | `Row` with the text direction opposite to the ambient one |
 | `flex-col-reverse` | `flex-direction: column-reverse` | `Column(verticalDirection: up)` |
 | `order-{n}` | `order: {n}` | Stable-sort children before layout |
 | `justify-{alignment}` | `justify-content: ...` | `MainAxisAlignment` |
@@ -285,9 +285,11 @@ Control how individual children resize to fill available space.
 | `flex-grow` / `grow` | Alias for `flex-1` (Tailwind v3 and v4 names). |
 | `grow-0` | Do not grow: child keeps its intrinsic main-axis size. |
 | `flex-{n}` | Specific flex factor (e.g., `flex-2`). |
+| `flex-auto` / `flex-initial` | Both wrap the child in a loose `Flexible`; only `flex-auto` counts as a grow claim. |
 | `shrink` | Allow child to shrink if needed (`FlexFit.loose`). |
 | `shrink-0` | Preserve intrinsic size: no Flexible wrapper, child keeps its natural dimensions. |
 | `flex-none` | CSS `flex: 0 0 auto`: do not grow AND do not shrink. Keeps intrinsic size (same no-shrink path as `shrink-0`). |
+| `flex-shrink-0` / `flex-grow-0` / `shrink-{n}` / `grow-{n}` | Not wired: dropped silently. Write `shrink-0` or `grow-0`. |
 | `basis-1/2` / `basis-1/3` / `basis-1/4` / `basis-full` | Fractional flex-basis: initial main-axis size (width in a row, height in a column). Approximates CSS `flex-basis`; ignores grow/shrink interplay. |
 | `basis-[Npx]` | Fixed flex-basis: a fixed main-axis size in logical pixels (e.g., `basis-[120px]`). |
 
