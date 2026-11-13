@@ -51,11 +51,10 @@ WindContext createTestContext({
   String platform = 'web',
   bool isMobile = false,
 }) => WindContext(
-      theme: testTheme,
+      theme: WindThemeData(brightness: brightness),
       screenWidth: 400,
       screenHeight: 800,
       activeBreakpoint: activeBreakpoint,
-      brightness: brightness,
       platform: platform,
       isMobile: isMobile,
       activeStates: {
@@ -66,14 +65,14 @@ WindContext createTestContext({
     );
 ```
 
-Duplicate is intentional — keeps each file's helper trivially editable for local tweaks. Do not extract into `test/test_utils.dart`.
+Duplicate is intentional - keeps each file's helper trivially editable for local tweaks. Do not extract into `test/test_utils.dart`.
 
 ## No mockito
 
 Wind tests use NO mocking library. Fake via:
 - Constructor injection (`WActionHandler(actions: {'foo': (args) => ...}, state: WDynamicState())`)
 - Stub widgets that implement the contract
-- `debugDefaultTargetPlatformOverride` for `Platform.is*` paths (inside `try/finally` — reset is mandatory)
+- `debugDefaultTargetPlatformOverride` for `Platform.is*` paths (inside `try/finally` - reset is mandatory)
 
 ```dart
 testWidgets('iOS-only behavior', (tester) async {
@@ -111,23 +110,23 @@ group('WFoo Widget Tests', () {
 
 Test names: verb + object (`'renders child content'`, not `'rendering'` or `'WFoo state'`).
 
-Assertions: behavioral (`find.text`, `find.byType`, callback fired, `tester.widget<X>(...).field`). Avoid asserting on internal private state.
+Assertions: behavioural (`find.text`, `find.byType`, callback fired, `tester.widget<X>(...).field`). Avoid asserting on internal private state.
 
 ## Async pump rules
 
-- `await tester.tap(...); await tester.pump();` — single frame
-- `await tester.enterText(...); await tester.pump();` — both required
-- `await tester.pumpAndSettle()` — ONLY when an animation actually settles (avoid for repeating animations like `spin`)
+- `await tester.tap(...); await tester.pump();` - single frame
+- `await tester.enterText(...); await tester.pump();` - both required
+- `await tester.pumpAndSettle()` - ONLY when an animation actually settles (avoid for repeating animations like `spin`)
 - Double pump for hover state changes that defer via `addPostFrameCallback`
 
 ## Coverage gate
 
-Adding code MUST keep total line coverage at or above 90% — the CI gate enforces `./tool/coverage.sh 90`. When new code drops coverage, write tests in the SAME change set to land back at ≥ 90%.
+Adding code MUST keep total line coverage at or above 90% - the CI gate enforces `./tool/coverage.sh 90`. When new code drops coverage, write tests in the SAME change set to land back at ≥ 90%.
 
 `// coverage:ignore-line` only for lines structurally unreachable from `flutter test` (kDebugMode-only branches; `Platform.isWindows` body when CI is Linux + dev is macOS). Pragma on the SAME line as the statement; one-line WHY comment above.
 
 ## What never goes in `test/`
 
-- Production code — even temporary helpers; if it ships with `lib/`, write it in `lib/`.
-- Network calls — pump returns; assert tree shape only.
-- Image bytes — `errorBuilder` on `WImage` swallows the unavoidable load failure in the test binding.
+- Production code - even temporary helpers; if it ships with `lib/`, write it in `lib/`.
+- Network calls - pump returns; assert tree shape only.
+- Image bytes - `errorBuilder` on `WImage` swallows the unavoidable load failure in the test binding.

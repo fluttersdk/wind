@@ -1,135 +1,178 @@
-# fluttersdk_wind
+# wind_kit
 
-> Tailwind CSS for Flutter. A utility-first styling framework that maps `className` strings to optimized Flutter widget trees, with 24-field `WindThemeData` theming, responsive prefixes (`sm:` / `md:` / `lg:` / `xl:` / `2xl:`), `dark:`, state prefixes (`hover:` / `focus:` / `disabled:` / `loading:` / `selected:`), platform prefixes (`ios:` / `android:` / `web:` / `mobile:`), 27 W-prefix widgets, `WindRecipe` / `WindSlotRecipe` variant composition, server-driven UI via `WDynamic`, and three AI integration layers (hosted MCP server, Claude Code skill, and a skill distributed to 8+ AI clients via fluttersdk/ai). Open Source. Tailwind syntax. Flutter native. Version 1.11.1 stable.
+> Tailwind CSS for Flutter: `className` strings such as `flex p-4 bg-white dark:bg-gray-800` become optimised Flutter widget trees. W-prefix widgets, token parsers, a `WindThemeData` of token scales, responsive, `dark:`, state and platform prefixes, `WindRecipe` variant composition and `WDynamic` server-driven UI. Stable 1.x, MIT.
 
-**Stack**: Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `fluttersdk_wind_diagnostics_contracts`. No `mockito`, no state management library, no router.
+**Stack**: Flutter >=3.27.0 · Dart >=3.4.0 · Runtime deps: `flutter_svg`, `wind_kit_diagnostics_contracts`. No state management library, no router, no mocking library.
 
 **Setup**:
 
 ```bash
-flutter pub add fluttersdk_wind
+flutter pub add wind_kit
 ```
 
 ```dart
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:wind_kit/wind_kit.dart';
 
-WindTheme(
-  data: WindThemeData(),
-  builder: (ctx, controller) => MaterialApp(
-    theme: controller.toThemeData(),
-    home: HomePage(),
-  ),
-)
+void main() {
+  // Debug and profile only: lets tools such as tapir read widget state.
+  if (!kReleaseMode) {
+    Wind.installDebugResolver();
+  }
 
-// Build with className
-WDiv(
-  className: 'p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg',
-  child: WText('Hello', className: 'text-xl font-bold dark:text-white'),
-)
-
-// Debug only: expose 7-field debug data to inspectors via fluttersdk_wind_diagnostics_contracts
-if (kDebugMode) Wind.installDebugResolver();
+  runApp(
+    WindTheme(
+      data: WindThemeData(),
+      builder: (context, controller) => MaterialApp(
+        theme: controller.toThemeData(),
+        home: Scaffold(
+          body: WDiv(
+            className: 'p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg',
+            child: WText('Hello', className: 'text-xl font-bold text-gray-900 dark:text-white'),
+          ),
+        ),
+      ),
+    ),
+  );
+}
 ```
 
-**Prefix stack** in className: `<state>:<breakpoint>:<dark>:<platform>:<utility>`. Last class wins; unknown tokens are dropped and a one-time `kDebugMode` hint names each (release builds stay silent). Every color token (`bg-` / `text-` / `border-` / `fill-` / `ring-` / `shadow-`) carries a `dark:` pair in the same className.
+**Prefix stack** in a className: `<state>:<breakpoint>:<dark>:<platform>:<utility>`. The last class in a family wins. An unknown family is dropped with a one-time `kDebugMode` hint (release builds stay silent); a known family with an unsupported value drops silently. Every colour token (`bg-` / `text-` / `border-` / `fill-` / `ring-` / `shadow-`) carries a `dark:` pair in the same className.
 
-**Parser cache key**: `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. Stable across rebuilds; invalidate via `WindParser.clearCache()` in test `setUp` only, never in production.
+**Parser cache key**: `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. Call `WindParser.clearCache()` in test `setUp` only, never in production.
 
-## Widgets
+## API
 
-### Layout & container
+- Widgets (one barrel, `package:wind_kit/wind_kit.dart`): layout `WDiv`, `WSpacer`, `WBreakpoint`, `WCard`, `WBadge`; display `WText`, `WIcon`, `WImage`, `WSvg`; interactive `WAnchor`, `WButton`, `WPopover`, `WTabs`, `WKeyboardActions`, `WindAnimationWrapper`; form `WInput`, `WSelect`, `WCheckbox`, `WSwitch`, `WRadio`, `WDatePicker`, `WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`; server-driven `WDynamic` (an allowlist of wind_kit and Flutter core widgets by default, `WDynamicConfig` extends or restricts). `child` XOR `children` on every widget that takes both.
+- Theme: `WindTheme` (takes `child` or `builder`), `WindThemeData` (token scales merged over the defaults), `WindThemeController` (`toggleTheme()`, `resetToSystem()`, `toThemeData()`), context extensions `context.windTheme`, `windThemeData`, `windBrightness`, `windIsDark`, `windColors`, `windScreens`, `wActiveBreakpoint`, `wIsMobile`, `wIsTablet`, `wIsDesktop`.
+- Parsing: `WindParser.parse(className, context, states:)` returns an immutable `WindStyle`; `WindThemeData.aliases` maps bare tokens to className strings.
+- Composition: `WindRecipe` and `WindSlotRecipe` (base, variant axes, `WindCompoundVariant`, caller className appended last, no dedupe).
+- Debug: `Wind.installDebugResolver()` and `Wind.installPerfResolver()` register resolvers in `wind_kit_diagnostics_contracts` (both no-ops in release builds), `WindPerfCounters` (opt-in counters; counting is off until a measurement session turns it on).
 
-- [WDiv](https://fluttersdk.com/wind/widgets/w-div.md): Flutter `Container` replacement; consumes `className` for spacing, color, border, shadow, layout.
-- [WText](https://fluttersdk.com/wind/widgets/w-text.md): Text widget with `className`-driven font, color, alignment, decoration.
-- [WSpacer](https://fluttersdk.com/wind/widgets/w-spacer.md): Flex-aware spacer that obeys responsive prefixes.
-- [WBreakpoint](https://fluttersdk.com/wind/widgets/w-breakpoint.md): Declarative per-breakpoint widget tree switcher; escape hatch when prefixes are not enough.
-- [WCard](https://fluttersdk.com/wind/widgets/w-card.md): Surface container with optional `header` and `footer` slots; all styling `className`-driven.
-- [WBadge](https://fluttersdk.com/wind/widgets/w-badge.md): Inline status/label pill; composes a rounded-full `WDiv` around a `WText`.
+## Platforms
 
-### Interactive
+Android, iOS, web, macOS, Windows and Linux; the web build is WebAssembly-ready. `ios:` / `android:` / `web:` / `mobile:` / `macos:` / `windows:` / `linux:` prefixes target one platform. Spacing is 4 logical pixels per step and font sizes are pixels, not rem.
 
-- [WButton](https://fluttersdk.com/wind/widgets/w-button.md): Button with `hover:` / `focus:` / `active:` / `loading:` / `disabled:` state prefixes.
-- [WAnchor](https://fluttersdk.com/wind/widgets/w-anchor.md): Inline interactive wrapper; auto-wraps `WDiv` / `WButton` when hover/focus prefixes are detected.
-- [WPopover](https://fluttersdk.com/wind/widgets/w-popover.md): Overlay container with alignment + trigger / content builders.
-- [WTabs](https://fluttersdk.com/wind/widgets/w-tabs.md): Controlled tabs; `selected:` state prefix marks the active tab, `panelBuilder` renders the active panel.
-- [WKeyboardActions](https://fluttersdk.com/wind/widgets/w-keyboard-actions.md): Above-keyboard toolbar with Done button and field navigation for iOS numeric keyboards; platform-targeted via `platform: 'ios'`.
-- [WindAnimationWrapper](https://fluttersdk.com/wind/widgets/wind-animation-wrapper.md): Low-level animation engine; wraps a child in spin, ping, pulse, or bounce with configurable `duration` and `curve`. Used internally by `animate-*` className tokens.
+## Rules for agents
 
-### Form
+- Import only `package:wind_kit/wind_kit.dart`; there are no sub-barrels.
+- Pair every colour token with its `dark:` peer in the same className, on the same line.
+- Never interpolate Dart into a className: route conditions through `states:` and prefixed classes.
+- Inside a Row give the child `flex-1`; inside a bounded Column (`flex flex-col h-full`) give the scrolling child `flex-1 overflow-y-auto` and the constructor prop `scrollPrimary: true`. `h-full` on a child of a scrollable parent throws an unbounded height assertion.
+- Spell-check token values by hand: a known family with an unsupported value (`text-7xl`, the scale stops at `6xl`; `w-auto`) or a mistyped prefix (`hovr:`) drops silently, and an unknown family (`ps-4`, `-m-4`) drops with a one-time `kDebugMode` hint.
+- There is no `group-*`, `peer-*`, `@apply`, container query or `active:` press state; track press in your own state and pass `states: {'pressed'}`.
+- Give an icon-only `WButton` or `WAnchor` a `semanticLabel`, and use `Icons.*_outlined` glyphs.
+- In tests call `WindParser.clearCache()` in `setUp`.
+- Install the skill for the full grammar: `npx skills add anilcancakir/wind_kit`.
 
-- [WInput](https://fluttersdk.com/wind/widgets/w-input.md): TextField with `className` styling + `InputType` (text, email, number, password, multiline, search).
-- [WSelect](https://fluttersdk.com/wind/widgets/w-select.md): Dropdown with optional search, multi-select, pagination.
-- [WCheckbox](https://fluttersdk.com/wind/widgets/w-checkbox.md): Checkbox or switch with `className`.
-- [WSwitch](https://fluttersdk.com/wind/widgets/w-switch.md): Controlled toggle switch; pushes the `checked:` state prefix, thumb positioned via `justify-*` on the track.
-- [WRadio](https://fluttersdk.com/wind/widgets/w-radio.md): Controlled radio button; drives the `selected:` state prefix when `value == groupValue`.
-- [WDatePicker](https://fluttersdk.com/wind/widgets/w-date-picker.md): Single-date, date-range and date-with-time picker.
-- [WFormInput](https://fluttersdk.com/wind/widgets/w-form-input.md): Form-bound `WInput` wrapper with validator.
-- [WFormSelect](https://fluttersdk.com/wind/widgets/w-form-select.md): Form-bound `WSelect` wrapper with validator.
-- [WFormMultiSelect](https://fluttersdk.com/wind/widgets/w-form-select.md): Multi-select variant of `WFormSelect`, documented in the same page.
-- [WFormCheckbox](https://fluttersdk.com/wind/widgets/w-form-checkbox.md): Form-bound `WCheckbox` wrapper.
-- [WFormDatePicker](https://fluttersdk.com/wind/widgets/w-form-date-picker.md): Form-bound `WDatePicker` wrapper.
+## Docs
 
-### Media
+### Getting started
 
-- [WIcon](https://fluttersdk.com/wind/widgets/w-icon.md): `IconData` with `className` size and color.
-- [WImage](https://fluttersdk.com/wind/widgets/w-image.md): Image with `className`-driven sizing, object-fit, object-position, border, opacity.
-- [WSvg](https://fluttersdk.com/wind/widgets/w-svg.md): SVG via `flutter_svg` with `className` fill / stroke + `preserve-colors` opt-in.
+- [Installation](https://anilcancakir.com/wind_kit/docs/getting-started/installation.md): Add wind_kit to a Flutter app, wrap it in `WindTheme` and style your first widget with a className.
+- [Upgrade Guide](https://anilcancakir.com/wind_kit/docs/getting-started/upgrade-guide.md): What changed between wind_kit versions and what to edit in your app when you upgrade.
 
-### Dynamic
+### Core concepts
 
-- [WDynamic](https://fluttersdk.com/wind/widgets/w-dynamic.md): JSON-to-widget renderer for server-driven UI; whitelisted 13 Wind widgets + 16 Flutter core widgets.
+- [Dark Mode](https://anilcancakir.com/wind_kit/docs/core-concepts/dark-mode.md): Wind makes it incredibly easy to support dark mode using the `dark:` variant modifier.
+- [Debugging](https://anilcancakir.com/wind_kit/docs/core-concepts/debugging.md): Print a widget's composition tree with the `debug` token, catch unknown className tokens and expose wind_kit state to tapir.
+- [Dynamic Rendering](https://anilcancakir.com/wind_kit/docs/core-concepts/dynamic-rendering.md): Build Flutter UIs from JSON at runtime. WDynamic turns a Map structure into a live widget tree with action handling and form state management.
+- [Responsive Design](https://anilcancakir.com/wind_kit/docs/core-concepts/responsive-design.md): Building interfaces that adapt to any screen size is a core requirement for modern applications.
+- [State Management & Interactive Styles](https://anilcancakir.com/wind_kit/docs/core-concepts/state-management.md): Style hover, focus, disabled, loading and custom states with prefixed classes and the `states` prop.
+- [Theme Binding](https://anilcancakir.com/wind_kit/docs/core-concepts/theme-binding.md): Theme binding allows you to sync your Wind configuration with Flutter's native `ThemeData` system.
+- [Theme Configuration](https://anilcancakir.com/wind_kit/docs/core-concepts/theming.md): Configure colours, spacing, typography, breakpoints and animations through `WindThemeData`, and wrap the app in `WindTheme`.
+- [Utility-First Fundamentals](https://anilcancakir.com/wind_kit/docs/core-concepts/utility-first.md): Utility-first styling is the core philosophy of Wind.
 
-## Core concepts
+### Widgets
 
-- [Installation](https://fluttersdk.com/wind/getting-started/installation.md): pubspec add + WindTheme wrap + first className.
-- [Utility-first](https://fluttersdk.com/wind/core-concepts/utility-first.md): why className beats nested widgets.
-- [Theming](https://fluttersdk.com/wind/core-concepts/theming.md): 24 `WindThemeData` fields, override patterns.
-- [Theme binding](https://fluttersdk.com/wind/core-concepts/theme-binding.md): `WindTheme` placement, `OverlayEntry` caveat.
-- [Dark mode](https://fluttersdk.com/wind/core-concepts/dark-mode.md): `dark:` prefix, runtime toggle, system sync.
-- [Responsive design](https://fluttersdk.com/wind/core-concepts/responsive-design.md): breakpoint prefixes + `WBreakpoint` escape hatch.
-- [State management](https://fluttersdk.com/wind/core-concepts/state-management.md): `hover:`, `focus:`, `disabled:`, `loading:`, `selected:`, custom states.
-- [Dynamic rendering](https://fluttersdk.com/wind/core-concepts/dynamic-rendering.md): `WDynamic` JSON schema + security model.
-- [Debugging](https://fluttersdk.com/wind/core-concepts/debugging.md): `WindLogger`, `Wind.installDebugResolver()`, `Wind.installPerfResolver()` + `WindPerfCounters` (opt-in hit/miss/bypass and build counters), cache inspection, unknown-className debug hint.
-- [Recipes](https://fluttersdk.com/wind/styling/wind-recipe.md): `WindRecipe` / `WindSlotRecipe` variant composition (base + axes + compoundVariants + caller className) in strict emission order, no dedupe / sort / twMerge.
+- [WAnchor](https://anilcancakir.com/wind_kit/docs/widgets/w-anchor.md): The foundational state wrapper that detects hover and focus, runs the gestures you give it and propagates that state down to all descendant widgets via `WindAnchorStateProvider`.
+- [WBadge](https://anilcancakir.com/wind_kit/docs/widgets/w-badge.md): Inline status or label pill. Composes a pill-shaped `WDiv` (rounded-full, inline-flex) around a `WText` (text-xs).
+- [WBreakpoint](https://anilcancakir.com/wind_kit/docs/widgets/w-breakpoint.md): Declarative breakpoint-keyed builder for rendering different widget trees per responsive breakpoint.
+- [WButton](https://anilcancakir.com/wind_kit/docs/widgets/w-button.md): `WButton` is an interactive component that combines `WAnchor` state management with Tailwind-like utility styling and built-in loading states.
+- [WCard](https://anilcancakir.com/wind_kit/docs/widgets/w-card.md): Surface container with optional `header` and `footer` slots.
+- [WCheckbox](https://anilcancakir.com/wind_kit/docs/widgets/w-checkbox.md): A utility-first checkbox component that translates Tailwind-style classes into a fully customisable checkbox widget.
+- [WDatePicker](https://anilcancakir.com/wind_kit/docs/widgets/w-date-picker.md): A utility-first date picker component built on WPopover with support for single date selection, date range selection, date-with-time selection, min/max constraints, and custom display formatting.
+- [WDiv](https://anilcancakir.com/wind_kit/docs/widgets/w-div.md): The fundamental building block of Wind. `WDiv` acts as a multi-purpose container that replaces standard Flutter widgets like `Container`, `Row`, `Column`, `Flex`, `Grid`, `Wrap`, and `SingleChildScrollView`.
+- [WDynamic](https://anilcancakir.com/wind_kit/docs/widgets/w-dynamic.md): `WDynamic` renders a Flutter widget tree from a JSON/Map configuration at runtime, with built-in action handling and form state management.
+- [WFormCheckbox](https://anilcancakir.com/wind_kit/docs/widgets/w-form-checkbox.md): A Wind-styled checkbox that integrates with Flutter's Form validation, providing built-in support for labels, hints, and error states.
+- [WFormDatePicker](https://anilcancakir.com/wind_kit/docs/widgets/w-form-date-picker.md): A form-integrated date picker that wraps WDatePicker with Flutter's `FormField<DateTime>`.
+- [WFormInput](https://anilcancakir.com/wind_kit/docs/widgets/w-form-input.md): A Wind-styled input that integrates seamlessly with Flutter's native Form validation system.
+- [WFormSelect](https://anilcancakir.com/wind_kit/docs/widgets/w-form-select.md): A Wind-styled single or multi-select dropdown that integrates seamlessly with Flutter's Form validation.
+- [WIcon](https://anilcancakir.com/wind_kit/docs/widgets/w-icon.md): The utility-first icon component for displaying vector icons with Tailwind-like styling.
+- [WImage](https://anilcancakir.com/wind_kit/docs/widgets/w-image.md): The `WImage` widget brings utility-first styling to images in Flutter, providing HTML-like semantics with Tailwind-inspired classes for sizing, object fitting, and decoration.
+- [WInput](https://anilcancakir.com/wind_kit/docs/widgets/w-input.md): A utility-first form input that combines React-style controlled state management with Tailwind-like styling.
+- [WKeyboardActions](https://anilcancakir.com/wind_kit/docs/widgets/w-keyboard-actions.md): A wrapper that renders a Done button and field-navigation toolbar above the keyboard for any group of input fields, with optional platform targeting and custom close widget.
+- [WPopover](https://anilcancakir.com/wind_kit/docs/widgets/w-popover.md): A flexible popover component for creating dropdown menus, notification panels, user menus, tooltips, and similar overlay patterns.
+- [WRadio](https://anilcancakir.com/wind_kit/docs/widgets/w-radio.md): Controlled radio button. Composes `WAnchor` (interaction state) + `WDiv` (outer ring shell) + `WDiv` (inner filled indicator).
+- [WSelect](https://anilcancakir.com/wind_kit/docs/widgets/w-select.md): A highly customisable, utility-first select component that supports single selection, multi-selection, searching, and remote data fetching.
+- [WSpacer](https://anilcancakir.com/wind_kit/docs/widgets/w-spacer.md): The `WSpacer` is a lightweight widget designed specifically for adding consistent gaps between elements.
+- [WSvg](https://anilcancakir.com/wind_kit/docs/widgets/w-svg.md): The utility-first SVG component. `WSvg` brings HTML SVG semantics to Flutter with Tailwind-like utility classes for styling, supporting both asset paths and raw SVG strings.
+- [WSwitch](https://anilcancakir.com/wind_kit/docs/widgets/w-switch.md): Controlled toggle switch. Composes `WAnchor` + `WDiv` (track) + `WDiv` (thumb).
+- [WTabs](https://anilcancakir.com/wind_kit/docs/widgets/w-tabs.md): Controlled tabs widget. Renders a tab list and a content panel.
+- [WText](https://anilcancakir.com/wind_kit/docs/widgets/w-text.md): A utility-first text component that translates Tailwind-like class strings into optimised Flutter typography.
+- [WindAnimationWrapper](https://anilcancakir.com/wind_kit/docs/widgets/wind-animation-wrapper.md): `WindAnimationWrapper` wraps any widget in a looping animation driven by `WindAnimationType`: spin, ping, pulse, or bounce.
 
-## Utility families
+### Layout
 
-- [Layout](https://fluttersdk.com/wind/layout): flex, grid, position, overflow, aspect-ratio, z-index, order.
-- [Sizing](https://fluttersdk.com/wind/layout/sizing.md): `w-*`, `h-*`, `size-*` (width + height shorthand), `min-*`, `max-*`, arbitrary `w-[200px]`.
-- [Spacing](https://fluttersdk.com/wind/layout/spacing.md): padding (`p-*`, `px-*`, `pt-*`), margin (`m-*`, `-mt-*`), gap (`gap-*`, `space-x-*`).
-- [Typography](https://fluttersdk.com/wind/typography): `text-*` (size + color + alignment overload), `font-*`, `leading-*`, `tracking-*`, `truncate`.
-- [Backgrounds](https://fluttersdk.com/wind/styling/background-color.md): `bg-*`, gradients, images.
-- [Borders & ring](https://fluttersdk.com/wind/borders): `border-*`, `rounded-*`, `ring-*`, `divide-*` (not implemented).
-- [Shadows](https://fluttersdk.com/wind/styling/shadow.md): `shadow`, `shadow-md`, colored shadows (`shadow-blue-500/20`).
-- [Opacity](https://fluttersdk.com/wind/styling/opacity.md): `opacity-*` + opacity modifiers (`bg-red-500/50`).
-- [Transitions & animations](https://fluttersdk.com/wind/interactivity): `duration-*`, `ease-*`, `animate-spin` / `pulse` / `bounce` / `ping`.
-- [Cursor](https://fluttersdk.com/wind/interactivity/cursor.md): `cursor-pointer`, `cursor-not-allowed`, `cursor-text`, grab / zoom / resize families mapped to `SystemMouseCursors` via `MouseRegion`.
+- [Aspect Ratio](https://anilcancakir.com/wind_kit/docs/layout/aspect-ratio.md): Utilities for controlling the aspect ratio of an element.
+- [Display](https://anilcancakir.com/wind_kit/docs/layout/display.md): Utilities for controlling the layout mode of an element.
+- [Flexbox & Layout](https://anilcancakir.com/wind_kit/docs/layout/flexbox.md): Utilities for controlling flex containers, direction, alignment, wrapping, and spacing.
+- [Grid Template Columns](https://anilcancakir.com/wind_kit/docs/layout/grid.md): Utilities for specifying the columns in a grid layout.
+- [Overflow](https://anilcancakir.com/wind_kit/docs/layout/overflow.md): Utilities for controlling how an element handles content that is too large for the container.
+- [Positioning](https://anilcancakir.com/wind_kit/docs/layout/positioning.md): Utilities for controlling how elements are positioned in the layout using `relative` and `absolute` placement.
+- [Sizing](https://anilcancakir.com/wind_kit/docs/layout/sizing.md): Utilities for setting the width and height of elements.
+- [Spacing](https://anilcancakir.com/wind_kit/docs/layout/spacing.md): Utilities for controlling the padding and margin of elements.
+- [Z-Index](https://anilcancakir.com/wind_kit/docs/layout/z-index.md): Utilities for controlling the stack order of an element.
 
-## Utility helpers (Dart APIs)
+### Borders
 
-- [Color helpers](https://fluttersdk.com/wind/utilities/color-helpers.md): `wColor(context, 'blue', shade: 500)`, theme-aware color lookups.
-- [Context extensions](https://fluttersdk.com/wind/utilities/context-extensions.md): `context.windTheme`, `context.windBreakpoint`, `context.windBrightness`.
-- [Responsive helpers](https://fluttersdk.com/wind/utilities/responsive-helpers.md): programmatic breakpoint queries.
-- [Spacing helpers](https://fluttersdk.com/wind/utilities/spacing-helpers.md): `wSpacing(context, 4)` resolves the same tokens as `p-4`.
-- [Style parser](https://fluttersdk.com/wind/utilities/style-parser.md): `WindParser.parse(className, context, states:)` direct access.
-- [Typography helpers](https://fluttersdk.com/wind/utilities/typography-helpers.md): `wFontSize(context, 'lg')` etc.
+- [Border Width, Colour, & Radius](https://anilcancakir.com/wind_kit/docs/borders/borders.md): Utilities for controlling border width, colour, style, and border radius.
+- [Ring Width, Colour, and Offset](https://anilcancakir.com/wind_kit/docs/borders/ring.md): Utilities for drawing an outline ring around an element.
 
-## AI & Tooling
+### Styling
 
-- [fluttersdk/ai](https://github.com/fluttersdk/ai): canonical distribution channel. One-command install via `npx skills add fluttersdk/ai --skill wind-ui` covers Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline, Roo Code.
-- [Wind skill source](https://github.com/fluttersdk/wind/tree/master/skills/wind-ui): canonical `SKILL.md` + references; `fluttersdk/ai` mirrors this directory.
-- [Hosted MCP server](https://mcp.fluttersdk.com): Streamable HTTP, single `search-docs` tool, no auth required.
-- [Stdio MCP bridge](https://www.npmjs.com/package/@fluttersdk/mcp): `npx @fluttersdk/mcp` for clients without HTTP MCP transport.
+- [Background Colour](https://anilcancakir.com/wind_kit/docs/styling/background-color.md): Utilities for controlling an element's background colour.
+- [Background Gradient](https://anilcancakir.com/wind_kit/docs/styling/background-gradient.md): Utilities for creating linear gradients with customisable directions and colour stops.
+- [Background Image](https://anilcancakir.com/wind_kit/docs/styling/background-image.md): Utilities for controlling background images, sizing, positioning, and repeat behaviour.
+- [Opacity](https://anilcancakir.com/wind_kit/docs/styling/opacity.md): Utilities for controlling the opacity of an element.
+- [Shadow](https://anilcancakir.com/wind_kit/docs/styling/shadow.md): Utilities for controlling the box shadow of an element.
+- [WindRecipe](https://anilcancakir.com/wind_kit/docs/styling/wind-recipe.md): A `tv()` (tailwind-variants) equivalent for Wind.
 
-## Source
+### Typography
 
-- [GitHub](https://github.com/fluttersdk/wind)
-- [pub.dev](https://pub.dev/packages/fluttersdk_wind)
-- [CHANGELOG](https://github.com/fluttersdk/wind/blob/master/CHANGELOG.md)
-- [ARCHITECTURE](https://github.com/fluttersdk/wind/blob/master/ARCHITECTURE.md)
+- [Font Family](https://anilcancakir.com/wind_kit/docs/typography/font-family.md): Utilities for controlling the typeface of text.
+- [Font Size](https://anilcancakir.com/wind_kit/docs/typography/font-size.md): Utilities for controlling the font size of an element.
+- [Font Weight](https://anilcancakir.com/wind_kit/docs/typography/font-weight.md): Utilities for controlling the font weight of an element.
+- [Letter Spacing](https://anilcancakir.com/wind_kit/docs/typography/letter-spacing.md): Utilities for controlling the tracking (letter spacing) of an element.
+- [Line Height](https://anilcancakir.com/wind_kit/docs/typography/line-height.md): Utilities for controlling the leading (line height) of an element.
+- [Text Align](https://anilcancakir.com/wind_kit/docs/typography/text-align.md): Utilities for controlling the alignment of text.
+- [Text Colour](https://anilcancakir.com/wind_kit/docs/typography/text-color.md): Utilities for controlling the text colour of an element.
+- [Text Decoration](https://anilcancakir.com/wind_kit/docs/typography/text-decoration.md): Utilities for controlling the decoration of text.
+- [Text Overflow](https://anilcancakir.com/wind_kit/docs/typography/text-overflow.md): Utilities for controlling how text behaves when it overflows its container.
+- [Text Transform](https://anilcancakir.com/wind_kit/docs/typography/text-transform.md): Utilities for controlling the capitalization and wrapping of text.
 
-## Optional
+### Interactivity
 
-- [LICENSE](https://github.com/fluttersdk/wind/blob/master/LICENSE)
-- [Issues](https://github.com/fluttersdk/wind/issues)
-- [Star on GitHub](https://github.com/fluttersdk/wind/stargazers)
+- [Animation](https://anilcancakir.com/wind_kit/docs/interactivity/animation.md): Utilities for animating elements with CSS-like animation classes.
+- [Cursor](https://anilcancakir.com/wind_kit/docs/interactivity/cursor.md): Utilities for controlling the mouse cursor shown when the pointer is over an element on web and desktop targets.
+- [Transitions](https://anilcancakir.com/wind_kit/docs/interactivity/transition.md): Utilities for controlling the duration and easing of state transitions in Wind.
+
+### Utilities
+
+- [Color Helpers](https://anilcancakir.com/wind_kit/docs/utilities/color-helpers.md): Resolve theme colours, hex values and opacity from Dart with `wColor` and the context helpers.
+- [Context Extensions](https://anilcancakir.com/wind_kit/docs/utilities/context-extensions.md): Read theme data, breakpoints, brightness and styling helpers straight from a `BuildContext`.
+- [Responsive Helpers](https://anilcancakir.com/wind_kit/docs/utilities/responsive-helpers.md): Responsive helpers provide programmatic access to Wind's breakpoint system, platform detection, and screen metrics directly from your Dart code.
+- [Spacing Helpers](https://anilcancakir.com/wind_kit/docs/utilities/spacing-helpers.md): Wind provides programmatic access to your theme's spacing scale through helper functions and extensions.
+- [Style Parser](https://anilcancakir.com/wind_kit/docs/utilities/style-parser.md): Parse a className string into a `WindStyle` yourself with `wStyle` and `WindParser.parse`.
+- [Typography Helpers](https://anilcancakir.com/wind_kit/docs/utilities/typography-helpers.md): Read the theme's font sizes and weights from Dart with `wFontSize`, `wFontWeight` and their context extensions.
+
+## Links
+
+- [README](https://github.com/anilcancakir/wind_kit/blob/master/README.md): install, what you get, the className rules and the agent rules table.
+- [API reference](https://pub.dev/documentation/wind_kit/latest/): generated from the doc comments.
+- [Changelog](https://github.com/anilcancakir/wind_kit/blob/master/CHANGELOG.md): what changed in each version.
+- [Architecture](https://github.com/anilcancakir/wind_kit/blob/master/ARCHITECTURE.md): module layout, data flow and the parser cache.
+- [Skill](https://github.com/anilcancakir/wind_kit/tree/master/skills/wind-ui): the `wind-ui` skill source, mirrored to `anilcancakir/ai`.
+- [Docs MCP server](https://mcp.anilcancakir.com/): Streamable HTTP, no auth; tools `list_packages`, `list_docs`, `search_docs`, `read_doc`.
+- [Source](https://github.com/anilcancakir/wind_kit): issues and pull requests.
