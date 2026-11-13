@@ -1,6 +1,6 @@
 # WCheckbox
 
-A utility-first checkbox component that translates Tailwind-style classes into a fully customizable checkbox widget. It sidesteps the limitations of native Flutter checkboxes by using a composable architecture of `WAnchor` and `WDiv`.
+A utility-first checkbox component that translates Tailwind-style classes into a fully customisable checkbox widget. It sidesteps the limitations of native Flutter checkboxes by using a composable architecture of `WAnchor` and `WDiv`.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -24,9 +24,10 @@ WCheckbox(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
-The `WCheckbox` widget provides a highly flexible alternative to native Flutter checkboxes. It supports all Wind utility classes, allowing for complex styling like custom borders, focus rings, and state-based colors using the `checked:` prefix.
+The `WCheckbox` widget provides a highly flexible alternative to native Flutter checkboxes. It supports all Wind utility classes, allowing for complex styling like custom borders, focus rings, and state-based colours using the `checked:` prefix.
 
 ```dart
 WCheckbox(
@@ -36,6 +37,7 @@ WCheckbox(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -51,6 +53,7 @@ const WCheckbox({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -63,10 +66,11 @@ const WCheckbox({
 | `checkIcon` | `IconData?` | `null` | Custom icon shown when `value` is true. When `null`, the widget renders `Icons.check`. |
 | `states` | `Set<String>?` | `null` | Custom state identifiers merged with built-in `checked` and `disabled` states. |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
 ### Dimensions
-Unlike some widgets that grow to fit their content, a checkbox requires explicit width (`w-{n}`) and height (`h-{n}`) classes to define its clickable area and visual size.
+A checkbox is 20x20 by default, because its built-in classes start with `w-5 h-5`. Your `className` is appended after those defaults, so add width (`w-{n}`) and height (`h-{n}`) classes only to change the clickable area and visual size.
 
 ```dart
 WCheckbox(
@@ -80,6 +84,7 @@ WCheckbox(
 )
 ```
 
+<a name="event-handling"></a>
 ## Event Handling
 
 The `onChanged` callback is triggered when the user taps the checkbox. It provides the toggled boolean value.
@@ -97,9 +102,10 @@ WCheckbox(
 
 Leaving `onChanged` null is how you render a display-only checkbox, such as a read-only summary row or a tile whose own tap drives the toggle.
 
+<a name="accessibility"></a>
 ## Accessibility
 
-`WCheckbox` publishes one semantics node carrying the `checked` state, so `getByRole('checkbox')` resolves and a screen reader announces whether the box is ticked. The widget renders its check glyph as the only child, so it has no name of its own, and a `WText` sitting beside it in a row is a visible label rather than a semantic one: the two stay separate nodes. Wrap the pair in `MergeSemantics` to publish a single node carrying both the text and the checked state.
+`WCheckbox` publishes two platform semantics nodes while it is interactive. The outer node carries the `checked` state but no tap action, so `getByRole('checkbox')` resolves and a screen reader announces whether the box is ticked. The inner node is the `WAnchor` button, and it carries the tap action. A display-only checkbox has no gesture, so only the outer node remains. The widget renders its check glyph as the only child, so it has no name of its own, and a `WText` sitting beside it in a row is a visible label rather than a semantic one: the nodes stay separate. Wrap the pair in `MergeSemantics` to publish a single node carrying both the text and the checked state.
 
 ```dart
 // One node, named "Accept terms", reporting checked.
@@ -140,6 +146,7 @@ const WCheckbox(
 
 [WRadio](./w-radio.md) and [WSwitch](./w-switch.md) read a null callback the same way, so the three controls behave alike.
 
+<a name="state-variants"></a>
 ## State Variants
 
 `WCheckbox` uses the `checked:` prefix to apply styles when the value is true. It also supports standard interaction prefixes like `hover:`, `focus:`, and `disabled:`.
@@ -151,6 +158,7 @@ WCheckbox(
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Custom Icons and Colors
@@ -176,6 +184,7 @@ WCheckbox(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 | Category | Classes |
@@ -186,9 +195,10 @@ WCheckbox(
 | States | `checked:`, `hover:`, `focus:`, `disabled:`, `error:` |
 | Effects | `opacity-{n}`, `ring`, `duration-{n}`, `ease-{n}` |
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-The default checked color can be controlled via the `primary` color in your `WindThemeData`.
+The default checked colour can be controlled via the `primary` colour in your `WindThemeData`.
 
 ```dart
 WindThemeData(
@@ -198,6 +208,7 @@ WindThemeData(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WFormCheckbox](./w-form-checkbox.md) - Form-integrated checkbox with label and validation.

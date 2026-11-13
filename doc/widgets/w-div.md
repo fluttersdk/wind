@@ -2,7 +2,7 @@
 
 The fundamental building block of Wind. `WDiv` acts as a multi-purpose container that replaces standard Flutter widgets like `Container`, `Row`, `Column`, `Flex`, `Grid`, `Wrap`, and `SingleChildScrollView`.
 
-It embodies the "Intelligent Composition" philosophy, dynamically constructing the most efficient widget tree based on the provided utility classes. Instead of blindly wrapping content, `WDiv` inspects the `className` and selectively applies specialized widgets like `Padding`, `Align`, `Row`, or `GridView` only when necessary.
+It embodies the "Intelligent Composition" philosophy, dynamically constructing the most efficient widget tree based on the provided utility classes. Instead of blindly wrapping content, `WDiv` inspects the `className` and selectively applies specialised widgets like `Padding`, `Align`, `Row`, or a `Wrap` inside a `LayoutBuilder` (for `grid`) only when necessary.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -78,12 +78,12 @@ const WDiv({
 | `style` | `WindStyle?` | `null` | Explicit style object that serves as a base for `className`. |
 | `states` | `Set<String>?` | `null` | Custom states to activate prefix classes (e.g., `loading:bg-blue-500`). |
 | `scrollPrimary` | `bool` | `false` | Whether this is the primary scroll view for iOS tap-to-top and desktop scrollbar integration. |
-| `backgroundColor` | `Color?` | `null` | Inline background color for runtime-dynamic values. Overrides any `bg-*` / `dark:bg-*` from `className`. See [Runtime-Dynamic Colors](#runtime-dynamic-colors). |
+| `backgroundColor` | `Color?` | `null` | Inline background colour for runtime-dynamic values. Overrides any `bg-*` / `dark:bg-*` from `className`. See [Runtime-Dynamic Colors](#runtime-dynamic-colors). |
 
 <a name="runtime-dynamic-colors"></a>
 ## Runtime-Dynamic Colors
 
-Utility classes are for **design tokens** (`bg-primary-500`, `bg-red-500`). When the color is a **runtime value**, a hex from a color picker or a brand color loaded per tenant, use the `backgroundColor` prop instead of interpolating into `bg-[#$hex]`.
+Utility classes are for **design tokens** (`bg-primary-500`, `bg-red-500`). When the colour is a **runtime value**, a hex from a colour picker or a brand colour loaded per tenant, use the `backgroundColor` prop instead of interpolating into `bg-[#$hex]`.
 
 ```dart
 // Good: runtime-dynamic color via inline prop
@@ -93,10 +93,10 @@ WDiv(
 )
 
 // Avoid: string interpolation bloats the parser cache, one entry per unique hex
-WDiv(className: 'w-16 h-16 rounded-xl bg-[#${userBrandColor.hex}]')
+WDiv(className: 'w-16 h-16 rounded-xl bg-[#${userBrandColor.toARGB32().toRadixString(16)}]')
 ```
 
-Precedence: inline `backgroundColor` wins over any `bg-*` / `dark:bg-*` resolved from `className`. When `backgroundColor` is `null`, className behavior, including the `dark:` fallback, is unchanged. The inline color does not participate in the parser cache key.
+Precedence: inline `backgroundColor` wins over any `bg-*` / `dark:bg-*` resolved from `className`. When `backgroundColor` is `null`, className behaviour, including the `dark:` fallback, is unchanged. The inline colour does not participate in the parser cache key.
 
 <a name="layout-modes"></a>
 ## Layout Modes
@@ -104,8 +104,8 @@ Precedence: inline `backgroundColor` wins over any `bg-*` / `dark:bg-*` resolved
 `WDiv` dynamically switches its internal structure based on the `display` utility classes provided in `className`.
 
 - **Block (Default)**: Standard vertical stack or single child wrapper. If `children` is used without `flex` or `grid`, it defaults to a `Column`.
-- **Flex**: Enabled via `flex`. Supports `flex-row`, `flex-col`, `gap-*`, `items-*`, `justify-*`. It mimics CSS Flexbox behavior, including automatic `Flexible` wrapping for row children so they can shrink. That wrap is skipped when a child claims a grow share (`flex-1`, `grow`, `flex-auto`, a bare `w-full`, or a raw `Expanded`/`Flexible`), so the growing child keeps the free space and its siblings stay at their content width. See [Flexbox](../layout/flexbox.md#flex-grow--shrink).
-- **Grid**: Enabled via `grid`. Uses a combination of `Wrap` and `LayoutBuilder` to achieve Tailwind-like grid behavior (`grid-cols-*`) with intrinsic item heights.
+- **Flex**: Enabled via `flex`. Supports `flex-row`, `flex-col`, `gap-*`, `items-*`, `justify-*`. It mimics CSS Flexbox behaviour, including automatic `Flexible` wrapping for row children so they can shrink. That wrap is skipped when a child claims a grow share (`flex-1`, `grow`, `flex-auto`, a bare `w-full`, or a raw `Expanded`/`Flexible`), so the growing child keeps the free space and its siblings stay at their content width. See [Flexbox](../layout/flexbox.md#flex-grow--shrink).
+- **Grid**: Enabled via `grid`. Uses a combination of `Wrap` and `LayoutBuilder` to achieve Tailwind-like grid behaviour (`grid-cols-*`) with intrinsic item heights.
 - **Wrap**: Enabled via `wrap`. Elements wrap to the next line when space is insufficient, similar to `flex-wrap` in CSS.
 - **Hidden**: Enabled via `hidden`. The widget short-circuits to `SizedBox.shrink()` to save resources.
 
@@ -127,7 +127,7 @@ For direct gesture support (taps, long presses) or to create semantic buttons, u
 
 ```dart
 WDiv(
-  className: 'bg-blue-500 hover:bg-blue-600 active:scale-95 duration-200',
+  className: 'bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 duration-200',
   child: WText('Interactive', className: 'text-white'),
 )
 ```
@@ -137,13 +137,13 @@ Common prefixes:
 - `focus:` - Applies when the element has keyboard focus.
 - `disabled:` - Applies when the element or parent is disabled.
 - `dark:` - Applies when the application is in dark mode.
-- `active:` - Applies while the element is being pressed.
+- `active:` - Reserved: it applies only when you pass `states: {'active'}`. Neither `WDiv` nor `WAnchor` tracks the press, so keep it in your own state and pass `states: {'pressed'}` with `pressed:` classes.
 
 <a name="styling-examples"></a>
 ## Styling Examples
 
 ### Backgrounds & Borders
-Combine background colors, gradients, and border properties.
+Combine background colours, gradients, and border properties.
 
 ```dart
 WDiv(className: 'bg-red-500 border-2 border-red-700 rounded-lg')
@@ -177,8 +177,8 @@ WDiv(className: 'w-full md:w-1/2 lg:w-1/3')
 | **Grid** | `grid-cols-*`, `gap-x-*`, `gap-y-*` |
 | **Sizing** | `w-*`, `h-*`, `min-w-*`, `max-w-*`, `aspect-*` |
 | **Spacing** | `p-*`, `px-*`, `py-*`, `m-*`, `mx-*`, `my-*`, `space-x-*`, `space-y-*` |
-| **Background** | `bg-*`, `bg-gradient-*`, `bg-opacity-*` |
-| **Borders** | `border-*`, `rounded-*`, `border-opacity-*` |
+| **Background** | `bg-*`, `bg-gradient-*` |
+| **Borders** | `border-*`, `rounded-*` |
 | **Effects** | `shadow-*`, `opacity-*`, `ring-*`, `ring-offset-*` |
 | **Overflow** | `overflow-hidden`, `overflow-scroll`, `overflow-auto`, `overflow-x-*`, `overflow-y-*` |
 | **Animation** | `animate-spin`, `animate-pulse`, `animate-bounce`, `animate-ping` |
@@ -194,7 +194,7 @@ WindTheme(
   data: WindThemeData(
     baseSpacingUnit: 4.0, // Multiplier for p-1, m-4, etc.
     colors: { ... },      // Custom color palette for bg-*, border-*
-    breakpoints: { ... }, // Custom screen sizes for md:, lg:, etc.
+    screens: { ... },     // Custom screen sizes for md:, lg:, etc.
   ),
   child: ...,
 )

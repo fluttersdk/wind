@@ -1,10 +1,8 @@
 # WindAnimationWrapper
 
 `WindAnimationWrapper` wraps any widget in a looping animation driven by `WindAnimationType`: spin, ping, pulse, or bounce. It is the
-underlying engine behind `animate-*` utility classes; you can also use it directly when you need programmatic control over the type,
-duration, or curve.
-
-## Table of Contents
+underlying engine behind `animate-*` utility classes; you can also use it directly when you need programmatic control over the type
+or duration.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -25,8 +23,8 @@ WindAnimationWrapper(
 )
 ```
 
-Use `animate-*` className tokens for most cases. Reach for `WindAnimationWrapper` directly when you need to vary duration or curve at
-runtime, or when wrapping a widget that does not accept a `className` prop.
+Use `animate-*` className tokens for most cases. Reach for `WindAnimationWrapper` directly when you need to vary the duration at
+runtime, or when wrapping a widget that does not accept a `className` prop. `curve` is currently ignored by every animation type; use `duration`.
 
 <a name="constructor"></a>
 ## Constructor
@@ -49,7 +47,7 @@ const WindAnimationWrapper({
 | `child` | `Widget` | **Required** | The widget to animate. |
 | `animationType` | `WindAnimationType` | **Required** | The animation style. One of `spin`, `ping`, `pulse`, `bounce`, or `none`. |
 | `duration` | `Duration` | `Duration(milliseconds: 1000)` | Full cycle length. Applies to all animation types. |
-| `curve` | `Curve` | `Curves.linear` | Easing curve for the animation controller. Note: `ping` and `pulse` apply their own `CurvedAnimation` internally; `curve` primarily affects `spin` and `bounce`. |
+| `curve` | `Curve` | `Curves.linear` | `curve` is currently ignored by every animation type; use `duration`. |
 
 <a name="animation-types"></a>
 ## Animation Types

@@ -1,6 +1,6 @@
 # WInput
 
-A utility-first form input that combines React-style controlled state management with Tailwind-like styling. It renders Material-free (`EditableText` core inside a `Container`) and works under any theming ancestor: Material, Cupertino, a custom app, or a bare `WidgetsApp`. No Material ancestor required (fixes #102).
+A utility-first form input that combines React-style controlled state management with Tailwind-like styling. It renders Material-free (`EditableText` core inside a `Container`) and works under any theming ancestor: Material, Cupertino, a custom app, or a bare `WidgetsApp`. No Material ancestor required.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -87,7 +87,7 @@ const WInput({
 | `placeholderClassName` | `String?` | `null` | Utility classes for styling the hint text |
 | `value` | `String?` | `null` | The controlled value of the input |
 | `onChanged` | `ValueChanged<String>?` | `null` | Callback when text changes |
-| `type` | `InputType` | `InputType.text` | Input keyboard and behavior (`text`, `password`, `email`, `number`, `multiline`). `number` restricts input to a signed decimal on every platform (web included), with `decimalSeparator` as its one decimal mark; pass `inputFormatters` to override. |
+| `type` | `InputType` | `InputType.text` | Input keyboard and behaviour (`text`, `password`, `email`, `number`, `multiline`). `number` restricts input to a signed decimal on every platform (web included), with `decimalSeparator` as its one decimal mark; pass `inputFormatters` to override. |
 | `placeholder` | `String?` | `null` | Hint text shown when input is empty |
 | `enabled` | `bool` | `true` | Whether the input is interactive |
 | `readOnly` | `bool` | `false` | Whether the input is read-only |
@@ -107,7 +107,7 @@ const WInput({
 | `focusNode` | `FocusNode?` | `null` | External focus controller for programmatic focus management |
 | `inputFormatters` | `List<TextInputFormatter>?` | `null` | Formatters applied as the user types (digit-only, masks, etc.) |
 | `decimalSeparator` | `String` | `'.'` | The one decimal mark a `number` field accepts. Pass the locale's mark (`','` in Turkish or German) so `2,5` is not typed as `25`; the text stays as typed, so convert it to `.` before it goes on the wire. One character, never a digit, `+` or `-` (debug asserts). Ignored when `inputFormatters` is set. |
-| `textCapitalization` | `TextCapitalization` | `TextCapitalization.none` | Auto-capitalize behavior (`none` / `sentences` / `words` / `characters`) |
+| `textCapitalization` | `TextCapitalization` | `TextCapitalization.none` | Auto-capitalise behaviour (`none` / `sentences` / `words` / `characters`) |
 | `autocorrect` | `bool` | `true` | Enable OS autocorrect suggestions |
 | `enableSuggestions` | `bool` | `true` | Enable OS suggestion bar (Android) |
 | `semanticLabel` | `String?` | `null` | Accessible name for the single textbox semantics node. Falls back to `placeholder` when `null`. Used by screen readers and `getByLabel`-style locators. |
@@ -191,7 +191,7 @@ WInput(
 <a name="accessibility"></a>
 ## Accessibility
 
-`WInput` emits exactly **one** typeable textbox semantics node. Its accessible name is `semanticLabel` when provided, falling back to `placeholder`. This single-node shape ensures label-by-text locators (e.g., Playwright `getByLabel`, `dusk` label lookup) resolve cleanly with no duplicate accessible names.
+`WInput` emits exactly **one** typeable textbox semantics node. Its accessible name is `semanticLabel` when provided, falling back to `placeholder`. This single-node shape ensures label-by-text locators (e.g., Playwright `getByLabel`, `tapir` label lookup) resolve cleanly with no duplicate accessible names.
 
 `InputType.password` fields report `isObscured: true` in the semantics tree so screen readers announce the field as a password input.
 
@@ -201,7 +201,7 @@ When the field is `enabled: false`, it is non-editable and reports `isReadOnly` 
 > `WInput` supports native text selection (drag-select, double-tap word, long-press) with Cupertino-style selection handles on all platforms. This keeps `WInput` cupertino-only (no `package:flutter/material.dart` import) and consistent with the rest of Wind's own look. Interactive selection requires an `Overlay` ancestor (`MaterialApp` / `CupertinoApp` / `WidgetsApp` all provide one). Under a bare root with no `Overlay` (unusual in practice), typing and focus still work, but all interactive selection (drag-select, double-tap word, long-press, the drag handles, and the toolbar) is suppressed rather than throwing.
 
 > [!NOTE]
-> **Web:** Flutter renders to a canvas (CanvasKit or Skwasm) and does not use a native browser `<input>`. Mouse drag-select, double-click word, and keyboard copy (Ctrl+C / Cmd+C) all work through Flutter's own selection layer. Right-click opens the browser's native context menu by default (not WInput's selection toolbar). Apps that want WInput's selection toolbar on right-click can call `BrowserContextMenu.disableContextMenu()` once at startup; this is an app-level opt-in and not WInput behavior. No magnifier is shown on web.
+> **Web:** Flutter renders to a canvas (CanvasKit or Skwasm) and does not use a native browser `<input>`. Mouse drag-select, double-click word, and keyboard copy (Ctrl+C / Cmd+C) all work through Flutter's own selection layer. Right-click opens the browser's native context menu by default (not WInput's selection toolbar). Apps that want WInput's selection toolbar on right-click can call `BrowserContextMenu.disableContextMenu()` once at startup; this is an app-level opt-in and not WInput behaviour. No magnifier is shown on web.
 
 > [!WARNING]
 > Passing both `value` and `controller` at the same time throws an `AssertionError` in debug mode. Use either `value` + `onChanged` (controlled) or `controller` (external), not both.
@@ -217,8 +217,8 @@ You can use the `prefix` prop to add icons while maintaining the utility-first s
 
 ```dart
 WInput(
-  prefix: Icon(Icons.search, color: Colors.gray),
-  className: 'pl-10 p-2 bg-gray-100 rounded-full border-transparent focus:bg-white focus:border-blue-500',
+  prefix: Icon(Icons.search, color: Colors.grey),
+  className: 'p-2 pl-10 bg-gray-100 rounded-full border-transparent focus:bg-white focus:border-blue-500',
   placeholder: 'Search...',
 )
 ```
@@ -245,15 +245,15 @@ WInput(
 |:---------|:--------|
 | Layout | `w-{size}`, `h-{size}`, `flex-1`, `w-full` |
 | Spacing | `p-{n}`, `px-{n}`, `py-{n}`, `m-{n}` |
-| Typography | `text-{size}`, `font-{weight}`, `italic`, `uppercase` |
-| Colors | `bg-{color}`, `text-{color}` |
+| Typography | `text-{size}`, `font-{weight}`, `italic` |
+| Colours | `bg-{color}`, `text-{color}` |
 | Borders | `border`, `border-{n}`, `rounded-{size}`, `border-{color}` |
-| Effects | `shadow-{size}`, `opacity-{n}`, `ring-{n}`, `ring-offset-{n}` |
+| Effects | `shadow-{size}`, `ring-{n}`, `ring-offset-{n}` |
 
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can override the default input appearance through `WindThemeData`. This is useful for setting global border colors or padding defaults.
+You can override the default input appearance through `WindThemeData`. This is useful for setting global border colours or padding defaults.
 
 ```dart
 WindThemeData(

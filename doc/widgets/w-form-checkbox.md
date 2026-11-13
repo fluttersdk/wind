@@ -25,6 +25,7 @@ WFormCheckbox(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 The `WFormCheckbox` widget wraps a `WCheckbox` with a `FormField<bool>`. This allows you to use it directly inside a `Form` widget for easy validation and state management. When validation fails, it automatically triggers the `error:` state for its utility classes.
@@ -42,6 +43,7 @@ Form(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -51,6 +53,7 @@ WFormCheckbox({
   FormFieldValidator<bool>? validator,
   FormFieldSetter<bool>? onSaved,
   AutovalidateMode? autovalidateMode,
+  String? restorationId,
   bool enabled = true,
   ValueChanged<bool>? onChanged,
   String? className,
@@ -60,14 +63,15 @@ WFormCheckbox({
   Set<String>? states,
   Widget? label,
   String? labelText,
-  String labelClassName = 'text-sm text-gray-700',
+  String labelClassName = 'text-sm text-gray-700 dark:text-gray-300',
   String? hint,
-  String hintClassName = 'text-gray-500 text-xs mt-1',
+  String hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
   bool showError = true,
-  String errorClassName = 'text-red-500 text-xs mt-1',
+  String errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -77,16 +81,17 @@ WFormCheckbox({
 | `onChanged` | `ValueChanged<bool>?` | `null` | Callback when the value changes. |
 | `labelText` | `String?` | `null` | Simple text label displayed next to the checkbox. |
 | `label` | `Widget?` | `null` | Custom label widget (takes precedence over `labelText`). |
-| `labelClassName` | `String` | `'text-sm text-gray-700'` | Styling for the text label. |
+| `labelClassName` | `String` | `'text-sm text-gray-700 dark:text-gray-300'` | Styling for the text label. |
 | `hint` | `String?` | `null` | Optional hint text displayed below the checkbox. |
-| `hintClassName` | `String` | `'text-gray-500 text-xs mt-1'` | Styling for the hint text. |
+| `hintClassName` | `String` | `'text-gray-500 dark:text-gray-400 text-xs mt-1'` | Styling for the hint text. |
 | `showError` | `bool` | `true` | Whether to display validation error messages. |
-| `errorClassName` | `String` | `'text-red-500 text-xs mt-1'` | Styling for the error message. |
+| `errorClassName` | `String` | `'text-red-500 dark:text-red-400 text-xs mt-1'` | Styling for the error message. |
 | `iconClassName` | `String?` | `null` | Utility classes for the check icon. |
 | `checkIcon` | `IconData?` | `null` | Custom icon to use when checked. |
 | `disabled` | `bool` | `false` | Disables the checkbox and its label interaction. |
 | `states` | `Set<String>?` | `null` | Custom state identifiers merged with built-in `checked` and `disabled` triggers. |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
 ### Label & Hint Layout
@@ -103,6 +108,7 @@ WFormCheckbox(
 )
 ```
 
+<a name="event-handling"></a>
 ## Event Handling
 
 The `onChanged` callback is triggered whenever the user toggles the checkbox or clicks on the associated label. Since it's a `FormField`, it also integrates with standard form lifecycle events like `onSaved` and `validator`.
@@ -118,6 +124,7 @@ WFormCheckbox(
 )
 ```
 
+<a name="state-variants"></a>
 ## State Variants
 
 `WFormCheckbox` supports all standard Wind state prefixes. Specifically, it activates the `error:` prefix when the form field validation fails.
@@ -130,11 +137,12 @@ WFormCheckbox(
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Custom Colors and Sizes
 
-You can easily customize the appearance of the checkbox and its icon using standard Tailwind-like classes.
+You can easily customise the appearance of the checkbox and its icon using standard Tailwind-like classes.
 
 ```dart
 WFormCheckbox(
@@ -157,6 +165,7 @@ WFormCheckbox(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 | Category | Classes |
@@ -165,10 +174,11 @@ WFormCheckbox(
 | Spacing | `p-{n}`, `m-{n}`, `pt-{n}`, `pl-{n}` |
 | Sizing | `w-{size}`, `h-{size}`, `aspect-square` |
 | Typography | `text-{color}`, `text-{size}`, `font-{weight}`, `italic` |
-| Colors | `bg-{color}`, `border-{color}`, `checked:bg-{color}` |
+| Colours | `bg-{color}`, `border-{color}`, `checked:bg-{color}` |
 | Borders | `border`, `border-{width}`, `rounded`, `rounded-{size}` |
 | Form | `error:{utility}`, `disabled:{utility}` |
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
 You can define default styles for form components in your `WindThemeData`.
@@ -185,6 +195,7 @@ WindThemeData(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WCheckbox](./w-checkbox.md) - The base checkbox component.

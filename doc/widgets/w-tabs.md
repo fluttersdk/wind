@@ -2,8 +2,6 @@
 
 Controlled tabs widget. Renders a tab list and a content panel. The `selected:` state prefix activates on the currently active tab, so callers can supply tokens like `selected:border-b-2 selected:text-blue-600` through `tabClassName`. This is a fully controlled widget: `selectedIndex` is managed by the caller.
 
-## Table of Contents
-
 - [Basic Usage](#basic-usage)
 - [Props](#props)
 - [Constructor](#constructor)
@@ -44,7 +42,7 @@ WTabs(
 | `tabClassName` | `String?` | `null` | Utility classes applied to every tab's inner `WDiv`. Supports `selected:` prefixed tokens: they activate only on the selected tab. |
 | `selectedTabClassName` | `String?` | `null` | Extra utility classes appended to the active tab's `WDiv` only. Applied after `tabClassName`. |
 | `panelClassName` | `String?` | `null` | Utility classes for the panel wrapper `WDiv`. Example: `'pt-4'`. |
-| `fullWidthList` | `bool` | `true` | When true, prepends `w-full` to the tab list so a `border-b` baseline spans the full container width (tabs stay content-sized, left-aligned). If `listClassName` already sets a width token (`w-*`), that width is respected and `w-full` is not prepended, so an explicit width wins. Set `false` for a content-width strip (centered pill tabs). |
+| `fullWidthList` | `bool` | `true` | When true, prepends `w-full` to the tab list so a `border-b` baseline spans the full container width (tabs stay content-sized, left-aligned). If `listClassName` already sets a width token (`w-*`), that width is respected and `w-full` is not prepended, so an explicit width wins. Set `false` for a content-width strip (centred pill tabs). |
 
 <a name="constructor"></a>
 ## Constructor
@@ -69,7 +67,7 @@ WTabs({
 
 ### Underline Tabs
 
-Classic underline style: `selected:border-b-2` on the active tab. Pair border and text colors with `dark:` variants:
+Classic underline style: `selected:border-b-2` on the active tab. Pair border and text colours with `dark:` variants:
 
 ```dart
 WTabs(
