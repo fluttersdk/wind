@@ -16,8 +16,8 @@ screenshots:
     path: screenshots/wind-gallery-overview.png
 
 environment:
-  sdk: ">=3.4.0 <4.0.0"
-  flutter: ">=3.27.0"
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
 
 # Declared explicitly so pub.dev's platform detection is not silently narrowed
 # by the `dart:io` import-graph trace; wind supports every Flutter platform.
