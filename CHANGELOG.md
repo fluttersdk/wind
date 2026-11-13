@@ -8,6 +8,10 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- **`wSpacing` floors the multiplier.** Spacing now lands on the unit grid. `lib/src/utils/wind_helpers.dart` (#298)
+
 ---
 
 ## [1.12.0] - 2026-11-14
