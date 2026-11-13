@@ -48,12 +48,12 @@ import 'package:flutter/material.dart';
 import 'package:material_ui/material_ui.dart';
 ```
 
-`dart fix --apply --code=migrate_design_widgets` performs the import change for you, as the `material_ui` README describes. `material_ui` defines its own `MaterialApp`, `ThemeData` and localisations, so an app that keeps importing `package:flutter/material.dart` for its `MaterialApp` hits two symptoms:
+`dart fix --apply --code=migrate_design_widgets` performs the import change for you, as the `material_ui` README describes. It also rewrites `package:flutter/cupertino.dart` to `package:cupertino_ui/cupertino_ui.dart`, so an app that uses Cupertino types directly adds `cupertino_ui` too (`flutter pub add cupertino_ui`); `cupertino_ui` types and the framework's Cupertino types are distinct to Dart, so do not mix the two. `material_ui` defines its own `MaterialApp`, `ThemeData` and localisations, so an app that keeps importing `package:flutter/material.dart` for its `MaterialApp` hits two symptoms:
 
 - Wind input widgets throw "No MaterialLocalizations found".
 - `WindThemeData.toThemeData()` returns a `ThemeData` that does not match the `ThemeData` type the old `MaterialApp` expects.
 
-**Action required for an app that uses the `flutter_localizations` delegates.** Replace `GlobalMaterialLocalizations` and `GlobalCupertinoLocalizations` from `flutter_localizations` with the delegates from `material_ui`, and remove the `package:flutter_localizations/flutter_localizations.dart` import from the same file: both libraries export a `GlobalMaterialLocalizations`, so keeping both makes the name ambiguous and the build fails. Keep your app's own delegates in the list:
+**Action required for an app that uses the `flutter_localizations` delegates.** Replace `GlobalMaterialLocalizations` and `GlobalCupertinoLocalizations` from `flutter_localizations` with the delegates from `material_ui`, and remove the `package:flutter_localizations/flutter_localizations.dart` import from the same file: both libraries export a `GlobalMaterialLocalizations`, so keeping both makes the name ambiguous and the build fails. `GlobalMaterialLocalizations.delegates` already holds the Cupertino, Material and Widgets delegates, so delete separate `GlobalWidgetsLocalizations.delegate`, `GlobalMaterialLocalizations.delegate` and `GlobalCupertinoLocalizations.delegate` entries instead of listing them again. Keep your app's own delegates in the list:
 
 ```dart
 // Before: the delegates of GlobalMaterialLocalizations and GlobalCupertinoLocalizations
