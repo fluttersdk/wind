@@ -33,7 +33,9 @@ No `W*` or `Wind*` class changes, and every className token behaves as before. D
 
 A minor release that changes behaviour, flagged BREAKING (behaviour) in the changelog, so a `^1.8.0` constraint picks it up on the next `pub get`.
 
-**`tracking-*` is now em, as in Tailwind.** Letter spacing scales with the font size, so every `tracking-*` class renders differently. A custom `WindThemeData.tracking` map is now read as em multipliers: a value written as pixels now means that many em, so convert it.
+**`tracking-*` is now em, as in Tailwind.** Letter spacing scales with the font size, so every `tracking-*` class renders differently.
+
+**Action required for a custom `WindThemeData.tracking` map.** It is now read as em multipliers: a value written as pixels now means that many em, so convert it.
 
 ```dart
 // Before: logical pixels

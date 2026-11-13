@@ -61,7 +61,7 @@ When a user manually toggles the theme via `toggleTheme()`, you may want to pers
 ```dart
 WindTheme(
   onThemeChanged: (brightness) {
-    // Persist the preference with your own storage (savePreference is the host's).
+    // Persist the manual choice with your own storage (savePreference is the host's).
     savePreference('theme_mode', brightness == Brightness.dark ? 'dark' : 'light');
   },
   data: WindThemeData(),
@@ -70,6 +70,8 @@ WindTheme(
   ),
 )
 ```
+
+The callback receives only the brightness, so a stored `light` or `dark` means "the user chose this mode", not "the OS currently reports it". Restore it as a manual choice with `syncWithSystem: false`, and store nothing while the user follows the system (see [Resetting to System Theme](#resetting-to-system-theme)).
 
 > [!IMPORTANT]
 > `onThemeChanged` fires on every brightness change that does not come from the OS sync: `toggleTheme()`, `setTheme()`, `updateTheme(brightness:)`, `resetToSystem()`, and a new `data:` from a parent rebuild. Automatic system brightness sync does not trigger this callback.
@@ -88,6 +90,35 @@ context.windTheme.resetToSystem();
 ```
 
 This immediately syncs the theme with the current platform brightness and re-enables the `syncWithSystem` flag so future OS changes are reflected automatically.
+
+If you persist the preference, clear it after you reset. `onThemeChanged` fires after `resetToSystem()` only when the brightness value actually changes (and then it saves the platform brightness as if it were a manual choice), and never for later OS changes, so a stored `light` or `dark` cannot tell a restart that the user went back to following the system. Delete the stored value yourself once the reset has run, and restore from it on startup:
+
+```dart
+// Going back to the system: re-enable sync, then forget the manual choice
+// (after the reset, because the reset itself may fire onThemeChanged).
+context.windTheme.resetToSystem();
+await removePreference('theme_mode');
+
+// On startup: no stored value keeps the default syncWithSystem: true.
+final String? saved = await readPreference('theme_mode');
+
+WindTheme(
+  data: saved == null
+      ? WindThemeData()
+      : WindThemeData(
+          brightness: saved == 'dark' ? Brightness.dark : Brightness.light,
+          syncWithSystem: false,
+        ),
+  onThemeChanged: (brightness) {
+    savePreference('theme_mode', brightness == Brightness.dark ? 'dark' : 'light');
+  },
+  child: MaterialApp(
+    home: MyHome(),
+  ),
+)
+```
+
+`removePreference`, `readPreference` and `savePreference` stand for the host's own storage.
 
 <a name="colors"></a>
 ## Colors

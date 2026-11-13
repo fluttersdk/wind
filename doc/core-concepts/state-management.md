@@ -33,8 +33,8 @@ Consider this basic button example:
 ```dart
 WButton(
   onTap: () => print('Action triggered'),
-  className: 'bg-blue-500 hover:bg-blue-600 p-4 rounded-lg duration-200',
-  child: WText('Save Changes', className: 'text-white'),
+  className: 'bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 p-4 rounded-lg duration-200',
+  child: WText('Save Changes', className: 'text-white dark:text-white'),
 )
 ```
 
@@ -50,8 +50,8 @@ Wind supports several interactive states out of the box. These are automatically
 
 - **hover**: Triggered when a pointer enters the widget bounds.
 - **focus**: Triggered when the widget receives keyboard or input focus.
-- **active**: Reserved. It is not wired to the pointer: it applies only when you pass `states: {'active'}`.
-- **disabled**: Active when `WButton(disabled: true)` or `WAnchor(isDisabled: true)`; a null `onTap` does not disable.
+- **active**: Reserved. It is not wired to the pointer: it applies only when you pass `states: {'active'}` to the widget that carries the `active:` classes (`WText`, `WDiv`, `WButton`). Passing it to a `WAnchor` does not reach a descendant `WText`, because the anchor's custom states are not part of the context a descendant resolves its styles from.
+- **disabled**: Active when `WButton(disabled: true)`, `WButton(isLoading: true)` or `WAnchor(isDisabled: true)`; a null `onTap` does not disable.
 
 <a name="quick-reference"></a>
 ## Quick Reference
@@ -60,8 +60,8 @@ Wind supports several interactive states out of the box. These are automatically
 |:-------|:--------|:-----------------|
 | `hover:` | Pointer entry | Changing background or elevation on desktop. |
 | `focus:` | Keyboard focus | Showing a ring or border on input fields. |
-| `active:` | `states: {'active'}` only | Press styling you drive yourself: track the press in your own state and pass `states: {'active'}`. |
-| `disabled:` | `disabled: true` / `isDisabled: true` | Reducing opacity or greying out actions. |
+| `active:` | `states: {'active'}` only | Press styling you drive yourself: track the press in your own state and pass `states: {'active'}` to the styled widget itself. |
+| `disabled:` | `disabled: true` / `isLoading: true` / `isDisabled: true` | Reducing opacity or greying out actions. `WButton(isLoading: true)` also applies `disabled:` styles, even when `disabled` is false. |
 
 <a name="interactive-widgets"></a>
 ## Interactive Widgets
@@ -77,9 +77,9 @@ Wind provides specific widgets designed to manage and propagate these states.
 WAnchor(
   onTap: () {},
   child: WDiv(
-    className: 'bg-white hover:bg-slate-50 border p-6 rounded-xl duration-300',
+    className: 'bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 border p-6 rounded-xl duration-300',
     children: [
-      WText('Interactive Card', className: 'hover:text-blue-600'),
+      WText('Interactive Card', className: 'text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400'),
     ],
   ),
 )

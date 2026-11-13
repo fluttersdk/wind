@@ -138,6 +138,8 @@ Wind: unknown className 'ps-4' was ignored.
 The hint fires once per unique token per session (deduped like the alias shadow and cycle warnings), so a token repeated across many widgets logs a single line. Release builds print nothing: the check sits behind `kDebugMode` and is tree-shaken out.
 
 > [!NOTE]
+> The warning only covers a token that no parser claims. A parser claims a token by its prefix and does not validate the value behind it, so `p-not-a-spacing` is claimed by the padding parser: it produces no padding and no warning. A silent result for a token you expect to work still means checking the spelling of its value.
+>
 > The warning targets genuine typos. Valid Wind tokens that a widget consumes outside the parser map are exempt and never warn: the `object-*` fit family (read by `WImage`), the `inline-flex` / `inline-block` / `inline` display keywords (emitted by `WBadge`, inert in Flutter), and deliberately inert compatibility tokens (`transition` / `transition-colors`, `antialiased`, `sr-only`, and the `*-nums` font-variant family such as `tabular-nums`).
 
 If a token you expect to work triggers the warning, check the [Token catalogue](https://anilcancakir.com/wind_kit/docs/layout) for the canonical spelling. A common case is a CSS name that Wind aliases: `flex-wrap` prints the hint and points you at the canonical `wrap`.
