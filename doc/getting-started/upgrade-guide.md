@@ -53,6 +53,8 @@ import 'package:material_ui/material_ui.dart';
 - Wind input widgets throw "No MaterialLocalizations found".
 - `WindThemeData.toThemeData()` returns a `ThemeData` that does not match the `ThemeData` type the old `MaterialApp` expects.
 
+The fix leaves `export` directives alone in the reported Dart 3.13.5 cases ([dart-lang/sdk#64560](https://github.com/dart-lang/sdk/issues/64560), still open when this guide was written), so a barrel file that re-exports `package:flutter/material.dart` or `package:flutter/cupertino.dart` needs its directive replaced by hand with the `material_ui` or `cupertino_ui` barrel. Search for `export 'package:flutter/material.dart'` after running it.
+
 **Action required for an app that uses the `flutter_localizations` delegates.** Replace `GlobalMaterialLocalizations` and `GlobalCupertinoLocalizations` from `flutter_localizations` with the delegates from `material_ui`, and remove the `package:flutter_localizations/flutter_localizations.dart` import from the same file: both libraries export a `GlobalMaterialLocalizations`, so keeping both makes the name ambiguous and the build fails. `GlobalMaterialLocalizations.delegates` already holds the Cupertino, Material and Widgets delegates, so delete separate `GlobalWidgetsLocalizations.delegate`, `GlobalMaterialLocalizations.delegate` and `GlobalCupertinoLocalizations.delegate` entries instead of listing them again. Keep your app's own delegates in the list:
 
 ```dart
