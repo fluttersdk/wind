@@ -96,7 +96,7 @@ WindThemeData({
 
 ### Default key tables
 
-**Colours**: `slate`, `gray`, `zinc`, `neutral`, `stone`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`. Plus `transparent`, `black`, `white`. Shades: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950.
+**Colours**: `slate`, `gray`, `zinc`, `neutral`, `stone`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`. Plus `primary` (seeded as the `blue` swatch, see §3), `transparent`, `black`, `white`. Shades: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950 for the 22 families and `primary`; `transparent`, `black` and `white` carry 50 to 900 only.
 
 **Screens**: `sm: 640`, `md: 768`, `lg: 1024`, `xl: 1280`, `2xl: 1536` (px).
 
@@ -118,7 +118,7 @@ WindThemeData({
 
 **Ring widths**: `0: 0`, `1: 1`, `2: 2`, `DEFAULT: 3`, `4: 4`, `8: 8`.
 
-**Opacities** (Tailwind scale): `0`, `5`, `10`, `15`, ..., `95`, `100` (every 5%).
+**Opacities**: `0`, `5`, `10`, `20`, `25`, `30`, `40`, `50`, `60`, `70`, `75`, `80`, `90`, `95`, `100`. There is no 15, 35, 45 or 55: `opacity-15` drops silently unless you add the key.
 
 **Z-indices**: `0`, `10`, `20`, `30`, `40`, `50`.
 
@@ -134,7 +134,7 @@ WindThemeData({
 
 ## 3. Merge strategy
 
-User-provided values merge into defaults via `Map.from(defaults)..addAll(userProvided ?? {})`. New defaults added in later Wind versions don't break existing themes; user overrides win.
+User-provided values merge into defaults via `Map.from(defaults)..addAll(userProvided ?? {})`. New defaults added in later Wind versions don't break existing themes; user overrides win. `WindThemeData.copyWith` merges its map arguments the same way (`addAll` over the current map), so passing `colors:` adds or replaces keys and never drops a family.
 
 ```dart
 WindThemeData(
@@ -153,11 +153,13 @@ The custom `primary` overrides the seeded default; the 22 default families remai
 
 `primary` is a seeded default token (aliased 1:1 to the Tailwind `blue` swatch), so `bg-primary` / `text-primary` / `border-primary` resolve out of the box even before you register a brand colour. The built-in interactive widgets (`WSelect`, `WCheckbox`, `WRadio`, `WDatePicker`) route their selection colours through `primary`, so overriding it here recolours those widgets to your brand while leaving the default look (blue) unchanged when you do not.
 
+`aliases` expand before the parser runs and before the cache key is built. Expansion stops at 8 levels (with a `kDebugMode` warning) and 256 output tokens, and an alias key that a real parser claims shadows that built-in token and warns once. A `bg-surface` alias also paints the scaffold: when `colors['background']` is absent, `toThemeData()` reads a `bg-[#hex]` (`dark:bg-[#hex]` in dark mode) out of that alias for `scaffoldBackgroundColor`, and falls back to white or `gray-900`. `toThemeData()` ignores a `primary` equal to the seeded blue and keeps Material's indigo baseline, so only a brand colour that differs repaints Material widgets.
+
 ---
 
 ## 4. WindThemeController API
 
-Exposed via `WindTheme.of(context)` or the extension `context.windTheme`.
+Exposed via `WindTheme.of(context)` or the extension `context.windTheme`. `WindTheme.dataOf(context)` reads the `WindThemeData`, and `WindTheme.maybeDataOf(context)` returns null instead of throwing when no `WindTheme` sits above. `WindTheme` takes `child:` or `builder:`, never neither.
 
 ```dart
 class WindThemeController extends ChangeNotifier {

@@ -119,7 +119,7 @@ WDiv(
   className: 'flex flex-col h-full',
   children: [
     WDiv(
-      className: 'flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700',
+      className: 'shrink-0 p-4 border-b border-gray-200 dark:border-gray-700',
       child: const WText('Header', className: 'text-lg font-semibold'),
     ),
     WDiv(

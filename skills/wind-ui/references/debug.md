@@ -44,7 +44,7 @@ For each W-prefix widget with a non-empty `className`, the resolver returns a `M
 | Field | Type | Source |
 |---|---|---|
 | `className` | `String` | The raw className passed to the widget |
-| `breakpoint` | `String` | Active breakpoint at render time: `'base'`, `'sm'`, `'md'`, `'lg'`, `'xl'`, `'2xl'` |
+| `breakpoint` | `String` | Active breakpoint at render time: `'base'`, or a key of `theme.screens` (`'sm'`, `'md'`, `'lg'`, `'xl'`, `'2xl'` by default; a custom `screens` map changes them) |
 | `brightness` | `String` | `'light'` or `'dark'` |
 | `platform` | `String` | `'web'`, `'ios'`, `'android'`, `'macos'`, `'windows'`, `'linux'`, or `'unknown'` |
 | `states` | `List<String>` | Active states (e.g. `['hover', 'focus']`) |
@@ -93,8 +93,10 @@ Consumers do not import Wind. They import only the contracts package. When Wind 
 The parser caches every resolved `WindStyle` keyed by:
 
 ```
-className + activeBreakpoint + brightness + platform + sorted(activeStates).join(',')
+expandedClassName + activeBreakpoint + brightness + platform + sorted(activeStates).join(',')
 ```
+
+`expandedClassName` is the className after `WindThemeData.aliases` expansion. A call that passes a `baseStyle` skips the cache entirely.
 
 Once warm, nearly every parse is a cache hit. The same className renders the same `WindStyle` regardless of how many times it's used. The cache survives hot reload (className edits during hot reload pick up the new value on the next frame because the key changes).
 
@@ -249,6 +251,6 @@ A per-`Element` resolver has nowhere to put a number that belongs to no element,
 
 A bypass is a property of a caller writing `style:`, not of using `WDiv` / `WText`: both pass `baseStyle: style` and that property is null in ordinary use. In a measured real app, bypasses were zero and the hit rate was above 99%.
 
-`WindParser.clearCache()` resets the counters too, which is why a theme change mid-measurement zeroes them.
+`WindParser.clearCache()` resets the counters too, so a host that clears the cache after a theme change mid-measurement zeroes them. `toggleTheme()` alone does not clear the cache, so the counters continue across it. `WindPerfCounters.reset()` is public and zeroes them without touching the cache.
 
 `Wind.installPerfResolver()` publishes a map through `WindDebugRegistry.currentPerf?.stats()`: the `int` values `cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds` and `wTextBuilds`, plus these `Map<String, int>` counters: `widgetBuilds` (every W-widget with a build method, by type name: `'WButton'`, `'WDiv'`, ...), `wrapperEmissions` (the Flutter or Wind-authored render-layer wrapper widget inserted at each composition-pipeline branch: `'DecoratedBox'`, `'ConstrainedBox'`, `'Padding'`, `'MouseRegion'`, `'Semantics'`, `'DefaultTextStyle'`, ...), `inheritedReads` (fixed to `mediaQuerySize`, `mediaQueryBrightness`, `windTheme`, `defaultTextStyle`). A `null` there means no resolver was installed, which is deliberately distinguishable from "the counters are zero". Both `installDebugResolver()` and `installPerfResolver()` gate on `!kReleaseMode`, not `kDebugMode`, so a profile build still carries them.

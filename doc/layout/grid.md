@@ -29,7 +29,7 @@ WDiv(
 
 Use `grid-cols-{n}` to create a grid with `n` equally sized columns.
 
-This utility must be used alongside the `grid` class (or `inline-grid` if supported) to activate the grid layout model.
+This utility must be used alongside the `grid` class to activate the grid layout model.
 
 ```dart
 WDiv(

@@ -41,7 +41,7 @@ Every node is a `Map<String, dynamic>` with one required field and two optional 
 - `props` (optional, `Map<String, dynamic>`): widget constructor arguments. Keys are widget-prop names exactly (no auto-rename; see §4).
 - `children` (optional, `List<Map>`): nested nodes. Recursively processed depth-first.
 
-All `Map` values are deep-converted to `Map<String, dynamic>` internally; mixed `Map<Object?, Object?>` payloads from JSON parsers are normalised automatically.
+`Map` values are converted to `Map<String, dynamic>` recursively, and so are the `Map` items of a `List`; mixed `Map<Object?, Object?>` payloads from JSON parsers are normalised automatically. A list nested directly inside a list stays raw.
 
 Recursion depth is capped at `maxDepth: 50` by default; deeper trees render a red error widget at the threshold node.
 
@@ -101,14 +101,14 @@ Props keys follow the Wind widget constructor parameters, with renderer-specific
 | `WDiv`, `WSpacer`, `WPopover` | `className` (`WPopover`: first child is the trigger, second the content) |
 | `WText` | `text` (or `value`) for the string, `className` |
 | `WButton` | `onTap` (action), `disabled`, `isLoading`, `className`; the first child is the content |
-| `WAnchor` | `onTap` (action) only; `className` is not read |
+| `WAnchor` | `onTap` (action) only; `className` is not read; more than one child is wrapped in a `WDiv` |
 | `WImage` | `src`, `className` |
 | `WIcon` | `icon` (a built-in or `customIcons` name), `className` |
 | `WSvg` | `svgContent` (raw markup) or `asset` (asset path), `className`; a node with neither, or with `src`, renders the fallback image icon |
-| `WInput` | `id`, `value`, `type`, `placeholder`, `onChange` (action), `className` |
+| `WInput` | `id`, `value`, `type` (`text`, `email`, `password`, `number`, `multiline` or `textarea`; anything else is `text`), `placeholder`, `onChange` (action), `className` |
 | `WCheckbox` | `id`, `checked` (or `value`), `onChange` (action), `className` |
 | `WSelect` | `id`, `value`, `options`, `placeholder` (required: without it the node renders the error box), `onChange` (action), `className` |
-| `WDatePicker` | `id`, `value` (ISO string), `placeholder`, `onChange` (action), `className` |
+| `WDatePicker` | `id`, `value` (ISO string), `placeholder` (default `Select a date`), `onChange` (action), `className` |
 
 The Flutter core widgets read their own keys, all optional with the Flutter default when absent:
 
@@ -123,7 +123,7 @@ The Flutter core widgets read their own keys, all optional with the Flutter defa
 | `Padding` | `padding` (all sides) or `top` / `bottom` / `left` / `right` |
 | `Align` | `alignment`, `widthFactor`, `heightFactor` |
 | `Opacity`, `AspectRatio` | `opacity`, `aspectRatio` |
-| `FittedBox` | `fit` (a `BoxFit` name), `alignment` |
+| `FittedBox` | `fit` (`fill`, `cover`, `fitWidth`, `fitHeight`, `none` or `scaleDown`, also hyphenated; else `contain`), `alignment` |
 | `ClipRRect` | `borderRadius` (a number) |
 | `Center` | none; the first child is the content (the single-child nodes use the first child) |
 
@@ -183,7 +183,7 @@ controller.addListener('email', (newValue) {
   // fires when 'email' changes
 });
 
-controller.reset();   // clears all values
+controller.reset();   // clears all values; notifies ChangeNotifier listeners only, not the per-id addListener callbacks
 controller.dispose(); // when done (only if not passed to WDynamic that owns it)
 ```
 
@@ -221,7 +221,7 @@ Handler signature is auto-detected in order:
 2. `Function(Map<String, dynamic>)`: pure action with no state access
 3. Fallback `Function.apply(handler, [args, state])`: for handlers with unusual signatures
 
-Unknown action names log `WindDynamic: Unknown action "<name>", ignored.` via `debugPrint` and return null. Exceptions inside handlers are caught and logged via `debugPrint('WindDynamic: Action "<name>" error: <err>')`. Neither crashes the build.
+Unknown action names log `WindDynamic: Unknown action "<name>", ignored.` via `debugPrint` and return null. A handler that throws synchronously is caught and logged via `debugPrint('WindDynamic: Action "<name>" error: <err>')`. An async handler's `Future` is returned unawaited, so an error it throws later is not caught: handle it inside the handler. Neither case crashes the build.
 
 Value actions (used by WInput, WCheckbox and WSelect; WDatePicker dispatches without an injected `_value`, see §5):
 - The widget's `onChange` callback is wired through `parseValueAction<T>`.
@@ -300,7 +300,7 @@ In JSON:
 
 Built-in icon names (default fallback): `star`, `star_outline`, `home`, `person`, `check`, `close`, `settings`, `search`, `add`, `edit`, `delete`, `favorite`, `favorite_outline`, `mail`, `menu`, `info`, `warning`, `error`, `help`, `code`, `chevron_left`, `chevron_right`, `arrow_back`, `arrow_forward`. Names are matched case-insensitively (lowercased). Unknown names fall back to `Icons.help_outline`.
 
-The `customIcons:` map merges with the built-in defaults; user keys override.
+The `customIcons:` map merges with the built-in defaults; user keys override. Lookup uses the lowercased icon name, so write every `customIcons` key in lowercase: a key such as `myLogo` never matches.
 
 ---
 
@@ -315,7 +315,7 @@ The `customIcons:` map merges with the built-in defaults; user keys override.
 Threat model considerations:
 - **JSON source matters.** A controlled backend rendering a known schema is safe. Untrusted client input is not; even with whitelist enforcement, props can hold dangerous data (URLs that load attacker-controlled assets via `WImage(src:)`, action names that overlap with privileged handlers).
 - **`builders:` is the escape hatch.** If you don't add custom builders, the surface is bounded by the default whitelist and the action handlers you registered. Action handlers run consumer Dart code; they are the trust boundary.
-- **Action argument coercion is shallow.** `args['_value'] as String?` will succeed if the JSON sends `"_value": "<script>"`. The script tag is just a string. But an `args['url']` that a handler passes to a URL launcher opens that URL. Validate inside the handler.
+- **Action argument coercion is shallow.** `args['_value'] as String?` on an `onTap` action will succeed if the JSON sends `"_value": "<script>"`, because `onTap` passes the JSON args through, and so does a `WDatePicker` `onChange`, which uses `parseAction` (a handler there reads the selected date from state). The `onChange` of `WInput`, `WCheckbox` and `WSelect` overwrites `_value` with the real value. The script tag is just a string. But an `args['url']` that a handler passes to a URL launcher opens that URL. Validate inside the handler.
 - **Recursion limit prevents stack overflow.** Default `maxDepth: 50` is plenty for legitimate UI; reduce for stricter bounds when accepting third-party JSON.
 
 ---

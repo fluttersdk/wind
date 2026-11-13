@@ -58,7 +58,7 @@ const WCheckbox({
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `value` | `bool` | - | Whether the checkbox is currently checked. |
+| `value` | `bool` | **Required** | Whether the checkbox is currently checked. |
 | `onChanged` | `ValueChanged<bool>?` | `null` | Callback triggered when the checkbox state is toggled. `null` makes the checkbox display-only, exactly like `disabled: true`. See [Accessibility](#accessibility). |
 | `className` | `String?` | `null` | Wind utility classes for the checkbox container (dimensions, border, background). |
 | `iconClassName` | `String?` | `null` | Utility classes applied to the check icon (e.g., `'text-white text-xs'`). |
@@ -203,7 +203,7 @@ The default checked colour can be controlled via the `primary` colour in your `W
 ```dart
 WindThemeData(
   colors: {
-    'primary': context.windColors['indigo']!,
+    'primary': Colors.indigo,
   },
 )
 ```

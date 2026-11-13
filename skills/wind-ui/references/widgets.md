@@ -66,7 +66,7 @@ Behaviour:
 - Honours layout tokens (flex, grid, wrap, block), sizing, spacing (padding/margin/gap), positioning, borders, shadows, opacity, transitions, animations.
 - Composition pipeline (innermost → outermost): aspect ratio → opacity → animation → box (`Align` → `Padding` inset by the border → `DecoratedBox` → `ConstrainedBox`, the primitives `Container` would build, without the `Container`; `AnimatedContainer` under `duration-*`) → scroll/clip → outer sizing → fractional sizing → margin → alignment → flex/expanded.
 - `scrollPrimary: true` only applies when className contains `overflow-y-auto`, `overflow-y-scroll`, `overflow-x-auto`, `overflow-x-scroll`, or `overflow-scroll`.
-- `flex-*` classes skip the Expanded wrap when `WindFlexOverflowScope.skipExpanded` is true (the main axis is scrollable). This is invisible to consumers and prevents unbounded-constraint assertions.
+- `flex-*` classes skip the Expanded wrap when the main axis is scrollable, through an internal scope (`WindFlexOverflowScope`, not exported by the barrel, so an app cannot reference it). This is invisible to consumers and prevents unbounded-constraint assertions.
 
 ### `WSpacer`
 
@@ -174,7 +174,7 @@ const WImage({
   String? className,
   Set<String>? states,
   Widget? placeholder,
-  ImageErrorWidgetBuilder? errorBuilder,             // (context, error, stack) => Widget
+  ImageErrorBuilder? errorBuilder,                   // (context, error, stack) => Widget
   ImageLoadingBuilder? loadingBuilder,
 })
 ```
@@ -191,7 +191,7 @@ Tokens consumed:
 - `object-center` (default) / `object-top` / `object-bottom` / `object-left` / `object-right` / `object-left-top` / `object-left-bottom` / `object-right-top` / `object-right-bottom` → the image's `Alignment`, so `object-cover object-top` keeps the upper part of a backdrop in a short wide banner. Read off the raw className like `object-*` fit: first match wins, a prefixed form (`md:object-top`) is not applied
 - `aspect-*` → `AspectRatio` wrapping
 - `rounded-*` → `ClipRRect`
-- `border-*` / `shadow-*` → `Container` decoration
+- `border-*` → `Container` decoration (`shadow-*` is not applied)
 - `w-*` / `h-*` → outer `SizedBox`
 - `opacity-*` → `Opacity`
 
@@ -294,7 +294,7 @@ const WButton({
 Loading state mechanics:
 - `isLoading: true` replaces the child with a default 16×16 `CircularProgressIndicator` (2 px stroke) plus optional `loadingText` in a flex row.
 - All taps are absorbed via `AbsorbPointer` when loading.
-- Spinner colour resolution chain: explicit `loadingColor` → `styles.color` (from `text-*`) → contrast colour (W3C relative-luminance against background) → white fallback.
+- Spinner colour resolution chain: explicit `loadingColor` → `styles.color` (from `text-*`, skipped when fully transparent, because `text-transparent` hides the label, not the spinner) → contrast colour (W3C relative-luminance against background) → white fallback.
 
 Disabled state:
 - `disabled: true` blocks all taps and sets the cursor to `SystemMouseCursors.forbidden`.
@@ -348,11 +348,13 @@ const WInput({
   int minLines = 1,
   List<TextInputFormatter>? inputFormatters,
   String decimalSeparator = '.',     // the one decimal mark of InputType.number
-  Widget? prefix,                    // 12 px left padding, 8 px right
-  Widget? suffix,                    // 8 px left padding, 12 px right
+  Widget? prefix,                    // left inset follows the content padding, 8 px gap to the text
+  Widget? suffix,                    // 8 px gap to the text, right inset follows the content padding
   String? semanticLabel,
 })
 ```
+
+Assertions: pass `value` (controlled) or `controller` (external), never both, and `decimalSeparator` is one character. With `type: InputType.number` and no `inputFormatters`, the default signed-decimal filter also rejects a digit, `+` or `-` as the separator, and the build asserts. The content padding is 12 px horizontal and 8 px vertical unless the className sets `p-*`.
 
 There is no `obscureText`, `keyboardType` or `maxLength`: `type: InputType.password` obscures, `type` picks the keyboard, and a length limit is a `LengthLimitingTextInputFormatter` in `inputFormatters`.
 
@@ -360,7 +362,7 @@ Keyboard config from `type`:
 - `text` → `TextInputType.text`
 - `password` → `TextInputType.visiblePassword`, `obscureText: true`
 - `email` → `TextInputType.emailAddress`
-- `number` → `TextInputType.number`
+- `number` → `TextInputType.numberWithOptions(decimal: true, signed: true)`; `decimalSeparator` is the one decimal mark it accepts
 - `multiline` → `TextInputType.multiline`, allows newlines via Enter
 
 State injection: `focus` (auto when focused) + `disabled` (auto when `!enabled`) + custom states from `states`.
@@ -431,7 +433,7 @@ const WSelect({
   double maxMenuHeight = 300,
   double? menuWidth,                 // defaults to trigger width
   bool disabled = false,
-  String? placeholder,
+  String placeholder = 'Select an option',
   // Builders:
   SelectTriggerBuilder<T>? triggerBuilder,
   MultiSelectTriggerBuilder<T>? multiTriggerBuilder,
@@ -471,7 +473,7 @@ const WDatePicker({
   String? className,
   String placeholder = 'Select date',
   bool disabled = false,             // injects the `disabled:` state, blocks opening
-  Set<String>? states,
+  Set<String> states = const {},
   DateDisplayFormat? displayFormat,  // custom formatter callback
   // dateTime mode only:
   int minuteStep = 5,                // asserted 1..59, clamped in release
@@ -740,7 +742,8 @@ const WKeyboardActions({
 
 Usage:
 - Create one `FocusNode` per input field. Pass them in focus-navigation order via `focusNodes`.
-- Set `platform: 'ios'` to limit the toolbar to iOS (most common pattern for numeric keyboards).
+- Set `platform: 'ios'` to limit the toolbar to iOS (most common pattern for numeric keyboards). The parameter is a `String`; the exported `WKeyboardPlatform` enum (`android`, `ios`, `all`) is what the widget maps it to internally and is not accepted by the constructor.
+- `WKeyboardToolbarInset.of(context)` (an exported `InheritedWidget`) returns the measured height of the bar, zero when none is up. `WInput` already adds it to its clearance; see `forms.md`.
 - Set `nextFocus: false` for single-field forms: shows only the Done button.
 - `toolbarClassName` accepts any `bg-*` Wind class; always pair with `dark:`. When null the toolbar uses `Theme.of(context).colorScheme.surfaceContainerHighest`.
 - `closeWidgetBuilder(node)` receives the focused `FocusNode`; call `node.unfocus()` to dismiss.
@@ -787,7 +790,7 @@ const WindAnimationWrapper({
 | `child` | `Widget` | **Required** | The widget to animate. |
 | `animationType` | `WindAnimationType` | **Required** | `spin`, `ping`, `pulse`, `bounce`, or `none`. |
 | `duration` | `Duration` | `Duration(milliseconds: 1000)` | Full cycle length for all types. |
-| `curve` | `Curve` | `Curves.linear` | Easing curve passed to the controller. `ping` and `pulse` apply their own `CurvedAnimation` internally. |
+| `curve` | `Curve` | `Curves.linear` | Easing curve passed to the controller. `ping`, `pulse` and `bounce` apply their own `CurvedAnimation` internally. |
 
 Animation mechanics per type:
 
@@ -859,7 +862,7 @@ class PopoverController extends ChangeNotifier {
 }
 ```
 
-`computeEffectiveAlignment` (static) is exposed as a standalone utility for pre-calculating the flipped alignment before showing an overlay.
+`computeEffectiveAlignment` (a top-level function) is exposed as a standalone utility for pre-calculating the flipped alignment before showing an overlay.
 
 Trigger interactivity: `enableTriggerOnTap` toggling is driven by a pointer-down `Listener`, not a tap `GestureDetector`, so it opens reliably even when `triggerBuilder` returns an interactive widget that owns its own `onTap` (a `WButton` or `WAnchor`). Both the trigger's `onTap` and the popover toggle fire on the same tap. The opening gesture cannot self-dismiss the popover (a one-shot first-frame guard absorbs the opening pointer-up); a genuine later outside tap still closes it.
 

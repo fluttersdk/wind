@@ -83,7 +83,7 @@ const WSelect({
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `className` | `String?` | `null` | Utility classes for the trigger container |
+| `className` | `String?` | `null` | Utility classes for the trigger container; when null the trigger uses `bg-white border border-gray-300 rounded-lg p-3` |
 | `menuClassName` | `String?` | `null` | Utility classes for the dropdown menu |
 | `options` | `List<SelectOption<T>>` | **Required** | List of items to display |
 | `value` | `T?` | `null` | Selected value in single-select mode |

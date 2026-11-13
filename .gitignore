@@ -67,3 +67,8 @@ pubspec_overrides.yaml
 # not skip them, and wipes a live worktree while `.git/worktrees/<slug>` survives,
 # leaving a registration that `git worktree prune` then has to clear.
 .claude/worktrees/
+
+# Personal Claude Code overrides, never committed. Claude Code adds settings.local.json to a
+# user's global excludes only when it writes the file itself, so a fresh clone needs the line here.
+.claude/settings.local.json
+CLAUDE.local.md
