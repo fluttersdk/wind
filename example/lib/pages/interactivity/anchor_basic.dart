@@ -10,14 +10,12 @@ class AnchorBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WAnchor',
-      description:
-          'Foundation interaction wrapper. Detects hover/focus/press and propagates state to descendants via WindAnchorStateProvider. No styling of its own.',
+      description: 'Foundation interaction wrapper. Detects hover/focus/press and propagates state to descendants via WindAnchorStateProvider. No styling of its own.',
       gradient: 'from-violet-500 to-purple-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Wrap any layout in WAnchor to make its descendants react to hover and focus.',
+          description: 'Wrap any layout in WAnchor to make its descendants react to hover and focus.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(
@@ -36,8 +34,7 @@ class AnchorBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Gestures',
-          description:
-              'onTap, onLongPress, and onDoubleTap each map to a separate callback. Click the card to fire onTap.',
+          description: 'onTap, onLongPress, and onDoubleTap each map to a separate callback. Click the card to fire onTap.',
           child: WAnchor(
             onTap: () {},
             onLongPress: () {},
@@ -57,8 +54,7 @@ class AnchorBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Disabled State',
-          description:
-              'isDisabled blocks gestures AND activates the disabled: prefix on descendants.',
+          description: 'isDisabled blocks gestures AND activates the disabled: prefix on descendants.',
           child: WAnchor(
             isDisabled: true,
             onTap: () {},
@@ -77,8 +73,7 @@ class AnchorBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'State Propagation',
-          description:
-              'Hover on the outer card; the inner WText also picks up the hover state via WindAnchorStateProvider.',
+          description: 'Hover on the outer card; the inner WText also picks up the hover state via WindAnchorStateProvider.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(
@@ -107,8 +102,7 @@ class AnchorBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Keyboard and Remote',
-          description:
-              'Tab to this button and press Enter or Space. The same binding is the D-pad centre on Android TV. It is one stop, not two: the ring is styled on the inner WDiv and the gesture lives on the anchor.',
+          description: 'Tab to this button and press Enter or Space. The same binding is the D-pad centre on Android TV. It is one stop, not two: the ring is styled on the inner WDiv and the gesture lives on the anchor.',
           child: WAnchor(
             onTap: () {},
             semanticLabel: 'Play',
@@ -119,10 +113,7 @@ class AnchorBasicExamplePage extends StatelessWidget {
                 hover:bg-violet-700 dark:hover:bg-violet-400
                 focus:ring-2 focus:ring-violet-400 dark:focus:ring-violet-300
               ''',
-              child: const WText(
-                'Play',
-                className: 'text-white font-medium',
-              ),
+              child: const WText('Play', className: 'text-white font-medium'),
             ),
           ),
         ),

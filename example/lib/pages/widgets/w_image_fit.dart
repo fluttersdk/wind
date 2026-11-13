@@ -12,14 +12,12 @@ class WImageFitExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Object Fit and Position',
-      description:
-          'object-{cover|contain|fill|none|scale-down} controls how the image scales inside its container, object-{top|left|...} decides which part of it stays in view. Same source, different modes.',
+      description: 'object-{cover|contain|fill|none|scale-down} controls how the image scales inside its container, object-{top|left|...} decides which part of it stays in view. Same source, different modes.',
       gradient: 'from-teal-500 to-emerald-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each tile applies a different object-{fit} to the same 256×160 container.',
+          description: 'Each tile applies a different object-{fit} to the same 256×160 container.',
           child: WDiv(
             className: 'grid grid-cols-1 sm:grid-cols-2 gap-3',
             children: const [
@@ -32,8 +30,7 @@ class WImageFitExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Object Position',
-          description:
-              'With object-cover the crop is centred by default. object-top keeps the upper part of a backdrop (faces, skylines); object-{left|right|bottom} and the four corners move the crop the same way.',
+          description: 'With object-cover the crop is centred by default. object-top keeps the upper part of a backdrop (faces, skylines); object-{left|right|bottom} and the four corners move the crop the same way.',
           child: WDiv(
             className: 'grid grid-cols-1 sm:grid-cols-3 gap-3',
             children: const [
@@ -104,10 +101,7 @@ class _FitTile extends StatelessWidget {
         WDiv(
           className:
               'h-40 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700',
-          child: WImage(
-            src: _photoUrl,
-            className: 'w-full h-full $fit',
-          ),
+          child: WImage(src: _photoUrl, className: 'w-full h-full $fit'),
         ),
       ],
     );
@@ -129,10 +123,14 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-teal-700 dark:text-teal-400'),
-        WText(maps,
-            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-teal-700 dark:text-teal-400',
+        ),
+        WText(
+          maps,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }

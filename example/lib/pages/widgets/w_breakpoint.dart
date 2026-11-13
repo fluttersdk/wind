@@ -10,19 +10,19 @@ class WBreakpointExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WBreakpoint',
-      description:
-          'Builder-per-breakpoint widget for structural switches. Use only when widget TYPE or child COUNT differs per breakpoint; className prefixes cover styling differences.',
+      description: 'Builder-per-breakpoint widget for structural switches. Use only when widget TYPE or child COUNT differs per breakpoint; className prefixes cover styling differences.',
       gradient: 'from-cyan-500 to-blue-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'A different WidgetBuilder runs per breakpoint. base is required; sm/md/lg/xl are optional fallbacks.',
+          description: 'A different WidgetBuilder runs per breakpoint. base is required; sm/md/lg/xl are optional fallbacks.',
           child: WBreakpoint(
             base: (_) => WDiv(
               className: 'p-4 rounded-lg bg-red-500',
-              child: const WText('base (mobile)',
-                  className: 'text-white font-bold'),
+              child: const WText(
+                'base (mobile)',
+                className: 'text-white font-bold',
+              ),
             ),
             md: (_) => WDiv(
               className: 'p-4 rounded-lg bg-amber-500',
@@ -40,8 +40,7 @@ class WBreakpointExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Structural Switch',
-          description:
-              'Mobile uses a stacked Column; md+ uses a 3-column grid. Widget TYPES differ, so WBreakpoint is the right call.',
+          description: 'Mobile uses a stacked Column; md+ uses a 3-column grid. Widget TYPES differ, so WBreakpoint is the right call.',
           child: WBreakpoint(
             base: (_) => WDiv(
               className: 'flex flex-col gap-3',
@@ -63,8 +62,7 @@ class WBreakpointExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'When NOT to Use',
-          description:
-              'If only styles differ between breakpoints, className prefixes are simpler.',
+          description: 'If only styles differ between breakpoints, className prefixes are simpler.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -85,8 +83,7 @@ class WBreakpointExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Resolution Order',
-          description:
-              'Picks the highest defined builder at or below the active breakpoint. Falls back to base when nothing matches.',
+          description: 'Picks the highest defined builder at or below the active breakpoint. Falls back to base when nothing matches.',
           child: WDiv(
             className: '''
               p-4 rounded-lg font-mono text-xs

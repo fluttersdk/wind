@@ -20,14 +20,12 @@ class _WFormCheckboxExamplePageState extends State<WFormCheckboxExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WFormCheckbox',
-      description:
-          'FormField-wrapped WCheckbox. validator receives the bool value; error: prefix activates on failure.',
+      description: 'FormField-wrapped WCheckbox. validator receives the bool value; error: prefix activates on failure.',
       gradient: 'from-emerald-500 to-green-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Required terms checkbox. Submitting without checking shows the error message.',
+          description: 'Required terms checkbox. Submitting without checking shows the error message.',
           child: Form(
             key: _formKey,
             child: WDiv(
@@ -61,8 +59,10 @@ class _WFormCheckboxExamplePageState extends State<WFormCheckboxExamplePage> {
                     bg-emerald-600 hover:bg-emerald-700
                     text-white px-4 py-2 rounded-lg self-start
                   ''',
-                  child: const WText('Submit',
-                      className: 'text-white font-medium'),
+                  child: const WText(
+                    'Submit',
+                    className: 'text-white font-medium',
+                  ),
                 ),
               ],
             ),
@@ -70,8 +70,7 @@ class _WFormCheckboxExamplePageState extends State<WFormCheckboxExamplePage> {
         ),
         ExampleSection(
           title: 'Custom Icon + Colors',
-          description:
-              'checkIcon swaps the default tick. iconClassName styles the icon itself.',
+          description: 'checkIcon swaps the default tick. iconClassName styles the icon itself.',
           child: WFormCheckbox(
             value: _newsletter,
             onChanged: (v) => setState(() => _newsletter = v),

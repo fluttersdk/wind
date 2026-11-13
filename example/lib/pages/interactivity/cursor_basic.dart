@@ -36,7 +36,8 @@ class CursorBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Interaction Cursors',
-          description: 'The everyday set: pointer, text, wait, progress, help, '
+          description:
+              'The everyday set: pointer, text, wait, progress, help, '
               'not-allowed, none.',
           child: WDiv(
             className: 'wrap gap-3',
@@ -103,7 +104,8 @@ class _CursorTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WDiv(
-      className: '''
+      className:
+          '''
         $cls
         px-4 py-3 rounded-lg
         border border-slate-200 dark:border-slate-700

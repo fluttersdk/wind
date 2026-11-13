@@ -10,14 +10,12 @@ class GridResponsiveExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Responsive Grid',
-      description:
-          'Prefix grid-cols-{n} with breakpoint modifiers to switch the column count per screen size.',
+      description: 'Prefix grid-cols-{n} with breakpoint modifiers to switch the column count per screen size.',
       gradient: 'from-green-500 to-teal-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              '1 column on mobile, 3 on md+, 6 on lg+. The same children automatically reflow.',
+          description: '1 column on mobile, 3 on md+, 6 on lg+. The same children automatically reflow.',
           child: WDiv(
             className: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3',
             children: List.generate(
@@ -27,18 +25,14 @@ class GridResponsiveExamplePage extends StatelessWidget {
                   h-16 rounded-lg flex items-center justify-center
                   bg-green-500
                 ''',
-                child: WText(
-                  '${i + 1}',
-                  className: 'text-white font-bold',
-                ),
+                child: WText('${i + 1}', className: 'text-white font-bold'),
               ),
             ),
           ),
         ),
         ExampleSection(
           title: 'Card Grid',
-          description:
-              'A common content layout: 1 column on phones, 2 on tablets, 3 on desktops, 4 on large screens.',
+          description: 'A common content layout: 1 column on phones, 2 on tablets, 3 on desktops, 4 on large screens.',
           child: WDiv(
             className: '''
               grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4
@@ -81,10 +75,16 @@ class GridResponsiveExamplePage extends StatelessWidget {
             className: 'flex flex-col gap-2',
             children: const [
               _CascadeRow(
-                  label: 'grid-cols-2', cols: 2, color: 'bg-emerald-500'),
+                label: 'grid-cols-2',
+                cols: 2,
+                color: 'bg-emerald-500',
+              ),
               _CascadeRow(label: 'grid-cols-4', cols: 4, color: 'bg-teal-500'),
               _CascadeRow(
-                  label: 'grid-cols-12', cols: 12, color: 'bg-cyan-500'),
+                label: 'grid-cols-12',
+                cols: 12,
+                color: 'bg-cyan-500',
+              ),
             ],
           ),
         ),

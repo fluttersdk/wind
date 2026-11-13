@@ -10,14 +10,12 @@ class TextOverflowExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Text Overflow',
-      description:
-          'Control what happens when text outgrows its container. truncate ends in ellipsis. line-clamp-{n} caps a paragraph at n lines.',
+      description: 'Control what happens when text outgrows its container. truncate ends in ellipsis. line-clamp-{n} caps a paragraph at n lines.',
       gradient: 'from-amber-500 to-yellow-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'truncate is the most common: single-line, no wrap, ellipsis. line-clamp limits to n lines.',
+          description: 'truncate is the most common: single-line, no wrap, ellipsis. line-clamp limits to n lines.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
@@ -48,15 +46,9 @@ class TextOverflowExamplePage extends StatelessWidget {
                 cls: 'truncate',
                 desc: 'maxLines 1 + softWrap false + ellipsis',
               ),
-              _RefRow(
-                cls: 'text-ellipsis',
-                desc: 'TextOverflow.ellipsis',
-              ),
+              _RefRow(cls: 'text-ellipsis', desc: 'TextOverflow.ellipsis'),
               _RefRow(cls: 'text-clip', desc: 'TextOverflow.clip'),
-              _RefRow(
-                cls: 'line-clamp-{n}',
-                desc: 'maxLines n + ellipsis',
-              ),
+              _RefRow(cls: 'line-clamp-{n}', desc: 'maxLines n + ellipsis'),
               _RefRow(
                 cls: 'line-clamp-none',
                 desc: 'maxLines: null (unlimited)',
@@ -66,12 +58,10 @@ class TextOverflowExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Responsive Line Clamp',
-          description:
-              '2 lines on mobile, 4 lines on tablet, unlimited on desktop. The reader sees a teaser on small screens and the full body on large ones.',
+          description: '2 lines on mobile, 4 lines on tablet, unlimited on desktop. The reader sees a teaser on small screens and the full body on large ones.',
           child: const WText(
             'Responsive line clamping changes the maxLines value across breakpoints. The same paragraph displays a short teaser on a phone, a medium summary on a tablet, and the full text on a desktop. Try resizing the window to walk through every stage.',
-            className:
-                'line-clamp-2 md:line-clamp-4 lg:line-clamp-none text-slate-900 dark:text-white',
+            className: 'line-clamp-2 md:line-clamp-4 lg:line-clamp-none text-slate-900 dark:text-white',
           ),
         ),
       ],
@@ -94,8 +84,10 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-amber-700 dark:text-amber-400'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-amber-700 dark:text-amber-400',
+        ),
         WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );

@@ -10,14 +10,12 @@ class RingBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Ring',
-      description:
-          'ring-{width} adds an outline that does NOT consume layout space. Perfect for focus indicators and highlights.',
+      description: 'ring-{width} adds an outline that does NOT consume layout space. Perfect for focus indicators and highlights.',
       gradient: 'from-amber-500 to-yellow-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each tile applies a different ring-{width}. Default ring is 3px and blue-500.',
+          description: 'Each tile applies a different ring-{width}. Default ring is 3px and blue-500.',
           child: WDiv(
             className: 'wrap gap-6 py-4',
             children: const [
@@ -32,8 +30,7 @@ class RingBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Ring Offset',
-          description:
-              'ring-offset-{N} adds a transparent gap between the element and the ring.',
+          description: 'ring-offset-{N} adds a transparent gap between the element and the ring.',
           child: WDiv(
             className: 'wrap gap-6 py-4',
             children: const [
@@ -43,21 +40,18 @@ class RingBasicExamplePage extends StatelessWidget {
               ),
               _RingTile(
                 label: 'ring-2 ring-offset-2',
-                cls:
-                    'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900',
+                cls: 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900',
               ),
               _RingTile(
                 label: 'ring-2 ring-offset-4',
-                cls:
-                    'ring-2 ring-offset-4 ring-offset-white dark:ring-offset-slate-900',
+                cls: 'ring-2 ring-offset-4 ring-offset-white dark:ring-offset-slate-900',
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Ring Inset',
-          description:
-              'ring-inset renders the ring INSIDE the element instead of outside.',
+          description: 'ring-inset renders the ring INSIDE the element instead of outside.',
           child: WDiv(
             className: 'flex justify-center py-4',
             child: WDiv(
@@ -92,7 +86,8 @@ class _RingTile extends StatelessWidget {
       className: 'flex flex-col gap-2 items-center',
       children: [
         WDiv(
-          className: '''
+          className:
+              '''
             w-20 h-20 rounded-lg
             bg-amber-200 dark:bg-amber-900/40
             $cls

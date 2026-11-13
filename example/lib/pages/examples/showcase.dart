@@ -12,19 +12,16 @@ class ShowcaseExamplePage extends StatelessWidget {
       className:
           'flex items-center justify-center w-full h-full overflow-y-auto p-4',
       child: WDiv(
-        className:
-            'flex-1 w-full max-w-sm mx-auto rounded-2xl shadow-2xl bg-gradient-to-br from-slate-900 to-slate-800',
+        className: 'flex-1 w-full max-w-sm mx-auto rounded-2xl shadow-2xl bg-gradient-to-br from-slate-900 to-slate-800',
         children: [
           // Header with gradient accent
           WDiv(
-            className:
-                'w-full p-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-2xl',
+            className: 'w-full p-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-2xl',
             child: WDiv(
               className: 'flex items-center gap-4',
               children: [
                 WDiv(
-                  className:
-                      'w-14 h-14 rounded-full bg-white/20 flex items-center justify-center',
+                  className: 'w-14 h-14 rounded-full bg-white/20 flex items-center justify-center',
                   child: WIcon(
                     Icons.rocket_launch_rounded,
                     className: 'text-white text-2xl',

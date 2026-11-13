@@ -10,14 +10,12 @@ class ShadowsBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Box Shadow',
-      description:
-          'shadow-{size} applies one of six built-in shadow scales. shadow-none removes any inherited shadow.',
+      description: 'shadow-{size} applies one of six built-in shadow scales. shadow-none removes any inherited shadow.',
       gradient: 'from-slate-700 to-slate-900',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each tile applies a different shadow size. Higher sizes = larger blur.',
+          description: 'Each tile applies a different shadow size. Higher sizes = larger blur.',
           child: WDiv(
             className: 'wrap gap-6 py-4',
             children: const [
@@ -48,8 +46,7 @@ class ShadowsBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Responsive Shadows',
-          description:
-              'Combine with breakpoint prefixes to scale shadow with screen size.',
+          description: 'Combine with breakpoint prefixes to scale shadow with screen size.',
           child: WDiv(
             className: 'flex justify-center py-6',
             child: WDiv(
@@ -61,8 +58,7 @@ class ShadowsBasicExamplePage extends StatelessWidget {
               ''',
               child: const WText(
                 'sm: small\nmd: large\nxl: extreme',
-                className:
-                    'font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-pre text-center',
+                className: 'font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-pre text-center',
               ),
             ),
           ),
@@ -84,7 +80,8 @@ class _ShadowTile extends StatelessWidget {
       className: 'flex flex-col gap-2 items-center',
       children: [
         WDiv(
-          className: '''
+          className:
+              '''
             w-20 h-20 rounded-lg
             bg-white dark:bg-slate-800
             $cls
@@ -114,10 +111,14 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-slate-700 dark:text-slate-300'),
-        WText(blur,
-            className: 'font-mono text-sm text-slate-500 dark:text-slate-400'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-slate-700 dark:text-slate-300',
+        ),
+        WText(
+          blur,
+          className: 'font-mono text-sm text-slate-500 dark:text-slate-400',
+        ),
       ],
     );
   }

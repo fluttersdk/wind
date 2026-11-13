@@ -10,14 +10,12 @@ class OverflowBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Overflow',
-      description:
-          'Control what happens when content exceeds the container bounds: clip, scroll, or spill.',
+      description: 'Control what happens when content exceeds the container bounds: clip, scroll, or spill.',
       gradient: 'from-purple-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Four keywords cover the bulk of overflow behavior. Pair with w-* / h-* to make the container constrain the content.',
+          description: 'Four keywords cover the bulk of overflow behavior. Pair with w-* / h-* to make the container constrain the content.',
           child: WDiv(
             className: 'grid grid-cols-1 sm:grid-cols-2 gap-4',
             children: [
@@ -34,8 +32,7 @@ class OverflowBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Scroll',
-          description:
-              'overflow-scroll wraps the subtree in a SingleChildScrollView. Scroll bars stay even when content fits.',
+          description: 'overflow-scroll wraps the subtree in a SingleChildScrollView. Scroll bars stay even when content fits.',
           child: WDiv(
             className: '''
               overflow-y-scroll h-40 p-4 rounded-lg
@@ -58,8 +55,7 @@ class OverflowBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Auto',
-          description:
-              'overflow-auto enables scrolling only when content actually overflows. Below max-h-48 caps the height.',
+          description: 'overflow-auto enables scrolling only when content actually overflows. Below max-h-48 caps the height.',
           child: WDiv(
             className: '''
               overflow-y-auto max-h-48 p-4 rounded-lg
@@ -125,14 +121,13 @@ class _OverflowBox extends StatelessWidget {
           className: 'font-mono text-sm text-slate-600 dark:text-slate-400',
         ),
         WDiv(
-          className: '''
+          className:
+              '''
             $overflowClass w-32 h-32 rounded-lg
             bg-white dark:bg-slate-800
             border border-slate-200 dark:border-slate-700
           ''',
-          child: WDiv(
-            className: 'w-48 h-48 bg-purple-500 rounded-lg',
-          ),
+          child: WDiv(className: 'w-48 h-48 bg-purple-500 rounded-lg'),
         ),
       ],
     );
@@ -144,11 +139,7 @@ class _RefRow extends StatelessWidget {
   final String maps;
   final String body;
 
-  const _RefRow({
-    required this.cls,
-    required this.maps,
-    required this.body,
-  });
+  const _RefRow({required this.cls, required this.maps, required this.body});
 
   @override
   Widget build(BuildContext context) {

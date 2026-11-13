@@ -56,14 +56,12 @@ class _DatePickerDatetimeExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WDatePicker · dateTime',
-      description:
-          'WDatePickerMode.dateTime keeps the time of day. The tapped day is composed with a stepped time row and emitted as one local DateTime, where single and range modes strike everything to midnight.',
+      description: 'WDatePickerMode.dateTime keeps the time of day. The tapped day is composed with a stepped time row and emitted as one local DateTime, where single and range modes strike everything to midnight.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'The popover stays open after a day tap: the time row below the calendar is the second half of the selection, and the confirm control closes it. onChanged fires on every day tap and every step.',
+          description: 'The popover stays open after a day tap: the time row below the calendar is the second half of the selection, and the confirm control closes it. onChanged fires on every day tap and every step.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: [
@@ -83,8 +81,7 @@ class _DatePickerDatetimeExamplePageState
         ),
         ExampleSection(
           title: 'Minute Step',
-          description:
-              'minuteStep sets how far one press of the minute spinner moves. 15 gives quarter-hour booking slots; the default is 5.',
+          description: 'minuteStep sets how far one press of the minute spinner moves. 15 gives quarter-hour booking slots; the default is 5.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: [
@@ -105,8 +102,7 @@ class _DatePickerDatetimeExamplePageState
         ),
         ExampleSection(
           title: 'Row Labels and Display Format',
-          description:
-              'timeLabel names the row, doneLabel names the confirm control, and displayFormat owns the whole trigger text (including the clock) once you provide it.',
+          description: 'timeLabel names the row, doneLabel names the confirm control, and displayFormat owns the whole trigger text (including the clock) once you provide it.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: [
@@ -131,8 +127,7 @@ class _DatePickerDatetimeExamplePageState
         ),
         ExampleSection(
           title: 'Instant-Level Bounds',
-          description:
-              'minDate and maxDate are compared on the full instant here, not on the day. A step that would leave the window renders greyed out, and a day tap that would land outside it is pulled back to the bound.',
+          description: 'minDate and maxDate are compared on the full instant here, not on the day. A step that would leave the window renders greyed out, and a day tap that would land outside it is pulled back to the bound.',
           child: WDiv(
             className: 'flex flex-col gap-4',
             children: [
@@ -141,8 +136,7 @@ class _DatePickerDatetimeExamplePageState
                 children: [
                   WText(
                     'Maintenance window · start',
-                    className:
-                        'text-xs font-medium uppercase text-slate-500 dark:text-slate-400',
+                    className: 'text-xs font-medium uppercase text-slate-500 dark:text-slate-400',
                   ),
                   WDatePicker(
                     mode: WDatePickerMode.dateTime,
@@ -168,8 +162,7 @@ class _DatePickerDatetimeExamplePageState
                 children: [
                   WText(
                     'Maintenance window · end',
-                    className:
-                        'text-xs font-medium uppercase text-slate-500 dark:text-slate-400',
+                    className: 'text-xs font-medium uppercase text-slate-500 dark:text-slate-400',
                   ),
                   WDatePicker(
                     mode: WDatePickerMode.dateTime,
@@ -185,17 +178,13 @@ class _DatePickerDatetimeExamplePageState
                   ),
                 ],
               ),
-              WText(
-                'Window length: $_windowLength',
-                className: _readoutCls,
-              ),
+              WText('Window length: $_windowLength', className: _readoutCls),
             ],
           ),
         ),
         ExampleSection(
           title: 'Inside a Form',
-          description:
-              'WFormDatePicker forwards mode, minuteStep, timeLabel and doneLabel unchanged, and the FormField holds the full instant, so a validator can compare times of day.',
+          description: 'WFormDatePicker forwards mode, minuteStep, timeLabel and doneLabel unchanged, and the FormField holds the full instant, so a validator can compare times of day.',
           child: Form(
             child: WFormDatePicker(
               mode: WDatePickerMode.dateTime,
@@ -205,7 +194,8 @@ class _DatePickerDatetimeExamplePageState
               timeLabel: 'Time',
               doneLabel: 'Confirm',
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              className: '''
+              className:
+                  '''
                 $_triggerCls
                 error:border-red-500 dark:error:border-red-400
               ''',

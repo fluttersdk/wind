@@ -46,8 +46,7 @@ class _WindAnimationWrapperBasicExamplePageState
           ),
           _buildSection(
             title: 'Programmatic switching',
-            description:
-                'Change animationType at runtime without restarting the widget.',
+            description: 'Change animationType at runtime without restarting the widget.',
             children: [_buildSwitcher()],
           ),
           _buildSection(
@@ -152,9 +151,7 @@ class _WindAnimationWrapperBasicExamplePageState
             top: 2,
             child: WindAnimationWrapper(
               animationType: WindAnimationType.ping,
-              child: WDiv(
-                className: 'w-3 h-3 $badgeClassName rounded-full',
-              ),
+              child: WDiv(className: 'w-3 h-3 $badgeClassName rounded-full'),
             ),
           ),
         ],
@@ -253,8 +250,7 @@ class _WindAnimationWrapperBasicExamplePageState
           }).toList(),
         ),
         WDiv(
-          className:
-              'flex items-center justify-center h-20 rounded-lg bg-gray-50 dark:bg-gray-800',
+          className: 'flex items-center justify-center h-20 rounded-lg bg-gray-50 dark:bg-gray-800',
           child: WindAnimationWrapper(
             animationType: _selectedType,
             child: const WIcon(

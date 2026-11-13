@@ -35,14 +35,12 @@ class _FormDatePickerRangeExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Form Date Range',
-      description:
-          'mode: WDatePickerMode.range. Validator sees the range start; for length-based rules drive validation from onRangeChanged.',
+      description: 'mode: WDatePickerMode.range. Validator sees the range start; for length-based rules drive validation from onRangeChanged.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Trip date range as a required field. The validator simply checks for a non-null start.',
+          description: 'Trip date range as a required field. The validator simply checks for a non-null start.',
           child: Form(
             key: _formKey,
             child: WDiv(
@@ -74,8 +72,10 @@ class _FormDatePickerRangeExamplePageState
                     bg-rose-600 hover:bg-rose-700
                     text-white px-4 py-2 rounded-lg self-start
                   ''',
-                  child: const WText('Submit',
-                      className: 'text-white font-medium'),
+                  child: const WText(
+                    'Submit',
+                    className: 'text-white font-medium',
+                  ),
                 ),
                 WText(
                   'Range: ${_formatRange(_tripRange)}',
@@ -93,8 +93,7 @@ class _FormDatePickerRangeExamplePageState
         ),
         ExampleSection(
           title: 'Minimum Stay (3 nights)',
-          description:
-              'Custom rule that auto-validates on interaction. Length is derived from onRangeChanged state, not from the validator argument.',
+          description: 'Custom rule that auto-validates on interaction. Length is derived from onRangeChanged state, not from the validator argument.',
           child: _MinStayDemo(triggerCls: _triggerCls),
         ),
       ],

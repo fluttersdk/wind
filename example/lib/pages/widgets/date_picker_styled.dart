@@ -21,14 +21,12 @@ class _DatePickerStyledExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Styling Variants',
-      description:
-          'className styles only the trigger. State prefixes (hover/focus/open/selected/disabled) compose freely.',
+      description: 'className styles only the trigger. State prefixes (hover/focus/open/selected/disabled) compose freely.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Ring Focus Variant',
-          description:
-              'focus: variant adds ring + tinted border. selected: keeps the active state visible.',
+          description: 'focus: variant adds ring + tinted border. selected: keeps the active state visible.',
           child: WDatePicker(
             value: _ring,
             onChanged: (d) => setState(() => _ring = d),
@@ -45,8 +43,7 @@ class _DatePickerStyledExamplePageState
         ),
         ExampleSection(
           title: 'Compact Inline',
-          description:
-              'Small px / py + text-sm packs the trigger into a tight inline pill.',
+          description: 'Small px / py + text-sm packs the trigger into a tight inline pill.',
           child: WDatePicker(
             value: _compact,
             onChanged: (d) => setState(() => _compact = d),
@@ -61,8 +58,7 @@ class _DatePickerStyledExamplePageState
         ),
         ExampleSection(
           title: 'Borderless Shadow',
-          description:
-              'Skip the border entirely; use shadow-* to delineate the trigger.',
+          description: 'Skip the border entirely; use shadow-* to delineate the trigger.',
           child: WDatePicker(
             value: _shadow,
             onChanged: (d) => setState(() => _shadow = d),

@@ -10,8 +10,7 @@ class WTextTransformExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WText Alignment & Transform',
-      description:
-          'text-{align} for horizontal alignment. uppercase / lowercase / capitalize / normal-case for case transforms. Apply directly via className.',
+      description: 'text-{align} for horizontal alignment. uppercase / lowercase / capitalize / normal-case for case transforms. Apply directly via className.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(
@@ -22,8 +21,7 @@ class WTextTransformExamplePage extends StatelessWidget {
             children: const [
               WText(
                 'centered uppercase text',
-                className:
-                    'text-center uppercase text-lg text-slate-900 dark:text-white',
+                className: 'text-center uppercase text-lg text-slate-900 dark:text-white',
               ),
               WText(
                 'capitalize me please',
@@ -47,23 +45,26 @@ class WTextTransformExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Transform',
-          description:
-              'Four named case transforms. normal-case resets an ancestor transform.',
+          description: 'Four named case transforms. normal-case resets an ancestor transform.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
-              WText('uppercase example',
-                  className:
-                      'uppercase text-lg text-slate-900 dark:text-white'),
-              WText('LOWERCASE EXAMPLE',
-                  className:
-                      'lowercase text-lg text-slate-900 dark:text-white'),
-              WText('capitalize each word',
-                  className:
-                      'capitalize text-lg text-slate-900 dark:text-white'),
-              WText('Mixed Original Case',
-                  className:
-                      'normal-case text-lg text-slate-900 dark:text-white'),
+              WText(
+                'uppercase example',
+                className: 'uppercase text-lg text-slate-900 dark:text-white',
+              ),
+              WText(
+                'LOWERCASE EXAMPLE',
+                className: 'lowercase text-lg text-slate-900 dark:text-white',
+              ),
+              WText(
+                'capitalize each word',
+                className: 'capitalize text-lg text-slate-900 dark:text-white',
+              ),
+              WText(
+                'Mixed Original Case',
+                className: 'normal-case text-lg text-slate-900 dark:text-white',
+              ),
             ],
           ),
         ),
