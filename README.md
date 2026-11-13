@@ -256,7 +256,7 @@ WDynamic(
 | `actions:` / `controller:` | Named callbacks for `onTap` and friends, and the shared state the value widgets bind to by `id`. |
 | `maxDepth:` / `onUnknownWidget:` / `onError:` | The recursion limit (default 50) and the stand-ins for a blocked type or a failed build. |
 
-Failure modes: a type outside the allowlist is not built, and `className` and image `src` values in untrusted JSON can load network and file images, so sanitise them or deny `WImage`. See the [security policy](SECURITY.md).
+Failure modes: a type outside the allowlist is not built, and `className` and image `src` values in untrusted JSON can load network and file images. A `className` such as `bg-[/path/to/file.png]` reads a local file on any allowed widget, `WDiv` included, and `WImage` fetches its `src` from the network, so denying `WImage` stops only the `src` fetch: sanitise every `className` and `src` from untrusted JSON either way. See the [security policy](SECURITY.md).
 
 ## Forms
 
