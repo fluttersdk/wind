@@ -2,10 +2,10 @@
 name: wind-ui
 description: "Tailwind-syntax className UI with wind_kit: W-widgets, dark: pairs, stacked prefixes, WindRecipe and WDynamic."
 when_to_use: "Use when writing, editing or auditing Flutter UI in an app that uses wind_kit: a className, W-widget, theme or overflow."
-version: 2.30.0
+version: 2.31.0
 ---
 
-<!-- wind_kit 1.12.x | Skill v2.30.0 (2026-11-13) -->
+<!-- wind_kit 1.12.x | Skill v2.31.0 (2026-11-13) -->
 
 # Wind UI
 
@@ -18,10 +18,10 @@ This skill assumes the host app already depends on `wind_kit` and has `WindTheme
 ## Install
 
 ```bash
-flutter pub add wind_kit
+flutter pub add wind_kit material_ui
 ```
 
-Import `package:wind_kit/wind_kit.dart` (the only barrel) and wrap the app once with `WindTheme(data: WindThemeData(), builder: (context, controller) => MaterialApp(theme: controller.toThemeData(), ...))`. The full wiring, with the debug resolver, is in [§13](#13-quick-install).
+Import `package:wind_kit/wind_kit.dart` (the only barrel) and `package:material_ui/material_ui.dart` for `MaterialApp` (not `package:flutter/material.dart`), and wrap the app once with `WindTheme(data: WindThemeData(), builder: (context, controller) => MaterialApp(theme: controller.toThemeData(), ...))`. The full wiring, with the debug resolver, is in [§13](#13-quick-install).
 
 ## 0. Before writing UI in this project
 
@@ -429,12 +429,13 @@ This skill is written for Flutter apps that already depend on `wind_kit`, so thi
 # pubspec.yaml
 dependencies:
   wind_kit: ^1.12.0
+  material_ui: ^1.11.0
 ```
 
 ```dart
 // lib/main.dart
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 void main() {

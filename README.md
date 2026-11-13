@@ -29,12 +29,12 @@
 | Fact | Value |
 |---|---|
 | Package | [`wind_kit`](https://pub.dev/packages/wind_kit) |
-| Install | `flutter pub add wind_kit` |
+| Install | `flutter pub add wind_kit material_ui` |
 | Import | `package:wind_kit/wind_kit.dart` (the only barrel) |
 | Entry points | `WindTheme` and `WindThemeData`, the W-prefix widgets (`WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, ...), `WindRecipe`, `WDynamic` |
 | Platforms | Android, iOS, web, macOS, Windows and Linux; web builds compile to WebAssembly |
-| Requires | Dart >=3.4, Flutter >=3.27 |
-| Dependencies | `flutter_svg`, `wind_kit_diagnostics_contracts` |
+| Requires | Dart >=3.13, Flutter >=3.47 |
+| Dependencies | `flutter_svg`, `material_ui`, `wind_kit_diagnostics_contracts` |
 | License | MIT |
 
 ## Why wind_kit
@@ -80,13 +80,15 @@ wind_kit is a styling engine, not a widget catalogue. It composes with whatever 
 ## Install
 
 ```bash
-flutter pub add wind_kit
+flutter pub add wind_kit material_ui
 ```
+
+Apps import `package:material_ui/material_ui.dart` for `MaterialApp`, not `package:flutter/material.dart`.
 
 Wrap the app once, then style everything with strings:
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 void main() => runApp(const App());

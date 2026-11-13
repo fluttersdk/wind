@@ -14,7 +14,7 @@ Each page demonstrates ONE widget or ONE concept thoroughly. Files are reference
 ## Shape
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/wind_kit.dart';
 
 class FooBasicExamplePage extends StatefulWidget {
