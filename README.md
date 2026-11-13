@@ -309,7 +309,7 @@ It is also distributed through the [skill registry](https://github.com/anilcanca
 
 ## Dependencies
 
-`flutter_svg` for `WSvg` and [`wind_kit_diagnostics_contracts`](https://pub.dev/packages/wind_kit_diagnostics_contracts), the neutral bridge through which debug tools read widget state without depending on wind_kit. That is the whole runtime surface: no state management library, no router, no mocking library.
+[`material_ui`](https://pub.dev/packages/material_ui) for the Material types the theme and the widgets build on, `flutter_svg` for `WSvg` and [`wind_kit_diagnostics_contracts`](https://pub.dev/packages/wind_kit_diagnostics_contracts), the neutral bridge through which debug tools read widget state without depending on wind_kit. That is the whole runtime surface: no state management library, no router, no mocking library.
 
 ## Links
 
