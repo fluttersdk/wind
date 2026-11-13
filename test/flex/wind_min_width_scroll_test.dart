@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/state/wind_min_width_scroll_scope.dart';
-import 'package:fluttersdk_wind/src/widgets/wind_min_width_scroll.dart';
+import 'package:wind_kit/src/state/wind_min_width_scroll_scope.dart';
+import 'package:wind_kit/src/widgets/wind_min_width_scroll.dart';
 
 /// WIND-4 min-width-stretch scroll: `WindMinWidthBox` sizes a `w-full` child to
 /// `max(viewportWidth, min-w-*)` when the scroll viewport width is known, and

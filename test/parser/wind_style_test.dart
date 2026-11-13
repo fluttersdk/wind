@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/parser/wind_style.dart';
+import 'package:wind_kit/src/parser/wind_style.dart';
 
 void main() {
   group('WindStyle.copyWith decoration handling', () {

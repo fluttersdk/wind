@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/utils/color_utils.dart';
+import 'package:wind_kit/src/utils/color_utils.dart';
 
 void main() {
   group('Color Opacity Utilities', () {

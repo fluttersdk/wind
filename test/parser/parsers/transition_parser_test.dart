@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
-import 'package:fluttersdk_wind/src/parser/parsers/transition_parser.dart';
+import 'package:wind_kit/wind_kit.dart';
+import 'package:wind_kit/src/parser/parsers/transition_parser.dart';
 
 WindContext createTestContext() {
   return WindContext(

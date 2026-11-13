@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../fluttersdk_wind.dart';
+import '../../wind_kit.dart';
 
 /// Renders a widget tree from JSON configuration with security controls and state management.
 ///

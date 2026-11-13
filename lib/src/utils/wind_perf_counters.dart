@@ -24,7 +24,7 @@ enum WindInheritedRead {
 ///
 /// `WindParser.parse` runs on every build of every W-widget, so these counters
 /// are OFF by default and every increment sits behind [enabled]: a disabled
-/// counter costs one static bool load and returns. A debug tool (dusk's
+/// counter costs one static bool load and returns. A debug tool (tapir's
 /// performance session, via `Wind.installPerfResolver()`) flips the flag on for
 /// the length of a measurement and reads the totals back out.
 ///
@@ -168,7 +168,7 @@ class WindPerfCounters {
   /// Zeroes every counter, leaving [enabled] alone.
   ///
   /// Public, unlike the recorders: a measurement session opens by zeroing the
-  /// counters from another package (`magic_devtools` assigns dusk's
+  /// counters from another package (`magic_devtools` assigns tapir's
   /// session-begin hook), so this is part of the cross-package contract rather
   /// than wind's own bookkeeping.
   ///

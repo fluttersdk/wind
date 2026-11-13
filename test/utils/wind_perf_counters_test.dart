@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
-import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
+import 'package:wind_kit/wind_kit.dart';
+import 'package:wind_kit_diagnostics_contracts/wind_kit_diagnostics_contracts.dart';
 
 /// Stands in for wind's own implementation to prove `installPerfResolver()`
 /// really returns early on a second call.
@@ -387,7 +387,7 @@ void main() {
       Wind.installPerfResolver();
       final Map<String, Object?> stats = WindDebugRegistry.currentPerf!.stats();
 
-      // The key set is the cross-repo contract fluttersdk_dusk reads; an extra
+      // The key set is the cross-repo contract tapir reads; an extra
       // or renamed key is a silently empty section in its report.
       expect(
         stats.keys.toList(),

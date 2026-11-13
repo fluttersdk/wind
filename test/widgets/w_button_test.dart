@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Helper to wrap widget in MaterialApp with WindTheme
 Widget wrapWithTheme(Widget child) {
@@ -98,7 +98,7 @@ void main() {
 
       // A disabled or loading button dropped its callbacks before reaching
       // WAnchor, which then took it for a styling wrapper and published no
-      // button node at all: screen readers and dusk lost the control.
+      // button node at all: screen readers and tapir lost the control.
       testWidgets('disabled button is a disabled button node with its label',
           (tester) async {
         final SemanticsHandle handle = tester.ensureSemantics();

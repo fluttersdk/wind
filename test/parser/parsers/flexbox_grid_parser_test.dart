@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/parser/parsers/flexbox_grid_parser.dart';
-import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
-import 'package:fluttersdk_wind/src/parser/wind_context.dart';
-import 'package:fluttersdk_wind/src/parser/wind_style.dart';
-import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
+import 'package:wind_kit/src/parser/parsers/flexbox_grid_parser.dart';
+import 'package:wind_kit/src/parser/wind_parser.dart';
+import 'package:wind_kit/src/parser/wind_context.dart';
+import 'package:wind_kit/src/parser/wind_style.dart';
+import 'package:wind_kit/src/theme/wind_theme_data.dart';
 
 // Helper function to create a WindContext for testing
 WindContext createTestContext({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// The trigger sits [top] pixels down an 800x600 surface, the shape of a
 /// player's control band a third of the way down a small desktop window.

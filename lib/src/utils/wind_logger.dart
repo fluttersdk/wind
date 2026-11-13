@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// A simple data class for the [WindLogger].
 class LogEntry {

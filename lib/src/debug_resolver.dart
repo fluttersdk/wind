@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
+import 'package:wind_kit_diagnostics_contracts/wind_kit_diagnostics_contracts.dart';
 
 import 'parser/wind_context.dart';
 import 'parser/wind_parser.dart';
@@ -12,7 +12,7 @@ import 'utils/wind_perf_counters.dart';
 /// Concrete WindDebugResolver wired into the registry at app boot
 /// via `Wind.installDebugResolver()`. Resolves up to 7 fields (5 always
 /// present, `bgColor` + `textColor` only when non-null) per the
-/// fluttersdk_wind_diagnostics_contracts v1 contract.
+/// wind_kit_diagnostics_contracts v1 contract.
 class WindDebugResolverImpl implements WindDebugResolver {
   const WindDebugResolverImpl();
 
@@ -87,7 +87,7 @@ class WindDebugResolverImpl implements WindDebugResolver {
 /// Formats a Color as 6-char RGB hex (alpha channel dropped, uppercase).
 ///
 /// Preserves the snapshot YAML hex format that downstream agent consumers
-/// (e.g. `fluttersdk_dusk`) parse.
+/// (e.g. `tapir`) parse.
 String _hexRgb(Color color) {
   final String hex = color.toARGB32().toRadixString(16).padLeft(8, '0');
   return hex.substring(2).toUpperCase();

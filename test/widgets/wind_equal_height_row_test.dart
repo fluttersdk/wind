@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/widgets/wind_equal_height_row.dart';
+import 'package:wind_kit/src/widgets/wind_equal_height_row.dart';
 
 Widget wrapWithTheme(Widget child, {double width = 600}) => MaterialApp(
       home: Scaffold(body: SizedBox(width: width, child: child)),

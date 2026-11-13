@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/parser/alias_expander.dart';
+import 'package:wind_kit/src/parser/alias_expander.dart';
 
 void main() {
   group('expandAliases', () {
