@@ -1,11 +1,11 @@
 name: Feature Request
-description: Suggest a new feature or enhancement for Wind UI
+description: Suggest a new feature or enhancement for wind_kit
 labels: ["pending triage", "enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Have an idea for Wind UI? We'd love to hear it!
+        Have an idea for wind_kit? We'd love to hear it!
 
   - type: textarea
     id: description

@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+*'
-  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,10 +16,38 @@ jobs:
   validate:
     name: Validate
     runs-on: ubuntu-latest
+    outputs:
+      notes: ${{ steps.notes.outputs.body }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
+
+      # pub.dev trusts every tag that matches the pattern, so a tag pushed from
+      # an unmerged branch would publish code that skipped the pull request and
+      # its checks. Release from the merge commit on master.
+      - name: Require the tag to sit on master
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
+            echo "::error::Tag $GITHUB_REF_NAME is not on master; tag the merge commit." >&2
+            exit 1
+          fi
+
+      # The tag, pubspec.yaml and the dartdoc source link must name one version,
+      # or pub.dev, the GitHub Release and the API reference's "view source"
+      # links would each carry a different one. The agent skill keeps its own
+      # version line, so it is not compared.
+      - name: Check version stamps
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          pubspec="$(awk '/^version:/ { print $2 }' pubspec.yaml)"
+          dartdoc="$(sed -n 's|.*/blob/\([^/]*\)/.*|\1|p' dartdoc_options.yaml | head -1)"
+          if [ "$TAG" != "$pubspec" ] || [ "$TAG" != "$dartdoc" ]; then
+            echo "::error::Version mismatch: tag $TAG, pubspec.yaml $pubspec, dartdoc_options.yaml $dartdoc." >&2
+            exit 1
+          fi
 
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
@@ -35,7 +62,13 @@ jobs:
         run: dart format --output=none --set-exit-if-changed lib/ test/ example/lib/
 
       - name: Analyze code
-        run: dart analyze lib/ test/ example/lib/
+        run: flutter analyze --no-fatal-infos
+
+      - name: Analyze the example
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter analyze --no-fatal-infos
 
       - name: Install lcov
         run: sudo apt-get update && sudo apt-get install -y lcov
@@ -44,7 +77,46 @@ jobs:
         run: ./tool/coverage.sh 90
 
       - name: Validate publish archive
-        run: dart pub publish --dry-run
+        run: flutter pub publish --dry-run
+
+      # pub.dev scores 160 points and a release that loses any of them stops
+      # here, before the irreversible publish. A repository URL that does not
+      # match the default branch's pubspec.yaml costs the 10 points of "valid
+      # pubspec"; an unreachable homepage only warns.
+      #
+      # Pinned to 0.23.19, the version pub.dev runs today, not the standard
+      # 0.23.13: 0.23.13 mis-evaluates flutter_svg's `dart.library.js_interop`
+      # conditional export and reports the package as web-incompatible, which
+      # costs 10 platform points and the `is:wasm-ready` tag, although
+      # `flutter build web --wasm` compiles it and pub.dev scores it 160/160.
+      - name: Require full pub.dev points (pana)
+        run: |
+          dart pub global activate pana 0.23.19
+          dart pub global run pana --no-warning --exit-code-threshold 0 .
+
+      # Runs before the irreversible publish: a tag without a `## [<version>]`
+      # section in CHANGELOG.md stops here instead of shipping a version with
+      # no GitHub Release.
+      - name: Extract changelog section
+        id: notes
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          notes="$(awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
+            flag && /^## / { exit }
+            flag && /^---$/ { next }
+            flag { print }
+          ' CHANGELOG.md)"
+          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
+            echo "::error::No CHANGELOG.md section found for $VERSION; refusing to publish a version without release notes." >&2
+            exit 1
+          fi
+          {
+            echo 'body<<CHANGELOG_EOF'
+            printf '%s\n' "$notes"
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
 
   publish:
     needs: validate
@@ -54,84 +126,41 @@ jobs:
 
   github-release:
     name: GitHub Release
-    needs: publish
-    if: startsWith(github.ref, 'refs/tags/')
+    needs: [validate, publish]
     runs-on: ubuntu-latest
     permissions:
       contents: write # Required to create the GitHub Release
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Extract changelog section
-        id: notes
-        env:
-          VERSION: ${{ github.ref_name }}
-        run: |
-          notes="$(awk -v ver="$VERSION" '
-            $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
-            flag && /^## / { exit }
-            flag { print }
-          ' CHANGELOG.md)"
-          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
-            echo "::error::No CHANGELOG.md section found for $VERSION; refusing to create a release with empty notes." >&2
-            exit 1
-          fi
-          {
-            echo 'body<<CHANGELOG_EOF'
-            printf '%s\n' "$notes"
-            echo 'CHANGELOG_EOF'
-          } >> "$GITHUB_OUTPUT"
-
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           VERSION: ${{ github.ref_name }}
-          NOTES: ${{ steps.notes.outputs.body }}
+          NOTES: ${{ needs.validate.outputs.notes }}
         run: |
-          PRERELEASE=""
           case "$VERSION" in
-            *-*) PRERELEASE="--prerelease" ;;
-            *) PRERELEASE="--latest" ;;
+            *-*) FLAG="--prerelease" ;;
+            *) FLAG="--latest" ;;
           esac
           gh release create "$VERSION" \
             --title "$VERSION" \
             --notes "$NOTES" \
             --verify-tag \
-            $PRERELEASE
+            "$FLAG"
 
-  # Called here rather than triggered by `release: [published]`, which is what
-  # dispatch-to-registry.yml used to declare. The release above is created with
-  # `GH_TOKEN: ${{ github.token }}`, and GitHub does not start workflow runs
-  # from events raised by GITHUB_TOKEN, so that trigger could never fire and
-  # never did: the 1.4.0 skill reached the registry only because it was
-  # dispatched by hand. Sequencing it after github-release also keeps the
-  # registry version tracking packages pub.dev actually accepted.
+  # Mirrors skills/wind-ui/ into the skill registry (anilcancakir/ai) after a
+  # stable release. Pre-releases are not mirrored, so a pre-release tag never
+  # reaches the consumers of `npx skills add anilcancakir/ai`. It runs only
+  # after the GitHub Release job, so the registry never gets a skill whose
+  # release failed. Called here and not triggered by `release: [published]`,
+  # because GitHub starts no workflow run from an event raised by GITHUB_TOKEN.
+  # The secrets are named, not inherited: the called workflow needs exactly these
+  # two, and this repo pins every action by SHA and runs zizmor over the result.
   registry:
     name: Sync skill to registry
     needs: github-release
-    # Stable releases only. The tag filter above is `[0-9]+.[0-9]+.[0-9]+*`, so
-    # `1.5.0-beta.1` matches it and this repo has shipped `1.0.0-alpha.*` tags
-    # before. The reason to skip is distribution, not a malformed version: the
-    # registry's `sync.yml` validates the upstream version as
-    # `^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.]+)?$` (a prerelease is explicitly
-    # allowed) and derives its own version by bumping its own manifest's patch
-    # number, so the string we send only reaches its release notes. What a sync
-    # does do is rsync `skills/wind-ui/` onto the registry's `main`, which is
-    # what `npx skills add fluttersdk/ai` serves. A beta tag would therefore
-    # hand beta skill content to every consumer, which is what a beta is meant
-    # not to do.
-    #
-    # A branch name carrying a dash cannot be caught by this: on a
-    # `workflow_dispatch` the `github-release` job is skipped by its own tag
-    # guard, and a dependant of a skipped job is skipped too, so `registry` only
-    # ever evaluates this on a tag push.
     if: ${{ !contains(github.ref_name, '-') }}
     uses: ./.github/workflows/dispatch-to-registry.yml
-    # Named rather than `secrets: inherit`: the called workflow needs exactly
-    # these two, and this repo pins every action by SHA and runs zizmor over
-    # the result, so handing it the whole secret store would be out of step.
     secrets:
       REGISTRY_BOT_APP_ID: ${{ secrets.REGISTRY_BOT_APP_ID }}
       REGISTRY_BOT_PRIVATE_KEY: ${{ secrets.REGISTRY_BOT_PRIVATE_KEY }}

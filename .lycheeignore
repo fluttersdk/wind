@@ -13,17 +13,18 @@
 ^https://github\.com/login
 
 # GitHub serves /stargazers as a 404 to unauthenticated clients. The page is
-# real, it just needs a session, so this is GitHub behavior and not link rot.
-^https://github\.com/fluttersdk/[a-z_]+/stargazers
+# real, it just needs a session, so this is GitHub behaviour and not link rot.
+^https://github\.com/anilcancakir/[a-z_]+/stargazers
+
+# The package is not on pub.dev yet; its pages answer 404 until the first release.
+# Added 2026-11-13: remove these lines once wind_kit 1.12.0 is published.
+^https://pub\.dev/packages/wind_kit(?:[/?#]|$)
+^https://pub\.dev/documentation/wind_kit/
 
 # The MCP server speaks JSON-RPC over POST: a GET (what lychee sends) is
 # answered with 405 Method Not Allowed, while POST returns 200. Reachability is
 # already proven by that 405, so checking it adds nothing.
-^https://mcp\.fluttersdk\.com
-
-# npmjs.com answers 403 to non-browser user agents. @fluttersdk/mcp is published
-# and resolvable through registry.npmjs.org; only the web page blocks bots.
-^https://www\.npmjs\.com/package/@fluttersdk/mcp(?:[/?#]|$)
+^https://mcp\.anilcancakir\.com
 
 # Placeholder hosts inside example code. Fenced blocks are already skipped by
 # lychee's markdown extractor, so this only catches samples written inline.
