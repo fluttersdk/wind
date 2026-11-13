@@ -130,7 +130,9 @@ int? wScreen(BuildContext context, String name) {
 bool wScreenIs(BuildContext context, String name) {
   // The size aspect only, so a keyboard inset does not rebuild the caller.
   final screenWidth = MediaQuery.sizeOf(context).width;
-  final breakpointValue = wScreen(context, name) ?? 0;
+  final breakpointValue = wScreen(context, name);
+
+  if (breakpointValue == null) return false;
 
   return screenWidth >= breakpointValue;
 }

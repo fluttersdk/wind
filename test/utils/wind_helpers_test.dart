@@ -300,9 +300,7 @@ void main() {
         expect(result, isA<String>());
       });
 
-      testWidgets('resolves the breakpoint at an exact width', (
-        tester,
-      ) async {
+      testWidgets('resolves the breakpoint at an exact width', (tester) async {
         String? result;
         await tester.pumpWidget(
           MediaQuery(

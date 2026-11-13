@@ -9,7 +9,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Changed
-- `wScreenIs` no longer guards against an unknown breakpoint name, and `wScreenCurrent` resolves an exact breakpoint width to that breakpoint.
+- `wScreenCurrent` resolves an exact breakpoint width to that breakpoint.
 
 ---
 
