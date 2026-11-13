@@ -1,5 +1,7 @@
 # Typography Helpers
 
+Read the theme's font sizes and weights from Dart with `wFontSize`, `wFontWeight` and their context extensions.
+
 - [Introduction](#introduction)
 - [Global Functions](#global-functions)
     - [wFontSize](#wfontsize)
@@ -99,7 +101,7 @@ return ListView(
 <a name="customizing-scales"></a>
 ## Customizing Scales
 
-You can override any part of the typography system when initializing your `WindTheme`. This ensures that your custom values are available through all the helper functions described above.
+You can override any part of the typography system when initialising your `WindTheme`. This ensures that your custom values are available through all the helper functions described above.
 
 ```dart
 WindTheme(

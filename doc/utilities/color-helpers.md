@@ -1,5 +1,7 @@
 # Color Helpers
 
+Resolve theme colours, hex values and opacity from Dart with `wColor` and the context helpers.
+
 - [Resolving Colors](#resolving-colors)
 - [Hex Colors](#hex-colors)
 - [Opacity Handling](#opacity-handling)
@@ -7,14 +9,14 @@
 - [Material Color Inversion](#material-color-inversion)
 - [Context Extensions](#context-extensions)
 
-Wind provides a set of utility functions and extensions to help you resolve and manipulate colors programmatically, staying consistent with your theme.
+Wind provides a set of utility functions and extensions to help you resolve and manipulate colours programmatically, staying consistent with your theme.
 
 <x-preview path="utilities/color_helpers_basic" size="md" source="example/lib/pages/utilities/color_helpers_basic.dart"></x-preview>
 
 <a name="resolving-colors"></a>
 ## Resolving Colors
 
-The `wColor` function is the primary way to resolve colors from the active `WindTheme`. It handles color names, shades, and even automatic dark mode overrides.
+The `wColor` function is the primary way to resolve colours from the active `WindTheme`. It handles colour names, shades, and even automatic dark mode overrides.
 
 ```dart
 Color? wColor(
@@ -28,7 +30,7 @@ Color? wColor(
 
 ### Basic Usage
 
-You can resolve a color by its name and shade:
+You can resolve a colour by its name and shade:
 
 ```dart
 // Resolves blue-500 from the theme
@@ -43,13 +45,14 @@ final danger = wColor(context, 'rose-500');
 
 ### Dark Mode Overrides
 
-You can specify a different color or shade to be used when the theme is in dark mode:
+You can specify a different colour or shade to be used when the theme is in dark mode. `darkColorName` takes a bare colour name, and the shade goes in `darkShade`; a name that carries a shade, such as `'slate-900'`, resolves to nothing in dark mode:
 
 ```dart
 final background = wColor(
   context,
   'slate-50',
-  darkColorName: 'slate-900',
+  darkColorName: 'slate',
+  darkShade: 900,
 );
 ```
 
@@ -77,11 +80,11 @@ Color hexToColor(String code)
 <a name="opacity-handling"></a>
 ## Opacity Handling
 
-Wind includes utilities for parsing Tailwind-style opacity modifiers and applying them to colors.
+Wind includes utilities for parsing Tailwind-style opacity modifiers and applying them to colours.
 
 ### Parsing Opacity
 
-The `parseColorOpacity` function splits a class string into the color part and its opacity factor.
+The `parseColorOpacity` function splits a class string into the colour part and its opacity factor.
 
 ```dart
 // Returns (colorPart: 'blue-500', opacity: 0.5)
@@ -134,7 +137,7 @@ final double ratio = contrastRatio(brandColor, Colors.white);
 <a name="material-color-inversion"></a>
 ## Material Color Inversion
 
-The `invertMaterialColor` utility is used by the theme engine to automatically generate dark mode variants by swapping shades (e.g., 50 ↔ 900, 100 ↔ 800).
+The `invertMaterialColor` utility is a standalone helper that returns a palette with its shades swapped (e.g., 50 ↔ 900, 100 ↔ 800). The theme engine does not call it, so dark mode variants come from the `dark:` pairs in your classes.
 
 ```dart
 MaterialColor invertMaterialColor(MaterialColor color)
@@ -143,11 +146,11 @@ MaterialColor invertMaterialColor(MaterialColor color)
 <a name="context-extensions"></a>
 ## Context Extensions
 
-For more ergonomic access, Wind extends `BuildContext` with several color-related shortcuts.
+For more ergonomic access, Wind extends `BuildContext` with several colour-related shortcuts.
 
 ### `context.windColors`
 
-Returns the full color map from the current `WindThemeData`.
+Returns the full colour map from the current `WindThemeData`.
 
 ```dart
 final redPalette = context.windColors['red'];

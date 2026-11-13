@@ -1,5 +1,7 @@
 # State Management & Interactive Styles
 
+Style hover, focus, disabled, loading and custom states with prefixed classes and the `states` prop.
+
 - [Introduction](#introduction)
 - [How It Works](#how-it-works)
 - [Built-in State Prefixes](#built-in-state-prefixes)
@@ -17,7 +19,7 @@
 
 Interactive styles allow you to define how your UI reacts to user input without managing complex state variables. Instead of nesting multiple `MouseRegion`, `GestureDetector`, and `Focus` widgets, Wind provides a declarative way to handle states directly in your `className` string.
 
-By using prefixes like `hover:`, `focus:`, and `active:`, you can build responsive, tactile interfaces that feel native to both web and mobile platforms.
+By using prefixes like `hover:`, `focus:` and `disabled:`, you can build responsive, tactile interfaces that feel native to both web and mobile platforms.
 
 <a name="how-it-works"></a>
 ## How It Works
@@ -31,15 +33,15 @@ Consider this basic button example:
 ```dart
 WButton(
   onTap: () => print('Action triggered'),
-  className: 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 p-4 rounded-lg duration-200',
+  className: 'bg-blue-500 hover:bg-blue-600 p-4 rounded-lg duration-200',
   child: WText('Save Changes', className: 'text-white'),
 )
 ```
 
-In this case, the background color transitions smoothly between shades based on the interaction state.
+In this case, the background colour transitions smoothly between shades based on the interaction state.
 
 > [!NOTE]
-> For state prefixes to work, the widget must be wrapped in an interactive component like `WAnchor`, `WButton`, or `WInput`. A standard `WDiv` is passive and will not trigger interaction states on its own.
+> For state prefixes to work, the widget must be wrapped in an interactive component like `WAnchor`, `WButton`, or `WInput`. `WDiv` wraps itself in a `WAnchor` when its className has `hover:`, `focus:` or `active:`; hover is per anchor and is not inherited by a nested `WDiv`.
 
 <a name="built-in-state-prefixes"></a>
 ## Built-in State Prefixes
@@ -48,8 +50,8 @@ Wind supports several interactive states out of the box. These are automatically
 
 - **hover**: Triggered when a pointer enters the widget bounds.
 - **focus**: Triggered when the widget receives keyboard or input focus.
-- **active**: Triggered while the widget is being pressed or tapped.
-- **disabled**: Triggered when the widget's interactivity is disabled (e.g., `onTap` is null).
+- **active**: Reserved. It is not wired to the pointer: it applies only when you pass `states: {'active'}`.
+- **disabled**: Active when `WButton(disabled: true)` or `WAnchor(isDisabled: true)`; a null `onTap` does not disable.
 
 <a name="quick-reference"></a>
 ## Quick Reference
@@ -58,8 +60,8 @@ Wind supports several interactive states out of the box. These are automatically
 |:-------|:--------|:-----------------|
 | `hover:` | Pointer entry | Changing background or elevation on desktop. |
 | `focus:` | Keyboard focus | Showing a ring or border on input fields. |
-| `active:` | Pointer press | Scaling down or darkening a button on tap. |
-| `disabled:` | Interactivity off | Reducing opacity or greying out actions. |
+| `active:` | `states: {'active'}` only | Press styling you drive yourself: track the press in your own state and pass `states: {'active'}`. |
+| `disabled:` | `disabled: true` / `isDisabled: true` | Reducing opacity or greying out actions. |
 
 <a name="interactive-widgets"></a>
 ## Interactive Widgets
@@ -77,7 +79,7 @@ WAnchor(
   child: WDiv(
     className: 'bg-white hover:bg-slate-50 border p-6 rounded-xl duration-300',
     children: [
-      WText('Interactive Card', className: 'group-hover:text-blue-600'),
+      WText('Interactive Card', className: 'hover:text-blue-600'),
     ],
   ),
 )
@@ -86,7 +88,7 @@ WAnchor(
 <a name="wbutton-the-high-level-action"></a>
 ### WButton: The High-Level Action
 
-While `WAnchor` is for generic wrappers, `WButton` is optimized for actions. It includes built-in support for loading states, padding defaults, and button-specific accessibility.
+While `WAnchor` is for generic wrappers, `WButton` is optimised for actions. It includes built-in support for loading states, padding defaults, and button-specific accessibility.
 
 ```dart
 WButton(
@@ -143,7 +145,7 @@ WAnchor(
 )
 ```
 
-Even if the mouse is only hovering over the padding of the `WDiv`, the `WText` widget will receive the "hover" state and update its color accordingly.
+Even if the mouse is only hovering over the padding of the `WDiv`, the `WText` widget will receive the "hover" state and update its colour accordingly.
 
 <a name="related-documentation"></a>
 ## Related Documentation

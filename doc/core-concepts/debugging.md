@@ -1,5 +1,7 @@
 # Debugging
 
+Print a widget's composition tree with the `debug` token, catch unknown className tokens and expose wind_kit state to tapir.
+
 - [Introduction](#introduction)
 - [Enabling Debug Mode](#enabling-debug-mode)
 - [Understanding the Output](#understanding-the-output)
@@ -16,7 +18,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Wind includes a specialized debugging system designed to peel back the abstraction of the utility-first engine. Since Wind translates a single `className` string into a complex hierarchy of Flutter widgets, the debugging tools allow you to verify the exact widget composition, resolved styles, and build performance.
+Wind includes a specialised debugging system designed to peel back the abstraction of the utility-first engine. Since Wind translates a single `className` string into a complex hierarchy of Flutter widgets, the debugging tools allow you to verify the exact widget composition, resolved styles, and build performance.
 
 The system is built directly into the core engine, requiring no external configuration or devtools extensions to inspect the "parsing → styling → building" pipeline.
 
@@ -56,7 +58,7 @@ The debug report is divided into three primary sections that represent the lifec
 <a name="composition-tree"></a>
 ### Composition Tree
 
-The Composition Tree visualizes the "Atomic Widget" stack. Because Wind often wraps your content in multiple Flutter widgets (such as `Padding`, `DecoratedBox`, or `ConstrainedBox`) to satisfy the `className` requirements, this tree shows the final structure.
+The Composition Tree visualises the "Atomic Widget" stack. Because Wind often wraps your content in multiple Flutter widgets (such as `Padding`, `DecoratedBox`, or `ConstrainedBox`) to satisfy the `className` requirements, this tree shows the final structure.
 
 ```text
 --- [WIND DEBUG] Composition Tree: ---
@@ -122,15 +124,15 @@ Let's look at common debugging workflows using the `debug` class:
 
 - **Inspecting Responsive Styles**: Resize the viewport while `debug` is active. The logger will re-trigger and show the new `Final Styles` for the active breakpoint.
 - **Verifying State Variants**: Hover over or focus a widget with state-based classes (like `hover:bg-blue-600`). The log will update to show the merged style.
-- **Analyzing Layout Layers**: Use the `Composition Tree` to determine which utility class is responsible for a specific Flutter wrapper, helping identify unexpected padding or alignment issues.
+- **Analysing Layout Layers**: Use the `Composition Tree` to determine which utility class is responsible for a specific Flutter wrapper, helping identify unexpected padding or alignment issues.
 
 <a name="unknown-classname-warnings"></a>
 ## Unknown className Warnings
 
-Wind drops any token no parser recognizes: an unknown token never throws and never renders. That keeps a typo from crashing the UI, but a silent drop also hides the typo. To surface it, the parser prints a one-time hint in `kDebugMode` whenever it meets a className it cannot resolve:
+Wind drops any token no parser recognises: an unknown token never throws and never renders. That keeps a typo from crashing the UI, but a silent drop also hides the typo. To surface it, the parser prints a one-time hint in `kDebugMode` whenever it meets a className it cannot resolve:
 
 ```text
-Wind: unknown className 'flex-col-reverse' was ignored.
+Wind: unknown className 'ps-4' was ignored.
 ```
 
 The hint fires once per unique token per session (deduped like the alias shadow and cycle warnings), so a token repeated across many widgets logs a single line. Release builds print nothing: the check sits behind `kDebugMode` and is tree-shaken out.
@@ -138,18 +140,18 @@ The hint fires once per unique token per session (deduped like the alias shadow 
 > [!NOTE]
 > The warning targets genuine typos. Valid Wind tokens that a widget consumes outside the parser map are exempt and never warn: the `object-*` fit family (read by `WImage`), the `inline-flex` / `inline-block` / `inline` display keywords (emitted by `WBadge`, inert in Flutter), and deliberately inert compatibility tokens (`transition` / `transition-colors`, `antialiased`, `sr-only`, and the `*-nums` font-variant family such as `tabular-nums`).
 
-If a token you expect to work triggers the warning, check the [Token catalog](https://fluttersdk.com/wind/layout) for the canonical spelling. A common case is a CSS name that Wind aliases: `flex-wrap` prints the hint and points you at the canonical `wrap`.
+If a token you expect to work triggers the warning, check the [Token catalogue](https://anilcancakir.com/wind_kit/docs/layout) for the canonical spelling. A common case is a CSS name that Wind aliases: `flex-wrap` prints the hint and points you at the canonical `wrap`.
 
 <a name="external-tooling-integration"></a>
 ## External Tooling Integration
 
-Beyond the `debug` className for in-console inspection, Wind exposes a contracts-based bridge so external debug tools (E2E drivers, runtime inspectors, IDE plugins) can read live Wind state per widget. The bridge ships in the production dependency `fluttersdk_wind_diagnostics_contracts` and is installed via a single facade call.
+Beyond the `debug` className for in-console inspection, Wind exposes a contracts-based bridge so external debug tools (E2E drivers, runtime inspectors, IDE plugins) can read live Wind state per widget. The bridge ships in the production dependency `wind_kit_diagnostics_contracts` and is installed via a single facade call.
 
 ### When you need this
 
 You need to call `Wind.installDebugResolver()` when one of these is true:
 
-- You are using `fluttersdk_dusk` to drive E2E tests against your app. Dusk reads Wind state (the active className, breakpoint, brightness, platform, dynamic states, resolved background color, resolved text color) via the contracts package during snapshot capture.
+- You are using `tapir` to drive E2E tests against your app. tapir reads Wind state (the active className, breakpoint, brightness, platform, dynamic states, resolved background colour, resolved text colour) via the contracts package during snapshot capture.
 - You are writing an inspector or IDE tool that needs the same per-widget Wind state at runtime.
 
 If neither applies, you can skip this step. Wind itself does not depend on the resolver being installed; widgets render the same with or without it.
@@ -160,7 +162,7 @@ Call `Wind.installDebugResolver()` once during app startup, inside a `!kReleaseM
 
 ```dart
 import 'package:flutter/foundation.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 void main() {
   if (!kReleaseMode) {
@@ -174,17 +176,17 @@ After the call, any consumer of `WindDebugRegistry.current` (from the contracts 
 
 ### What the contract emits
 
-`WindDebugResolverImpl.resolve(element)` returns at most six fields per widget element:
+`WindDebugResolverImpl.resolve(element)` returns at most seven fields per widget element:
 
 | Field | Type | Notes |
 |:------|:-----|:------|
-| `className` | `String` | The active className resolved through breakpoints, dark mode, and state prefixes |
+| `className` | `String` | The raw className string as written, before breakpoints, dark mode and state prefixes are applied |
 | `breakpoint` | `String` | The currently-active named breakpoint (`sm` / `md` / `lg` / `xl` / `2xl` / `base`) |
 | `brightness` | `String` | `'light'` or `'dark'` |
 | `platform` | `String` | `'web'` / `'android'` / `'ios'` / etc. |
 | `states` | `List<String>` | Active dynamic states (`hover`, `focus`, `active`, custom keys) |
-| `bgColor` | `String?` | Resolved background color hex (8 digits including alpha) when set by className or inline prop |
-| `textColor` | `String?` | Resolved foreground color hex when set |
+| `bgColor` | `String?` | Resolved background colour as `#RRGGBB` (6 digits, alpha dropped), read from the className only, so an inline prop is not reflected |
+| `textColor` | `String?` | Resolved foreground colour as `#RRGGBB` (alpha dropped), read from the className only |
 
 Fields whose value is null are omitted; the map only carries what the widget actually resolved.
 
@@ -242,4 +244,4 @@ if (!kReleaseMode) {
 
 A tool then reads `WindDebugRegistry.currentPerf?.stats()` and gets exactly nine keys: `cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds`, `wTextBuilds` (all `int`), plus `widgetBuilds`, `wrapperEmissions`, `inheritedReads` (all `Map<String, int>`). The `null` when no resolver is registered is meaningful and worth passing through rather than flattening to zeros: it is what lets a caller tell "wind never installed one" from "the counters really are zero".
 
-`fluttersdk_dusk` reads this during a `dusk:perf_begin` / `dusk:perf_end` session.
+`tapir` reads this during a `tapir:perf_begin` / `tapir:perf_end` session.

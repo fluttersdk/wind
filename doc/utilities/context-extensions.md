@@ -1,11 +1,14 @@
 # Context Extensions
 
+Read theme data, breakpoints, brightness and styling helpers straight from a `BuildContext`.
+
 - [Overview](#overview)
 - [Theme Extensions](#theme-extensions)
 - [Responsive Extensions](#responsive-extensions)
 - [Helper Extensions](#helper-extensions)
 - [API Reference](#api-reference)
 - [Common Patterns](#common-patterns)
+- [Related Documentation](#related-documentation)
 
 <a name="overview"></a>
 ## Overview
@@ -40,7 +43,7 @@ context.windTheme.resetToSystem();
 > `toggleTheme()` sets `syncWithSystem: false` for you, which is what makes it a real user preference. `updateTheme(brightness: ...)` does not: it is the partial-update call the framework's own `didChangePlatformBrightness` listener uses, so while `syncWithSystem` is `true` the next OS brightness change overwrites whatever you set. Pin the preference through `setTheme` with `syncWithSystem: false`, as above, and use `resetToSystem()` to give control back.
 
 ### Theme Data
-Access the raw `WindThemeData` or specific properties like colors and brightness.
+Access the raw `WindThemeData` or specific properties like colours and brightness.
 
 ```dart
 // Access the full theme data object
@@ -90,7 +93,7 @@ WText('Current breakpoint: ${context.wActiveBreakpoint}');
 These extensions are shorthand for Wind's global helper functions, allowing you to resolve specific values from the theme without passing the context manually.
 
 ### Colors and Spacing
-Resolve colors and spacing values based on your theme's unit scale.
+Resolve colours and spacing values based on your theme's unit scale.
 
 ```dart
 // Get 'red-500' from the theme
@@ -118,7 +121,7 @@ final style = context.wStyleExt('p-4 bg-blue-500 rounded-lg');
 |:---|:---|:---|
 | `windTheme` | `WindThemeController` | Access the controller for toggling or updating the theme. |
 | `windThemeData` | `WindThemeData` | Access the read-only theme configuration. |
-| `windColors` | `Map<String, MaterialColor>` | Returns the full color palette from the theme. |
+| `windColors` | `Map<String, MaterialColor>` | Returns the full colour palette from the theme. |
 | `windScreens` | `Map<String, int>` | Returns the breakpoint map (e.g., `md: 768`). |
 | `windBrightness` | `Brightness` | Returns the current theme brightness (`light` or `dark`). |
 | `windIsDark` | `bool` | Convenience getter for `brightness == Brightness.dark`. |
@@ -126,7 +129,7 @@ final style = context.wStyleExt('p-4 bg-blue-500 rounded-lg');
 | `wIsMobile` | `bool` | Returns `true` if screen width is less than `md`. |
 | `wIsTablet` | `bool` | Returns `true` if screen width is between `md` and `lg`. |
 | `wIsDesktop` | `bool` | Returns `true` if screen width is `lg` or larger. |
-| `wColorExt(name, {shade})`| `Color?` | Resolves a theme color by name and optional shade. |
+| `wColorExt(name, {shade})`| `Color?` | Resolves a theme colour by name and optional shade. |
 | `wSpacingExt(multiplier)` | `double` | Returns spacing calculated by `multiplier * baseSpacingUnit`. |
 | `wFontSizeExt(name)` | `double?` | Returns the font size value for a key (e.g., `xl`). |
 | `wFontWeightExt(name)` | `FontWeight?` | Returns the font weight for a key (e.g., `bold`). |
@@ -158,7 +161,7 @@ final style = context.wStyleExt('text-blue-600 font-bold italic');
 
 return Text(
   'Direct Styling',
-  style: style.textStyle,
+  style: style.toTextStyle(),
 );
 ```
 
@@ -172,8 +175,9 @@ IconButton(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [Theming Concepts](../core-concepts/theming.md)
 - [Responsive Design](../core-concepts/responsive-design.md)
-- [Color Helpers](./color-helpers.md)
+- [Colour Helpers](./color-helpers.md)

@@ -7,7 +7,6 @@ Wind makes it incredibly easy to support dark mode using the `dark:` variant mod
 - [Responsive Dark Mode](#responsive-dark-mode)
 - [Best Practices](#best-practices)
 
-<a name="basic-usage"></a>
 <x-preview path="core-concepts/dark_mode_basic" size="md" source="example/lib/pages/core-concepts/dark_mode_basic.dart"></x-preview>
 
 ```dart
@@ -20,9 +19,10 @@ WDiv(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
-To style an element for dark mode, add the `dark:` prefix to any utility class. This works for colors, borders, shadows, and even opacity.
+To style an element for dark mode, add the `dark:` prefix to any utility class. This works for colours, borders, shadows, and even opacity.
 
 Let's look at a practical example:
 
@@ -33,12 +33,12 @@ WDiv(
 )
 ```
 
-In this example, the background will be light gray in light mode and shift to a dark gray when dark mode is enabled. The text color behaves similarly, maintaining readability across themes.
+In this example, the background will be light gray in light mode and shift to a dark gray when dark mode is enabled. The text colour behaves similarly, maintaining readability across themes.
 
 <a name="system-vs-manual-mode"></a>
 ## System vs Manual Mode
 
-By default, Wind follows the system's brightness settings via `MediaQuery.platformBrightness`. However, you can manually override this behavior to allow users to toggle themes within your app.
+By default, Wind follows the system's brightness settings via `PlatformDispatcher.platformBrightness` while `syncWithSystem` is true (the default). However, you can manually override this behaviour to allow users to toggle themes within your app.
 
 ### Manual Toggling
 
@@ -50,7 +50,7 @@ context.windTheme.toggleTheme();
 
 // Force dark mode
 context.windTheme.setTheme(
-  context.windThemeData.copyWith(brightness: Brightness.dark),
+  context.windThemeData.copyWith(brightness: Brightness.dark, syncWithSystem: false),
 );
 ```
 
