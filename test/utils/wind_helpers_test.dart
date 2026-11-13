@@ -299,6 +299,31 @@ void main() {
         expect(result, isNotNull);
         expect(result, isA<String>());
       });
+
+      testWidgets('resolves the breakpoint below an exact width', (
+        tester,
+      ) async {
+        String? result;
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(size: Size(768, 800)),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: WindTheme(
+                data: WindThemeData(),
+                child: Builder(
+                  builder: (context) {
+                    result = wScreenCurrent(context);
+                    return const SizedBox();
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(result, 'sm');
+      });
     });
 
     group('wStyle', () {
