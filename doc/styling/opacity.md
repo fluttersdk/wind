@@ -2,8 +2,6 @@
 
 Utilities for controlling the opacity of an element.
 
-## Table of Contents
-
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
 - [Variants](#variants)
@@ -36,7 +34,7 @@ WDiv(
 ```
 
 > [!NOTE]
-> This utility sets the Flutter `Opacity` widget or `color.withOpacity()` equivalent depending on context. To change only the background color's opacity without affecting text, use the color opacity modifier (e.g., `bg-blue-500/50`) instead.
+> This utility wraps the element in a Flutter `Opacity` widget (an `AnimatedOpacity` when a transition is set). To change only the background colour's opacity without affecting text, use the colour opacity modifier (e.g., `bg-blue-500/50`) instead.
 
 <a name="quick-reference"></a>
 ## Quick Reference
@@ -69,10 +67,7 @@ Wind supports all standard state variants for opacity.
 WDiv(className: 'opacity-50 hover:opacity-100')
 
 // Change opacity when button is disabled
-WButton(className: 'bg-blue-500 disabled:opacity-50')
-
-// Change opacity on focus
-WInput(className: 'opacity-75 focus:opacity-100')
+WButton(disabled: true, className: 'bg-blue-500 disabled:opacity-50', child: Text('Save'))
 ```
 
 <a name="responsive-design"></a>
@@ -109,7 +104,7 @@ WDiv(className: 'opacity-[0.125]')
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can customize the available opacity scale in your `WindThemeData`.
+You can customise the available opacity scale in your `WindThemeData`.
 
 ```dart
 WindTheme(
@@ -134,6 +129,6 @@ WDiv(className: 'opacity-glass')    // 0.85
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [Background Color](background-color.md) - Using `/alpha` modifiers for backgrounds
-- [Text Color](../typography/text-color.md) - Using `/alpha` modifiers for text
+- [Background Colour](background-color.md) - Using `/alpha` modifiers for backgrounds
+- [Text Colour](../typography/text-color.md) - Using `/alpha` modifiers for text
 - [Shadow](shadow.md) - Box shadow utilities

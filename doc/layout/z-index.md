@@ -2,8 +2,6 @@
 
 Utilities for controlling the stack order of an element.
 
-## Table of Contents
-
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
 - [Variants](#variants)
@@ -28,9 +26,10 @@ WDiv(className: 'z-[-1]')
 <a name="basic-usage"></a>
 ## Basic Usage
 
-Use `z-{index}` to set the stack order of an element. This utility is primarily used with `Stack` widgets to determine which element appears on top.
+`z-*` parses into `WindStyle.zIndex`, but no widget reads it yet: children paint in source order. Control stacking by child order.
 
 ```dart
+// Painted in source order: the green box ends up on top
 Stack(
   children: [
     WDiv(className: 'z-0 bg-blue-500 w-20 h-20'),
@@ -58,13 +57,7 @@ Stack(
 
 ### Hover & Focus
 
-Control the stack order on interaction. This is useful for "pop-out" effects where an item should rise above others when hovered.
-
-<x-preview path="layout/z_index_hover" size="md" source="example/lib/pages/layout/z_index_hover.dart"></x-preview>
-
-```dart
-WDiv(className: 'z-0 hover:z-50 bg-white shadow-sm hover:shadow-xl')
-```
+State prefixes such as `hover:z-50` parse like any other class, but because no widget reads `zIndex`, they do not change the paint order.
 
 <a name="responsive-design"></a>
 ## Responsive Design
@@ -121,8 +114,8 @@ WindThemeData(
 Usage with custom theme:
 
 ```dart
-WDiv(className: 'z-modal')   // Applies z-index: 9999
-WDiv(className: 'z-popover') // Applies z-index: 5000
+WDiv(className: 'z-modal')   // Parses to zIndex 9999
+WDiv(className: 'z-popover') // Parses to zIndex 5000
 ```
 
 <a name="related-documentation"></a>

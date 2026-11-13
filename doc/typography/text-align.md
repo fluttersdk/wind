@@ -42,7 +42,7 @@ WDiv(
 | Class | Value | Description |
 |:------|:------|:------------|
 | `text-left` | `TextAlign.left` | Align text to the left. |
-| `text-center` | `TextAlign.center` | Align text to the center. |
+| `text-center` | `TextAlign.center` | Align text to the centre. |
 | `text-right` | `TextAlign.right` | Align text to the right. |
 | `text-justify` | `TextAlign.justify` | Stretch lines of text to equal width. |
 | `text-start` | `TextAlign.start` | Align text to the start (direction-aware). |
@@ -66,7 +66,7 @@ WText(
 <a name="dark-mode"></a>
 ## Dark Mode
 
-Use the `dark:` prefix to apply different alignment in dark mode. While less common for alignment than colors, it is fully supported.
+Use the `dark:` prefix to apply different alignment in dark mode. While less common for alignment than colours, it is fully supported.
 
 ```dart
 WText('Dark mode alignment', className: 'text-left dark:text-center')
@@ -80,7 +80,7 @@ The text alignment utility does not support arbitrary values because it maps dir
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-Text alignment values are hardcoded to map to Flutter's `TextAlign` enum and cannot be customized via `WindThemeData`.
+Text alignment values are hardcoded to map to Flutter's `TextAlign` enum and cannot be customised via `WindThemeData`.
 
 <a name="related-documentation"></a>
 ## Related Documentation

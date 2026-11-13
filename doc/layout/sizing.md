@@ -50,7 +50,7 @@ Values follow the global spacing scale (1 unit = 4px).
 | Class | Value | Description |
 |:------|:------|:------------|
 | `w-0` / `h-0` | 0px | Zero width/height |
-| `w-px` / `h-px` | 1px | 1px width/height |
+| `w-[1px]` / `h-[1px]` | 1px | 1px width/height |
 | `w-1` / `h-1` | 4px | Tiny |
 | `w-4` / `h-4` | 16px | Small |
 | `w-16` / `h-16` | 64px | Medium |
@@ -131,7 +131,7 @@ Wind includes a comprehensive max-width scale, perfect for keeping text readable
 | Class | Value |
 |:------|:------|
 | `max-w-0` | 0px |
-| `max-w-none` | No limit (Infinity) |
+| `max-w-none` | Sets nothing; to lift a limit at a breakpoint use `md:max-w-full` |
 | `max-w-xs` | 320px |
 | `max-w-sm` | 384px |
 | `max-w-md` | 448px |
@@ -143,7 +143,7 @@ Wind includes a comprehensive max-width scale, perfect for keeping text readable
 | `max-w-5xl` | 1024px |
 | `max-w-6xl` | 1152px |
 | `max-w-7xl` | 1280px |
-| `max-w-full` | 100% |
+| `max-w-full` | No limit (Infinity) |
 | `max-w-screen` | 100vw |
 | `max-w-prose` | 512px |
 
@@ -160,12 +160,12 @@ WDiv(
 | Class | Value |
 |:------|:------|
 | `min-w-0` | 0px |
-| `min-w-full` | 100% |
+| `min-w-full` | 100vw (viewport, not parent) |
 | `min-w-screen` | 100vw |
 | `min-h-0` | 0px |
-| `min-h-full` | 100% |
+| `min-h-full` | 100vh (viewport, not parent) |
 | `min-h-screen` | 100vh |
-| `max-h-full` | 100% |
+| `max-h-full` | No limit (Infinity) |
 | `max-h-screen` | 100vh |
 
 <a name="intrinsic-sizing-limitation"></a>
@@ -187,7 +187,7 @@ LayoutBuilder does not support returning intrinsic dimensions.
 
 - Prefer explicit sizing: give the cells a fixed `h-*` (or `size-*`) instead of a `grid` + `IntrinsicHeight`.
 - For an equal-height row, use a `Stack` with a `Positioned(top: 0, bottom: 0)` element for the part that must fill, or reserve equal content so natural heights already match.
-- Wind's own `items-stretch` grid equalizes row heights with real layout rather than `IntrinsicHeight`, so reach for it INSTEAD of wrapping.
+- Wind's own `items-stretch` grid equalises row heights with real layout rather than `IntrinsicHeight`, so reach for it instead of wrapping.
 
 ```dart
 // Throws: the wrapped subtree contains a grid.
@@ -195,7 +195,7 @@ IntrinsicHeight(
   child: WDiv(className: 'grid grid-cols-2 gap-4', children: cards),
 )
 
-// Safe: items-stretch equalizes the row heights with real layout.
+// Safe: items-stretch equalises the row heights with real layout.
 WDiv(
   className: 'grid grid-cols-2 gap-4 items-stretch',
   children: cards,
@@ -237,13 +237,11 @@ WDiv(className: 'w-[33%] h-[45%]')
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-To extend the sizing scale, modify the `spacing` section of your `WindThemeData`. This affects width, height, padding, margin, and positioning.
+There is no spacing map: any number is a multiple of `baseSpacingUnit`, so `w-128` is already 512px. Change the unit with `WindThemeData(baseSpacingUnit: ...)`. This affects width, height, padding, margin, and positioning.
 
 ```dart
 WindThemeData(
-  spacing: {
-    '128': 512.0, // Adds w-128, h-128, p-128...
-  },
+  baseSpacingUnit: 8.0, // w-4 is now 32px
 )
 ```
 

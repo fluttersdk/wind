@@ -14,13 +14,15 @@ Utilities for controlling the leading (line height) of an element.
 
 ```dart
 // Relative line-heights
-WText('Leading none', className: 'leading-none')
+// `leading-none` is not supported yet; use `leading-tight` or override a named key.
+WText('Leading tight', className: 'leading-tight')
 WText('Leading loose', className: 'leading-loose')
 
 // Fixed line-heights
 WText('Leading 6', className: 'leading-6')
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 Use `leading-{value}` to control the line height of an element. Relative line heights (like `normal`, `loose`) depend on the font size, while fixed line heights (like `leading-6`) set a specific height independent of the font size.
@@ -39,13 +41,14 @@ WDiv(
 ```
 
 > [!NOTE]
-> You can also set line height directly within the font size utility, e.g., `text-lg/7` or `text-lg/loose`. See [Font Size](./font-size.md) for details.
+> You can also set line height directly within the font size utility, e.g., `text-lg/7` or `text-lg/[28px]`. See [Font Size](./font-size.md) for details.
 
+<a name="quick-reference"></a>
 ## Quick Reference
 
 | Class | Value | Description |
 |:--- |:--- |:--- |
-| `leading-none` | 1 | Relative height |
+| `leading-none` | none | Not supported yet; use `leading-tight` or override a named key |
 | `leading-tight` | 1.25 | Relative height |
 | `leading-snug` | 1.375 | Relative height |
 | `leading-normal` | 1.5 | Relative height |
@@ -60,6 +63,7 @@ WDiv(
 | `leading-9` | 2.25rem | Fixed height (36px) |
 | `leading-10` | 2.5rem | Fixed height (40px) |
 
+<a name="responsive-design"></a>
 ## Responsive Design
 
 Apply different line height values at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
@@ -67,10 +71,11 @@ Apply different line height values at different breakpoints using the standard `
 ```dart
 WText(
   'Responsive leading',
-  className: 'leading-none md:leading-normal lg:leading-loose',
+  className: 'leading-tight md:leading-normal lg:leading-loose',
 )
 ```
 
+<a name="dark-mode"></a>
 ## Dark Mode
 
 Use the `dark:` prefix to apply different line heights when the application is in dark mode.
@@ -82,6 +87,7 @@ WText(
 )
 ```
 
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
 If the built-in scale doesn't meet your needs, use bracket notation to apply custom values directly.
@@ -90,28 +96,28 @@ If the built-in scale doesn't meet your needs, use bracket notation to apply cus
 // Fixed pixel value
 WText('Custom px', className: 'leading-[24px]')
 
-// Relative value (unitless)
-WText('Custom relative', className: 'leading-[1.8]')
-
-// Rem value
-WText('Custom rem', className: 'leading-[3rem]')
+// A bare number is also logical pixels
+WText('Custom bare number', className: 'leading-[24]')
 ```
 
+Arbitrary values are logical pixels, not a multiplier. `rem` is not converted: `leading-[1.8]` is 1.8 px and `leading-[3rem]` is 3 px.
+
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-To extend or override the default line height scale, modify the `leading` property in `WindThemeData`.
+To override the named line height scale, modify the `leading` property in `WindThemeData`.
 
 ```dart
 WindThemeData(
   leading: {
-    'tighter': 1.1,
-    'double': 2.0,
-    // Overriding existing
     'loose': 2.5,
   },
 )
 ```
 
+Only the six named keys parse (`none`, `tight`, `snug`, `normal`, `relaxed`, `loose`); override their values, do not add keys. `none` has no default value, so `leading-none` does nothing until you supply one (`'none': 1.0`).
+
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [Font Size](./font-size.md) - Setting font size and line height together

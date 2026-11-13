@@ -48,7 +48,7 @@ WText('Link without underline', className: 'no-underline')
 
 ### Decoration Color
 
-Use the `decoration-{color}` utilities to change the color of the text decoration.
+Use the `decoration-{color}` utilities to change the colour of the text decoration.
 
 <x-preview path="typography/decoration_color" size="md" source="example/lib/pages/typography/decoration_color.dart"></x-preview>
 
@@ -113,7 +113,7 @@ WText('Link', className: 'text-gray-900 underline decoration-gray-900 dark:text-
 <a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-Use bracket notation for custom decoration colors or thickness.
+Use bracket notation for custom decoration colours or thickness.
 
 ```dart
 // Custom color
@@ -128,20 +128,20 @@ WText('3px underline', className: 'underline decoration-[3px]')
 
 ### Decoration Color
 
-Decoration colors use your theme's `colors` configuration.
+Decoration colours use your theme's `colors` configuration.
 
 ```dart
 WindThemeData(
   colors: {
-    'brand': {
-      '500': Color(0xFF1E88E5),
-    },
+    'brand': MaterialColor(0xFF1E88E5, {500: Color(0xFF1E88E5)}),
   },
 )
 ```
 
+The map merges with the default palette, so the built-in colours stay available.
+
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [Text Color](./text-color.md)
+- [Text Colour](./text-color.md)
 - [Font Weight](./font-weight.md)

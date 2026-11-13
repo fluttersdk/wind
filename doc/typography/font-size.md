@@ -19,6 +19,7 @@ WText('Large text', className: 'text-lg')
 WText('Extra large', className: 'text-xl')
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 Use `text-{size}` to set the font size of an element.
@@ -35,6 +36,7 @@ WText(
 )
 ```
 
+<a name="quick-reference"></a>
 ## Quick Reference
 
 | Class | Size | Pixel Value |
@@ -52,18 +54,16 @@ WText(
 
 > For sizes beyond `text-6xl`, use the arbitrary-value syntax (`text-[80px]`) or extend `WindThemeData.fontSizes` with additional entries.
 
+<a name="variants"></a>
 ## Variants
 
 ### Line Height Modifier
 
 You can set the line height simultaneously by adding a forward slash and a line-height value to any font size utility.
 
-This supports both named line heights (from your theme) and numeric spacing values.
+This supports numeric spacing values and arbitrary pixel values. A named line height (`text-lg/loose`) is stored as pixels, not as a multiplier, so use `leading-loose` for a named one.
 
 ```dart
-// Named line height (text-lg + leading-loose)
-WText('Loose text', className: 'text-lg/loose')
-
 // Numeric spacing (text-base + 28px line height)
 // 7 * 4px = 28px
 WText('Spaced text', className: 'text-base/7')
@@ -76,8 +76,9 @@ WText('Precise text', className: 'text-xl/[32px]')
 |:------|:-----|:------------|
 | `text-sm/6` | 14px | 24px |
 | `text-base/7` | 16px | 28px |
-| `text-lg/relaxed` | 18px | 1.625 (factor) |
+| `text-xl/[32px]` | 20px | 32px |
 
+<a name="responsive-design"></a>
 ## Responsive Design
 
 Apply different font sizes at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
@@ -89,6 +90,7 @@ WText(
 )
 ```
 
+<a name="dark-mode"></a>
 ## Dark Mode
 
 Use the `dark:` prefix to apply different font sizes when the application is in dark mode.
@@ -100,6 +102,7 @@ WText(
 )
 ```
 
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
 If the built-in scale doesn't meet your needs, use bracket notation to apply custom values directly.
@@ -108,10 +111,11 @@ If the built-in scale doesn't meet your needs, use bracket notation to apply cus
 // Exact pixel value
 WText('15px text', className: 'text-[15px]')
 
-// Rem value (treated as pixels if no unit provided, or parsed explicitly)
-WText('1.5rem text', className: 'text-[1.5rem]')
+// rem is read as px, so write px
+WText('24px text', className: 'text-[24px]')
 ```
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
 To extend or override the default font size scale, modify the `fontSizes` property in `WindThemeData`.
@@ -135,8 +139,9 @@ WText('Tiny text', className: 'text-xs') // 10.0
 WText('Huge text', className: 'text-mega') // 100.0
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [Font Weight](./font-weight.md)
 - [Line Height](./line-height.md)
-- [Text Color](./text-color.md)
+- [Text Colour](./text-color.md)

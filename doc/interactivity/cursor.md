@@ -79,7 +79,7 @@ WDiv(className: 'cursor-default md:cursor-pointer')
 <a name="dark-mode"></a>
 ## Dark Mode
 
-The cursor itself is theme-independent, but pair the surrounding color tokens with their `dark:` peers as usual.
+The cursor itself is theme-independent, but pair the surrounding colour tokens with their `dark:` peers as usual.
 
 ```dart
 WDiv(className: 'cursor-pointer bg-white dark:bg-gray-800')

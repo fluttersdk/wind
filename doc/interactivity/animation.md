@@ -19,7 +19,7 @@ Utilities for animating elements with CSS-like animation classes. Whether you're
 
 ```dart
 // Spinning loader
-WDiv(className: 'animate-spin w-8 h-8 border-4 border-blue-500 rounded-full')
+WIcon(Icons.refresh, className: 'animate-spin text-blue-500')
 
 // Pulsing skeleton
 WDiv(className: 'animate-pulse w-full h-4 bg-gray-200 rounded')
@@ -56,7 +56,7 @@ WIcon(
 Use `animate-spin` for things like loading indicators. It provides a smooth, linear rotation. Let's look at a basic spinner:
 
 ```dart
-WDiv(className: 'animate-spin w-6 h-6 border-2 border-t-transparent border-blue-500 rounded-full')
+WIcon(Icons.refresh, className: 'animate-spin text-blue-500')
 ```
 
 ### Ping
@@ -80,8 +80,8 @@ WDiv(className: 'animate-pulse flex space-x-4', children: [
   WDiv(className: 'flex-1 space-y-6 py-1', children: [
     WDiv(className: 'h-2 bg-slate-200 rounded'),
     WDiv(className: 'grid grid-cols-3 gap-4', children: [
-      WDiv(className: 'h-2 bg-slate-200 rounded col-span-2'),
-      WDiv(className: 'h-2 bg-slate-200 rounded col-span-1'),
+      WDiv(className: 'h-2 bg-slate-200 rounded'),
+      WDiv(className: 'h-2 bg-slate-200 rounded'),
     ]),
   ]),
 ])
@@ -107,7 +107,7 @@ WDiv(className: 'animate-none md:animate-spin')
 <a name="dark-mode"></a>
 ## Dark Mode
 
-Animations work seamlessly with dark mode. You'll typically just change the colors of the animated element when switching to dark mode.
+Animations work seamlessly with dark mode. You'll typically just change the colours of the animated element when switching to dark mode.
 
 ```dart
 WDiv(className: 'animate-pulse bg-gray-200 dark:bg-gray-700')
@@ -116,11 +116,7 @@ WDiv(className: 'animate-pulse bg-gray-200 dark:bg-gray-700')
 <a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-If the built-in animations don't quite fit, you can use arbitrary values to specify custom animation strings.
-
-```dart
-WDiv(className: 'animate-[wiggle_1s_ease-in-out_infinite]')
-```
+Animations have no arbitrary form: `animate-[...]` is not parsed. Use one of the built-in types, or register your own name in the theme (see below).
 
 <a name="customizing-theme"></a>
 ## Customizing Theme
@@ -130,7 +126,7 @@ Want to add your own animations to the system? You can extend the `animations` m
 ```dart
 WindThemeData(
   animations: {
-    'wiggle': WindAnimationType.bounce, // Map to existing logic or custom type
+    'animate-wiggle': WindAnimationType.bounce, // keys include the animate- prefix; only the five built-in types exist
   },
 )
 ```
