@@ -50,7 +50,7 @@ Color? wColor(
 /// ```
 double wSpacing(BuildContext context, num multiplier) {
   final theme = WindTheme.dataOf(context);
-  return multiplier * theme.baseSpacingUnit;
+  return multiplier.floor() * theme.baseSpacingUnit;
 }
 
 /// Returns a font size by name.
