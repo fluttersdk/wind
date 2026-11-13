@@ -156,3 +156,5 @@ These utilities do not use theme variables. `line-clamp` accepts numeric values 
 ## Related Documentation
 
 - [Font Size](./font-size.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

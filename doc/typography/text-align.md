@@ -88,3 +88,5 @@ Text alignment values are hardcoded to map to Flutter's `TextAlign` enum and can
 - [Font Size](./font-size.md)
 - [Font Weight](./font-weight.md)
 - [Line Height](./line-height.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

@@ -107,3 +107,5 @@ final style = context.wStyleExt('p-4');
 - [Context Extensions](./context-extensions.md)
 - [Colour Helpers](./color-helpers.md)
 - [Theming Concepts](../core-concepts/theming.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

@@ -144,3 +144,5 @@ WText('Tahiti Color', className: 'text-tahiti-900')
 
 - [Background Colour](../styling/background-color.md)
 - [Text Decoration](./text-decoration.md#decoration-color)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

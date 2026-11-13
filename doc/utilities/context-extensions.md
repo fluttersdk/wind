@@ -181,3 +181,5 @@ IconButton(
 - [Theming Concepts](../core-concepts/theming.md)
 - [Responsive Design](../core-concepts/responsive-design.md)
 - [Colour Helpers](./color-helpers.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

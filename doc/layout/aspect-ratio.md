@@ -119,3 +119,5 @@ To use custom ratios, we recommend using [Arbitrary Values](#arbitrary-values) o
 
 - [Sizing](./sizing.md)
 - [Display](./display.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

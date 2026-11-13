@@ -251,3 +251,5 @@ WindThemeData(
 - [Padding & Margin](./spacing.md)
 - [Flexbox & Grid](./flexbox.md)
 - [Aspect Ratio](./aspect-ratio.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

@@ -150,3 +150,5 @@ WText('Body text', className: 'font-body')
 - [Font Size](./font-size.md)
 - [Font Weight](./font-weight.md)
 - [Letter Spacing](./letter-spacing.md)
+
+> **Defaults:** the `sans` stack starts with `system-ui`.

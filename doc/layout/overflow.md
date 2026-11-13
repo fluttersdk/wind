@@ -180,3 +180,5 @@ Overflow utilities are hardcoded behaviour toggles and cannot be customised via 
 
 - [Sizing](../layout/sizing.md)
 - [Display](../layout/display.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

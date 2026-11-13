@@ -145,3 +145,5 @@ The map merges with the default palette by name, so the built-in colours stay av
 
 - [Text Colour](./text-color.md)
 - [Font Weight](./font-weight.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

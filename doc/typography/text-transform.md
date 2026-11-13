@@ -136,3 +136,5 @@ Text transform and whitespace utilities are hardcoded in the parser and **cannot
 - [Text Overflow](./text-overflow.md)
 - [Font Weight](./font-weight.md)
 - [Letter Spacing](./letter-spacing.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

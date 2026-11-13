@@ -266,3 +266,5 @@ Until these land, use `Overlay` directly or Flutter's `Stack` at the `Scaffold` 
 - [Grid Layout](./grid.md)
 - [Sizing](../layout/sizing.md)
 - [Spacing](../layout/spacing.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

@@ -124,3 +124,5 @@ WindTheme(
 - [Font Size](./font-size.md)
 - [Font Family](./font-family.md)
 - [Text Colour](./text-color.md)
+
+> **Defaults:** `semibold` maps to `FontWeight.w500` and `bold` to `FontWeight.w700`.

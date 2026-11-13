@@ -134,3 +134,5 @@ WindThemeData(
 - [Font Size](./font-size.md)
 - [Line Height](./line-height.md)
 - [Font Weight](./font-weight.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

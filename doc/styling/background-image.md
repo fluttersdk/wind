@@ -137,3 +137,5 @@ A URL containing `:` (`http://`, `https://`) cannot sit in a className: the pref
 
 - [Background Colour](./background-color.md)
 - [Background Gradient](./background-gradient.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

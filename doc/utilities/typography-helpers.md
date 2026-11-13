@@ -123,3 +123,5 @@ Once defined, these custom keys are accessible just like the defaults:
 ```dart
 final displaySize = context.wFontSizeExt('display'); // 120.0
 ```
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

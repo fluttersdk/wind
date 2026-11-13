@@ -126,3 +126,5 @@ WDiv(className: 'z-popover') // Parses to zIndex 5000
 - [Position](positioning.md)
 - [Display](display.md)
 - [WindTheme](../core-concepts/theming.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

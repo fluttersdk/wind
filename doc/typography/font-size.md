@@ -145,3 +145,5 @@ WText('Huge text', className: 'text-mega') // 100.0
 - [Font Weight](./font-weight.md)
 - [Line Height](./line-height.md)
 - [Text Colour](./text-color.md)
+
+> **Defaults:** the scale runs from `xs` (12px) to `6xl` (60px).

@@ -139,3 +139,5 @@ WDiv(className: 'bg-gradient-to-r from-brand-500 to-brand-600')
 
 - [Background Colour](./background-color.md)
 - [Background Image](./background-image.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

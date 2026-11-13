@@ -137,3 +137,5 @@ The map merges with the default palette, so the built-in colours stay available.
 - [Background Image](./background-image.md)
 - [Text Colour](../typography/text-color.md)
 - [Border Width, Colour, & Radius](../borders/borders.md)
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).

@@ -127,3 +127,5 @@ WDiv(
 
 - [Flexbox & Gap](./flexbox.md) - For `gap-{n}`, `gap-x-{n}`, and `gap-y-{n}` utilities.
 - [Display](./display.md) - For the `grid` class.
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).
