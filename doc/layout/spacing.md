@@ -150,4 +150,4 @@ WindThemeData(
 - [Flexbox](./flexbox.md) (Gap utilities)
 - [Grid](./grid.md) (Gap utilities)
 
-> **Defaults:** one spacing unit is 4px, so `p-4` is 12px.
+> **Defaults:** one spacing unit is 4px, so `p-4` is 16px.

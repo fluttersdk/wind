@@ -85,4 +85,4 @@ Related Documentation:
 - [Theming Guide](../core-concepts/theming.md)
 - [Context Extensions](./context-extensions.md)
 
-> **Defaults:** `wSpacing(context, 4)` returns `8.0` with the default base unit.
+> **Defaults:** `wSpacing(context, 4)` returns `16.0` with the default base unit.

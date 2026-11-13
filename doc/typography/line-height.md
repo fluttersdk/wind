@@ -125,4 +125,4 @@ Only the six named keys parse (`none`, `tight`, `snug`, `normal`, `relaxed`, `lo
 - [Font Size](./font-size.md) - Setting font size and line height together
 - [Letter Spacing](./letter-spacing.md) - Controlling tracking (letter spacing)
 
-> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme (see the [Theming Guide](../core-concepts/theming.md)).
+> **Defaults:** `leading-normal` is 1.6 and `leading-loose` is 2.0.
