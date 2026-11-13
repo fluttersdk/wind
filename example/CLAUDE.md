@@ -6,21 +6,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working inside 
 
 ## What this directory is
 
-`example/` is a standalone Flutter app (own `pubspec.yaml`, `analysis_options.yaml`, web/android/ios/desktop targets) that boots `lib/main.dart` into a navigable showcase gallery. It serves as the canonical visual reference embedded at `fluttersdk.com/wind` via per-page iframes.
+`example/` is a standalone Flutter app (own `pubspec.yaml`, `analysis_options.yaml`, web/android/ios/desktop targets) that boots `lib/main.dart` into a navigable showcase gallery. It serves as the canonical visual reference embedded at `anilcancakir.com/wind_kit` via per-page iframes.
 
-Wind itself is consumed via `pubspec.yaml: fluttersdk_wind: { path: ../ }`. A code change in `../lib/` is visible here on the next hot-reload; the example app is the manual smoke test for the parent package.
+Wind itself is consumed via `pubspec.yaml: wind_kit: { path: ../ }`. A code change in `../lib/` is visible here on the next hot-reload; the example app is the manual smoke test for the parent package.
 
-The standalone JSON playground formerly hosted here (`lib/play.dart`, `lib/playground.dart`) has been migrated to the `wind_playground_web` package in the `fluttersdk.com` repository. The wind package only ships the demo gallery now.
+The standalone JSON playground formerly hosted here (`lib/play.dart`, `lib/playground.dart`) has been migrated to the `wind_playground` package in the site repository. The wind_kit package only ships the demo gallery now.
 
 ## Adding a new example page (three edits, manual)
 
 There is NO auto-discovery. Pages are wired by hand in `lib/routes.dart`. To add one:
 
-1. Create the page file at `lib/pages/<category>/<feature>_basic.dart`. File name is **snake_case**; class name is `<Feature>BasicExamplePage` (PascalCase, ends in `ExamplePage`). Page shape (root `WDiv` with `scrollPrimary: true`, `_buildHeader` + `_buildSection` helpers, dark-mode pairs on every color token) is governed by `../.claude/rules/example-pages.md` — read it before writing the page body.
+1. Create the page file at `lib/pages/<category>/<feature>_basic.dart`. File name is **snake_case**; class name is `<Feature>BasicExamplePage` (PascalCase, ends in `ExamplePage`). Page shape (root `WDiv` with `scrollPrimary: true`, `_buildHeader` + `_buildSection` helpers, dark-mode pairs on every colour token) is governed by `../.claude/rules/example-pages.md` - read it before writing the page body.
 2. Add `import 'pages/<category>/<feature>_basic.dart';` to the top of `lib/routes.dart` (alphabetically inside its category block).
 3. Add `'/<category>/<feature>_basic': const <Feature>BasicExamplePage(),` to the `appRoutes` map at the bottom of `lib/routes.dart`.
 
-Verify by running `flutter run -d chrome` and navigating to `/<category>/<feature>_basic`. The route key MUST exactly match the file basename (sans `.dart`) — the docs website uses this URL to iframe the page.
+Verify by running `flutter run -d chrome` and navigating to `/<category>/<feature>_basic`. The route key MUST exactly match the file basename (sans `.dart`) - the docs website uses this URL to iframe the page.
 
 ## The `<x-preview>` contract (docs ↔ example binding)
 
@@ -32,7 +32,7 @@ A doc file at `../doc/<section>/<page>.md` embeds an example page via:
 
 The docs website resolves this by iframing the deployed web build at `/<category>/<feature>_basic`. Three things MUST hold for the iframe to render:
 
-- The `path` attribute matches a key in `appRoutes` exactly. Case-sensitive. **Snake_case only** — kebab-case caused 8 doc 404s in commit `a2dee86` and was reverted globally.
+- The `path` attribute matches a key in `appRoutes` exactly. Case-sensitive. **Snake_case only** - kebab-case caused 8 doc 404s in commit `a2dee86` and was reverted globally.
 - The `source` attribute is the repo-root-relative path to the actual `.dart` file.
 - The route exists in `lib/routes.dart` AND the page widget compiles cleanly under `flutter build web --target lib/main.dart`.
 
@@ -57,15 +57,15 @@ The docs website iframes a deployed web build of `lib/main.dart` and navigates t
 
 ## Dependencies
 
-- `fluttersdk_wind: { path: ../ }` — local path to the parent. Do not bump to a pub.dev version; the example tests pre-release parent code.
-- `google_fonts: ^6.1.0` — pulled by some pages for non-system font demos.
+- `wind_kit: { path: ../ }` - local path to the parent. Do not bump to a pub.dev version; the example tests pre-release parent code.
+- `google_fonts: ^6.1.0` - pulled by some pages for non-system font demos.
 
 `pubspec.lock` is committed (this is an application, not a library). Do not delete it.
 
 ## Off-limits
 
-- `lib/routes.dart` route keys — renaming a route silently breaks every doc page that links to it. Run a grep across `../doc/` BEFORE renaming.
-- `web/index.html`, `web/manifest.json` — standard Flutter web scaffolding. Editing them changes the iframe-host page chrome; coordinate with the docs site before touching.
+- `lib/routes.dart` route keys - renaming a route silently breaks every doc page that links to it. Run a grep across `../doc/` BEFORE renaming.
+- `web/index.html`, `web/manifest.json` - standard Flutter web scaffolding. Editing them changes the iframe-host page chrome; coordinate with the docs site before touching.
 
 ## Coverage
 
@@ -73,7 +73,7 @@ The 90% coverage gate enforced by `../tool/coverage.sh 90` measures the PARENT p
 
 ## Related rules (loaded automatically by the parent project)
 
-- `../CLAUDE.md` — Wind-wide stack, commands, post-change sync discipline (which lists example/lib/pages/ as one of the 5 surfaces every code change updates), coverage policy.
-- `../.claude/rules/example-pages.md` (paths: example/lib/pages/**) — per-page file shape, helpers (`_buildHeader`, `_buildSection`), dark-mode pair rule, naming convention.
-- `../.claude/rules/docs.md` (paths: doc/**) — the doc-side half of the `<x-preview>` contract.
-- `../.claude/rules/dynamic.md` (paths: {lib/src/dynamic,test/dynamic}/**) — `WDynamic` schema and security model.
+- `../CLAUDE.md` - Wind-wide stack, commands, post-change sync discipline (which lists example/lib/pages/ as one of the surfaces every code change updates), coverage policy.
+- `../.claude/rules/example-pages.md` (paths: example/lib/pages/**) - per-page file shape, helpers (`_buildHeader`, `_buildSection`), dark-mode pair rule, naming convention.
+- `../.claude/rules/docs.md` (paths: doc/**) - the doc-side half of the `<x-preview>` contract.
+- `../.claude/rules/dynamic.md` (paths: {lib/src/dynamic,test/dynamic}/**) - `WDynamic` schema and security model.

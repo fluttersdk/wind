@@ -23,6 +23,7 @@ WButton(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 The `WButton` widget handles common interactive states automatically. It provides a simple way to create buttons that react to hover, focus, and disabled states without manual state management.
@@ -35,6 +36,7 @@ WButton(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -56,6 +58,7 @@ const WButton({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -70,17 +73,18 @@ const WButton({
 | `loadingText` | `String?` | `null` | Text to display next to the loading spinner. |
 | `loadingWidget` | `Widget?` | `null` | Custom widget to replace the default spinner. |
 | `loadingSize` | `double` | `16` | Size of the default loading spinner. |
-| `loadingColor` | `Color?` | `null` | Color of the spinner. Falls back to text color, then auto-computes contrast via W3C luminance when no color is resolvable. |
+| `loadingColor` | `Color?` | `null` | Colour of the spinner. Falls back to text colour, then auto-computes contrast via W3C luminance when no colour is resolvable. |
 | `states` | `Set<String>?` | `null` | Custom state prefixes (e.g., `{'error'}` for `error:` classes). |
 | `semanticLabel` | `String?` | `null` | Accessible name for icon-only controls. When set, excludes the child subtree from semantics so the label overrides any child text; prefer it for icon-only controls rather than buttons that already expose readable text. |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
-`WButton` uses flexbox-like behavior internally. You can control content alignment using standard utility classes.
+You can control content alignment using standard utility classes.
 
 ### Centered Content
 
-By default, using `justify-center` in the `className` will center the child within the button's constraints.
+By default, using `justify-center` in the `className` will centre the child within the button's constraints.
 
 <x-preview path="widgets/w_button_centered" size="md" source="example/lib/pages/widgets/w_button_centered.dart"></x-preview>
 
@@ -91,6 +95,7 @@ WButton(
 )
 ```
 
+<a name="event-handling"></a>
 ## Event Handling
 
 `WButton` exposes standard gesture callbacks. All interaction is automatically suppressed when `isLoading` or `disabled` is set to `true`. A disabled or loading button still appears to assistive technology as a button, marked not enabled, so a screen reader announces it as "dimmed" instead of skipping it. The same holds for a button with no callback at all (`onTap: null`): it is a button that is not enabled, not plain text.
@@ -104,6 +109,7 @@ WButton(
 )
 ```
 
+<a name="state-variants"></a>
 ## State Variants
 
 `WButton` supports multiple state-based prefixes. These classes are applied only when the corresponding state is active.
@@ -123,6 +129,7 @@ WButton(
 | `disabled:` | When the `disabled` prop is `true`. |
 | `loading:` | When the `isLoading` prop is `true`. |
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Loading States
@@ -147,7 +154,7 @@ WButton(
 ```
 
 > [!NOTE]
-> When no explicit `loadingColor` is set and no text color is available from the className, the spinner automatically picks a contrasting color (light or dark) based on the button's background luminance using the W3C relative luminance algorithm.
+> When no explicit `loadingColor` is set and no text colour is available from the className, the spinner automatically picks a contrasting colour (light or dark) based on the button's background luminance using the W3C relative luminance algorithm.
 
 ### Icon Buttons
 
@@ -160,23 +167,25 @@ WButton(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
-Since `WButton` uses `WDiv` and `WAnchor` internally, it supports the full range of Wind utilities.
+`WButton` reads sizing, padding, background, border, radius, shadow, ring, text colour, size and weight, opacity and `justify-center` / alignment. Layout (`flex`, `grid`, `hidden`, `gap`), margin and text transforms are not applied; put them on a wrapping `WDiv` or the child `WText`.
 
 | Category | Classes |
 |:---------|:--------|
-| Layout | `flex`, `grid`, `block`, `hidden`, `justify-center`, `items-center` |
-| Spacing | `p-{n}`, `px-{n}`, `py-{n}`, `m-{n}`, `gap-{n}` |
+| Layout | `justify-center` |
+| Spacing | `p-{n}`, `px-{n}`, `py-{n}` |
 | Sizing | `w-{size}`, `h-{size}`, `min-w-{size}`, `max-w-{size}` |
-| Typography | `text-{size}`, `font-{weight}`, `text-{color}`, `uppercase` |
-| Background | `bg-{color}`, `bg-gradient-to-{dir}`, `bg-opacity-{n}` |
+| Typography | `text-{size}`, `font-{weight}`, `text-{color}` |
+| Background | `bg-{color}`, `bg-gradient-to-{dir}` |
 | Borders | `border`, `border-{n}`, `rounded`, `rounded-{size}`, `ring` |
 | Effects | `shadow`, `opacity-{n}`, `duration-{n}`, `ease-{type}` |
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can customize the default behavior and appearance of buttons by modifying `WindThemeData`.
+You can customise the default behaviour and appearance of buttons by modifying `WindThemeData`.
 
 ```dart
 WindThemeData(
@@ -189,10 +198,11 @@ WindThemeData(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WAnchor](./w-anchor.md) - The base interactive wrapper
 - [WText](./w-text.md) - For styling button labels
-- [Background Color](../styling/background-color.md) - Color utilities
-- [Text Color](../typography/text-color.md) - Typography color utilities
+- [Background Colour](../styling/background-color.md) - Colour utilities
+- [Text Colour](../typography/text-color.md) - Typography colour utilities
 - [Spacing](../layout/spacing.md) - Padding and margin utilities

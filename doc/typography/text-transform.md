@@ -1,6 +1,6 @@
 # Text Transform
 
-Utilities for controlling the capitalization and wrapping of text.
+Utilities for controlling the capitalisation and wrapping of text.
 
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
@@ -101,7 +101,7 @@ WText(
 | `whitespace-nowrap` | No | Prevent text from wrapping. |
 | `text-wrap` | Yes | Alias for `whitespace-normal`. |
 | `text-nowrap` | No | Alias for `whitespace-nowrap`. |
-| `text-balance` | Balance | Balances text across lines for better readability. |
+| `text-balance` | Yes | Only sets `softWrap: true`; lines are not balanced. |
 
 <a name="responsive-design"></a>
 ## Responsive Design
@@ -128,7 +128,7 @@ WText('Dark Mode Text', className: 'normal-case dark:uppercase')
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-Text transform and whitespace utilities are hardcoded in the parser and **cannot be customized** via `WindThemeData`.
+Text transform and whitespace utilities are hardcoded in the parser and **cannot be customised** via `WindThemeData`.
 
 <a name="related-documentation"></a>
 ## Related Documentation

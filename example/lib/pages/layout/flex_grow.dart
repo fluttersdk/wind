@@ -10,14 +10,12 @@ class FlexGrowExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Flex Grow & Shrink',
-      description:
-          'flex-1 wraps a child in Expanded. shrink-0 preserves intrinsic size. Mix them to build sidebars, search bars, and toolbars.',
+      description: 'flex-1 wraps a child in Expanded. shrink-0 preserves intrinsic size. Mix them to build sidebars, search bars, and toolbars.',
       gradient: 'from-orange-500 to-red-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Fixed-width sidebar, flexible content. shrink-0 stops the sidebar from collapsing.',
+          description: 'Fixed-width sidebar, flexible content. shrink-0 stops the sidebar from collapsing.',
           child: WDiv(
             className: '''
               flex p-2 rounded-lg
@@ -42,8 +40,7 @@ class FlexGrowExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Multiple Flex Factors',
-          description:
-              'flex-1, flex-2, flex-3 share remaining space in their numeric ratio.',
+          description: 'flex-1, flex-2, flex-3 share remaining space in their numeric ratio.',
           child: WDiv(
             className: '''
               flex gap-2 p-2 rounded-lg
@@ -51,22 +48,26 @@ class FlexGrowExamplePage extends StatelessWidget {
             ''',
             children: const [
               _FactorBox(
-                  label: 'flex-1',
-                  factorClass: 'flex-1',
-                  color: 'bg-amber-400'),
+                label: 'flex-1',
+                factorClass: 'flex-1',
+                color: 'bg-amber-400',
+              ),
               _FactorBox(
-                  label: 'flex-2',
-                  factorClass: 'flex-2',
-                  color: 'bg-orange-500'),
+                label: 'flex-2',
+                factorClass: 'flex-2',
+                color: 'bg-orange-500',
+              ),
               _FactorBox(
-                  label: 'flex-3', factorClass: 'flex-3', color: 'bg-red-500'),
+                label: 'flex-3',
+                factorClass: 'flex-3',
+                color: 'bg-red-500',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'grow vs grow-0',
-          description:
-              'grow is an alias for flex-1 (Expanded). grow-0 keeps the item at its natural size and refuses to expand.',
+          description: 'grow is an alias for flex-1 (Expanded). grow-0 keeps the item at its natural size and refuses to expand.',
           child: WDiv(
             className: '''
               flex gap-2 p-2 rounded-lg
@@ -88,8 +89,7 @@ class FlexGrowExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'basis-* (flex-basis)',
-          description:
-              'basis-* sets the initial main-axis size before grow/shrink apply. basis-1/2 takes half, basis-1/3 takes a third, basis-full spans the whole axis.',
+          description: 'basis-* sets the initial main-axis size before grow/shrink apply. basis-1/2 takes half, basis-1/3 takes a third, basis-full spans the whole axis.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -122,8 +122,7 @@ class FlexGrowExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Smart Column Stretch',
-          description:
-              'A flex flex-col stretches each WDiv child to the column width by default (no w-full needed). Add items-start to shrink children to content size.',
+          description: 'A flex flex-col stretches each WDiv child to the column width by default (no w-full needed). Add items-start to shrink children to content size.',
           child: WDiv(
             className: 'flex flex-col gap-4',
             children: const [
@@ -142,8 +141,7 @@ class FlexGrowExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Clickable Row Stretch (WAnchor / WButton)',
-          description:
-              'WAnchor and WButton column children also stretch to the column width by default. A nav sidebar built from WAnchor rows fills its container without w-full or items-stretch.',
+          description: 'WAnchor and WButton column children also stretch to the column width by default. A nav sidebar built from WAnchor rows fills its container without w-full or items-stretch.',
           child: const _ClickableStretchDemo(),
         ),
         ExampleSection(
@@ -154,17 +152,21 @@ class FlexGrowExamplePage extends StatelessWidget {
             children: const [
               _RefRow(cls: 'flex-1', desc: 'Expanded(): grow to fill'),
               _RefRow(
-                  cls: 'flex-{n}',
-                  desc: 'Specific flex factor (n is any integer)'),
+                cls: 'flex-{n}',
+                desc: 'Specific flex factor (n is any integer)',
+              ),
               _RefRow(cls: 'flex-grow / grow', desc: 'Alias of flex-1'),
               _RefRow(cls: 'grow-0', desc: 'Keep intrinsic size, no growing'),
               _RefRow(cls: 'shrink', desc: 'Allow shrinking (FlexFit.loose)'),
               _RefRow(
-                  cls: 'shrink-0', desc: 'Preserve intrinsic size (no wrap)'),
+                cls: 'shrink-0',
+                desc: 'Preserve intrinsic size (no wrap)',
+              ),
               _RefRow(cls: 'flex-none', desc: 'Do not grow or shrink'),
               _RefRow(
-                  cls: 'basis-1/2 / basis-1/3 / basis-full',
-                  desc: 'Fractional flex-basis'),
+                cls: 'basis-1/2 / basis-1/3 / basis-full',
+                desc: 'Fractional flex-basis',
+              ),
               _RefRow(cls: 'basis-[Npx]', desc: 'Fixed flex-basis in pixels'),
             ],
           ),
@@ -192,10 +194,7 @@ class _Box extends StatelessWidget {
     return WDiv(
       className:
           '$widthClass $extras $color h-16 rounded flex items-center justify-center',
-      child: WText(
-        label,
-        className: 'text-white font-mono text-sm font-bold',
-      ),
+      child: WText(label, className: 'text-white font-mono text-sm font-bold'),
     );
   }
 }
@@ -216,10 +215,7 @@ class _FactorBox extends StatelessWidget {
     return WDiv(
       className:
           '$factorClass $color h-16 rounded flex items-center justify-center',
-      child: WText(
-        label,
-        className: 'text-white font-mono font-bold',
-      ),
+      child: WText(label, className: 'text-white font-mono font-bold'),
     );
   }
 }
@@ -353,10 +349,7 @@ class _ClickableStretchDemo extends StatelessWidget {
                 text-slate-800 dark:text-slate-100
               ''',
               onTap: () {},
-              child: WText(
-                'Save draft',
-                className: 'font-semibold text-sm',
-              ),
+              child: WText('Save draft', className: 'font-semibold text-sm'),
             ),
             WButton(
               className: '''
@@ -394,7 +387,8 @@ class _NavRow extends StatelessWidget {
     return WAnchor(
       onTap: onTap,
       child: WDiv(
-        className: '''
+        className:
+            '''
           flex flex-row items-center gap-3
           px-4 py-3
           $color
@@ -432,7 +426,8 @@ class _StretchDemo extends StatelessWidget {
           className: 'text-xs font-mono text-slate-500 dark:text-slate-400',
         ),
         WDiv(
-          className: '''
+          className:
+              '''
             $containerClass p-2 rounded-lg
             bg-slate-100 dark:bg-slate-700
           ''',

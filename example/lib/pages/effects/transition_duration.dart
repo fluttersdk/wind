@@ -119,7 +119,8 @@ class TransitionDurationPage extends StatelessWidget {
     return WAnchor(
       onTap: () {},
       child: WDiv(
-        className: '''
+        className:
+            '''
           bg-purple-500 hover:bg-pink-600 $durationClass
           px-6 py-4 rounded-xl shadow-md hover:shadow-xl
         ''',

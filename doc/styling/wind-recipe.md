@@ -12,7 +12,7 @@ A `tv()` (tailwind-variants) equivalent for Wind. Composes a className from a `b
 - [Constructor: WindRecipe](#constructor-windrecipe)
 - [Constructor: WindSlotRecipe](#constructor-windslotrecipe)
 - [Resolution Order](#resolution-order)
-- [Same-Granularity Override Contract](#same-granularity-override-contract)
+- [Override Contract](#override-contract)
 - [Styling Examples](#styling-examples)
 - [Related Documentation](#related-documentation)
 
@@ -148,26 +148,32 @@ This is verified by `test/recipe/wind_recipe_test.dart` (proves the append, orde
 
 Note: the className-REPLACE anti-pattern (a component treating an incoming `className` as a full recipe bypass instead of appending it) is a consumer-component bug, not a wind defect; wind's own recipes always append. When it appears, it lives in a downstream consumer's component layer, outside this package.
 
-<a name="same-granularity-override-contract"></a>
-## Same-Granularity Override Contract
+<a name="override-contract"></a>
+## Override Contract
 
-Because Wind's parser resolves conflicts per-family with last-class-wins at parse time, a variant must override a base token at the **same granularity**. Mixing a shorthand and a longhand of the same family silently keeps the shorthand:
+A recipe emits the base first and the variants after it, and the parser resolves conflicts per family with last-class-wins, so a variant overrides the base. How far the override reaches depends on the family:
+
+| Family | A longhand after a shorthand | Result |
+|:-------|:-----------------------------|:-------|
+| Padding, margin, inset | `p-4` then `px-2` | Composes per side: 8 on the left and right, 16 on the top and bottom. |
+| Border radius | `rounded-lg` then `rounded-t-none` | Does not compose: every corner becomes square. |
+| Border width | `border-2` then `border-t-4` | Does not compose: only the top border is kept. |
 
 ```dart
-// Correct: override px-* with px-*
-WindRecipe(
-  base: 'px-4',
-  variants: {'size': {'sm': 'px-2'}},  // overrides px-4 correctly
-)
-
-// Incorrect: base p-* vs variant px-* (same family, different granularity)
+// Padding composes: the variant changes only the horizontal sides.
 WindRecipe(
   base: 'p-4',
-  variants: {'size': {'sm': 'px-2'}},  // px-2 does NOT override p-4; p-4 wins silently
+  variants: {'size': {'sm': 'px-2'}},
+)
+
+// Radius and border width do not: the variant restates every corner and side.
+WindRecipe(
+  base: 'rounded-lg border-2',
+  variants: {'shape': {'pill': 'rounded-full border-4', 'flat': 'rounded-none border-0'}},
 )
 ```
 
-In debug builds, `WindRecipe` logs a warning the first time it detects a shorthand/longhand mix.
+In debug builds, `WindRecipe` logs a warning the first time it sees a shorthand and a longhand of one family in the same recipe; for padding, margin and inset the result still composes per side, as in the table.
 
 <a name="styling-examples"></a>
 ## Styling Examples

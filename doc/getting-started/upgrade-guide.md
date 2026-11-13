@@ -1,6 +1,11 @@
 # Upgrade Guide
 
+What changed between wind_kit versions and what to edit in your app when you upgrade.
+
 - [Overview](#overview)
+- [Moving to wind_kit](#moving-to-wind-kit)
+- [1.8.x to 1.9.0](#one-eight-to-one-nine)
+- [1.3.x to 1.4.0](#one-three-to-one-four)
 - [1.0.x to 1.1.0](#one-zero-to-one-one)
   - [New, opt-in](#new-opt-in)
   - [Behavior changes to review](#behavior-changes)
@@ -10,12 +15,57 @@
 <a name="overview"></a>
 ## Overview
 
-Wind follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html). Within a major version, upgrades are backward compatible: a project pinned to `^1.0.0` resolves to the latest `1.x` automatically, and no public API is removed or renamed across minor releases. This guide lists the per-version changes worth knowing about, newest first. If a section has no "Action required" entry, the upgrade is drop-in.
+Wind follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html). A project pinned to `^1.0.0` resolves to the latest `1.x` automatically. Within a major version no public API is removed; a minor release can still change behaviour, flagged BREAKING (behaviour) in the changelog. This guide lists the per-version changes worth knowing about, newest first. If a section has no "Action required" entry, the upgrade is drop-in.
+
+<a name="moving-to-wind-kit"></a>
+## Moving to wind_kit
+
+The package was renamed to `wind_kit`. To move an app over, replace the previous dependency name in `pubspec.yaml` with `wind_kit`, and replace the previous import with the new barrel:
+
+```dart
+import 'package:wind_kit/wind_kit.dart';
+```
+
+No `W*` or `Wind*` class changes, and every className token behaves as before. Do not depend on both packages in one app: each has its own `WindTheme` and `WindDebugRegistry`, so a `WDiv` from one finds no theme from the other.
+
+<a name="one-eight-to-one-nine"></a>
+## 1.8.x to 1.9.0
+
+A minor release that changes behaviour, flagged BREAKING (behaviour) in the changelog, so a `^1.8.0` constraint picks it up on the next `pub get`.
+
+**`tracking-*` is now em, as in Tailwind.** Letter spacing scales with the font size, so every `tracking-*` class renders differently.
+
+**Action required for a custom `WindThemeData.tracking` map.** It is now read as em multipliers: a value written as pixels now means that many em, so convert it.
+
+```dart
+// Before: logical pixels
+WindThemeData(tracking: {'tight': -1.0})
+
+// After: a multiple of the font size (-1px on 14px text is about -0.07)
+WindThemeData(tracking: {'tight': -0.07})
+```
+
+The built-in scale already holds Tailwind's values, so an app that uses only the default `tracking-*` classes needs no edit; check the few places where the tighter or wider spacing shows.
+
+An arbitrary `tracking-[Nem]` is now em too (it was read as N pixels), and a negative arbitrary value now applies instead of being dropped.
+
+<a name="one-three-to-one-four"></a>
+## 1.3.x to 1.4.0
+
+A minor release that changes behaviour, flagged BREAKING (behaviour) in the changelog.
+
+**A single-line `WInput` defaults its Return key to `TextInputAction.done`** instead of `.next`. Multiline still defaults to `.newline`, and an explicit `textInputAction` still wins. Flutter implements `.next` as a move to the next focusable widget, not the next text field, so the old default could land on a button or a swatch. A form that relied on the old default gets it back per field:
+
+```dart
+WInput(
+  textInputAction: TextInputAction.next,
+)
+```
 
 <a name="one-zero-to-one-one"></a>
 ## 1.0.x to 1.1.0
 
-A backward-compatible minor release. The headline additions are opt-in, so existing apps compile and render unchanged. One debug-only assertion and a few input behavior changes are worth a quick scan.
+A backward-compatible minor release. The headline additions are opt-in, so existing apps compile and render unchanged. One debug-only assertion and a few input behaviour changes are worth a quick scan.
 
 <a name="new-opt-in"></a>
 ### New, opt-in
@@ -68,7 +118,7 @@ WInput(
 No code change is required, but the rendered result differs in these cases.
 
 - **`WInput` renders Material-free.** It now builds on `EditableText` inside a decorated `Container` instead of a Material `TextField`, so it no longer requires a `MaterialApp` ancestor and works under Cupertino, a custom root, or a bare `WidgetsApp`. If you relied on ambient Material `InputDecoration` theming bleeding into `WInput`, style it with `className` instead.
-- **Selection handles are Cupertino-style on every platform.** Previously Material-style on Android and web. The copy / cut / paste menu reads `WidgetsLocalizations`, so it works under any ancestor. Behavior is identical; only the handle and toolbar appearance changes on Android and web.
+- **Selection handles are Cupertino-style on every platform.** Previously Material-style on Android and web. The copy / cut / paste menu reads `WidgetsLocalizations`, so it works under any ancestor. Behaviour is identical; only the handle and toolbar appearance changes on Android and web.
 - **`InputType.number` restricts input to a signed decimal on every platform.** A default formatter now allows digits, one decimal point, and an optional leading minus, so the field is numeric on web too (where the keyboard type alone enforces nothing). Supply your own `inputFormatters` to override the default.
 
 <a name="action-required"></a>

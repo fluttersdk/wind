@@ -16,7 +16,7 @@ Utilities for controlling the duration and easing of state transitions in Wind.
 <a name="basic-usage"></a>
 ## Basic Usage
 
-Transitions allow you to change property values smoothly over a given duration. In Wind, these are typically paired with state modifiers like `hover:`, `focus:`, or `active:`.
+Transitions allow you to change property values smoothly over a given duration. In Wind, these are typically paired with state modifiers like `hover:` or `focus:`. `active:` is not wired to the pointer; it applies only when the widget is given `states: {'active'}`.
 
 <x-preview path="interactivity/transition_basic" size="md" source="example/lib/pages/interactivity/transition_basic.dart"></x-preview>
 
@@ -28,7 +28,7 @@ WDiv(
 )
 ```
 
-By adding `duration-200`, the background color shift happens over 200 milliseconds instead of snapping instantly.
+By adding `duration-200`, the background colour shift happens over 200 milliseconds instead of snapping instantly.
 
 <a name="quick-reference"></a>
 ## Quick Reference
@@ -96,33 +96,32 @@ WDiv(className: 'duration-200 dark:duration-500')
 <a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-If the standard scale doesn't fit your specific animation needs, use bracket notation to provide a custom millisecond value.
+If the standard scale doesn't fit your specific animation needs, use bracket notation to provide a custom millisecond value. Easing has no arbitrary form; pick one of the named curves.
 
 ```dart
-WDiv(className: 'duration-[420ms] ease-[Curves.bounceOut]')
+WDiv(className: 'duration-[420ms] ease-out')
 ```
 
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-To extend or override the default transition scales, modify `WindThemeData` in your app configuration.
+To override the default transition scales, modify `WindThemeData` in your app configuration.
 
 ```dart
 WindTheme(
   data: WindThemeData(
     transitionDurations: {
-      'snappy': Duration(milliseconds: 50),
-      'lazy': Duration(milliseconds: 2000),
+      '200': Duration(milliseconds: 150),
     },
     transitionCurves: {
-      'bounce': Curves.bounceOut,
+      'out': Curves.easeOutCubic,
     },
   ),
   child: MyApp(),
 )
 ```
 
-Usage: `duration-snappy`, `ease-bounce`.
+Only the default keys parse (`75` to `1000`, `linear`, `in`, `out`, `in-out`); you can override their values, but new keys are not recognised.
 
 <a name="related-documentation"></a>
 ## Related Documentation

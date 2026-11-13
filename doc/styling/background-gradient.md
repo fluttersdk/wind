@@ -1,6 +1,6 @@
 # Background Gradient
 
-Utilities for creating linear gradients with customizable directions and color stops.
+Utilities for creating linear gradients with customisable directions and colour stops.
 
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
@@ -21,9 +21,10 @@ WDiv(className: 'bg-gradient-to-r from-cyan-500 to-blue-500')
 WDiv(className: 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500')
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
-To create a gradient, you need to specify a direction (e.g., `bg-gradient-to-r`) and at least a starting color (`from-*`). Wind will create a linear gradient based on these parameters.
+To create a gradient, you need to specify a direction (e.g., `bg-gradient-to-r`) and at least a starting colour (`from-*`). Wind will create a linear gradient based on these parameters.
 
 ```dart
 WDiv(
@@ -32,8 +33,9 @@ WDiv(
 )
 ```
 
-If you only provide a `from` color, the gradient will fade to transparent by default. If you provide `to` but no `from`, it will also handle it gracefully, but standard usage typically defines both or relies on the fade-to-transparent behavior.
+If you only provide a `from` colour, the gradient will fade to transparent by default. If you provide `to` but no `from`, it will also handle it gracefully, but standard usage typically defines both or relies on the fade-to-transparent behaviour.
 
+<a name="quick-reference"></a>
 ## Quick Reference
 
 | Class | Description |
@@ -46,15 +48,16 @@ If you only provide a `from` color, the gradient will fade to transparent by def
 | `bg-gradient-to-bl` | Gradient to bottom left |
 | `bg-gradient-to-l` | Gradient to left |
 | `bg-gradient-to-tl` | Gradient to top left |
-| `from-{color}` | Starting color |
-| `via-{color}` | Middle color |
-| `to-{color}` | Ending color |
+| `from-{color}` | Starting colour |
+| `via-{color}` | Middle colour |
+| `to-{color}` | Ending colour |
 
+<a name="variants"></a>
 ## Variants
 
 ### Gradient Stops
 
-Use `from-*`, `via-*`, and `to-*` utilities to define the color stops of your gradient.
+Use `from-*`, `via-*`, and `to-*` utilities to define the colour stops of your gradient.
 
 <x-preview path="styling/background_gradient_stops" size="md" source="example/lib/pages/styling/background_gradient_stops.dart"></x-preview>
 
@@ -71,31 +74,34 @@ WDiv(className: 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-600')
 
 ### Color Opacity
 
-You can control the opacity of gradient colors using the `/opacity` modifier.
+You can control the opacity of gradient colours using the `/opacity` modifier.
 
 ```dart
 WDiv(className: 'bg-gradient-to-r from-red-500/50 to-red-500/0')
 ```
 
+<a name="responsive-design"></a>
 ## Responsive Design
 
-Apply different gradient directions or colors at different breakpoints using standard responsive prefixes.
+Apply different gradient directions or colours at different breakpoints using standard responsive prefixes.
 
 ```dart
 WDiv(className: 'bg-gradient-to-r md:bg-gradient-to-b from-blue-500 to-green-500')
 ```
 
+<a name="dark-mode"></a>
 ## Dark Mode
 
-Use `dark:` to specify different gradient colors for dark mode.
+Use `dark:` to specify different gradient colours for dark mode.
 
 ```dart
 WDiv(className: 'bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900')
 ```
 
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-If you need specific hex colors that aren't in your theme, use square bracket notation.
+If you need specific hex colours that aren't in your theme, use square bracket notation.
 
 ```dart
 WDiv(className: 'bg-gradient-to-r from-[#1da1f2] to-[#1a91da]')
@@ -107,20 +113,20 @@ Three, four, six and eight hex digits are accepted, matching [`hexToColor`](../u
 WDiv(className: 'bg-gradient-to-t from-[#cc000000] to-transparent')
 ```
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-Gradient colors use your theme's color palette. To add new colors, update the `colors` key in `WindThemeData`.
+Gradient colours use your theme's colour palette. To add new colours, update the `colors` key in `WindThemeData`.
 
 ```dart
 WindThemeData(
   colors: {
-    'brand': {
-      '500': Color(0xFF1DA1F2),
-      '600': Color(0xFF1A91DA),
-    },
+    'brand': MaterialColor(0xFF1DA1F2, {500: Color(0xFF1DA1F2), 600: Color(0xFF1A91DA)}),
   },
 )
 ```
+
+The map merges with the default palette, so the built-in colours stay available.
 
 Then use them in your gradients:
 
@@ -128,7 +134,8 @@ Then use them in your gradients:
 WDiv(className: 'bg-gradient-to-r from-brand-500 to-brand-600')
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Background Color](./background-color.md)
+- [Background Colour](./background-color.md)
 - [Background Image](./background-image.md)

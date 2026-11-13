@@ -1,6 +1,6 @@
 # WSelect
 
-A highly customizable, utility-first select component that supports single selection, multi-selection, searching, and remote data fetching.
+A highly customisable, utility-first select component that supports single selection, multi-selection, searching, and remote data fetching.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -28,6 +28,7 @@ WSelect<String>(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 The `WSelect` widget replaces the standard Material Dropdown with a utility-first approach. It manages its own open state while providing a controlled interface for selection.
@@ -41,6 +42,7 @@ WSelect<int>(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -76,6 +78,7 @@ const WSelect({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -108,6 +111,7 @@ const WSelect({
 | `emptyBuilder` | `EmptyStateBuilder?` | `null` | Custom widget when no options match the search |
 | `loadingBuilder` | `LoadingBuilder?` | `null` | Custom widget shown while `onSearch` or `onLoadMore` is pending |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
 ### Single Select
@@ -144,12 +148,16 @@ WSelect<String>(
 )
 ```
 
+<a name="event-handling"></a>
 ## Event Handling
 
 `WSelect` provides callbacks for selection changes and remote interactions.
 
 ```dart
 WSelect<String>(
+  options: _options,
+  searchable: true,
+  hasMore: true,
   onChange: (value) {
     // Handle single selection
   },
@@ -183,12 +191,14 @@ list, which is the ordinary shape: return rows from `onLoadMore` and leave
 already has all of them on reopen, so resetting its cursor there would re-fetch
 page two and append duplicates. Reset the cursor only if `options` resets too.
 
+<a name="accessibility"></a>
 ## Accessibility
 
-The closed trigger is one button whose accessible name is its visible text: the selected option's label (labels joined with `, ` in multi-select), and the `placeholder` only while nothing is selected. A test or dusk script that finds a select with a value by its placeholder text must look for the selected label instead. The default placeholder is English and wind has no localization layer, so pass a translated `placeholder` in a localized app.
+The closed trigger is one button whose accessible name is its visible text: the selected option's label (labels joined with `, ` in multi-select), and the `placeholder` only while nothing is selected. A test or tapir script that finds a select with a value by its placeholder text must look for the selected label instead. The default placeholder is English and wind has no localisation layer, so pass a translated `placeholder` in a localised app.
 
 The closed trigger publishes exactly one semantics node: it carries the button role, the enabled state, the name, the tap action that opens or closes the menu (absent when `disabled`) and the keyboard focus state. The trigger's own content, including multi-select chips and the output of `triggerBuilder` / `multiTriggerBuilder`, is excluded from semantics so it is not announced a second time. The search field of an open menu keeps its own semantics.
 
+<a name="state-variants"></a>
 ## State Variants
 
 `WSelect` automatically manages several states that you can style using prefixes in `className`:
@@ -199,11 +209,13 @@ The closed trigger publishes exactly one semantics node: it carries the button r
 - `selected:` - When a value is selected.
 
 ```dart
-WSelect(
+WSelect<String>(
+  options: _options,
   className: 'border-gray-300 hover:border-blue-500 focus:ring-2 focus:ring-blue-200',
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Searchable Select
@@ -234,6 +246,7 @@ WSelect<String>(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 | Category | Classes |
@@ -244,6 +257,7 @@ WSelect<String>(
 | States | `hover:`, `focus:`, `disabled:`, `dark:` |
 | Custom | `open:`, `selected:` |
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
 The default styling for `WSelect` and its chips can be influenced by the `WindThemeData`.
@@ -256,6 +270,7 @@ WindThemeData(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WFormSelect](./w-form-select.md) - Form-integrated version with validation

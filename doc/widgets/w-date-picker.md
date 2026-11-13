@@ -29,6 +29,7 @@ WDatePicker(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 `WDatePicker` renders a trigger container that opens a popover-based calendar on click. It handles month navigation, today highlighting, and date constraints out of the box.
@@ -54,6 +55,7 @@ When no `className` is provided, the trigger uses this default styling:
 
 The calendar popover opens below the trigger and auto-flips if there isn't enough space. In single mode, the popover closes automatically after a date is selected.
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -77,6 +79,7 @@ const WDatePicker({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -97,6 +100,7 @@ const WDatePicker({
 | `timeLabel` | `String` | `'Time'` | Label above the time row (`dateTime` mode only) |
 | `doneLabel` | `String` | `'Done'` | Confirm control text that closes the popover (`dateTime` mode only) |
 
+<a name="types"></a>
 ## Types
 
 ### WDatePickerMode
@@ -112,7 +116,7 @@ enum WDatePickerMode {
 }
 ```
 
-`single` and `range` normalize every value to midnight. `dateTime` is the only
+`single` and `range` normalise every value to midnight. `dateTime` is the only
 mode that preserves an hour and a minute, so it is the one to use when the value
 is an instant rather than a calendar day. It adds a stepped time row below the
 calendar and keeps the popover open until the confirm control is pressed.
@@ -142,6 +146,7 @@ typedef DateDisplayFormat = String Function(DateTime date);
 
 When no `displayFormat` is provided, dates display as `"Jan 15, 2025"` format.
 
+<a name="date-range-selection"></a>
 ## Date Range Selection
 
 Setting `mode: WDatePickerMode.range` enables two-click range selection with hover preview.
@@ -168,6 +173,7 @@ How range selection works:
 
 The trigger display text updates throughout: `"Jan 15, 2025 - ..."` while in progress, then `"Jan 15, 2025 - Jan 20, 2025"` when complete.
 
+<a name="date--time-selection"></a>
 ## Date + Time Selection
 
 Setting `mode: WDatePickerMode.dateTime` keeps the time of day. The tapped day is composed with a stepped time row and emitted as a single local `DateTime`, where `single` and `range` strike everything to midnight.
@@ -190,7 +196,7 @@ WDatePicker(
 How the mode differs from `single`:
 
 1. **The popover stays open on a day tap.** The time row below the calendar is the second half of the selection, so the confirm control (`doneLabel`) is what closes it.
-2. **`onChanged` fires on every change**, both the day tap and each time step, always with the full composed instant. Closing the popover commits nothing new.
+2. **`onChanged` fires on every change**, both the day tap and each time step, always with the full composed instant. A time step only emits once a day has been picked: before that it moves the pending time and nothing is emitted. Closing the popover commits nothing new.
 3. **The mode is controlled.** Feed each emitted value back through `value` or the calendar highlight, the time row, and the bounds will drift apart from what the user sees.
 4. **The time row is Wind markup**, two 24-hour spinners plus the confirm control built from `WDiv` / `WText` / `WIcon`. It is not a Material `showTimePicker` dialog, so it themes with the rest of the picker.
 
@@ -199,6 +205,7 @@ The spinners never wrap: stepping up from 23:00 would move the instant a full da
 > [!NOTE]
 > The emitted `DateTime` is local and carries no offset. Dart's `DateTime` cannot hold an arbitrary one ([dart-lang/sdk#54993](https://github.com/dart-lang/sdk/issues/54993)), so a value crossing a network boundary is the caller's `toUtc()` to make.
 
+<a name="minmax-constraints"></a>
 ## Min/Max Constraints
 
 Use `minDate` and `maxDate` to restrict which dates are selectable. Dates outside the range appear dimmed and don't respond to clicks.
@@ -233,6 +240,7 @@ WDatePicker(
 )
 ```
 
+<a name="custom-display-format"></a>
 ## Custom Display Format
 
 Override the default `"Jan 15, 2025"` format with a custom function:
@@ -248,11 +256,12 @@ WDatePicker(
 
 In range mode, the format function applies to both start and end dates independently.
 
+<a name="event-handling"></a>
 ## Event Handling
 
 ### Single Mode
 
-`onChanged` fires with a normalized `DateTime` (midnight, no time component) when the user selects a date:
+`onChanged` fires with a normalised `DateTime` (midnight, no time component) when the user selects a date:
 
 ```dart
 WDatePicker(
@@ -298,6 +307,7 @@ WDatePicker(
 
 Treat it as a live value rather than a commit signal. The confirm control only closes the popover; if you need a "the user finished" moment, act on the value you already hold once the popover closes.
 
+<a name="state-variants"></a>
 ## State Variants
 
 `WDatePicker` automatically manages several interactive states. Use state prefixes in `className` to apply conditional styles.
@@ -334,6 +344,7 @@ WDatePicker(
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Default Styling
@@ -387,6 +398,7 @@ WDatePicker(
 )
 ```
 
+<a name="calendar-internals"></a>
 ## Calendar Internals
 
 The calendar popover is styled with a fixed-width container:
@@ -405,13 +417,14 @@ The calendar grid consists of:
 | **Date grid** | 6 rows × 7 columns = 42 cells |
 | **Today** | Highlighted with `bg-gray-100 dark:bg-gray-700 rounded-full` |
 | **Selected** | `bg-primary text-white rounded-full` |
-| **In range** | `bg-primary-100 dark:bg-primary-900/30 text-primary-700` |
+| **In range** | `bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300` |
 | **Out of month** | `text-gray-300 dark:text-gray-600` |
 | **Disabled** | `text-gray-300 dark:text-gray-600`, no click |
 
 > [!NOTE]
 > The calendar chrome (header, grid, day cells) uses hardcoded Wind classes and is not configurable via `className`. The `className` prop only controls the trigger element.
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 ### Trigger (className)
@@ -426,7 +439,7 @@ The `className` prop styles the trigger container. All Wind utility classes are 
 | Sizing | `w-full`, `w-64`, `w-[300px]` |
 | Ring | `ring-2`, `ring-blue-200`, `ring-offset-2` |
 | Shadow | `shadow-sm`, `shadow-md`, `shadow-lg` |
-| Typography | `text-sm` (affects placeholder/display text indirectly via icon color) |
+| Typography | `text-sm` (sizes the placeholder and display text; a `text-{color}` class tints the calendar icon) |
 | Opacity | `opacity-50`, `opacity-75` |
 | State prefixes | `hover:`, `focus:`, `open:`, `disabled:`, `selected:`, `dark:` |
 | Responsive | `sm:`, `md:`, `lg:`, `xl:`, `2xl:` |
@@ -435,9 +448,10 @@ The `className` prop styles the trigger container. All Wind utility classes are 
 
 The calendar popover, header, weekday labels, and day cells use internal Wind classes that are not configurable via props.
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-The calendar's selection colors route through the theme `primary` token (`bg-primary` for the selected day, `bg-primary-100` / `text-primary-700` for the in-range fill). Override `primary` to recolor the calendar to your brand; the neutral grays remain configurable via their own palette keys. The default `primary` is aliased to the Tailwind blue swatch, so leaving it unchanged keeps the original blue look.
+The calendar's selection colours route through the theme `primary` token (`bg-primary` for the selected day, `bg-primary-100` / `text-primary-700` for the in-range fill). Override `primary` to recolour the calendar to your brand; the neutral grays remain configurable via their own palette keys. The default `primary` is aliased to the Tailwind blue swatch, so leaving it unchanged keeps the original blue look.
 
 ```dart
 WindTheme(
@@ -445,6 +459,7 @@ WindTheme(
     colors: {
       'primary': MaterialColor(0xFF16A34A, {
         100: Color(0xFFDCFCE7),  // Range fill
+        300: Color(0xFF86EFAC),  // Dark mode range text
         500: Color(0xFF16A34A),  // Selected day (shade 500 == bg-primary)
         700: Color(0xFF15803D),  // Range text
         900: Color(0xFF14532D),  // Dark mode range
@@ -455,8 +470,9 @@ WindTheme(
 )
 ```
 
-The calendar only reads shades `100` / `500` / `700` / `900`, so the partial swatch above is enough for it. Other `primary`-driven widgets read further shades (`WSelect` uses `400` / `600` / `700` for its raw icon colors); a missing shade safely falls back to the swatch's base color rather than throwing, but if you share one `primary` across widgets, prefer a complete `50`-`950` swatch (e.g. a generated `MaterialColor`) so every shade renders as intended.
+The calendar only reads shades `100` / `300` / `500` / `700` / `900`, so the partial swatch above is enough for it. Other `primary`-driven widgets read further shades (`WSelect` uses `400` / `600` / `700` for its raw icon colours and class tokens such as `text-primary-800` for its selected chip text). A missing shade falls back to the swatch's base colour only for those raw icons, so nothing throws there; a class token such as `text-primary-800` resolves to nothing when its shade is absent, and the requested colour is not applied. If you share one `primary` across widgets, use a complete `50`-`950` swatch (e.g. a generated `MaterialColor`) so every shade renders as intended.
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WFormDatePicker](./w-form-date-picker.md) - Form-integrated date picker with validation

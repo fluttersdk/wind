@@ -18,15 +18,19 @@ The utility-first SVG component. `WSvg` brings HTML SVG semantics to Flutter wit
 <x-preview path="widgets/w_svg" size="md" source="example/lib/pages/widgets/w_svg.dart"></x-preview>
 
 ```dart
-WSvg(
-  src: 'assets/icons/star.svg',
-  className: 'fill-yellow-500 w-6 h-6 hover:scale-110 transition-transform',
+WAnchor(
+  onTap: () {},
+  child: WSvg(
+    src: 'assets/icons/star.svg',
+    className: 'fill-yellow-500 dark:fill-yellow-400 hover:fill-yellow-600 dark:hover:fill-yellow-300 w-6 h-6',
+  ),
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
-The `WSvg` widget allows you to render SVG graphics and style them using utility classes. It inherits colors and sizes from parent styles if not explicitly defined.
+The `WSvg` widget allows you to render SVG graphics and style them using utility classes. It inherits colours and sizes from parent styles if not explicitly defined.
 
 ### From Asset
 Use the default constructor for files located in your assets folder.
@@ -44,14 +48,15 @@ Use the `WSvg.string` constructor to render raw SVG content.
 ```dart
 WSvg.string(
   '<svg>...</svg>',
-  className: 'stroke-red-500 stroke-2 w-8 h-8',
+  className: 'stroke-red-500 w-8 h-8',
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
-WSvg({
+const WSvg({
   Key? key,
   required String? src,
   String? className,
@@ -59,7 +64,7 @@ WSvg({
   String? semanticsLabel,
 })
 
-WSvg.string(
+const WSvg.string(
   String svg, {
   Key? key,
   String? className,
@@ -68,16 +73,18 @@ WSvg.string(
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| `className` | `String?` | `null` | Wind utility classes for sizing, coloring, and effects. |
-| `src` | `String?` | `null` | The asset path to the SVG file. |
-| `svgString` | `String?` | `null` | Raw SVG string content (used in `WSvg.string`). |
+| `className` | `String?` | `null` | Wind utility classes for sizing, colouring, and effects. |
+| `src` | `String?` | **Required** | The asset path to the SVG file (default constructor). |
+| `svg` | `String` | **Required** | Raw SVG string content, passed positionally to `WSvg.string`. |
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling prefixes. |
 | `semanticsLabel` | `String?` | `null` | Semantic label for accessibility. |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
 `WSvg` behaves as a fixed-size or flexible graphic depending on the classes provided.
@@ -95,6 +102,7 @@ WSvg(
 )
 ```
 
+<a name="event-handling"></a>
 ## Event Handling
 
 `WSvg` does not handle events directly. To add interactivity, wrap it in a `WAnchor` or `WButton`.
@@ -104,30 +112,35 @@ WAnchor(
   onTap: () => print('SVG clicked'),
   child: WSvg(
     src: 'assets/icon.svg',
-    className: 'hover:fill-blue-500 transition-colors',
+    className: 'hover:fill-blue-500 dark:hover:fill-blue-400 transition-colors',
   ),
 )
 ```
 
+<a name="state-variants"></a>
 ## State Variants
 
-Use state prefixes to change SVG styles based on interactions or environment:
+The interaction prefixes (`hover:`, `focus:`, `disabled:`) need an ancestor that publishes state (`WAnchor`, `WButton`, `WPopover`); `WSvg` has none of its own. Custom prefixes driven by the `states` prop and `dark:` do not need one.
 
 ```dart
-WSvg(
-  src: 'assets/icon.svg',
-  className: 'fill-gray-400 hover:fill-blue-500 dark:fill-white',
+WAnchor(
+  onTap: () {},
+  child: WSvg(
+    src: 'assets/icon.svg',
+    className: 'fill-gray-400 hover:fill-blue-500 dark:fill-white dark:hover:fill-blue-400',
+  ),
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Color Priority
-The widget applies a color filter using the following priority:
+The widget applies a colour filter using the following priority:
 1. `stroke-{color}` (ideal for outlined icons)
 2. `fill-{color}`
 3. `text-{color}` (fallback)
-4. Inherited color from parent
+4. Inherited colour from parent
 
 ```dart
 // Applying a stroke color to an outlined SVG
@@ -138,21 +151,24 @@ WSvg(
 ```
 
 > [!NOTE]
-> Adding the `preserve-colors` class bypasses the entire color priority chain. No `ColorFilter` is applied, and the SVG renders with its original embedded colors.
+> Adding the `preserve-colors` class bypasses the entire colour priority chain. No `ColorFilter` is applied, and the SVG renders with its original embedded colours.
 
 ### Opacity and Transitions
 You can apply opacity and animate it using transition classes.
 
 ```dart
-WSvg(
-  src: 'assets/logo.svg',
-  className: 'opacity-50 hover:opacity-100 duration-300',
+WAnchor(
+  onTap: () {},
+  child: WSvg(
+    src: 'assets/logo.svg',
+    className: 'opacity-50 hover:opacity-100 duration-300',
+  ),
 )
 ```
 
 ### Preserving Original Colors
 
-By default, `WSvg` applies a `ColorFilter` based on the color priority chain above. For SVGs that contain multiple colors you want to keep intact (like QR codes, branded logos, or multi-color illustrations), use the `preserve-colors` utility class.
+By default, `WSvg` applies a `ColorFilter` based on the colour priority chain above. For SVGs that contain multiple colours you want to keep intact (like QR codes, branded logos, or multi-colour illustrations), use the `preserve-colors` utility class.
 
 ```dart
 // Multi-color logo: keep original colors
@@ -168,20 +184,23 @@ WSvg(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 | Category | Classes |
 |:---------|:--------|
 | Sizing | `w-{size}`, `h-{size}`, `text-{size}` |
-| Coloring | `fill-{color}`, `stroke-{color}`, `text-{color}` |
+| Colouring | `fill-{color}`, `stroke-{color}`, `text-{color}` |
 | Preserve | `preserve-colors` |
 | Opacity | `opacity-{n}` |
 | Transitions| `duration-{ms}`, `ease-{curve}` |
-| Animations | `animate-spin`, `animate-pulse`, `animate-bounce` |
 
+`WSvg` does not apply `animate-*` classes. To animate an SVG, wrap it in a `WindAnimationWrapper`.
+
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can define custom colors in your `WindThemeData` that will be available to `WSvg`.
+You can define custom colours in your `WindThemeData` that will be available to `WSvg`.
 
 ```dart
 WindThemeData(
@@ -193,6 +212,7 @@ WindThemeData(
 
 Then use it as: `className: 'fill-brand-500'`.
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WIcon](./w-icon.md)

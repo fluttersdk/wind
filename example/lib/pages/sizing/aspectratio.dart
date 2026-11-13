@@ -34,8 +34,7 @@ class AspectRatioExamplePage extends StatelessWidget {
             description: 'Square aspect ratio (1:1)',
             children: [
               WDiv(
-                className:
-                    'w-32 aspect-square bg-blue-500 rounded-lg flex items-center justify-center',
+                className: 'w-32 aspect-square bg-blue-500 rounded-lg flex items-center justify-center',
                 child: WText('1:1', className: 'text-white font-bold'),
               ),
             ],
@@ -47,8 +46,7 @@ class AspectRatioExamplePage extends StatelessWidget {
             description: 'Video aspect ratio (16:9)',
             children: [
               WDiv(
-                className:
-                    'w-64 aspect-video bg-red-500 rounded-lg flex items-center justify-center',
+                className: 'w-64 aspect-video bg-red-500 rounded-lg flex items-center justify-center',
                 child: WText('16:9', className: 'text-white font-bold'),
               ),
             ],
@@ -60,8 +58,7 @@ class AspectRatioExamplePage extends StatelessWidget {
             description: 'No aspect ratio constraint',
             children: [
               WDiv(
-                className:
-                    'w-32 h-24 aspect-auto bg-green-500 rounded-lg flex items-center justify-center',
+                className: 'w-32 h-24 aspect-auto bg-green-500 rounded-lg flex items-center justify-center',
                 child: WText('auto', className: 'text-white font-bold'),
               ),
             ],
@@ -98,12 +95,10 @@ class AspectRatioExamplePage extends StatelessWidget {
                     children: [
                       WText(
                         'Image Card',
-                        className:
-                            'text-sm font-medium text-gray-600 dark:text-gray-300',
+                        className: 'text-sm font-medium text-gray-600 dark:text-gray-300',
                       ),
                       WDiv(
-                        className:
-                            'w-full aspect-video bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center',
+                        className: 'w-full aspect-video bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center',
                         child: WText('📷', className: 'text-3xl'),
                       ),
                     ],
@@ -114,12 +109,10 @@ class AspectRatioExamplePage extends StatelessWidget {
                     children: [
                       WText(
                         'Avatar',
-                        className:
-                            'text-sm font-medium text-gray-600 dark:text-gray-300',
+                        className: 'text-sm font-medium text-gray-600 dark:text-gray-300',
                       ),
                       WDiv(
-                        className:
-                            'w-20 aspect-square bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-full flex items-center justify-center',
+                        className: 'w-20 aspect-square bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-full flex items-center justify-center',
                         child: WText('👤', className: 'text-2xl'),
                       ),
                     ],

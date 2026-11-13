@@ -14,7 +14,6 @@ A Wind-styled single or multi-select dropdown that integrates seamlessly with Fl
 - [Customizing Theme](#customizing-theme)
 - [Related Documentation](#related-documentation)
 
-<a name="basic-usage"></a>
 <x-preview path="widgets/w_form_select" size="md" source="example/lib/pages/widgets/w_form_select.dart"></x-preview>
 
 ```dart
@@ -30,6 +29,7 @@ WFormSelect<String>(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 The `WFormSelect` (and its counterpart `WFormMultiSelect`) is designed to be used inside a `Form` widget. It automatically manages its own state and displays validation errors using the `error:` utility prefix when validation fails.
@@ -118,7 +118,7 @@ WFormMultiSelect({
 | `searchable` | `bool` | `false` | Enables a search input inside the dropdown. |
 | `disabled` | `bool` | `false` | Disables user interaction. |
 | `labelClassName`| `String` | `text-sm font-medium...` | Styling for the label text. |
-| `errorClassName`| `String` | `text-red-500 text-xs...` | Styling for the error message. |
+| `errorClassName`| `String` | `text-red-500 dark:text-red-400 text-xs mt-1` | Styling for the error message. |
 
 <a name="layout-modes"></a>
 ## Layout Modes
@@ -163,7 +163,7 @@ WFormSelect<String>(
 <a name="accessibility"></a>
 ## Accessibility
 
-The underlying `WSelect` trigger is one button named by its visible text: the selected option's label (labels joined with `, ` for `WFormMultiSelect`), and the `placeholder` only while nothing is selected. Pass a translated `placeholder` in a localized app; the default is English.
+The underlying `WSelect` trigger is one button named by its visible text: the selected option's label (labels joined with `, ` for `WFormMultiSelect`), and the `placeholder` only while nothing is selected. Pass a translated `placeholder` in a localised app; the default is English.
 
 <a name="state-variants"></a>
 ## State Variants
@@ -222,17 +222,20 @@ Since `WFormSelect` wraps `WSelect`, it supports all standard Wind utilities on 
 | Sizing | `w-full`, `max-w-md`, `h-12` |
 | Spacing | `p-{n}`, `px-{n}`, `py-{n}`, `m-{n}` |
 | Borders | `border`, `rounded-{size}`, `ring-{n}` |
-| Colors | `bg-{color}`, `text-{color}`, `border-{color}` |
+| Colours | `bg-{color}`, `text-{color}`, `border-{color}` |
 | States | `hover:`, `focus:`, `disabled:`, `error:` |
 
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can globally customize the default styling of form labels and error messages through `WindThemeData`.
+The default styling of labels, hints and error messages does not come from `WindThemeData`: it is the default value of the `labelClassName`, `hintClassName` and `errorClassName` constructor parameters. Override those per field.
 
 ```dart
-WindThemeData(
-  // Customizing default form select behavior via theme defaults
+WFormSelect<String>(
+  label: 'Country',
+  options: countries,
+  labelClassName: 'text-sm font-semibold text-gray-900 dark:text-white mb-2',
+  errorClassName: 'text-red-600 dark:text-red-400 text-xs mt-1',
 )
 ```
 

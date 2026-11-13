@@ -18,7 +18,7 @@ Wind provides programmatic access to your theme's spacing scale through helper f
 The `wSpacing` helper is the primary way to calculate pixel values based on your theme's `baseSpacingUnit` (defaulting to 4px).
 
 ```dart
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 // Calculates: multiplier * baseSpacingUnit
 double padding = wSpacing(context, 4);    // 16.0

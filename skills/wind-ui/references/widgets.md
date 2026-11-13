@@ -1,14 +1,14 @@
-# Wind 1.5: Widget reference
+# Widget reference
 
 Full constructor surface, every named parameter, every default. Reach for this file when picking a widget, wiring callbacks, or recovering from a "what does this prop do?" stall.
 
 All widgets import from the single barrel:
 
 ```dart
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 ```
 
-No sub-barrels (`lib/dusk_integration.dart` and similar were removed in 1.0 alpha-10).
+No sub-barrels.
 
 ## Contents
 
@@ -33,12 +33,12 @@ No sub-barrels (`lib/dusk_integration.dart` and similar were removed in 1.0 alph
 - **`states: Set<String>?`**: consumer-passed state strings (e.g. `{'selected'}`). Merges with the widget's automatic states (`hover`, `focus`, `loading`, `disabled`, `checked`, `error`).
 - **`child` XOR `children`**: for widgets that accept both, the assertion fires at construction. Pass exactly one.
 - **Outlined icon convention**: when using `Icons.*`, prefer the `_outlined` variant. `Icons.settings_outlined`, not `Icons.settings`.
-- **`semanticLabel` for icon-only controls**: `WButton` / `WAnchor` accept `semanticLabel: String?`. An icon-only button (no text child) is nameless to screen readers and Playwright `getByRole('button', { name })` without it; always set it when the child carries no readable text. When set, the child subtree is excluded from semantics, so the label overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already exposes readable text. The label must NOT contain the word "button"; the role appends it (`'Close button'` becomes "Close button button").
+- **`semanticLabel` for icon-only controls**: `WButton` / `WAnchor` accept `semanticLabel: String?`. An icon-only button (no text child) is nameless to screen readers and Playwright `getByRole('button', { name })` without it; always set it when the child carries no readable text. When set, the child subtree is excluded from semantics, so the label overrides any child text rather than concatenating with it. Prefer it for icon-only controls; omit it when the child already exposes readable text. The label must not contain the word "button"; the role appends it (`'Close button'` becomes "Close button button").
 - **A null `onChanged` means non-interactive**: `WCheckbox`, `WRadio` and `WSwitch` read a null callback exactly like `disabled: true`. No gesture is attached, no tap action reaches assistive technology, semantics report the control as not enabled, and the `disabled:` prefix activates, so a display-only control styled `disabled:opacity-50` renders dimmed. The `checked` / `selected` state is still reported, which is what keeps a read-only control readable. Use it for a summary row, or for a tile whose own tap drives the toggle.
-- **Inline color escape hatches**:
+- **Inline colour escape hatches**:
   - `WDiv(backgroundColor: Color)` overrides any `bg-*` / `dark:bg-*`.
-  - `WText(foregroundColor: Color)` overrides any `text-*` / `dark:text-*`.
-  - These bypass the parser cache; use them for runtime-dynamic colors (a hex from the API).
+  - `WText(foregroundColor: Color)` and `WIcon(foregroundColor: Color)` override any `text-*` / `dark:text-*`.
+  - These bypass the parser cache; use them for runtime-dynamic colours (a hex from the API).
 
 ---
 
@@ -56,14 +56,14 @@ const WDiv({
   List<Widget>? children,           // child XOR children
   WindStyle? style,                 // pre-parsed override (rare)
   Set<String>? states,
-  bool scrollPrimary = false,        // PASS true alongside `overflow-y-auto` for iOS tap-to-top
+  bool scrollPrimary = false,        // pass true alongside `overflow-y-auto` for iOS tap-to-top
   Color? backgroundColor,           // runtime escape hatch; bypasses className
 })
 ```
 
-Behavior:
+Behaviour:
 - Auto-wraps in `WAnchor` when className contains the literal substrings `hover:`, `focus:`, or `active:`. (Note: `active:` prefix is not yet wired; the substring check is for forward-compatibility.)
-- Honors layout tokens (flex, grid, wrap, block), sizing, spacing (padding/margin/gap), positioning, borders, shadows, opacity, transitions, animations.
+- Honours layout tokens (flex, grid, wrap, block), sizing, spacing (padding/margin/gap), positioning, borders, shadows, opacity, transitions, animations.
 - Composition pipeline (innermost → outermost): aspect ratio → opacity → animation → box (`Align` → `Padding` inset by the border → `DecoratedBox` → `ConstrainedBox`, the primitives `Container` would build, without the `Container`; `AnimatedContainer` under `duration-*`) → scroll/clip → outer sizing → fractional sizing → margin → alignment → flex/expanded.
 - `scrollPrimary: true` only applies when className contains `overflow-y-auto`, `overflow-y-scroll`, `overflow-x-auto`, `overflow-x-scroll`, or `overflow-scroll`.
 - `flex-*` classes skip the Expanded wrap when `WindFlexOverflowScope.skipExpanded` is true (the main axis is scrollable). This is invisible to consumers and prevents unbounded-constraint assertions.
@@ -131,9 +131,9 @@ const WText(
 )
 ```
 
-Behavior:
+Behaviour:
 - Renders `Text(data)` or `SelectableText(data)` based on `selectable`.
-- Honors typography tokens, color, alignment, transforms, decoration, padding, margin, flex-sizing.
+- Honours typography tokens, colour, alignment, transforms, decoration, padding, margin, flex-sizing.
 - No animation or opacity at the text level; wrap in `WDiv` for those.
 - Text transformation (`uppercase` / `lowercase` / `capitalize`) applied at core level before rendering.
 
@@ -148,6 +148,7 @@ const WIcon(
     Key? key,
     String? className,
     Set<String>? states,
+    Color? foregroundColor,           // runtime escape hatch
     String? semanticLabel,
     TextDirection? textDirection,
   },
@@ -156,7 +157,7 @@ const WIcon(
 
 Resolution:
 - Size: `styles.width ?? styles.height ?? styles.fontSize ?? inheritedSize`. Inherits from `DefaultTextStyle`.
-- Color: `styles.color ?? inheritedColor` (also from `DefaultTextStyle`).
+- Colour: `foregroundColor ?? styles.color ?? inheritedColor` (the inherited colour also comes from `DefaultTextStyle`). `foregroundColor` overrides any `text-*` / `dark:text-*`; use it for a runtime value, not for a design token.
 - Animation: wraps in `WindAnimationWrapper` when className contains `animate-*`.
 - Opacity: `AnimatedOpacity` when both `opacity-*` and `duration-*` are present; otherwise plain `Opacity`.
 
@@ -196,7 +197,7 @@ Tokens consumed:
 
 ### `WSvg`
 
-Two constructors: asset path OR raw SVG string.
+Two constructors: asset path or raw SVG string.
 
 ```dart
 const WSvg({
@@ -207,22 +208,22 @@ const WSvg({
   String? semanticsLabel,
 })
 
-const WSvg.string({
+const WSvg.string(
+  String svg, {                       // raw SVG markup, positional
   Key? key,
-  required String svg,                // raw SVG markup
   String? className,
   Set<String>? states,
   String? semanticsLabel,
 })
 ```
 
-Color resolution priority:
+Colour resolution priority:
 1. `stroke-*` token (outlined-icon use case)
 2. `fill-*` token
 3. `text-*` token (fallback)
 4. Inherited from `DefaultTextStyle`
 
-Apply via `ColorFilter.mode(color, BlendMode.srcIn)`. The `preserve-colors` token disables the filter entirely for multi-color SVGs (QR codes, logos).
+Apply via `ColorFilter.mode(color, BlendMode.srcIn)`. The `preserve-colors` token disables the filter entirely for multi-colour SVGs (QR codes, logos).
 
 ---
 
@@ -230,7 +231,7 @@ Apply via `ColorFilter.mode(color, BlendMode.srcIn)`. The `preserve-colors` toke
 
 ### `WAnchor`
 
-Low-level state propagator. Tracks hover and focus; provides `WindAnchorStateProvider` to descendants. Emits `Semantics(button: true)` for accessibility / E2E **when it carries a gesture, or when `semanticLabel` is set**. A gestureless, unlabelled anchor (what `WDiv` auto-wraps into for `hover:` / `focus:` / `active:`) publishes no node of its own, so a hoverable card announces as its content instead of as a button with no tap action behind it. An explicit `semanticLabel` always publishes the node, which is how a DISABLED control still reports that it exists and is unavailable; set it on a control, never on decoration.
+Low-level state propagator. Tracks hover and focus; provides `WindAnchorStateProvider` to descendants. Emits `Semantics(button: true)` for accessibility / E2E **when it carries a gesture, or when `semanticLabel` is set**. A gestureless, unlabelled anchor (what `WDiv` auto-wraps into for `hover:` / `focus:` / `active:`) publishes no node of its own, so a hoverable card announces as its content instead of as a button with no tap action behind it. An explicit `semanticLabel` always publishes the node, which is how a disabled control still reports that it exists and is unavailable; set it on a control, never on decoration.
 
 ```dart
 const WAnchor({
@@ -247,7 +248,6 @@ const WAnchor({
 })
 ```
 
-Structure (outermost → innermost):
 Three accessibility paths, checked in this order:
 
 1. `semanticLabel != null`: `Semantics(button: true, enabled: !isDisabled, label: semanticLabel, onTap/onLongPress lifted, excludeSemantics: true)` → the rest below. The label replaces the child subtree rather than concatenating with it, and the node is published whether or not a gesture exists.
@@ -259,14 +259,14 @@ The rest, in all three: `MouseRegion(onEnter/onExit)` → `WindAnchorStateProvid
 State tracking:
 - Hover: `MouseRegion.onEnter` / `onExit` set `_isHovering`; calls `setState` only on change.
 - Focus: `FocusNode` listener reads `hasFocus` and calls `setState` on change.
-- Press tracking does NOT exist. `active:` prefix is reserved but not wired; `WAnchor` does not detect press duration via `onTapDown` / `onTapUp` today.
+- Press tracking does not exist. `active:` prefix is reserved but not wired; `WAnchor` does not detect press duration via `onTapDown` / `onTapUp` today.
 
 Keyboard and remote activation:
 - `Actions` maps `ActivateIntent` and `ButtonActivateIntent` to `onTap`, and is installed only when `onTap != null && !isDisabled`. `WidgetsApp` raises those intents for `Enter`, `Space`, numpad `Enter`, gamepad A and `select` (the Android TV D-pad centre, the Apple TV remote click), so `WAnchor` binds no key itself and inherits whatever the platform adds. Only `onTap` is bound: `ActivateIntent` is the primary action and there is no second key for `onLongPress` / `onDoubleTap`.
-- The install gate is narrower than `hasGestures` on purpose. A `CallbackAction` is always enabled and `ShortcutManager` reports a key HANDLED for any enabled action, so an always-installed map made a long-press-only or disabled anchor swallow the activation key belonging to its parent, and on web beat `Space`'s `PrioritizedIntents([ActivateIntent, ScrollIntent])` race so the page stopped scrolling. An early return inside the callback does NOT fix that: the action still reports enabled.
+- The install gate is narrower than `hasGestures` on purpose. A `CallbackAction` is always enabled and `ShortcutManager` reports a key handled for any enabled action, so an always-installed map made a long-press-only or disabled anchor swallow the activation key belonging to its parent, and on web beat `Space`'s `PrioritizedIntents([ActivateIntent, ScrollIntent])` race so the page stopped scrolling. An early return inside the callback does not fix that: the action still reports enabled.
 - `Focus` is installed only when the anchor has a gesture or `trackFocus` is true. `WDiv` passes `trackFocus: className.contains('focus:')`, so a hover-only or active-only div has no node, is no Tab or D-pad stop, and publishes no `focusable` semantics. The provider and `MouseRegion` stay unconditional: every parse reads the provider, and hover needs the region. It also publishes no focus-within to its children: a `focus:` label beside a `WInput` under a hover-only row stays unlit, so give the row any `focus:` class when a sibling has to light.
 - `canRequestFocus: !isDisabled && (hasGestures || no ancestor anchor state)`. A gestureless `WAnchor` under another anchor is a styling wrapper, not a traversal stop, so one control costs one press of the remote. Standalone (nothing to inherit from) it keeps its node, because that is how a consumer styles a custom control.
-- A gestureless wrapper inherits the ancestor's `hasPrimaryFocus` and `isDisabled`, NOT its `isFocused`, and it REPUBLISHES `hasPrimaryFocus` with the inherited value ORed in so the signal chains: a wrapper's own node never holds primary focus, so stopping at it left a ring two wrappers deep dark, and any `hover:` / `active:` class on an intermediate div creates that second wrapper. `WindAnchorState.isFocused` is focus-WITHIN (it comes from `FocusNode.hasFocus`, true for an ancestor of the real holder), so inheriting it lit the ring on every wrapper under a tappable card while the user typed in a field inside that card, including wrappers sitting beside the field. The container case still works without inheritance: a ring-styled `WDiv` wrapping a `WInput` lights through its own node. `isHovering` is never inherited: hover is a pointer position and sibling divs inside one anchor highlight independently.
+- A gestureless wrapper inherits the ancestor's `hasPrimaryFocus` and `isDisabled`, not its `isFocused`, and it republishes `hasPrimaryFocus` with the inherited value ORed in so the signal chains: a wrapper's own node never holds primary focus, so stopping at it left a ring two wrappers deep dark, and any `hover:` / `active:` class on an intermediate div creates that second wrapper. `WindAnchorState.isFocused` is focus-within (it comes from `FocusNode.hasFocus`, true for an ancestor of the real holder), so inheriting it lit the ring on every wrapper under a tappable card while the user typed in a field inside that card, including wrappers sitting beside the field. The container case still works without inheritance: a ring-styled `WDiv` wrapping a `WInput` lights through its own node. `isHovering` is never inherited: hover is a pointer position and sibling divs inside one anchor highlight independently.
 
 ### `WButton`
 
@@ -294,7 +294,7 @@ const WButton({
 Loading state mechanics:
 - `isLoading: true` replaces the child with a default 16×16 `CircularProgressIndicator` (2 px stroke) plus optional `loadingText` in a flex row.
 - All taps are absorbed via `AbsorbPointer` when loading.
-- Spinner color resolution chain: explicit `loadingColor` → `styles.color` (from `text-*`) → contrast color (W3C relative-luminance against background) → white fallback.
+- Spinner colour resolution chain: explicit `loadingColor` → `styles.color` (from `text-*`) → contrast colour (W3C relative-luminance against background) → white fallback.
 
 Disabled state:
 - `disabled: true` blocks all taps and sets the cursor to `SystemMouseCursors.forbidden`.
@@ -302,7 +302,7 @@ Disabled state:
 
 State injection summary:
 - `loading`: from `isLoading: true`
-- `disabled`: from `disabled: true` or `isLoading: true`
+- `disabled`: from `disabled: true` on the button's own `className`; a loading button also disables its anchor, so a `WText` or `WIcon` inside it resolves `disabled:` too, while the button itself only gets `loading:`
 - `hover` / `focus`: from `WAnchor` automatically
 
 ---
@@ -335,24 +335,26 @@ const WInput({
   String? className,
   Set<String>? states,
   bool enabled = true,
+  bool readOnly = false,
   bool autofocus = false,
-  bool obscureText = false,          // explicit override; defaults from `type: InputType.password`
   TextEditingController? controller, // optional; widget creates internal one if null
   FocusNode? focusNode,              // optional; widget creates internal one if null
   TextInputAction? textInputAction,
-  TextInputType? keyboardType,       // explicit override; defaults from `type`
+  Iterable<String>? autofillHints = const <String>[],
   TextCapitalization textCapitalization = TextCapitalization.none,
+  bool autocorrect = true,
+  bool enableSuggestions = true,
   int? maxLines,
-  int? minLines,
-  int? maxLength,
-  bool readOnly = false,
+  int minLines = 1,
+  List<TextInputFormatter>? inputFormatters,
+  String decimalSeparator = '.',     // the one decimal mark of InputType.number
   Widget? prefix,                    // 12 px left padding, 8 px right
   Widget? suffix,                    // 8 px left padding, 12 px right
-  List<TextInputFormatter>? inputFormatters,
   String? semanticLabel,
-  // ...
 })
 ```
+
+There is no `obscureText`, `keyboardType` or `maxLength`: `type: InputType.password` obscures, `type` picks the keyboard, and a length limit is a `LengthLimitingTextInputFormatter` in `inputFormatters`.
 
 Keyboard config from `type`:
 - `text` → `TextInputType.text`
@@ -383,21 +385,21 @@ const WCheckbox({
 })
 ```
 
-State injection: `checked` (when `value: true`) + `disabled` (from `disabled: true` OR a null `onChanged`, see section 1) + custom states.
+State injection: `checked` (when `value: true`) + `disabled` (from `disabled: true` or a null `onChanged`, see section 1) + custom states.
 
-Default className (appended to user className):
+Default className (your `className` is appended after it, so a token you pass wins over the same family here):
 ```
 w-5 h-5 rounded border border-gray-300 items-center justify-center
-checked:bg-blue-500 error:border-red-500 checked:bg-primary checked:border-transparent
+error:border-red-500 checked:bg-primary checked:border-transparent
 ```
 
-Uses `checked:bg-primary` which requires a `primary` color family in `WindThemeData.colors`.
+`checked:bg-primary` reads the `primary` colour family, which the default theme seeds with the blue swatch. Override it with `colors: {'primary': ...}` on `WindThemeData` to recolour every checked box, or pass your own `checked:bg-*` in `className` for one box.
 
 No `semanticLabel` prop: the widget publishes one node carrying the `checked` state and no name, since the check glyph is its only child. A sibling `WText` is a visible label, not a semantic one. Wrap the pair in `MergeSemantics` for a single named node: `MergeSemantics(child: WDiv(className: 'flex flex-row items-center gap-3', children: [WCheckbox(...), WText('Accept terms')]))`.
 
 ### `WSelect<T>`
 
-Dropdown with single OR multi-select, search, async search, tagging, pagination. `focus:` applies while open AND on keyboard focus of the trigger (not while disabled).
+Dropdown with single or multi-select, search, async search, tagging, pagination. `focus:` applies while open and on keyboard focus of the trigger (not while disabled).
 
 ```dart
 const WSelect({
@@ -440,17 +442,17 @@ const WSelect({
 })
 ```
 
-Behavior:
+Behaviour:
 - `OverlayPortal` + `CompositedTransformFollower` for positioning.
 - Auto-flips upward when space below trigger < `maxMenuHeight` and triggerY > spaceBelow.
-- Multi-select keeps menu open after each selection; default chips use `bg-blue-100 rounded px-2 py-0.5`.
+- Multi-select keeps menu open after each selection; default chips use `bg-primary-100 rounded px-2 py-0.5`.
 - Search: async `onSearch` runs filtering remotely; without it, local `contains`-based filter.
 - Pagination: scroll listener triggers `onLoadMore` at 50 px from bottom when `hasMore: true`.
 - Opening the menu clears the search and puts the visible list back to `options`, so rows fetched through `onLoadMore` are gone. `onOpen` fires there: a paginating caller resets its cursor, or the next scroll asks for the page after the one the reader can see. Only reset if `options` resets too; a caller that mirrors fetched pages into `options` would re-fetch and duplicate.
 
 ### `WDatePicker`
 
-Calendar popover with single, range, OR date-plus-time mode.
+Calendar popover with single, range, or date-plus-time mode.
 
 ```dart
 const WDatePicker({
@@ -467,7 +469,8 @@ const WDatePicker({
   DateTime? maxDate,
   // Styling:
   String? className,
-  String? placeholder,
+  String placeholder = 'Select date',
+  bool disabled = false,             // injects the `disabled:` state, blocks opening
   Set<String>? states,
   DateDisplayFormat? displayFormat,  // custom formatter callback
   // dateTime mode only:
@@ -477,11 +480,11 @@ const WDatePicker({
 })
 ```
 
-Behavior:
+Behaviour:
 - Wraps a `WPopover` (auto-flip handled by popover).
 - Single mode closes after selection. Range mode requires two clicks; auto-swaps if end < start.
-- `dateTime` mode uses `value` / `onChanged` like single mode, but emits the picked day composed with an hour and minute instead of midnight. It stays open after a day tap: a time row (two 24-hour spinners plus a confirm control labelled by `doneLabel`) closes it. `onChanged` fires on every day tap AND every time step, so treat it as a live value, not a commit signal. `minDate` / `maxDate` apply to the full instant, so a step leaving the window renders disabled and a day tap landing outside it is pulled to the bound; 23:00 never wraps to 00:00.
-- Bounds gotcha in `dateTime` mode: a bare-day `maxDate` (`DateTime(2026, 8, 31)`) IS Aug 31 00:00, so the last day admits only midnight and its step controls render disabled. Pass an explicit end-of-day (`DateTime(2026, 8, 31, 23, 59)`) to open the whole day. `minDate` has no equivalent trap, a bare day opens at 00:00.
+- `dateTime` mode uses `value` / `onChanged` like single mode, but emits the picked day composed with an hour and minute instead of midnight. It stays open after a day tap: a time row (two 24-hour spinners plus a confirm control labelled by `doneLabel`) closes it. `onChanged` fires on every day tap and every time step, so treat it as a live value, not a commit signal. `minDate` / `maxDate` apply to the full instant, so a step leaving the window renders disabled and a day tap landing outside it is pulled to the bound; 23:00 never wraps to 00:00.
+- Bounds gotcha in `dateTime` mode: a bare-day `maxDate` (`DateTime(2026, 8, 31)`) is Aug 31 00:00, so the last day admits only midnight and its step controls render disabled. Pass an explicit end-of-day (`DateTime(2026, 8, 31, 23, 59)`) to open the whole day. `minDate` has no equivalent trap, a bare day opens at 00:00.
 - The mode is controlled: feed each emitted value back through `value`. Setting `value` back to `null` (a form reset) also re-seeds the time row from the wall clock.
 - The emitted `DateTime` is local and carries no offset (`DateTime` cannot hold an arbitrary one), so a value crossing the wire is the caller's `toUtc()` to make.
 - Calendar grid: 42 cells (6 weeks starting Monday); current month + adjacent days; state styling for selected / today / inactive / hover preview.
@@ -496,7 +499,7 @@ Each extends `FormField<T>` and integrates with Flutter's `Form` + `GlobalKey<Fo
 ### `WFormInput extends FormField<String>`
 
 ```dart
-const WFormInput({
+WFormInput({                         // not const
   Key? key,
   // FormField:
   String? initialValue,
@@ -505,34 +508,46 @@ const WFormInput({
   AutovalidateMode? autovalidateMode,
   String? restorationId,
   bool enabled = true,
-  String? forceErrorText,            // bypass validator; set non-null for server errors
   // Layout:
   String? label,
-  String? labelClassName,            // default 'text-sm font-medium text-gray-700 mb-1'
+  String labelClassName,             // default 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
   String? hint,
-  String? hintClassName,             // default 'text-gray-500 text-xs mt-1'
+  String hintClassName,              // default 'text-gray-500 dark:text-gray-400 text-xs mt-1'
   bool showError = true,
-  String? errorClassName,            // default 'text-red-500 text-xs mt-1'
+  String errorClassName,             // default 'text-red-500 dark:text-red-400 text-xs mt-1'
   // WInput passthrough:
   TextEditingController? controller,
   FocusNode? focusNode,
   InputType type = InputType.text,
   String? placeholder,
+  String? placeholderClassName,
   String? className,
   Set<String>? states,
   ValueChanged<String>? onChanged,
   ValueChanged<String>? onSubmitted,
+  VoidCallback? onEditingComplete,
+  VoidCallback? onTap,
+  TapRegionCallback? onTapOutside,
   TextInputAction? textInputAction,
+  Iterable<String>? autofillHints = const <String>[],
+  TextCapitalization textCapitalization = TextCapitalization.none,
+  bool autocorrect = true,
+  bool enableSuggestions = true,
+  bool readOnly = false,
+  bool autofocus = false,
+  int? maxLines,
+  int minLines = 1,
+  List<TextInputFormatter>? inputFormatters,
+  String decimalSeparator = '.',
   Widget? prefix,
   Widget? suffix,
-  int? maxLength,
-  // ...
 })
 ```
 
-State synchronization:
-- TextEditingController text → `FormFieldState.value` via internal listener.
-- External `value` prop changes sync the other direction (`didUpdateWidget`).
+State synchronisation:
+- `controller` text → `FormFieldState.value` via an internal listener.
+- `FormFieldState.value` → controller text on rebuild (`didUpdateWidget`), for example after `FormState.reset()`.
+- There is no `value` prop. Seed the field with `initialValue`, or with the text already in `controller`; passing both is allowed and the controller's text wins.
 - `state.hasError` → `'error'` added to `effectiveStates` → `error:border-red-500` activates.
 
 Validator signature: `String? Function(String?)` inherited from `FormField<String>`.
@@ -542,28 +557,44 @@ Validator signature: `String? Function(String?)` inherited from `FormField<Strin
 Single-select with validation. Same props as `WSelect` plus FormField additions.
 
 ```dart
-const WFormSelect({
+WFormSelect({                        // not const
   Key? key,
-  T? value,
-  ValueChanged<T>? onChange,
-  required List<SelectOption<T>> options,
+  T? value,                          // initial selected value
   // FormField:
   FormFieldValidator<T>? validator,
   FormFieldSetter<T>? onSaved,
   AutovalidateMode? autovalidateMode,
+  String? restorationId,
   bool enabled = true,
-  String? forceErrorText,
-  // Layout label / hint / error: same as WFormInput
+  // WSelect passthrough:
+  required List<SelectOption<T>> options,
+  ValueChanged<T?>? onChange,
+  String placeholder = 'Select an option',
+  String? className,
+  String? menuClassName,
+  bool searchable = false,
+  String searchPlaceholder = 'Search...',
+  Future<List<SelectOption<T>>> Function(String query)? onSearch,
+  Future<SelectOption<T>> Function(String query)? onCreateOption,
+  CreateOptionBuilder? createOptionBuilder,
+  Future<List<SelectOption<T>>> Function()? onLoadMore,
+  bool hasMore = false,
+  VoidCallback? onOpen,
+  bool disabled = false,
+  double? menuWidth,
+  double maxMenuHeight = 300,
+  Set<String>? states,
+  SelectTriggerBuilder<T>? triggerBuilder,
+  SelectItemBuilder<T>? itemBuilder,
+  EmptyStateBuilder? emptyBuilder,
+  LoadingBuilder? loadingBuilder,
+  // Layout: same defaults as WFormInput
   String? label,
-  String? labelClassName,
+  String labelClassName,             // default 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
   String? hint,
-  String? hintClassName,
+  String hintClassName,              // default 'text-gray-500 dark:text-gray-400 text-xs mt-1'
   bool showError = true,
-  String? errorClassName,
-  // WSelect passthrough: searchable, onSearch, onCreateOption, onLoadMore, hasMore, onOpen,
-  // disabled, menuWidth, maxMenuHeight, className, menuClassName, states, placeholder,
-  // triggerBuilder, itemBuilder, emptyBuilder, loadingBuilder
-  // ...
+  String errorClassName,             // default 'text-red-500 dark:text-red-400 text-xs mt-1'
 })
 ```
 
@@ -572,21 +603,45 @@ const WFormSelect({
 Multi-select with validation. Validator inspects the full `List<T>?`.
 
 ```dart
-const WFormMultiSelect({
+WFormMultiSelect({                   // not const
   Key? key,
   List<T>? values,                   // initial selected list
-  ValueChanged<List<T>>? onMultiChange,
-  required List<SelectOption<T>> options,
   // FormField (operates on List<T>):
   FormFieldValidator<List<T>>? validator,
   FormFieldSetter<List<T>>? onSaved,
   AutovalidateMode? autovalidateMode,
+  String? restorationId,
   bool enabled = true,
-  String? forceErrorText,
-  // Layout: same as WFormSelect
-  // WSelect passthrough: searchable, onSearch, onCreateOption, onLoadMore, hasMore, onOpen,
-  // multiTriggerBuilder, selectedChipBuilder, itemBuilder, emptyBuilder, loadingBuilder
-  // ...
+  // WSelect passthrough:
+  required List<SelectOption<T>> options,
+  ValueChanged<List<T>>? onMultiChange,
+  String placeholder = 'Select options',
+  String? className,
+  String? menuClassName,
+  bool searchable = false,
+  String searchPlaceholder = 'Search...',
+  Future<List<SelectOption<T>>> Function(String query)? onSearch,
+  Future<SelectOption<T>> Function(String query)? onCreateOption,
+  CreateOptionBuilder? createOptionBuilder,
+  Future<List<SelectOption<T>>> Function()? onLoadMore,
+  bool hasMore = false,
+  VoidCallback? onOpen,
+  bool disabled = false,
+  double? menuWidth,
+  double maxMenuHeight = 300,
+  Set<String>? states,
+  MultiSelectTriggerBuilder<T>? multiTriggerBuilder,
+  SelectedChipBuilder<T>? selectedChipBuilder,
+  SelectItemBuilder<T>? itemBuilder,
+  EmptyStateBuilder? emptyBuilder,
+  LoadingBuilder? loadingBuilder,
+  // Layout: same defaults as WFormSelect
+  String? label,
+  String labelClassName,
+  String? hint,
+  String hintClassName,
+  bool showError = true,
+  String errorClassName,
 })
 ```
 
@@ -595,7 +650,7 @@ const WFormMultiSelect({
 Custom `createState()` returns `_WFormCheckboxState` (not default) to sync external `value` prop via `didUpdateWidget`.
 
 ```dart
-const WFormCheckbox({
+WFormCheckbox({                      // not const
   Key? key,
   bool value = false,
   ValueChanged<bool>? onChanged,
@@ -603,16 +658,16 @@ const WFormCheckbox({
   FormFieldValidator<bool>? validator,
   FormFieldSetter<bool>? onSaved,
   AutovalidateMode? autovalidateMode,
+  String? restorationId,
   bool enabled = true,
-  String? forceErrorText,
   // Layout:
   Widget? label,                     // custom label widget
-  String? labelText,                 // OR plain text label
-  String? labelClassName,            // default 'text-sm text-gray-700'
+  String? labelText,                 // or a plain text label
+  String labelClassName,             // default 'text-sm text-gray-700 dark:text-gray-300'
   String? hint,
-  String? hintClassName,
+  String hintClassName,              // default 'text-gray-500 dark:text-gray-400 text-xs mt-1'
   bool showError = true,
-  String? errorClassName,
+  String errorClassName,             // default 'text-red-500 dark:text-red-400 text-xs mt-1'
   // WCheckbox passthrough:
   String? className,
   String? iconClassName,
@@ -631,7 +686,7 @@ In `dateTime` mode the field's value is a full `DateTime` carrying the picked ho
 Range mode gotcha: stores only `range.start` in `FormFieldState<DateTime>`. Validators can only inspect the start date. For range completeness validation, reach for the internal state separately.
 
 ```dart
-const WFormDatePicker({
+WFormDatePicker({                    // not const
   Key? key,
   DateTime? initialValue,
   DateRange? initialRange,
@@ -643,17 +698,16 @@ const WFormDatePicker({
   FormFieldSetter<DateTime>? onSaved,
   AutovalidateMode? autovalidateMode,
   bool enabled = true,
-  String? forceErrorText,
   // Constraints:
   DateTime? minDate,
   DateTime? maxDate,
-  // Layout (defaults documented):
+  // Layout:
   String? label,
-  String? labelClassName,            // default 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
+  String labelClassName,             // default 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
   String? hint,
-  String? hintClassName,             // default 'text-gray-500 text-xs mt-1'
+  String hintClassName,              // default 'text-gray-500 dark:text-gray-400 text-xs mt-1'
   bool showError = true,
-  String? errorClassName,            // default 'text-red-500 text-xs mt-1'
+  String errorClassName,             // default 'text-red-500 dark:text-red-400 text-xs mt-1'
   // Styling:
   String? className,
   String? placeholder,
@@ -780,7 +834,7 @@ const WPopover({
   PopoverAlignment alignment = PopoverAlignment.bottomLeft,
   String? className,                     // overlay container styling
   Offset offset = const Offset(0, 4),    // trigger-to-popover gap
-  double maxHeight = 400,
+  double maxHeight = 400,                // content scrolls past it; also capped to the room on its side while autoFlip
   double? width,                         // fixed overlay width (WSelect parity); overrides w-* token
   double? maxWidth,                      // upper bound; falls back to max-w-* token then screen width
   bool disabled = false,
@@ -825,7 +879,8 @@ const WDynamic({
   Map<String, WWidgetBuilder>? builders,             // custom widget types
   Map<String, IconData>? customIcons,                // override / extend icon map
   int maxDepth = 50,                                 // recursion limit
-  void Function(String type, Map<String, dynamic> props)? onUnknownWidget,
+  Widget Function(String type, Map<String, dynamic> props)? onUnknownWidget,  // stand-in for a blocked or unknown type
+  Widget Function(String type, Object error)? onError,                        // stand-in when a build throws
 })
 ```
 
@@ -838,7 +893,7 @@ JSON node schema:
 }
 ```
 
-Allowed widget types (13 Wind + 16 Flutter core, by default):
+Allowed widget types by default:
 - Wind: `WDiv`, `WText`, `WButton`, `WImage`, `WIcon`, `WAnchor`, `WInput`, `WCheckbox`, `WSvg`, `WSelect`, `WPopover`, `WDatePicker`, `WSpacer`
 - Flutter core: `Column`, `Row`, `Center`, `SizedBox`, `Expanded`, `Container`, `Wrap`, `Stack`, `Positioned`, `Padding`, `Align`, `Opacity`, `AspectRatio`, `FittedBox`, `ClipRRect`, `Spacer`
 
@@ -859,7 +914,7 @@ Full JSON contract + state binding + security model: `${CLAUDE_SKILL_DIR}/refere
 
 ## 11. Composed: WBadge, WCard, WSwitch, WRadio, WTabs
 
-Five design-system widgets composed from `WDiv` / `WText` / `WAnchor`. All visual tone is `className`-driven, so every color token needs its `dark:` pair in the same string.
+Five design-system widgets composed from `WDiv` / `WText` / `WAnchor`. All visual tone is `className`-driven, so every colour token needs its `dark:` pair in the same string.
 
 ### `WBadge`
 
@@ -897,7 +952,7 @@ const WSwitch({
   required bool value,
   ValueChanged<bool>? onChanged,         // null (or disabled) makes it inert
   String? className,                     // the track: a flex Row; position the thumb with justify-* here
-  String? thumbClassName,                // thumb shape + color ONLY
+  String? thumbClassName,                // thumb shape and colour only
   bool disabled = false,
   Set<String>? states,
   String? semanticLabel,
@@ -908,7 +963,7 @@ The thumb is a flex child of the track, so the caller animates it with `justify-
 
 ### `WRadio<T>`
 
-Controlled radio button. Drives the `selected:` state prefix when `value == groupValue`. Group behavior (mutual exclusivity) is the caller's responsibility.
+Controlled radio button. Drives the `selected:` state prefix when `value == groupValue`. Group behaviour (mutual exclusivity) is the caller's responsibility.
 
 ```dart
 const WRadio<T>({
@@ -929,7 +984,7 @@ const WRadio<T>({
 Controlled tabs widget. The `selected:` state prefix activates on the active tab; a null `onChanged` marks the whole strip disabled.
 
 ```dart
-WTabs({                                  // NOT const (asserts on tabs / selectedIndex)
+WTabs({                                  // not const (asserts on tabs / selectedIndex)
   Key? key,
   required List<String> tabs,            // tab labels
   required int selectedIndex,            // active tab (must be in range)
@@ -961,17 +1016,17 @@ class SelectOption<T> {
 }
 ```
 
-Equality based on value + label + disabled (NOT icon).
+Equality is based on value, label and disabled (not icon).
 
 ### `DateRange`
 
 ```dart
 class DateRange {
   final DateTime start;
-  final DateTime end;
-  DateRange({required this.start, required this.end});
-  bool get isComplete => /* end > start */;
-  DateRange copyWith({DateTime? start, DateTime? end});
+  final DateTime? end;                 // null until the second pick
+  const DateRange({required this.start, this.end});
+  bool get isComplete => end != null;
+  DateRange copyWith({DateTime? start, DateTime? end});  // body omitted
 }
 ```
 
@@ -991,22 +1046,22 @@ enum WDatePickerMode { single, range, dateTime }
 
 ```dart
 enum PopoverAlignment {
-  bottomLeft, bottomCenter, bottomRight,
-  topLeft, topCenter, topRight,
+  bottomLeft, bottomRight, bottomCenter,
+  topLeft, topRight, topCenter,
 }
 ```
 
 ### `WindAnimationType` enum
 
 ```dart
-enum WindAnimationType { none, spin, ping, pulse, bounce }
+enum WindAnimationType { spin, ping, pulse, bounce, none }
 ```
 
-All loop infinitely. Wired via the `animate-*` className tokens.
+Every type except `none` loops infinitely. Wired via the `animate-*` className tokens.
 
 ### `WindThemeController`
 
-Exposed via `context.windTheme` (extension on `BuildContext`).
+Exposed via `context.windTheme` (extension on `BuildContext`). Principal members only; the controller also exposes a getter for each remaining theme map (`fontSizes`, `fontWeights`, `fontFamilies`, `borderWidths`, `borderRadius`) and `baseSpacingUnit`.
 
 ```dart
 class WindThemeController extends ChangeNotifier {
@@ -1017,7 +1072,17 @@ class WindThemeController extends ChangeNotifier {
 
   void toggleTheme();                              // flips brightness; disables syncWithSystem
   void setTheme(WindThemeData newData);
-  void updateTheme({Brightness? brightness, Map<String, MaterialColor>? colors, /* ... */});
+  void updateTheme({                               // every argument is optional; null keeps the current value
+    Brightness? brightness,
+    Map<String, MaterialColor>? colors,
+    Map<String, int>? screens,
+    Map<String, double>? fontSizes,
+    Map<String, FontWeight>? fontWeights,
+    Map<String, String>? fontFamilies,
+    Map<String, double>? borderWidths,
+    Map<String, double>? borderRadius,
+    double? baseSpacingUnit,
+  });
   void resetToSystem();                            // re-enables OS-brightness sync
   ThemeData toThemeData();                         // for MaterialApp.theme
 }
@@ -1025,4 +1090,4 @@ class WindThemeController extends ChangeNotifier {
 
 `context.windIsDark` is a shortcut for `context.windTheme.brightness == Brightness.dark`.
 
-Full theme customization (custom colors, custom breakpoints, font families, `baseSpacingUnit`): `${CLAUDE_SKILL_DIR}/references/theme.md`.
+Full theme customisation (custom colours, custom breakpoints, font families, `baseSpacingUnit`): `${CLAUDE_SKILL_DIR}/references/theme.md`.

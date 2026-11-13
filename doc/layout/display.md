@@ -35,7 +35,7 @@ WDiv(className: 'hidden', child: ...)
 <a name="block"></a>
 ### Block
 
-Use `block` to create a standard block-level element. In Wind, this is the default behavior of `WDiv` (rendering a `Container` or `SizedBox`).
+Use `block` to create a standard block-level element. In Wind, this is the default behaviour of `WDiv` (rendering a `Container` or `SizedBox`).
 
 ```dart
 WDiv(
@@ -90,9 +90,9 @@ Use `wrap` to create a wrapping container. This renders a Flutter `Wrap` widget.
 WDiv(
   className: 'wrap gap-2',
   children: [
-    WChip('React'),
-    WChip('Flutter'),
-    WChip('Vue'),
+    WBadge('React'),
+    WBadge('Flutter'),
+    WBadge('Vue'),
   ],
 )
 ```
@@ -157,15 +157,23 @@ WDiv(
 <a name="state-variants"></a>
 ## State Variants
 
-Prefix utilities with state variants like `hover:`, `focus:`, or `active:` to conditionally apply display modes.
+Prefix utilities with state variants like `hover:` or `focus:` to conditionally apply display modes. `active:` is not wired to the pointer; it applies only when the widget is given `states: {'active'}`. `group-hover:` is not supported.
 
 ```dart
 // Show element on hover
-WDiv(
-  className: 'hidden group-hover:block',
-  child: ...,
+WAnchor(
+  onTap: () {},
+  child: WDiv(
+    className: 'p-4',
+    children: [
+      WText('Hover the card'),
+      WText('Revealed on hover', className: 'hidden hover:block'),
+    ],
+  ),
 )
 ```
+
+A `WDiv` with `hover:` tracks its own hover; reveal through a `WText`.
 
 <a name="arbitrary-values"></a>
 ## Arbitrary Values
@@ -175,7 +183,7 @@ The display utility does not support arbitrary values. You must use one of the p
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-Display utilities are structural and cannot be customized via `WindThemeData`. They map directly to Flutter widgets (`Row`, `Column`, `Wrap`, `GridView`).
+Display utilities are structural and cannot be customised via `WindThemeData`. They map directly to Flutter widgets (`Row`, `Column`, `Wrap`, `GridView`).
 
 <a name="related-documentation"></a>
 ## Related Documentation

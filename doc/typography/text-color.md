@@ -1,6 +1,6 @@
 # Text Color
 
-Utilities for controlling the text color of an element.
+Utilities for controlling the text colour of an element.
 
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
@@ -20,9 +20,10 @@ WText('Success', className: 'text-green-600')
 WText('Info', className: 'text-blue-500')
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
-Control the text color of an element using the `text-{color}-{shade}` utilities.
+Control the text colour of an element using the `text-{color}-{shade}` utilities.
 
 ```dart
 WDiv(
@@ -34,23 +35,25 @@ WDiv(
 )
 ```
 
+<a name="quick-reference"></a>
 ## Quick Reference
 
-Wind includes the standard Tailwind color palette. Here are some examples:
+Wind includes the standard Tailwind colour palette. Here are some examples:
 
 | Class | Value | Description |
 |:------|:------|:------------|
-| `text-slate-500` | #64748b | Slate text color |
-| `text-gray-500` | #6b7280 | Gray text color |
-| `text-red-500` | #ef4444 | Red text color |
-| `text-blue-600` | #2563eb | Blue text color |
+| `text-slate-500` | #64748b | Slate text colour |
+| `text-gray-500` | #6b7280 | Gray text colour |
+| `text-red-500` | #ef4444 | Red text colour |
+| `text-blue-600` | #2563eb | Blue text colour |
 | `text-white` | #ffffff | White text |
 | `text-black` | #000000 | Black text |
 | `text-transparent` | transparent | Transparent text |
 
+<a name="opacity-modifier"></a>
 ## Opacity Modifier
 
-Control the opacity of the text color using the color opacity modifier. Add a forward slash and the opacity percentage value to any color utility.
+Control the opacity of the text colour using the colour opacity modifier. Add a forward slash and the opacity percentage value to any colour utility.
 
 <x-preview path="typography/text_color_opacity" size="md" source="example/lib/pages/typography/text_color_opacity.dart"></x-preview>
 
@@ -66,9 +69,10 @@ WDiv(
 )
 ```
 
+<a name="responsive-design"></a>
 ## Responsive Design
 
-Apply different text colors at specific breakpoints using standard responsive prefixes.
+Apply different text colours at specific breakpoints using standard responsive prefixes.
 
 ```dart
 WText(
@@ -77,9 +81,10 @@ WText(
 )
 ```
 
+<a name="dark-mode"></a>
 ## Dark Mode
 
-Use the `dark:` prefix to apply specific text colors when dark mode is active.
+Use the `dark:` prefix to apply specific text colours when dark mode is active.
 
 ```dart
 WDiv(
@@ -91,9 +96,10 @@ WDiv(
 )
 ```
 
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
-If you need a specific color that isn't in your theme, use square brackets to generate a property on the fly using a hex code.
+If you need a specific colour that isn't in your theme, use square brackets to generate a property on the fly using a hex code.
 
 ```dart
 WText(
@@ -109,26 +115,22 @@ WText('Half-faded', className: 'text-[#8050d71e]')
 WText('Underlined', className: 'underline decoration-[#80ff0000]')
 ```
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-To add your own colors, modify the `colors` property in `WindThemeData`.
+To add your own colours, modify the `colors` property in `WindThemeData`.
 
 ```dart
 WindThemeData(
   colors: {
-    // Add custom color map
-    'brand': {
-      '500': Color(0xFF1E40AF),
-    },
-    // Extend existing map
-    ...WindThemeData.defaultColors,
-    'tahiti': {
-      '100': Color(0xFFcffafe),
-      '900': Color(0xFF164e63),
-    },
+    // Add custom color maps
+    'brand': MaterialColor(0xFF1E40AF, {500: Color(0xFF1E40AF)}),
+    'tahiti': MaterialColor(0xFF164E63, {100: Color(0xFFCFFAFE), 900: Color(0xFF164E63)}),
   },
 )
 ```
+
+The map merges with the default palette by name, so the built-in colours stay available. A name that matches a built-in palette (`blue`, say) replaces that whole palette, not shade by shade: list every shade you still use, or `text-blue-600` stops resolving.
 
 Then use them in your classes:
 
@@ -137,7 +139,8 @@ WText('My Brand Color', className: 'text-brand-500')
 WText('Tahiti Color', className: 'text-tahiti-900')
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
-- [Background Color](../styling/background-color.md)
+- [Background Colour](../styling/background-color.md)
 - [Text Decoration](./text-decoration.md#decoration-color)

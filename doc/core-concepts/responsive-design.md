@@ -7,6 +7,7 @@ Building interfaces that adapt to any screen size is a core requirement for mode
 - [Platform Prefixes](#platform-prefixes)
 - [Combining Modifiers](#combining-modifiers)
 - [Customizing Breakpoints](#customizing-breakpoints)
+- [Related Documentation](#related-documentation)
 
 <x-preview path="core-concepts/responsive_basic" size="md" source="example/lib/pages/core-concepts/responsive_basic.dart"></x-preview>
 
@@ -33,7 +34,7 @@ Consider this example:
 WDiv(className: 'bg-blue-500 lg:bg-green-500')
 ```
 
-In this case, the `bg-blue-500` class is the base style. The `lg:bg-green-500` class only activates when the screen width is at least 1024px, overriding the base background color.
+In this case, the `bg-blue-500` class is the base style. The `lg:bg-green-500` class only activates when the screen width is at least 1024px, overriding the base background colour.
 
 <a name="breakpoint-reference"></a>
 ## Breakpoint Reference
@@ -87,9 +88,6 @@ WButton(
 )
 ```
 
-> [!WARNING]
-> Modifier order is strict. Breakpoint modifiers must always come first in the chain (e.g., `lg:dark:hover:`).
-
 <a name="customizing-breakpoints"></a>
 ## Customizing Breakpoints
 
@@ -110,6 +108,7 @@ WindTheme(
 
 Once defined, these custom keys can be used as prefixes: `tablet:p-4`, `laptop:flex-row`, etc.
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [Utility-First Fundamentals](./utility-first.md)

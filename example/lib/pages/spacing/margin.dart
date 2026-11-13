@@ -57,8 +57,7 @@ class MarginExamplePage extends StatelessWidget {
                 className: 'bg-gray-100 dark:bg-slate-700 rounded-lg p-2',
                 children: [
                   WDiv(
-                    className:
-                        'mx-auto w-32 h-10 bg-emerald-500 dark:bg-emerald-400 rounded-lg flex items-center justify-center',
+                    className: 'mx-auto w-32 h-10 bg-emerald-500 dark:bg-emerald-400 rounded-lg flex items-center justify-center',
                     child: WText(
                       'mx-auto',
                       className: 'text-white text-xs font-mono',
@@ -89,7 +88,9 @@ class MarginExamplePage extends StatelessWidget {
             title: 'Arbitrary Values',
             children: [
               _buildMarginDemo(
-                  'm-[10px]', 'm-[10px] bg-pink-500 dark:bg-pink-400'),
+                'm-[10px]',
+                'm-[10px] bg-pink-500 dark:bg-pink-400',
+              ),
             ],
           ),
         ],

@@ -19,9 +19,8 @@ class _FormCheckboxBasicExamplePageState
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Form submitted!')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Form submitted!')));
     }
   }
 

@@ -12,16 +12,15 @@ class ThemingExamplePage extends StatelessWidget {
 
     return ExampleScaffold(
       title: 'Theme Configuration',
-      description:
-          'WindThemeData drives every utility. Override any of 24 fields; unset ones inherit the Tailwind-equivalent defaults.',
+      description: 'WindThemeData drives every utility. Override any of 24 fields; unset ones inherit the Tailwind-equivalent defaults.',
       gradient: 'from-emerald-500 to-teal-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Wrap the app once. Override only the fields you need; merge with defaults is automatic.',
+          description: 'Wrap the app once. Override only the fields you need; merge with defaults is automatic.',
           child: _CodeBlock(
-            code: 'WindTheme(\n'
+            code:
+                'WindTheme(\n'
                 '  data: WindThemeData(\n'
                 '    colors: {\n'
                 '      "brand": Colors.indigo,\n'
@@ -43,10 +42,10 @@ class ThemingExamplePage extends StatelessWidget {
         const _AliasesSection(),
         ExampleSection(
           title: 'Theme Change Callbacks',
-          description:
-              'onThemeChanged fires only on user-initiated toggleTheme() calls. Use it to persist preference.',
+          description: 'onThemeChanged fires only on user-initiated toggleTheme() calls. Use it to persist preference.',
           child: _CodeBlock(
-            code: 'WindTheme(\n'
+            code:
+                'WindTheme(\n'
                 '  data: WindThemeData(),\n'
                 '  onThemeChanged: (brightness) {\n'
                 '    Vault.set(\n'
@@ -60,18 +59,15 @@ class ThemingExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Reset to System',
-          description:
-              'After a manual toggle, automatic system brightness sync is disabled. Call resetToSystem() to re-enable it.',
-          child: _CodeBlock(
-            code: 'context.windTheme.resetToSystem();',
-          ),
+          description: 'After a manual toggle, automatic system brightness sync is disabled. Call resetToSystem() to re-enable it.',
+          child: _CodeBlock(code: 'context.windTheme.resetToSystem();'),
         ),
         ExampleSection(
           title: 'copyWith for Variants',
-          description:
-              'Build dark or branded variants from a base theme without retyping every field.',
+          description: 'Build dark or branded variants from a base theme without retyping every field.',
           child: _CodeBlock(
-            code: 'final dark = baseTheme.copyWith(\n'
+            code:
+                'final dark = baseTheme.copyWith(\n'
                 '  brightness: Brightness.dark,\n'
                 '  ringColor: Colors.amber,\n'
                 ');',
@@ -96,15 +92,14 @@ class _ColorPaletteSection extends StatelessWidget {
     '600',
     '700',
     '800',
-    '900'
+    '900',
   ];
 
   @override
   Widget build(BuildContext context) {
     return ExampleSection(
       title: 'Color Palettes',
-      description:
-          'Define a MaterialColor under colors["brand"] and every shade utility (bg-brand-50 … bg-brand-900) is available.',
+      description: 'Define a MaterialColor under colors["brand"] and every shade utility (bg-brand-50 … bg-brand-900) is available.',
       child: WDiv(
         className: 'flex flex-col gap-3',
         children: _colors.map((color) {
@@ -113,8 +108,7 @@ class _ColorPaletteSection extends StatelessWidget {
             children: [
               WText(
                 color,
-                className:
-                    'text-sm font-medium capitalize text-slate-700 dark:text-slate-300',
+                className: 'text-sm font-medium capitalize text-slate-700 dark:text-slate-300',
               ),
               WDiv(
                 className: 'flex gap-1 overflow-x-auto',
@@ -191,8 +185,7 @@ class _TypographyScaleSection extends StatelessWidget {
 
     return ExampleSection(
       title: 'Typography Scale',
-      description:
-          'fontSizes drives the text-{name} parser. Override per-key to retune the entire app.',
+      description: 'fontSizes drives the text-{name} parser. Override per-key to retune the entire app.',
       child: WDiv(
         className: 'flex flex-col gap-3',
         children: rows.map((entry) {
@@ -281,8 +274,7 @@ class _ShadowScaleSection extends StatelessWidget {
 
     return ExampleSection(
       title: 'Shadow Scale',
-      description:
-          'Each key resolves to a List<BoxShadow>. Useful for layered glassy cards.',
+      description: 'Each key resolves to a List<BoxShadow>. Useful for layered glassy cards.',
       child: WDiv(
         className: 'wrap gap-6 py-4',
         children: shadows.map((entry) {
@@ -334,7 +326,8 @@ class _AliasesSection extends StatelessWidget {
               children: [
                 WText(
                   'Alias form',
-                  className: 'text-xs font-semibold uppercase tracking-wide '
+                  className:
+                      'text-xs font-semibold uppercase tracking-wide '
                       'text-slate-500 dark:text-slate-400',
                 ),
                 WDiv(
@@ -342,19 +335,12 @@ class _AliasesSection extends StatelessWidget {
                   child: WDiv(
                     className: 'row center gap-2',
                     children: [
-                      WDiv(
-                        className: 'w-8 h-8 rounded bg-emerald-500',
-                      ),
-                      WDiv(
-                        className: 'w-8 h-8 rounded bg-teal-500',
-                      ),
-                      WDiv(
-                        className: 'w-8 h-8 rounded bg-cyan-500',
-                      ),
+                      WDiv(className: 'w-8 h-8 rounded bg-emerald-500'),
+                      WDiv(className: 'w-8 h-8 rounded bg-teal-500'),
+                      WDiv(className: 'w-8 h-8 rounded bg-cyan-500'),
                       WText(
                         'row center gap-2',
-                        className:
-                            'text-xs font-mono text-slate-600 dark:text-slate-300',
+                        className: 'text-xs font-mono text-slate-600 dark:text-slate-300',
                       ),
                     ],
                   ),
@@ -366,7 +352,8 @@ class _AliasesSection extends StatelessWidget {
               children: [
                 WText(
                   'Expanded form (identical output)',
-                  className: 'text-xs font-semibold uppercase tracking-wide '
+                  className:
+                      'text-xs font-semibold uppercase tracking-wide '
                       'text-slate-500 dark:text-slate-400',
                 ),
                 WDiv(
@@ -375,19 +362,12 @@ class _AliasesSection extends StatelessWidget {
                     className:
                         'flex flex-row items-center justify-center gap-2',
                     children: [
-                      WDiv(
-                        className: 'w-8 h-8 rounded bg-emerald-500',
-                      ),
-                      WDiv(
-                        className: 'w-8 h-8 rounded bg-teal-500',
-                      ),
-                      WDiv(
-                        className: 'w-8 h-8 rounded bg-cyan-500',
-                      ),
+                      WDiv(className: 'w-8 h-8 rounded bg-emerald-500'),
+                      WDiv(className: 'w-8 h-8 rounded bg-teal-500'),
+                      WDiv(className: 'w-8 h-8 rounded bg-cyan-500'),
                       WText(
                         'flex flex-row items-center justify-center gap-2',
-                        className:
-                            'text-xs font-mono text-slate-600 dark:text-slate-300',
+                        className: 'text-xs font-mono text-slate-600 dark:text-slate-300',
                       ),
                     ],
                   ),
@@ -395,7 +375,8 @@ class _AliasesSection extends StatelessWidget {
               ],
             ),
             _CodeBlock(
-              code: 'WindTheme(\n'
+              code:
+                  'WindTheme(\n'
                   '  data: WindThemeData(\n'
                   '    aliases: {\n'
                   "      'row': 'flex flex-row',\n"
@@ -430,10 +411,7 @@ class _CodeBlock extends StatelessWidget {
         text-emerald-400
         overflow-x-auto
       ''',
-      child: WText(
-        code,
-        className: 'whitespace-pre text-emerald-400',
-      ),
+      child: WText(code, className: 'whitespace-pre text-emerald-400'),
     );
   }
 }

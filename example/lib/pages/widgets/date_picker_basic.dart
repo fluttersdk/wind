@@ -28,8 +28,7 @@ class _DatePickerBasicExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WDatePicker',
-      description:
-          'Calendar popover for single-date or date-range selection. Built on WPopover. value + onChanged for controlled state.',
+      description: 'Calendar popover for single-date or date-range selection. Built on WPopover. value + onChanged for controlled state.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
@@ -55,8 +54,7 @@ class _DatePickerBasicExamplePageState
         ),
         ExampleSection(
           title: 'Min/Max Constraints',
-          description:
-              'minDate + maxDate restrict the selectable range. Out-of-range dates appear dimmed.',
+          description: 'minDate + maxDate restrict the selectable range. Out-of-range dates appear dimmed.',
           child: WDatePicker(
             value: _constrainedDate,
             onChanged: (d) => setState(() => _constrainedDate = d),
@@ -68,8 +66,7 @@ class _DatePickerBasicExamplePageState
         ),
         ExampleSection(
           title: 'Custom Display Format',
-          description:
-              'displayFormat receives the DateTime and returns the trigger text.',
+          description: 'displayFormat receives the DateTime and returns the trigger text.',
           child: WDatePicker(
             value: _formattedDate,
             onChanged: (d) => setState(() => _formattedDate = d),
@@ -87,7 +84,8 @@ class _DatePickerBasicExamplePageState
             value: DateTime(2026, 6, 15),
             onChanged: (_) {},
             disabled: true,
-            className: '''
+            className:
+                '''
               $_triggerCls
               disabled:opacity-60 disabled:bg-slate-100
               dark:disabled:bg-slate-700

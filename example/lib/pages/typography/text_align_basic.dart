@@ -10,14 +10,12 @@ class TextAlignBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Text Align',
-      description:
-          'Six alignment keywords map directly to Flutter TextAlign. text-start and text-end are direction-aware (RTL-safe).',
+      description: 'Six alignment keywords map directly to Flutter TextAlign. text-start and text-end are direction-aware (RTL-safe).',
       gradient: 'from-rose-500 to-red-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each row applies a different text-{align}. The paragraph realigns inside its parent.',
+          description: 'Each row applies a different text-{align}. The paragraph realigns inside its parent.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -30,8 +28,7 @@ class TextAlignBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Direction-Aware',
-          description:
-              'text-start and text-end respect the active text direction. In RTL locales they flip automatically.',
+          description: 'text-start and text-end respect the active text direction. In RTL locales they flip automatically.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -105,10 +102,14 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-rose-700 dark:text-rose-400'),
-        WText(val,
-            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-rose-700 dark:text-rose-400',
+        ),
+        WText(
+          val,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }

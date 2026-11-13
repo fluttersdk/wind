@@ -1,4 +1,4 @@
-# Wind 1.5: Design culture
+# Design culture
 
 Taste, expressed as className tokens. Every other reference file answers "does this token exist and what does it do"; this one answers "which token should this be". Reach for it when the task is a screen or a component with no design spec attached, when a layout renders correctly and still looks wrong, or when a reviewer says "it works but it feels off".
 
@@ -8,7 +8,7 @@ The rules below are the iOS Human Interface Guidelines and common product-design
 
 1. [Before the first widget](#1-before-the-first-widget)
 2. [Visual hierarchy](#2-visual-hierarchy)
-3. [Color](#3-color)
+3. [Colour](#3-colour)
 4. [Typography](#4-typography)
 5. [Spacing and layout](#5-spacing-and-layout)
 6. [Depth](#6-depth)
@@ -20,7 +20,7 @@ The rules below are the iOS Human Interface Guidelines and common product-design
 
 Three HIG pillars carry most of the weight:
 
-1. **Clarity.** Readable text at every size. Hierarchy comes from spacing, color, and weight. Decoration is the last resort.
+1. **Clarity.** Readable text at every size. Hierarchy comes from spacing, colour, and weight. Decoration is the last resort.
 2. **Deference.** Content fills the screen, chrome gets out of the way. No decorative shadows.
 3. **Depth.** Layered surfaces and motion that reinforces spatial relationships.
 
@@ -31,7 +31,7 @@ Four questions, answered before writing markup:
 | Purpose | What problem does this screen solve, and for whom? |
 | Tone | One direction, committed to fully (table below) |
 | Constraints | Framework limits, performance budget, accessibility floor |
-| Differentiation | The ONE memorable thing about this interface |
+| Differentiation | The one memorable thing about this interface |
 
 | Tone | Character |
 |:-----|:----------|
@@ -41,13 +41,13 @@ Four questions, answered before writing markup:
 | Editorial | Strong type hierarchy, grid discipline, dramatic imagery |
 | Soft / pastel | Low saturation, gentle gradients, warm neutrals |
 
-Work in this order: core functionality before the shell, grayscale until the hierarchy reads, systems before details. A screen that works in grayscale works in color; the reverse is not true.
+Work in this order: core functionality before the shell, grayscale until the hierarchy reads, systems before details. A screen that works in grayscale works in colour; the reverse is not true.
 
 ## 2. Visual hierarchy
 
 Every element sits at one of three levels.
 
-| Level | Weight | Color | Usage |
+| Level | Weight | Colour | Usage |
 |:------|:-------|:------|:------|
 | Primary | 600-700 | Darkest neutral | Headlines, key values. One per section. |
 | Secondary | 400-500 | Mid grey | Supporting text, descriptions |
@@ -65,14 +65,14 @@ The type scale that implements it:
 | Form label | `text-sm font-medium text-gray-700 dark:text-gray-300` |
 | Uppercase section label | `text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400` |
 | Metadata / timestamp | `text-xs text-gray-400 dark:text-gray-500` |
-| Inline link | `text-sm text-primary hover:underline` |
+| Inline link | `text-sm text-primary dark:text-primary-400 hover:underline` |
 | Error text | `text-sm text-red-600 dark:text-red-400` |
 
 Four habits that separate a designed screen from a styled one:
 
-- **Reach for weight and color before size.** Size is the last lever, not the first.
-- **Emphasize by de-emphasizing.** Soften what competes instead of shouting louder.
-- **Give icons softer colors than their neighbouring text.** A glyph is visually heavier than a word at the same size: `text-gray-400` for decorative, `text-primary` for active.
+- **Reach for weight and colour before size.** Size is the last lever, not the first.
+- **Emphasise by de-emphasising.** Soften what competes instead of shouting louder.
+- **Give icons softer colours than their neighbouring text.** A glyph is visually heavier than a word at the same size: `text-gray-400` for decorative, `text-primary` for active.
 - **Avoid a second primary.** Exactly one element per section carries `text-gray-900 dark:text-white font-bold`.
 
 Labels are a last resort; fold them into the value. "12 left in stock" beats "Stock: 12".
@@ -85,7 +85,7 @@ Labels are a last resort; fold them into the value. "12 left in stock" beats "St
 
 Destructive actions are big and red on a confirmation dialog only. On a regular screen they take tertiary styling, with Cancel beside them.
 
-## 3. Color
+## 3. Colour
 
 `primary` is a seeded Wind token (aliased to the blue swatch), so `bg-primary` / `text-primary` / `border-primary` resolve with no registration and re-brand in one place through `WindThemeData.colors`. Prefer it over a literal `blue-600` for anything brand-carrying.
 
@@ -96,11 +96,13 @@ Destructive actions are big and red on a confirmation dialog only. On a regular 
 | Warning | `bg-yellow-500` | `text-yellow-600 dark:text-yellow-400` | `border-yellow-500` |
 | Error | `bg-red-500` | `text-red-600 dark:text-red-400` | `border-red-500` |
 | Info | `bg-blue-500` | `text-blue-600 dark:text-blue-400` | `border-blue-500` |
-| Neutral | `bg-gray-500` | `text-gray-500 dark:text-gray-400` | `border-gray-300` |
+| Neutral | `bg-gray-500` | `text-gray-500 dark:text-gray-400` | `border-gray-300 dark:border-gray-600` |
+
+The solid `-500` backgrounds and borders are the "same in both modes" exemption of Core Law 2 in SKILL.md: Wind applies an unprefixed token in light and dark alike, so a colour you want identical in both needs no `dark:` peer. The text column differs per mode, so it carries its own.
 
 Mapped from the iOS system palette:
 
-| Role | iOS color (light / dark) | Wind token |
+| Role | iOS colour (light / dark) | Wind token |
 |:-----|:-------------------------|:-----------|
 | Primary | systemBlue #007AFF / #0A84FF | `bg-primary`, `text-primary` |
 | Success | systemGreen #34C759 / #30D158 | `bg-green-500`, `text-green-600` |
@@ -138,7 +140,7 @@ In dark mode, lighter means higher: `gray-900` base, `gray-800` surface, `gray-7
 
 **Building a custom family.** Decide in HSL; hex is storage, not a design tool. Pick 500 first (it has to work as a button background), then the edges (900 for dark text on light fills, 100 for tinted backgrounds), then fill 700 and 300, then the rest. Increase saturation as lightness moves away from 50%. Lighten by rotating hue toward 60 / 180 / 300 degrees, darken by rotating toward 0 / 120 / 240, never more than 20 to 30 degrees. For greys, saturate toward blue for cool and toward yellow for warm; true black reads unnatural, so use a very dark grey.
 
-**Contrast floor.** 4.5:1 for body text, 3:1 for large text (bold 18sp+ or regular 24sp+). Color is never the only channel: pair it with an icon, a label, or a shape.
+**Contrast floor.** 4.5:1 for body text, 3:1 for large text (bold 18sp+ or regular 24sp+). Colour is never the only channel: pair it with an icon, a label, or a shape.
 
 ## 4. Typography
 
@@ -212,7 +214,7 @@ iOS layout values worth memorising: 16pt standard margin on compact (`p-4`), 20p
 | `shadow-xl` | Dialogs, highest-emphasis surfaces |
 | `shadow-none` | Reset |
 
-Colored shadow for brand emphasis: `shadow-lg shadow-primary/20`.
+Coloured shadow for brand emphasis: `shadow-lg shadow-primary-500 dark:shadow-primary-400` (a `/N` modifier is ignored; the preset's alpha decides the strength).
 
 Light comes from above. A raised element gets a lighter top edge and a shadow below; an inset element gets a lighter bottom edge and a shadow above. Dragging increases the shadow, pressing decreases it. Depth also works with no shadow at all: lighter than the background reads raised, darker reads inset.
 
@@ -220,7 +222,7 @@ The iOS register is restrained: soft shadows, blur, minimal elevation. For a pre
 
 ## 7. Mobile patterns
 
-**Forms.** Full-width inputs with horizontal padding, label above or floating, helper text below, error as a colored border plus a message, primary action full-width at the bottom. Wiring and validation live in `references/forms.md`.
+**Forms.** Full-width inputs with horizontal padding, label above or floating, helper text below, error as a coloured border plus a message, primary action full-width at the bottom. Wiring and validation live in `references/forms.md`.
 
 **Loading and empty.** Skeletons over spinners, always: a shimmering placeholder of the real layout reads as fast, a spinner reads as stalled. Pull to refresh on lists. An empty state is a first impression, so it earns an illustration, a title, a description, and one CTA, with irrelevant chrome hidden.
 
@@ -246,7 +248,7 @@ Stack at most one modal. Disable swipe-to-dismiss while there is unsaved data. I
 
 App bars come in three shapes: standard (title plus actions), search (an integrated field), and collapsing (a hero that shrinks into a title). The leading icon carries a promise: hamburger opens a drawer, back arrow pops, X dismisses a modal.
 
-| Gesture | Expected behavior |
+| Gesture | Expected behaviour |
 |:--------|:------------------|
 | Tap | Activate a control, select an item |
 | Horizontal swipe | Navigate back, reveal a destructive action |
@@ -260,7 +262,7 @@ Never override a system gesture (the bottom and top screen edges). A shortcut ge
 | Mistake | Fix |
 |:--------|:----|
 | Touch target under 44dp | `py-3 px-4` minimum on anything interactive |
-| Status conveyed by color alone | Add an icon or a text label |
+| Status conveyed by colour alone | Add an icon or a text label |
 | Hardcoded hex in UI chrome | `bg-primary`, `text-gray-900`, and the surface pairs above |
 | Missing dark peer | `bg-white dark:bg-gray-900`, on the same line (Core Law 2) |
 | Modal with no dismiss | Cancel / Done plus swipe-to-dismiss |
@@ -268,7 +270,7 @@ Never override a system gesture (the bottom and top screen edges). A shortcut ge
 | Type below 12px | `text-xs` is the floor |
 | Tab bar hidden mid-navigation | Keep it visible across pushed screens |
 | Destructive action styled as the primary button | Red with a Cancel beside it, on a confirmation surface only |
-| Grey text on a colored background | Hand-pick a hue-matched tint instead |
+| Grey text on a coloured background | Hand-pick a hue-matched tint instead |
 | Sparse content stretched to fill the screen | Constrain the width, let it breathe |
 | Group spacing that reads ambiguously | `gap-6` between groups, `gap-2` within |
 | Safe area ignored | Respect the notch and the home indicator |

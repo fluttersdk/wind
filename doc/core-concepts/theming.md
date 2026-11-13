@@ -1,5 +1,7 @@
 # Theme Configuration
 
+Configure colours, spacing, typography, breakpoints and animations through `WindThemeData`, and wrap the app in `WindTheme`.
+
 - [Introduction](#introduction)
 - [The WindTheme Widget](#the-windtheme-widget)
 - [Theme Change Callbacks](#theme-change-callbacks)
@@ -17,22 +19,22 @@
 <a name="introduction"></a>
 ## Introduction
 
-Wind is designed to be fully customizable from the ground up. If you've ever used Tailwind CSS, you'll feel right at home with how we handle "design tokens." Instead of hunting through nested widget properties to change a color or a font size, you define your design system once in your theme configuration.
+Wind is designed to be fully customisable from the ground up. If you've ever used Tailwind CSS, you'll feel right at home with how we handle "design tokens." Instead of hunting through nested widget properties to change a colour or a font size, you define your design system once in your theme configuration.
 
-Everything in Wind (from the colors in `bg-blue-500` to the spacing in `p-4`) is driven by `WindThemeData`. This ensures that your UI remains consistent across the entire application while giving you the freedom to break away from defaults whenever you need to.
+Everything in Wind (from the colours in `bg-blue-500` to the spacing in `p-4`) is driven by `WindThemeData`. This ensures that your UI remains consistent across the entire application while giving you the freedom to break away from defaults whenever you need to.
 
 <a name="the-windtheme-widget"></a>
 ## The WindTheme Widget
 
-To start customizing your design system, you need to wrap your application with the `WindTheme` widget. This widget acts as a provider, making your theme configuration available to all `W` widgets in the tree.
+To start customising your design system, you need to wrap your application with the `WindTheme` widget. This widget acts as a provider, making your theme configuration available to all `W` widgets in the tree.
 
 > [!IMPORTANT]
-> Always use the `data:` parameter when providing your theme configuration. Earlier alpha versions used `theme:`, but this has been updated for consistency.
+> Always use the `data:` parameter when providing your theme configuration.
 
 Let's look at a basic setup:
 
 ```dart
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 void main() {
   runApp(
@@ -54,13 +56,13 @@ void main() {
 <a name="theme-change-callbacks"></a>
 ## Theme Change Callbacks
 
-When a user manually toggles the theme via `toggleTheme()`, you may want to persist their preference. The `onThemeChanged` callback fires only on user-initiated theme changes; it does **not** fire when the system brightness changes automatically.
+When a user manually toggles the theme via `toggleTheme()`, you may want to persist their preference. The `onThemeChanged` callback fires on every brightness change that does not come from the OS sync; it does **not** fire when the system brightness changes automatically.
 
 ```dart
 WindTheme(
   onThemeChanged: (brightness) {
-    // Persist user preference
-    Vault.set('theme_mode', brightness == Brightness.dark ? 'dark' : 'light');
+    // Persist the manual choice with your own storage (savePreference is the host's).
+    savePreference('theme_mode', brightness == Brightness.dark ? 'dark' : 'light');
   },
   data: WindThemeData(),
   child: MaterialApp(
@@ -69,8 +71,10 @@ WindTheme(
 )
 ```
 
+The callback receives only the brightness, so a stored `light` or `dark` means "the user chose this mode", not "the OS currently reports it". Restore it as a manual choice with `syncWithSystem: false`, and store nothing while the user follows the system (see [Resetting to System Theme](#resetting-to-system-theme)).
+
 > [!IMPORTANT]
-> `onThemeChanged` only fires when the user calls `toggleTheme()`. Automatic system brightness sync does not trigger this callback.
+> `onThemeChanged` fires on every brightness change that does not come from the OS sync: `toggleTheme()`, `setTheme()`, `updateTheme(brightness:)`, `resetToSystem()`, and a new `data:` from a parent rebuild. Automatic system brightness sync does not trigger this callback.
 
 <a name="resetting-to-system-theme"></a>
 ## Resetting to System Theme
@@ -87,19 +91,48 @@ context.windTheme.resetToSystem();
 
 This immediately syncs the theme with the current platform brightness and re-enables the `syncWithSystem` flag so future OS changes are reflected automatically.
 
+If you persist the preference, clear it after you reset. `onThemeChanged` fires after `resetToSystem()` only when the brightness value actually changes (and then it saves the platform brightness as if it were a manual choice), and never for later OS changes, so a stored `light` or `dark` cannot tell a restart that the user went back to following the system. Delete the stored value yourself once the reset has run, and restore from it on startup:
+
+```dart
+// Going back to the system: re-enable sync, then forget the manual choice
+// (after the reset, because the reset itself may fire onThemeChanged).
+context.windTheme.resetToSystem();
+await removePreference('theme_mode');
+
+// On startup: no stored value keeps the default syncWithSystem: true.
+final String? saved = await readPreference('theme_mode');
+
+WindTheme(
+  data: saved == null
+      ? WindThemeData()
+      : WindThemeData(
+          brightness: saved == 'dark' ? Brightness.dark : Brightness.light,
+          syncWithSystem: false,
+        ),
+  onThemeChanged: (brightness) {
+    savePreference('theme_mode', brightness == Brightness.dark ? 'dark' : 'light');
+  },
+  child: MaterialApp(
+    home: MyHome(),
+  ),
+)
+```
+
+`removePreference`, `readPreference` and `savePreference` stand for the host's own storage.
+
 <a name="colors"></a>
 ## Colors
 
-Colors in Wind are defined as palettes. When you add a color to your theme, Wind expects a `MaterialColor` (or a Map of shades) so it can resolve utilities like `bg-brand-50` through `bg-brand-950`.
+Colours in Wind are defined as palettes. When you add a colour to your theme, Wind expects a `MaterialColor` so it can resolve utilities like `bg-brand-50` through `bg-brand-900`.
 
-Here's how to define custom colors:
+Here's how to define custom colours:
 
 ```dart
 WindThemeData(
   colors: {
-    // Single color - Wind automatically generates shades
-    'brand': Colors.indigo, 
-    
+    // A MaterialColor swatch: shades 50-900 (Flutter swatches have no 950)
+    'brand': Colors.indigo,
+
     // Explicit shades for fine-tuned control
     'accent': MaterialColor(0xFF3B82F6, {
       50: Color(0xFFEFF6FF),
@@ -115,7 +148,7 @@ Once defined, these become available as utility classes immediately: `text-brand
 <a name="typography"></a>
 ## Typography
 
-You can take full control of your app's typography by overriding font families, sizes, and weights. Wind applies a "sans" font family globally by default, mimicking Tailwind's behavior.
+You can take full control of your app's typography by overriding font families, sizes, and weights. Wind applies a "sans" font family globally by default, mimicking Tailwind's behaviour.
 
 ```dart
 WindThemeData(
@@ -151,7 +184,7 @@ WindThemeData(
 )
 ```
 
-You can also customize the "container" sizes or "screen" breakpoints if the default Tailwind values don't fit your needs:
+You can also customise the "screen" breakpoints if the default Tailwind values don't fit your needs:
 
 ```dart
 WindThemeData(
@@ -255,14 +288,14 @@ WDiv(className: 'row-c bg-white dark:bg-gray-800')
 
 | Property | Type | Description |
 |:---------|:-----|:------------|
-| `colors` | `Map<String, MaterialColor>` | Custom color palettes (`bg-brand-500`, etc.) |
+| `colors` | `Map<String, MaterialColor>` | Custom colour palettes (`bg-brand-500`, etc.) |
 | `screens` | `Map<String, int>` | Breakpoint min-widths (`sm`, `md`, `lg`, `xl`, `2xl`, custom) |
-| `containers` | `Map<String, int>` | Container max-widths (`container` utility) |
+| `containers` | `Map<String, int>` | Named spacing: `p-md`, `gap-xs` resolve to `containers[key] * baseSpacingUnit`. There is no `container` utility, and `max-w-*` uses a fixed scale. |
 | `fontFamilies` | `Map<String, String>` | Font aliases (`sans`, `serif`, `mono`, custom) |
 | `fontSizes` | `Map<String, double>` | Text size scale (`text-xs` through `text-6xl`) |
 | `fontWeights` | `Map<String, FontWeight>` | Weight scale (`font-thin` through `font-black`) |
 | `tracking` | `Map<String, double>` | Letter spacing in em, a multiple of the font size (`tracking-tight`, etc.) |
-| `leading` | `Map<String, double>` | Line height (`leading-none`, etc.) |
+| `leading` | `Map<String, double>` | Line height (`leading-tight`, etc.) |
 | `borderWidths` | `Map<String, double>` | Border width scale (`border-2`, etc.) |
 | `borderRadius` | `Map<String, double>` | Corner radius scale (`rounded-lg`, etc.) |
 | `shadows` | `Map<String, List<BoxShadow>>` | Shadow definitions (`shadow-md`, etc.) |
@@ -277,7 +310,7 @@ WDiv(className: 'row-c bg-white dark:bg-gray-800')
 
 | Property | Type | Default | Description |
 |:---------|:-----|:--------|:------------|
-| `ringColor` | `Color` | Tailwind blue-500 | Default ring color when not overridden by `ring-{color}` |
+| `ringColor` | `Color` | Tailwind blue-500 | Default ring colour when not overridden by `ring-{color}` |
 | `ringWidths` | `Map<String, double>` | `0,1,2,DEFAULT=3,4,8` | Ring width scale (`ring`, `ring-2`, etc.) |
 | `ringOffsets` | `Map<String, double>` | `0,1,2,4,8` | Ring offset scale (`ring-offset-2`, etc.) |
 
@@ -298,6 +331,6 @@ WDiv(className: 'row-c bg-white dark:bg-gray-800')
 
 ### Widget-level callback
 
-`onThemeChanged` is a `WindTheme` widget parameter, not a `WindThemeData` field. It fires on user-initiated `toggleTheme()` calls and is documented in the [Theme Change Callbacks](#theme-change-callbacks) section above.
+`onThemeChanged` is a `WindTheme` widget parameter, not a `WindThemeData` field. It fires on every brightness change that does not come from the OS sync (`toggleTheme()`, `setTheme()`, `updateTheme(brightness:)`, `resetToSystem()`, and a new `data:` from a parent rebuild) and is documented in the [Theme Change Callbacks](#theme-change-callbacks) section above.
 
 For more details on how to sync these values with Flutter's standard Material components, check out the [Theme Binding](./theme-binding.md) guide.

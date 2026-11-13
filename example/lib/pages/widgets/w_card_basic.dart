@@ -10,14 +10,12 @@ class WCardBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WCard',
-      description:
-          'Surface container with optional header and footer slots. All styling is className-driven.',
+      description: 'Surface container with optional header and footer slots. All styling is className-driven.',
       gradient: 'from-slate-500 to-gray-700',
       children: [
         ExampleSection(
           title: 'Basic Card',
-          description:
-              'Rounded surface with border and shadow. The body is the required child slot.',
+          description: 'Rounded surface with border and shadow. The body is the required child slot.',
           child: WCard(
             className: '''
               rounded-xl
@@ -122,10 +120,7 @@ class WCardBasicExamplePage extends StatelessWidget {
                   bg-blue-600 dark:bg-blue-500
                   hover:bg-blue-700 dark:hover:bg-blue-600
                 ''',
-                child: WText(
-                  'Upgrade',
-                  className: 'text-white',
-                ),
+                child: WText('Upgrade', className: 'text-white'),
               ),
             ),
             child: WDiv(
@@ -147,8 +142,11 @@ class WCardBasicExamplePage extends StatelessWidget {
     );
   }
 
-  Widget _buildActivityRow(BuildContext context,
-      {required String label, required String time}) {
+  Widget _buildActivityRow(
+    BuildContext context, {
+    required String label,
+    required String time,
+  }) {
     return WDiv(
       className: '''
         flex flex-row items-center justify-between
@@ -160,10 +158,7 @@ class WCardBasicExamplePage extends StatelessWidget {
           label,
           className: 'text-sm text-gray-700 dark:text-gray-300 flex-1',
         ),
-        WText(
-          time,
-          className: 'text-xs text-gray-400 dark:text-gray-500',
-        ),
+        WText(time, className: 'text-xs text-gray-400 dark:text-gray-500'),
       ],
     );
   }

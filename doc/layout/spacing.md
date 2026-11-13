@@ -18,6 +18,7 @@ Utilities for controlling the padding and margin of elements.
 WDiv(className: 'p-4 m-4 bg-white')
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 Control the spacing of an element using the `p-{size}` (padding) and `m-{size}` (margin) utilities.
@@ -40,6 +41,7 @@ Margin adds space **outside** the element's boundary.
 WDiv(className: 'm-4 bg-red-100', child: WText('Margin'))
 ```
 
+<a name="quick-reference"></a>
 ## Quick Reference
 
 The default spacing scale is based on a **4px** unit (`baseSpacingUnit: 4.0`).
@@ -59,6 +61,7 @@ The default spacing scale is based on a **4px** unit (`baseSpacingUnit: 4.0`).
 | `pb-{n}` / `mb-{n}` | - | Bottom only |
 | `pl-{n}` / `ml-{n}` | - | Left only |
 
+<a name="variants"></a>
 ## Variants
 
 ### Directional Spacing
@@ -80,7 +83,7 @@ WDiv(className: 'pt-8 bg-purple-100')
 
 ### Horizontal Centering
 
-Use `mx-auto` to center a container horizontally. This sets the left and right margins to align the element within its parent.
+Use `mx-auto` to centre a container horizontally. This sets the left and right margins to align the element within its parent.
 
 > [!NOTE]
 > `mx-auto` only works when the element has a defined width less than its parent. Explicit `mx-{value}` classes (like `mx-0`) will override `mx-auto`.
@@ -92,6 +95,7 @@ WDiv(
 )
 ```
 
+<a name="responsive-design"></a>
 ## Responsive Design
 
 Apply different spacing at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
@@ -101,6 +105,7 @@ Apply different spacing at different breakpoints using the standard `sm:`, `md:`
 WDiv(className: 'p-4 md:p-8 lg:p-12')
 ```
 
+<a name="dark-mode"></a>
 ## Dark Mode
 
 Use the `dark:` prefix to apply different spacing in dark mode.
@@ -109,6 +114,7 @@ Use the `dark:` prefix to apply different spacing in dark mode.
 WDiv(className: 'p-4 dark:p-6')
 ```
 
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
 If the built-in scale doesn't meet your needs, use bracket notation to apply exact pixel values.
@@ -124,6 +130,7 @@ WDiv(className: 'p-[13px]')
 WDiv(className: 'mt-[50px]')
 ```
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
 To extend or override the default spacing scale, modify the `WindThemeData` in your app root.
@@ -136,6 +143,7 @@ WindThemeData(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [Sizing](./sizing.md)

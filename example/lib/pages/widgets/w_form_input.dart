@@ -27,14 +27,12 @@ class _WFormInputExamplePageState extends State<WFormInputExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WFormInput',
-      description:
-          'FormField-wrapped WInput. Validates via Form key, shows error string below the field, error: prefix activates on failure.',
+      description: 'FormField-wrapped WInput. Validates via Form key, shows error string below the field, error: prefix activates on failure.',
       gradient: 'from-blue-500 to-cyan-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Wrap in Form + GlobalKey, define validator, call _formKey.currentState!.validate() on submit.',
+          description: 'Wrap in Form + GlobalKey, define validator, call _formKey.currentState!.validate() on submit.',
           child: Form(
             key: _formKey,
             child: WDiv(
@@ -80,8 +78,10 @@ class _WFormInputExamplePageState extends State<WFormInputExamplePage> {
                     bg-blue-600 hover:bg-blue-700
                     text-white px-4 py-2 rounded-lg self-start
                   ''',
-                  child: const WText('Submit',
-                      className: 'text-white font-medium'),
+                  child: const WText(
+                    'Submit',
+                    className: 'text-white font-medium',
+                  ),
                 ),
               ],
             ),
@@ -89,8 +89,7 @@ class _WFormInputExamplePageState extends State<WFormInputExamplePage> {
         ),
         ExampleSection(
           title: 'Hint vs Error',
-          description:
-              'hint shows when there is no error. error: triggers automatically when validator returns a string.',
+          description: 'hint shows when there is no error. error: triggers automatically when validator returns a string.',
           child: Form(
             child: WFormInput(
               label: 'Username',

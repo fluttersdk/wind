@@ -10,14 +10,12 @@ class FlexIntroExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Flexbox & Layout',
-      description:
-          'flex turns WDiv into a Row/Column. Pair with flex-row, flex-col, gap-*, items-*, justify-* to compose layouts.',
+      description: 'flex turns WDiv into a Row/Column. Pair with flex-row, flex-col, gap-*, items-*, justify-* to compose layouts.',
       gradient: 'from-orange-500 to-red-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'flex defaults to a horizontal row. gap-4 inserts spacing between children. items-center centers along the cross axis.',
+          description: 'flex defaults to a horizontal row. gap-4 inserts spacing between children. items-center centers along the cross axis.',
           child: WDiv(
             className: '''
               flex items-center gap-4 p-4 rounded-lg
@@ -32,8 +30,7 @@ class FlexIntroExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Flex Direction',
-          description:
-              'flex-row puts children horizontally. flex-col stacks them vertically.',
+          description: 'flex-row puts children horizontally. flex-col stacks them vertically.',
           child: WDiv(
             className: 'grid grid-cols-1 md:grid-cols-2 gap-3',
             children: const [
@@ -52,8 +49,7 @@ class FlexIntroExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Every flex utility maps cleanly to a Flutter property. The parser preserves the CSS mental model.',
+          description: 'Every flex utility maps cleanly to a Flutter property. The parser preserves the CSS mental model.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -70,8 +66,7 @@ class FlexIntroExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Responsive Direction',
-          description:
-              'Stack on mobile, distribute horizontally on md+. One class string, two layouts.',
+          description: 'Stack on mobile, distribute horizontally on md+. One class string, two layouts.',
           child: WDiv(
             className: '''
               flex flex-col md:flex-row gap-4 p-4 rounded-lg

@@ -10,30 +10,36 @@ class WPopoverAlignmentExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Popover Alignment',
-      description:
-          'alignment selects where the floating panel sits relative to the trigger. Six anchor points cover the common layouts. autoFlip mirrors when an edge would clip.',
+      description: 'alignment selects where the floating panel sits relative to the trigger. Six anchor points cover the common layouts. autoFlip mirrors when an edge would clip.',
       gradient: 'from-purple-500 to-violet-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each chip below opens its popover anchored to a different alignment.',
+          description: 'Each chip below opens its popover anchored to a different alignment.',
           child: WDiv(
             className: 'wrap gap-3',
             children: const [
               _AlignChip(
-                  label: 'bottomLeft', alignment: PopoverAlignment.bottomLeft),
+                label: 'bottomLeft',
+                alignment: PopoverAlignment.bottomLeft,
+              ),
               _AlignChip(
-                  label: 'bottomRight',
-                  alignment: PopoverAlignment.bottomRight),
+                label: 'bottomRight',
+                alignment: PopoverAlignment.bottomRight,
+              ),
               _AlignChip(
-                  label: 'bottomCenter',
-                  alignment: PopoverAlignment.bottomCenter),
+                label: 'bottomCenter',
+                alignment: PopoverAlignment.bottomCenter,
+              ),
               _AlignChip(label: 'topLeft', alignment: PopoverAlignment.topLeft),
               _AlignChip(
-                  label: 'topRight', alignment: PopoverAlignment.topRight),
+                label: 'topRight',
+                alignment: PopoverAlignment.topRight,
+              ),
               _AlignChip(
-                  label: 'topCenter', alignment: PopoverAlignment.topCenter),
+                label: 'topCenter',
+                alignment: PopoverAlignment.topCenter,
+              ),
             ],
           ),
         ),
@@ -44,19 +50,29 @@ class WPopoverAlignmentExamplePage extends StatelessWidget {
             className: 'flex flex-col gap-1',
             children: const [
               _RefRow(
-                  cls: 'PopoverAlignment.bottomLeft', pos: 'Below + left edge'),
+                cls: 'PopoverAlignment.bottomLeft',
+                pos: 'Below + left edge',
+              ),
               _RefRow(
-                  cls: 'PopoverAlignment.bottomRight',
-                  pos: 'Below + right edge'),
+                cls: 'PopoverAlignment.bottomRight',
+                pos: 'Below + right edge',
+              ),
               _RefRow(
-                  cls: 'PopoverAlignment.bottomCenter',
-                  pos: 'Below + centered'),
+                cls: 'PopoverAlignment.bottomCenter',
+                pos: 'Below + centered',
+              ),
               _RefRow(
-                  cls: 'PopoverAlignment.topLeft', pos: 'Above + left edge'),
+                cls: 'PopoverAlignment.topLeft',
+                pos: 'Above + left edge',
+              ),
               _RefRow(
-                  cls: 'PopoverAlignment.topRight', pos: 'Above + right edge'),
+                cls: 'PopoverAlignment.topRight',
+                pos: 'Above + right edge',
+              ),
               _RefRow(
-                  cls: 'PopoverAlignment.topCenter', pos: 'Above + centered'),
+                cls: 'PopoverAlignment.topCenter',
+                pos: 'Above + centered',
+              ),
             ],
           ),
         ),
@@ -111,9 +127,10 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className:
-                'font-mono text-sm text-purple-700 dark:text-purple-400'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-purple-700 dark:text-purple-400',
+        ),
         WText(pos, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );

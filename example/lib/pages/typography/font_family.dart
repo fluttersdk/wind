@@ -10,14 +10,12 @@ class FontFamilyExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Font Family',
-      description:
-          'font-sans, font-serif, and font-mono pick the typeface. Wind ships sensible defaults; override per scale via WindThemeData.fontFamilies.',
+      description: 'font-sans, font-serif, and font-mono pick the typeface. Wind ships sensible defaults; override per scale via WindThemeData.fontFamilies.',
       gradient: 'from-sky-500 to-blue-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'The three default families. Each maps to a curated system font stack.',
+          description: 'The three default families. Each maps to a curated system font stack.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: const [
@@ -29,8 +27,7 @@ class FontFamilyExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Monospace for Code',
-          description:
-              'font-mono pairs naturally with a slate background and rounded corners for inline code snippets.',
+          description: 'font-mono pairs naturally with a slate background and rounded corners for inline code snippets.',
           child: WDiv(
             className: '''
               p-4 rounded-lg font-mono text-sm
@@ -42,12 +39,10 @@ class FontFamilyExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Responsive Family',
-          description:
-              'Switch the family per breakpoint. Useful for compact mobile heading vs serif editorial on desktop.',
+          description: 'Switch the family per breakpoint. Useful for compact mobile heading vs serif editorial on desktop.',
           child: const WText(
             'Responsive Typography',
-            className:
-                'font-sans md:font-serif lg:font-mono text-xl text-slate-900 dark:text-white',
+            className: 'font-sans md:font-serif lg:font-mono text-xl text-slate-900 dark:text-white',
           ),
         ),
         ExampleSection(
@@ -59,14 +54,15 @@ class FontFamilyExamplePage extends StatelessWidget {
               _RefRow(cls: 'font-sans', desc: 'ui-sans-serif, system-ui, …'),
               _RefRow(cls: 'font-serif', desc: 'ui-serif, Georgia, …'),
               _RefRow(
-                  cls: 'font-mono', desc: 'ui-monospace, SFMono-Regular, …'),
+                cls: 'font-mono',
+                desc: 'ui-monospace, SFMono-Regular, …',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Arbitrary Family',
-          description:
-              'font-[Roboto] applies the literal family name. Useful for one-off branding text without theme changes.',
+          description: 'font-[Roboto] applies the literal family name. Useful for one-off branding text without theme changes.',
           child: const WText(
             'Custom Branding',
             className: 'font-[Roboto] text-xl text-slate-900 dark:text-white',
@@ -74,10 +70,10 @@ class FontFamilyExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Custom Theme Families',
-          description:
-              'Add named families through WindThemeData.fontFamilies. Each key becomes a new font-{key} utility.',
+          description: 'Add named families through WindThemeData.fontFamilies. Each key becomes a new font-{key} utility.',
           child: _CodeBlock(
-            code: 'WindThemeData(\n'
+            code:
+                'WindThemeData(\n'
                 '  fontFamilies: {\n'
                 '    "sans": "Inter",\n'
                 '    "display": "Oswald",\n'

@@ -10,14 +10,12 @@ class LineHeightExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Line Height',
-      description:
-          'leading-{key} controls vertical breathing room. Relative keys (none/tight/normal/loose) follow the font size; numeric keys (leading-6) set a fixed pixel height.',
+      description: 'leading-{key} controls vertical breathing room. Relative keys (none/tight/normal/loose) follow the font size; numeric keys (leading-6) set a fixed pixel height.',
       gradient: 'from-fuchsia-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Six relative keys ship by default. Each is a multiplier against the current font size.',
+          description: 'Six relative keys ship by default. Each is a multiplier against the current font size.',
           child: WDiv(
             className: 'grid grid-cols-1 md:grid-cols-2 gap-3',
             children: const [
@@ -32,8 +30,7 @@ class LineHeightExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Fixed Line Heights',
-          description:
-              'leading-{n} fixes the line box height to n × baseSpacingUnit. Independent of font size.',
+          description: 'leading-{n} fixes the line box height to n × baseSpacingUnit. Independent of font size.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: const [
@@ -45,8 +42,7 @@ class LineHeightExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Relative scale below; fixed pixel scale runs leading-3 (12px) through leading-10 (40px).',
+          description: 'Relative scale below; fixed pixel scale runs leading-3 (12px) through leading-10 (40px).',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [

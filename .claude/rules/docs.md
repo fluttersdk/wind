@@ -4,7 +4,7 @@ paths: doc/**
 
 # Documentation conventions (`doc/`)
 
-The `doc/` directory is the user-facing markdown reference, organized by topic (`widgets/`, `layout/`, `styling/`, `getting-started/`, `theming/`, etc.). It is paired with `example/lib/pages/` via `<x-preview>` tags.
+The `doc/` directory is the user-facing markdown reference, organised by topic (`widgets/`, `layout/`, `styling/`, `getting-started/`, `core-concepts/`, etc.). It is paired with `example/lib/pages/` via `<x-preview>` tags.
 
 ## File shape (every doc file)
 
@@ -12,8 +12,6 @@ The `doc/` directory is the user-facing markdown reference, organized by topic (
 # WFoo
 
 One-line description of what the widget / concept does.
-
-## Table of Contents
 
 - [Basic Usage](#basic-usage)
 - [Props](#props)
@@ -44,14 +42,14 @@ WFoo(
 <a name="related-documentation"></a>
 ## Related Documentation
 
-- [WAnchor](../widgets/w-anchor.md) — auto-wraps when className contains state prefixes.
+- [WAnchor](../widgets/w-anchor.md) - auto-wraps when className contains state prefixes.
 ```
 
 ## Heading hierarchy
 
-- `#` (single) — page title (widget or concept name). Exactly one per file, and it is the file's first line: nothing precedes it, not a lead paragraph and not a code fence.
-- `##` — main sections (Basic Usage, Props, Styling Examples, Related Documentation, etc.).
-- `###` — subsections within a section.
+- `#` (single) - page title (widget or concept name). Exactly one per file, and it is the file's first line: nothing precedes it, not a lead paragraph and not a code fence.
+- `##` - main sections (Basic Usage, Props, Styling Examples, Related Documentation, etc.).
+- `###` - subsections within a section.
 - Never skip levels.
 
 ## Section anchors
@@ -106,7 +104,7 @@ WFoo({
 
 - Language: always `dart`.
 - Short, realistic, copy-pasteable (no Lorem ipsum).
-- Every color token carries `dark:` pair: `bg-white dark:bg-gray-800`.
+- Every colour token carries `dark:` pair: `bg-white dark:bg-gray-800`.
 
 ## Preservation rule
 
@@ -114,13 +112,13 @@ When editing an existing doc file, do NOT restructure sections that haven't chan
 
 ## Verifying a doc change
 
-`python3 tool/check-docs.py` is the gate (`docs-link-check.yml` runs it per PR). It validates page structure, relative `.md` targets, in-page and cross-page fragments, ToC-reachable anchors, both halves of every x-preview, and absolute `fluttersdk.com/wind/....md` URLs. Run it before reporting doc work done; it needs no network and no Flutter toolchain.
+`python3 tool/check-docs.py` is the gate (`docs-link-check.yml` runs it per PR). It validates page structure, relative `.md` targets, in-page and cross-page fragments, ToC-reachable anchors, both halves of every x-preview, and absolute `anilcancakir.com/wind_kit/....md` URLs. Run it before reporting doc work done; it needs no network and no Flutter toolchain.
 
 Fragments resolve against explicit `<a name>` anchors OR heading slugs, using the slug rule GitHub and the docs site share: punctuation drops, and each surviving space becomes one hyphen without collapsing runs (`## Date + Time Selection` yields `#date--time-selection`).
 
 ## What never goes in `doc/`
 
-- API reference dumps — that's dartdoc's job.
-- CHANGELOG entries — that's `CHANGELOG.md`.
-- Marketing copy — that's `README.md`.
-- Internal architecture deep-dives — that's `CLAUDE.md` and `.claude/rules/`.
+- API reference dumps - that's dartdoc's job.
+- CHANGELOG entries - that's `CHANGELOG.md`.
+- Marketing copy - that's `README.md`.
+- Internal architecture deep-dives - that's `ARCHITECTURE.md`.

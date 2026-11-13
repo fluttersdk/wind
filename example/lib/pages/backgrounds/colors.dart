@@ -133,8 +133,7 @@ class BackgroundColorsPage extends StatelessWidget {
                     ),
                   ),
                   WDiv(
-                    className:
-                        'bg-transparent p-4 rounded-lg border border-dashed border-gray-400',
+                    className: 'bg-transparent p-4 rounded-lg border border-dashed border-gray-400',
                     child: WText(
                       'bg-transparent',
                       className: 'text-gray-600 font-mono text-sm',

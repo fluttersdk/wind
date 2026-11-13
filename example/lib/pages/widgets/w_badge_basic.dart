@@ -15,26 +15,22 @@ class _WBadgeBasicExamplePageState extends State<WBadgeBasicExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WBadge',
-      description:
-          'Inline status / label pill. Caller supplies tone via className; no colors are baked in.',
+      description: 'Inline status / label pill. Caller supplies tone via className; no colors are baked in.',
       gradient: 'from-violet-500 to-purple-600',
       children: [
         ExampleSection(
           title: 'Status Tones',
-          description:
-              'Each badge carries bg-* and text-* with dark: pairs for full dark-mode support.',
+          description: 'Each badge carries bg-* and text-* with dark: pairs for full dark-mode support.',
           child: WDiv(
             className: 'wrap gap-3',
             children: [
               WBadge(
                 'Active',
-                className:
-                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+                className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
               ),
               WBadge(
                 'Pending',
-                className:
-                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+                className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
               ),
               WBadge(
                 'Error',
@@ -43,13 +39,11 @@ class _WBadgeBasicExamplePageState extends State<WBadgeBasicExamplePage> {
               ),
               WBadge(
                 'Archived',
-                className:
-                    'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+                className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
               ),
               WBadge(
                 'New',
-                className:
-                    'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+                className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
               ),
             ],
           ),
@@ -71,8 +65,7 @@ class _WBadgeBasicExamplePageState extends State<WBadgeBasicExamplePage> {
                   ),
                   WBadge(
                     'Paid',
-                    className:
-                        'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200',
+                    className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200',
                   ),
                 ],
               ),
@@ -86,8 +79,7 @@ class _WBadgeBasicExamplePageState extends State<WBadgeBasicExamplePage> {
                   ),
                   WBadge(
                     'In Transit',
-                    className:
-                        'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200',
+                    className: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200',
                   ),
                 ],
               ),
@@ -101,8 +93,7 @@ class _WBadgeBasicExamplePageState extends State<WBadgeBasicExamplePage> {
                   ),
                   WBadge(
                     'Overdue',
-                    className:
-                        'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200',
+                    className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200',
                   ),
                 ],
               ),
@@ -111,14 +102,10 @@ class _WBadgeBasicExamplePageState extends State<WBadgeBasicExamplePage> {
         ),
         ExampleSection(
           title: 'No className (Unstyled)',
-          description:
-              'Without className the badge renders unstyled: transparent background, inherited text color.',
+          description: 'Without className the badge renders unstyled: transparent background, inherited text color.',
           child: WDiv(
             className: 'flex flex-row gap-3',
-            children: [
-              WBadge('Draft'),
-              WBadge('Internal'),
-            ],
+            children: [WBadge('Draft'), WBadge('Internal')],
           ),
         ),
       ],
