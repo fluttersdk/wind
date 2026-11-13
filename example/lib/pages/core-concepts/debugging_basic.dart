@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -119,7 +119,7 @@ class _DebuggingBasicExamplePageState extends State<DebuggingBasicExamplePage> {
               'For E2E drivers and inspectors, call Wind.installDebugResolver() inside kDebugMode at startup. Tree-shaken in release.',
           child: _CodeBlock(
             code: 'import "package:flutter/foundation.dart";\n'
-                'import "package:fluttersdk_wind/fluttersdk_wind.dart";\n\n'
+                'import "package:wind_kit/wind_kit.dart";\n\n'
                 'void main() {\n'
                 '  if (kDebugMode) {\n'
                 '    Wind.installDebugResolver();\n'

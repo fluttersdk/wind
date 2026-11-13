@@ -1,6 +1,6 @@
 {
-    "name": "fluttersdk_wind",
-    "short_name": "fluttersdk_wind",
+    "name": "wind_kit",
+    "short_name": "wind_kit",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -82,15 +82,14 @@ updates:
           - minor
           - patch
     ignore:
-      # The package itself (fluttersdk_wind until the rename lands, then wind_kit)
-      # is the parent package, consumed through `path: ../` so
+      # The package itself (wind_kit) is the parent package, consumed through `path: ../` so
       # the gallery always builds against the working tree. Dependabot reads
       # the resolved version of that path package and proposes it as a
       # `version:` pin, which is a hard equality constraint on a moving target:
       # it goes stale on the next release and fails resolution outright
       # ("depends on <package> X from path which doesn't match any
       # versions"). See #159. There is no valid update here, so never track it.
-      - dependency-name: fluttersdk_wind
+      - dependency-name: wind_kit
 
   # ─────────────────────────────────────────────────────────────────────
   # GitHub Actions under .github/workflows/

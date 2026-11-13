@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Showcase Example - A stunning demo for the installation page
 /// Demonstrates Wind's core features: flexbox, colors, gradients, hover states

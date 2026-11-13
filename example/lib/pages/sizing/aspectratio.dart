@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Aspect Ratio Example
 /// Demonstrates aspect ratio utilities: aspect-square, aspect-video, aspect-[custom]

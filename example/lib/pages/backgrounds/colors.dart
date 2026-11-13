@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Background Colors Example
 /// Demonstrates background color utilities: bg-{color}-{shade}, opacity, arbitrary
