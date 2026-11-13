@@ -150,7 +150,7 @@ String wScreenCurrent(BuildContext context) {
     ..sort((a, b) => b.value.compareTo(a.value));
 
   for (final entry in sortedBreakpoints) {
-    if (screenWidth > entry.value) {
+    if (screenWidth >= entry.value) {
       return entry.key;
     }
   }

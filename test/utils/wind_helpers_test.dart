@@ -300,7 +300,7 @@ void main() {
         expect(result, isA<String>());
       });
 
-      testWidgets('resolves the breakpoint below an exact width', (
+      testWidgets('resolves the breakpoint at an exact width', (
         tester,
       ) async {
         String? result;
@@ -322,7 +322,7 @@ void main() {
           ),
         );
 
-        expect(result, 'sm');
+        expect(result, 'md');
       });
     });
 
