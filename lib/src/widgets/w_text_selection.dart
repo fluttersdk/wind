@@ -188,43 +188,47 @@ class WindTextSelectionToolbar extends StatelessWidget {
       ],
     ];
 
-    // 3. Tapping a button must not count as a tap outside the field, or the
-    //    field would lose focus (and its selection) before the action runs.
-    return TextFieldTapRegion(
-      child: Padding(
-        padding: insets,
-        child: CustomSingleChildLayout(
-          delegate: TextSelectionToolbarLayoutDelegate(
-            anchorAbove:
-                anchorAbove -
-                origin -
-                const Offset(0, _kToolbarContentDistance),
-            anchorBelow:
-                anchorBelow -
-                origin +
-                const Offset(0, _kToolbarContentDistance),
+    // 3. The framework already wraps every context menu in a
+    //    TextFieldTapRegion, so a button tap keeps the field focused. A row
+    //    wider than the screen (seven iOS actions, German labels) scrolls
+    //    sideways instead of clipping, so every action stays reachable.
+    return Padding(
+      padding: insets,
+      child: CustomSingleChildLayout(
+        delegate: TextSelectionToolbarLayoutDelegate(
+          anchorAbove:
+              anchorAbove - origin - const Offset(0, _kToolbarContentDistance),
+          anchorBelow:
+              anchorBelow - origin + const Offset(0, _kToolbarContentDistance),
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
           ),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x33000000),
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              child: DefaultTextStyle(
-                style: TextStyle(color: foregroundColor, fontSize: 14),
-                child: IntrinsicHeight(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: row,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            child: DefaultTextStyle(
+              style: TextStyle(color: foregroundColor, fontSize: 14),
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context)
+                    .copyWith(scrollbars: false),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const ClampingScrollPhysics(),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: row,
+                    ),
                   ),
                 ),
               ),
@@ -267,4 +271,26 @@ class WindTextSelectionToolbarButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Maps a context-menu action to its localized label: the
+/// [WidgetsLocalizations] string for every action it names, the item's own
+/// label for the rest (custom items, delete, Live Text), and null when there
+/// is none, so the caller can leave a blank button out.
+String? windContextMenuLabel(
+  ContextMenuButtonItem item,
+  WidgetsLocalizations localizations,
+) {
+  return switch (item.type) {
+    ContextMenuButtonType.copy => localizations.copyButtonLabel,
+    ContextMenuButtonType.cut => localizations.cutButtonLabel,
+    ContextMenuButtonType.paste => localizations.pasteButtonLabel,
+    ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
+    ContextMenuButtonType.lookUp => localizations.lookUpButtonLabel,
+    ContextMenuButtonType.searchWeb => localizations.searchWebButtonLabel,
+    ContextMenuButtonType.share => localizations.shareButtonLabel,
+    ContextMenuButtonType.delete ||
+    ContextMenuButtonType.liveTextInput ||
+    ContextMenuButtonType.custom => item.label,
+  };
 }

@@ -342,11 +342,6 @@ class _WInputState extends State<WInput>
   late TextEditingController _controller;
   late FocusNode _focusNode;
   bool _isFocused = false;
-
-  /// The brightness the last build resolved, kept for [_buildContextMenu]:
-  /// the toolbar builds in the overlay's context, which can sit above the
-  /// field's [WindTheme], so it reads the field's resolution instead.
-  Brightness _brightness = Brightness.light;
   bool _ownsController = false;
   bool _ownsFocusNode = false;
 
@@ -741,7 +736,6 @@ class _WInputState extends State<WInput>
     }
     final Brightness brightness =
         windBrightness ?? platformBrightness ?? Brightness.light;
-    _brightness = brightness;
     final Color baselineColor = brightness == Brightness.dark
         ? const Color(0xFFFFFFFF)
         : const Color(0xFF000000);
@@ -848,8 +842,12 @@ class _WInputState extends State<WInput>
           ? _selectionControls
           : null,
       enableInteractiveSelection: hasOverlay && widget.enabled,
+      // A fresh closure on every build: EditableText re-shows an open toolbar
+      // only when the builder changes, so a tear-off would keep the colours
+      // of the brightness the menu opened with.
       contextMenuBuilder: hasOverlay && widget.enabled
-          ? _buildContextMenu
+          ? (context, editableTextState) =>
+                _buildContextMenu(context, editableTextState, brightness)
           : null,
       // Caller-supplied formatters win outright; otherwise InputType.number
       // gets a signed-decimal filter so it is actually numeric on every
@@ -1189,11 +1187,14 @@ class _WInputState extends State<WInput>
   /// `DefaultWidgetsLocalizations`) even with no Material/Cupertino ancestor.
   ///
   /// [context] is the overlay's, which can sit above the field's
-  /// [WindTheme], so the palette follows [_brightness], the field's own
-  /// resolution, and reaches the toolbar as plain colours.
+  /// [WindTheme], so the palette follows [brightness], the field's own
+  /// resolution from its last build, and reaches the toolbar as plain colours.
+  /// An action with no label (Live Text has none in [WidgetsLocalizations])
+  /// is left out rather than drawn as a blank button.
   Widget _buildContextMenu(
     BuildContext context,
     EditableTextState editableTextState,
+    Brightness brightness,
   ) {
     final WidgetsLocalizations localizations = WidgetsLocalizations.of(context);
     final TextSelectionToolbarAnchors anchors =
@@ -1202,10 +1203,11 @@ class _WInputState extends State<WInput>
     final List<WindTextSelectionToolbarButton> buttons = [
       for (final ContextMenuButtonItem item
           in editableTextState.contextMenuButtonItems)
-        WindTextSelectionToolbarButton(
-          label: _contextMenuLabel(item, localizations),
-          onPressed: item.onPressed,
-        ),
+        if (windContextMenuLabel(item, localizations) case final String label)
+          WindTextSelectionToolbarButton(
+            label: label,
+            onPressed: item.onPressed,
+          ),
     ];
 
     if (buttons.isEmpty) {
@@ -1214,7 +1216,7 @@ class _WInputState extends State<WInput>
 
     // Light: white surface, gray-900 text, gray-200 dividers. Dark: slate-800
     // surface, white text, slate-700 dividers.
-    final bool dark = _brightness == Brightness.dark;
+    final bool dark = brightness == Brightness.dark;
 
     return WindTextSelectionToolbar(
       anchorAbove: anchors.primaryAnchor,
@@ -1224,22 +1226,6 @@ class _WInputState extends State<WInput>
       dividerColor: dark ? const Color(0xFF334155) : const Color(0xFFE5E7EB),
       buttons: buttons,
     );
-  }
-
-  /// Maps a context-menu button to its localized label, preferring the
-  /// `WidgetsLocalizations` strings for the standard edit actions and falling
-  /// back to the button item's own label for anything else.
-  String _contextMenuLabel(
-    ContextMenuButtonItem item,
-    WidgetsLocalizations localizations,
-  ) {
-    return switch (item.type) {
-      ContextMenuButtonType.copy => localizations.copyButtonLabel,
-      ContextMenuButtonType.cut => localizations.cutButtonLabel,
-      ContextMenuButtonType.paste => localizations.pasteButtonLabel,
-      ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
-      _ => item.label ?? '',
-    };
   }
 }
 

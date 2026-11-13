@@ -408,7 +408,9 @@ void main() {
               reason: 'the last action starts off screen',
             );
 
-            await tester.drag(find.text(labels.first), const Offset(-600, 0));
+            // Further than the row is wide; the clamped physics stop at the
+            // end, which leaves the last action on screen.
+            await tester.drag(find.text(labels.first), const Offset(-2000, 0));
             await tester.pumpAndSettle();
 
             final Rect last = tester.getRect(find.text(labels.last));
