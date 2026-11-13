@@ -55,7 +55,7 @@ example/
 └── pubspec.yaml
 ```
 
-The interactive playground formerly hosted here has been migrated to the [`fluttersdk.com`](https://fluttersdk.com/wind) site, where it runs as a `WDynamic`-driven Flutter app embedded in the Laravel host. The example app in this repository only ships the navigable demo gallery.
+The interactive playground formerly hosted here has been migrated to the [`fluttersdk.com`](https://anilcancakir.com/wind_kit) site, where it runs as a `WDynamic`-driven Flutter app embedded in the Laravel host. The example app in this repository only ships the navigable demo gallery.
 
 ## 🎯 Key Examples
 
@@ -92,9 +92,9 @@ WButton(
 
 ## 📚 Learn More
 
-- **Documentation**: [fluttersdk.com/wind](https://fluttersdk.com/wind)
-- **GitHub**: [github.com/fluttersdk/wind](https://github.com/fluttersdk/wind)
-- **Pub.dev**: [pub.dev/packages/fluttersdk_wind](https://pub.dev/packages/fluttersdk_wind)
+- **Documentation**: [anilcancakir.com/wind_kit](https://anilcancakir.com/wind_kit)
+- **GitHub**: [github.com/anilcancakir/wind_kit](https://github.com/anilcancakir/wind_kit)
+- **Pub.dev**: [pub.dev/packages/wind_kit](https://pub.dev/packages/wind_kit)
 
 ## 💡 Tips
 
@@ -106,4 +106,4 @@ WButton(
 
 ## 🐛 Issues?
 
-Found a bug or have a suggestion? Please open an issue on [GitHub](https://github.com/fluttersdk/wind/issues).
+Found a bug or have a suggestion? Please open an issue on [GitHub](https://github.com/anilcancakir/wind_kit/issues).

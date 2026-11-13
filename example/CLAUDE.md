@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working inside 
 
 ## What this directory is
 
-`example/` is a standalone Flutter app (own `pubspec.yaml`, `analysis_options.yaml`, web/android/ios/desktop targets) that boots `lib/main.dart` into a navigable showcase gallery. It serves as the canonical visual reference embedded at `fluttersdk.com/wind` via per-page iframes.
+`example/` is a standalone Flutter app (own `pubspec.yaml`, `analysis_options.yaml`, web/android/ios/desktop targets) that boots `lib/main.dart` into a navigable showcase gallery. It serves as the canonical visual reference embedded at `anilcancakir.com/wind_kit` via per-page iframes.
 
-Wind itself is consumed via `pubspec.yaml: fluttersdk_wind: { path: ../ }`. A code change in `../lib/` is visible here on the next hot-reload; the example app is the manual smoke test for the parent package.
+Wind itself is consumed via `pubspec.yaml: wind_kit: { path: ../ }`. A code change in `../lib/` is visible here on the next hot-reload; the example app is the manual smoke test for the parent package.
 
 The standalone JSON playground formerly hosted here (`lib/play.dart`, `lib/playground.dart`) has been migrated to the `wind_playground_web` package in the `fluttersdk.com` repository. The wind package only ships the demo gallery now.
 
@@ -57,7 +57,7 @@ The docs website iframes a deployed web build of `lib/main.dart` and navigates t
 
 ## Dependencies
 
-- `fluttersdk_wind: { path: ../ }` — local path to the parent. Do not bump to a pub.dev version; the example tests pre-release parent code.
+- `wind_kit: { path: ../ }` — local path to the parent. Do not bump to a pub.dev version; the example tests pre-release parent code.
 - `google_fonts: ^6.1.0` — pulled by some pages for non-system font demos.
 
 `pubspec.lock` is committed (this is an application, not a library). Do not delete it.
