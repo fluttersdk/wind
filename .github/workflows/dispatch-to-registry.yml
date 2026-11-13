@@ -1,97 +1,81 @@
-# Auto-sync the FlutterSDK AI registry when a wind release is published.
-#
-# Fires repository_dispatch at fluttersdk/ai. The registry's sync.yml receives
-# the event, pulls the skills/wind-ui/ subtree, bumps the version triplet, and
-# pushes to main.
+# Auto-sync the skills registry when a wind_kit release is published.
 #
 # Called by publish.yml after its github-release job, so the dispatch happens
-# only once pub.dev has actually accepted the release. It is NOT triggered by
-# `release: [published]`, which is what it used to declare: publish.yml creates
-# the release with `gh release create` under `GH_TOKEN: ${{ github.token }}`,
-# and GitHub does not start workflow runs from events raised by GITHUB_TOKEN.
-# That trigger could never fire, and did not fire once between the day it was
-# added (2026-08-03) and the 1.4.0 release, which shipped a skill the registry
-# never received until it was dispatched by hand.
+# only once pub.dev has accepted the release; or run by hand. It is NOT
+# triggered by `release: [published]`: the release is created under the default
+# GITHUB_TOKEN, and GitHub starts no workflow run from an event raised by that
+# token, so such a trigger never fires. The registry's sync.yml receives the
+# repository_dispatch, pulls the skills/wind-ui/ subtree, bumps the
+# version triplet, and pushes to master.
 #
 # Deliberately NOT on every push. A skill edit that lands on master between
 # releases waits for the release that carries it, so the registry version
-# tracks published packages instead of counting commits: under the old push
-# trigger the registry reached v1.3.75, most of those re-publishing the same
-# skill content. Reach for the manual run when a skill fix has to arrive
-# before the next release.
+# tracks published packages instead of counting commits. Reach for the manual
+# run when a skill fix has to arrive before the next release.
 #
-# Auth: uses the fluttersdk-registry GitHub App (1-hour mint-on-demand
-# tokens). Requires REGISTRY_BOT_APP_ID + REGISTRY_BOT_PRIVATE_KEY
-# secrets on this repo (same values as on fluttersdk/ai).
+# Auth: uses the registry GitHub App (anilcancakir-ai-registry, 1-hour
+# mint-on-demand tokens). Requires REGISTRY_BOT_APP_ID + REGISTRY_BOT_PRIVATE_KEY
+# secrets on this repo (same values as on anilcancakir/ai).
 
 name: Dispatch skill update to registry
 
 on:
-    workflow_call:
-        secrets:
-            REGISTRY_BOT_APP_ID:
-                required: true
-            REGISTRY_BOT_PRIVATE_KEY:
-                required: true
-    workflow_dispatch:
+  workflow_call:
+    secrets:
+      REGISTRY_BOT_APP_ID:
+        required: true
+      REGISTRY_BOT_PRIVATE_KEY:
+        required: true
+  workflow_dispatch:
 
 permissions:
-    contents: read
+  contents: read
 
 jobs:
-    dispatch:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-              with:
-                  fetch-depth: 1
-                  # Every other checkout in this repo sets it, and zizmor's
-                  # `artipacked` audit is on by default. This job only reads
-                  # `pubspec.yaml`, so leaving the token in `.git/config` buys
-                  # nothing and this workflow now runs inside the release
-                  # pipeline.
-                  persist-credentials: false
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
 
-            - name: Extract version
-              id: ver
-              run: |
-                  set -euo pipefail
-                  # `v?` because this repo tags WITHOUT the prefix: publish.yml
-                  # matches '[0-9]+.[0-9]+.[0-9]+*' and CLAUDE.md says
-                  # `git tag X.Y.Z`. The old `^v` test could never match a real
-                  # tag here, so this always fell through to pubspec.yaml.
-                  if [[ -n "${GITHUB_REF_NAME}" && "${GITHUB_REF_NAME}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-                      VER="${GITHUB_REF_NAME#v}"
-                  else
-                      VER=$(grep -E '^version:' pubspec.yaml | head -1 | awk '{print $2}')
-                  fi
-                  # Strip Dart/Flutter build metadata suffix (e.g. 1.2.3+4 -> 1.2.3)
-                  VER="${VER%%+*}"
-                  if [[ -z "$VER" ]]; then
-                      echo "::error::could not extract a non-empty version from ref or pubspec.yaml"
-                      exit 1
-                  fi
-                  echo "version=$VER" >> "$GITHUB_OUTPUT"
+      - name: Extract version
+        id: ver
+        run: |
+          set -euo pipefail
+          if [[ -n "${GITHUB_REF_NAME}" && "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            VER="${GITHUB_REF_NAME#v}"
+          else
+            VER=$(grep -E '^version:' pubspec.yaml | head -1 | awk '{print $2}')
+          fi
+          # Strip Dart/Flutter build metadata suffix (e.g. 1.2.3+4 -> 1.2.3)
+          VER="${VER%%+*}"
+          if [[ -z "$VER" ]]; then
+            echo "::error::could not extract a non-empty version from ref or pubspec.yaml"
+            exit 1
+          fi
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
 
-            - name: Mint App token scoped to fluttersdk/ai
-              id: app-token
-              uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
-              with:
-                  app_id: ${{ secrets.REGISTRY_BOT_APP_ID }}
-                  private_key: ${{ secrets.REGISTRY_BOT_PRIVATE_KEY }}
-                  installation_retrieval_mode: repository
-                  installation_retrieval_payload: fluttersdk/ai
-                  repositories: '["ai"]'
+      - name: Mint App token scoped to anilcancakir/ai
+        id: app-token
+        uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
+        with:
+          app_id: ${{ secrets.REGISTRY_BOT_APP_ID }}
+          private_key: ${{ secrets.REGISTRY_BOT_PRIVATE_KEY }}
+          installation_retrieval_mode: repository
+          installation_retrieval_payload: anilcancakir/ai
+          repositories: '["ai"]'
 
-            - name: Fire repository_dispatch to fluttersdk/ai
-              uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4
-              with:
-                  token: ${{ steps.app-token.outputs.token }}
-                  repository: fluttersdk/ai
-                  event-type: skill-updated
-                  client-payload: |
-                      {
-                          "source": "wind",
-                          "version": "${{ steps.ver.outputs.version }}",
-                          "sha": "${{ github.sha }}"
-                      }
+      - name: Fire repository_dispatch to anilcancakir/ai
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          repository: anilcancakir/ai
+          event-type: skill-updated
+          client-payload: |
+            {
+              "source": "wind_kit",
+              "version": "${{ steps.ver.outputs.version }}",
+              "sha": "${{ github.sha }}"
+            }

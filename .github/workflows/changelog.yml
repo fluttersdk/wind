@@ -1,0 +1,57 @@
+name: Changelog
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  changelog:
+    name: Changelog
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # A change to the shipped code needs a CHANGELOG.md entry in the same pull
+      # request. Dependabot, release pull requests and the `skip-changelog`
+      # label are exempt. README, llms.txt, doc/ and the agent skill stay a
+      # review rule (CLAUDE.md, Post-Change Checklist).
+      - name: Require a changelog entry for code changes
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          TITLE: ${{ github.event.pull_request.title }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          CODE_PATHS: '^lib/'
+        run: |
+          case "$AUTHOR" in
+            dependabot*) echo "Dependabot pull request: exempt."; exit 0 ;;
+          esac
+          case "$TITLE" in
+            release:*) echo "Release pull request: exempt."; exit 0 ;;
+          esac
+          case ",$LABELS," in
+            *,skip-changelog,*) echo "skip-changelog label: exempt."; exit 0 ;;
+          esac
+
+          changed="$(git diff --name-only "origin/$BASE_REF"...HEAD)"
+
+          if ! printf '%s\n' "$changed" | grep -Eq "$CODE_PATHS"; then
+            echo "No shipped code changed: nothing to record."
+            exit 0
+          fi
+
+          if printf '%s\n' "$changed" | grep -qx 'CHANGELOG.md'; then
+            echo "CHANGELOG.md is updated."
+            exit 0
+          fi
+
+          echo "::error::This pull request changes shipped code but not CHANGELOG.md. Add an entry under [Unreleased], or apply the skip-changelog label."
+          exit 1
