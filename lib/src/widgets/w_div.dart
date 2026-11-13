@@ -475,10 +475,7 @@ class WDiv extends StatelessWidget {
 
         return Stack(
           clipBehavior: Clip.none,
-          children: [
-            if (normalLayout != null) normalLayout,
-            ...positionedWidgets,
-          ],
+          children: [?normalLayout, ...positionedWidgets],
         );
       }
 

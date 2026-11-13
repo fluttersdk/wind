@@ -302,7 +302,7 @@ class _WFormDatePickerContentState extends State<_WFormDatePickerContent> {
         if (widget.label != null)
           WText(widget.label!, className: widget.labelClassName),
         datePicker,
-        if (bottomText != null) bottomText,
+        ?bottomText,
       ],
     );
   }

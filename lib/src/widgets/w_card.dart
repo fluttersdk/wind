@@ -83,11 +83,7 @@ class WCard extends StatelessWidget {
     final String effectiveClassName = className ?? _defaultClassName;
 
     // 2. Build the slot children list: header? + body + footer?
-    final List<Widget> slotChildren = [
-      if (header != null) header!,
-      child,
-      if (footer != null) footer!,
-    ];
+    final List<Widget> slotChildren = [?header, child, ?footer];
 
     // 3. Render via WDiv, which handles all layout + decoration.
     return WDiv(className: effectiveClassName, children: slotChildren);
