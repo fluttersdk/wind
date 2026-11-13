@@ -302,7 +302,7 @@ Disabled state:
 
 State injection summary:
 - `loading`: from `isLoading: true`
-- `disabled`: from `disabled: true` or `isLoading: true`
+- `disabled`: from `disabled: true` on the button's own `className`; a loading button also disables its anchor, so a `WText` or `WIcon` inside it resolves `disabled:` too, while the button itself only gets `loading:`
 - `hover` / `focus`: from `WAnchor` automatically
 
 ---
