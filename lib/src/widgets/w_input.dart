@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
-import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
@@ -12,6 +12,7 @@ import '../utils/wind_helpers.dart';
 import '../utils/wind_logger.dart';
 import '../utils/wind_perf_counters.dart';
 import 'w_keyboard_actions.dart';
+import 'w_text_selection.dart';
 
 /// Input type enum for WInput widget
 ///
@@ -329,6 +330,15 @@ class _WInputState extends State<WInput>
   static const double _defaultBorderRadius = 4.0;
   static const Color _defaultBorderColor = Color(0xFFD1D5DB); // grey.shade300
 
+  /// The floating-cursor anchor colour (the grey ghost caret an iOS trackpad
+  /// drag leaves at the text position): iOS inactive grey, `#999999`, the
+  /// same constant Material and Cupertino text fields use.
+  static const Color _backgroundCursorColor = Color(0xFF999999);
+
+  /// Shared, stateless handle controls; one instance serves every field.
+  static final WindTextSelectionHandleControls _selectionControls =
+      WindTextSelectionHandleControls();
+
   late TextEditingController _controller;
   late FocusNode _focusNode;
   bool _isFocused = false;
@@ -351,7 +361,7 @@ class _WInputState extends State<WInput>
 
   /// Builds the native selection gesture layer (tap-to-focus, drag-select,
   /// double-tap word, long-press) around the EditableText. This is the
-  /// framework's canonical Material-free recipe (the one [CupertinoTextField]
+  /// framework's canonical Material-free recipe (the one `CupertinoTextField`
   /// uses): instead of a hand-rolled whole-box [GestureDetector], the builder
   /// hit-tests against the EditableText's [RenderEditable] in global coords, so
   /// it handles glyph-level selection AND whole-box taps in one detector.
@@ -811,7 +821,7 @@ class _WInputState extends State<WInput>
       // The floating-cursor anchor (iOS trackpad drag) uses inactive grey by
       // convention, matching Material/Cupertino TextField; it is not the live
       // cursor color.
-      backgroundCursorColor: CupertinoColors.inactiveGray,
+      backgroundCursorColor: _backgroundCursorColor,
       selectionColor: _isFocused ? selectionColor : null,
       // RenderEditable must NOT handle pointers itself: the gesture layer is the
       // `_selectionGestureDetectorBuilder` wrapping the whole box (below), which
@@ -822,20 +832,22 @@ class _WInputState extends State<WInput>
       // handles/toolbar): with no Overlay, `enableInteractiveSelection` below
       // is false too, so drag-select / double-tap / long-press are all off and
       // only typing + focus work. A disabled field must expose none of it (a
-      // read-only field stays selectable so its text can be copied). Cupertino
-      // handle controls on
-      // every platform keep WInput cupertino-only (no `package:material_ui/material_ui.dart`
-      // import): `cupertinoTextSelectionHandleControls` mixes in
-      // [TextSelectionHandleControls], which suppresses the legacy `buildToolbar`
-      // (so the Material-free `contextMenuBuilder` stays the only toolbar path and
-      // the MaterialLocalizations assert is never hit) and is NOT deprecated (so
-      // `dart analyze` stays clean).
+      // read-only field stays selectable so its text can be copied). The
+      // package's own widgets-layer handles serve every platform, so WInput
+      // imports neither Material nor Cupertino: they mix in
+      // [TextSelectionHandleControls], which suppresses the legacy
+      // `buildToolbar` (so `contextMenuBuilder` stays the only toolbar path and
+      // the MaterialLocalizations assert is never hit).
       selectionControls: hasOverlay && widget.enabled
-          ? cupertinoTextSelectionHandleControls
+          ? _selectionControls
           : null,
       enableInteractiveSelection: hasOverlay && widget.enabled,
+      // A fresh closure on every build: EditableText re-shows an open toolbar
+      // only when the builder changes, so a tear-off would keep the colours
+      // of the brightness the menu opened with.
       contextMenuBuilder: hasOverlay && widget.enabled
-          ? _buildContextMenu
+          ? (context, editableTextState) =>
+                _buildContextMenu(context, editableTextState, brightness)
           : null,
       // Caller-supplied formatters win outright; otherwise InputType.number
       // gets a signed-decimal filter so it is actually numeric on every
@@ -1170,58 +1182,57 @@ class _WInputState extends State<WInput>
     );
   }
 
-  /// Builds a Material-free selection toolbar (Cupertino chrome) whose action
-  /// labels read from [WidgetsLocalizations], which is always resolvable (via
+  /// Builds the package's widgets-layer selection toolbar, whose action labels
+  /// read from [WidgetsLocalizations], which is always resolvable (via
   /// `DefaultWidgetsLocalizations`) even with no Material/Cupertino ancestor.
+  ///
+  /// [context] is the overlay's, which can sit above the field's
+  /// [WindTheme], so the palette follows [brightness], the field's own
+  /// resolution from its last build, and reaches the toolbar as plain colours.
+  /// An action with no label (Live Text has none in [WidgetsLocalizations])
+  /// is left out rather than drawn as a blank button.
   Widget _buildContextMenu(
     BuildContext context,
     EditableTextState editableTextState,
+    Brightness brightness,
   ) {
     final WidgetsLocalizations localizations = WidgetsLocalizations.of(context);
     final TextSelectionToolbarAnchors anchors =
         editableTextState.contextMenuAnchors;
 
-    final List<Widget> children = [
+    final List<WindTextSelectionToolbarButton> buttons = [
       for (final ContextMenuButtonItem item
           in editableTextState.contextMenuButtonItems)
-        CupertinoTextSelectionToolbarButton.text(
-          onPressed: item.onPressed,
-          text: _contextMenuLabel(item, localizations),
-        ),
+        if (windContextMenuLabel(item, localizations) case final String label)
+          WindTextSelectionToolbarButton(
+            label: label,
+            onPressed: item.onPressed,
+          ),
     ];
 
-    if (children.isEmpty) {
+    if (buttons.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    return CupertinoTextSelectionToolbar(
+    // Light: white surface, gray-900 text, gray-200 dividers. Dark: slate-800
+    // surface, white text, slate-700 dividers.
+    final bool dark = brightness == Brightness.dark;
+
+    return WindTextSelectionToolbar(
       anchorAbove: anchors.primaryAnchor,
       anchorBelow: anchors.secondaryAnchor ?? anchors.primaryAnchor,
-      children: children,
+      backgroundColor: dark ? const Color(0xFF1E293B) : const Color(0xFFFFFFFF),
+      foregroundColor: dark ? const Color(0xFFFFFFFF) : const Color(0xFF111827),
+      dividerColor: dark ? const Color(0xFF334155) : const Color(0xFFE5E7EB),
+      buttons: buttons,
     );
-  }
-
-  /// Maps a context-menu button to its localized label, preferring the
-  /// `WidgetsLocalizations` strings for the standard edit actions and falling
-  /// back to the button item's own label for anything else.
-  String _contextMenuLabel(
-    ContextMenuButtonItem item,
-    WidgetsLocalizations localizations,
-  ) {
-    return switch (item.type) {
-      ContextMenuButtonType.copy => localizations.copyButtonLabel,
-      ContextMenuButtonType.cut => localizations.cutButtonLabel,
-      ContextMenuButtonType.paste => localizations.pasteButtonLabel,
-      ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
-      _ => item.label ?? '',
-    };
   }
 }
 
 /// The gesture layer for [WInput]'s native text selection.
 ///
 /// This is the framework's canonical Material-free recipe: it extends
-/// [TextSelectionGestureDetectorBuilder] (the same base [CupertinoTextField]
+/// [TextSelectionGestureDetectorBuilder] (the same base `CupertinoTextField`
 /// uses) and inherits every default selection gesture (tap-to-focus,
 /// drag-select, double-tap word, triple-tap line, long-press, force-press on
 /// iOS). It hit-tests against the EditableText's [RenderEditable] in global

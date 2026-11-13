@@ -27,7 +27,7 @@ Building forms with validation. Use this file when picking between raw `W*` and 
 
 Both families share the same className surface and visual output. The split is purely about validation flow.
 
-`WInput` (and by extension `WFormInput`) uses native text selection: mouse-drag selects a substring, double-click or double-tap selects a word, and tapping the box moves the cursor. Selection handles are Cupertino-style on all platforms (keeps `WInput` cupertino-only, no `material.dart` import). An `Overlay` ancestor is required for interactive selection; without one, typing and focus still work but all interactive selection (drag-select, double-tap, long-press, handles, and toolbar) is suppressed. Both widget families are Material-free at their core (`EditableText`), so no Material ancestor is required for the input itself.
+`WInput` (and by extension `WFormInput`) uses native text selection: mouse-drag selects a substring, double-click or double-tap selects a word, and tapping the box moves the cursor. Selection handles (lollipop) and the Cut / Copy / Paste toolbar are drawn by Wind itself on every platform, light or dark to match the Wind theme, with no Material or Cupertino ancestor needed. An `Overlay` ancestor is required for interactive selection; without one, typing and focus still work but all interactive selection (drag-select, double-tap, long-press, handles, and toolbar) is suppressed. Both widget families are Material-free at their core (`EditableText`), so no Material ancestor is required for the input itself.
 
 ---
 
