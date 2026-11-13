@@ -238,7 +238,7 @@ WFormDatePicker(
 )
 ```
 
-Two behaviours carry over from the raw widget. Once a day is picked, every time step updates the field value, not only the day tap, because `onChanged` fires on each one; the validator runs on those changes only when an `autovalidateMode` other than the default `AutovalidateMode.disabled` is set (as above), and otherwise on `validate()`; and `initialValue` seeds the field on first build only, the way `FormField` does, so changing it later does not move an already-picked value.
+Two behaviours carry over from the raw widget. Once a day is picked, every time step updates the field value, not only the day tap, because `onChanged` fires on each one; the validator runs on those changes when `autovalidateMode` is `always` or `onUserInteraction` (as above), when an enclosing `Form` sets its own mode, and on `validate()`; `AutovalidateMode.onUnfocus` validates on focus loss instead, not on each change; and `initialValue` seeds the field on first build only, the way `FormField` does, so changing it later does not move an already-picked value.
 
 <a name="event-handling"></a>
 ## Event Handling
