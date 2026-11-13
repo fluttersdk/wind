@@ -315,7 +315,7 @@ The `customIcons:` map merges with the built-in defaults; user keys override. Lo
 Threat model considerations:
 - **JSON source matters.** A controlled backend rendering a known schema is safe. Untrusted client input is not; even with whitelist enforcement, props can hold dangerous data (URLs that load attacker-controlled assets via `WImage(src:)`, action names that overlap with privileged handlers).
 - **`builders:` is the escape hatch.** If you don't add custom builders, the surface is bounded by the default whitelist and the action handlers you registered. Action handlers run consumer Dart code; they are the trust boundary.
-- **Action argument coercion is shallow.** `args['_value'] as String?` on an `onTap` action will succeed if the JSON sends `"_value": "<script>"`, because only `onTap` passes the JSON args through (an `onChange` dispatch overwrites `_value` with the real value). The script tag is just a string. But an `args['url']` that a handler passes to a URL launcher opens that URL. Validate inside the handler.
+- **Action argument coercion is shallow.** `args['_value'] as String?` on an `onTap` action will succeed if the JSON sends `"_value": "<script>"`, because `onTap` passes the JSON args through, and so does a `WDatePicker` `onChange`, which uses `parseAction` (a handler there reads the selected date from state). The `onChange` of `WInput`, `WCheckbox` and `WSelect` overwrites `_value` with the real value. The script tag is just a string. But an `args['url']` that a handler passes to a URL launcher opens that URL. Validate inside the handler.
 - **Recursion limit prevents stack overflow.** Default `maxDepth: 50` is plenty for legitimate UI; reduce for stricter bounds when accepting third-party JSON.
 
 ---

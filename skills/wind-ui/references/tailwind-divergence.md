@@ -206,8 +206,8 @@ Wind 1.0 is anchored to Tailwind v3 semantics for shadow / radius / blur / ring 
 | `bg-linear-to-r` | `bg-gradient-to-r` |
 | `bg-conic-*` | not implemented |
 | `bg-radial-*` | not implemented |
-| `shrink-*` | only `shrink`, `shrink-0` and `flex-shrink` are wired; `flex-shrink-0` and numeric variants drop silently |
-| `grow-*` | only `grow`, `grow-0` and `flex-grow` are wired; `flex-grow-0` and numeric variants drop silently |
+| `shrink-*` | only `shrink`, `shrink-0` and `flex-shrink` are wired; `flex-shrink-0` and numeric variants above 0 drop silently |
+| `grow-*` | only `grow`, `grow-0` and `flex-grow` are wired; `flex-grow-0` and numeric variants above 0 drop silently |
 | `outline-hidden` | not implemented (use `outline-none` if you need it; not wired either) |
 | `ring-3` (explicit width to get the v3 default) | `ring` produces 3 px (matches v3) |
 | `bg-black/50` (opacity modifier) | Same; `bg-opacity-50` removed in v4, also not in Wind |

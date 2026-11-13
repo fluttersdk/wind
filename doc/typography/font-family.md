@@ -62,9 +62,11 @@ WText(
 
 | Class | Font Family | Description |
 |:------|:------------|:------------|
-| `font-sans` | `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` | Default sans-serif stack. |
-| `font-serif` | `Georgia, Cambria, "Times New Roman", Times, serif` | Default serif stack. |
-| `font-mono` | `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace` | Default monospace stack. |
+| `font-sans` | `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` | Default sans-serif family string. |
+| `font-serif` | `Georgia, Cambria, "Times New Roman", Times, serif` | Default serif family string. |
+| `font-mono` | `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace` | Default monospace family string. |
+
+Each string goes whole to `TextStyle.fontFamily`; Wind does not split it into `fontFamilyFallback`, so Flutter does not try the listed families one by one. Register a single installed family under a custom key in `WindThemeData.fontFamilies` when the exact face matters.
 
 <a name="variants"></a>
 ## Variants

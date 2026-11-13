@@ -354,7 +354,7 @@ const WInput({
 })
 ```
 
-Assertions: pass `value` (controlled) or `controller` (external), never both, and `decimalSeparator` is one character. The content padding is 12 px horizontal and 8 px vertical unless the className sets `p-*`.
+Assertions: pass `value` (controlled) or `controller` (external), never both, and `decimalSeparator` is one character. With `type: InputType.number` and no `inputFormatters`, the default signed-decimal filter also rejects a digit, `+` or `-` as the separator, and the build asserts. The content padding is 12 px horizontal and 8 px vertical unless the className sets `p-*`.
 
 There is no `obscureText`, `keyboardType` or `maxLength`: `type: InputType.password` obscures, `type` picks the keyboard, and a length limit is a `LengthLimitingTextInputFormatter` in `inputFormatters`.
 

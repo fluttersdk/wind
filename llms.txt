@@ -40,7 +40,7 @@ void main() {
 
 **Prefix stack** in a className: `<state>:<breakpoint>:<dark>:<platform>:<utility>`. The last class in a family wins. An unknown family is dropped with a one-time `kDebugMode` hint (release builds stay silent); a known family with an unsupported value drops silently. Every colour token (`bg-` / `text-` / `border-` / `fill-` / `ring-` / `shadow-`) carries a `dark:` pair in the same className.
 
-**Parser cache key**: the alias-expanded `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. A call that passes a `baseStyle` skips the cache. Call `WindParser.clearCache()` in test `setUp` only, never in production.
+**Parser cache key**: the alias-expanded `className + activeBreakpoint + brightness + platform + sorted(activeStates)`. A call that passes a `baseStyle` skips the cache. The key omits the theme's maps: call `WindParser.clearCache()` in test `setUp`, and after `setTheme` / `updateTheme` changes anything but brightness.
 
 ## API
 

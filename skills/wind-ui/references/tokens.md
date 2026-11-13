@@ -2,7 +2,7 @@
 
 Exhaustive per-parser token catalogue. Reach for this file when verifying a className token exists, picking the right family, looking up an arbitrary-value pattern, or auditing className for unsupported syntax.
 
-The parsers run first-match-wins. Order within className matters: last class within the same property wins (including duplicate tokens; `top-8 top-4 top-8` resolves to `top-8`). A token no parser claims is dropped and a one-time `kDebugMode` hint names it (release builds stay silent); a token whose family is claimed but whose value is unsupported (`text-7xl`) drops silently, with no hint.
+The parsers run first-match-wins. Order within className matters: last class within the same property wins (including duplicate tokens; `top-8 top-4 top-8` resolves to `top-8`). A token no parser claims is dropped and a one-time `kDebugMode` hint names it (release builds stay silent), except the deliberate no-ops listed under "Recognised as deliberate no-ops" below (`transition`, `antialiased` and the like), which drop with no hint; a token whose family is claimed but whose value is unsupported (`text-7xl`) drops silently, with no hint.
 
 ## Contents
 
@@ -38,7 +38,7 @@ The key leaves out the theme's maps. Cache hit-rate is near-100% in production; 
 
 Resolution:
 - Each token is matched against parsers in registration order; the first parser whose `canParse()` returns `true` claims it.
-- A token no parser claims (checked on the bare token after its last `:`) is dropped and a one-time `kDebugMode` hint names it (release builds stay silent, no exception is thrown). A claimed family with an unsupported value drops silently, and a class with an unknown or inactive prefix is removed earlier with no hint.
+- A token no parser claims (checked on the bare token after its last `:`) is dropped and a one-time `kDebugMode` hint names it (release builds stay silent, no exception is thrown), unless it is one of the deliberate no-ops near the end of this file (`transition`, `antialiased` and the like), which drop with no hint. A claimed family with an unsupported value drops silently, and a class with an unknown or inactive prefix is removed earlier with no hint.
 - Within a parser, last-class-wins via reverse iteration: `p-4 p-8` resolves to `p-8`.
 - Across parsers, conflicts coexist by targeting different `WindStyle` fields: `text-red-500` (colour) and `text-center` (alignment) both apply.
 - Prefix resolution: every `:` segment must be active for the class to apply. `md:hover:dark:bg-blue-500` requires breakpoint ≥ md, the hover state and dark brightness. Prefix order is arbitrary.
@@ -242,7 +242,7 @@ Opacity:
 
 | Token | Effect |
 |---|---|
-| `opacity-{0|5|10|20|25|30|40|50|60|70|75|80|90|95|100}` | Preset percentages (`opacity-50` = 50%); 15, 35, 45 and 55 are not steps and drop silently |
+| `opacity-{0\|5\|10\|20\|25\|30\|40\|50\|60\|70\|75\|80\|90\|95\|100}` | Preset percentages (`opacity-50` = 50%); 15, 35, 45 and 55 are not steps and drop silently |
 | `opacity-[0.5]` / `opacity-[0.75]` | Arbitrary decimal (clamped to 0-1) |
 
 The slash-syntax `/N` modifier applies only to colours, not as a standalone token.
@@ -482,7 +482,7 @@ If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it 
 - `flex-nowrap` (default; omit `wrap`)
 - `flex-wrap-reverse`
 - `place-*` (the flex parser claims it but has no handler)
-- `flex-shrink-0` / `flex-grow-0` and numeric `shrink-N` / `grow-N` (only `shrink`, `shrink-0`, `flex-shrink`, `grow`, `grow-0` and `flex-grow` are wired)
+- `flex-shrink-0` / `flex-grow-0` and numeric `shrink-N` / `grow-N` with N above 0 (only `shrink`, `shrink-0`, `flex-shrink`, `grow`, `grow-0` and `flex-grow` are wired)
 
 (`flex-wrap` is not in this list: it is aliased to `wrap` and resolves, printing a one-time `kDebugMode` hint that points at the canonical `wrap`.)
 

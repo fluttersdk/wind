@@ -46,7 +46,7 @@ Widget.build()  // composes the Flutter tree from style fields
 
 ## Parser cache
 
-Key: `WindContext.cacheKey` over the alias-expanded className, `activeBreakpoint`, `brightness`, `platform` and `sorted(activeStates)`. A call that passes a `baseStyle` never consults the cache, because the key does not include it; `WDiv` and `WText` pass their own nullable `style:`, which is null in ordinary use, so only a caller that sets `style:` bypasses. The perf-counters entry in `CHANGELOG.md` records 0 bypasses and a hit rate of 99% or better across 1613 W-widget builds of one real app; `WindPerfCounters` (off by default) measures it in yours. Invalidate via `WindParser.clearCache()` (test `setUp` only, never in production code), which also resets the counters.
+Key: `WindContext.cacheKey` over the alias-expanded className, `activeBreakpoint`, `brightness`, `platform` and `sorted(activeStates)`. A call that passes a `baseStyle` never consults the cache, because the key does not include it; `WDiv` and `WText` pass their own nullable `style:`, which is null in ordinary use, so only a caller that sets `style:` bypasses. The perf-counters entry in `CHANGELOG.md` records 0 bypasses and a hit rate of 99% or better across 1613 W-widget builds of one real app; `WindPerfCounters` (off by default) measures it in yours. The key leaves out the theme's maps, and `setTheme` / `updateTheme` do not clear the cache, so after either changes anything but brightness a cached style keeps the old value. Call `WindParser.clearCache()` then, and in test `setUp`; it also resets the counters. A brightness change needs no call, because `brightness` is in the key.
 
 ## WindTheme integration
 
@@ -100,4 +100,4 @@ Wind keeps Tailwind's class vocabulary and diverges where Flutter's layout model
 
 ## Last reviewed
 
-2026-11-13: audited against `lib/`. Alias expansion and the `baseStyle` cache bypass joined the data flow, `recipe/` and `alias_expander.dart` joined the tree, the perf resolver joined the diagnostics bridge, and Invariants and a Change guide were added.
+2026-11-13: audited against `lib/`. Alias expansion and the `baseStyle` cache bypass joined the data flow, `recipe/` and `alias_expander.dart` joined the tree, the perf resolver joined the diagnostics bridge, and Invariants and a Change guide were added. The parser cache paragraph now states that the key omits the theme's maps and when to call `clearCache()`.
