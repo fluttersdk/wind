@@ -1,5 +1,7 @@
 # Installation
 
+Add wind_kit to a Flutter app, wrap it in `WindTheme` and style your first widget with a className.
+
 - [Requirements](#requirements)
 - [Installation](#installation-step)
 - [Basic Setup](#basic-setup)
@@ -23,17 +25,17 @@ Before adding Wind to your project, ensure your environment meets these minimum 
 <a name="installation-step"></a>
 ## Installation
 
-Add `fluttersdk_wind` to your `pubspec.yaml` using the Flutter CLI:
+Add `wind_kit` to your `pubspec.yaml` using the Flutter CLI:
 
 ```bash
-flutter pub add fluttersdk_wind
+flutter pub add wind_kit
 ```
 
 Alternatively, add it manually to your dependencies:
 
 ```yaml
 dependencies:
-  fluttersdk_wind: any  # or pin to latest stable from pub.dev/packages/fluttersdk_wind
+  wind_kit: any  # or pin to latest stable from pub.dev/packages/wind_kit
 ```
 
 <a name="basic-setup"></a>
@@ -43,13 +45,13 @@ To use Wind utilities, you must wrap your application with the `WindTheme` widge
 
 ### The Builder Pattern (Recommended)
 
-The `builder` pattern is the preferred way to initialize Wind. It provides a `controller` that synchronizes Wind's theme state (like dark mode) directly with your `MaterialApp`.
+The `builder` pattern is the preferred way to initialise Wind. It provides a `controller` that synchronises Wind's theme state (like dark mode) directly with your `MaterialApp`.
 
 Let's look at a typical implementation:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 void main() => runApp(const MyApp());
 
@@ -77,12 +79,12 @@ class MyApp extends StatelessWidget {
 By using the `builder` pattern, any theme changes triggered via `context.windTheme.toggleTheme()` will instantly propagate to both Wind widgets and native Material components.
 
 > [!NOTE]
-> Ensure you use the `data:` parameter. The `theme:` parameter found in earlier versions is deprecated and will result in compilation errors in v1.
+> Ensure you use the `data:` parameter. `WindTheme` has no `theme:` parameter, so an argument of that name does not compile.
 
 <a name="alternative-setup"></a>
 ## Alternative Setup
 
-If you do not need reactive synchronization with `MaterialApp` or are only using Wind in a specific subtree, you can use the `child` pattern:
+If you do not need reactive synchronisation with `MaterialApp` or are only using Wind in a specific subtree, you can use the `child` pattern:
 
 ```dart
 WindTheme(

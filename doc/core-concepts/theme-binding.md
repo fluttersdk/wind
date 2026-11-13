@@ -11,11 +11,11 @@ Theme binding allows you to sync your Wind configuration with Flutter's native `
 <a name="why-bind-themes"></a>
 ## Why Bind Themes?
 
-By default, Wind manages its own styling tokens (colors, spacing, typography). However, Flutter's built-in widgets (like `AppBar`, `FloatingActionButton`, or `TextField`) rely on the standard `Theme.of(context)` to determine their appearance.
+By default, Wind manages its own styling tokens (colours, spacing, typography). However, Flutter's built-in widgets (like `AppBar`, `FloatingActionButton`, or `TextField`) rely on the standard `Theme.of(context)` to determine their appearance.
 
 Binding the two systems ensures:
 - **Consistency:** A button using `bg-primary-500` matches a standard `ElevatedButton`.
-- **Inheritance:** Standard Flutter widgets automatically pick up your Wind font families and colors.
+- **Inheritance:** Standard Flutter widgets automatically pick up your Wind font families and colours.
 - **Automation:** Toggling dark mode in Wind automatically updates the `brightness` of your standard Material theme.
 
 <a name="reactive-binding"></a>
@@ -63,11 +63,12 @@ context.windTheme.toggleTheme();
 <a name="static-binding"></a>
 ## Static Binding
 
-If you do not need dynamic theme switching at runtime, you can bind the theme once during initialization. This is useful for apps with a fixed brand identity or forced dark/light modes.
+If you do not need dynamic theme switching at runtime, you can bind the theme once during initialisation. This is useful for apps with a fixed brand identity or forced dark/light modes.
 
 ```dart
 final windTheme = WindThemeData(
   brightness: Brightness.dark,
+  syncWithSystem: false,
   colors: {'primary': Colors.purple},
 );
 

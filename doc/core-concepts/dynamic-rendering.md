@@ -16,14 +16,14 @@ Build Flutter UIs from JSON at runtime. WDynamic turns a Map structure into a li
 <a name="introduction"></a>
 ## Introduction
 
-Dynamic rendering, also known as Server-Driven UI, allows your backend to control the structure and behavior of your Flutter interface at runtime. Instead of hard-coding widget trees in Dart, you define them in JSON and let WDynamic convert them into live widgets.
+Dynamic rendering, also known as Server-Driven UI, allows your backend to control the structure and behaviour of your Flutter interface at runtime. Instead of hard-coding widget trees in Dart, you define them in JSON and let WDynamic convert them into live widgets.
 
 This approach unlocks powerful capabilities:
 
 - **CMS-driven layouts** - Non-technical teams can author UI configurations through admin panels.
 - **A/B testing** - Experiment with different layouts without rebuilding your app.
 - **Remote configuration** - Update UI elements instantly via API responses.
-- **White-label apps** - Customize entire interfaces per client from a single codebase.
+- **White-label apps** - Customise entire interfaces per client from a single codebase.
 
 **Traditional approach:**
 ```dart
@@ -161,15 +161,12 @@ An array of nested widget definitions. Optional for widgets like `WText` or `WIc
 <a name="action-system"></a>
 ## Action System
 
-Interactive widgets (buttons, inputs, checkboxes) trigger actions via props like `onTap`, `onLongPress`, `onDoubleTap`, `onChange`, and `onChanged`. Each action prop references a named handler registered in the `actions` map.
+Interactive widgets (buttons, inputs, checkboxes) trigger actions via the `onTap` and `onChange` props. Each action prop references a named handler registered in the `actions` map.
 
 **Supported action props:**
 
 - `onTap` - Single tap/click (WButton, WAnchor)
-- `onLongPress` - Long press gesture (WButton, WAnchor)
-- `onDoubleTap` - Double tap/click (WButton, WAnchor)
 - `onChange` - Value change (WInput, WCheckbox, WSelect, WDatePicker)
-- `onChanged` - Alias for onChange
 
 **JSON syntax:**
 
@@ -370,7 +367,7 @@ WDynamic(
       return WDiv(
         className: 'flex items-center gap-4 p-4 bg-white rounded-lg shadow',
         children: [
-          WImage(props['avatar'], className: 'w-12 h-12 rounded-full'),
+          WImage(src: props['avatar'], className: 'w-12 h-12 rounded-full'),
           WDiv(
             className: 'flex flex-col',
             children: [
@@ -399,6 +396,7 @@ Custom builders receive the parsed `props` map and any resolved `children` widge
 > [!WARNING]
 > Custom builders bypass the security whitelist. Only register builders for widgets you trust. Never pass user-provided builder functions.
 
+<a name="custom-icons"></a>
 ## Custom Icons
 
 For `WIcon` widgets in your JSON, you can provide custom icon mappings without building a full custom widget builder. Use the `customIcons` prop to map string names to `IconData`:

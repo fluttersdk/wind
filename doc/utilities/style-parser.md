@@ -1,5 +1,7 @@
 # Style Parser
 
+Parse a className string into a `WindStyle` yourself with `wStyle` and `WindParser.parse`.
+
 - [Introduction](#introduction)
 - [The wStyle Helper](#wstyle-helper)
 - [WindParser Engine](#windparser-engine)
@@ -69,14 +71,14 @@ The resulting `WindStyle` object contains resolved Flutter properties:
 final style = wStyle(context, 'bg-red-500 text-lg font-bold');
 
 Color? color = style.decoration?.color; // Resolved bg-red-500
-TextStyle? textStyle = style.textStyle;  // Resolved text-lg and font-bold
+TextStyle textStyle = style.toTextStyle(); // Resolved text-lg and font-bold
 EdgeInsets? padding = style.padding;     // resolved p-* classes
 ```
 
 <a name="performance-and-caching"></a>
 ## Performance & Caching
 
-Wind uses an internal memoization system to ensure that parsing is extremely fast. The `WindParser` maintains a static cache keyed by a combination of:
+Wind uses an internal memoisation system to ensure that parsing is extremely fast. The `WindParser` maintains a static cache keyed by a combination of:
 
 1. The raw `className` string.
 2. The current active breakpoint (`sm`, `md`, etc.).
@@ -103,5 +105,5 @@ final style = context.wStyleExt('p-4');
 ### Related Documentation
 
 - [Context Extensions](./context-extensions.md)
-- [Color Helpers](./color-helpers.md)
+- [Colour Helpers](./color-helpers.md)
 - [Theming Concepts](../core-concepts/theming.md)

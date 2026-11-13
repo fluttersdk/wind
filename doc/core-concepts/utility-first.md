@@ -47,7 +47,7 @@ Container(
     borderRadius: BorderRadius.circular(12),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black.withValues(alpha: 0.1),
         blurRadius: 10,
         offset: const Offset(0, 4),
       ),
@@ -83,22 +83,22 @@ By flattening the widget tree, Wind makes the UI structure more readable and sig
 Adopting a utility-first workflow provides several architectural advantages:
 
 - **Development Velocity**: Stay within your widget tree. There is no need to jump between separate files or long constructor lists to adjust styling.
-- **Design Consistency**: Instead of using magic numbers, you work with a standardized scale (e.g., `p-4` for 16px). This ensures your UI remains visually aligned.
+- **Design Consistency**: Instead of using magic numbers, you work with a standardised scale (e.g., `p-4` for 16px). This ensures your UI remains visually aligned.
 - **Improved Maintainability**: Styles are local to the widget. When you modify a `WDiv`, you see exactly what it affects without worrying about global CSS-like side effects.
 - **Declarative Modifiers**: Handling responsiveness (`md:`), dark mode (`dark:`), and states (`hover:`) is handled via simple prefixes rather than conditional logic in your build methods.
 
 <a name="how-it-works"></a>
 ## How it Works
 
-Wind uses a high-performance pipeline to transform strings into native Flutter styles. This process is optimized through caching to ensure runtime overhead is minimal.
+Wind uses a high-performance pipeline to transform strings into native Flutter styles. This process is optimised through caching to ensure runtime overhead is minimal.
 
-1. **Context Initialization**: `WindContext` captures the current environment, including screen size (breakpoints), brightness, and theme scales.
-2. **Parsing**: The `WindParser` tokenizes the `className` string and delegates to specialized parsers for colors, spacing, borders, and more.
+1. **Context Initialisation**: `WindContext` captures the current environment, including screen size (breakpoints), brightness, and theme scales.
+2. **Parsing**: The `WindParser` tokenises the `className` string and delegates to specialised parsers for colours, spacing, borders, and more.
 3. **Style Composition**: Parsers generate a `WindStyle` object, an immutable, typed representation of the requested styles.
 4. **Widget Application**: `W-prefixed` widgets consume this `WindStyle` to dynamically build the optimal Flutter widget hierarchy (e.g., injecting `Padding` or `DecoratedBox` only when needed).
 
 > [!NOTE]
-> Wind implements an LRU (Least Recently Used) cache. Once a class string is parsed, subsequent renders retrieve the pre-computed style almost instantly.
+> Wind caches parsed styles in an unbounded map, keyed per context. Once a class string is parsed, subsequent renders retrieve the pre-computed style almost instantly. `WindParser.clearCache()` empties it.
 
 <a name="quick-reference"></a>
 ## Quick Reference
@@ -110,7 +110,7 @@ Common utility categories and their primary classes:
 | **Layout** | `flex`, `grid`, `block`, `hidden` | Controls positioning and visibility. |
 | **Spacing** | `p-4`, `m-2`, `gap-4`, `px-6` | Manages padding, margins, and spacing between children. |
 | **Sizing** | `w-full`, `h-64`, `max-w-md` | Defines explicit widths and heights. |
-| **Colors** | `bg-blue-500`, `text-white` | Applies theme colors to backgrounds and text. |
+| **Colours** | `bg-blue-500`, `text-white` | Applies theme colours to backgrounds and text. |
 | **Borders** | `border`, `rounded-lg`, `ring-2` | Configures borders, radii, and focus rings. |
 
 <a name="syntax-guide"></a>
@@ -121,7 +121,7 @@ Wind uses a syntax that matches Tailwind CSS, supporting standard values, arbitr
 | Pattern | Example | Description |
 |:--------|:--------|:------------|
 | **Standard** | `p-4` | A predefined value from your theme scale. |
-| **Negative** | `-m-4` | Inverts a value (primarily for margins). |
+| **Negative** | `-top-2` | Negative offset (positioning only; negative margins are not supported). |
 | **Arbitrary** | `w-[350px]` | Uses exact values inside square brackets for one-off styles. |
-| **Opacity** | `bg-blue-500/50` | Appends a percentage to a color to set alpha transparency. |
+| **Opacity** | `bg-blue-500/50` | Appends a percentage to a colour to set alpha transparency. |
 | **Modifiers** | `md:flex-row` | Conditionally applies styles based on screen size or state. |
