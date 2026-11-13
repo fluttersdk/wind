@@ -120,22 +120,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  fluttersdk_wind:
-    dependency: "direct main"
-    description:
-      name: fluttersdk_wind
-      sha256: "7dda8ce1dd4e05b6bc20d8446bb81018dfe67b5c0e3563ba031e6c71005dcefe"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.11.1"
-  fluttersdk_wind_diagnostics_contracts:
-    dependency: transitive
-    description:
-      name: fluttersdk_wind_diagnostics_contracts
-      sha256: "909f743ed9f2b7c67ae68ae8b7af8dd997cd1f309167a9c1a6c1e283d18f19ce"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -485,6 +469,21 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  wind_kit:
+    dependency: "direct main"
+    description:
+      path: ".."
+      relative: true
+    source: path
+    version: "1.11.1"
+  wind_kit_diagnostics_contracts:
+    dependency: transitive
+    description:
+      name: wind_kit_diagnostics_contracts
+      sha256: "68ba38fdcd068e022d623c26bde44e4dd906a3d304f21d842cc2946c96d04eac"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
   xdg_directories:
     dependency: transitive
     description:

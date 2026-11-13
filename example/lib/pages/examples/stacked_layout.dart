@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Stacked Layout with Bottom Border Example
 /// A responsive navigation layout with bottom border indicators

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Font Weight Example
 /// Demonstrates font weight utilities: font-thin through font-black

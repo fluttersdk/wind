@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Responsive Layout Example
 /// Demonstrates sidebar layout: stacked on mobile, side-by-side on desktop

@@ -1,4 +1,4 @@
-name: fluttersdk_wind_example
+name: wind_kit_example
 description: Example application demonstrating Wind utility-first styling framework
 publish_to: 'none'
 
@@ -31,9 +31,8 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  # The gallery builds against the last published release of the previous package
-  # name until its own rename lands, because the repository's package is wind_kit now.
-  fluttersdk_wind: ^1.11.1
+  wind_kit:
+    path: ../
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Responsive Grid Example
 /// Demonstrates responsive grid columns: 1 -> 2 -> 3 -> 4 based on breakpoint
