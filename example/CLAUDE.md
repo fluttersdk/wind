@@ -58,7 +58,7 @@ The docs website iframes a deployed web build of `lib/main.dart` and navigates t
 ## Dependencies
 
 - `wind_kit: { path: ../ }` - local path to the parent. Do not bump to a pub.dev version; the example tests pre-release parent code.
-- `google_fonts: ^6.1.0` - pulled by some pages for non-system font demos.
+- `google_fonts: ^9.0.0` - pulled by some pages for non-system font demos.
 
 `pubspec.lock` is committed (this is an application, not a library). Do not delete it.
 
