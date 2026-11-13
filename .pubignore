@@ -3,7 +3,7 @@
 # INSTEAD of .gitignore (not in addition), so this file repeats every
 # exclusion .gitignore enforces plus the publish-specific extras.
 #
-# Goal: keep the published archive lean (target < 500 KB compressed).
+# Goal: keep the published archive lean (the pub.dev screenshot is its largest file).
 
 # ---------------------------------------------------------------------------
 # example/: keep lib/, web/index.html + manifest.json, pubspec.yaml, README.md
@@ -88,9 +88,11 @@ tool/
 .mcp.json
 CLAUDE.md
 CLAUDE.local.md
+.sync-agents-cache.json
+pubspec_overrides.yaml
 
 # ---------------------------------------------------------------------------
 # LLM-facing skill bundle (kept in repo for contributors but not shipped;
-# external agents fetch via the MCP server / fluttersdk/ai repo, not pub.dev)
+# external agents fetch via the MCP server / anilcancakir/ai repo, not pub.dev)
 # ---------------------------------------------------------------------------
 skills/

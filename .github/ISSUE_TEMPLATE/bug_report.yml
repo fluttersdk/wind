@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug in Wind UI
+description: Report a bug in wind_kit
 labels: ["pending triage", "bug"]
 body:
   - type: markdown
@@ -32,7 +32,7 @@ body:
   - type: textarea
     id: expected
     attributes:
-      label: Expected Behavior
+      label: Expected Behaviour
       description: What did you expect to happen?
     validations:
       required: true
@@ -40,7 +40,7 @@ body:
   - type: textarea
     id: actual
     attributes:
-      label: Actual Behavior
+      label: Actual Behaviour
       description: What actually happened?
     validations:
       required: true
@@ -63,8 +63,8 @@ body:
   - type: input
     id: wind-version
     attributes:
-      label: Wind UI Version
-      placeholder: "1.0.0-alpha.3"
+      label: wind_kit Version
+      placeholder: "1.11.1"
     validations:
       required: true
 

@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Question / Discussion
-    url: https://github.com/fluttersdk/wind/discussions
-    about: Ask questions and discuss Wind UI with the community
+  - name: Security vulnerability
+    url: https://github.com/anilcancakir/wind_kit/security/advisories/new
+    about: Report a vulnerability privately, not as a public issue
+  - name: API reference
+    url: https://pub.dev/documentation/wind_kit/latest/
+    about: Check the API reference before opening an issue

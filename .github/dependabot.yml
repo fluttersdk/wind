@@ -1,9 +1,9 @@
-# Dependabot config for fluttersdk/wind
+# Dependabot config for anilcancakir/wind_kit
 #
 # Three ecosystems in scope:
-#   1. pub        — runtime + dev deps in pubspec.yaml at the repo root
-#   2. pub (example/) — the showcase Flutter app (lower priority, monthly)
-#   3. github-actions — every workflow under .github/workflows/
+#   1. pub        - runtime + dev deps in pubspec.yaml at the repo root
+#   2. pub (example/) - the showcase Flutter app (lower priority, monthly)
+#   3. github-actions - every workflow under .github/workflows/
 #
 # Grouping policy: minor + patch updates roll up into a single weekly PR per
 # logical bucket so the queue stays small. Major bumps open their own PR so
@@ -11,7 +11,7 @@
 #
 # Commit-message prefixes follow the repo's conventional-commit style
 # (chore(deps), chore(example-deps), chore(ci)). 'include: scope' appends
-# "(deps)" automatically — keep prefix parens-free.
+# "(deps)" automatically - keep prefix parens-free.
 
 version: 2
 
@@ -36,28 +36,27 @@ updates:
       prefix: chore
       include: scope
     groups:
-      # All in-house FlutterSDK packages move together — diagnostics
-      # contracts, future companion packages, etc. Keep alpha/prerelease
-      # bumps in a dedicated bucket so a noisy contract bump does not
-      # mix with third-party updates.
-      fluttersdk:
+      # The wind_kit family moves together: the diagnostics contracts and
+      # future companion packages. A contract bump gets its own bucket so a
+      # noisy contract bump does not mix with third-party updates.
+      wind-kit-family:
         patterns:
-          - fluttersdk_*
+          - wind_kit_*
         update-types:
           - minor
           - patch
-      # Third-party runtime + dev — flutter_svg, flutter_lints, etc.
+      # Third-party runtime + dev - flutter_svg, flutter_lints, etc.
       third-party:
         patterns:
           - "*"
         exclude-patterns:
-          - fluttersdk_*
+          - wind_kit_*
         update-types:
           - minor
           - patch
 
   # ─────────────────────────────────────────────────────────────────────
-  # Example app deps (example/pubspec.yaml) — showcase only, monthly
+  # Example app deps (example/pubspec.yaml) - showcase only, monthly
   # ─────────────────────────────────────────────────────────────────────
   - package-ecosystem: pub
     directory: /example
@@ -83,20 +82,14 @@ updates:
           - minor
           - patch
     ignore:
-      # google_fonts current major is pinned for Dart 3.6.0 compatibility
-      # (see comment in example/pubspec.yaml). Skip major bumps until the
-      # SDK floor is raised; minor/patch still flow through the group above.
-      - dependency-name: google_fonts
-        update-types:
-          - version-update:semver-major
-      # fluttersdk_wind is the parent package, consumed through `path: ../` so
+      # wind_kit is the parent package, consumed through `path: ../` so
       # the gallery always builds against the working tree. Dependabot reads
       # the resolved version of that path package and proposes it as a
       # `version:` pin, which is a hard equality constraint on a moving target:
       # it goes stale on the next release and fails resolution outright
-      # ("depends on fluttersdk_wind X from path which doesn't match any
+      # ("depends on wind_kit X from path which doesn't match any
       # versions"). See #159. There is no valid update here, so never track it.
-      - dependency-name: fluttersdk_wind
+      - dependency-name: wind_kit
 
   # ─────────────────────────────────────────────────────────────────────
   # GitHub Actions under .github/workflows/
@@ -122,17 +115,14 @@ updates:
       actions-official:
         patterns:
           - actions/*
-      # Deploy + release stack — appleboy/scp, softprops/action-gh-release,
-      # codecov, dart-lang. Group them so the deploy pipeline updates land
-      # in a single review.
-      deploy-stack:
+      # Release stack - codecov, dart-lang, subosito. Group them so the
+      # pipeline updates land in a single review.
+      release-stack:
         patterns:
-          - appleboy/*
-          - softprops/*
           - codecov/*
           - dart-lang/*
           - subosito/*
-      # Dependabot helpers — keep separate so auto-merge logic stays
+      # Dependabot helpers - keep separate so auto-merge logic stays
       # predictable.
       dependabot-helpers:
         patterns:

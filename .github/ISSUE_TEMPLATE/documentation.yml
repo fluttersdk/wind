@@ -5,14 +5,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        Help us improve the Wind UI documentation!
+        Help us improve the wind_kit documentation!
 
   - type: input
     id: page
     attributes:
       label: Documentation Page
       description: Which doc page has the issue?
-      placeholder: "doc/widgets/w-button.md or https://wind.fluttersdk.com/..."
+      placeholder: "doc/widgets/w-button.md or https://anilcancakir.com/wind_kit/docs/..."
     validations:
       required: true
 
