@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
-import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
+import 'package:wind_kit_diagnostics_contracts/wind_kit_diagnostics_contracts.dart';
 
 import 'debug_resolver.dart';
 import 'parser/wind_parser.dart';
 import 'utils/wind_perf_counters.dart';
 
 /// Publishes Wind's aggregate performance counters through the
-/// fluttersdk_wind_diagnostics_contracts perf slot.
+/// wind_kit_diagnostics_contracts perf slot.
 ///
-/// The returned key set is the cross-repo contract `fluttersdk_dusk` reads;
+/// The returned key set is the cross-repo contract `tapir` reads;
 /// it is pinned in [WindPerfResolver] and must not be renamed here. Counting
 /// itself stays off until [WindPerfCounters.enabled] is set, so installing
 /// this resolver costs nothing on its own; `cacheSize` is the exception and is
@@ -46,7 +46,7 @@ class Wind {
   static bool _perfInstalled = false;
 
   /// Installs the Wind diagnostics resolver into the global
-  /// fluttersdk_wind_diagnostics_contracts registry. Idempotent. No-op in
+  /// wind_kit_diagnostics_contracts registry. Idempotent. No-op in
   /// release builds (`!kReleaseMode` gate, so a profile build still carries
   /// it for a profiling session; release tree-shakes it).
   static void installDebugResolver() {

@@ -17,7 +17,7 @@
 ///
 /// ```dart
 /// import 'package:flutter/material.dart';
-/// import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+/// import 'package:wind_kit/wind_kit.dart';
 ///
 /// void main() => runApp(MyApp());
 ///
@@ -56,7 +56,7 @@
 /// }
 /// ```
 ///
-/// For complete documentation, visit the [Wind documentation](https://fluttersdk.com/wind).
+/// For complete documentation, visit the [Wind documentation](https://anilcancakir.com/wind_kit).
 library;
 
 export 'src/parser/parsers/wind_parser_interface.dart';
