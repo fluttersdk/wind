@@ -4,7 +4,7 @@ Utility-first Flutter styling: Tailwind-syntax `className` strings become Flutte
 
 **Version:** 1.12.0 · **Dart:** >=3.13 · **Flutter:** >=3.47 · Runtime deps: `flutter_svg`, `material_ui`, `wind_kit_diagnostics_contracts` (no mocking library, no state management library, no router).
 
-Before changing structure, read [ARCHITECTURE.md](ARCHITECTURE.md). The user-facing surface is [README.md](README.md); the agent inventory is [llms.txt](llms.txt).
+Before changing structure, read [ARCHITECTURE.md](ARCHITECTURE.md); before scoping work, read [PROJECT.md](PROJECT.md). The user-facing surface is [README.md](README.md); the agent inventory is [llms.txt](llms.txt).
 
 ## Commands
 
