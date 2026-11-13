@@ -1,4 +1,4 @@
-# Wind 1.5: WDynamic (server-driven UI)
+# WDynamic (server-driven UI)
 
 JSON node tree → Wind widget tree. Reach for this file when rendering UI from a CMS, A/B framework, remote-config service, or any source where the widget shape is decided at runtime.
 
@@ -41,7 +41,7 @@ Every node is a `Map<String, dynamic>` with one required field and two optional 
 - `props` (optional, `Map<String, dynamic>`): widget constructor arguments. Keys are widget-prop names exactly (no auto-rename; see §4).
 - `children` (optional, `List<Map>`): nested nodes. Recursively processed depth-first.
 
-All `Map` values are deep-converted to `Map<String, dynamic>` internally; mixed `Map<Object?, Object?>` payloads from JSON parsers are normalized automatically.
+All `Map` values are deep-converted to `Map<String, dynamic>` internally; mixed `Map<Object?, Object?>` payloads from JSON parsers are normalised automatically.
 
 Recursion depth is capped at `maxDepth: 50` by default; deeper trees render a red error widget at the threshold node.
 
@@ -49,7 +49,7 @@ Recursion depth is capped at `maxDepth: 50` by default; deeper trees render a re
 
 ## 2. Allowed widget types
 
-The default whitelist covers 13 Wind widgets and 16 Flutter core widgets.
+The default whitelist covers the Wind widgets and Flutter core widgets below.
 
 **Wind widgets** (use these as the primary surface; they consume className):
 
@@ -59,7 +59,7 @@ The default whitelist covers 13 Wind widgets and 16 Flutter core widgets.
 
 `Column`, `Row`, `Center`, `SizedBox`, `Expanded`, `Container`, `Wrap`, `Stack`, `Positioned`, `Padding`, `Align`, `Opacity`, `AspectRatio`, `FittedBox`, `ClipRRect`, `Spacer`
 
-**Not on the whitelist:** `WBadge`, `WCard`, `WSwitch`, `WRadio`, `WTabs` (the five widgets added in 1.2.0), plus the `WForm*` family, `WBreakpoint`, `WDynamic` itself, and `WKeyboardActions`. A JSON node naming one of them is treated as an unknown type and renders the error box, so do not reach for them in a payload. Register a custom builder (§7) when a server-driven tree genuinely needs one, for example `builders: {'WCard': (props, children) => WCard(className: props['className'], child: children.first)}`.
+**Not on the whitelist:** `WBadge`, `WCard`, `WSwitch`, `WRadio`, `WTabs`, plus the `WForm*` family, `WBreakpoint`, `WDynamic` itself, and `WKeyboardActions`. A JSON node naming one of them is treated as an unknown type and renders the error box, so do not reach for them in a payload. Register a custom builder (§7) when a server-driven tree genuinely needs one, for example `builders: {'WCard': (props, children) => WCard(className: props['className'], child: children.first)}`.
 
 Extension via `builders:` constructor param adds new types (§7); these bypass the whitelist entirely.
 
@@ -79,7 +79,8 @@ const WDynamic({
   Map<String, WWidgetBuilder>? builders,
   Map<String, IconData>? customIcons,
   int maxDepth = 50,
-  void Function(String type, Map<String, dynamic> props)? onUnknownWidget,
+  Widget Function(String type, Map<String, dynamic> props)? onUnknownWidget,  // stand-in for a blocked or unknown type
+  Widget Function(String type, Object error)? onError,                        // stand-in when a build throws
 })
 ```
 
@@ -93,7 +94,40 @@ The `actions:` map is captured at construction; updating it requires rebuilding 
 
 ## 4. Props mapping (no auto-rename)
 
-Props keys map 1:1 to Wind widget constructor parameters. There is NO snake_case → camelCase conversion. The JSON must use the exact Dart parameter name.
+Props keys follow the Wind widget constructor parameters, with renderer-specific names where the renderer differs from the constructor. A key the renderer does not read is dropped silently, and there is no snake_case → camelCase conversion.
+
+| Node | Keys the renderer reads |
+|---|---|
+| `WDiv`, `WSpacer`, `WPopover` | `className` (`WPopover`: first child is the trigger, second the content) |
+| `WText` | `text` (or `value`) for the string, `className` |
+| `WButton` | `onTap` (action), `disabled`, `isLoading`, `className`; the first child is the content |
+| `WAnchor` | `onTap` (action) only; `className` is not read |
+| `WImage` | `src`, `className` |
+| `WIcon` | `icon` (a built-in or `customIcons` name), `className` |
+| `WSvg` | `svgContent` (raw markup) or `asset` (asset path), `className`; a node with neither, or with `src`, renders the fallback image icon |
+| `WInput` | `id`, `value`, `type`, `placeholder`, `onChange` (action), `className` |
+| `WCheckbox` | `id`, `checked` (or `value`), `onChange` (action), `className` |
+| `WSelect` | `id`, `value`, `options`, `placeholder` (required: without it the node renders the error box), `onChange` (action), `className` |
+| `WDatePicker` | `id`, `value` (ISO string), `placeholder`, `onChange` (action), `className` |
+
+The Flutter core widgets read their own keys, all optional with the Flutter default when absent:
+
+| Node | Keys the renderer reads |
+|---|---|
+| `Column`, `Row` | `mainAxisSize` (`max`, else `min`), `mainAxisAlignment` (`center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`, also hyphenated; else `start`), `crossAxisAlignment` (`start`, `end`, `stretch`, `baseline`; else `center`) |
+| `SizedBox`, `Container` | `width`, `height` (`Container` builds a `SizedBox`: it has no colour, padding or decoration keys) |
+| `Expanded`, `Spacer` | `flex` |
+| `Wrap` | `spacing`, `runSpacing`, `alignment` |
+| `Stack` | `alignment` (`topLeft` ... `bottomRight`, also hyphenated), `fit` (`expand`, `passthrough`) |
+| `Positioned` | `top`, `bottom`, `left`, `right`, `width`, `height` |
+| `Padding` | `padding` (all sides) or `top` / `bottom` / `left` / `right` |
+| `Align` | `alignment`, `widthFactor`, `heightFactor` |
+| `Opacity`, `AspectRatio` | `opacity`, `aspectRatio` |
+| `FittedBox` | `fit` (a `BoxFit` name), `alignment` |
+| `ClipRRect` | `borderRadius` (a number) |
+| `Center` | none; the first child is the content (the single-child nodes use the first child) |
+
+The value widgets read `onChange`, not `onChanged`. Use the exact names above and in the worked examples (§9).
 
 Right:
 ```json
@@ -103,7 +137,7 @@ Right:
     "id": "email",
     "type": "email",
     "placeholder": "you@example.com",
-    "className": "rounded-lg p-3 border border-gray-300 focus:ring-2 focus:ring-blue-500"
+    "className": "rounded-lg p-3 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
   }
 }
 ```
@@ -177,7 +211,7 @@ WDynamic(
       state.set('counter', current + step);
     },
     'submit': (args, state) => api.submit(state.getAll()),
-    'open': (args) => MagicRoute.to(args['route'] as String),
+    'open': (args) => router.go(args['route'] as String),   // `router` is your own navigator
   },
 );
 ```
@@ -189,10 +223,10 @@ Handler signature is auto-detected in order:
 
 Unknown action names log `WindDynamic: Unknown action "<name>", ignored.` via `debugPrint` and return null. Exceptions inside handlers are caught and logged via `debugPrint('WindDynamic: Action "<name>" error: <err>')`. Neither crashes the build.
 
-Value actions (used by WInput, WCheckbox, WSelect, WDatePicker):
+Value actions (used by WInput, WCheckbox and WSelect; WDatePicker dispatches without an injected `_value`, see §5):
 - The widget's `onChange` callback is wired through `parseValueAction<T>`.
 - The changed value is injected into args as `_value`.
-- If the widget also has an `id` prop, `state.set(id, value)` runs BEFORE the action dispatches, so the handler sees the updated state.
+- If the widget also has an `id` prop, `state.set(id, value)` runs before the action dispatches, so the handler sees the updated state.
 
 Example:
 ```json
@@ -200,7 +234,7 @@ Example:
   "type": "WInput",
   "props": {
     "id": "email",
-    "onChanged": {"action": "validateEmail", "args": {}}
+    "onChange": {"action": "validateEmail", "args": {}}
   }
 }
 ```
@@ -243,28 +277,28 @@ Then in JSON:
 {"type": "MyChart", "props": {"data": [1, 2, 3, 4], "color": "#3B82F6"}}
 ```
 
-Custom builders BYPASS the whitelist entirely. If you register `MyChart`, it renders even if added to `denyWidgets`. Build the security model around your `builders:` map (don't accept builder definitions from untrusted JSON).
+Custom builders bypass the whitelist entirely. If you register `MyChart`, it renders even if added to `denyWidgets`. Build the security model around your `builders:` map (don't accept builder definitions from untrusted JSON).
 
 ### Custom icons
 
-Override or extend the 24 built-in icon names:
+Add icon names, or override a built-in one (the built-in names are listed below):
 
 ```dart
 WDynamic(
   json: schema,
   customIcons: {
-    'app-logo': Icons.flutter_dash_outlined,
-    'arrow_right': Icons.east_outlined,            // override built-in
+    'app-logo': Icons.flutter_dash_outlined,       // a new name
+    'star': Icons.star_outlined,                   // overrides the built-in `star`
   },
 );
 ```
 
 In JSON:
 ```json
-{"type": "WIcon", "props": {"icon": "app-logo", "className": "w-8 h-8 text-blue-500"}}
+{"type": "WIcon", "props": {"icon": "app-logo", "className": "w-8 h-8 text-blue-500 dark:text-blue-400"}}
 ```
 
-Built-in icon names (default fallback, 24 total): `star`, `star_outline`, `home`, `person`, `check`, `close`, `settings`, `search`, `add`, `edit`, `delete`, `favorite`, `favorite_outline`, `mail`, `menu`, `info`, `warning`, `error`, `help`, `code`, `chevron_left`, `chevron_right`, `arrow_back`, `arrow_forward`. Names are matched case-insensitively (lowercased). Unknown names fall back to `Icons.help_outline`.
+Built-in icon names (default fallback): `star`, `star_outline`, `home`, `person`, `check`, `close`, `settings`, `search`, `add`, `edit`, `delete`, `favorite`, `favorite_outline`, `mail`, `menu`, `info`, `warning`, `error`, `help`, `code`, `chevron_left`, `chevron_right`, `arrow_back`, `arrow_forward`. Names are matched case-insensitively (lowercased). Unknown names fall back to `Icons.help_outline`.
 
 The `customIcons:` map merges with the built-in defaults; user keys override.
 
@@ -275,13 +309,13 @@ The `customIcons:` map merges with the built-in defaults; user keys override.
 `WDynamicConfig.isAllowed(type)` runs in priority order:
 1. Custom builders win (always allowed; bypass everything).
 2. `denyWidgets` blocks.
-3. Default whitelist allows (13 Wind + 16 Flutter core).
+3. Default whitelist allows (the Wind and Flutter core types in §2).
 4. Unknown type → `onUnknownWidget` callback if provided, else a red error widget.
 
 Threat model considerations:
 - **JSON source matters.** A controlled backend rendering a known schema is safe. Untrusted client input is not; even with whitelist enforcement, props can hold dangerous data (URLs that load attacker-controlled assets via `WImage(src:)`, action names that overlap with privileged handlers).
-- **`builders:` is the escape hatch.** If you don't add custom builders, the surface is bounded by the 29-widget whitelist + the action handlers you registered. Action handlers run consumer Dart code; they are the trust boundary.
-- **Action argument coercion is shallow.** `args['_value'] as String?` will succeed if the JSON sends `"_value": "<script>"`. The script tag is just a string. But `args['url']` passed to `Magic.launch.url(args['url'])` opens the URL. Validate at the handler.
+- **`builders:` is the escape hatch.** If you don't add custom builders, the surface is bounded by the default whitelist and the action handlers you registered. Action handlers run consumer Dart code; they are the trust boundary.
+- **Action argument coercion is shallow.** `args['_value'] as String?` will succeed if the JSON sends `"_value": "<script>"`. The script tag is just a string. But an `args['url']` that a handler passes to a URL launcher opens that URL. Validate inside the handler.
 - **Recursion limit prevents stack overflow.** Default `maxDepth: 50` is plenty for legitimate UI; reduce for stricter bounds when accepting third-party JSON.
 
 ---
@@ -307,7 +341,7 @@ WDynamic(
       {
         'type': 'WButton',
         'props': {
-          'className': 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg',
+          'className': 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg',
           'onTap': {'action': 'increment', 'args': {'step': 1}},
         },
         'children': [
@@ -326,7 +360,7 @@ WDynamic(
 );
 ```
 
-Note: `WText` does not subscribe to id-based state changes automatically (it's a stateless display widget). For a reactive counter display, either listen via `WDynamicController` and rebuild the JSON tree, or use a stateful Dart widget that reads state.
+Note: the state write rebuilds the tree, but `WText` reads only `text` (or `value`) from its props and never looks up its `id` in the state, so the displayed `0` does not change. For a reactive counter display, listen via `WDynamicController` and rebuild the JSON with the new `text`, or use a stateful Dart widget that reads state.
 
 ### A form
 
@@ -360,7 +394,7 @@ WDynamic(
       {
         'type': 'WButton',
         'props': {
-          'className': 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg',
+          'className': 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-6 py-3 rounded-lg',
           'onTap': {'action': 'submit', 'args': {}},
         },
         'children': [{'type': 'WText', 'props': {'text': 'Sign in'}}],
@@ -382,12 +416,12 @@ WDynamic(
 ### A select with options
 
 ```dart
-{
+// A child node for the `children` list of a parent node.
+const Map<String, dynamic> countrySelect = {
   'type': 'WSelect',
   'props': {
     'id': 'country',
     'placeholder': 'Pick a country',
-    'searchable': true,
     'options': [
       {'value': 'tr', 'label': 'Türkiye'},
       {'value': 'us', 'label': 'United States'},
@@ -396,21 +430,22 @@ WDynamic(
     'onChange': {'action': 'pickCountry', 'args': {}},
     'className': 'rounded-lg p-3 border border-gray-300 dark:border-gray-600',
   },
-}
+};
 ```
 
-Options accept maps with `value` + `label` (+ optional `disabled`, `icon` name) OR plain strings (which become both value and label).
+Options accept maps with `value` and `label`, or plain strings (which become both value and label). Only `value` and `label` are read from an option map: `disabled` and `icon` are dropped. `WSelect` in JSON is a single-select with no search; its `searchable`, `isMulti`, `onSearch` and similar props are not read, so register a custom builder (§7) when a payload needs them.
 
 ---
 
 ## 10. Known limitations
 
 - **Snake-case → camelCase**: not done. JSON keys must match Dart parameter names exactly.
-- **WSelect<String> + null initial value crash**: documented edge case. When passing simple string options with a null initial value, the renderer's catch path swallows the type error and renders the error widget. Workaround: pass map-typed options or an explicit initial value.
 - **WDatePicker action signature asymmetry**: uses `parseAction()` (no `_value` injection) instead of `parseValueAction<DateTime>()`. Handlers must read the new value from `state.get(id)`, not from `args['_value']`.
 - **Async actions fire-and-forget**: the dispatcher does not await. Compose action handlers carefully; for sequenced operations, store intermediate state via `state.set()` and dispatch follow-up actions explicitly.
 - **No partial re-render**: when `state.set(id, value)` runs, the entire JSON tree rebuilds (it's a single `setState` in the renderer). For high-frequency state, prefer Dart with targeted listeners.
-- **No subtree caching**: the JSON tree is rebuilt every frame; the WindStyle cache helps but the JSON-to-Widget tree is fresh each time.
-- **`WText` is not reactive to state by `id`**: it's a stateless display widget. To display a state value reactively, listen via `WDynamicController` from a Dart widget that wraps WDynamic.
+- **No subtree caching**: `WDynamic` rebuilds the whole JSON-to-widget tree on each of its own builds (every state write and every rebuild of its parent), not on every frame; the WindStyle cache still applies to the styles.
+- **`WText` is not reactive to state by `id`**: it reads `text` / `value` from its props only. To display a state value reactively, listen via `WDynamicController` from a Dart widget that wraps WDynamic.
+- **`WSelect` needs `placeholder`**: a node without it renders the error box, whatever its options or value.
+- **Several Wind widget constructor props are not exposed**: the renderer reads only the Wind widget keys in §4, so for example `WSelect` search, `WButton` `loadingText` and `WImage` `errorBuilder` are unreachable from JSON. Register a custom builder (§7) for those.
 
 For static UI, Dart is faster, simpler, and easier to debug. Reach for WDynamic only when the use case actually requires runtime-defined trees.
