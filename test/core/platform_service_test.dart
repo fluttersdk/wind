@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/core/platform_service.dart';
+import 'package:wind_kit/src/core/platform_service.dart';
 
 /// Tests for [WindPlatformService].
 ///

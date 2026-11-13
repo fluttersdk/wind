@@ -346,7 +346,7 @@ class _WAnchorState extends State<WAnchor> {
         // (a settings row with text on one side, a link, an icon row) then
         // ignored taps that landed on its empty regions. Real users tapping the
         // blank part of a row, and every centre-of-element tap from a driver
-        // (dusk / Playwright), silently did nothing. Translucent matches the
+        // (tapir / Playwright), silently did nothing. Translucent matches the
         // whole-box tap target WInput and WPopover already use.
         behavior: HitTestBehavior.translucent,
         onTap: widget.isDisabled ? null : widget.onTap,

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RendererBinding;
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Helper to wrap widget in MaterialApp with WindTheme
 Widget wrapWithTheme(Widget child) {
@@ -216,7 +216,7 @@ void main() {
         // GestureDetector defaulting to deferToChild, a tap on the transparent
         // centre missed the gesture entirely, so a real user tapping the blank
         // part of a row, and every centre-of-element tap from a driver
-        // (dusk / Playwright), silently did nothing. The whole anchor bounds
+        // (tapir / Playwright), silently did nothing. The whole anchor bounds
         // must be tappable.
         bool tapped = false;
         await tester.pumpWidget(

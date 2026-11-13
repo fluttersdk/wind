@@ -17,7 +17,7 @@
 ///
 /// ```dart
 /// import 'package:flutter/material.dart';
-/// import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+/// import 'package:wind_kit/wind_kit.dart';
 ///
 /// void main() => runApp(MyApp());
 ///
@@ -29,21 +29,21 @@
 ///       child: MaterialApp(
 ///         home: Scaffold(
 ///           body: WDiv(
-///             className: 'flex flex-col gap-4 p-6 bg-gray-100 min-h-screen',
+///             className: 'flex flex-col gap-4 p-6 bg-gray-100 dark:bg-gray-900 min-h-screen',
 ///             children: [
 ///               WText(
 ///                 'Hello Wind!',
-///                 className: 'text-3xl font-bold text-blue-600',
+///                 className: 'text-3xl font-bold text-blue-600 dark:text-blue-400',
 ///               ),
 ///               WDiv(
-///                 className: 'bg-white rounded-xl shadow-lg p-6 hover:shadow-xl',
+///                 className: 'bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl',
 ///                 child: WText(
 ///                   'Build UIs faster with utility-first styling',
-///                   className: 'text-gray-600',
+///                   className: 'text-gray-600 dark:text-gray-300',
 ///                 ),
 ///               ),
 ///               WButton(
-///                 onTap: () => print('Clicked!'),
+///                 onTap: () => debugPrint('Clicked!'),
 ///                 className: 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg',
 ///                 child: Text('Get Started'),
 ///               ),
@@ -56,7 +56,7 @@
 /// }
 /// ```
 ///
-/// For complete documentation, visit the [Wind documentation](https://fluttersdk.com/wind).
+/// For complete documentation, visit the [Wind documentation](https://anilcancakir.com/wind_kit).
 library;
 
 export 'src/parser/parsers/wind_parser_interface.dart';

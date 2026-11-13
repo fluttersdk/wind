@@ -1,10 +1,10 @@
 import 'package:flutter/semantics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/src/parser/wind_parser.dart';
-import 'package:fluttersdk_wind/src/theme/wind_theme.dart';
-import 'package:fluttersdk_wind/src/theme/wind_theme_data.dart';
-import 'package:fluttersdk_wind/src/widgets/w_input.dart';
+import 'package:wind_kit/src/parser/wind_parser.dart';
+import 'package:wind_kit/src/theme/wind_theme.dart';
+import 'package:wind_kit/src/theme/wind_theme_data.dart';
+import 'package:wind_kit/src/widgets/w_input.dart';
 
 /// Wraps [child] in the bare harness used throughout the Material-free tests:
 /// [Directionality] > [WindTheme] > child (no MaterialApp, no Scaffold).

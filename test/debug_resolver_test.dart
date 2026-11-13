@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
-import 'package:fluttersdk_wind/src/debug_resolver.dart';
-import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostics_contracts.dart';
+import 'package:wind_kit/wind_kit.dart';
+import 'package:wind_kit/src/debug_resolver.dart';
+import 'package:wind_kit_diagnostics_contracts/wind_kit_diagnostics_contracts.dart';
 
 /// Tests for the Wind v1.0 debug resolver.
 ///
@@ -15,8 +15,8 @@ import 'package:fluttersdk_wind_diagnostics_contracts/fluttersdk_wind_diagnostic
 /// - Emits only the 6 core fields: className, breakpoint, brightness,
 ///   platform, states, bgColor (conditional), textColor (conditional).
 /// - The 50+ optional snapshot fields (displayType, flexDirection, padding,
-///   margin, fontSize, ...) that earlier alpha builds exposed are intentionally
-///   absent from v1.0.
+///   margin, fontSize, ...) that older builds exposed are intentionally
+///   absent from v1.
 
 /// Helper to wrap widget in MaterialApp with WindTheme (canonical wind test
 /// harness pattern per `wind/.claude/rules/tests.md`).
@@ -108,7 +108,7 @@ void main() {
       (tester) async {
         // WAnchor is W-prefixed but interaction-only: it has no `className`
         // field. The resolver must treat it as a miss, not crash with a
-        // NoSuchMethodError (which would break every dusk/telescope snapshot
+        // NoSuchMethodError (which would break every tapir snapshot
         // that contains a bare WAnchor).
         await tester.pumpWidget(
           wrapWithTheme(WAnchor(onTap: () {}, child: const Text('x'))),

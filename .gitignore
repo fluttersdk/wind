@@ -51,6 +51,9 @@ app.*.map.json
 # Local agent-instruction sync tool cache (machine-specific absolute paths)
 .sync-agents-cache.json
 
+# A package does not commit its lock (the example app's lock stays tracked)
+/pubspec.lock
+
 # Local sibling-package path wiring (dev only)
 pubspec_overrides.yaml
 
