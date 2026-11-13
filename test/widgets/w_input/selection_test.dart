@@ -403,7 +403,10 @@ void main() {
           _overlayHarness(WInput(controller: controller, focusNode: focusNode)),
         );
         await _selectHelloAndShowToolbar(tester, controller);
-        await tester.tap(find.text('Copy'));
+        // A mouse tap outside the field's tap region unfocuses it on every
+        // platform (a touch tap does not on Android and iOS), so this fails if
+        // the toolbar ever falls outside the region.
+        await tester.tap(find.text('Copy'), kind: PointerDeviceKind.mouse);
         await tester.pump();
 
         expect(focusNode.hasFocus, isTrue);
@@ -451,6 +454,88 @@ void main() {
           expect(toolbar.foregroundColor, text);
         });
       }
+
+      testWidgets('repaints the open toolbar when the Wind theme toggles', (
+        tester,
+      ) async {
+        final controller = TextEditingController(text: 'hello world');
+        addTearDown(controller.dispose);
+        final ValueNotifier<Brightness> brightness = ValueNotifier(
+          Brightness.light,
+        );
+        addTearDown(brightness.dispose);
+
+        await tester.pumpWidget(
+          WidgetsApp(
+            color: const Color(0xFF000000),
+            builder: (context, _) => Overlay(
+              initialEntries: [
+                OverlayEntry(
+                  builder: (context) => ValueListenableBuilder<Brightness>(
+                    valueListenable: brightness,
+                    builder: (context, value, _) => WindTheme(
+                      data: WindThemeData(
+                        brightness: value,
+                        syncWithSystem: false,
+                      ),
+                      child: WInput(controller: controller),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+        await _selectHelloAndShowToolbar(tester, controller);
+        Color surface() => tester
+            .widget<WindTextSelectionToolbar>(
+              find.byType(WindTextSelectionToolbar),
+            )
+            .backgroundColor;
+        expect(surface(), const Color(0xFFFFFFFF));
+
+        brightness.value = Brightness.dark;
+        await tester.pump();
+        await tester.pump();
+
+        expect(surface(), const Color(0xFF1E293B));
+      });
+
+      testWidgets('labels and reaches every iOS action on a 320px screen', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        try {
+          final controller = TextEditingController(text: 'hello world');
+          addTearDown(controller.dispose);
+
+          await tester.pumpWidget(
+            _overlayHarness(WInput(controller: controller)),
+          );
+          await _selectHelloAndShowToolbar(tester, controller);
+
+          expect(tester.takeException(), isNull, reason: 'no overflow');
+          for (final String label in ['Look Up', 'Search Web', 'Share']) {
+            expect(find.text(label), findsOneWidget, reason: label);
+          }
+          expect(
+            find.descendant(
+              of: find.byType(WindTextSelectionToolbarButton),
+              matching: find.text(''),
+            ),
+            findsNothing,
+            reason: 'no blank button',
+          );
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      });
     });
   });
 }

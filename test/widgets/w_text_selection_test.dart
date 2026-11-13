@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -59,22 +60,27 @@ void main() {
       }
     });
 
-    test('anchors the left handle at its stem tip and the right one at its '
-        'stem root', () {
-      const double lineHeight = 20;
-      final Size size = controls.getHandleSize(lineHeight);
+    test('pins the handle size and the anchor of each handle type', () {
+      // Radius 6, overlap 1.5: height = 10 + 12 - 1.5 = 20.5, the same
+      // formulas as the Cupertino reference.
+      const double lineHeight = 10;
+      expect(controls.getHandleSize(lineHeight), const Size(12, 20.5));
 
-      // The left handle has its knob on top, so the stem tip (the bottom of
-      // the selected line) is the bottom edge of the handle.
+      // Left: knob on top, the stem tip is the handle's bottom edge.
       expect(
-        controls.getHandleAnchor(TextSelectionHandleType.left, lineHeight).dy,
-        size.height,
+        controls.getHandleAnchor(TextSelectionHandleType.left, lineHeight),
+        const Offset(6, 20.5),
       );
-      // The right handle is flipped: its stem starts at the top of the line,
-      // so the anchor sits one line height above the knob.
+      // Right: flipped, anchored one knob (minus the overlap) above the
+      // bottom: 20.5 - 12 + 1.5.
       expect(
-        controls.getHandleAnchor(TextSelectionHandleType.right, lineHeight).dy,
-        lessThan(size.height),
+        controls.getHandleAnchor(TextSelectionHandleType.right, lineHeight),
+        const Offset(6, 10),
+      );
+      // Collapsed: centred on the line bottom: 10 + (20.5 - 10) / 2.
+      expect(
+        controls.getHandleAnchor(TextSelectionHandleType.collapsed, lineHeight),
+        const Offset(6, 15.25),
       );
     });
 
@@ -127,7 +133,25 @@ void main() {
           ),
         ),
       );
-      expect(find.byType(Transform), findsOneWidget);
+      // Rotated by pi about its centre: x and y both flip, nothing else moves.
+      final Transform flip = tester.widget<Transform>(find.byType(Transform));
+      expect(flip.alignment, Alignment.center);
+      expect(flip.transform.entry(0, 0), closeTo(-1, 1e-9));
+      expect(flip.transform.entry(1, 1), closeTo(-1, 1e-9));
+      expect(flip.transform.entry(0, 1), closeTo(0, 1e-9));
+      expect(flip.transform.entry(1, 0), closeTo(0, 1e-9));
+      expect(flip.transform.entry(0, 3), 0);
+      expect(flip.transform.entry(1, 3), 0);
+      final CustomPaint rightPaint = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byWidget(flip),
+          matching: find.byType(CustomPaint),
+        ),
+      );
+      expect(
+        (rightPaint.painter! as WindTextSelectionHandlePainter).color,
+        const Color(0xFF3B82F6),
+      );
     });
 
     testWidgets('paints the handle in the ambient cursor colour, with a blue '
@@ -315,6 +339,123 @@ void main() {
       } finally {
         handle.dispose();
       }
+    });
+
+    group('more buttons than fit', () {
+      const List<String> iosLabels = [
+        'Cut',
+        'Copy',
+        'Paste',
+        'Select All',
+        'Look Up',
+        'Search Web',
+        'Share',
+      ];
+      const List<String> germanLabels = [
+        'Ausschneiden',
+        'Kopieren',
+        'Einfügen',
+        'Alles auswählen',
+        'Nachschlagen',
+        'Im Web suchen',
+        'Teilen',
+      ];
+
+      for (final (String name, List<String> labels) in [
+        ('seven iOS actions', iosLabels),
+        ('German-length labels', germanLabels),
+      ]) {
+        testWidgets('scrolls $name into reach on a 320px screen', (
+          tester,
+        ) async {
+          tester.view.physicalSize = const Size(320, 640);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(() {
+            tester.view.resetPhysicalSize();
+            tester.view.resetDevicePixelRatio();
+          });
+          debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+          try {
+            int lastTaps = 0;
+            await tester.pumpWidget(
+              _widgetsRoot(
+                Stack(
+                  children: [
+                    WindTextSelectionToolbar(
+                      anchorAbove: const Offset(160, 300),
+                      anchorBelow: const Offset(160, 340),
+                      backgroundColor: const Color(0xFFFFFFFF),
+                      foregroundColor: const Color(0xFF111827),
+                      dividerColor: const Color(0xFFE5E7EB),
+                      buttons: [
+                        for (final String label in labels)
+                          WindTextSelectionToolbarButton(
+                            label: label,
+                            onPressed: label == labels.last
+                                ? () => lastTaps++
+                                : () {},
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+            expect(tester.takeException(), isNull, reason: 'no overflow');
+            expect(
+              tester.getRect(find.text(labels.last)).left,
+              greaterThan(320),
+              reason: 'the last action starts off screen',
+            );
+
+            await tester.drag(find.text(labels.first), const Offset(-600, 0));
+            await tester.pumpAndSettle();
+
+            final Rect last = tester.getRect(find.text(labels.last));
+            expect(last.right, lessThanOrEqualTo(320));
+            expect(last.left, greaterThanOrEqualTo(0));
+
+            await tester.tap(find.text(labels.last));
+            await tester.pump();
+            expect(lastTaps, 1);
+            expect(tester.takeException(), isNull);
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        });
+      }
+    });
+  });
+
+  group('windContextMenuLabel', () {
+    const WidgetsLocalizations localizations = DefaultWidgetsLocalizations();
+
+    String? labelOf(ContextMenuButtonType type, {String? label}) {
+      return windContextMenuLabel(
+        ContextMenuButtonItem(type: type, label: label, onPressed: () {}),
+        localizations,
+      );
+    }
+
+    test('reads every standard action from WidgetsLocalizations', () {
+      expect(labelOf(ContextMenuButtonType.cut), 'Cut');
+      expect(labelOf(ContextMenuButtonType.copy), 'Copy');
+      expect(labelOf(ContextMenuButtonType.paste), 'Paste');
+      expect(labelOf(ContextMenuButtonType.selectAll), 'Select all');
+      expect(labelOf(ContextMenuButtonType.lookUp), 'Look Up');
+      expect(labelOf(ContextMenuButtonType.searchWeb), 'Search Web');
+      expect(labelOf(ContextMenuButtonType.share), 'Share');
+    });
+
+    test('uses the item label for the rest, and none when it has none', () {
+      expect(labelOf(ContextMenuButtonType.custom, label: 'Bold'), 'Bold');
+      expect(labelOf(ContextMenuButtonType.delete, label: 'Delete'), 'Delete');
+      expect(
+        labelOf(ContextMenuButtonType.liveTextInput, label: 'Scan'),
+        'Scan',
+      );
+      expect(labelOf(ContextMenuButtonType.custom), isNull);
+      expect(labelOf(ContextMenuButtonType.liveTextInput), isNull);
     });
   });
 }
