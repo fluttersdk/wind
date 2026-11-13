@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Tests for the flex child tokens `grow`, `grow-0`, `basis-*`, and the
 /// corrected `flex-none` (CSS `flex: 0 0 auto` — no grow AND no shrink).

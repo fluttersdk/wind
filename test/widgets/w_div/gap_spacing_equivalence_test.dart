@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// `gap-*` used to be built by injecting a `SizedBox` between every pair of
 /// children, which makes the gaps real flex children. Flutter's own
