@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -51,8 +51,7 @@ class _WKeyboardActionsBasicExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WKeyboardActions',
-      description:
-          'Adds a Done button and field navigation toolbar above the keyboard for numeric and text inputs.',
+      description: 'Adds a Done button and field navigation toolbar above the keyboard for numeric and text inputs.',
       gradient: 'from-violet-500 to-purple-600',
       children: [
         ExampleSection(
@@ -61,11 +60,7 @@ class _WKeyboardActionsBasicExamplePageState
               'Wrap any group of inputs with WKeyboardActions and pass a FocusNode for each field. '
               'The toolbar shows Previous/Next arrows and a Done button while any field is focused.',
           child: WKeyboardActions(
-            focusNodes: [
-              _nameFocus,
-              _emailFocus,
-              _amountFocus,
-            ],
+            focusNodes: [_nameFocus, _emailFocus, _amountFocus],
             toolbarClassName: 'bg-slate-100 dark:bg-slate-800',
             child: WDiv(
               className: 'flex flex-col gap-4',

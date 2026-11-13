@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Input states example demonstrating focus, error, and disabled states.
 class InputStatesExamplePage extends StatefulWidget {

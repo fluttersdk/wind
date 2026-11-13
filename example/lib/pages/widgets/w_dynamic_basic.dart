@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -18,20 +18,17 @@ class _WDynamicBasicExamplePageState extends State<WDynamicBasicExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WDynamic',
-      description:
-          'Render a widget tree from a JSON Map at runtime. type + props + children schema, action map for callbacks, whitelist for safety.',
+      description: 'Render a widget tree from a JSON Map at runtime. type + props + children schema, action map for callbacks, whitelist for safety.',
       gradient: 'from-fuchsia-500 to-purple-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'JSON Map describes the tree; WDynamic instantiates the live widgets.',
+          description: 'JSON Map describes the tree; WDynamic instantiates the live widgets.',
           child: WDynamic(
             json: const {
               'type': 'WDiv',
               'props': {
-                'className':
-                    'p-6 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700',
+                'className': 'p-6 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700',
               },
               'children': [
                 {
@@ -45,8 +42,7 @@ class _WDynamicBasicExamplePageState extends State<WDynamicBasicExamplePage> {
                 {
                   'type': 'WText',
                   'props': {
-                    'text':
-                        'This entire card was instantiated from a Map<String, dynamic>.',
+                    'text': 'This entire card was instantiated from a Map<String, dynamic>.',
                     'className':
                         'text-sm text-slate-600 dark:text-slate-400 mt-1',
                   },
@@ -57,8 +53,7 @@ class _WDynamicBasicExamplePageState extends State<WDynamicBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Action System',
-          description:
-              'onTap references a named handler in the actions map. Tap the JSON button to fire it.',
+          description: 'onTap references a named handler in the actions map. Tap the JSON button to fire it.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
@@ -66,8 +61,7 @@ class _WDynamicBasicExamplePageState extends State<WDynamicBasicExamplePage> {
                 json: const {
                   'type': 'WButton',
                   'props': {
-                    'className':
-                        'bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded self-start',
+                    'className': 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded self-start',
                     'onTap': {
                       'action': 'recordTap',
                       'args': {'source': 'json-button'},
@@ -105,8 +99,7 @@ class _WDynamicBasicExamplePageState extends State<WDynamicBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Form State (id auto-track)',
-          description:
-              'Widgets with an id auto-register in a shared store. Read state inside action handlers.',
+          description: 'Widgets with an id auto-register in a shared store. Read state inside action handlers.',
           child: WDynamic(
             json: const {
               'type': 'WDiv',
@@ -117,15 +110,13 @@ class _WDynamicBasicExamplePageState extends State<WDynamicBasicExamplePage> {
                   'props': {
                     'id': 'username',
                     'placeholder': 'Type your name…',
-                    'className':
-                        'px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-fuchsia-500/30',
+                    'className': 'px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-fuchsia-500/30',
                   },
                 },
                 {
                   'type': 'WButton',
                   'props': {
-                    'className':
-                        'bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded self-start',
+                    'className': 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded self-start',
                     'onTap': {'action': 'greet'},
                   },
                   'children': [
@@ -150,8 +141,7 @@ class _WDynamicBasicExamplePageState extends State<WDynamicBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Custom Widget Builders',
-          description:
-              'Register builders for type names not in the whitelist. Custom widgets bypass the security whitelist.',
+          description: 'Register builders for type names not in the whitelist. Custom widgets bypass the security whitelist.',
           child: WDynamic(
             json: const {
               'type': 'InfoCard',
@@ -169,16 +159,17 @@ class _WDynamicBasicExamplePageState extends State<WDynamicBasicExamplePage> {
                     border border-fuchsia-200 dark:border-fuchsia-800
                   ''',
                   children: [
-                    WIcon(Icons.info,
-                        className:
-                            'text-fuchsia-600 dark:text-fuchsia-400 w-6 h-6'),
+                    WIcon(
+                      Icons.info,
+                      className:
+                          'text-fuchsia-600 dark:text-fuchsia-400 w-6 h-6',
+                    ),
                     WDiv(
                       className: 'flex flex-col flex-1',
                       children: [
                         WText(
                           (props['title'] ?? '').toString(),
-                          className:
-                              'font-bold text-fuchsia-800 dark:text-fuchsia-200',
+                          className: 'font-bold text-fuchsia-800 dark:text-fuchsia-200',
                         ),
                         WText(
                           (props['subtitle'] ?? '').toString(),

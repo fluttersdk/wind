@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -23,14 +23,12 @@ class WSvgExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WSvg',
-      description:
-          'Utility-styled SVG. fill-{color} for solid shapes, stroke-{color} for outlines. preserve-colors bypasses the tint for multi-color art.',
+      description: 'Utility-styled SVG. fill-{color} for solid shapes, stroke-{color} for outlines. preserve-colors bypasses the tint for multi-color art.',
       gradient: 'from-emerald-500 to-teal-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Solid SVG tinted via fill-{color}. Sizing via w/h or text-{size}.',
+          description: 'Solid SVG tinted via fill-{color}. Sizing via w/h or text-{size}.',
           child: WDiv(
             className: 'wrap gap-8 items-center',
             children: [
@@ -43,31 +41,34 @@ class WSvgExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Stroke vs Fill',
-          description:
-              'stroke-{color} for line-style SVGs. fill-{color} for solid shapes. stroke takes priority when both are present.',
+          description: 'stroke-{color} for line-style SVGs. fill-{color} for solid shapes. stroke takes priority when both are present.',
           child: WDiv(
             className: 'wrap gap-8 items-center',
             children: [
               WSvg.string(_starSvg, className: 'w-16 h-16 fill-emerald-500'),
-              WSvg.string(_strokeStarSvg,
-                  className: 'w-16 h-16 stroke-emerald-500'),
+              WSvg.string(
+                _strokeStarSvg,
+                className: 'w-16 h-16 stroke-emerald-500',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'preserve-colors',
-          description:
-              'For multi-color art (logos, QR codes, illustrations) add preserve-colors to skip the ColorFilter.',
+          description: 'For multi-color art (logos, QR codes, illustrations) add preserve-colors to skip the ColorFilter.',
           child: WDiv(
             className: 'wrap gap-8 items-center',
             children: [
               WSvg.string(_multiColorSvg, className: 'w-16 h-16'),
-              WSvg.string(_multiColorSvg,
-                  className: 'w-16 h-16 preserve-colors'),
+              WSvg.string(
+                _multiColorSvg,
+                className: 'w-16 h-16 preserve-colors',
+              ),
               const WText(
-                  'left: tinted by default theme color\nright: preserve-colors keeps original',
-                  className:
-                      'text-xs text-slate-500 dark:text-slate-400 whitespace-pre'),
+                'left: tinted by default theme color\nright: preserve-colors keeps original',
+                className:
+                    'text-xs text-slate-500 dark:text-slate-400 whitespace-pre',
+              ),
             ],
           ),
         ),

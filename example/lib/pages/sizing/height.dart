@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Height Example
 /// Demonstrates height utilities: fixed, full, screen, arbitrary
@@ -53,20 +53,17 @@ class HeightExamplePage extends StatelessWidget {
             title: 'h-full (100%)',
             children: [
               WDiv(
-                className:
-                    'h-48 bg-gray-100 dark:bg-slate-700 rounded-lg p-2 flex gap-2',
+                className: 'h-48 bg-gray-100 dark:bg-slate-700 rounded-lg p-2 flex gap-2',
                 children: [
                   WDiv(
-                    className:
-                        'h-full w-16 bg-green-500 rounded-lg flex items-center justify-center',
+                    className: 'h-full w-16 bg-green-500 rounded-lg flex items-center justify-center',
                     child: WText(
                       'h-full',
                       className: 'text-white text-xs font-mono',
                     ),
                   ),
                   WDiv(
-                    className:
-                        'h-1/2 w-16 bg-lime-500 rounded-lg flex items-center justify-center',
+                    className: 'h-1/2 w-16 bg-lime-500 rounded-lg flex items-center justify-center',
                     child: WText(
                       'h-1/2',
                       className: 'text-white text-xs font-mono',

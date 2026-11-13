@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -19,8 +19,7 @@ class _WRadioBasicExamplePageState extends State<WRadioBasicExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WRadio',
-      description:
-          'Controlled radio button. selected: state prefix activates when value == groupValue.',
+      description: 'Controlled radio button. selected: state prefix activates when value == groupValue.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(
@@ -85,8 +84,7 @@ class _WRadioBasicExamplePageState extends State<WRadioBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Nullable groupValue',
-          description:
-              'groupValue may be null; no option is selected until the user taps one.',
+          description: 'groupValue may be null; no option is selected until the user taps one.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
@@ -133,7 +131,8 @@ class _WRadioBasicExamplePageState extends State<WRadioBasicExamplePage> {
     return GestureDetector(
       onTap: () => setState(() => _plan = value),
       child: WDiv(
-        className: '''
+        className:
+            '''
         flex flex-row items-center gap-4 p-4 rounded-lg border-2
         border-gray-200 dark:border-gray-700
         bg-white dark:bg-gray-800

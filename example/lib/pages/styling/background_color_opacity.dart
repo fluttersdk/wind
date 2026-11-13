@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class BackgroundColorOpacityExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Background Opacity',
-      description:
-          'Append /N to any bg-{color} to apply N percent alpha. bg-blue-500/50 = blue with 50 percent opacity.',
+      description: 'Append /N to any bg-{color} to apply N percent alpha. bg-blue-500/50 = blue with 50 percent opacity.',
       gradient: 'from-blue-500 to-indigo-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Same color, descending opacity. The slash takes any integer 0-100.',
+          description: 'Same color, descending opacity. The slash takes any integer 0-100.',
           child: WDiv(
             className: 'wrap gap-3',
             children: const [
@@ -31,17 +29,14 @@ class BackgroundColorOpacityExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Overlay Pattern',
-          description:
-              'Combine with positioning to layer translucent overlays on top of images or gradients.',
+          description: 'Combine with positioning to layer translucent overlays on top of images or gradients.',
           child: WDiv(
             className: '''
               relative h-32 rounded-lg overflow-hidden
               bg-gradient-to-r from-cyan-500 to-blue-600
             ''',
             children: const [
-              WDiv(
-                className: 'absolute inset-0 bg-black/40',
-              ),
+              WDiv(className: 'absolute inset-0 bg-black/40'),
               WDiv(
                 className: 'absolute inset-0 flex items-center justify-center',
                 child: WText(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Implicit Animation Example Page - demonstrates duration-* and ease-* classes.
 class AnimationImplicitExamplePage extends StatefulWidget {
@@ -222,7 +222,8 @@ class _HoverBox extends StatelessWidget {
       children: [
         WAnchor(
           child: WDiv(
-            className: '''
+            className:
+                '''
               w-16 h-16 rounded-lg duration-$duration
               bg-gray-300 hover:bg-blue-500
               flex items-center justify-center

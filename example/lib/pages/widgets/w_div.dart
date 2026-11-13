@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// WDiv Widget Showcase
 class WDivExamplePage extends StatefulWidget {
@@ -58,8 +58,7 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
           // Flex Row
           _section('Flex Row', 'Horizontal layout with flex flex-row', [
             WDiv(
-              className:
-                  'flex flex-row gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+              className: 'flex flex-row gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
               children: [
                 WDiv(
                   className: 'w-12 h-12 bg-red-500 rounded-lg',
@@ -80,8 +79,7 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
           // Flex Column
           _section('Flex Column', 'Vertical layout with flex flex-col', [
             WDiv(
-              className:
-                  'flex flex-col gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+              className: 'flex flex-col gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
               children: const [
                 WText('Item 1', className: 'text-gray-800 dark:text-white'),
                 WText('Item 2', className: 'text-gray-800 dark:text-white'),
@@ -93,8 +91,7 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
           // Grid
           _section('Grid Layout', 'Grid with grid grid-cols-3', [
             WDiv(
-              className:
-                  'grid grid-cols-3 gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+              className: 'grid grid-cols-3 gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
               children: List.generate(
                 6,
                 (i) => WDiv(
@@ -108,22 +105,18 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
           // Sizing
           _section('Sizing', 'Width and height utilities', [
             WDiv(
-              className:
-                  'flex flex-row gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
+              className: 'flex flex-row gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
               children: [
                 WDiv(
-                  className:
-                      'w-16 h-16 bg-purple-500 rounded flex items-center justify-center',
+                  className: 'w-16 h-16 bg-purple-500 rounded flex items-center justify-center',
                   child: const WText('w-16', className: 'text-white text-xs'),
                 ),
                 WDiv(
-                  className:
-                      'w-24 h-16 bg-purple-500 rounded flex items-center justify-center',
+                  className: 'w-24 h-16 bg-purple-500 rounded flex items-center justify-center',
                   child: const WText('w-24', className: 'text-white text-xs'),
                 ),
                 WDiv(
-                  className:
-                      'w-32 h-16 bg-purple-500 rounded flex items-center justify-center',
+                  className: 'w-32 h-16 bg-purple-500 rounded flex items-center justify-center',
                   child: const WText('w-32', className: 'text-white text-xs'),
                 ),
               ],
@@ -147,21 +140,18 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
           // Backgrounds
           _section('Backgrounds', 'Solid colors and gradients', [
             WDiv(
-              className:
-                  'flex flex-row gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
+              className: 'flex flex-row gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
               children: [
                 WDiv(
                   className: 'w-20 h-20 bg-red-500 rounded-lg',
                   child: const SizedBox(),
                 ),
                 WDiv(
-                  className:
-                      'w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg',
+                  className: 'w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg',
                   child: const SizedBox(),
                 ),
                 WDiv(
-                  className:
-                      'w-20 h-20 bg-gradient-to-b from-green-400 to-teal-500 rounded-lg',
+                  className: 'w-20 h-20 bg-gradient-to-b from-green-400 to-teal-500 rounded-lg',
                   child: const SizedBox(),
                 ),
               ],
@@ -171,8 +161,7 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
           // Borders
           _section('Borders', 'Border width, color, and radius', [
             WDiv(
-              className:
-                  'flex flex-row gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
+              className: 'flex flex-row gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
               children: [
                 WDiv(
                   className: 'w-16 h-16 border-2 border-gray-400 rounded',
@@ -193,8 +182,7 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
           // Shadows
           _section('Shadows', 'Box shadow utilities', [
             WDiv(
-              className:
-                  'flex flex-row gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
+              className: 'flex flex-row gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
               children: [
                 WDiv(
                   className: 'w-16 h-16 bg-white shadow rounded-lg',
@@ -219,8 +207,7 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
                 'compile time (color picker, per-tenant brand).',
             [
               WDiv(
-                className:
-                    'flex flex-col gap-3 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+                className: 'flex flex-col gap-3 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
                 children: [
                   WDiv(
                     className: 'flex flex-row items-center gap-3',
@@ -234,13 +221,11 @@ class _WDivExamplePageState extends State<WDivExamplePage> {
                         children: [
                           WText(
                             'Brand swatch',
-                            className:
-                                'text-sm font-semibold text-gray-800 dark:text-white',
+                            className: 'text-sm font-semibold text-gray-800 dark:text-white',
                           ),
                           WText(
                             '#${_userBrandColor.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}',
-                            className:
-                                'text-xs font-mono text-gray-500 dark:text-gray-400',
+                            className: 'text-xs font-mono text-gray-500 dark:text-gray-400',
                           ),
                         ],
                       ),

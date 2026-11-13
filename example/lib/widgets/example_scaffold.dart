@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 class ExampleScaffold extends StatelessWidget {
   final String title;
@@ -61,14 +61,8 @@ class _ExampleHeader extends StatelessWidget {
           WDiv(
             className: 'flex-1 flex flex-col gap-2',
             children: [
-              WText(
-                title,
-                className: 'text-2xl font-bold text-white',
-              ),
-              WText(
-                description,
-                className: 'text-sm text-white/80',
-              ),
+              WText(title, className: 'text-2xl font-bold text-white'),
+              WText(description, className: 'text-sm text-white/80'),
             ],
           ),
           WButton(

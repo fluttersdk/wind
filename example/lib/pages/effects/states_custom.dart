@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 class StatesCustomExamplePage extends StatefulWidget {
   const StatesCustomExamplePage({super.key});
@@ -61,8 +61,7 @@ class _StatesCustomExamplePageState extends State<StatesCustomExamplePage> {
                 setState(() => isSelected = !isSelected);
               },
               child: WDiv(
-                className:
-                    "bg-white border-2 border-gray-300 selected:border-blue-500 selected:bg-blue-50 px-6 py-3 rounded-lg",
+                className: "bg-white border-2 border-gray-300 selected:border-blue-500 selected:bg-blue-50 px-6 py-3 rounded-lg",
                 states: isSelected ? {'selected'} : {},
                 children: [
                   Row(

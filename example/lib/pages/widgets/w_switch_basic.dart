@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -21,8 +21,7 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WSwitch',
-      description:
-          'Controlled toggle. checked: state prefix activates when value is true.',
+      description: 'Controlled toggle. checked: state prefix activates when value is true.',
       gradient: 'from-teal-500 to-cyan-600',
       children: [
         ExampleSection(
@@ -87,8 +86,7 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Disabled State',
-          description:
-              'disabled: true blocks interaction and activates the disabled: prefix.',
+          description: 'disabled: true blocks interaction and activates the disabled: prefix.',
           child: WDiv(
             className: 'flex flex-row items-center gap-3',
             children: [
@@ -126,7 +124,8 @@ class _WSwitchBasicExamplePageState extends State<WSwitchBasicExamplePage> {
     bool isLast = false,
   }) {
     return WDiv(
-      className: '''
+      className:
+          '''
         flex flex-row items-center justify-between
         px-5 py-4
         bg-white dark:bg-gray-800

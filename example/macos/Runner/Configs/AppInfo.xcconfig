@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = fluttersdk_wind
+PRODUCT_NAME = wind_kit
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.fluttersdk.wind.fluttersdkWind
+PRODUCT_BUNDLE_IDENTIFIER = com.anilcancakir.windKit
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2025 com.fluttersdk.wind. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 Anılcan Çakır. All rights reserved.

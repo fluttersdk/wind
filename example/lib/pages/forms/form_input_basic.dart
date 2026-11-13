@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// WFormInput example with form validation.
 class FormInputBasicExamplePage extends StatefulWidget {
@@ -17,9 +17,8 @@ class _FormInputBasicExamplePageState extends State<FormInputBasicExamplePage> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Form is valid!')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Form is valid!')));
     }
   }
 
@@ -73,8 +72,7 @@ class _FormInputBasicExamplePageState extends State<FormInputBasicExamplePage> {
                       controller: _emailController,
                       type: InputType.email,
                       label: 'Email',
-                      labelClassName:
-                          'text-sm font-medium text-gray-700 dark:text-gray-200 mb-1',
+                      labelClassName: 'text-sm font-medium text-gray-700 dark:text-gray-200 mb-1',
                       placeholder: 'name@example.com',
                       className: '''
                         w-full p-3 border border-gray-300 dark:border-gray-600
@@ -104,8 +102,7 @@ class _FormInputBasicExamplePageState extends State<FormInputBasicExamplePage> {
                       controller: _passwordController,
                       type: InputType.password,
                       label: 'Password',
-                      labelClassName:
-                          'text-sm font-medium text-gray-700 dark:text-gray-200 mb-1',
+                      labelClassName: 'text-sm font-medium text-gray-700 dark:text-gray-200 mb-1',
                       placeholder: 'Enter password',
                       hint: 'Must be at least 6 characters',
                       hintClassName:

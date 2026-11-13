@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -13,14 +13,12 @@ class ResponsiveHelpersBasicExamplePage extends StatelessWidget {
 
     return ExampleScaffold(
       title: 'Responsive Helpers',
-      description:
-          'Dart API for breakpoint detection: context.wIsMobile/Tablet/Desktop, context.wActiveBreakpoint, wScreen(), wScreenIs().',
+      description: 'Dart API for breakpoint detection: context.wIsMobile/Tablet/Desktop, context.wActiveBreakpoint, wScreen(), wScreenIs().',
       gradient: 'from-cyan-500 to-teal-600',
       children: [
         ExampleSection(
           title: 'Live Breakpoint Badge',
-          description:
-              'Resize the window. The active badge swaps as you cross thresholds.',
+          description: 'Resize the window. The active badge swaps as you cross thresholds.',
           child: WDiv(
             className: 'flex items-center gap-3',
             children: [
@@ -35,8 +33,7 @@ class ResponsiveHelpersBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Device Class Booleans',
-          description:
-              'Convenience flags from context. Useful for picking layouts in Dart code.',
+          description: 'Convenience flags from context. Useful for picking layouts in Dart code.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: [
@@ -48,8 +45,7 @@ class ResponsiveHelpersBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Window Size Class',
-          description:
-              'wWindowClassOf(context) cuts the window width at md and lg. Pick a bar or a rail from it, not from the platform.',
+          description: 'wWindowClassOf(context) cuts the window width at md and lg. Pick a bar or a rail from it, not from the platform.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: [
@@ -62,8 +58,7 @@ class ResponsiveHelpersBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Breakpoint Pixel Values',
-          description:
-              'wScreen(context, name) returns the raw px threshold from your theme.',
+          description: 'wScreen(context, name) returns the raw px threshold from your theme.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -77,10 +72,10 @@ class ResponsiveHelpersBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Conditional Layout',
-          description:
-              'Common pattern: pick a widget tree from a Dart-side conditional.',
+          description: 'Common pattern: pick a widget tree from a Dart-side conditional.',
           child: _CodeBlock(
-            code: '@override\n'
+            code:
+                '@override\n'
                 'Widget build(BuildContext context) {\n'
                 '  if (context.wIsMobile) return const MobileLayout();\n'
                 '  if (context.wIsTablet) return const TabletLayout();\n'
@@ -111,10 +106,7 @@ class _BreakpointBadge extends StatelessWidget {
     };
     return WDiv(
       className: '$color px-4 py-2 rounded-lg',
-      child: WText(
-        active,
-        className: 'text-white font-mono font-bold',
-      ),
+      child: WText(active, className: 'text-white font-mono font-bold'),
     );
   }
 }
@@ -134,8 +126,10 @@ class _BoolRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(label,
-            className: 'font-mono text-sm text-cyan-700 dark:text-cyan-400'),
+        WText(
+          label,
+          className: 'font-mono text-sm text-cyan-700 dark:text-cyan-400',
+        ),
         WDiv(
           className: value
               ? 'px-2 py-0.5 rounded bg-emerald-500'
@@ -165,10 +159,14 @@ class _ValueRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(label,
-            className: 'font-mono text-sm text-cyan-700 dark:text-cyan-400'),
-        WText(value,
-            className: 'font-mono text-sm text-slate-700 dark:text-slate-200'),
+        WText(
+          label,
+          className: 'font-mono text-sm text-cyan-700 dark:text-cyan-400',
+        ),
+        WText(
+          value,
+          className: 'font-mono text-sm text-slate-700 dark:text-slate-200',
+        ),
       ],
     );
   }
@@ -189,10 +187,14 @@ class _BreakpointPxRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText('wScreen(context, "$name")',
-            className: 'font-mono text-sm text-cyan-700 dark:text-cyan-400'),
-        WText(px != null ? '${px}px' : 'null',
-            className: 'font-mono text-sm text-slate-700 dark:text-slate-200'),
+        WText(
+          'wScreen(context, "$name")',
+          className: 'font-mono text-sm text-cyan-700 dark:text-cyan-400',
+        ),
+        WText(
+          px != null ? '${px}px' : 'null',
+          className: 'font-mono text-sm text-slate-700 dark:text-slate-200',
+        ),
       ],
     );
   }

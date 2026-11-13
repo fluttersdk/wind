@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -27,14 +27,12 @@ class _StyleParserBasicExamplePageState
 
     return ExampleScaffold(
       title: 'Style Parser',
-      description:
-          'wStyle(context, className) returns a WindStyle with resolved Flutter properties. Apply to plain Container/Text widgets when className is not an option.',
+      description: 'wStyle(context, className) returns a WindStyle with resolved Flutter properties. Apply to plain Container/Text widgets when className is not an option.',
       gradient: 'from-purple-500 to-fuchsia-600',
       children: [
         ExampleSection(
           title: 'Try It Live',
-          description:
-              'Type any utility string. The parser resolves Flutter properties below.',
+          description: 'Type any utility string. The parser resolves Flutter properties below.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
@@ -52,8 +50,9 @@ class _StyleParserBasicExamplePageState
                 padding: padding,
                 decoration: BoxDecoration(
                   color: bgColor,
-                  borderRadius:
-                      radius != null ? BorderRadius.circular(radius) : null,
+                  borderRadius: radius != null
+                      ? BorderRadius.circular(radius)
+                      : null,
                 ),
                 child: Text(
                   'Live Preview',
@@ -74,32 +73,37 @@ class _StyleParserBasicExamplePageState
             className: 'flex flex-col gap-1',
             children: [
               _PropRow(
-                  label: 'decoration.color',
-                  value: bgColor?.toString() ?? 'null'),
+                label: 'decoration.color',
+                value: bgColor?.toString() ?? 'null',
+              ),
               _PropRow(label: 'padding', value: padding?.toString() ?? 'null'),
               _PropRow(
-                  label: 'decoration.borderRadius',
-                  value: radius != null
-                      ? 'BorderRadius.all(Radius.circular($radius))'
-                      : 'null'),
+                label: 'decoration.borderRadius',
+                value: radius != null
+                    ? 'BorderRadius.all(Radius.circular($radius))'
+                    : 'null',
+              ),
               _PropRow(
-                  label: 'textStyle.color',
-                  value: textColor?.toString() ?? 'null'),
+                label: 'textStyle.color',
+                value: textColor?.toString() ?? 'null',
+              ),
               _PropRow(
-                  label: 'textStyle.fontWeight',
-                  value: fontWeight?.toString() ?? 'null'),
+                label: 'textStyle.fontWeight',
+                value: fontWeight?.toString() ?? 'null',
+              ),
               _PropRow(
-                  label: 'textStyle.fontSize',
-                  value: fontSize?.toString() ?? 'null'),
+                label: 'textStyle.fontSize',
+                value: fontSize?.toString() ?? 'null',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Apply to Plain Flutter Widgets',
-          description:
-              'Use wStyle to bring Wind into Container, Text, AppBar, ListTile: anything outside the W-prefixed family.',
+          description: 'Use wStyle to bring Wind into Container, Text, AppBar, ListTile: anything outside the W-prefixed family.',
           child: _CodeBlock(
-            code: 'final style = wStyle(context, "p-4 bg-red-500 rounded");\n\n'
+            code:
+                'final style = wStyle(context, "p-4 bg-red-500 rounded");\n\n'
                 'return Container(\n'
                 '  padding: style.padding,\n'
                 '  decoration: style.decoration,\n'
@@ -132,15 +136,17 @@ class _PropRow extends StatelessWidget {
       children: [
         WDiv(
           className: 'w-44 shrink-0',
-          child: WText(label,
-              className:
-                  'font-mono text-sm text-purple-700 dark:text-purple-400'),
+          child: WText(
+            label,
+            className: 'font-mono text-sm text-purple-700 dark:text-purple-400',
+          ),
         ),
         WDiv(
           className: 'flex-1 min-w-0',
-          child: WText(value,
-              className:
-                  'font-mono text-xs text-slate-700 dark:text-slate-200'),
+          child: WText(
+            value,
+            className: 'font-mono text-xs text-slate-700 dark:text-slate-200',
+          ),
         ),
       ],
     );

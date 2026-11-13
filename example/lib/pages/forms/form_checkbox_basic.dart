@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// WFormCheckbox example with form validation.
 class FormCheckboxBasicExamplePage extends StatefulWidget {
@@ -19,9 +19,8 @@ class _FormCheckboxBasicExamplePageState
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Form submitted!')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Form submitted!')));
     }
   }
 

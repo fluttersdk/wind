@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Example page demonstrating transition ease/timing utilities.
 class TransitionEasePage extends StatelessWidget {
@@ -33,8 +33,7 @@ class TransitionEasePage extends StatelessWidget {
           // Ease examples section
           _buildSection(
             title: 'Timing Curves',
-            description:
-                'Hover over each box to compare different easing functions (all use 700ms duration)',
+            description: 'Hover over each box to compare different easing functions (all use 700ms duration)',
             children: [
               WDiv(
                 className: 'flex gap-4 overflow-x-auto',
@@ -126,7 +125,8 @@ class TransitionEasePage extends StatelessWidget {
     return WAnchor(
       onTap: () {},
       child: WDiv(
-        className: '''
+        className:
+            '''
           $colors duration-700 $easeClass
           w-[120px] py-5 rounded-xl shadow-md hover:shadow-xl
         ''',
@@ -141,8 +141,7 @@ class TransitionEasePage extends StatelessWidget {
       children: [
         WText(
           className,
-          className:
-              'text-sm font-mono text-emerald-600 dark:text-emerald-400 min-w-[100px]',
+          className: 'text-sm font-mono text-emerald-600 dark:text-emerald-400 min-w-[100px]',
         ),
         WText(
           description,

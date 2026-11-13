@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class ColorHelpersBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Color Helpers',
-      description:
-          'Dart API for resolving theme colors programmatically: wColor(), hexToColor(), parseColorOpacity(), applyOpacity().',
+      description: 'Dart API for resolving theme colors programmatically: wColor(), hexToColor(), parseColorOpacity(), applyOpacity().',
       gradient: 'from-pink-500 to-rose-600',
       children: [
         ExampleSection(
           title: 'wColor(): Resolve Theme Color',
-          description:
-              'Pass a color name and shade. Wind returns the resolved Color from the active theme.',
+          description: 'Pass a color name and shade. Wind returns the resolved Color from the active theme.',
           child: WDiv(
             className: 'wrap gap-3',
             children: const [
@@ -63,7 +61,8 @@ class ColorHelpersBasicExamplePage extends StatelessWidget {
           description:
               'Same as wColor(context, ...). Cleaner inside build methods.',
           child: _CodeBlock(
-            code: 'final primary = context.wColorExt("blue", shade: 600);\n'
+            code:
+                'final primary = context.wColorExt("blue", shade: 600);\n'
                 'final error = context.wColorExt("red", shade: 500);',
           ),
         ),

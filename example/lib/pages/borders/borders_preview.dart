@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,8 +10,7 @@ class BordersPreviewExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Borders',
-      description:
-          'border (1px default), border-{n} for width, border-{color} for color, rounded-{size} for radius. Stack any combination.',
+      description: 'border (1px default), border-{n} for width, border-{color} for color, rounded-{size} for radius. Stack any combination.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
@@ -29,45 +28,57 @@ class BordersPreviewExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Color',
-          description:
-              'border-{color}-{shade} tints the border. Pair with dark: for theme-aware borders.',
+          description: 'border-{color}-{shade} tints the border. Pair with dark: for theme-aware borders.',
           child: WDiv(
             className: 'wrap gap-6 py-4',
             children: const [
               _BorderTile(
-                  label: 'border-rose-500', cls: 'border-2 border-rose-500'),
+                label: 'border-rose-500',
+                cls: 'border-2 border-rose-500',
+              ),
               _BorderTile(
-                  label: 'border-blue-500', cls: 'border-2 border-blue-500'),
+                label: 'border-blue-500',
+                cls: 'border-2 border-blue-500',
+              ),
               _BorderTile(
-                  label: 'border-emerald-500',
-                  cls: 'border-2 border-emerald-500'),
+                label: 'border-emerald-500',
+                cls: 'border-2 border-emerald-500',
+              ),
               _BorderTile(
-                  label: 'border-amber-500', cls: 'border-2 border-amber-500'),
+                label: 'border-amber-500',
+                cls: 'border-2 border-amber-500',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Individual Sides',
-          description:
-              'border-{t|r|b|l}-{n} targets a single side. Useful for dividers and asymmetric accents.',
+          description: 'border-{t|r|b|l}-{n} targets a single side. Useful for dividers and asymmetric accents.',
           child: WDiv(
             className: 'wrap gap-6 py-4',
             children: const [
               _BorderTile(
-                  label: 'border-t-4', cls: 'border-t-4 border-rose-500'),
+                label: 'border-t-4',
+                cls: 'border-t-4 border-rose-500',
+              ),
               _BorderTile(
-                  label: 'border-b-4', cls: 'border-b-4 border-rose-500'),
+                label: 'border-b-4',
+                cls: 'border-b-4 border-rose-500',
+              ),
               _BorderTile(
-                  label: 'border-l-4', cls: 'border-l-4 border-rose-500'),
+                label: 'border-l-4',
+                cls: 'border-l-4 border-rose-500',
+              ),
               _BorderTile(
-                  label: 'border-r-4', cls: 'border-r-4 border-rose-500'),
+                label: 'border-r-4',
+                cls: 'border-r-4 border-rose-500',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Radius',
-          description:
-              'rounded-{size} controls corner radius. Pair with rounded-{corner}-{size} for asymmetric shapes.',
+          description: 'rounded-{size} controls corner radius. Pair with rounded-{corner}-{size} for asymmetric shapes.',
           child: WDiv(
             className: 'wrap gap-6 py-4',
             children: const [
@@ -83,8 +94,7 @@ class BordersPreviewExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Corner-Specific Radius',
-          description:
-              'rounded-t-lg rounds top corners only. rounded-tl-lg rounds the top-left corner only.',
+          description: 'rounded-t-lg rounds top corners only. rounded-tl-lg rounds the top-left corner only.',
           child: WDiv(
             className: 'wrap gap-6 py-4',
             children: const [
@@ -103,8 +113,9 @@ class BordersPreviewExamplePage extends StatelessWidget {
             className: 'wrap gap-6 py-4',
             children: const [
               _BorderTile(
-                  label: 'border-[3px] border-[#50d71e]',
-                  cls: 'border-[3px] border-[#50d71e]'),
+                label: 'border-[3px] border-[#50d71e]',
+                cls: 'border-[3px] border-[#50d71e]',
+              ),
               _RadiusTile(label: 'rounded-[10px]', cls: 'rounded-[10px]'),
             ],
           ),
@@ -126,7 +137,8 @@ class _BorderTile extends StatelessWidget {
       className: 'flex flex-col gap-2 items-center',
       children: [
         WDiv(
-          className: '''
+          className:
+              '''
             w-20 h-20 rounded-lg
             bg-white dark:bg-slate-800
             $cls
@@ -153,7 +165,8 @@ class _RadiusTile extends StatelessWidget {
       className: 'flex flex-col gap-2 items-center',
       children: [
         WDiv(
-          className: '''
+          className:
+              '''
             w-20 h-20
             bg-rose-500
             $cls

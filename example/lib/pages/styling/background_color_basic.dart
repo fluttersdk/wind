@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,8 +10,7 @@ class BackgroundColorBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Background Color',
-      description:
-          'bg-{color}-{shade} pulls from the theme palette. Pair with dark: to ship one className that works in both modes.',
+      description: 'bg-{color}-{shade} pulls from the theme palette. Pair with dark: to ship one className that works in both modes.',
       gradient: 'from-blue-500 to-indigo-600',
       children: [
         ExampleSection(
@@ -38,7 +37,9 @@ class BackgroundColorBasicExamplePage extends StatelessWidget {
             className: 'wrap gap-3',
             children: const [
               _Swatch(
-                  label: 'bg-white', cls: 'bg-white border border-slate-200'),
+                label: 'bg-white',
+                cls: 'bg-white border border-slate-200',
+              ),
               _Swatch(label: 'bg-black', cls: 'bg-black'),
               _Swatch(
                 label: 'bg-transparent',

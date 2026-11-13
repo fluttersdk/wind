@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class TextColorOpacityExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Text Color Opacity',
-      description:
-          'Append /N to any color utility to apply N percent alpha. text-blue-500/50 = the blue with 50 percent opacity.',
+      description: 'Append /N to any color utility to apply N percent alpha. text-blue-500/50 = the blue with 50 percent opacity.',
       gradient: 'from-red-500 to-orange-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Same color, descending opacity. The slash takes any integer 0-100.',
+          description: 'Same color, descending opacity. The slash takes any integer 0-100.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -31,8 +29,7 @@ class TextColorOpacityExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Opacity modifier syntax is universal across text-, bg-, border-, and ring- utilities.',
+          description: 'Opacity modifier syntax is universal across text-, bg-, border-, and ring- utilities.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -65,10 +62,7 @@ class _Row extends StatelessWidget {
             className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
           ),
         ),
-        WText(
-          'The quick brown fox',
-          className: '$cls text-lg',
-        ),
+        WText('The quick brown fox', className: '$cls text-lg'),
       ],
     );
   }
@@ -89,10 +83,14 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-red-700 dark:text-red-400'),
-        WText(val,
-            className: 'font-mono text-sm text-slate-600 dark:text-slate-300'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-red-700 dark:text-red-400',
+        ),
+        WText(
+          val,
+          className: 'font-mono text-sm text-slate-600 dark:text-slate-300',
+        ),
       ],
     );
   }

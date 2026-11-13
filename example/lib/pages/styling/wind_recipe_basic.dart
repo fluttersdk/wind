@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -41,8 +41,7 @@ final _badge = WindRecipe(
     'tone': {
       'success':
           'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200',
-      'warning':
-          'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200',
+      'warning': 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200',
       'danger': 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200',
       'info': 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200',
       'neutral':
@@ -94,14 +93,12 @@ class _WindRecipeBasicExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WindRecipe',
-      description:
-          'Compose reusable className variants. base ++ variant ++ compound ++ caller.',
+      description: 'Compose reusable className variants. base ++ variant ++ compound ++ caller.',
       gradient: 'from-amber-500 to-orange-600',
       children: [
         ExampleSection(
           title: 'WindRecipe: Button Variants',
-          description:
-              'One recipe, four intent values, three sizes. Compound: large primary gets shadow-lg.',
+          description: 'One recipe, four intent values, three sizes. Compound: large primary gets shadow-lg.',
           child: WDiv(
             className: 'flex flex-col gap-4',
             children: [
@@ -110,8 +107,9 @@ class _WindRecipeBasicExamplePageState
                 children: [
                   WButton(
                     onTap: () {},
-                    className:
-                        _button(variants: {'intent': 'primary', 'size': 'sm'}),
+                    className: _button(
+                      variants: {'intent': 'primary', 'size': 'sm'},
+                    ),
                     child: WText('Primary SM'),
                   ),
                   WButton(
@@ -151,15 +149,18 @@ class _WindRecipeBasicExamplePageState
         ),
         ExampleSection(
           title: 'WindRecipe: Badge Tones',
-          description:
-              'A recipe with a single axis; defaultVariants covers the no-argument call.',
+          description: 'A recipe with a single axis; defaultVariants covers the no-argument call.',
           child: WDiv(
             className: 'wrap gap-2',
             children: [
-              WBadge('Deployed',
-                  className: _badge(variants: {'tone': 'success'})),
-              WBadge('Pending',
-                  className: _badge(variants: {'tone': 'warning'})),
+              WBadge(
+                'Deployed',
+                className: _badge(variants: {'tone': 'success'}),
+              ),
+              WBadge(
+                'Pending',
+                className: _badge(variants: {'tone': 'warning'}),
+              ),
               WBadge('Failed', className: _badge(variants: {'tone': 'danger'})),
               WBadge('Review', className: _badge()),
               WBadge('Draft', className: _badge(variants: {'tone': 'neutral'})),
@@ -168,8 +169,7 @@ class _WindRecipeBasicExamplePageState
         ),
         ExampleSection(
           title: 'WindSlotRecipe: Card Tones',
-          description:
-              'Each slot (root, header, body) gets independent classNames per variant.',
+          description: 'Each slot (root, header, body) gets independent classNames per variant.',
           child: WDiv(
             className: 'flex flex-col gap-4',
             children: [
@@ -180,9 +180,10 @@ class _WindRecipeBasicExamplePageState
                     onTap: () => setState(() => _cardTone = 'default'),
                     className: _button(
                       variants: {
-                        'intent':
-                            _cardTone == 'default' ? 'primary' : 'secondary',
-                        'size': 'sm'
+                        'intent': _cardTone == 'default'
+                            ? 'primary'
+                            : 'secondary',
+                        'size': 'sm',
                       },
                     ),
                     child: WText('Default'),
@@ -210,8 +211,7 @@ class _WindRecipeBasicExamplePageState
                       className: classes['header'],
                       child: WText(
                         'Account Summary',
-                        className:
-                            'text-sm font-semibold text-gray-700 dark:text-gray-300',
+                        className: 'text-sm font-semibold text-gray-700 dark:text-gray-300',
                       ),
                     ),
                     child: WDiv(
@@ -219,8 +219,7 @@ class _WindRecipeBasicExamplePageState
                       children: [
                         WText(
                           'john.doe@example.com',
-                          className:
-                              'text-base font-medium text-gray-900 dark:text-white',
+                          className: 'text-base font-medium text-gray-900 dark:text-white',
                         ),
                         WText(
                           'Pro plan, renews on July 15.',
@@ -236,8 +235,7 @@ class _WindRecipeBasicExamplePageState
         ),
         ExampleSection(
           title: 'Caller className Override',
-          description:
-              'Pass className: to _recipe() to append extra classes after the resolved set.',
+          description: 'Pass className: to _recipe() to append extra classes after the resolved set.',
           child: WDiv(
             className: 'wrap gap-3',
             children: [
@@ -249,7 +247,9 @@ class _WindRecipeBasicExamplePageState
               WButton(
                 onTap: () {},
                 className: _button(
-                    variants: {'intent': 'secondary'}, className: 'italic'),
+                  variants: {'intent': 'secondary'},
+                  className: 'italic',
+                ),
                 child: WText('Secondary italic'),
               ),
             ],

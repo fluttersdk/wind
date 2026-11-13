@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Stacked Layout with Bottom Border Example
 /// A responsive navigation layout with bottom border indicators
@@ -62,7 +62,8 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
                     return WAnchor(
                       onTap: () => setState(() => _currentIndex = index),
                       child: WDiv(
-                        className: '''
+                        className:
+                            '''
                           flex items-center border-b-2 px-1 pt-1 text-sm font-medium h-16
                           ${isActive ? 'border-indigo-500 text-white' : 'border-transparent text-gray-400 hover:border-white/20 hover:text-gray-200'}
                           duration-200
@@ -82,8 +83,7 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
                 WAnchor(
                   onTap: () {},
                   child: WDiv(
-                    className:
-                        "rounded-full p-1 text-gray-400 hover:text-white duration-200",
+                    className: "rounded-full p-1 text-gray-400 hover:text-white duration-200",
                     child: WIcon(
                       Icons.notifications_outlined,
                       className: "text-2xl",
@@ -98,8 +98,7 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
                     clipBehavior: Clip.none,
                     children: [
                       WImage(
-                        src:
-                            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+                        src: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
                         className: "w-8 h-8 rounded-full",
                       ),
                       if (_isProfileMenuOpen)
@@ -120,8 +119,7 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
                 onTap: () =>
                     setState(() => _isMobileMenuOpen = !_isMobileMenuOpen),
                 child: WDiv(
-                  className:
-                      "rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white duration-200",
+                  className: "rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white duration-200",
                   child: WIcon(
                     _isMobileMenuOpen ? Icons.close : Icons.menu,
                     className: "text-2xl",
@@ -150,8 +148,7 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
     return WAnchor(
       onTap: () => setState(() => _isProfileMenuOpen = false),
       child: WDiv(
-        className:
-            "block px-4 py-2 text-sm text-gray-300 hover:bg-white/5 duration-150",
+        className: "block px-4 py-2 text-sm text-gray-300 hover:bg-white/5 duration-150",
         child: WText(label),
       ),
     );
@@ -176,7 +173,8 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
                     _isMobileMenuOpen = false;
                   }),
                   child: WDiv(
-                    className: '''
+                    className:
+                        '''
                       block border-l-4 py-2 pr-4 pl-3 text-base font-medium
                       ${isActive ? 'border-indigo-500 bg-indigo-600/10 text-indigo-300' : 'border-transparent text-gray-400 hover:border-gray-500 hover:bg-white/5 hover:text-gray-200'}
                       duration-200
@@ -195,8 +193,7 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
                   className: "flex items-center px-4",
                   children: [
                     WImage(
-                      src:
-                          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+                      src: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
                       className: "w-10 h-10 rounded-full shrink-0",
                     ),
                     WDiv(
@@ -215,8 +212,7 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
                     WAnchor(
                       onTap: () {},
                       child: WDiv(
-                        className:
-                            "rounded-full p-1 text-gray-400 hover:text-white duration-200 shrink-0",
+                        className: "rounded-full p-1 text-gray-400 hover:text-white duration-200 shrink-0",
                         child: WIcon(
                           Icons.notifications_outlined,
                           className: "text-2xl",
@@ -246,8 +242,7 @@ class _StackedLayoutExamplePageState extends State<StackedLayoutExamplePage> {
     return WAnchor(
       onTap: () => setState(() => _isMobileMenuOpen = false),
       child: WDiv(
-        className:
-            "block px-4 py-2 text-base font-medium text-gray-400 hover:bg-white/5 hover:text-gray-200 duration-150",
+        className: "block px-4 py-2 text-base font-medium text-gray-400 hover:bg-white/5 hover:text-gray-200 duration-150",
         child: WText(label),
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -12,14 +12,12 @@ class WImageRatioExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Image Aspect Ratio',
-      description:
-          'Pair WImage with aspect-{ratio} to lock the height to a known proportion of the width.',
+      description: 'Pair WImage with aspect-{ratio} to lock the height to a known proportion of the width.',
       gradient: 'from-teal-500 to-emerald-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'w-full + aspect-video produces a 16:9 hero. The image always covers the box.',
+          description: 'w-full + aspect-video produces a 16:9 hero. The image always covers the box.',
           child: WDiv(
             className: 'flex flex-col items-stretch',
             child: WDiv(
@@ -33,8 +31,7 @@ class WImageRatioExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Square Thumbnails',
-          description:
-              'aspect-square in a grid creates uniform tiles regardless of source dimensions.',
+          description: 'aspect-square in a grid creates uniform tiles regardless of source dimensions.',
           child: WDiv(
             className: 'grid grid-cols-3 gap-2',
             children: List.generate(

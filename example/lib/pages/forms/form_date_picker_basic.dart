@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -28,8 +28,7 @@ class _FormDatePickerBasicExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WFormDatePicker',
-      description:
-          'FormField-wrapped WDatePicker. Validator receives DateTime?; error: prefix activates on failure. Label + hint + error stacked vertically.',
+      description: 'FormField-wrapped WDatePicker. Validator receives DateTime?; error: prefix activates on failure. Label + hint + error stacked vertically.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
@@ -58,8 +57,10 @@ class _FormDatePickerBasicExamplePageState
                     bg-rose-600 hover:bg-rose-700
                     text-white px-4 py-2 rounded-lg self-start
                   ''',
-                  child: const WText('Submit',
-                      className: 'text-white font-medium'),
+                  child: const WText(
+                    'Submit',
+                    className: 'text-white font-medium',
+                  ),
                 ),
                 WText(
                   'Saved: ${_savedDate?.toIso8601String().split("T").first ?? "—"}',
@@ -72,8 +73,7 @@ class _FormDatePickerBasicExamplePageState
         ),
         ExampleSection(
           title: 'Future Dates Only',
-          description:
-              'Combine validator + minDate. The error message fires when the user picks a past date or no date at all.',
+          description: 'Combine validator + minDate. The error message fires when the user picks a past date or no date at all.',
           child: Form(
             child: WFormDatePicker(
               label: 'Departure Date',
@@ -92,12 +92,10 @@ class _FormDatePickerBasicExamplePageState
         ),
         ExampleSection(
           title: 'Minimalist Style',
-          description:
-              'Drop the box, lean on a single underline. labelClassName + className keep things lightweight.',
+          description: 'Drop the box, lean on a single underline. labelClassName + className keep things lightweight.',
           child: WFormDatePicker(
             label: 'WHEN',
-            labelClassName:
-                'text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1',
+            labelClassName: 'text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1',
             className: '''
               border-b border-slate-200 dark:border-slate-700
               py-2 rounded-none

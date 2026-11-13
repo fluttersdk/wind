@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Responsive Card Example
 /// Demonstrates card that changes from vertical to horizontal layout
@@ -18,8 +18,7 @@ class ResponsiveCardExamplePage extends StatelessWidget {
         children: [
           // Header
           WDiv(
-            className:
-                'w-full p-4 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500',
+            className: 'w-full p-4 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500',
             children: [
               WText(
                 'Responsive Card',
@@ -51,17 +50,13 @@ class ResponsiveCardExamplePage extends StatelessWidget {
 
           // Responsive Card Demo
           WDiv(
-            className:
-                'rounded-xl overflow-hidden shadow-lg bg-white dark:bg-slate-800',
+            className: 'rounded-xl overflow-hidden shadow-lg bg-white dark:bg-slate-800',
             child: isMedium
                 ? WDiv(
                     className: 'flex flex-row',
                     children: [
                       _buildImagePlaceholder(isWide: false),
-                      WDiv(
-                        className: 'flex-1',
-                        child: _buildCardContent(),
-                      ),
+                      WDiv(className: 'flex-1', child: _buildCardContent()),
                     ],
                   )
                 : WDiv(
@@ -77,10 +72,7 @@ class ResponsiveCardExamplePage extends StatelessWidget {
           WDiv(
             className: 'p-4 rounded-xl bg-slate-800',
             children: [
-              WText(
-                'Code:',
-                className: 'text-sm font-bold text-gray-300 mb-2',
-              ),
+              WText('Code:', className: 'text-sm font-bold text-gray-300 mb-2'),
               WText(
                 'WDiv(\n'
                 '  className: "flex flex-col md:flex-row",\n'
@@ -97,7 +89,8 @@ class ResponsiveCardExamplePage extends StatelessWidget {
 
   Widget _buildBadge(String label, bool isActive) {
     return WDiv(
-      className: '''
+      className:
+          '''
         px-2 py-1 rounded text-xs font-bold
         ${isActive ? 'bg-white text-rose-600' : 'bg-white/10 text-white/50'}
       ''',
@@ -107,15 +100,13 @@ class ResponsiveCardExamplePage extends StatelessWidget {
 
   Widget _buildImagePlaceholder({required bool isWide}) {
     return WDiv(
-      className: '''
+      className:
+          '''
         ${isWide ? 'w-full h-48' : 'w-48 min-h-48'}
         bg-gradient-to-br from-cyan-400 to-blue-500
         flex items-center justify-center
       ''',
-      child: WIcon(
-        Icons.image,
-        className: 'text-white/50 text-5xl',
-      ),
+      child: WIcon(Icons.image, className: 'text-white/50 text-5xl'),
     );
   }
 
@@ -149,8 +140,7 @@ class ResponsiveCardExamplePage extends StatelessWidget {
 
   Widget _buildTag(String label) {
     return WDiv(
-      className:
-          'px-2 py-1 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300 text-xs font-mono',
+      className: 'px-2 py-1 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300 text-xs font-mono',
       child: WText(label),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Ring Opacity Example Page - demonstrates ring color opacity.
 class RingOpacityExamplePage extends StatelessWidget {
@@ -119,13 +119,15 @@ class _OpacityBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final opacityClass =
-        opacity == '100' ? 'ring-blue-500' : 'ring-blue-500/$opacity';
+    final opacityClass = opacity == '100'
+        ? 'ring-blue-500'
+        : 'ring-blue-500/$opacity';
     return WDiv(
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className: '''
+          className:
+              '''
             ring-4 $opacityClass w-16 h-16 bg-white rounded-lg
             flex items-center justify-center
           ''',
@@ -153,7 +155,8 @@ class _ArbitraryOpacityBox extends StatelessWidget {
       className: 'flex flex-col items-center gap-2',
       children: [
         WDiv(
-          className: '''
+          className:
+              '''
             ring-4 ring-purple-500/[$value] w-16 h-16 bg-white rounded-lg
             flex items-center justify-center
           ''',

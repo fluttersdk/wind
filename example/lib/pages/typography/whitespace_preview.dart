@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class WhitespacePreviewExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Whitespace & Wrapping',
-      description:
-          'whitespace-nowrap forces single-line. whitespace-normal restores wrapping. text-balance balances lines for headings.',
+      description: 'whitespace-nowrap forces single-line. whitespace-normal restores wrapping. text-balance balances lines for headings.',
       gradient: 'from-teal-500 to-emerald-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Same text inside the same width container. The whitespace utility decides whether it wraps.',
+          description: 'Same text inside the same width container. The whitespace utility decides whether it wraps.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: const [
@@ -39,7 +37,9 @@ class WhitespacePreviewExamplePage extends StatelessWidget {
             className: 'flex flex-col gap-1',
             children: const [
               _RefRow(
-                  cls: 'whitespace-normal', desc: 'softWrap: true (default)'),
+                cls: 'whitespace-normal',
+                desc: 'softWrap: true (default)',
+              ),
               _RefRow(cls: 'whitespace-nowrap', desc: 'softWrap: false'),
               _RefRow(cls: 'text-wrap', desc: 'Alias of whitespace-normal'),
               _RefRow(cls: 'text-nowrap', desc: 'Alias of whitespace-nowrap'),
@@ -97,8 +97,10 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-teal-700 dark:text-teal-400'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-teal-700 dark:text-teal-400',
+        ),
         WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );

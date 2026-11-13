@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,8 +10,7 @@ class FontStyleBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Font Style',
-      description:
-          'italic and not-italic toggle FontStyle.italic on or off. Use the reset class to override an italic ancestor.',
+      description: 'italic and not-italic toggle FontStyle.italic on or off. Use the reset class to override an italic ancestor.',
       gradient: 'from-indigo-500 to-violet-600',
       children: [
         ExampleSection(
@@ -28,15 +27,18 @@ class FontStyleBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Reset Pattern',
-          description:
-              'A parent applies italic; a child resets it with not-italic. Useful inside markdown-derived content.',
+          description: 'A parent applies italic; a child resets it with not-italic. Useful inside markdown-derived content.',
           child: WDiv(
             className: 'italic text-slate-900 dark:text-white',
             children: const [
-              WText('This paragraph is italic by default.',
-                  className: 'italic'),
-              WText('This sentence resets to upright.',
-                  className: 'not-italic'),
+              WText(
+                'This paragraph is italic by default.',
+                className: 'italic',
+              ),
+              WText(
+                'This sentence resets to upright.',
+                className: 'not-italic',
+              ),
             ],
           ),
         ),

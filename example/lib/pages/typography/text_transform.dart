@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class TextTransformExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Text Transform',
-      description:
-          'uppercase, lowercase, capitalize. Pair with normal-case to reset an ancestor transform on a child.',
+      description: 'uppercase, lowercase, capitalize. Pair with normal-case to reset an ancestor transform on a child.',
       gradient: 'from-teal-500 to-emerald-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each row uses a different transform. The source text stays the same; only the rendered case changes.',
+          description: 'Each row uses a different transform. The source text stays the same; only the rendered case changes.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -30,18 +28,15 @@ class TextTransformExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Headline Styling',
-          description:
-              'uppercase + tracking-widest + small text size is a classic section label pattern.',
+          description: 'uppercase + tracking-widest + small text size is a classic section label pattern.',
           child: const WText(
             'featured projects',
-            className:
-                'uppercase tracking-widest text-sm font-bold text-teal-700 dark:text-teal-400',
+            className: 'uppercase tracking-widest text-sm font-bold text-teal-700 dark:text-teal-400',
           ),
         ),
         ExampleSection(
           title: 'Locale-aware Casing',
-          description:
-              'Casing follows the ambient locale. The same source text under a Turkish locale keeps the dot on i and takes it off ı, which locale-independent casing gets wrong.',
+          description: 'Casing follows the ambient locale. The same source text under a Turkish locale keeps the dot on i and takes it off ı, which locale-independent casing gets wrong.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -53,8 +48,7 @@ class TextTransformExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Four named transforms. capitalize raises the first letter of each word and leaves the rest as typed.',
+          description: 'Four named transforms. capitalize raises the first letter of each word and leaves the rest as typed.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -147,8 +141,10 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-teal-700 dark:text-teal-400'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-teal-700 dark:text-teal-400',
+        ),
         WText(val, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );

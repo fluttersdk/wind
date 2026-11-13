@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class AspectRatioBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Aspect Ratio',
-      description:
-          'Lock an element to a specific width-to-height ratio. Drop-in for video frames, square thumbnails, and custom ratios.',
+      description: 'Lock an element to a specific width-to-height ratio. Drop-in for video frames, square thumbnails, and custom ratios.',
       gradient: 'from-amber-400 to-orange-500',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'aspect-square forces 1:1, aspect-video forces 16:9. The width drives the height.',
+          description: 'aspect-square forces 1:1, aspect-video forces 16:9. The width drives the height.',
           child: WDiv(
             className: 'flex flex-col items-stretch gap-4',
             children: const [
@@ -41,8 +39,7 @@ class AspectRatioBasicExamplePage extends StatelessWidget {
           child: WDiv(
             className: 'flex flex-col items-stretch',
             child: WDiv(
-              className:
-                  'aspect-video bg-black rounded-lg flex items-center justify-center',
+              className: 'aspect-video bg-black rounded-lg flex items-center justify-center',
               child: const WText(
                 'Video Placeholder',
                 className: 'text-white font-medium',
@@ -52,8 +49,7 @@ class AspectRatioBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Square (1:1)',
-          description:
-              'Perfect square at any width. Combine with w-{n} or w-1/2 to control the dimensions.',
+          description: 'Perfect square at any width. Combine with w-{n} or w-1/2 to control the dimensions.',
           child: WDiv(
             className: 'flex flex-row gap-4',
             children: const [
@@ -72,16 +68,21 @@ class AspectRatioBasicExamplePage extends StatelessWidget {
             children: const [
               _RefRow(cls: 'aspect-auto', ratio: 'null', use: 'No constraint'),
               _RefRow(
-                  cls: 'aspect-square', ratio: '1 / 1', use: 'Avatars, thumbs'),
+                cls: 'aspect-square',
+                ratio: '1 / 1',
+                use: 'Avatars, thumbs',
+              ),
               _RefRow(
-                  cls: 'aspect-video', ratio: '16 / 9', use: 'Video frames'),
+                cls: 'aspect-video',
+                ratio: '16 / 9',
+                use: 'Video frames',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Responsive Design',
-          description:
-              'Combine aspect-* with breakpoint prefixes to switch ratios per screen size.',
+          description: 'Combine aspect-* with breakpoint prefixes to switch ratios per screen size.',
           child: WDiv(
             className: 'flex flex-col items-stretch',
             child: WDiv(
@@ -99,8 +100,7 @@ class AspectRatioBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Arbitrary Values',
-          description:
-              'Use aspect-[w/h] for any custom ratio. Both numbers must be numeric.',
+          description: 'Use aspect-[w/h] for any custom ratio. Both numbers must be numeric.',
           child: WDiv(
             className: 'flex flex-col items-stretch gap-4',
             children: const [

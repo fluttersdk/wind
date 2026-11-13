@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// WFormSelect example with form validation.
 class FormSelectBasicExamplePage extends StatefulWidget {
@@ -33,9 +33,8 @@ class _FormSelectBasicExamplePageState
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Form is valid!')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Form is valid!')));
     }
   }
 
@@ -77,8 +76,7 @@ class _FormSelectBasicExamplePageState
                       options: _countryOptions,
                       onChange: (v) => setState(() => _country = v),
                       label: 'Country',
-                      labelClassName:
-                          'text-sm font-medium text-gray-700 dark:text-gray-200 mb-1',
+                      labelClassName: 'text-sm font-medium text-gray-700 dark:text-gray-200 mb-1',
                       hint: 'Select your country',
                       hintClassName:
                           'text-gray-500 dark:text-gray-400 text-xs mt-1',
@@ -110,8 +108,7 @@ class _FormSelectBasicExamplePageState
                       options: _tagOptions,
                       onMultiChange: (v) => setState(() => _tags = v),
                       label: 'Tags',
-                      labelClassName:
-                          'text-sm font-medium text-gray-700 dark:text-gray-200 mb-1',
+                      labelClassName: 'text-sm font-medium text-gray-700 dark:text-gray-200 mb-1',
                       placeholder: 'Select tags...',
                       searchable: true,
                       className: '''

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,22 +10,22 @@ class WSpacerBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WSpacer',
-      description:
-          'Single-purpose SizedBox-backed widget for explicit gaps. h-{n} for vertical, w-{n} for horizontal. Lighter than a styled WDiv.',
+      description: 'Single-purpose SizedBox-backed widget for explicit gaps. h-{n} for vertical, w-{n} for horizontal. Lighter than a styled WDiv.',
       gradient: 'from-slate-500 to-slate-700',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'WSpacer between two stacked widgets. h-2 yields an 8px vertical gap.',
+          description: 'WSpacer between two stacked widgets. h-2 yields an 8px vertical gap.',
           child: WDiv(
             className: '''
               flex flex-col p-4 rounded-lg
               bg-slate-50 dark:bg-slate-700/40
             ''',
             children: [
-              const WText('Label',
-                  className: 'font-bold text-slate-900 dark:text-white'),
+              const WText(
+                'Label',
+                className: 'font-bold text-slate-900 dark:text-white',
+              ),
               const WSpacer(className: 'h-2'),
               WInput(
                 placeholder: 'Enter text…',
@@ -59,8 +59,7 @@ class WSpacerBasicExamplePage extends StatelessWidget {
           title: 'Horizontal Gaps',
           description: 'Switch to w-{n} when arranging items in a row.',
           child: WDiv(
-            className:
-                'flex flex-row items-center p-4 rounded-lg bg-slate-50 dark:bg-slate-700/40',
+            className: 'flex flex-row items-center p-4 rounded-lg bg-slate-50 dark:bg-slate-700/40',
             children: const [
               _Pill(label: 'Save'),
               WSpacer(className: 'w-2'),
@@ -100,10 +99,7 @@ class _Box extends StatelessWidget {
         bg-white dark:bg-slate-800
         border border-slate-200 dark:border-slate-700
       ''',
-      child: WText(
-        label,
-        className: 'text-slate-700 dark:text-slate-200',
-      ),
+      child: WText(label, className: 'text-slate-700 dark:text-slate-200'),
     );
   }
 }

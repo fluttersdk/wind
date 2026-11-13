@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Z-Index Example
 /// Demonstrates z-index utilities within Stack widgets
@@ -30,8 +30,7 @@ class ZIndexExamplePage extends StatelessWidget {
 
           // Important Note
           WDiv(
-            className:
-                'p-4 bg-amber-100 dark:bg-amber-900/30 rounded-lg border border-amber-300 dark:border-amber-700',
+            className: 'p-4 bg-amber-100 dark:bg-amber-900/30 rounded-lg border border-amber-300 dark:border-amber-700',
             child: WText(
               '⚠️ Z-index only works inside Stack widgets. Flutter determines layer order by child position in the list.',
               className: 'text-sm text-amber-800 dark:text-amber-200',
@@ -53,8 +52,7 @@ class ZIndexExamplePage extends StatelessWidget {
                         left: 0,
                         top: 0,
                         child: WDiv(
-                          className:
-                              'z-10 w-24 h-24 bg-blue-500 rounded-lg flex items-center justify-center',
+                          className: 'z-10 w-24 h-24 bg-blue-500 rounded-lg flex items-center justify-center',
                           child: WText(
                             'z-10',
                             className: 'text-white font-bold',
@@ -65,8 +63,7 @@ class ZIndexExamplePage extends StatelessWidget {
                         left: 40,
                         top: 30,
                         child: WDiv(
-                          className:
-                              'z-20 w-24 h-24 bg-red-500 rounded-lg flex items-center justify-center',
+                          className: 'z-20 w-24 h-24 bg-red-500 rounded-lg flex items-center justify-center',
                           child: WText(
                             'z-20',
                             className: 'text-white font-bold',
@@ -77,8 +74,7 @@ class ZIndexExamplePage extends StatelessWidget {
                         left: 80,
                         top: 60,
                         child: WDiv(
-                          className:
-                              'z-30 w-24 h-24 bg-green-500 rounded-lg flex items-center justify-center',
+                          className: 'z-30 w-24 h-24 bg-green-500 rounded-lg flex items-center justify-center',
                           child: WText(
                             'z-30',
                             className: 'text-white font-bold',
@@ -146,8 +142,7 @@ class ZIndexExamplePage extends StatelessWidget {
                         left: 0,
                         top: 0,
                         child: WDiv(
-                          className:
-                              'z-10 w-48 p-4 bg-white dark:bg-slate-700 rounded-xl shadow-lg',
+                          className: 'z-10 w-48 p-4 bg-white dark:bg-slate-700 rounded-xl shadow-lg',
                           children: [
                             WText(
                               'Card 1',
@@ -162,8 +157,7 @@ class ZIndexExamplePage extends StatelessWidget {
                         left: 30,
                         top: 30,
                         child: WDiv(
-                          className:
-                              'z-20 w-48 p-4 bg-white dark:bg-slate-700 rounded-xl shadow-lg',
+                          className: 'z-20 w-48 p-4 bg-white dark:bg-slate-700 rounded-xl shadow-lg',
                           children: [
                             WText(
                               'Card 2',
@@ -178,8 +172,7 @@ class ZIndexExamplePage extends StatelessWidget {
                         left: 60,
                         top: 60,
                         child: WDiv(
-                          className:
-                              'z-30 w-48 p-4 bg-white dark:bg-slate-700 rounded-xl shadow-lg',
+                          className: 'z-30 w-48 p-4 bg-white dark:bg-slate-700 rounded-xl shadow-lg',
                           children: [
                             WText(
                               'Card 3',

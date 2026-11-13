@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -20,28 +20,27 @@ class _StateManagementOverviewExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'State Management',
-      description:
-          'Declarative interactive styles. State prefixes like hover:, focus:, active:, and disabled: react to user input without manual gesture handling.',
+      description: 'Declarative interactive styles. State prefixes like hover:, focus:, active:, and disabled: react to user input without manual gesture handling.',
       gradient: 'from-cyan-500 to-blue-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'WButton swaps background colors through three states. duration-200 smooths the transition.',
+          description: 'WButton swaps background colors through three states. duration-200 smooths the transition.',
           child: WButton(
             onTap: () {},
             className: '''
               bg-blue-500 hover:bg-blue-600 active:bg-blue-700
               text-white px-4 py-3 rounded-lg duration-200 self-start
             ''',
-            child: const WText('Save Changes',
-                className: 'text-white font-medium'),
+            child: const WText(
+              'Save Changes',
+              className: 'text-white font-medium',
+            ),
           ),
         ),
         ExampleSection(
           title: 'Built-in State Prefixes',
-          description:
-              'Four prefixes activate automatically when used inside an interactive widget (WButton, WAnchor, WInput).',
+          description: 'Four prefixes activate automatically when used inside an interactive widget (WButton, WAnchor, WInput).',
           child: WDiv(
             className: 'grid grid-cols-1 sm:grid-cols-2 gap-3',
             children: const [
@@ -70,8 +69,7 @@ class _StateManagementOverviewExamplePageState
         ),
         ExampleSection(
           title: 'WAnchor: The Core Wrapper',
-          description:
-              'Wraps any subtree to make it interactive. No visual styling itself; it propagates state to descendants.',
+          description: 'Wraps any subtree to make it interactive. No visual styling itself; it propagates state to descendants.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(
@@ -82,19 +80,21 @@ class _StateManagementOverviewExamplePageState
                 border border-slate-200 dark:border-slate-700
               ''',
               children: const [
-                WText('Interactive Card',
-                    className: 'font-semibold text-slate-900 dark:text-white'),
-                WText('Hover anywhere on this card; the bg eases over 300ms.',
-                    className:
-                        'text-sm text-slate-600 dark:text-slate-400 mt-1'),
+                WText(
+                  'Interactive Card',
+                  className: 'font-semibold text-slate-900 dark:text-white',
+                ),
+                WText(
+                  'Hover anywhere on this card; the bg eases over 300ms.',
+                  className: 'text-sm text-slate-600 dark:text-slate-400 mt-1',
+                ),
               ],
             ),
           ),
         ),
         ExampleSection(
           title: 'WButton: The High-Level Action',
-          description:
-              'WButton extends WAnchor with loading states, padding defaults, and an isDisabled prop that activates the disabled: prefix.',
+          description: 'WButton extends WAnchor with loading states, padding defaults, and an isDisabled prop that activates the disabled: prefix.',
           child: WDiv(
             className: 'wrap gap-3',
             children: [
@@ -106,8 +106,10 @@ class _StateManagementOverviewExamplePageState
                   disabled:opacity-50 disabled:bg-slate-400
                   text-white px-6 py-3 rounded duration-150
                 ''',
-                child:
-                    const WText('Submit', className: 'text-white font-medium'),
+                child: const WText(
+                  'Submit',
+                  className: 'text-white font-medium',
+                ),
               ),
               WButton(
                 onTap: () => setState(() => _isDisabled = !_isDisabled),
@@ -126,8 +128,7 @@ class _StateManagementOverviewExamplePageState
         ),
         ExampleSection(
           title: 'WInput: Focus States',
-          description:
-              'Inputs manage their own focus. focus: classes activate when the field gains keyboard focus.',
+          description: 'Inputs manage their own focus. focus: classes activate when the field gains keyboard focus.',
           child: WInput(
             placeholder: 'Search...',
             className: '''
@@ -140,8 +141,7 @@ class _StateManagementOverviewExamplePageState
         ),
         ExampleSection(
           title: 'Custom States',
-          description:
-              'Pass any string through the states: parameter to activate matching prefixed classes.',
+          description: 'Pass any string through the states: parameter to activate matching prefixed classes.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
@@ -177,8 +177,7 @@ class _StateManagementOverviewExamplePageState
         ),
         ExampleSection(
           title: 'State Propagation',
-          description:
-              'A parent WAnchor shares its hover state with every WText below it. The descendant picks up hover:text-blue-600 even when the cursor is on the padding.',
+          description: 'A parent WAnchor shares its hover state with every WText below it. The descendant picks up hover:text-blue-600 even when the cursor is on the padding.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(
@@ -234,14 +233,8 @@ class _PrefixCard extends StatelessWidget {
           prefix,
           className: 'font-mono font-bold text-cyan-600 dark:text-cyan-400',
         ),
-        WText(
-          trigger,
-          className: 'text-sm text-slate-700 dark:text-slate-300',
-        ),
-        WText(
-          useCase,
-          className: 'text-xs text-slate-500 dark:text-slate-400',
-        ),
+        WText(trigger, className: 'text-sm text-slate-700 dark:text-slate-300'),
+        WText(useCase, className: 'text-xs text-slate-500 dark:text-slate-400'),
       ],
     );
   }

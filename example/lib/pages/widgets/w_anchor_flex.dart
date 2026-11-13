@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class WAnchorFlexExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WAnchor Layouts',
-      description:
-          'WAnchor has no layout of its own. Wrap a styled WDiv to add hover/press state to any flex row, card, or button-like surface.',
+      description: 'WAnchor has no layout of its own. Wrap a styled WDiv to add hover/press state to any flex row, card, or button-like surface.',
       gradient: 'from-violet-500 to-purple-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'WAnchor + WDiv with flex layout. Icon + label both adopt hover state.',
+          description: 'WAnchor + WDiv with flex layout. Icon + label both adopt hover state.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(
@@ -28,8 +26,10 @@ class WAnchorFlexExamplePage extends StatelessWidget {
               ''',
               children: [
                 WIcon(Icons.add, className: 'text-blue-500 dark:text-blue-400'),
-                const WText('Add Item',
-                    className: 'text-slate-900 dark:text-white font-medium'),
+                const WText(
+                  'Add Item',
+                  className: 'text-slate-900 dark:text-white font-medium',
+                ),
               ],
             ),
           ),
@@ -49,8 +49,7 @@ class WAnchorFlexExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Card Lift Effect',
-          description:
-              'Hover raises shadow + tints background, works for entire interactive cards.',
+          description: 'Hover raises shadow + tints background, works for entire interactive cards.',
           child: WAnchor(
             onTap: () {},
             child: WDiv(

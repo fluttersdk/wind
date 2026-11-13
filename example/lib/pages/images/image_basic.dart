@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -13,8 +13,7 @@ class ImageBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WImage',
-      description:
-          'Utility-styled image. Network and asset sources. object-{fit}, aspect-*, w-*/h-*, rounded-*, and shadow-* all compose freely.',
+      description: 'Utility-styled image. Network and asset sources. object-{fit}, aspect-*, w-*/h-*, rounded-*, and shadow-* all compose freely.',
       gradient: 'from-teal-500 to-emerald-600',
       children: [
         ExampleSection(
@@ -90,8 +89,7 @@ class ImageBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Interactive',
-          description:
-              'Wrap in WAnchor for hover/tap. opacity-* and scale-* animate via duration-*.',
+          description: 'Wrap in WAnchor for hover/tap. opacity-* and scale-* animate via duration-*.',
           child: WAnchor(
             onTap: () {},
             child: WImage(

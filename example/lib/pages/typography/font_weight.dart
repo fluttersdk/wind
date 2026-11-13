@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Font Weight Example
 /// Demonstrates font weight utilities: font-thin through font-black
@@ -34,8 +34,7 @@ class FontWeightExamplePage extends StatelessWidget {
             description: 'From font-thin (100) to font-black (900)',
             children: [
               WDiv(
-                className:
-                    'flex flex-col gap-3 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+                className: 'flex flex-col gap-3 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
                 children: [
                   _buildWeightRow('font-thin', '100'),
                   _buildWeightRow('font-extralight', '200'),
@@ -57,8 +56,7 @@ class FontWeightExamplePage extends StatelessWidget {
             description: 'Custom weights with bracket notation',
             children: [
               WDiv(
-                className:
-                    'flex flex-col gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
+                className: 'flex flex-col gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg',
                 children: [
                   WText(
                     'font-[700]',

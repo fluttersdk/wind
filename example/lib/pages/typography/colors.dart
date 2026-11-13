@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Text Color Example
 /// Demonstrates text color utilities: text-{color}-{shade}
@@ -34,8 +34,7 @@ class TypographyColorsPage extends StatelessWidget {
             description: 'Common text colors',
             children: [
               WDiv(
-                className:
-                    'flex wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
+                className: 'flex wrap gap-4 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
                 children: [
                   _buildColorChip('text-red-500', 'Red'),
                   _buildColorChip('text-blue-500', 'Blue'),
@@ -54,8 +53,7 @@ class TypographyColorsPage extends StatelessWidget {
             description: 'From 50 (light) to 900 (dark)',
             children: [
               WDiv(
-                className:
-                    'flex wrap gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
+                className: 'flex wrap gap-2 p-4 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-x-auto',
                 children: [
                   WText(
                     '50',

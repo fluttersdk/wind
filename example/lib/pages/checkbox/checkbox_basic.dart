@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -20,14 +20,12 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WCheckbox',
-      description:
-          'Utility-styled checkbox. value + onChanged for controlled state. checked: prefix activates when value is true.',
+      description: 'Utility-styled checkbox. value + onChanged for controlled state. checked: prefix activates when value is true.',
       gradient: 'from-emerald-500 to-green-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'A standard square checkbox with checked: prefix flipping the background.',
+          description: 'A standard square checkbox with checked: prefix flipping the background.',
           child: WDiv(
             className: 'flex flex-row items-center gap-3',
             children: [
@@ -91,8 +89,7 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Custom Check Icon',
-          description:
-              'checkIcon swaps the default Icons.check. Pair with iconClassName to style.',
+          description: 'checkIcon swaps the default Icons.check. Pair with iconClassName to style.',
           child: WDiv(
             className: 'flex flex-row items-center gap-3',
             children: [
@@ -117,8 +114,7 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Disabled State',
-          description:
-              'disabled: true blocks interaction and activates the disabled: prefix.',
+          description: 'disabled: true blocks interaction and activates the disabled: prefix.',
           child: WDiv(
             className: 'flex flex-row items-center gap-3',
             children: [
@@ -143,8 +139,7 @@ class _CheckboxBasicExamplePageState extends State<CheckboxBasicExamplePage> {
         ),
         ExampleSection(
           title: 'Display-only',
-          description:
-              'Leaving onChanged null reads exactly like disabled: true. No tap, nothing announced as pressable, and the disabled: prefix activates.',
+          description: 'Leaving onChanged null reads exactly like disabled: true. No tap, nothing announced as pressable, and the disabled: prefix activates.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [

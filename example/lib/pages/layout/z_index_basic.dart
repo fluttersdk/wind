@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,44 +10,44 @@ class ZIndexBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Z-Index',
-      description:
-          'z-{n} sets the stack order inside a Stack widget. Higher values render above lower ones.',
+      description: 'z-{n} sets the stack order inside a Stack widget. Higher values render above lower ones.',
       gradient: 'from-violet-600 to-purple-700',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Three overlapping boxes. The z-index decides which one ends up on top.',
+          description: 'Three overlapping boxes. The z-index decides which one ends up on top.',
           child: SizedBox(
             height: 160,
             child: Stack(
               children: [
                 _ZBox(
-                    left: 0,
-                    top: 0,
-                    color: 'bg-blue-500',
-                    zClass: 'z-0',
-                    label: 'z-0'),
+                  left: 0,
+                  top: 0,
+                  color: 'bg-blue-500',
+                  zClass: 'z-0',
+                  label: 'z-0',
+                ),
                 _ZBox(
-                    left: 40,
-                    top: 30,
-                    color: 'bg-red-500',
-                    zClass: 'z-10',
-                    label: 'z-10'),
+                  left: 40,
+                  top: 30,
+                  color: 'bg-red-500',
+                  zClass: 'z-10',
+                  label: 'z-10',
+                ),
                 _ZBox(
-                    left: 80,
-                    top: 60,
-                    color: 'bg-green-500',
-                    zClass: 'z-20',
-                    label: 'z-20'),
+                  left: 80,
+                  top: 60,
+                  color: 'bg-green-500',
+                  zClass: 'z-20',
+                  label: 'z-20',
+                ),
               ],
             ),
           ),
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Six standard stops cover most UI needs. Use bracket syntax for exact integers.',
+          description: 'Six standard stops cover most UI needs. Use bracket syntax for exact integers.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -77,7 +77,8 @@ class ZIndexBasicExamplePage extends StatelessWidget {
           title: 'Custom Theme Tokens',
           description: 'Add named z-index tokens via WindThemeData.zIndices.',
           child: _CodeBlock(
-            code: 'WindThemeData(\n'
+            code:
+                'WindThemeData(\n'
                 '  zIndices: {\n'
                 '    "modal": 9999,\n'
                 '    "popover": 5000,\n'
@@ -112,15 +113,13 @@ class _ZBox extends StatelessWidget {
       left: left,
       top: top,
       child: WDiv(
-        className: '''
+        className:
+            '''
           $zClass $color w-24 h-24 rounded-lg
           flex items-center justify-center
           shadow-lg
         ''',
-        child: WText(
-          label,
-          className: 'text-white font-mono font-bold',
-        ),
+        child: WText(label, className: 'text-white font-mono font-bold'),
       ),
     );
   }
@@ -168,10 +167,7 @@ class _CodeBlock extends StatelessWidget {
         text-emerald-400
         overflow-x-auto
       ''',
-      child: WText(
-        code,
-        className: 'whitespace-pre text-emerald-400',
-      ),
+      child: WText(code, className: 'whitespace-pre text-emerald-400'),
     );
   }
 }

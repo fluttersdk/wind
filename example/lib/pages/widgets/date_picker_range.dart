@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -33,14 +33,12 @@ class _DatePickerRangeExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Date Range Picker',
-      description:
-          'mode: WDatePickerMode.range enables two-click range selection with hover preview. range + onRangeChanged for controlled state.',
+      description: 'mode: WDatePickerMode.range enables two-click range selection with hover preview. range + onRangeChanged for controlled state.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'First click sets start. Hover paints the candidate range. Second click commits the end.',
+          description: 'First click sets start. Hover paints the candidate range. Second click commits the end.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
@@ -73,16 +71,16 @@ class _DatePickerRangeExamplePageState
         ),
         ExampleSection(
           title: 'How It Works',
-          description:
-              'onRangeChanged fires twice: once with start only (end == null), once with the complete range.',
+          description: 'onRangeChanged fires twice: once with start only (end == null), once with the complete range.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
               _Step(n: 1, text: 'First click → DateRange(start, end: null)'),
               _Step(n: 2, text: 'Hover → preview highlights candidate range'),
               _Step(
-                  n: 3,
-                  text: 'Second click → DateRange(start, end: …) commits'),
+                n: 3,
+                text: 'Second click → DateRange(start, end: …) commits',
+              ),
               _Step(n: 4, text: 'If end < start, swap automatically'),
             ],
           ),
@@ -113,10 +111,7 @@ class _Step extends StatelessWidget {
             bg-rose-500
             flex items-center justify-center
           ''',
-          child: WText(
-            '$n',
-            className: 'text-white text-xs font-bold',
-          ),
+          child: WText('$n', className: 'text-white text-xs font-bold'),
         ),
         WText(
           text,

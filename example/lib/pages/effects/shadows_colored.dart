@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,8 +10,7 @@ class ShadowsColoredExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Colored Shadows',
-      description:
-          'shadow-{color} tints the shadow with a theme color. Pair with size for distinct elevation effects.',
+      description: 'shadow-{color} tints the shadow with a theme color. Pair with size for distinct elevation effects.',
       gradient: 'from-slate-700 to-slate-900',
       children: [
         ExampleSection(
@@ -23,26 +22,35 @@ class ShadowsColoredExamplePage extends StatelessWidget {
               _ColoredTile(label: 'shadow-blue-500', cls: 'shadow-blue-500'),
               _ColoredTile(label: 'shadow-red-500', cls: 'shadow-red-500'),
               _ColoredTile(
-                  label: 'shadow-emerald-500', cls: 'shadow-emerald-500'),
+                label: 'shadow-emerald-500',
+                cls: 'shadow-emerald-500',
+              ),
               _ColoredTile(label: 'shadow-amber-500', cls: 'shadow-amber-500'),
               _ColoredTile(
-                  label: 'shadow-purple-500', cls: 'shadow-purple-500'),
+                label: 'shadow-purple-500',
+                cls: 'shadow-purple-500',
+              ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Color + Opacity',
-          description:
-              'Append /N to any shadow color for an alpha tweak. Subtle tinted shadows for hero cards.',
+          description: 'Append /N to any shadow color for an alpha tweak. Subtle tinted shadows for hero cards.',
           child: WDiv(
             className: 'wrap gap-6 py-4',
             children: const [
               _ColoredTile(
-                  label: 'shadow-red-500/50', cls: 'shadow-red-500/50'),
+                label: 'shadow-red-500/50',
+                cls: 'shadow-red-500/50',
+              ),
               _ColoredTile(
-                  label: 'shadow-blue-500/30', cls: 'shadow-blue-500/30'),
+                label: 'shadow-blue-500/30',
+                cls: 'shadow-blue-500/30',
+              ),
               _ColoredTile(
-                  label: 'shadow-emerald-500/40', cls: 'shadow-emerald-500/40'),
+                label: 'shadow-emerald-500/40',
+                cls: 'shadow-emerald-500/40',
+              ),
             ],
           ),
         ),
@@ -75,7 +83,8 @@ class _ColoredTile extends StatelessWidget {
       className: 'flex flex-col gap-2 items-center',
       children: [
         WDiv(
-          className: '''
+          className:
+              '''
             w-24 h-24 rounded-lg
             bg-white dark:bg-slate-800
             shadow-lg $cls

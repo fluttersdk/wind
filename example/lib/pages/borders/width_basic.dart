@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Border Width Example Page - demonstrates border width utilities.
 class WidthBasicPage extends StatelessWidget {

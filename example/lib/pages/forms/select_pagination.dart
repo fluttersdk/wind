@@ -1,6 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Pagination and tagging WSelect example.
 class SelectPaginationExamplePage extends StatefulWidget {
@@ -57,8 +58,8 @@ class _SelectPaginationExamplePageState
     var filtered = query.isEmpty
         ? allUsers
         : allUsers
-            .where((u) => u.label.toLowerCase().contains(query.toLowerCase()))
-            .toList();
+              .where((u) => u.label.toLowerCase().contains(query.toLowerCase()))
+              .toList();
     final end = (start + 10).clamp(0, filtered.length);
     if (start >= filtered.length) return [];
     return filtered.sublist(start, end);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,8 +10,7 @@ class SizingHeightExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Height',
-      description:
-          'h-{n} mirrors w-{n} on the vertical axis. h-screen reaches the full viewport. h-full needs a constrained parent.',
+      description: 'h-{n} mirrors w-{n} on the vertical axis. h-screen reaches the full viewport. h-full needs a constrained parent.',
       gradient: 'from-yellow-500 to-orange-500',
       children: [
         ExampleSection(
@@ -41,8 +40,7 @@ class SizingHeightExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Min and Max Height',
-          description:
-              'min-h-{n} forces a floor; max-h-{n} caps the height. Combine with overflow-y-auto when content can grow.',
+          description: 'min-h-{n} forces a floor; max-h-{n} caps the height. Combine with overflow-y-auto when content can grow.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: [
@@ -93,9 +91,7 @@ class _HBar extends StatelessWidget {
           label,
           className: 'font-mono text-xs text-slate-500 dark:text-slate-400',
         ),
-        WDiv(
-          className: '$heightClass w-12 rounded bg-orange-500',
-        ),
+        WDiv(className: '$heightClass w-12 rounded bg-orange-500'),
       ],
     );
   }

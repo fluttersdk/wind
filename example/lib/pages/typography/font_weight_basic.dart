@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class FontWeightBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Font Weight',
-      description:
-          'Nine named weights from font-thin (100) through font-black (900). Every step maps directly to a Flutter FontWeight constant.',
+      description: 'Nine named weights from font-thin (100) through font-black (900). Every step maps directly to a Flutter FontWeight constant.',
       gradient: 'from-indigo-500 to-violet-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each row applies a different font-{name}. Watch the strokes thicken from top to bottom.',
+          description: 'Each row applies a different font-{name}. Watch the strokes thicken from top to bottom.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -35,8 +33,7 @@ class FontWeightBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Each name maps to a numeric weight that Flutter exposes as FontWeight.wN.',
+          description: 'Each name maps to a numeric weight that Flutter exposes as FontWeight.wN.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -52,18 +49,15 @@ class FontWeightBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Responsive Weight',
-          description:
-              'Normal on mobile, bold on md+. Useful for headings that scale up on desktop.',
+          description: 'Normal on mobile, bold on md+. Useful for headings that scale up on desktop.',
           child: const WText(
             'Responsive Weight',
-            className:
-                'font-normal md:font-bold text-xl text-slate-900 dark:text-white',
+            className: 'font-normal md:font-bold text-xl text-slate-900 dark:text-white',
           ),
         ),
         ExampleSection(
           title: 'Arbitrary Weight',
-          description:
-              'font-[N] accepts an integer. Wind maps it to the nearest standard weight.',
+          description: 'font-[N] accepts an integer. Wind maps it to the nearest standard weight.',
           child: const WText(
             'font-[550]',
             className: 'font-[550] text-lg text-slate-900 dark:text-white',

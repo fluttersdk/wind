@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Example page demonstrating combined transition utilities with real-world patterns.
 class TransitionCombinedPage extends StatelessWidget {
@@ -117,8 +117,7 @@ class TransitionCombinedPage extends StatelessWidget {
                           'bg-blue-100 dark:bg-blue-900 px-3 py-1 rounded-full',
                       child: WText(
                         'Tag',
-                        className:
-                            'text-blue-600 dark:text-blue-300 text-sm font-medium',
+                        className: 'text-blue-600 dark:text-blue-300 text-sm font-medium',
                       ),
                     ),
                   ],
@@ -178,7 +177,8 @@ class TransitionCombinedPage extends StatelessWidget {
     return WAnchor(
       onTap: () {},
       child: WDiv(
-        className: '''
+        className:
+            '''
           $colorClasses duration-300 ease-in-out 
           w-[56px] h-[56px] rounded-xl shadow-sm hover:shadow-lg
         ''',

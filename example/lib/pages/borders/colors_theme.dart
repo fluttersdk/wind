@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Border Colors Example Page - demonstrates theme color utilities.
 class ColorsThemePage extends StatelessWidget {
@@ -142,8 +142,9 @@ class _OpacityBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final opacityClass =
-        opacity == '100' ? 'border-rose-500' : 'border-rose-500/$opacity';
+    final opacityClass = opacity == '100'
+        ? 'border-rose-500'
+        : 'border-rose-500/$opacity';
     return WDiv(
       className: 'flex flex-col items-center gap-2',
       children: [

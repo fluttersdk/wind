@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// WPopover alignment examples showing all 6 alignment options.
 class PopoverAlignmentExamplePage extends StatelessWidget {
@@ -132,7 +132,8 @@ class PopoverAlignmentExamplePage extends StatelessWidget {
         rounded-lg shadow-lg
       ''',
       triggerBuilder: (context, isOpen, isHovering) => WDiv(
-        className: '''
+        className:
+            '''
           px-4 py-2 rounded-lg
           bg-gray-800 dark:bg-gray-700
           ${isOpen ? 'ring-2 ring-blue-400' : ''}

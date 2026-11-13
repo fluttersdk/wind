@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,16 +10,15 @@ class ThemeBindingExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Theme Binding',
-      description:
-          'Sync WindThemeData with Flutter\'s MaterialApp ThemeData. Native widgets pick up Wind colors and switch with dark mode automatically.',
+      description: 'Sync WindThemeData with Flutter\'s MaterialApp ThemeData. Native widgets pick up Wind colors and switch with dark mode automatically.',
       gradient: 'from-sky-500 to-indigo-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'The builder pattern hands you a controller. controller.toThemeData() emits a Material ThemeData wired to Wind tokens.',
+          description: 'The builder pattern hands you a controller. controller.toThemeData() emits a Material ThemeData wired to Wind tokens.',
           child: _CodeBlock(
-            code: 'WindTheme(\n'
+            code:
+                'WindTheme(\n'
                 '  data: WindThemeData(\n'
                 '    colors: {\n'
                 '      "primary": Colors.indigo,\n'
@@ -37,8 +36,7 @@ class ThemeBindingExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Why Bind Themes',
-          description:
-              'Binding gives you a single source of truth for colors, typography, and brightness across both Wind and Material widgets.',
+          description: 'Binding gives you a single source of truth for colors, typography, and brightness across both Wind and Material widgets.',
           child: WDiv(
             className: 'grid grid-cols-1 md:grid-cols-3 gap-3',
             children: const [
@@ -50,33 +48,28 @@ class ThemeBindingExamplePage extends StatelessWidget {
               _BenefitTile(
                 icon: Icons.swap_vert,
                 title: 'Inheritance',
-                body:
-                    'Standard Flutter widgets pick up Wind fonts and colors automatically.',
+                body: 'Standard Flutter widgets pick up Wind fonts and colors automatically.',
               ),
               _BenefitTile(
                 icon: Icons.brightness_6,
                 title: 'Automation',
-                body:
-                    'Toggling Wind dark mode flips MaterialApp.brightness in lockstep.',
+                body: 'Toggling Wind dark mode flips MaterialApp.brightness in lockstep.',
               ),
             ],
           ),
         ),
         ExampleSection(
           title: 'Toggling Themes',
-          description:
-              'The toggle button in this page\'s header calls the exact line below. Try it now; both Wind utilities and Material widgets switch together.',
-          child: _CodeBlock(
-            code: 'context.windTheme.toggleTheme();',
-          ),
+          description: 'The toggle button in this page\'s header calls the exact line below. Try it now; both Wind utilities and Material widgets switch together.',
+          child: _CodeBlock(code: 'context.windTheme.toggleTheme();'),
         ),
         const _MappingDemo(),
         ExampleSection(
           title: 'Static Binding',
-          description:
-              'When you do not need runtime toggling, bind once during init and skip the builder.',
+          description: 'When you do not need runtime toggling, bind once during init and skip the builder.',
           child: _CodeBlock(
-            code: 'final theme = WindThemeData(\n'
+            code:
+                'final theme = WindThemeData(\n'
                 '  brightness: Brightness.dark,\n'
                 '  colors: {"primary": Colors.purple},\n'
                 ');\n\n'
@@ -91,31 +84,21 @@ class ThemeBindingExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Mapping Reference',
-          description:
-              'How toThemeData() converts Wind tokens into Flutter ThemeData fields.',
+          description: 'How toThemeData() converts Wind tokens into Flutter ThemeData fields.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
-              _MappingRow(
-                from: 'colors["primary"]',
-                to: 'colorScheme.primary',
-              ),
+              _MappingRow(from: 'colors["primary"]', to: 'colorScheme.primary'),
               _MappingRow(
                 from: 'colors["secondary"]',
                 to: 'colorScheme.secondary',
               ),
-              _MappingRow(
-                from: 'colors["error"]',
-                to: 'colorScheme.error',
-              ),
+              _MappingRow(from: 'colors["error"]', to: 'colorScheme.error'),
               _MappingRow(
                 from: 'colors["background"]',
                 to: 'scaffoldBackgroundColor',
               ),
-              _MappingRow(
-                from: 'brightness',
-                to: 'brightness',
-              ),
+              _MappingRow(from: 'brightness', to: 'brightness'),
               _MappingRow(
                 from: 'fontFamilies["sans"]',
                 to: 'textTheme.fontFamily',
@@ -143,8 +126,7 @@ class _MappingDemo extends StatelessWidget {
 
     return ExampleSection(
       title: 'Live Mapping',
-      description:
-          'These swatches read directly from Theme.of(context).colorScheme. Toggling dark mode rebuilds them through the WindTheme controller.',
+      description: 'These swatches read directly from Theme.of(context).colorScheme. Toggling dark mode rebuilds them through the WindTheme controller.',
       child: WDiv(
         className: 'grid grid-cols-2 md:grid-cols-4 gap-3',
         children: entries.map((entry) {
@@ -201,18 +183,9 @@ class _BenefitTile extends StatelessWidget {
         border border-slate-200 dark:border-slate-700
       ''',
       children: [
-        WIcon(
-          icon,
-          className: 'w-5 h-5 text-sky-600 dark:text-sky-400',
-        ),
-        WText(
-          title,
-          className: 'font-semibold text-slate-900 dark:text-white',
-        ),
-        WText(
-          body,
-          className: 'text-sm text-slate-600 dark:text-slate-400',
-        ),
+        WIcon(icon, className: 'w-5 h-5 text-sky-600 dark:text-sky-400'),
+        WText(title, className: 'font-semibold text-slate-900 dark:text-white'),
+        WText(body, className: 'text-sm text-slate-600 dark:text-slate-400'),
       ],
     );
   }
@@ -270,10 +243,7 @@ class _CodeBlock extends StatelessWidget {
         text-emerald-400
         overflow-x-auto
       ''',
-      child: WText(
-        code,
-        className: 'whitespace-pre text-emerald-400',
-      ),
+      child: WText(code, className: 'whitespace-pre text-emerald-400'),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class FlexBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Flex Direction',
-      description:
-          'flex-row puts children left to right (default). flex-col stacks them top to bottom. Reverse variants flip the axis without reordering the source list.',
+      description: 'flex-row puts children left to right (default). flex-col stacks them top to bottom. Reverse variants flip the axis without reordering the source list.',
       gradient: 'from-orange-500 to-red-600',
       children: [
         ExampleSection(
           title: 'Row (Default)',
-          description:
-              'Just flex creates a horizontal Row. gap-2 inserts the spacer between siblings.',
+          description: 'Just flex creates a horizontal Row. gap-2 inserts the spacer between siblings.',
           child: WDiv(
             className: '''
               flex gap-2 p-4 rounded-lg
@@ -32,8 +30,7 @@ class FlexBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Column',
-          description:
-              'flex-col rewires the Flutter widget to a Column. gap-* still works.',
+          description: 'flex-col rewires the Flutter widget to a Column. gap-* still works.',
           child: WDiv(
             className: '''
               flex flex-col gap-2 p-4 rounded-lg
@@ -48,8 +45,7 @@ class FlexBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Reverse',
-          description:
-              'flex-row-reverse mirrors the axis. Children stay in source order but render right-to-left.',
+          description: 'flex-row-reverse mirrors the axis. Children stay in source order but render right-to-left.',
           child: WDiv(
             className: '''
               flex flex-row-reverse gap-2 p-4 rounded-lg
@@ -64,8 +60,7 @@ class FlexBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Responsive Direction',
-          description:
-              'Column on mobile, row on md+. Same children, different shape per breakpoint.',
+          description: 'Column on mobile, row on md+. Same children, different shape per breakpoint.',
           child: WDiv(
             className: '''
               flex flex-col md:flex-row gap-2 p-4 rounded-lg

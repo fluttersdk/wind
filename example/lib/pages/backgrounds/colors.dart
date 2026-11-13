@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Background Colors Example
 /// Demonstrates background color utilities: bg-{color}-{shade}, opacity, arbitrary
@@ -133,8 +133,7 @@ class BackgroundColorsPage extends StatelessWidget {
                     ),
                   ),
                   WDiv(
-                    className:
-                        'bg-transparent p-4 rounded-lg border border-dashed border-gray-400',
+                    className: 'bg-transparent p-4 rounded-lg border border-dashed border-gray-400',
                     child: WText(
                       'bg-transparent',
                       className: 'text-gray-600 font-mono text-sm',

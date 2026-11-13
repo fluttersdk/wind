@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -110,10 +110,7 @@ class _BodyCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return WDiv(
       className: 'flex-1',
-      child: WText(
-        value,
-        className: 'text-slate-700 dark:text-slate-300',
-      ),
+      child: WText(value, className: 'text-slate-700 dark:text-slate-300'),
     );
   }
 }
@@ -131,10 +128,7 @@ class _StretchCard extends StatelessWidget {
         bg-white dark:bg-slate-800
         border border-slate-200 dark:border-slate-700
       ''',
-      child: WText(
-        label,
-        className: 'text-slate-900 dark:text-white',
-      ),
+      child: WText(label, className: 'text-slate-900 dark:text-white'),
     );
   }
 }

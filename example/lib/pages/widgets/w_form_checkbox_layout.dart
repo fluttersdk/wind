@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -21,8 +21,7 @@ class _WFormCheckboxLayoutExamplePageState
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Form Checkbox Layout',
-      description:
-          'WFormCheckbox stacks checkbox + label horizontally and hint/error below. label / labelText / hint / errorClassName all tunable.',
+      description: 'WFormCheckbox stacks checkbox + label horizontally and hint/error below. label / labelText / hint / errorClassName all tunable.',
       gradient: 'from-emerald-500 to-green-600',
       children: [
         ExampleSection(
@@ -42,8 +41,7 @@ class _WFormCheckboxLayoutExamplePageState
         ),
         ExampleSection(
           title: 'Bold Label',
-          description:
-              'labelClassName lets you escalate the label to a primary heading.',
+          description: 'labelClassName lets you escalate the label to a primary heading.',
           child: WFormCheckbox(
             value: _marketing,
             onChanged: (v) => setState(() => _marketing = v),
@@ -60,8 +58,7 @@ class _WFormCheckboxLayoutExamplePageState
         ),
         ExampleSection(
           title: 'Custom Error Styling',
-          description:
-              'errorClassName takes any Wind className. Required state surfaces a bold red message.',
+          description: 'errorClassName takes any Wind className. Required state surfaces a bold red message.',
           child: Form(
             child: WFormCheckbox(
               value: _danger,

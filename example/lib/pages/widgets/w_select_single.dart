@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -19,14 +19,12 @@ class _WSelectSingleExamplePageState extends State<WSelectSingleExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Single-Select',
-      description:
-          'Default mode of WSelect. Pick one value from a list. Pair searchable: true with longer lists for filtering.',
+      description: 'Default mode of WSelect. Pick one value from a list. Pair searchable: true with longer lists for filtering.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Three options. The trigger displays the selected label or placeholder.',
+          description: 'Three options. The trigger displays the selected label or placeholder.',
           child: WSelect<String>(
             value: _fruit,
             options: const [
@@ -51,8 +49,7 @@ class _WSelectSingleExamplePageState extends State<WSelectSingleExamplePage> {
         ),
         ExampleSection(
           title: 'Searchable',
-          description:
-              'searchable: true adds a filter input on top of the list. searchPlaceholder customizes the prompt.',
+          description: 'searchable: true adds a filter input on top of the list. searchPlaceholder customizes the prompt.',
           child: WSelect<String>(
             value: _country,
             searchable: true,

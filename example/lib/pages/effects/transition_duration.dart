@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Example page demonstrating transition duration utilities.
 class TransitionDurationPage extends StatelessWidget {
@@ -119,7 +119,8 @@ class TransitionDurationPage extends StatelessWidget {
     return WAnchor(
       onTap: () {},
       child: WDiv(
-        className: '''
+        className:
+            '''
           bg-purple-500 hover:bg-pink-600 $durationClass
           px-6 py-4 rounded-xl shadow-md hover:shadow-xl
         ''',

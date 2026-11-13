@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class GridColsExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Grid Template Columns',
-      description:
-          'grid-cols-{n} sets the column count. Any positive integer works; Wind is not limited to the Tailwind 1-12 scale.',
+      description: 'grid-cols-{n} sets the column count. Any positive integer works; Wind is not limited to the Tailwind 1-12 scale.',
       gradient: 'from-green-500 to-teal-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Pair grid with grid-cols-{n} to lay children out in even columns. gap-{n} spaces them apart.',
+          description: 'Pair grid with grid-cols-{n} to lay children out in even columns. gap-{n} spaces them apart.',
           child: WDiv(
             className: 'grid grid-cols-3 gap-3',
             children: List.generate(
@@ -27,18 +25,14 @@ class GridColsExamplePage extends StatelessWidget {
                   h-16 rounded-lg flex items-center justify-center
                   bg-green-500
                 ''',
-                child: WText(
-                  '${i + 1}',
-                  className: 'text-white font-bold',
-                ),
+                child: WText('${i + 1}', className: 'text-white font-bold'),
               ),
             ),
           ),
         ),
         ExampleSection(
           title: 'Column Counts',
-          description:
-              'Each row below switches grid-cols. Same children, different layout.',
+          description: 'Each row below switches grid-cols. Same children, different layout.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: const [
@@ -50,8 +44,7 @@ class GridColsExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Quick Reference',
-          description:
-              'Default scale covers 1 to 12 columns. Any other integer also resolves correctly.',
+          description: 'Default scale covers 1 to 12 columns. Any other integer also resolves correctly.',
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
@@ -127,9 +120,7 @@ class _GridRow extends StatelessWidget {
           className: 'grid grid-cols-$cols gap-2',
           children: List.generate(
             cols,
-            (i) => WDiv(
-              className: 'h-10 rounded $color',
-            ),
+            (i) => WDiv(className: 'h-10 rounded $color'),
           ),
         ),
       ],
@@ -181,10 +172,7 @@ class _StatCard extends StatelessWidget {
         border border-slate-200 dark:border-slate-700
       ''',
       children: [
-        WText(
-          label,
-          className: 'text-sm text-slate-500 dark:text-slate-400',
-        ),
+        WText(label, className: 'text-sm text-slate-500 dark:text-slate-400'),
         WText(
           value,
           className: 'text-2xl font-bold text-slate-900 dark:text-white',

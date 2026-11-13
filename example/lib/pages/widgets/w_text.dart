@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class WTextExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WText',
-      description:
-          'Utility-styled text. text-{size}, font-{weight}, text-{color}, text-{align} compose freely; supports state prefixes and dark mode pairs.',
+      description: 'Utility-styled text. text-{size}, font-{weight}, text-{color}, text-{align} compose freely; supports state prefixes and dark mode pairs.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'One className string sets size, weight, color, alignment, and line height in one go.',
+          description: 'One className string sets size, weight, color, alignment, and line height in one go.',
           child: WText(
             'Design is not just what it looks like and feels like.',
             className: '''
@@ -32,16 +30,26 @@ class WTextExamplePage extends StatelessWidget {
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
-              WText('text-xs',
-                  className: 'text-xs text-slate-900 dark:text-white'),
-              WText('text-base',
-                  className: 'text-base text-slate-900 dark:text-white'),
-              WText('text-xl',
-                  className: 'text-xl text-slate-900 dark:text-white'),
-              WText('text-3xl',
-                  className: 'text-3xl text-slate-900 dark:text-white'),
-              WText('text-5xl',
-                  className: 'text-5xl text-slate-900 dark:text-white'),
+              WText(
+                'text-xs',
+                className: 'text-xs text-slate-900 dark:text-white',
+              ),
+              WText(
+                'text-base',
+                className: 'text-base text-slate-900 dark:text-white',
+              ),
+              WText(
+                'text-xl',
+                className: 'text-xl text-slate-900 dark:text-white',
+              ),
+              WText(
+                'text-3xl',
+                className: 'text-3xl text-slate-900 dark:text-white',
+              ),
+              WText(
+                'text-5xl',
+                className: 'text-5xl text-slate-900 dark:text-white',
+              ),
             ],
           ),
         ),
@@ -51,18 +59,23 @@ class WTextExamplePage extends StatelessWidget {
           child: WDiv(
             className: 'flex flex-col gap-1',
             children: const [
-              WText('font-thin',
-                  className:
-                      'font-thin text-lg text-slate-900 dark:text-white'),
-              WText('font-normal',
-                  className:
-                      'font-normal text-lg text-slate-900 dark:text-white'),
-              WText('font-bold',
-                  className:
-                      'font-bold text-lg text-slate-900 dark:text-white'),
-              WText('font-bold italic',
-                  className:
-                      'font-bold italic text-lg text-slate-900 dark:text-white'),
+              WText(
+                'font-thin',
+                className: 'font-thin text-lg text-slate-900 dark:text-white',
+              ),
+              WText(
+                'font-normal',
+                className: 'font-normal text-lg text-slate-900 dark:text-white',
+              ),
+              WText(
+                'font-bold',
+                className: 'font-bold text-lg text-slate-900 dark:text-white',
+              ),
+              WText(
+                'font-bold italic',
+                className:
+                    'font-bold italic text-lg text-slate-900 dark:text-white',
+              ),
             ],
           ),
         ),
@@ -82,8 +95,7 @@ class WTextExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Layout Compose',
-          description:
-              'WText accepts padding, background, and borders; Wind auto-wraps in Container.',
+          description: 'WText accepts padding, background, and borders; Wind auto-wraps in Container.',
           child: WText(
             'Alert: build failed at 14:32. Please retry.',
             className: '''

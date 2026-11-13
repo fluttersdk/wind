@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Hero Card Example - A showcase card for the Wind plugin landing page
 /// Built entirely with Wind widgets
@@ -20,8 +20,7 @@ class HeroCardExamplePage extends StatelessWidget {
                 className: "flex items-center gap-4",
                 children: [
                   WImage(
-                    src:
-                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+                    src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
                     className: "w-20 h-20 rounded-full",
                   ),
                   WDiv(

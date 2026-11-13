@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -20,8 +20,7 @@ class _WInputSearchExamplePageState extends State<WInputSearchExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Search & Adornments',
-      description:
-          'prefix / suffix slots accept any Widget. Pair with WIcon for search bars, password toggles, and clear buttons.',
+      description: 'prefix / suffix slots accept any Widget. Pair with WIcon for search bars, password toggles, and clear buttons.',
       gradient: 'from-blue-500 to-cyan-600',
       children: [
         ExampleSection(
@@ -48,15 +47,13 @@ class _WInputSearchExamplePageState extends State<WInputSearchExamplePage> {
         ),
         ExampleSection(
           title: 'Password Toggle',
-          description:
-              'suffix slot holds a WButton that toggles InputType.password / text.',
+          description: 'suffix slot holds a WButton that toggles InputType.password / text.',
           child: WInput(
             type: _obscure ? InputType.password : InputType.text,
             placeholder: 'Enter password',
             suffix: WButton(
               onTap: () => setState(() => _obscure = !_obscure),
-              className:
-                  'p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 duration-150',
+              className: 'p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 duration-150',
               child: WIcon(
                 _obscure
                     ? Icons.visibility_outlined
@@ -74,8 +71,7 @@ class _WInputSearchExamplePageState extends State<WInputSearchExamplePage> {
         ),
         ExampleSection(
           title: 'Clear Button',
-          description:
-              'Show a clear button only when the field has text. Tap clears value.',
+          description: 'Show a clear button only when the field has text. Tap clears value.',
           child: WInput(
             value: _clearable,
             onChanged: (v) => setState(() => _clearable = v),
@@ -84,11 +80,11 @@ class _WInputSearchExamplePageState extends State<WInputSearchExamplePage> {
                 ? null
                 : WButton(
                     onTap: () => setState(() => _clearable = ''),
-                    className:
-                        'p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700',
-                    child: WIcon(Icons.close,
-                        className:
-                            'text-slate-500 dark:text-slate-400 w-4 h-4'),
+                    className: 'p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700',
+                    child: WIcon(
+                      Icons.close,
+                      className: 'text-slate-500 dark:text-slate-400 w-4 h-4',
+                    ),
                   ),
             className: '''
               w-full px-3 py-2 rounded-lg

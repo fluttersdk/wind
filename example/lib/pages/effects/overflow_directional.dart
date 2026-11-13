@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class OverflowDirectionalExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Directional Overflow',
-      description:
-          'overflow-x-{mode} and overflow-y-{mode} target a single axis. Useful for horizontal tab bars or tall list panels.',
+      description: 'overflow-x-{mode} and overflow-y-{mode} target a single axis. Useful for horizontal tab bars or tall list panels.',
       gradient: 'from-purple-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Horizontal Scroll',
-          description:
-              'overflow-x-auto creates a horizontal scroll lane. Children stay at their intrinsic width.',
+          description: 'overflow-x-auto creates a horizontal scroll lane. Children stay at their intrinsic width.',
           child: WDiv(
             className: '''
               overflow-x-auto p-2 rounded-lg
@@ -44,8 +42,7 @@ class OverflowDirectionalExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Vertical Scroll',
-          description:
-              'overflow-y-scroll always shows a vertical scroll lane, even when content fits.',
+          description: 'overflow-y-scroll always shows a vertical scroll lane, even when content fits.',
           child: WDiv(
             className: '''
               overflow-y-scroll h-40 p-3 rounded-lg
@@ -68,8 +65,7 @@ class OverflowDirectionalExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Cross-Axis Hidden',
-          description:
-              'overflow-x-scroll + overflow-y-hidden gives a strict horizontal lane with no vertical bleed.',
+          description: 'overflow-x-scroll + overflow-y-hidden gives a strict horizontal lane with no vertical bleed.',
           child: WDiv(
             className: '''
               overflow-x-scroll overflow-y-hidden h-24
@@ -86,10 +82,7 @@ class OverflowDirectionalExamplePage extends StatelessWidget {
                     bg-purple-500
                     flex items-center justify-center
                   ''',
-                  child: WText(
-                    '${i + 1}',
-                    className: 'text-white font-bold',
-                  ),
+                  child: WText('${i + 1}', className: 'text-white font-bold'),
                 ),
               ),
             ),
@@ -102,14 +95,21 @@ class OverflowDirectionalExamplePage extends StatelessWidget {
             className: 'flex flex-col gap-1',
             children: const [
               _RefRow(
-                  cls: 'overflow-x-auto',
-                  desc: 'Scroll horizontally when needed'),
+                cls: 'overflow-x-auto',
+                desc: 'Scroll horizontally when needed',
+              ),
               _RefRow(
-                  cls: 'overflow-y-scroll', desc: 'Always scroll vertically'),
+                cls: 'overflow-y-scroll',
+                desc: 'Always scroll vertically',
+              ),
               _RefRow(
-                  cls: 'overflow-x-hidden', desc: 'Clip horizontal overflow'),
+                cls: 'overflow-x-hidden',
+                desc: 'Clip horizontal overflow',
+              ),
               _RefRow(
-                  cls: 'overflow-y-visible', desc: 'Allow vertical overflow'),
+                cls: 'overflow-y-visible',
+                desc: 'Allow vertical overflow',
+              ),
             ],
           ),
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 /// Grid Gap Example
 /// Demonstrates gap utilities for grid spacing
@@ -68,15 +68,13 @@ class GridGapExamplePage extends StatelessWidget {
                         'px-2 py-1 rounded bg-indigo-100 dark:bg-indigo-900/50',
                     child: WText(
                       'Different H/V gaps',
-                      className:
-                          'text-xs font-mono text-indigo-700 dark:text-indigo-300',
+                      className: 'text-xs font-mono text-indigo-700 dark:text-indigo-300',
                     ),
                   ),
                 ],
               ),
               WDiv(
-                className:
-                    'grid grid-cols-3 gap-x-4 gap-y-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
+                className: 'grid grid-cols-3 gap-x-4 gap-y-2 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg',
                 children: List.generate(
                   6,
                   (i) => _buildBox('${i + 1}', 'bg-fuchsia-500'),

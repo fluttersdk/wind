@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,40 +10,50 @@ class WIconSizingExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Icon Sizing',
-      description:
-          'WIcon supports two sizing modes. Explicit w-{n} h-{n} wins; otherwise text-{size} sets both size and the surrounding text rhythm.',
+      description: 'WIcon supports two sizing modes. Explicit w-{n} h-{n} wins; otherwise text-{size} sets both size and the surrounding text rhythm.',
       gradient: 'from-amber-500 to-orange-500',
       children: [
         ExampleSection(
           title: 'Typography Sizing',
-          description:
-              'text-{size} pulls from fontSizes scale. Icons inherit the same line-height as adjacent text.',
+          description: 'text-{size} pulls from fontSizes scale. Icons inherit the same line-height as adjacent text.',
           child: WDiv(
             className: 'flex flex-col gap-3',
             children: [
               _SizeRow(
-                  size: 'text-sm',
-                  child: WIcon(Icons.info,
-                      className: 'text-sm text-amber-600 dark:text-amber-400')),
+                size: 'text-sm',
+                child: WIcon(
+                  Icons.info,
+                  className: 'text-sm text-amber-600 dark:text-amber-400',
+                ),
+              ),
               _SizeRow(
-                  size: 'text-base',
-                  child: WIcon(Icons.info,
-                      className:
-                          'text-base text-amber-600 dark:text-amber-400')),
+                size: 'text-base',
+                child: WIcon(
+                  Icons.info,
+                  className: 'text-base text-amber-600 dark:text-amber-400',
+                ),
+              ),
               _SizeRow(
-                  size: 'text-xl',
-                  child: WIcon(Icons.info,
-                      className: 'text-xl text-amber-600 dark:text-amber-400')),
+                size: 'text-xl',
+                child: WIcon(
+                  Icons.info,
+                  className: 'text-xl text-amber-600 dark:text-amber-400',
+                ),
+              ),
               _SizeRow(
-                  size: 'text-3xl',
-                  child: WIcon(Icons.info,
-                      className:
-                          'text-3xl text-amber-600 dark:text-amber-400')),
+                size: 'text-3xl',
+                child: WIcon(
+                  Icons.info,
+                  className: 'text-3xl text-amber-600 dark:text-amber-400',
+                ),
+              ),
               _SizeRow(
-                  size: 'text-5xl',
-                  child: WIcon(Icons.info,
-                      className:
-                          'text-5xl text-amber-600 dark:text-amber-400')),
+                size: 'text-5xl',
+                child: WIcon(
+                  Icons.info,
+                  className: 'text-5xl text-amber-600 dark:text-amber-400',
+                ),
+              ),
             ],
           ),
         ),
@@ -76,10 +86,7 @@ class WIconSizingExamplePage extends StatelessWidget {
                 cls: 'w-12 h-12',
                 desc: 'Explicit (48px); overrides any text-{size}',
               ),
-              _RefRow(
-                cls: 'text-3xl w-6 h-6',
-                desc: 'w/h wins → 24px',
-              ),
+              _RefRow(cls: 'text-3xl w-6 h-6', desc: 'w/h wins → 24px'),
             ],
           ),
         ),
@@ -127,8 +134,10 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-amber-700 dark:text-amber-400'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-amber-700 dark:text-amber-400',
+        ),
         WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );

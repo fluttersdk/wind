@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,30 +10,35 @@ class DecorationStyleExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Decoration Style',
-      description:
-          'decoration-{style} changes the shape of the underline: solid (default), double, dotted, dashed, or wavy.',
+      description: 'decoration-{style} changes the shape of the underline: solid (default), double, dotted, dashed, or wavy.',
       gradient: 'from-orange-500 to-amber-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Five styles. Pair with decoration-{color} and decoration-{thickness} for fine control.',
+          description: 'Five styles. Pair with decoration-{color} and decoration-{thickness} for fine control.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
               _StyleRow(
-                  label: 'decoration-solid', cls: 'underline decoration-solid'),
+                label: 'decoration-solid',
+                cls: 'underline decoration-solid',
+              ),
               _StyleRow(
-                  label: 'decoration-double',
-                  cls: 'underline decoration-double'),
+                label: 'decoration-double',
+                cls: 'underline decoration-double',
+              ),
               _StyleRow(
-                  label: 'decoration-dotted',
-                  cls: 'underline decoration-dotted'),
+                label: 'decoration-dotted',
+                cls: 'underline decoration-dotted',
+              ),
               _StyleRow(
-                  label: 'decoration-dashed',
-                  cls: 'underline decoration-dashed'),
+                label: 'decoration-dashed',
+                cls: 'underline decoration-dashed',
+              ),
               _StyleRow(
-                  label: 'decoration-wavy', cls: 'underline decoration-wavy'),
+                label: 'decoration-wavy',
+                cls: 'underline decoration-wavy',
+              ),
             ],
           ),
         ),
@@ -98,9 +103,10 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className:
-                'font-mono text-sm text-orange-700 dark:text-orange-400'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-orange-700 dark:text-orange-400',
+        ),
         WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );

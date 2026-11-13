@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -33,8 +33,7 @@ class _WFormSelectExamplePageState extends State<WFormSelectExamplePage> {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WFormSelect',
-      description:
-          'FormField-wrapped WSelect. Validates against the active value; error: prefix activates on failure. Same options API as WSelect.',
+      description: 'FormField-wrapped WSelect. Validates against the active value; error: prefix activates on failure. Same options API as WSelect.',
       gradient: 'from-indigo-500 to-blue-600',
       children: [
         ExampleSection(
@@ -74,8 +73,10 @@ class _WFormSelectExamplePageState extends State<WFormSelectExamplePage> {
                     bg-indigo-600 hover:bg-indigo-700
                     text-white px-4 py-2 rounded-lg self-start
                   ''',
-                  child: const WText('Submit',
-                      className: 'text-white font-medium'),
+                  child: const WText(
+                    'Submit',
+                    className: 'text-white font-medium',
+                  ),
                 ),
                 WText(
                   'Saved: ${_saved ?? "—"}',
@@ -88,8 +89,7 @@ class _WFormSelectExamplePageState extends State<WFormSelectExamplePage> {
         ),
         ExampleSection(
           title: 'Searchable',
-          description:
-              'searchable: true adds an inline filter input. Inherits the same form validation.',
+          description: 'searchable: true adds an inline filter input. Inherits the same form validation.',
           child: Form(
             child: WFormSelect<String>(
               label: 'Programming Language',

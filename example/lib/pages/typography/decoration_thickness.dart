@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class DecorationThicknessExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Decoration Thickness',
-      description:
-          'decoration-{N} sets the underline thickness in pixels. Standard scale runs 0, 1, 2, 4, 8; brackets accept arbitrary values.',
+      description: 'decoration-{N} sets the underline thickness in pixels. Standard scale runs 0, 1, 2, 4, 8; brackets accept arbitrary values.',
       gradient: 'from-orange-500 to-amber-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'Each row uses a different decoration-{N}. Watch the underline get heavier as the number grows.',
+          description: 'Each row uses a different decoration-{N}. Watch the underline get heavier as the number grows.',
           child: WDiv(
             className: 'flex flex-col gap-2',
             children: const [
@@ -33,8 +31,7 @@ class DecorationThicknessExamplePage extends StatelessWidget {
           description: 'Brackets accept exact px values.',
           child: const WText(
             'decoration-[3px]',
-            className:
-                'underline decoration-[3px] text-lg text-slate-900 dark:text-white',
+            className: 'underline decoration-[3px] text-lg text-slate-900 dark:text-white',
           ),
         ),
       ],

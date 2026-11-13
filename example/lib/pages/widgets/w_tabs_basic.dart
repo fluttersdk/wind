@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -17,27 +17,25 @@ class _WTabsBasicExamplePageState extends State<WTabsBasicExamplePage> {
   static const List<String> _overviewLabels = [
     'Overview',
     'Activity',
-    'Settings'
+    'Settings',
   ];
   static const List<String> _pillLabels = [
     'All',
     'Open',
     'Resolved',
-    'Archived'
+    'Archived',
   ];
 
   @override
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'WTabs',
-      description:
-          'Controlled tabs. selected: state prefix activates on the active tab.',
+      description: 'Controlled tabs. selected: state prefix activates on the active tab.',
       gradient: 'from-rose-500 to-pink-600',
       children: [
         ExampleSection(
           title: 'Underline Tabs',
-          description:
-              'The selected tab shows an underline border via selected:border-b-2.',
+          description: 'The selected tab shows an underline border via selected:border-b-2.',
           child: WTabs(
             tabs: _overviewLabels,
             selectedIndex: _overviewTab,
@@ -90,15 +88,15 @@ class _WTabsBasicExamplePageState extends State<WTabsBasicExamplePage> {
     const panels = [
       (
         'Project Overview',
-        'The project is on track. 3 milestones completed, 2 remaining.'
+        'The project is on track. 3 milestones completed, 2 remaining.',
       ),
       (
         'Recent Activity',
-        'John Doe pushed 4 commits. Alice reviewed 2 pull requests.'
+        'John Doe pushed 4 commits. Alice reviewed 2 pull requests.',
       ),
       (
         'Settings',
-        'Notifications, permissions, and integrations are configured.'
+        'Notifications, permissions, and integrations are configured.',
       ),
     ];
     final (title, body) = panels[index];
@@ -113,10 +111,7 @@ class _WTabsBasicExamplePageState extends State<WTabsBasicExamplePage> {
           title,
           className: 'text-base font-semibold text-gray-900 dark:text-white',
         ),
-        WText(
-          body,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
-        ),
+        WText(body, className: 'text-sm text-gray-500 dark:text-gray-400'),
       ],
     );
   }
@@ -140,10 +135,7 @@ class _WTabsBasicExamplePageState extends State<WTabsBasicExamplePage> {
           title,
           className: 'text-base font-semibold text-gray-900 dark:text-white',
         ),
-        WText(
-          body,
-          className: 'text-sm text-gray-500 dark:text-gray-400',
-        ),
+        WText(body, className: 'text-sm text-gray-500 dark:text-gray-400'),
       ],
     );
   }

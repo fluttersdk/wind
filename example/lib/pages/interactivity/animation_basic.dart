@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,14 +10,12 @@ class InteractivityAnimationExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Animation',
-      description:
-          'animate-{spin|ping|pulse|bounce} adds a continuous motion to any widget. Drop-in for loaders, skeletons, badges, and attention nudges.',
+      description: 'animate-{spin|ping|pulse|bounce} adds a continuous motion to any widget. Drop-in for loaders, skeletons, badges, and attention nudges.',
       gradient: 'from-pink-500 to-rose-600',
       children: [
         ExampleSection(
           title: 'Basic Usage',
-          description:
-              'animate-spin on an icon = loader. animate-pulse on a placeholder = skeleton.',
+          description: 'animate-spin on an icon = loader. animate-pulse on a placeholder = skeleton.',
           child: WDiv(
             className: 'wrap gap-6 py-4 items-center',
             children: [
@@ -31,12 +29,10 @@ class InteractivityAnimationExamplePage extends StatelessWidget {
                 className: 'flex flex-col gap-2 w-48',
                 children: [
                   WDiv(
-                    className:
-                        'animate-pulse h-3 w-full rounded bg-slate-200 dark:bg-slate-700',
+                    className: 'animate-pulse h-3 w-full rounded bg-slate-200 dark:bg-slate-700',
                   ),
                   WDiv(
-                    className:
-                        'animate-pulse h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700',
+                    className: 'animate-pulse h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700',
                   ),
                 ],
               ),
@@ -68,8 +64,7 @@ class InteractivityAnimationExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Ping',
-          description:
-              'Element scales outward and fades (radar pulse / notification dot).',
+          description: 'Element scales outward and fades (radar pulse / notification dot).',
           child: WDiv(
             className: 'wrap gap-8 items-center py-6',
             children: const [
@@ -81,8 +76,7 @@ class InteractivityAnimationExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Pulse',
-          description:
-              'Smooth opacity in/out. Use for skeleton loaders and placeholders.',
+          description: 'Smooth opacity in/out. Use for skeleton loaders and placeholders.',
           child: WDiv(
             className: '''
               animate-pulse flex gap-4 items-center p-3 rounded-lg
@@ -169,14 +163,13 @@ class _PingDot extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           WDiv(
-            className: '''
+            className:
+                '''
               animate-ping w-8 h-8
               rounded-full bg-$color-400 opacity-75
             ''',
           ),
-          WDiv(
-            className: 'w-4 h-4 rounded-full bg-$color-500',
-          ),
+          WDiv(className: 'w-4 h-4 rounded-full bg-$color-500'),
         ],
       ),
     );
@@ -198,8 +191,10 @@ class _RefRow extends StatelessWidget {
         bg-slate-50 dark:bg-slate-700/40
       ''',
       children: [
-        WText(cls,
-            className: 'font-mono text-sm text-pink-700 dark:text-pink-400'),
+        WText(
+          cls,
+          className: 'font-mono text-sm text-pink-700 dark:text-pink-400',
+        ),
         WText(desc, className: 'text-sm text-slate-600 dark:text-slate-300'),
       ],
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 class ResponsiveExamplePage extends StatelessWidget {
   const ResponsiveExamplePage({super.key});
@@ -34,15 +34,13 @@ class ResponsiveExamplePage extends StatelessWidget {
 
           // Hidden on mobile, Flex on MD (768px) and up
           WDiv(
-            className:
-                "hidden md:flex w-64 h-24 bg-blue-500 text-white items-center justify-center rounded",
+            className: "hidden md:flex w-64 h-24 bg-blue-500 text-white items-center justify-center rounded",
             children: [Text("Desktop / Tablet (MD+)")],
           ),
 
           // Flex on mobile, Hidden on MD and up
           WDiv(
-            className:
-                "flex md:hidden w-64 h-24 bg-red-500 text-white items-center justify-center rounded",
+            className: "flex md:hidden w-64 h-24 bg-red-500 text-white items-center justify-center rounded",
             children: [Text("Mobile (Small)")],
           ),
         ],

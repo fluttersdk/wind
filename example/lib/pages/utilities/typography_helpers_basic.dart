@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 import '../../widgets/example_scaffold.dart';
 
@@ -10,8 +10,7 @@ class TypographyHelpersBasicExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExampleScaffold(
       title: 'Typography Helpers',
-      description:
-          'Dart API for type tokens: wFontSize(), wFontWeight(), context.wFontSizeExt(), context.wFontWeightExt(). Resolves theme values to Flutter primitives.',
+      description: 'Dart API for type tokens: wFontSize(), wFontWeight(), context.wFontSizeExt(), context.wFontWeightExt(). Resolves theme values to Flutter primitives.',
       gradient: 'from-amber-500 to-orange-500',
       children: [
         ExampleSection(
@@ -52,7 +51,8 @@ class TypographyHelpersBasicExamplePage extends StatelessWidget {
           description:
               'Iterate the full scale via context.windThemeData.fontSizes.',
           child: _CodeBlock(
-            code: 'final theme = context.windThemeData;\n\n'
+            code:
+                'final theme = context.windThemeData;\n\n'
                 'for (final entry in theme.fontSizes.entries) {\n'
                 '  print("\${entry.key}: \${entry.value}");\n'
                 '}\n\n'
@@ -62,8 +62,7 @@ class TypographyHelpersBasicExamplePage extends StatelessWidget {
         ),
         ExampleSection(
           title: 'Use With Material Widgets',
-          description:
-              'Apply Wind tokens to plain Text widgets where className is unavailable.',
+          description: 'Apply Wind tokens to plain Text widgets where className is unavailable.',
           child: Builder(
             builder: (context) {
               final size = context.wFontSizeExt('xl');
