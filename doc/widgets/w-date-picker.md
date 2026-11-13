@@ -470,7 +470,7 @@ WindTheme(
 )
 ```
 
-The calendar only reads shades `100` / `300` / `500` / `700` / `900`, so the partial swatch above is enough for it. Other `primary`-driven widgets read further shades (`WSelect` uses `400` / `600` / `700` for its raw icon colours); a missing shade safely falls back to the swatch's base colour rather than throwing, but if you share one `primary` across widgets, prefer a complete `50`-`950` swatch (e.g. a generated `MaterialColor`) so every shade renders as intended.
+The calendar only reads shades `100` / `300` / `500` / `700` / `900`, so the partial swatch above is enough for it. Other `primary`-driven widgets read further shades (`WSelect` uses `400` / `600` / `700` for its raw icon colours and class tokens such as `text-primary-800` for its selected chip text). A missing shade falls back to the swatch's base colour only for those raw icons, so nothing throws there; a class token such as `text-primary-800` resolves to nothing when its shade is absent, and the requested colour is not applied. If you share one `primary` across widgets, use a complete `50`-`950` swatch (e.g. a generated `MaterialColor`) so every shade renders as intended.
 
 <a name="related-documentation"></a>
 ## Related Documentation

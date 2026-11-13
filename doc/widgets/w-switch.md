@@ -40,7 +40,7 @@ WSwitch(
 | `thumbClassName` | `String?` | `null` | Utility classes for the thumb (the circular indicator), shape and colour only. The thumb is a flex child of the track; position it with `justify-start` / `checked:justify-end` on the track `className`, not with `translate-x-*` (Wind has no transform parser, so translate is a no-op). |
 | `disabled` | `bool` | `false` | Blocks tap and activates the `disabled:` prefix. |
 | `states` | `Set<String>?` | `null` | Extra custom states merged with built-in `checked` and `disabled`. |
-| `semanticLabel` | `String?` | `null` | Accessible label, forwarded to the inner `WAnchor`. It names the inner button node, not the outer node that carries the toggled state. Set this when the switch has no adjacent visible text label. |
+| `semanticLabel` | `String?` | `null` | Accessible label, forwarded to the inner `WAnchor`. It names the inner button node, not the outer node that carries the toggled state. A `WText` beside the switch is a visible label only, not a semantic one, so either set this or wrap the pair in `MergeSemantics` to publish one node carrying the text and the toggled state, as [WCheckbox](./w-checkbox.md#accessibility) shows. |
 
 <a name="constructor"></a>
 ## Constructor

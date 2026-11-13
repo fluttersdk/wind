@@ -126,7 +126,7 @@ WAnchor(
   onTap: () {},
   child: WIcon(
     Icons.check_circle,
-    className: 'text-green-500 dark:text-green-400 hover:text-green-600',
+    className: 'text-green-500 dark:text-green-400 hover:text-green-600 dark:hover:text-green-300',
   ),
 )
 ```

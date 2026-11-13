@@ -22,7 +22,7 @@ WAnchor(
   onTap: () {},
   child: WSvg(
     src: 'assets/icons/star.svg',
-    className: 'fill-yellow-500 hover:fill-yellow-600 w-6 h-6',
+    className: 'fill-yellow-500 dark:fill-yellow-400 hover:fill-yellow-600 dark:hover:fill-yellow-300 w-6 h-6',
   ),
 )
 ```
@@ -120,7 +120,7 @@ WAnchor(
 <a name="state-variants"></a>
 ## State Variants
 
-State prefixes need an ancestor that publishes state (`WAnchor`, `WButton`, `WPopover`); `WSvg` has none of its own.
+The interaction prefixes (`hover:`, `focus:`, `disabled:`) need an ancestor that publishes state (`WAnchor`, `WButton`, `WPopover`); `WSvg` has none of its own. Custom prefixes driven by the `states` prop and `dark:` do not need one.
 
 ```dart
 WAnchor(

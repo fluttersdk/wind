@@ -120,7 +120,7 @@ WAnchor(
   onTap: () {},
   child: WText(
     'Hover me',
-    className: 'text-gray-500 hover:text-blue-600',
+    className: 'text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400',
   ),
 )
 ```

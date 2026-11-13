@@ -256,7 +256,7 @@ WDynamic(
 
 ### Auto-Tracking with ID
 
-A `WInput`, `WCheckbox`, `WSelect` or `WDatePicker` with an `id` prop automatically stores its value in state. Other widgets, such as `WDiv`, do not track an `id`:
+A `WInput`, `WCheckbox`, `WSelect` or `WDatePicker` with an `id` prop stores its value in state after the user changes it. The `value` prop only sets the displayed initial value and does not write state, so an untouched field reads as `null`. Other widgets, such as `WDiv`, do not track an `id`:
 
 ```dart
 {

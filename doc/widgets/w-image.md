@@ -167,7 +167,7 @@ Creating circular avatars with borders.
 ```dart
 WImage(
   src: 'https://example.com/user.jpg',
-  className: 'w-16 h-16 rounded-full border-2 border-white object-cover',
+  className: 'w-16 h-16 rounded-full border-2 border-white dark:border-gray-800 object-cover',
 )
 ```
 

@@ -127,7 +127,7 @@ For direct gesture support (taps, long presses) or to create semantic buttons, u
 
 ```dart
 WDiv(
-  className: 'bg-blue-500 hover:bg-blue-600 duration-200',
+  className: 'bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 duration-200',
   child: WText('Interactive', className: 'text-white'),
 )
 ```

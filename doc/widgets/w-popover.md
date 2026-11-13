@@ -94,7 +94,7 @@ const WPopover({
 | `disabled` | `bool` | `false` | When true, the trigger will not respond to interactions and is not a Tab stop. |
 | `onOpen` | `VoidCallback?` | `null` | Callback fired when the popover is opened. |
 | `onClose` | `VoidCallback?` | `null` | Callback fired when the popover is closed. |
-| `autoFlip` | `bool` | `true` | When true, the popover flips its alignment to the opposite side if the natural position would render off-screen, and is held inside the viewport: pulled in horizontally, and capped vertically at the room on its side (the content needs `overflow-y-auto` or a scroll view to scroll). |
+| `autoFlip` | `bool` | `true` | When true, the popover flips its alignment to the opposite side if the natural position would render off-screen, and is held inside the viewport: pulled in horizontally, and capped vertically at the room on its side (the content needs `overflow-y-auto` or a scroll view to scroll). It never shrinks the panel: a fixed `width` (or `w-*`) wider than the screen still spills off it, so constrain fixed widths yourself. |
 
 <a name="layout-modes"></a>
 ## Layout Modes

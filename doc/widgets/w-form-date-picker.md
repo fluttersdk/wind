@@ -238,7 +238,7 @@ WFormDatePicker(
 )
 ```
 
-Two behaviours carry over from the raw widget. Once a day is picked, the field revalidates on every time step, not only on the day tap, because `onChanged` fires on each one; and `initialValue` seeds the field on first build only, the way `FormField` does, so changing it later does not move an already-picked value.
+Two behaviours carry over from the raw widget. Once a day is picked, every time step updates the field value, not only the day tap, because `onChanged` fires on each one; the validator runs on those changes only when an `autovalidateMode` other than the default `AutovalidateMode.disabled` is set (as above), and otherwise on `validate()`; and `initialValue` seeds the field on first build only, the way `FormField` does, so changing it later does not move an already-picked value.
 
 <a name="event-handling"></a>
 ## Event Handling
@@ -366,7 +366,8 @@ WindTheme(
     colors: {
       'red': MaterialColor(0xFFEF4444, {
         200: Color(0xFFFECACA), // Error ring color
-        500: Color(0xFFEF4444), // Error border color
+        400: Color(0xFFF87171), // Dark mode error text (errorClassName)
+        500: Color(0xFFEF4444), // Error border and error text color
       }),
     },
   ),

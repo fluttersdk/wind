@@ -149,7 +149,7 @@ WAnchor(
 )
 ```
 
-A `WDiv` whose only state classes are `hover:` or `active:` carries no focus node at all (its wrapper gets `trackFocus: false`): it cannot draw focus, so a stop on it was a key press that lit nothing. Hover and the primary focus chained down from an anchor above it still pass through.
+A `WDiv` whose only state classes are `hover:` or `active:` carries no focus node at all (its wrapper gets `trackFocus: false`): it cannot draw focus, so a stop on it was a key press that lit nothing. The primary focus chained down from an anchor above it still passes through; hover does not, because each wrapper publishes its own.
 
 One thing it no longer publishes is focus-within to its own descendants. A `focus:` class on a label reads the nearest wrapper, so in `WDiv(className: 'hover:bg-gray-50', children: [WText('Email', className: 'focus:text-blue-600'), WInput(...)])` the label stays gray while the field has focus. Give the row any `focus:` class of its own (`hover:bg-gray-50 focus:bg-gray-50`) and its wrapper keeps the node, so the label lights again.
 
@@ -209,7 +209,7 @@ WAnchor(
 WAnchor(
   onTap: () {},
   child: WDiv(
-    className: 'p-6 bg-white shadow hover:shadow-lg rounded-xl duration-300',
+    className: 'p-6 bg-white dark:bg-gray-800 shadow hover:shadow-lg rounded-xl duration-300',
     child: WText('Hover to see the shadow effect'),
   ),
 )
