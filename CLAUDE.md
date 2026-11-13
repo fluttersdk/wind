@@ -2,7 +2,7 @@
 
 Utility-first Flutter styling: Tailwind-syntax `className` strings become Flutter widget trees through a modular parsing pipeline (W-prefix widgets, token parsers, a `WindThemeData` of token scales).
 
-**Version:** 1.11.1 · **Dart:** >=3.4.0 · **Flutter:** >=3.27.0 · Runtime deps: `flutter_svg`, `wind_kit_diagnostics_contracts` (no mocking library, no state management library, no router).
+**Version:** 1.11.1 · **Dart:** >=3.4.0 · **Flutter:** >=3.27.0 · Runtime deps: `flutter_svg`, `material_ui`, `cupertino_ui`, `wind_kit_diagnostics_contracts` (no mocking library, no state management library, no router).
 
 Before changing structure, read [ARCHITECTURE.md](ARCHITECTURE.md). The user-facing surface is [README.md](README.md); the agent inventory is [llms.txt](llms.txt).
 
@@ -76,7 +76,7 @@ No production code without a failing test first. Zero analyzer issues, no format
 | Interpolating Dart into a className | Route conditions through `states:` and prefixed classes; interpolation breaks the parser cache |
 | A new sub-barrel | The package has one barrel, `wind_kit.dart` |
 | Renaming a `doc/` page or an example route | The docs site embeds the gallery and links pages by path; keep them stable |
-| Adding a runtime dependency | `flutter_svg` and the contracts package are the whole surface |
+| Adding a runtime dependency | `flutter_svg`, `material_ui`, `cupertino_ui` and the contracts package are the whole surface |
 | Changing a key of the contracts package's maps from this repo | The contract lives in `wind_kit_diagnostics_contracts`; a rename or removal there is a major bump across wind_kit and tapir |
 | Relative paths in `pubspec_overrides.yaml` | Use absolute ones; the file is never committed |
 

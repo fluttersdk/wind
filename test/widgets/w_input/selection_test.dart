@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
@@ -312,7 +312,7 @@ void main() {
     });
 
     // QA (7): WInput wires Cupertino handle controls on EVERY platform (it stays
-    // cupertino-only / no package:flutter/material.dart import), and the bare
+    // cupertino-only / no package:material_ui/material_ui.dart import), and the bare
     // harness never trips debugCheckHasMaterialLocalizations on any platform.
     group('cupertino-only handle controls', () {
       for (final TargetPlatform platform in TargetPlatform.values) {

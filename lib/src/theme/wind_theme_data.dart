@@ -1,24 +1,24 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../parser/wind_style.dart';
+import '../utils/color_utils.dart' show hexToColor;
+import 'defaults/animations.dart' as default_animations;
 import 'defaults/border_radius.dart' as default_border_radius;
 import 'defaults/border_widths.dart' as default_border_widths;
+import 'defaults/box_shadows.dart';
 import 'defaults/colors.dart' as default_colors;
 import 'defaults/containers.dart' as default_containers;
 import 'defaults/font_families.dart' as default_font_families;
 import 'defaults/font_sizes.dart' as default_font_sizes;
 import 'defaults/font_weights.dart' as default_font_weights;
 import 'defaults/leading.dart' as default_leading;
+import 'defaults/opacities.dart' as default_opacities;
+import 'defaults/ring_widths.dart' as default_ring_widths;
 import 'defaults/screens.dart' as default_screens;
 import 'defaults/tracking.dart' as default_tracking;
-import 'defaults/ring_widths.dart' as default_ring_widths;
-import '../utils/color_utils.dart' show hexToColor;
-import 'defaults/box_shadows.dart';
-import 'defaults/opacities.dart' as default_opacities;
-import 'defaults/z_indices.dart' as default_z_indices;
 import 'defaults/transitions.dart' as default_transitions;
-import 'defaults/animations.dart' as default_animations;
-import '../parser/wind_style.dart';
+import 'defaults/z_indices.dart' as default_z_indices;
 
 /// The REM unit used for sizing calculations.
 const int windRemUnit = 4;

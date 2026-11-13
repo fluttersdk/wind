@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wind_kit/wind_kit.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wind_kit/src/utils/color_utils.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 void main() {
   group('ColorUtils', () {

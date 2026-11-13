@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/services.dart';
@@ -817,7 +817,7 @@ class _WInputState extends State<WInput>
       // only typing + focus work. A disabled field must expose none of it (a
       // read-only field stays selectable so its text can be copied). Cupertino
       // handle controls on
-      // every platform keep WInput cupertino-only (no `package:flutter/material.dart`
+      // every platform keep WInput cupertino-only (no `package:material_ui/material_ui.dart`
       // import): `cupertinoTextSelectionHandleControls` mixes in
       // [TextSelectionHandleControls], which suppresses the legacy `buildToolbar`
       // (so the Material-free `contextMenuBuilder` stays the only toolbar path and

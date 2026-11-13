@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../parser/wind_parser.dart';
 import '../parser/wind_style.dart';
 import '../state/wind_anchor_state.dart';
 import '../state/wind_anchor_state_provider.dart';
+import '../utils/wind_extensions.dart';
+import '../utils/wind_logger.dart';
+import '../utils/wind_perf_counters.dart';
 import 'select_option.dart';
 import 'w_div.dart';
 import 'w_input.dart';
 import 'w_text.dart';
-import '../utils/wind_extensions.dart';
-import '../utils/wind_logger.dart';
-import '../utils/wind_perf_counters.dart';
 
 /// Signature for building a custom trigger widget for [WSelect].
 ///

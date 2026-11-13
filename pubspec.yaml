@@ -32,7 +32,9 @@ platforms:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_ui: ^1.1.6
   flutter_svg: ^2.0.0
+  material_ui: ^1.11.0
   wind_kit_diagnostics_contracts: ^1.3.0
 
 dev_dependencies:

@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../utils/wind_perf_counters.dart';
 import 'select_option.dart';
-import 'w_select.dart';
 import 'w_div.dart';
+import 'w_select.dart';
 import 'w_text.dart';
 
 /// A Wind-styled single-select that integrates with Flutter's Form validation.
