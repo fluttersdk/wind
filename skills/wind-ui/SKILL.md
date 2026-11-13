@@ -207,7 +207,7 @@ A developer fluent in Tailwind v3 or v4 will default to assumptions Wind partial
 |---|---|
 | `flex-wrap` enables wrapping | Aliased to `wrap` (Flutter `Wrap` is a separate widget); prefer `wrap` directly, `flex-wrap` prints a one-time debug hint. |
 | Font sizes go to `9xl` | Stop at `6xl` (60 px). `7xl`/`8xl`/`9xl` silently no-op; use `text-[72px]` for a larger size. |
-| `text-7xl` typo fails loudly | A token no parser recognises is dropped with a one-time `kDebugMode` hint; a recognised family with an unsupported value (like `text-7xl`, claimed by `text-*`) drops silently. Hand-check values. |
+| `text-7xl` typo fails loudly | A token no parser recognises is dropped with a one-time `kDebugMode` hint (except the deliberate no-ops such as `transition` and `antialiased`); a recognised family with an unsupported value (like `text-7xl`, claimed by `text-*`) drops silently. Hand-check values. |
 | Spacing in rem | Logical pixels (4 px per unit; `p-4` = 16 px). Adjust via `WindThemeData.baseSpacingUnit`. |
 | `w-full` inside a Row works | A bare `w-full` row child is treated as `flex-1` (wrapped in `Expanded`) and fills the row; prefer `flex-1` for clarity. `md:w-full` is not auto-expanded. |
 | `h-full` inside a scrollable parent works | A child's `h-full` on a `WDiv` vertical scroll asserts in debug; under a plain `SingleChildScrollView` it silently takes the screen height. Use `flex-1` in a `flex flex-col`, `min-h-screen`, or a fixed-height container. |

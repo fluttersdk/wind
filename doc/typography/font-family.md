@@ -26,7 +26,7 @@ Use `font-{family}` utilities to apply a font stack to an element.
 
 ### Sans-serif
 
-Use `font-sans` to apply a web-safe sans-serif font stack. This is the default font family for Wind.
+Use `font-sans` to apply a web-safe sans-serif family string. This is the default font family for Wind.
 
 ```dart
 WText(
@@ -37,7 +37,7 @@ WText(
 
 ### Serif
 
-Use `font-serif` to apply a serif font stack, ideal for long-form text or editorial designs.
+Use `font-serif` to apply a serif family string, ideal for long-form text or editorial designs.
 
 ```dart
 WText(
@@ -48,7 +48,7 @@ WText(
 
 ### Monospace
 
-Use `font-mono` to apply a monospace font stack, perfect for code snippets or technical data.
+Use `font-mono` to apply a monospace family string, perfect for code snippets or technical data.
 
 ```dart
 WText(

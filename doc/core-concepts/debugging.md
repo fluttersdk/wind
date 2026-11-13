@@ -231,7 +231,7 @@ print(WindPerfCounters.inheritedReads);     // mediaQuerySize, mediaQueryBrightn
 
 `widgetBuilds` counts every W-widget with a build method, by its type name (`'WButton'`, `'WDiv'`, ...); `wDivBuilds`/`wTextBuilds` stay as dedicated counters alongside it rather than being folded in, since they are the pinned six-key contract's own fields. `wrapperEmissions` counts the Flutter (or Wind-authored render-layer) wrapper widget Wind inserts at each composition-pipeline branch (`DecoratedBox`, `ConstrainedBox`, `Padding`, `MouseRegion`, `Semantics`, `DefaultTextStyle`, ...), one inline call beside the construction it never changes. `inheritedReads` is fixed to four keys: `mediaQuerySize` (a `MediaQuery.sizeOf(context)` read, which depends on the size aspect only), `mediaQueryBrightness` (`MediaQuery.maybePlatformBrightnessOf`), `windTheme` (`WindTheme.maybeDataOf`), `defaultTextStyle` (`DefaultTextStyle.of`).
 
-`WindParser.clearCache()` resets the counters as well as the cache, so a hit rate is always reported against the cache it was measured on. That is also why a theme change mid-measurement zeroes them.
+`WindParser.clearCache()` resets the counters as well as the cache, so a hit rate is always reported against the cache it was measured on. A brightness toggle does not clear the cache, so the counters continue across it; they zero only when the host calls `clearCache()`, for example after changing the colour maps.
 
 ### Reading them from outside
 
