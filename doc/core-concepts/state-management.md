@@ -51,7 +51,7 @@ Wind supports several interactive states out of the box. These are automatically
 - **hover**: Triggered when a pointer enters the widget bounds.
 - **focus**: Triggered when the widget receives keyboard or input focus.
 - **active**: Reserved. It is not wired to the pointer: it applies only when you pass `states: {'active'}` to the widget that carries the `active:` classes (`WText`, `WDiv`, `WButton`). Passing it to a `WAnchor` does not reach a descendant `WText`, because the anchor's custom states are not part of the context a descendant resolves its styles from.
-- **disabled**: Active when `WButton(disabled: true)`, `WButton(isLoading: true)` or `WAnchor(isDisabled: true)`; a null `onTap` does not disable.
+- **disabled**: Active when `WButton(disabled: true)` or `WAnchor(isDisabled: true)`; a null `onTap` does not disable. `WButton(isLoading: true)` activates `loading:` on the button's own `className`, not `disabled:`, so a class meant to cover both needs both prefixes (`disabled:opacity-50 loading:opacity-50`). A loading button's anchor is disabled, though, so a `WText` or `WIcon` inside it does resolve `disabled:`.
 
 <a name="quick-reference"></a>
 ## Quick Reference
@@ -61,7 +61,7 @@ Wind supports several interactive states out of the box. These are automatically
 | `hover:` | Pointer entry | Changing background or elevation on desktop. |
 | `focus:` | Keyboard focus | Showing a ring or border on input fields. |
 | `active:` | `states: {'active'}` only | Press styling you drive yourself: track the press in your own state and pass `states: {'active'}` to the styled widget itself. |
-| `disabled:` | `disabled: true` / `isLoading: true` / `isDisabled: true` | Reducing opacity or greying out actions. `WButton(isLoading: true)` also applies `disabled:` styles, even when `disabled` is false. |
+| `disabled:` | `disabled: true` / `isDisabled: true` | Reducing opacity or greying out actions. `WButton(isLoading: true)` applies `loading:` to the button itself and `disabled:` only to descendants such as `WText`. |
 
 <a name="interactive-widgets"></a>
 ## Interactive Widgets
