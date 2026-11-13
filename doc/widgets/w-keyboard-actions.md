@@ -1,8 +1,6 @@
 # WKeyboardActions
 
-A wrapper that renders a Done button and field-navigation toolbar above the keyboard for any group of input fields, with optional platform targeting and custom close widget.
-
-## Table of Contents
+A wrapper that renders an OK button and field-navigation toolbar above the keyboard for any group of input fields, with optional platform targeting and custom close widget.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -72,6 +70,17 @@ class _MyFormState extends State<MyForm> {
 
 > **The toolbar is hosted in the ROOT `Overlay`, not the nearest one.** It positions itself in screen terms (`bottom: viewInsets.bottom`, so it sits on top of the keyboard), and a nested `Overlay` is measured in its own box rather than the screen's. An app whose page host owns an `Overlay` inside a scroll view gives that overlay the height of the scrolled content, so a nearest-overlay toolbar would render hundreds of points below the viewport: present in the widget tree, absent from the screen. You need no `Overlay` of your own for this to work; `MaterialApp` and `CupertinoApp` both provide the root one.
 
+> **The toolbar needs `MaterialLocalizations`.** Its OK button label comes from `MaterialLocalizations.of(context).okButtonLabel`, so the app must provide them: a `MaterialApp` does. Under a bare `CupertinoApp` the toolbar throws "No MaterialLocalizations found" when a field takes focus; add `DefaultMaterialLocalizations.delegate` to the app's `localizationsDelegates`.
+
+```dart
+CupertinoApp(
+  localizationsDelegates: const [
+    DefaultMaterialLocalizations.delegate,
+  ],
+  home: MyForm(),
+)
+```
+
 <a name="constructor"></a>
 ## Constructor
 
@@ -96,8 +105,8 @@ const WKeyboardActions({
 | `focusNodes` | `List<FocusNode>` | **Required** | FocusNodes for the inputs that need keyboard actions. Order determines navigation order. |
 | `platform` | `String` | `'all'` | Platform gate: `'all'`, `'ios'`, or `'android'`. |
 | `nextFocus` | `bool` | `true` | When true, Previous/Next arrow buttons appear in the toolbar for field navigation. |
-| `toolbarClassName` | `String?` | `null` | Wind utility classes applied to the toolbar background (typically `bg-*` classes). |
-| `closeWidgetBuilder` | `Widget Function(FocusNode)?` | `null` | Builder that replaces the default "Done" button. Receives the currently-focused FocusNode. |
+| `toolbarClassName` | `String?` | `null` | Wind utility classes for the toolbar background. Only the background colour (`bg-*`) is read; other classes are ignored. |
+| `closeWidgetBuilder` | `Widget Function(FocusNode)?` | `null` | Builder that replaces the default "OK" button. Receives the currently-focused FocusNode. |
 
 <a name="platform-targeting"></a>
 ## Platform Targeting
@@ -106,7 +115,7 @@ The `platform` prop gates the toolbar to a specific OS. The most common value is
 
 | Value | Toolbar visible on |
 |:------|:-------------------|
-| `'all'` | iOS and Android (default) |
+| `'all'` | Every platform, including web and desktop (default) |
 | `'ios'` | iOS only |
 | `'android'` | Android only |
 
@@ -127,7 +136,7 @@ WKeyboardActions(
 
 When `nextFocus: true` (the default), the toolbar shows Previous and Next arrow buttons. They move focus to the previous or next node in the `focusNodes` list, in the order they were provided. The Previous button is disabled at the first field; the Next button is disabled at the last.
 
-Set `nextFocus: false` to show only the Done button, which is useful for single-field forms.
+Set `nextFocus: false` to show only the OK button, which is useful for single-field forms.
 
 ```dart
 WKeyboardActions(
@@ -161,7 +170,7 @@ When `toolbarClassName` is null, the toolbar uses `Theme.of(context).colorScheme
 <a name="custom-close-button"></a>
 ## Custom Close Button
 
-Supply `closeWidgetBuilder` to replace the default "Done" label with any widget. The builder receives the currently-focused `FocusNode`, which you can call `unfocus()` on.
+Supply `closeWidgetBuilder` to replace the default "OK" label with any widget. The builder receives the currently-focused `FocusNode`, which you can call `unfocus()` on.
 
 ```dart
 WKeyboardActions(
@@ -188,7 +197,7 @@ final double toolbar = WKeyboardToolbarInset.of(context);
 
 Zero when no bar is up, which covers every platform the widget is gated off and every moment nothing is focused. `WInput` already consumes it, so a plain field inside a `WKeyboardActions` needs nothing; reach for it in a widget of your own that positions something against the keyboard.
 
-The height is measured rather than assumed, because the row is built from `IconButton`s whose size comes from the ambient theme and `toolbarClassName` can change the padding around them.
+The height is measured rather than assumed, because the row is built from `IconButton`s whose size comes from the ambient theme.
 
 <a name="styling-examples"></a>
 ## Styling Examples
@@ -209,7 +218,7 @@ WKeyboardActions(
 )
 ```
 
-### Multi-field form with custom toolbar color
+### Multi-field form with custom toolbar colour
 
 ```dart
 WKeyboardActions(

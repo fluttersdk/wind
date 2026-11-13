@@ -27,6 +27,7 @@ WFormDatePicker(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 `WFormDatePicker` works inside a Flutter `Form` widget. It renders a vertical layout with an optional label above the date picker and error/hint text below.
@@ -46,7 +47,7 @@ Form(
       ),
       WButton(
         className: 'mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg',
-        onPressed: () {
+        onTap: () {
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
           }
@@ -60,6 +61,7 @@ Form(
 
 When validation fails, the widget automatically adds the `error` state to the inner `WDatePicker`, activating any `error:` prefixed classes.
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -90,12 +92,13 @@ WFormDatePicker({
   String? label,
   String labelClassName = 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
   bool showError = true,
-  String errorClassName = 'text-red-500 text-xs mt-1',
+  String errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
   String? hint,
-  String hintClassName = 'text-gray-500 text-xs mt-1',
+  String hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 ### FormField Props
@@ -133,13 +136,14 @@ WFormDatePicker({
 | `label` | `String?` | `null` | Label text displayed above the picker |
 | `labelClassName` | `String` | `'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'` | Wind classes for the label |
 | `showError` | `bool` | `true` | Whether to display validation error text |
-| `errorClassName` | `String` | `'text-red-500 text-xs mt-1'` | Wind classes for error message |
+| `errorClassName` | `String` | `'text-red-500 dark:text-red-400 text-xs mt-1'` | Wind classes for error message |
 | `hint` | `String?` | `null` | Hint text displayed below the picker |
-| `hintClassName` | `String` | `'text-gray-500 text-xs mt-1'` | Wind classes for hint text |
+| `hintClassName` | `String` | `'text-gray-500 dark:text-gray-400 text-xs mt-1'` | Wind classes for hint text |
 
 > [!NOTE]
 > When both an error and hint are present, the error message takes priority and the hint is hidden.
 
+<a name="form-validation"></a>
 ## Form Validation
 
 The `validator` function receives the currently selected `DateTime?` value. Return a `String` to show an error, or `null` if valid.
@@ -182,6 +186,7 @@ WFormDatePicker(
 )
 ```
 
+<a name="range-mode-in-forms"></a>
 ## Range Mode in Forms
 
 In range mode, the `FormField<DateTime>` internally tracks the range's **start date** for validation purposes. This means a simple null check still works as a "required" validator.
@@ -207,6 +212,7 @@ WFormDatePicker(
 > [!NOTE]
 > The `validator` receives the range's start `DateTime`, not a `DateRange` object. For more complex range validation (e.g., minimum stay duration), use the `onRangeChanged` callback to manage validation externally.
 
+<a name="date--time-in-forms"></a>
 ## Date + Time in Forms
 
 With `mode: WDatePickerMode.dateTime` the field holds a full `DateTime` carrying the picked hour and minute, so a validator can compare times of day rather than just checking for null. `minuteStep`, `timeLabel`, and `doneLabel` are forwarded to [WDatePicker](./w-date-picker.md#date--time-selection) unchanged.
@@ -232,8 +238,9 @@ WFormDatePicker(
 )
 ```
 
-Two behaviors carry over from the raw widget. The field revalidates on every time step, not only on the day tap, because `onChanged` fires on each one; and `initialValue` seeds the field on first build only, the way `FormField` does, so changing it later does not move an already-picked value.
+Two behaviours carry over from the raw widget. Once a day is picked, the field revalidates on every time step, not only on the day tap, because `onChanged` fires on each one; and `initialValue` seeds the field on first build only, the way `FormField` does, so changing it later does not move an already-picked value.
 
+<a name="event-handling"></a>
 ## Event Handling
 
 `onChanged` and `onRangeChanged` fire alongside the form state updates. The `FormFieldState` is updated automatically; you don't need to call `didChange` yourself.
@@ -248,6 +255,7 @@ WFormDatePicker(
 )
 ```
 
+<a name="state-variants"></a>
 ## State Variants
 
 `WFormDatePicker` inherits all state variants from `WDatePicker` and adds the `error` state automatically when validation fails.
@@ -273,6 +281,7 @@ WFormDatePicker(
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Standard Form Field
@@ -317,6 +326,7 @@ WFormDatePicker(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 ### Trigger (className)
@@ -339,31 +349,32 @@ Default: `text-sm font-medium text-gray-700 dark:text-gray-300 mb-1`
 
 ### Error (errorClassName)
 
-Default: `text-red-500 text-xs mt-1`
+Default: `text-red-500 dark:text-red-400 text-xs mt-1`
 
 ### Hint (hintClassName)
 
-Default: `text-gray-500 text-xs mt-1`
+Default: `text-gray-500 dark:text-gray-400 text-xs mt-1`
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-`WFormDatePicker` inherits all theme customization from `WDatePicker`. Override Tailwind color scales in `WindThemeData` to change selection colors, error states, and calendar chrome:
+`WFormDatePicker` inherits all theme customisation from `WDatePicker`. Override Tailwind colour scales in `WindThemeData` to change selection colours, error states, and calendar chrome. The colours you pass merge over the defaults by name: a name you supply replaces that whole palette, so list every shade you use.
 
 ```dart
 WindTheme(
   data: WindThemeData(
     colors: {
-      ...WindThemeData.defaultColors,
-      'red': {
-        500: Color(0xFFEF4444), // Error border color
+      'red': MaterialColor(0xFFEF4444, {
         200: Color(0xFFFECACA), // Error ring color
-      },
+        500: Color(0xFFEF4444), // Error border color
+      }),
     },
   ),
   child: MyApp(),
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WDatePicker](./w-date-picker.md) - The base date picker widget

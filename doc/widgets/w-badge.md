@@ -1,8 +1,6 @@
 # WBadge
 
-Inline status or label pill. Composes a pill-shaped `WDiv` (rounded-full, inline-flex) around a `WText` (text-xs). All visual styling is className-driven: the caller supplies tone via `bg-*` and `text-*` tokens (with `dark:` pairs); no colors are baked in.
-
-## Table of Contents
+Inline status or label pill. Composes a pill-shaped `WDiv` (rounded-full) around a `WText` (text-xs). All visual styling is className-driven: the caller supplies tone via `bg-*` and `text-*` tokens (with `dark:` pairs); no colours are baked in.
 
 - [Basic Usage](#basic-usage)
 - [Props](#props)
@@ -34,7 +32,7 @@ WBadge(
 ## Constructor
 
 ```dart
-WBadge(
+const WBadge(
   String label, {
   Key? key,
   String? className,
@@ -48,7 +46,7 @@ WBadge(
 
 ### Status Tones
 
-Supply tone through `bg-*` + `text-*` + their `dark:` pairs. The default layout provides no background or text color:
+Supply tone through `bg-*` + `text-*` + their `dark:` pairs. The default layout provides no background or text colour:
 
 ```dart
 // Success
@@ -66,7 +64,7 @@ WBadge('Draft', className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text
 
 ### Inline Beside Text
 
-`WBadge` is `inline-flex` by default, so it sits naturally beside other inline widgets in a `flex-row` container:
+The default classes include `inline-flex`, but Wind treats it as an inert token (it has no inline display), so the badge sits beside other widgets because of the parent `flex flex-row` container:
 
 ```dart
 WDiv(
@@ -84,7 +82,7 @@ Use `WindRecipe` to drive tone from a variant axis instead of repeating classNam
 
 ```dart
 final badge = WindRecipe(
-  base: 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+  base: 'items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
   variants: {
     'tone': {
       'success': 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200',

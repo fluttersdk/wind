@@ -33,6 +33,7 @@ WPopover(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 The `WPopover` widget uses two builders: `triggerBuilder` for the element that activates the popover, and `contentBuilder` for the overlay content. It manages the overlay state and positioning automatically.
@@ -50,6 +51,7 @@ WPopover(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -73,6 +75,7 @@ const WPopover({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -83,7 +86,7 @@ const WPopover({
 | `controller` | `PopoverController?` | `null` | Optional controller for programmatic show/hide/toggle. |
 | `alignment` | `PopoverAlignment` | `bottomLeft` | Where to position the popover relative to the trigger. |
 | `offset` | `Offset` | `Offset(0, 4)` | Gap between the trigger and the popover. |
-| `maxHeight` | `double` | `400` | Maximum height for the content. It will scroll if exceeded. With `autoFlip` on, the overlay is also capped at the room left on its side of the trigger, so it never runs off the window. |
+| `maxHeight` | `double` | `400` | Maximum height for the overlay. Content taller than this does not scroll by itself: give the popover `overflow-y-auto` (or build the content on a scroll view). With `autoFlip` on, the overlay is also capped at the room left on its side of the trigger, so it never runs off the window. |
 | `width` | `double?` | `null` | Pins the overlay to a fixed width (like `WSelect`'s `menuWidth`). Overrides a `w-*` token in `className`. |
 | `maxWidth` | `double?` | `null` | Upper bound for the overlay width. Falls back to a `max-w-*` token, then to the screen width, so the overlay never stretches off-screen. Ignored when a fixed `width` (or `w-*`) is set. |
 | `enableTriggerOnTap` | `bool` | `true` | Whether tapping the trigger toggles the popover. |
@@ -91,8 +94,9 @@ const WPopover({
 | `disabled` | `bool` | `false` | When true, the trigger will not respond to interactions and is not a Tab stop. |
 | `onOpen` | `VoidCallback?` | `null` | Callback fired when the popover is opened. |
 | `onClose` | `VoidCallback?` | `null` | Callback fired when the popover is closed. |
-| `autoFlip` | `bool` | `true` | When true, the popover flips its alignment to the opposite side if the natural position would render off-screen, and is held inside the viewport: pulled in horizontally, and capped vertically at the room on its side (the content scrolls). |
+| `autoFlip` | `bool` | `true` | When true, the popover flips its alignment to the opposite side if the natural position would render off-screen, and is held inside the viewport: pulled in horizontally, and capped vertically at the room on its side (the content needs `overflow-y-auto` or a scroll view to scroll). |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
 While `WPopover` itself isn't a layout container, it supports various **Alignment Modes** to determine how the overlay is positioned relative to the trigger.
@@ -107,11 +111,12 @@ While `WPopover` itself isn't a layout container, it supports various **Alignmen
 |:----------|:------------|
 | `bottomLeft` | Below trigger, aligned to left edge (Default). |
 | `bottomRight` | Below trigger, aligned to right edge. |
-| `bottomCenter` | Below trigger, centered horizontally. |
+| `bottomCenter` | Below trigger, centred horizontally. |
 | `topLeft` | Above trigger, aligned to left edge. |
 | `topRight` | Above trigger, aligned to right edge. |
-| `topCenter` | Above trigger, centered horizontally. |
+| `topCenter` | Above trigger, centred horizontally. |
 
+<a name="event-handling"></a>
 ## Event Handling
 
 The `triggerBuilder` provides the `isOpen` and `isHovering` states, allowing you to reactively style the trigger. The `contentBuilder` provides a `close` callback to dismiss the popover from within the content (e.g., when a menu item is clicked).
@@ -137,6 +142,7 @@ The trigger is one Tab stop. Enter, Space, and the Android TV D-pad centre toggl
 
 A disabled popover is not a Tab stop. With `enableTriggerOnTap: false`, Enter and Space do nothing, as a tap does nothing; Escape still closes a popover the controller opened.
 
+<a name="state-variants"></a>
 ## State Variants
 
 Since the popover trigger is built via `triggerBuilder`, you can apply state-based styling manually or use Wind's state prefixes if the trigger is a Wind widget like `WButton` or `WDiv`.
@@ -167,6 +173,7 @@ WPopover(
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Custom Size and Shadow
@@ -193,6 +200,7 @@ WPopover(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 The popover overlay container is a `WDiv` and supports all standard Wind utilities.
@@ -200,24 +208,19 @@ The popover overlay container is a `WDiv` and supports all standard Wind utiliti
 | Category | Classes |
 |:---------|:--------|
 | Sizing | `w-{size}`, `max-w-{size}`, `h-{size}`, `max-h-{size}` |
-| Background | `bg-{color}`, `bg-opacity-{n}` |
+| Background | `bg-{color}` |
 | Borders | `border`, `border-{color}`, `rounded-{size}` |
-| Shadow | `shadow-{size}`, `shadow-{color}/{opacity}` |
+| Shadow | `shadow-{size}`, `shadow-{color}-{shade}` |
 | Padding | `p-{n}`, `px-{n}`, `py-{n}` |
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-Popovers inherit from global theme scales. You can customize the default appearance by modifying the `WindThemeData`.
+`WPopover` has no theme keys of its own: style the panel through `className`. Colour and spacing tokens inside `className` resolve through `WindThemeData` like any other Wind class.
 
-```dart
-WindThemeData(
-  colors: {
-    'popover-bg': Colors.white,
-  },
-  baseSpacingUnit: 4.0,
-)
-```
+When `className` is `null`, the panel uses `bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl`. A `className` you pass replaces that default rather than extending it.
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WSelect - A high-level dropdown built using WPopover](./w-select.md)

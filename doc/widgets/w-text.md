@@ -1,6 +1,6 @@
 # WText
 
-A utility-first text component that translates Tailwind-like class strings into optimized Flutter typography.
+A utility-first text component that translates Tailwind-like class strings into optimised Flutter typography.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -22,6 +22,7 @@ WText(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 The `WText` widget handles all text rendering in Wind. Unlike standard Flutter `Text` widgets, it supports direct styling via the `className` property, including responsive and state-based modifiers.
@@ -33,6 +34,7 @@ WText(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -48,6 +50,7 @@ const WText(
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -58,12 +61,12 @@ const WText(
 | `textStyle` | `TextStyle?` | `null` | Standard Flutter TextStyle to merge (className takes precedence). |
 | `selectable` | `bool` | `false` | Whether the text should be selectable (renders `SelectableText`). |
 | `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., 'loading'). |
-| `foregroundColor` | `Color?` | `null` | Inline text color for runtime-dynamic values. Overrides any `text-*` / `dark:text-*` from `className`. See [Runtime-Dynamic Colors](#runtime-dynamic-colors). |
+| `foregroundColor` | `Color?` | `null` | Inline text colour for runtime-dynamic values. Overrides any `text-*` / `dark:text-*` from `className`. See [Runtime-Dynamic Colors](#runtime-dynamic-colors). |
 
 <a name="runtime-dynamic-colors"></a>
 ## Runtime-Dynamic Colors
 
-Utility classes are for **design tokens** (`text-primary-500`, `text-red-500`). When the color is a **runtime value**, a user-picked brand color or a hex loaded from an API, use the `foregroundColor` prop instead of interpolating into `text-[#$hex]`.
+Utility classes are for **design tokens** (`text-primary-500`, `text-red-500`). When the colour is a **runtime value**, a user-picked brand colour or a hex loaded from an API, use the `foregroundColor` prop instead of interpolating into `text-[#$hex]`.
 
 ```dart
 // Good: runtime-dynamic color via inline prop
@@ -74,11 +77,15 @@ WText(
 )
 
 // Avoid: string interpolation bloats the parser cache, one entry per unique hex
-WText('Brand', className: 'text-lg font-bold text-[#${userBrandColor.hex}]')
+WText(
+  'Brand',
+  className: 'text-lg font-bold text-[#${userBrandColor.toARGB32().toRadixString(16)}]',
+)
 ```
 
-Precedence: inline `foregroundColor` wins over any `text-*` / `dark:text-*` resolved from `className`. When `foregroundColor` is `null`, className behavior, including the `dark:` fallback, is unchanged. The inline color does not participate in the parser cache key.
+Precedence: inline `foregroundColor` wins over any `text-*` / `dark:text-*` resolved from `className`. When `foregroundColor` is `null`, className behaviour, including the `dark:` fallback, is unchanged. The inline colour does not participate in the parser cache key.
 
+<a name="typography-styling"></a>
 ## Typography Styling
 
 WText supports a wide range of typography utilities that map directly to Flutter's `TextStyle`.
@@ -103,17 +110,22 @@ WText(
 )
 ```
 
+<a name="state-variants"></a>
 ## State Variants
 
-Text colors and weights can react to states when provided via the `states` prop or when nested within state-aware widgets like `WButton`.
+Text colours and weights can react to states when provided via the `states` prop or when nested within state-aware widgets like `WButton`. `WText` has no anchor of its own, so `hover:` only fires when an ancestor publishes state (`WAnchor`, `WButton`, `WPopover`).
 
 ```dart
-WText(
-  'Hover me',
-  className: 'text-gray-500 hover:text-blue-600 transition-colors',
+WAnchor(
+  onTap: () {},
+  child: WText(
+    'Hover me',
+    className: 'text-gray-500 hover:text-blue-600',
+  ),
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Gradient and Opacity
@@ -136,19 +148,21 @@ WText(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 | Category | Classes |
 |:---------|:--------|
 | **Font Size** | `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl` ... `text-6xl` |
 | **Font Weight** | `font-thin`, `font-light`, `font-normal`, `font-medium`, `font-bold` ... `font-black` |
-| **Color** | `text-{color}`, `text-{color}/{opacity}`, `text-[rgb(...)]` |
+| **Colour** | `text-{color}`, `text-{color}/{opacity}` |
 | **Align** | `text-left`, `text-center`, `text-right`, `text-justify` |
 | **Transform** | `uppercase`, `lowercase`, `capitalize`, `normal-case` |
 | **Decoration** | `underline`, `line-through`, `no-underline` |
 | **Spacing** | `leading-{size}` (Line Height), `tracking-{size}` (Letter Spacing) |
 | **Overflow** | `truncate`, `text-ellipsis`, `line-clamp-{n}` |
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
 Override default typography scales in your `WindThemeData`.
@@ -164,6 +178,7 @@ WindThemeData(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WDiv](./w-div.md) - For complex layouts and containers.

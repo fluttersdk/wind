@@ -1,6 +1,6 @@
 # WAnchor
 
-The foundational state wrapper that detects user gestures (Hover, Focus, Press) and propagates that state down to all descendant widgets via `WindAnchorStateProvider`.
+The foundational state wrapper that detects hover and focus, runs the gestures you give it and propagates that state down to all descendant widgets via `WindAnchorStateProvider`.
 
 - [Basic Usage](#basic-usage)
 - [Constructor](#constructor)
@@ -12,6 +12,7 @@ The foundational state wrapper that detects user gestures (Hover, Focus, Press) 
 - [Styling Examples](#styling-examples)
 - [All Supported Classes](#all-supported-classes)
 - [Customizing Theme](#customizing-theme)
+- [Accessibility](#accessibility)
 - [Related Documentation](#related-documentation)
 
 <x-preview path="interactivity/anchor_basic" size="md" source="example/lib/pages/interactivity/anchor_basic.dart"></x-preview>
@@ -27,6 +28,7 @@ WAnchor(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 The `WAnchor` widget acts as the "brain" for interaction state management in Wind. It handles gesture detection and focus management, making it possible for child widgets to use prefixes like `hover:`, `focus:`, and `disabled:`.
@@ -43,6 +45,7 @@ WAnchor(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -60,6 +63,7 @@ const WAnchor({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -69,11 +73,12 @@ const WAnchor({
 | `onLongPress` | `VoidCallback?` | `null` | Triggered when the widget is long-pressed. |
 | `onDoubleTap` | `VoidCallback?` | `null` | Triggered when the widget is double-tapped. |
 | `isDisabled` | `bool` | `false` | When true, gestures are ignored and the `disabled:` prefix is activated. |
-| `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., `{'active'}`). |
+| `states` | `Set<String>?` | `null` | Custom states for dynamic styling (e.g., `{'selected'}`). They reach `WDiv` and `WButton` descendants only, and a `WDiv` sees them only while its className has no `hover:`, `focus:` or `active:` class (such a `WDiv` wraps itself in its own anchor, which shadows this one). `WText` ignores them. |
 | `mouseCursor` | `MouseCursor?` | `null` | Custom cursor. Defaults to click when interactive, basic when disabled, and `MouseCursor.defer` when the anchor has no gesture, so a styling wrapper keeps the cursor of the control around it. |
 | `semanticLabel` | `String?` | `null` | Accessible name for icon-only controls. When set, excludes the child subtree from semantics so the label overrides any child text; prefer it for icon-only controls rather than controls that already expose readable text. |
 | `trackFocus` | `bool` | `true` | Whether a gestureless anchor installs a focus node. `WDiv` passes `false` when its className has no `focus:` class. Ignored when the anchor has a gesture, which always keeps its node. |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
 `WAnchor` is a logic wrapper and does not provide layout properties of its own. To control the layout of the interactive area, use a `WDiv` or another layout widget as the immediate child.
@@ -95,6 +100,7 @@ WAnchor(
 )
 ```
 
+<a name="event-handling"></a>
 ## Event Handling
 
 `WAnchor` supports standard touch and mouse gestures. These events are only triggered if `isDisabled` is false.
@@ -111,6 +117,7 @@ WAnchor(
 )
 ```
 
+<a name="keyboard-and-remote-control"></a>
 ## Keyboard and Remote Control
 
 A focused `WAnchor` runs its `onTap` when the user presses the activation key. `WAnchor` binds no key of its own: it answers `ActivateIntent`, which `WidgetsApp` already raises for `Enter`, `Space`, the numeric keypad `Enter`, the gamepad A button and `select`. `select` is the D-pad centre on Android TV and the click on the Apple TV remote, so one binding covers a keyboard, a gamepad and a remote, and a key the platform adds later arrives for free.
@@ -142,7 +149,7 @@ WAnchor(
 )
 ```
 
-A `WDiv` whose only state classes are `hover:` or `active:` carries no focus node at all (its wrapper gets `trackFocus: false`): it cannot draw focus, so a stop on it was a key press that lit nothing. Hover, press and the primary focus chained down from an anchor above it still pass through.
+A `WDiv` whose only state classes are `hover:` or `active:` carries no focus node at all (its wrapper gets `trackFocus: false`): it cannot draw focus, so a stop on it was a key press that lit nothing. Hover and the primary focus chained down from an anchor above it still pass through.
 
 One thing it no longer publishes is focus-within to its own descendants. A `focus:` class on a label reads the nearest wrapper, so in `WDiv(className: 'hover:bg-gray-50', children: [WText('Email', className: 'focus:text-blue-600'), WInput(...)])` the label stays gray while the field has focus. Give the row any `focus:` class of its own (`hover:bg-gray-50 focus:bg-gray-50`) and its wrapper keeps the node, so the label lights again.
 
@@ -174,6 +181,7 @@ Wind ships no `FocusTraversalPolicy`. Directional movement is Flutter's default 
 
 One upstream limit is worth knowing before it is diagnosed as a Wind bug: directional traversal cannot reach a list item that has not been built, so focus stops at the edge of a lazy list's cache extent ([flutter/flutter#91741](https://github.com/flutter/flutter/issues/91741)), and it can land on a cached item that is scrolled out of sight ([flutter/flutter#91795](https://github.com/flutter/flutter/issues/91795)).
 
+<a name="state-variants"></a>
 ## State Variants
 
 `WAnchor` enables several state prefixes for all Wind widgets in its subtree. This allows you to define complex interactive styles easily.
@@ -193,6 +201,7 @@ WAnchor(
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Card Lift Effect
@@ -200,8 +209,8 @@ WAnchor(
 WAnchor(
   onTap: () {},
   child: WDiv(
-    className: 'p-6 bg-white shadow hover:shadow-lg hover:-translate-y-1 rounded-xl duration-300',
-    child: WText('Hover to see the lift effect'),
+    className: 'p-6 bg-white shadow hover:shadow-lg rounded-xl duration-300',
+    child: WText('Hover to see the shadow effect'),
   ),
 )
 ```
@@ -217,20 +226,22 @@ WAnchor(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
-While `WAnchor` does not take a `className`, it facilitates the use of these state prefixes for visual widgets (like `WDiv` or `WText`) within its subtree:
+While `WAnchor` does not take a `className`, it facilitates the use of these state prefixes for the Wind widgets within its subtree. Custom `states` are narrower: they reach `WDiv` and `WButton` only, and a `WDiv` with its own `hover:`, `focus:` or `active:` class shadows them. `WText` ignores them.
 
 | Category | Prefixes / Features |
 |:---------|:--------------------|
 | Interaction | `hover:`, `focus:`, `disabled:` |
-| Custom States | Any value passed to the `states` prop (e.g., `active:`, `error:`) |
+| Custom States | Any value passed to the `states` prop (e.g., `selected:`) |
 | Gestures | Enables `onTap`, `onLongPress`, `onDoubleTap` |
 | Keys | `onTap` also runs on `ActivateIntent` (`Enter`, `Space`, gamepad A, D-pad `select`) |
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-`WAnchor` behavior is primarily state-driven. You can customize the global interaction defaults via `WindThemeData`.
+`WAnchor` behaviour is primarily state-driven. You can customise the global interaction defaults via `WindThemeData`.
 
 ```dart
 WindTheme(
@@ -242,6 +253,7 @@ WindTheme(
 )
 ```
 
+<a name="accessibility"></a>
 ## Accessibility
 
 A `WAnchor` that carries a gesture (`onTap`, `onLongPress` or `onDoubleTap`) publishes one `Semantics(button: true)` node, and `MergeSemantics` folds the child's text into it so the control gets its name from what it renders. Pass `semanticLabel` when the child has no readable text, such as an icon-only anchor; that label replaces the child subtree rather than concatenating with it.
@@ -261,6 +273,7 @@ const WAnchor(isDisabled: true, semanticLabel: 'Save', child: WText('Save'))
 const WAnchor(child: WDiv(className: 'hover:bg-slate-100', child: WText('Card')))
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WButton](./w-button.md) - High-level button widget built on WAnchor.

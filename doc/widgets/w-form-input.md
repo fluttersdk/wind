@@ -28,9 +28,10 @@ WFormInput(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
-The `WFormInput` widget wraps a standard `WInput` with a `FormField`. It automatically manages its own internal `TextEditingController` if one isn't provided, and synchronizes its state with the parent `Form` widget.
+The `WFormInput` widget wraps a standard `WInput` with a `FormField`. It automatically manages its own internal `TextEditingController` if one isn't provided, and synchronises its state with the parent `Form` widget.
 
 When validation fails, the widget automatically activates the `error` state, enabling any `error:` prefixed utility classes in your `className`.
 
@@ -53,6 +54,7 @@ Form(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -92,11 +94,11 @@ WFormInput({
   
   // Layout props
   String? label,
-  String labelClassName = 'text-sm font-medium text-gray-700 mb-1',
+  String labelClassName = 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
   String? hint,
-  String hintClassName = 'text-gray-500 text-xs mt-1',
+  String hintClassName = 'text-gray-500 dark:text-gray-400 text-xs mt-1',
   bool showError = true,
-  String errorClassName = 'text-red-500 text-xs mt-1',
+  String errorClassName = 'text-red-500 dark:text-red-400 text-xs mt-1',
   
   // Prefix/Suffix
   Widget? prefix,
@@ -104,6 +106,7 @@ WFormInput({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -124,10 +127,11 @@ WFormInput({
 | `prefix` | `Widget?` | `null` | Widget (like an Icon) displayed before the input text. |
 | `suffix` | `Widget?` | `null` | Widget (like a visibility toggle) displayed after the input text. |
 
+<a name="layout-modes"></a>
 ## Layout Modes
 
 ### Vertical Stack (Default)
-`WFormInput` organizes its components in a vertical column: label at the top, followed by the input field, and then the hint or error message at the bottom.
+`WFormInput` organises its components in a vertical column: label at the top, followed by the input field, and then the hint or error message at the bottom.
 
 <x-preview path="widgets/w_form_input_layout" size="md" source="example/lib/pages/widgets/w_form_input_layout.dart"></x-preview>
 
@@ -139,6 +143,7 @@ WFormInput(
 )
 ```
 
+<a name="event-handling"></a>
 ## Event Handling
 
 `WFormInput` supports all standard text input events. `onChanged` automatically notifies the internal `FormFieldState` to track validation in real-time if `autovalidateMode` is enabled.
@@ -151,6 +156,7 @@ WFormInput(
 )
 ```
 
+<a name="state-variants"></a>
 ## State Variants
 
 Interactive styling is achieved through state prefixes. `WFormInput` automatically manages the `error` state based on validation results.
@@ -167,10 +173,11 @@ WFormInput(
 )
 ```
 
+<a name="styling-examples"></a>
 ## Styling Examples
 
 ### Custom Error Feedback
-You can completely customize how the error appears by using `error:` classes on the main input and styling the error message specifically.
+You can completely customise how the error appears by using `error:` classes on the main input and styling the error message specifically.
 
 ```dart
 WFormInput(
@@ -193,31 +200,35 @@ WFormInput(
 )
 ```
 
+<a name="all-supported-classes"></a>
 ## All Supported Classes
 
 Since `WFormInput` uses `WInput` internally, it supports all standard utility categories.
 
 | Category | Classes |
 |:---------|:--------|
-| Layout | `flex`, `grid`, `block`, `hidden` |
-| Spacing | `p-{n}`, `m-{n}`, `gap-{n}` |
+| Spacing | `p-{n}`, `m-{n}` |
 | Sizing | `w-{size}`, `h-{size}` |
 | Typography | `text-{size}`, `font-{weight}` |
-| Colors | `bg-{color}`, `text-{color}` |
+| Colours | `bg-{color}`, `text-{color}` |
 | Borders | `border`, `rounded`, `ring` |
-| State | `hover:`, `focus:`, `disabled:`, `error:` |
+| State | `focus:`, `disabled:`, `error:` |
 
+Layout classes (`flex`, `grid`, `hidden`, `gap-{n}`) and `hover:` have no effect on the field itself; put them on a wrapping `WDiv`.
+
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-Default styles for labels, hints, and error messages can be influenced globally through `WindThemeData`.
+The default label, hint and error styles are the default values of the `labelClassName`, `hintClassName` and `errorClassName` parameters, not theme values; override them per field. The tokens inside any class string still resolve through `WindThemeData`.
 
 ```dart
 WindThemeData(
-  // The base spacing unit affects all p-{n}, m-{n}, and gap-{n} classes
+  // The base spacing unit affects all p-{n} and m-{n} classes
   baseSpacingUnit: 4.0,
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WInput](./w-input.md) - The base input widget.

@@ -1,8 +1,6 @@
 # WSwitch
 
-Controlled toggle switch. Composes `WAnchor` + `WDiv` (track) + `WDiv` (thumb). Pushes the `checked:` state prefix into the className context when `value` is `true`, so callers can drive all visual changes: track color, thumb position, opacity: through className tokens alone.
-
-## Table of Contents
+Controlled toggle switch. Composes `WAnchor` + `WDiv` (track) + `WDiv` (thumb). Pushes the `checked:` state prefix into the className context when `value` is `true`, so callers can drive all visual changes: track colour, thumb position, opacity: through className tokens alone.
 
 - [Basic Usage](#basic-usage)
 - [Props](#props)
@@ -39,16 +37,16 @@ WSwitch(
 | `value` | `bool` | **Required** | Whether the switch is on. Drives the `checked:` state prefix. |
 | `onChanged` | `ValueChanged<bool>?` | `null` | Called with the new value when the switch is tapped. Omit or pass `null` to make the switch non-interactive. |
 | `className` | `String?` | `null` | Utility classes for the track (the outer pill). Supports `checked:`, `disabled:`, `hover:`, and `focus:` prefixes. |
-| `thumbClassName` | `String?` | `null` | Utility classes for the thumb (the circular indicator), shape and color only. The thumb is a flex child of the track; position it with `justify-start` / `checked:justify-end` on the track `className`, not with `translate-x-*` (Wind has no transform parser, so translate is a no-op). |
+| `thumbClassName` | `String?` | `null` | Utility classes for the thumb (the circular indicator), shape and colour only. The thumb is a flex child of the track; position it with `justify-start` / `checked:justify-end` on the track `className`, not with `translate-x-*` (Wind has no transform parser, so translate is a no-op). |
 | `disabled` | `bool` | `false` | Blocks tap and activates the `disabled:` prefix. |
 | `states` | `Set<String>?` | `null` | Extra custom states merged with built-in `checked` and `disabled`. |
-| `semanticLabel` | `String?` | `null` | Accessible label for the switch Semantics node. Set this when the switch has no adjacent visible text label. |
+| `semanticLabel` | `String?` | `null` | Accessible label, forwarded to the inner `WAnchor`. It names the inner button node, not the outer node that carries the toggled state. Set this when the switch has no adjacent visible text label. |
 
 <a name="constructor"></a>
 ## Constructor
 
 ```dart
-WSwitch({
+const WSwitch({
   Key? key,
   required bool value,
   ValueChanged<bool>? onChanged,

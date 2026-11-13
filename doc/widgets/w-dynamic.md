@@ -35,6 +35,7 @@ WDynamic(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 The `WDynamic` widget converts JSON/Map structures into live Flutter widgets. This enables server-driven UI, dynamic form generation, and runtime-configurable layouts without rebuilding your app.
@@ -63,6 +64,7 @@ WDynamic(
 )
 ```
 
+<a name="constructor"></a>
 ## Constructor
 
 ```dart
@@ -80,6 +82,7 @@ const WDynamic({
 })
 ```
 
+<a name="props"></a>
 ## Props
 
 | Prop | Type | Default | Description |
@@ -89,11 +92,12 @@ const WDynamic({
 | `controller` | `WDynamicController?` | `null` | Optional controller for external state access (read/write form values). |
 | `denyWidgets` | `Set<String>?` | `null` | Widget types to remove from the default whitelist. |
 | `builders` | `Map<String, WWidgetBuilder>?` | `null` | Custom widget builders keyed by type name. Signature: `Widget Function(Map<String, dynamic> props, List<Widget> children)`. |
-| `customIcons` | `Map<String, IconData>?` | `null` | Custom icon mappings for `WIcon` widgets. Keys are icon names used in the JSON `icon` prop, values are `IconData` instances. Extends the default Material icon map. |
+| `customIcons` | `Map<String, IconData>?` | `null` | Custom icon mappings for `WIcon` widgets. Keys are icon names used in the JSON `icon` prop, values are `IconData` instances. Extends a small built-in map of common names; an unknown name renders a help icon. |
 | `maxDepth` | `int` | `50` | Maximum recursion depth for nested widgets. Prevents infinite loops. |
 | `onError` | `Widget Function(String, Object)?` | `null` | Error handler for widget build failures. Returns a fallback widget. |
 | `onUnknownWidget` | `Widget Function(String, Map)?` | `null` | Handler for unknown or denied widget types. Returns a fallback widget. |
 
+<a name="json-schema"></a>
 ## JSON Schema
 
 Every widget node in the JSON structure follows this format:
@@ -105,7 +109,7 @@ Every widget node in the JSON structure follows this format:
     'className': 'flex gap-4',
     'text': 'Hello',
     'onTap': {'action': 'handleTap', 'args': {'id': 1}},
-    'id': 'username',        // Auto-tracked form state key
+    'id': 'username',        // Form state key (WInput, WCheckbox, WSelect, WDatePicker)
   },
   'children': [              // Optional: nested widget array
     { /* child node */ }
@@ -130,7 +134,6 @@ Widget properties are passed directly to the constructor. Common props include:
   'type': 'WDiv',
   'props': {
     'className': 'flex gap-4 p-6 bg-white rounded-xl',  // Wind utilities
-    'id': 'formContainer',                              // Auto-tracked state key
   }
 }
 ```
@@ -171,6 +174,7 @@ An array of nested widget nodes. Used by layout widgets like `WDiv`, `Column`, `
 }
 ```
 
+<a name="action-handling"></a>
 ## Action Handling
 
 Interactive widgets like `WButton` can trigger actions defined in the `actions` map. Actions are referenced in the JSON using an object format.
@@ -196,6 +200,7 @@ Actions can accept arguments only, or both arguments and state:
 ```dart
 // Simple: (Map<String, dynamic> args)
 WDynamic(
+  json: myJson,
   actions: {
     'showAlert': (Map<String, dynamic> args) {
       print('Alert: ${args['message']}');
@@ -207,6 +212,7 @@ WDynamic(
 ```dart
 // With state access: (Map<String, dynamic> args, WDynamicState state)
 WDynamic(
+  json: myJson,
   actions: {
     'submitForm': (Map<String, dynamic> args, WDynamicState state) {
       final email = state.get('email');
@@ -243,13 +249,14 @@ WDynamic(
 )
 ```
 
+<a name="state-management"></a>
 ## State Management
 
 `WDynamic` automatically tracks form widget values using the `id` prop. Values are stored in an internal state object accessible via `WDynamicController` or action handlers.
 
 ### Auto-Tracking with ID
 
-Any widget with an `id` prop automatically stores its value in state:
+A `WInput`, `WCheckbox`, `WSelect` or `WDatePicker` with an `id` prop automatically stores its value in state. Other widgets, such as `WDiv`, do not track an `id`:
 
 ```dart
 {
@@ -324,6 +331,7 @@ WDynamic(
 )
 ```
 
+<a name="custom-builders"></a>
 ## Custom Builders
 
 Extend `WDynamic` with custom widget types using the `builders` prop.
@@ -375,7 +383,7 @@ Custom builders have priority over default widgets. You can override built-in wi
 
 ### Custom Icons
 
-Map string icon names to `IconData` for use in JSON `WIcon` widget nodes. Custom icons extend (not replace) the built-in Material icon map.
+Map string icon names to `IconData` for use in JSON `WIcon` widget nodes. Custom icons extend (not replace) a small built-in map of common names; add yours with `customIcons`. Names are matched in lower case, so write the keys in lower case.
 
 ```dart
 WDynamic(
@@ -401,6 +409,7 @@ WDynamic(
 )
 ```
 
+<a name="security"></a>
 ## Security
 
 `WDynamic` uses a whitelist approach for security. Only explicitly allowed widget types can be rendered.
@@ -440,6 +449,7 @@ WDynamic(
 )
 ```
 
+<a name="error-handling"></a>
 ## Error Handling
 
 Handle widget build failures gracefully with the `onError` callback.
@@ -473,8 +483,9 @@ WDynamic(
 )
 ```
 
-When max depth is exceeded, rendering stops and returns an empty `SizedBox.shrink()` or calls `onError` if provided.
+When max depth is exceeded, that branch renders a built-in red error box ("Error: MaxDepth") instead of its widget. `onError` is not called for it, so it cannot replace that box.
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [WDiv](./w-div.md) - Primary layout container

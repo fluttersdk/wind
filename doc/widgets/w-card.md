@@ -1,8 +1,6 @@
 # WCard
 
-Surface container with optional `header` and `footer` slots. Composes a `WDiv` (flex-col) with up to three slots: an optional header above the body, the required `child` body, and an optional footer below. All styling is className-driven; no colors or spacing are baked in.
-
-## Table of Contents
+Surface container with optional `header` and `footer` slots. Composes a `WDiv` (flex-col) with up to three slots: an optional header above the body, the required `child` body, and an optional footer below. All styling is className-driven; no colours or spacing are baked in.
 
 - [Basic Usage](#basic-usage)
 - [Props](#props)
@@ -30,13 +28,13 @@ WCard(
 | `child` | `Widget` | **Required** | The main body content of the card. |
 | `header` | `Widget?` | `null` | Optional widget rendered above the body. Typical use: a title row, a card image, or a section label. |
 | `footer` | `Widget?` | `null` | Optional widget rendered below the body. Typical use: action buttons or status/metadata rows. |
-| `className` | `String?` | `null` | Utility classes for the outer container. When omitted, defaults to `'w-full flex flex-col'` (no colors, no spacing). |
+| `className` | `String?` | `null` | Utility classes for the outer container. When omitted, defaults to `'w-full flex flex-col'` (no colours, no spacing). |
 
 <a name="constructor"></a>
 ## Constructor
 
 ```dart
-WCard({
+const WCard({
   Key? key,
   required Widget child,
   Widget? header,

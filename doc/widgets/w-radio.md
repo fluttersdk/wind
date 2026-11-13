@@ -2,9 +2,7 @@
 
 Controlled radio button. Composes `WAnchor` (interaction state) + `WDiv` (outer ring shell) + `WDiv` (inner filled indicator). Drives the `selected:` state prefix when `value == groupValue`, mirroring how `WCheckbox` drives `checked:`.
 
-Mutually-exclusive group behavior is the caller's responsibility: pass the same `groupValue` to every `WRadio<T>` in a group and update it through `onChanged`.
-
-## Table of Contents
+Mutually-exclusive group behaviour is the caller's responsibility: pass the same `groupValue` to every `WRadio<T>` in a group and update it through `onChanged`.
 
 - [Basic Usage](#basic-usage)
 - [Props](#props)
@@ -44,13 +42,13 @@ WRadio<String>(
 | `indicatorClassName` | `String?` | `null` | Utility classes for the inner filled dot (visible only when selected). Defaults to `'w-2.5 h-2.5 rounded-full bg-primary selected:opacity-100'` when `null`. |
 | `disabled` | `bool` | `false` | Blocks tap and activates the `disabled:` prefix. |
 | `states` | `Set<String>?` | `null` | Extra custom states merged with built-in `selected` and `disabled`. |
-| `semanticLabel` | `String?` | `null` | Accessible label for the Semantics node. Required on icon-only radios. |
+| `semanticLabel` | `String?` | `null` | Accessible label, forwarded to the inner `WAnchor`. It names the inner button node, not the outer node that carries the checked state. Set it on icon-only radios, which have no text to derive a label from. |
 
 <a name="constructor"></a>
 ## Constructor
 
 ```dart
-WRadio<T>({
+const WRadio<T>({
   Key? key,
   required T value,
   required T? groupValue,
