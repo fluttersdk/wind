@@ -26,7 +26,7 @@ Use `font-{family}` utilities to apply a font stack to an element.
 
 ### Sans-serif
 
-Use `font-sans` to apply a web-safe sans-serif font stack. This is the default font family for Wind.
+Use `font-sans` to apply a web-safe sans-serif family string. This is the default font family for Wind.
 
 ```dart
 WText(
@@ -37,7 +37,7 @@ WText(
 
 ### Serif
 
-Use `font-serif` to apply a serif font stack, ideal for long-form text or editorial designs.
+Use `font-serif` to apply a serif family string, ideal for long-form text or editorial designs.
 
 ```dart
 WText(
@@ -48,7 +48,7 @@ WText(
 
 ### Monospace
 
-Use `font-mono` to apply a monospace font stack, perfect for code snippets or technical data.
+Use `font-mono` to apply a monospace family string, perfect for code snippets or technical data.
 
 ```dart
 WText(
@@ -62,9 +62,11 @@ WText(
 
 | Class | Font Family | Description |
 |:------|:------------|:------------|
-| `font-sans` | `ui-sans-serif, system-ui, ...` | Default sans-serif stack. |
-| `font-serif` | `ui-serif, Georgia, ...` | Default serif stack. |
-| `font-mono` | `ui-monospace, SFMono-Regular, ...` | Default monospace stack. |
+| `font-sans` | `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` | Default sans-serif family string. |
+| `font-serif` | `Georgia, Cambria, "Times New Roman", Times, serif` | Default serif family string. |
+| `font-mono` | `ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace` | Default monospace family string. |
+
+Each string goes whole to `TextStyle.fontFamily`; Wind does not split it into `fontFamilyFallback`, so Flutter does not try the listed families one by one. Register a single installed family under a custom key in `WindThemeData.fontFamilies` when the exact face matters.
 
 <a name="variants"></a>
 ## Variants

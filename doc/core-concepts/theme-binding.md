@@ -21,7 +21,7 @@ Binding the two systems ensures:
 <a name="reactive-binding"></a>
 ## Reactive Binding
 
-To ensure your entire application rebuilds when the theme changes (e.g., switching to dark mode), use the `builder` pattern. This provides a `WindController` that dynamically generates a new `ThemeData` whenever the state updates.
+To ensure your entire application rebuilds when the theme changes (e.g., switching to dark mode), use the `builder` pattern. This provides a `WindThemeController` that dynamically generates a new `ThemeData` whenever the state updates.
 
 <x-preview path="core-concepts/theme_binding" size="md" source="example/lib/pages/core-concepts/theme_binding.dart"></x-preview>
 
@@ -94,6 +94,8 @@ The `toThemeData()` method intelligently maps Wind tokens to their standard Flut
 | `colors['background']` | `scaffoldBackgroundColor` |
 | `brightness` | `brightness` |
 | `fontFamilies['sans']` | `textTheme.fontFamily` |
+
+Three rows have a fallback. `colors['primary']` only repaints Material widgets when it differs from Wind's seeded default (the `blue` swatch); otherwise the Material layer keeps its indigo baseline. `colors['secondary']` defaults to teal. Without `colors['background']`, `scaffoldBackgroundColor` reads the `bg-[#hex]` in your `bg-surface` alias (`dark:bg-[#hex]` in dark mode) and then falls back to white in light mode and `gray-900` in dark mode.
 
 This mapping ensures that your utility-first styles and native widgets stay perfectly in sync.
 

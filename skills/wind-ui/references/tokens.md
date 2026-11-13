@@ -2,7 +2,7 @@
 
 Exhaustive per-parser token catalogue. Reach for this file when verifying a className token exists, picking the right family, looking up an arbitrary-value pattern, or auditing className for unsupported syntax.
 
-The parsers run first-match-wins. Order within className matters: last class within the same property wins (including duplicate tokens; `top-8 top-4 top-8` resolves to `top-8`). Unknown tokens are dropped from output, and a one-time `kDebugMode` hint names each (release builds stay silent).
+The parsers run first-match-wins. Order within className matters: last class within the same property wins (including duplicate tokens; `top-8 top-4 top-8` resolves to `top-8`). A token no parser claims is dropped and a one-time `kDebugMode` hint names it (release builds stay silent), except the deliberate no-ops listed under "Recognised as deliberate no-ops" below (`transition`, `antialiased` and the like), which drop with no hint; a token whose family is claimed but whose value is unsupported (`text-7xl`) drops silently, with no hint.
 
 ## Contents
 
@@ -38,7 +38,7 @@ The key leaves out the theme's maps. Cache hit-rate is near-100% in production; 
 
 Resolution:
 - Each token is matched against parsers in registration order; the first parser whose `canParse()` returns `true` claims it.
-- Unknown tokens are dropped from output; a one-time `kDebugMode` hint names each (release builds stay silent, no exception is thrown).
+- A token no parser claims (checked on the bare token after its last `:`) is dropped and a one-time `kDebugMode` hint names it (release builds stay silent, no exception is thrown), unless it is one of the deliberate no-ops near the end of this file (`transition`, `antialiased` and the like), which drop with no hint. A claimed family with an unsupported value drops silently, and a class with an unknown or inactive prefix is removed earlier with no hint.
 - Within a parser, last-class-wins via reverse iteration: `p-4 p-8` resolves to `p-8`.
 - Across parsers, conflicts coexist by targeting different `WindStyle` fields: `text-red-500` (colour) and `text-center` (alignment) both apply.
 - Prefix resolution: every `:` segment must be active for the class to apply. `md:hover:dark:bg-blue-500` requires breakpoint ≥ md, the hover state and dark brightness. Prefix order is arbitrary.
@@ -66,7 +66,7 @@ Inline colour escape hatches that bypass the cache key:
 | `flex-1` | `Expanded(flex: 1)` participation |
 | `flex-N` | Numeric flex (any integer) |
 | `flex-auto` | `Flexible(fit: loose, flex: 1)` |
-| `flex-initial` | `Flexible(fit: loose, flex: 0)` |
+| `flex-initial` | `Flexible(fit: loose)` like `flex-auto`, but it never claims a grow share in a row (CSS `flex: 0 1 auto`) |
 | `flex-none` | CSS `flex: 0 0 auto`: no grow and no shrink. Keeps intrinsic size (no `Flexible` wrap), like `shrink-0` |
 | `flex-grow` / `grow` | `flex: 1` (Expanded). Both Tailwind v3 + v4 names supported |
 | `grow-0` | No grow (intrinsic main size) |
@@ -197,7 +197,7 @@ Custom families via `WindThemeData.colors`: `{'brand': MaterialColor(...)}` make
 | Token | Effect |
 |---|---|
 | `border` | Default uniform width (theme `DEFAULT` = 1 px) |
-| `border-N` | Numeric width (`border-2`, `border-4`, `border-8`) |
+| `border-N` | Numeric width: any integer works (`border-2`, `border-4`, `border-8`; the theme names 0, 2, 4 and 8) |
 | `border-[3px]` | Arbitrary width |
 | `border-t` / `border-r` / `border-b` / `border-l` | Directional default-width |
 | `border-t-N` / `border-r-N` / `border-b-N` / `border-l-N` | Directional with width |
@@ -242,7 +242,7 @@ Opacity:
 
 | Token | Effect |
 |---|---|
-| `opacity-{0|5|10|15|...|95|100}` | Preset percentages (`opacity-50` = 50%) |
+| `opacity-{0\|5\|10\|20\|25\|30\|40\|50\|60\|70\|75\|80\|90\|95\|100}` | Preset percentages (`opacity-50` = 50%); 15, 35, 45 and 55 are not steps and drop silently |
 | `opacity-[0.5]` / `opacity-[0.75]` | Arbitrary decimal (clamped to 0-1) |
 
 The slash-syntax `/N` modifier applies only to colours, not as a standalone token.
@@ -320,7 +320,7 @@ Order: covered in §2.
 
 **Tracking (letter-spacing)**: em, as in Tailwind: `tracking-tighter` (-0.05em) / `-tight` (-0.025em) / `-normal` (0) / `-wide` (0.025em) / `-wider` (0.05em) / `-widest` (0.1em). The em multiplies the font size the text renders at (`text-*` in the same className, else the inherited `DefaultTextStyle` size, else 14, `kDefaultFontSize`), so `text-sm tracking-tight` is -0.35 px. Arbitrary `tracking-[-0.02em]` is em; `tracking-[1px]` and a bare `tracking-[1]` are logical pixels; both take a sign. A custom widget building text from a parsed `WindStyle` calls `style.toTextStyle(inheritedFontSize: wInheritedFontSize(context))` so the em resolves the same way.
 
-**Leading (line-height)**: `leading-tight` (1.25) / `-snug` (1.375) / `-normal` (1.5) / `-relaxed` (1.625) / `-loose` (2.0). Arbitrary `leading-[24px]`, numeric `leading-6` (6 × 4 px).
+**Leading (line-height)**: `leading-tight` (1.25) / `-snug` (1.375) / `-normal` (1.5) / `-relaxed` (1.625) / `-loose` (2.0). Arbitrary `leading-[24px]`, numeric `leading-6` (6 × 4 px). `leading-none` matches the family but has no theme value, so it drops silently. `rem` inside an arbitrary `leading-[...]` or `text-[...]` is read as px (`text-[1.5rem]` is 1.5 px). After a slash only a number works (`text-xl/8`): a named leading (`text-xl/loose`) reads the theme multiplier (2.0) as pixels and collapses the line height.
 
 **Overflow**: `truncate` (sets `TextOverflow.ellipsis` + `maxLines: 1` + `softWrap: false`) / `text-ellipsis` (ellipsis only) / `text-clip` (no ellipsis). `line-clamp-N` for multi-line ellipsis. `line-clamp-none` to reset.
 
@@ -405,12 +405,12 @@ Custom breakpoints via `WindThemeData.screens`: `{'tablet': 900}` enables `table
 
 **Platform:** `ios:` `android:` `macos:` `windows:` `linux:` `web:` (specific platform). `mobile:` (true on iOS or Android).
 
-**State (built-in):** `hover:` `focus:` `disabled:` `loading:` `checked:` `error:`. The first two come from `WAnchor`; the others from the widget itself.
+**State (built-in):** `hover:` `focus:` `disabled:`, resolved from the anchor and the widget's own `disabled` prop. **State (widget-supplied):** `loading:` (`WButton`), `checked:` (`WCheckbox`, `WSwitch`) and `error:` (`WForm*`) arrive through the widget's `states`, not the context.
 
 **State (custom):** `selected:` `highlighted:` `new:` `pressed:` `expanded:`, or any string. Pass via `states: Set<String>?`. No registration required.
 
 Not supported as prefixes:
-- `active:` (reserved, not wired; WAnchor tracks hover and focus only)
+- `active:` as an automatic press state (no widget tracks press; it applies only when you pass `states: {'active'}`)
 - `group-hover:` / `peer-focus:` / `first:` / `last:` / `odd:` / `even:` / `before:` / `after:` / `focus-within:` / `focus-visible:`
 - `@container` / `@sm:` (container queries), viewport-only
 
@@ -481,6 +481,8 @@ If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it 
 **Layout / flex:**
 - `flex-nowrap` (default; omit `wrap`)
 - `flex-wrap-reverse`
+- `place-*` (the flex parser claims it but has no handler)
+- `flex-shrink-0` / `flex-grow-0` and numeric `shrink-N` / `grow-N` with N above 0 (only `shrink`, `shrink-0`, `flex-shrink`, `grow`, `grow-0` and `flex-grow` are wired)
 
 (`flex-wrap` is not in this list: it is aliased to `wrap` and resolves, printing a one-time `kDebugMode` hint that points at the canonical `wrap`.)
 
@@ -547,7 +549,7 @@ If a token from Tailwind v3 / v4 muscle memory does not seem to do anything, it 
 - `selection:` / `placeholder:` / `marker:` / `file:`
 - `motion-safe:` / `motion-reduce:` / `print:`
 - `focus-within:` / `focus-visible:`
-- `active:` (reserved, no wiring)
+- `active:` as an automatic press state (applies only through `states: {'active'}`)
 
 **Container queries:** `@container`, `@sm:`, `@md:`, `@lg:`, `@max-md:`, named containers like `@sm/sidebar:`.
 

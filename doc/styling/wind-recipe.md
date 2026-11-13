@@ -55,7 +55,7 @@ button(className: 'w-full')
 | `base` | `String` | `''` | Always-applied className. |
 | `variants` | `Map<String, Map<String, String>>` | `{}` | Variant axes: axis -> (value -> className). Iteration order fixes emission order. |
 | `compoundVariants` | `List<WindCompoundVariant>` | `[]` | Multi-condition rules applied in list order after variant classes. |
-| `defaultVariants` | `Map<String, String>` | `{}` | Default selection per axis. Overridden by the `variants:` argument at call site; a `null` value clears the default. |
+| `defaultVariants` | `Map<String, String>` | `{}` | Default selection per axis. Overridden by the `variants:` argument at call site; a `null` there clears the default, while `defaultVariants` itself holds strings only. |
 
 **Call signature** (`WindRecipe` is callable):
 

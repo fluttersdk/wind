@@ -25,7 +25,7 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | Wrapping | `flex-wrap` (CSS flex-wrap property) | `wrap` (Flutter `Wrap` widget is structurally separate from `flex`) |
 | Container layout | `flex` works on any element | `flex` requires `WDiv`; raw `Container` does not parse className |
 | `dark:` opt-in | Optional (use only when needed) | Required for every colour token; missing peer is a bug |
-| Unknown tokens | Build-time warning or ignored depending on config | No-op at runtime (dropped). A one-time `kDebugMode` `debugPrint` names the token only when no parser recognises it (its prefix matches no parser); a recognised family with an unsupported value (e.g. `text-7xl`, claimed by `text-*`) drops silently with no hint. Valid tokens handled outside the parser map (widget-consumed `object-*`, the `inline-flex`/`inline-block`/`inline` display keywords, inert compat tokens like `transition-colors` / `antialiased` / `sr-only` / `tabular-nums`) are exempt, so the hint targets genuine unknown-family typos |
+| Unknown tokens | Build-time warning or ignored depending on config | No-op at runtime (dropped). A one-time `kDebugMode` `debugPrint` names the token only when no parser claims the bare token left after its last `:` (a class with an unknown or inactive prefix is removed earlier, with no hint); a recognised family with an unsupported value (e.g. `text-7xl`, claimed by `text-*`) drops silently with no hint. Valid tokens handled outside the parser map (widget-consumed `object-*`, the `inline-flex`/`inline-block`/`inline` display keywords, inert compat tokens like `transition-colors` / `antialiased` / `sr-only` / `tabular-nums`) are exempt, so the hint targets genuine unknown-family typos |
 | Important modifier | `!flex` (v3) or `flex!` (v4) | Not implemented |
 | Container queries | `@container`, `@sm:`, `@max-md:` | Not implemented; viewport-only |
 | Group / peer state | `group-hover:`, `peer-focus:` | Not implemented; use `states: Set<String>` |
@@ -41,6 +41,8 @@ The base rule: Wind aims for syntactic familiarity, not semantic equivalence. Mo
 | `flex-wrap` | Enables wrapping on a flex container | Aliased directly to `wrap` (the canonical token); emits a one-time `kDebugMode` hint pointing at `wrap` |
 | `text-{xs..6xl}` | Sizes go to `9xl` (128 px) | Stops at `6xl` (60 px). `7xl` / `8xl` / `9xl` silently no-op |
 | `text-7xl`+ | Larger sizes available | No-op |
+| `min-w-full` / `min-h-full` | Percentage of the parent | The viewport width and the viewport height, not the parent's |
+| `leading-none` | `line-height: 1` | Not mapped (no `none` key in the leading scale); drops silently |
 | `text-{color}` | Pure font colour | Overloaded across colour / alignment / size / weight; resolves in order |
 | `w-full` inside a flex Row | Works (max-width: 100%) | A bare `w-full` row child is treated as `flex-1` (wrapped in `Expanded`) and fills the row; `flex-1` is the clearer, idiomatic choice. `md:w-full` is not auto-expanded. |
 | `h-full` inside a vertical scroll | Works (max-height: 100%) | Raises an actionable dev assert ("use `flex-1` inside a `flex flex-col` instead of `h-full` inside a vertical scroll"); the scrollable parent threads a vertical-unbounded flag so the child can fail fast. Stripped in release. |
@@ -137,7 +139,7 @@ When a className inherited from a web project includes any of these, expect sile
 - `selection:` / `placeholder:` / `marker:` / `file:`
 - `motion-safe:` / `motion-reduce:` / `print:`
 - `focus-within:` / `focus-visible:`
-- `active:` (reserved, not wired; WAnchor tracks hover and focus only)
+- `active:` as an automatic press state (no widget tracks press; it applies only through `states: {'active'}`)
 
 ### Container queries
 - `@container`, `@sm:`, `@md:`, `@lg:`, `@max-md:`, named containers (`@sm/sidebar:`): viewport-only in Wind
@@ -204,8 +206,8 @@ Wind 1.0 is anchored to Tailwind v3 semantics for shadow / radius / blur / ring 
 | `bg-linear-to-r` | `bg-gradient-to-r` |
 | `bg-conic-*` | not implemented |
 | `bg-radial-*` | not implemented |
-| `shrink-*` | both `shrink-*` and `flex-shrink-*` work |
-| `grow-*` | both `grow-*` and `flex-grow-*` work |
+| `shrink-*` | only `shrink`, `shrink-0` and `flex-shrink` are wired; `flex-shrink-0` and numeric variants above 0 drop silently |
+| `grow-*` | only `grow`, `grow-0` and `flex-grow` are wired; `flex-grow-0` and numeric variants above 0 drop silently |
 | `outline-hidden` | not implemented (use `outline-none` if you need it; not wired either) |
 | `ring-3` (explicit width to get the v3 default) | `ring` produces 3 px (matches v3) |
 | `bg-black/50` (opacity modifier) | Same; `bg-opacity-50` removed in v4, also not in Wind |

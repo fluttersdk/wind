@@ -17,7 +17,7 @@ Utilities for controlling the box shadow of an element.
 // Basic examples
 WDiv(className: 'shadow')
 WDiv(className: 'shadow-lg')
-WDiv(className: 'shadow-red-500')
+WDiv(className: 'shadow-md shadow-red-500')
 WDiv(className: 'shadow-none')
 ```
 

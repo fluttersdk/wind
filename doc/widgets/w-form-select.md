@@ -110,7 +110,7 @@ WFormMultiSelect({
 | `className` | `String?` | `null` | Wind utility classes for the select trigger. |
 | `options` | `List<SelectOption<T>>` | **Required** | The list of available options to display. |
 | `value` | `T?` | `null` | The currently selected value (single select). |
-| `values` | `List<T>?` | `[]` | The currently selected values (multi select). |
+| `values` | `List<T>?` | `null` | The currently selected values (multi select); null is treated as empty. |
 | `label` | `String?` | `null` | Optional label text displayed above the select. |
 | `hint` | `String?` | `null` | Optional hint text displayed below the select. |
 | `validator` | `String? Function(T?)?` | `null` | Form validation logic. |

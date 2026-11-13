@@ -87,7 +87,7 @@ const WDatePicker({
 | `mode` | `WDatePickerMode` | `single` | Selection mode: `single`, `range` or `dateTime` |
 | `value` | `DateTime?` | `null` | Currently selected instant (`single` and `dateTime` modes; carries the time of day in `dateTime`) |
 | `range` | `DateRange?` | `null` | Currently selected range (range mode) |
-| `onChanged` | `ValueChanged<DateTime>?` | `null` | Callback fired on selection (`single` and `dateTime` modes; in `dateTime` it fires once the confirm control closes the popover) |
+| `onChanged` | `ValueChanged<DateTime>?` | `null` | Callback fired on selection (`single` and `dateTime` modes; in `dateTime` it fires on every day tap, and on every time step only while `value` is non-null (with no date picked a step moves the pending time and emits nothing); the confirm control only closes the popover) |
 | `onRangeChanged` | `ValueChanged<DateRange>?` | `null` | Callback fired on range selection (range mode) |
 | `minDate` | `DateTime?` | `null` | Earliest selectable date; day cells compare at day granularity, the composed instant is additionally clamped in `dateTime` mode |
 | `maxDate` | `DateTime?` | `null` | Latest selectable date; a bare-day bound is that day at `00:00`, so `dateTime` mode needs an explicit end-of-day to admit the whole last day |
@@ -405,7 +405,7 @@ The calendar popover is styled with a fixed-width container:
 
 ```
 'w-[320px] bg-white dark:bg-gray-800 border border-gray-200
- dark:border-gray-700 rounded-xl shadow-xl p-4'
+ dark:border-gray-700 rounded-xl shadow-xl p-4 overflow-y-auto'
 ```
 
 The calendar grid consists of:
