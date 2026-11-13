@@ -4,7 +4,7 @@ paths: example/lib/pages/**
 
 # Example page conventions (`example/lib/pages/`)
 
-Each page demonstrates ONE widget or ONE concept thoroughly. Files are referenced by `doc/` via `<x-preview source="...">` — stable file paths matter.
+Each page demonstrates ONE widget or ONE concept thoroughly. Files are referenced by `doc/` via `<x-preview source="...">` - stable file paths matter.
 
 ## Naming
 
@@ -15,7 +15,7 @@ Each page demonstrates ONE widget or ONE concept thoroughly. Files are reference
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 class FooBasicExamplePage extends StatefulWidget {
   const FooBasicExamplePage({super.key});
@@ -72,8 +72,8 @@ class _FooBasicExamplePageState extends State<FooBasicExamplePage> {
 
 ## Rules
 
-- **Root:** `WDiv(className: 'w-full h-full overflow-y-auto p-4', scrollPrimary: true, child: ...)` — always scrollable, always `scrollPrimary: true` so iOS tap-to-top works.
-- **Content wrapper:** `WDiv(className: 'flex flex-col gap-6 max-w-4xl mx-auto', children: [...])` — vertical flex with consistent gap, max-width centered.
+- **Root:** `WDiv(className: 'w-full h-full overflow-y-auto p-4', scrollPrimary: true, child: ...)` - always scrollable, always `scrollPrimary: true` so iOS tap-to-top works.
+- **Content wrapper:** `WDiv(className: 'flex flex-col gap-6 max-w-4xl mx-auto', children: [...])` - vertical flex with consistent gap, max-width centered.
 - **Header:** gradient `WDiv` with title (`text-2xl font-bold text-white`) + description (`text-sm text-white/80`).
 - **Sections:** `_buildSection(title:, description:, children:)` helper. Title `text-lg font-semibold text-gray-900 dark:text-white`. Description `text-sm text-gray-500 dark:text-gray-400`.
 - **Demo rows:** for variant comparisons, helper `_buildDemoRow` or inline; show 3-5 variants per feature.
@@ -100,9 +100,9 @@ Use multi-line triple-quoted strings when className spans more than one concern.
 When demoing state-prefixed classes, show the className that fires the state:
 ```dart
 WButton(
-  className: 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 disabled:bg-gray-400',
+  className: 'bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400',
   onTap: () {},
-  child: WText('Hover / Press / Disable me'),
+  child: WText('Hover / Disable me'),
 );
 ```
 
@@ -110,10 +110,10 @@ For custom states, drive via `states: {'selected'}` and use `selected:` prefixed
 
 ## Pairing with `doc/`
 
-When a doc file's `<x-preview source="example/lib/pages/foo/bar.dart">` references this page, the path is the contract — do not rename or move the file without updating every doc that references it.
+When a doc file's `<x-preview source="example/lib/pages/foo/bar.dart">` references this page, the path is the contract - do not rename or move the file without updating every doc that references it.
 
 ## What never goes in `example/lib/pages/`
 
-- Production logic — pure demos only.
-- Network calls — pump-friendly demos only.
+- Production logic - pure demos only.
+- Network calls - pump-friendly demos only.
 - Long copy that belongs in `doc/`.

@@ -1,70 +1,93 @@
 <p align="center">
-  <img src=".github/wind-logo.svg" width="120" alt="Wind" />
+  <img src="https://raw.githubusercontent.com/anilcancakir/wind_kit/master/.github/wind-kit-logo.svg" width="120" alt="wind_kit logo" />
 </p>
+
+<h1 align="center">wind_kit</h1>
 
 <p align="center">
   <strong>Tailwind CSS for Flutter.</strong><br/>
-  Utility-first styling that turns <code>className</code> strings into optimized Flutter widget trees. If you know Tailwind, you already know Wind.
+  Utility-first <code>className</code> styling: <code>'flex p-4 dark:bg-gray-800'</code> becomes an optimised widget tree, with dark mode, responsive breakpoints, hover states and theming built in. No codegen.
 </p>
 
 <p align="center">
-  <a href="https://pub.dev/packages/fluttersdk_wind"><img src="https://img.shields.io/pub/v/fluttersdk_wind.svg" alt="pub package"></a>
+  <a href="https://pub.dev/packages/wind_kit"><img src="https://img.shields.io/pub/v/wind_kit.svg" alt="pub package"></a>
   <a href="https://github.com/anilcancakir/wind_kit/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/anilcancakir/wind_kit/ci.yml?branch=master&label=CI" alt="CI"></a>
-  <a href="https://pub.dev/packages/fluttersdk_wind/score"><img src="https://img.shields.io/pub/points/fluttersdk_wind" alt="pub points"></a>
+  <a href="https://codecov.io/gh/anilcancakir/wind_kit"><img src="https://codecov.io/gh/anilcancakir/wind_kit/graph/badge.svg" alt="codecov"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://pub.dev/packages/wind_kit/score"><img src="https://img.shields.io/pub/points/wind_kit" alt="pub points"></a>
 </p>
 
 <p align="center">
-  <a href="https://fluttersdk.com/wind">Documentation</a> ·
-  <a href="https://fluttersdk.com/wind/getting-started/installation">Getting started</a> ·
-  <a href="https://pub.dev/packages/fluttersdk_wind">pub.dev</a> ·
-  <a href="https://github.com/fluttersdk/wind/issues">Issues</a>
+  <a href="https://anilcancakir.com/wind_kit">Documentation</a> ·
+  <a href="https://anilcancakir.com/wind_kit/docs/getting-started/installation">Getting started</a> ·
+  <a href="https://pub.dev/packages/wind_kit">pub.dev</a> ·
+  <a href="https://github.com/anilcancakir/wind_kit/issues">Issues</a>
 </p>
 
----
+## At a glance
 
-Flutter's structural styling costs you a six widget pyramid for a rounded card with a hover state, and the Flutter team has acknowledged the [verbosity](https://github.com/flutter/flutter/issues/161345) itself. Wind is the styling layer that closes the gap: one string, one widget, the same utility names you already write on the web.
+| Fact | Value |
+|---|---|
+| Package | [`wind_kit`](https://pub.dev/packages/wind_kit) |
+| Install | `flutter pub add wind_kit` |
+| Import | `package:wind_kit/wind_kit.dart` (the only barrel) |
+| Entry points | `WindTheme` and `WindThemeData`, the W-prefix widgets (`WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, ...), `WindRecipe`, `WDynamic` |
+| Platforms | Android, iOS, web, macOS, Windows and Linux; web builds compile to WebAssembly |
+| Requires | Dart >=3.4, Flutter >=3.27 |
+| Dependencies | `flutter_svg`, `wind_kit_diagnostics_contracts` |
+| License | MIT |
+
+## Why wind_kit
+
+A rounded card with a dark theme, a shadow and a hover state costs a pyramid of widgets in plain Flutter, and the Flutter team has acknowledged the [verbosity](https://github.com/flutter/flutter/issues/161345) itself. wind_kit closes the gap with the utility names you already write on the web: one string, one widget.
 
 ```dart
 WDiv(
-  className: 'p-6 mx-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg',
+  className: 'p-6 mx-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl',
   child: WText('Hello', className: 'text-xl font-bold'),
 )
 ```
 
 <details>
-<summary>The same thing in raw Flutter (click to show)</summary>
+<summary>The same card in plain Flutter (click to show)</summary>
 
 ```dart
-Container(
-  padding: EdgeInsets.all(24),
-  margin: EdgeInsets.symmetric(horizontal: 16),
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(12),
-    boxShadow: [
-      BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: Offset(0, 4)),
-    ],
-  ),
-  child: Text('Hello', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-)
+Widget card(BuildContext context) {
+  final bool dark = Theme.of(context).brightness == Brightness.dark;
+
+  return Container(
+    padding: const EdgeInsets.all(24),
+    margin: const EdgeInsets.symmetric(horizontal: 16),
+    decoration: BoxDecoration(
+      color: dark ? const Color(0xFF1F2937) : Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: const [
+        BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 15, offset: Offset(0, 10), spreadRadius: -3),
+        BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 6, offset: Offset(0, 4), spreadRadius: -2),
+      ],
+    ),
+    child: const Text('Hello', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  );
+}
 ```
+
+That is before the hover state, which needs a `StatefulWidget`, a `MouseRegion` and a second set of shadows.
 
 </details>
 
-Wind is a styling engine, not a widget catalogue. It composes with whatever component library you already use.
+wind_kit is a styling engine, not a widget catalogue. It composes with whatever component library you already use.
 
 ## Install
 
 ```bash
-flutter pub add fluttersdk_wind
+flutter pub add wind_kit
 ```
 
 Wrap the app once, then style everything with strings:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:fluttersdk_wind/fluttersdk_wind.dart';
+import 'package:wind_kit/wind_kit.dart';
 
 void main() => runApp(const App());
 
@@ -77,7 +100,7 @@ class App extends StatelessWidget {
       data: WindThemeData(),
       builder: (context, controller) => MaterialApp(
         theme: controller.toThemeData(),
-        home: const Home(),
+        home: const Scaffold(body: Center(child: Home())),
       ),
     );
   }
@@ -90,7 +113,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return WDiv(
       className: '''
-        flex flex-col gap-4 p-6
+        flex flex-col gap-4 p-6 w-full max-w-md
         bg-white dark:bg-gray-800
         rounded-xl shadow-lg
         md:flex-row md:gap-6
@@ -98,7 +121,7 @@ class Home extends StatelessWidget {
         hover:shadow-xl
       ''',
       children: [
-        WText('Wind', className: 'text-xl font-bold text-gray-900 dark:text-white'),
+        WText('wind_kit', className: 'text-xl font-bold text-gray-900 dark:text-white'),
         WButton(
           className: 'px-4 py-2 rounded-lg bg-blue-500 dark:bg-blue-600 hover:bg-blue-600',
           onTap: () {},
@@ -112,81 +135,191 @@ class Home extends StatelessWidget {
 
 That runs as written. No `MouseRegion`, no `setState`, no `_isHovered` boolean, no `MediaQuery` branch for the tablet layout.
 
-## What you get
+## The className language
 
-- **The Tailwind vocabulary you already know.** `flex`, `p-4`, `bg-blue-500`, `rounded-lg`, `shadow-md`, parsed by 20 token parsers. Classes paste between a web project and a Flutter one unmodified.
-- **27 W-prefix widgets.** `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDatePicker`, `WCard`, `WTabs`, `WBadge`, `WSwitch`, `WRadio`, `WDynamic`, and five `FormField` wrappers that drop straight into a Flutter `Form`.
-- **Prefixes that stack.** `dark:`, `sm:` to `2xl:`, `hover:` / `focus:` / `disabled:` / `loading:` / `selected:`, and `ios:` / `android:` / `web:` / `mobile:` / `macos:` / `windows:` / `linux:` for the cases where one platform genuinely differs.
-- **A theme you own.** 24 `WindThemeData` fields covering every token scale: colors, spacing, typography, shadows, breakpoints, animations. Defaults track Tailwind's own. `aliases` let you name a bare token once and use it everywhere.
-- **Variant composition.** `WindRecipe` and `WindSlotRecipe` build a className (or a per-slot map) from a base, variant axes, compound variants and a caller override, in a strict emission order with no merge magic to reason about.
-- **Forms that behave on a phone.** A focused field lifts the whole input clear of the keyboard and of the keyboard toolbar above it, not just the line the caret sits on. A control with an `onTap` is one traversal stop and activates on Enter, Space, a gamepad A button and a TV remote.
-- **Server-driven UI.** `WDynamic` renders a widget tree from JSON against a whitelist of 13 Wind widgets and 16 Flutter core widgets, so a layout change can ship without a store release.
-- **Written for agents as much as for people.** A canonical skill, a hosted MCP server and an `llms.txt` inventory, all maintained in this repository.
-
-## className rules worth knowing before the first line
+wind_kit reads Tailwind's vocabulary (`flex`, `p-4`, `bg-blue-500`, `rounded-lg`, `shadow-md`) through a set of token parsers, and the W-prefix widgets that style themselves accept it: `WDiv`, `WText`, `WButton`, `WInput`, `WSelect`, `WPopover`, `WDatePicker`, `WCard`, `WTabs`, `WBadge`, `WSwitch`, `WRadio` and the `WForm*` wrappers that drop straight into a Flutter `Form`.
 
 | Rule | What it means |
 |:---|:---|
-| Prefix order | `<state>:<breakpoint>:<dark>:<platform>:<utility>`, and prefixes stack freely. |
+| Prefixes | `dark:`, `sm:` to `2xl:`, `hover:` / `focus:` / `disabled:` / `loading:` / `selected:` and `ios:` / `android:` / `web:` / `mobile:` / `macos:` / `windows:` / `linux:` stack freely. By convention `<state>:<breakpoint>:<dark>:<platform>:<utility>` reads best, but order does not matter. |
 | Conflicts | The last class in a family wins. `p-2 p-6` is padding 6. |
-| Dark mode | Every color token carries its `dark:` pair in the SAME className. A missing pair is a bug, and the parser says so once in `kDebugMode`. |
-| Unknown tokens | Dropped silently in release, named once in debug. A typo never throws and never renders a red screen. |
+| Dark mode | Every colour token carries its `dark:` pair in the SAME className. Nothing checks it for you, so review it: `bg-white` alone stays white in dark mode. |
+| Unknown tokens | An unknown family (`ps-4`) is dropped with a one-time `kDebugMode` hint. A known family with a bad value (`text-7xl`, `bg-blu-500`) or a mistyped prefix (`hovr:`) drops silently. A typo never throws and never renders a red screen. |
 | Spacing scale | One step is 4 logical pixels, so `p-4` is 16. Font size is pixel based too; tracking is em, as in Tailwind, so `tracking-tight` on 14px text is -0.35. |
+| Press state | `active:` is not wired to the pointer. Track the press in your own state and pass `states: {'pressed'}` with `pressed:` classes. |
 | Caching | A parsed className is cached on `className + breakpoint + brightness + platform + states`, so rebuilds cost a map lookup. |
 
-Wind is not a literal Tailwind port. Transforms, filters, `group-*` / `peer-*`, container queries and `@apply` have no Flutter counterpart and are deliberately out of scope; the full list lives in the [docs](https://fluttersdk.com/wind).
+wind_kit is not a literal Tailwind port: most classes paste between a web project and a Flutter one, and the gaps are listed. Transforms, filters, `group-*` / `peer-*`, container queries and `@apply` have no Flutter counterpart and are deliberately out of scope.
 
-## For coding agents
+## Theming
 
-Wind ships its own agent surface rather than hoping a model guessed right:
+A `WindThemeData` holds the token scales (colours, spacing, typography, shadows, breakpoints, animations) and `aliases`. Defaults track Tailwind's own, and an alias names a bare token once for every widget.
 
-```bash
-npx skills add fluttersdk/ai --skill wind-ui
+```dart
+WindTheme(
+  data: WindThemeData(
+    aliases: {'btn-primary': 'bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg'},
+  ),
+  builder: (context, controller) => MaterialApp(
+    theme: controller.toThemeData(),
+    home: Scaffold(
+      body: WButton(
+        className: 'btn-primary',
+        onTap: controller.toggleTheme,
+        child: const WText('Toggle theme'),
+      ),
+    ),
+  ),
+)
 ```
 
-The skill at [`skills/wind-ui/SKILL.md`](skills/wind-ui/SKILL.md) is the source of truth for the className grammar, the widget surface, the dark-mode pairing rule and the anti-patterns. [fluttersdk/ai](https://github.com/fluttersdk/ai) distributes it to Claude Code, Cursor, OpenCode, Gemini CLI, VS Code Copilot, Codex CLI, Cline and Roo Code. The hosted MCP server at `mcp.fluttersdk.com` exposes a `search-docs` tool over Streamable HTTP with no auth, and `npx @fluttersdk/mcp` bridges it for stdio-only clients. The machine-readable package inventory is [`llms.txt`](llms.txt).
+| Member | Meaning |
+|:---|:---|
+| `WindThemeData(colors:, screens:, fontSizes:, aliases:, baseSpacingUnit: ...)` | Merged over the defaults, so you pass only what you change. |
+| `controller.toggleTheme()` / `resetToSystem()` | Flip light and dark by hand, or follow the OS again. |
+| `context.windTheme`, `context.windIsDark`, `context.wActiveBreakpoint` | Read the theme, the brightness and the breakpoint from any `BuildContext`. |
 
-## Documentation and examples
+Failure modes: a widget outside a `WindTheme` fails an assertion in debug, and a colour name the theme does not define drops silently.
 
-Full documentation with live previews is at [fluttersdk.com/wind](https://fluttersdk.com/wind): every widget, every parser token, the theme fields, dark mode, responsive design, `WDynamic`, and the AI setup. Upgrading from an earlier release? See the [upgrade guide](doc/getting-started/upgrade-guide.md). Internals live in [ARCHITECTURE.md](ARCHITECTURE.md).
+## Responsive and dark mode
 
-The [`example/`](example/) directory is the same gallery the docs site embeds:
-
-```bash
-cd example && flutter pub get
-flutter run -d chrome
+```dart
+WDiv(
+  className: 'flex flex-col md:flex-row gap-4 p-4 bg-white dark:bg-gray-900',
+  children: [
+    WDiv(className: 'flex-1 p-4 rounded-lg bg-gray-100 dark:bg-gray-800', child: WText('Left', className: 'text-gray-900 dark:text-white')),
+    WDiv(className: 'flex-1 p-4 rounded-lg bg-gray-100 dark:bg-gray-800', child: WText('Right', className: 'text-gray-900 dark:text-white')),
+  ],
+)
 ```
 
-Requires Flutter 3.27.0 and Dart 3.4.0 or newer. Stable since 1.0, MIT licensed, and the only runtime dependencies are `flutter_svg` and the diagnostics contracts package.
+| Prefix | Active when |
+|:---|:---|
+| `sm:` `md:` `lg:` `xl:` `2xl:` | The window is at least 640, 768, 1024, 1280 or 1536 px wide (the theme's `screens`, mobile first). |
+| `dark:` | The theme brightness is dark, from the OS or from `toggleTheme()`. |
+| `ios:` `android:` `web:` `mobile:` `macos:` `windows:` `linux:` | The app runs on that platform. |
 
-## Contributing
+Failure modes: inside a `Row` a child needs `flex-1` to fill the row, and `h-full` inside a scrollable parent throws an unbounded height assertion; give the scrolling child `flex-1 overflow-y-auto` inside a bounded column.
 
-```bash
-git clone https://github.com/fluttersdk/wind.git
-cd wind && flutter pub get
+## Variants
+
+`WindRecipe` and `WindSlotRecipe` build a className from a base, variant axes, compound variants and a caller override, in a strict emission order with no merge magic to reason about.
+
+```dart
+final button = WindRecipe(
+  base: 'flex flex-row items-center rounded-lg font-medium',
+  variants: {
+    'intent': {
+      'primary': 'bg-blue-600 dark:bg-blue-500 text-white',
+      'ghost': 'bg-transparent text-blue-600 dark:text-blue-400',
+    },
+    'size': {'sm': 'px-3 py-1.5 text-sm', 'md': 'px-4 py-2 text-base'},
+  },
+  defaultVariants: {'intent': 'primary', 'size': 'md'},
+);
+
+final String className = button(variants: {'intent': 'ghost'});
 ```
 
-New behaviour ships with a failing test first. Before opening a pull request, run what CI runs:
+| Member | Meaning |
+|:---|:---|
+| `WindRecipe(base:, variants:, compoundVariants:, defaultVariants:)` | One component's classNames. Calling it returns the className string. |
+| `recipe(variants: {...}, className: '...')` | Override axes per call (`null` clears a default); the caller className is appended last. |
+| `WindCompoundVariant(conditions:, className:)` | Classes that apply only when every condition matches. |
+| `WindSlotRecipe` | The same for components with several parts: returns a map of slot to className. |
 
-```bash
-dart format --output=none --set-exit-if-changed .
-dart analyze
-flutter test
-./tool/coverage.sh 90
-dart pub publish --dry-run
+Failure modes: the recipe appends the caller's className last and never dedupes (there is no `twMerge`), and a variant that overrides a border width or radius of the base must name every side or corner, because those families do not compose per side.
+
+## Server-driven UI
+
+`WDynamic` renders a widget tree from JSON against an allowlist of wind_kit and Flutter core widgets, so a layout change can ship without a store release.
+
+```dart
+WDynamic(
+  json: const {
+    'type': 'WDiv',
+    'props': {'className': 'p-6 bg-white dark:bg-gray-800 rounded-xl'},
+    'children': [
+      {
+        'type': 'WText',
+        'props': {'text': 'Hello from JSON', 'className': 'text-xl font-bold text-gray-900 dark:text-white'},
+      },
+    ],
+  },
+)
 ```
 
-CI enforces 90% line coverage on `lib/`, zero analyzer issues and zero format drift.
+| Member | Meaning |
+|:---|:---|
+| `json:` | The node tree: `type`, optional `props` and `children`. |
+| `denyWidgets:` / `builders:` | Block types from the allowlist, or add your own. |
+| `actions:` / `controller:` | Named callbacks for `onTap` and friends, and the shared state the value widgets bind to by `id`. |
+| `maxDepth:` / `onUnknownWidget:` / `onError:` | The recursion limit (default 50) and the stand-ins for a blocked type or a failed build. |
 
-[Report a bug](https://github.com/fluttersdk/wind/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/fluttersdk/wind/issues/new?template=feature_request.yml)
+Failure modes: a type outside the allowlist is not built, and `className` and image `src` values in untrusted JSON can load network and file images, so sanitise them or deny `WImage`. See the [security policy](SECURITY.md).
+
+## Forms
+
+The `WForm*` wrappers (`WFormInput`, `WFormSelect`, `WFormMultiSelect`, `WFormCheckbox`, `WFormDatePicker`) extend Flutter's `FormField`, so `Form` validation just works and a failed validator switches on the `error:` state.
+
+```dart
+WFormInput(
+  label: 'Email',
+  type: InputType.email,
+  autovalidateMode: AutovalidateMode.onUserInteraction,
+  className: 'rounded-lg p-3 border border-gray-300 dark:border-gray-600 error:border-red-500',
+  validator: (value) => (value == null || !value.contains('@')) ? 'Invalid email' : null,
+)
+```
+
+| Member | Meaning |
+|:---|:---|
+| `validator:` / `onSaved:` / `autovalidateMode:` | The standard `FormField` hooks. |
+| `className:` with `error:` | Styles the field while the validator reports a message. |
+| `label:` / `hint:` / `showError:` | The label, the hint and the error line around the field. |
+| `WInput`, `WSelect`, `WCheckbox`, `WDatePicker` | The raw controls, for forms you manage yourself. |
+
+A focused field lifts the whole input clear of the keyboard and of the keyboard toolbar above it, and a control with an `onTap` is one traversal stop that activates on Enter, Space, a gamepad A button and a TV remote. Failure modes: a `FormField` validator is synchronous, so server-side errors go through your own state and a second `validate()` call.
+
+## For AI coding agents
+
+Rules for an agent writing wind_kit code. Each one is a mistake the maintainers already made once.
+
+| Do | Because |
+|----|---------|
+| Import only `package:wind_kit/wind_kit.dart` | There is one barrel and no sub-barrels. |
+| Pair every colour token (`bg-`, `text-` colour, `border-`, `ring-`, `shadow-`, `fill-`) with its `dark:` peer in the same className | A missing pair is a bug and nothing reports it. |
+| Route conditions through `states:` and prefixed classes, never Dart interpolation inside a className | An interpolated token hides from the dark-pair review and from grep, and every distinct string adds a cache entry. |
+| Give a Row child `flex-1`; give a scrolling child of a bounded Column `flex-1 overflow-y-auto` | `h-full` inside a scrollable parent throws an unbounded height assertion. |
+| Pass `child` or `children`, never both | Both fail an assertion at construction. |
+| Spell-check token values by hand | A known family with an unsupported value (`text-7xl`) drops silently; only an unknown family prints the one-time debug hint. |
+| Give an icon-only `WButton` a `semanticLabel` | Without it the control is nameless to screen readers. |
+| Call `WindParser.clearCache()` in test `setUp` | The parser cache persists between tests and gives false positives. |
+| Call `Wind.installDebugResolver()` once in `main`, behind `!kReleaseMode` | It exposes widget state to tools such as tapir and is tree-shaken from release builds; do not add it per screen. |
+
+Install the skill, which is the source of truth for the className grammar, the widget surface and the anti-patterns:
+
+```bash
+npx skills add anilcancakir/wind_kit
+```
+
+It is also distributed through the [skill registry](https://github.com/anilcancakir/ai) (`npx skills add anilcancakir/ai --skill wind-ui`) to OpenCode, Claude Code, Cursor, Gemini CLI, Codex CLI, Antigravity CLI, Cline and Roo Code. The docs MCP server of anilcancakir.com (`https://mcp.anilcancakir.com/`, Streamable HTTP, no auth) exposes `list_packages`, `list_docs`, `search_docs` and `read_doc` over every package's documentation. The machine-readable inventory is [`llms.txt`](llms.txt), and internals are in [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Dependencies
+
+`flutter_svg` for `WSvg` and [`wind_kit_diagnostics_contracts`](https://pub.dev/packages/wind_kit_diagnostics_contracts), the neutral bridge through which debug tools read widget state without depending on wind_kit. That is the whole runtime surface: no state management library, no router, no mocking library.
+
+## Links
+
+- [Documentation](https://anilcancakir.com/wind_kit/docs/getting-started/installation): every widget, parser token, theme field, dark mode, responsive design and `WDynamic`, with live previews
+- [Upgrade guide](https://anilcancakir.com/wind_kit/docs/getting-started/upgrade-guide)
+- [API reference](https://pub.dev/documentation/wind_kit/latest/)
+- [llms.txt](llms.txt) and the [agent skill](skills/wind-ui/SKILL.md): `npx skills add anilcancakir/wind_kit`
+- [Changelog](CHANGELOG.md)
+- [Contributing](CLAUDE.md): the commands CI runs, the post-change checklist and the release steps
+- [Report a bug](https://github.com/anilcancakir/wind_kit/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/anilcancakir/wind_kit/issues/new?template=feature_request.yml)
+- [Security policy](SECURITY.md)
 
 ## License
 
-MIT, see [LICENSE](LICENSE) for details.
-
----
-
-<p align="center">
-  <sub>Wind is the styling layer of the <a href="https://github.com/fluttersdk">fluttersdk</a> ecosystem, and it works perfectly well on its own.</sub><br/>
-  <sub>If Wind saved you a <code>Container</code> or two, <a href="https://github.com/fluttersdk/wind">give it a star</a>, it helps others find it.</sub>
-</p>
+MIT, see [LICENSE](LICENSE). Built by [Anılcan Çakır](https://anilcancakir.com).

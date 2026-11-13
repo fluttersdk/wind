@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Offline consistency gate for wind's markdown reference.
+"""Offline consistency gate for wind_kit's markdown reference.
 
-fluttersdk.com ingests `doc/` verbatim and validates nothing: `DocLinkExtension`
-strips the `.md` suffix off internal links without checking the target exists,
-`DocsScaffolder` upserts every page it finds, and the `<x-preview>` component
-builds its iframe and GitHub URLs from raw attribute values. A typo therefore
-survives the sync and ships as a dead link on the docs site.
+anilcancakir.com ingests `doc/` verbatim at a release tag and validates little:
+a link is rewritten without checking the target exists, every page it finds is
+upserted, and the `<x-preview>` component builds its iframe and GitHub URLs from
+raw attribute values. A typo therefore survives the sync and ships as a dead
+link on the docs site.
 
 This script closes that gap from the repo side. It needs no network and no
 Flutter toolchain, so it runs identically in CI and on a developer machine:
@@ -23,7 +23,7 @@ Surfaces checked:
 5. `<x-preview source="...">` points at a real repository file.
 6. `<x-preview path="...">` matches a route registered in the demo gallery,
    because the iframe URL is the preview base plus that path.
-7. Absolute `https://fluttersdk.com/wind/....md` URLs (the raw-markdown route)
+7. Absolute `https://anilcancakir.com/wind_kit/docs/....md` URLs (the raw-markdown route)
    map to a doc page that exists.
 """
 
@@ -35,13 +35,13 @@ from pathlib import Path
 from typing import Iterator, NamedTuple
 from urllib.parse import unquote, urlsplit
 
-# The docs site serves this repository under /wind, the demo gallery routes live
-# in the example app, and every preview source sits under one directory. All of
-# it is wind-specific by design; a sibling package copying this script changes
+# The docs site serves this repository under /wind_kit/docs, the demo gallery
+# routes live in the example app, and every preview source sits under one
+# directory. All of it is wind_kit-specific by design; a sibling package copying this script changes
 # these constants and nothing else.
-PACKAGE_SLUG = 'wind'
-SITE_ORIGIN = 'https://fluttersdk.com'
-DOC_URL_PREFIX = f'/{PACKAGE_SLUG}/'
+PACKAGE_SLUG = 'wind_kit'
+SITE_ORIGIN = 'https://anilcancakir.com'
+DOC_URL_PREFIX = f'/{PACKAGE_SLUG}/docs/'
 ROUTES_FILE = Path('example/lib/routes.dart')
 PREVIEW_SOURCE_ROOT = Path('example/lib/pages')
 
@@ -56,8 +56,9 @@ EXTRA_LINK_FILES = (
     Path('llms.txt'),
 )
 
-# Mirrors VersionedDocRoutes::VERSION_PATTERN on the site, so /wind/1.3.0/<page>
-# resolves against the same doc tree as /wind/<page>.
+# Mirrors VersionedDocRoutes::VERSION_PATTERN on the site, so
+# /wind_kit/docs/1.3.0/<page> resolves against the same doc tree as
+# /wind_kit/docs/<page>.
 VERSION_SEGMENT = re.compile(r'^v?\d+(?:\.\d+)*(?:-[A-Za-z0-9.]+)?$')
 
 FENCE = re.compile(r'^\s*(```|~~~)')
@@ -111,7 +112,7 @@ def slugify(heading: str) -> str:
     """Slugify heading text the way GitHub and the docs site both do.
 
     Verified against the rendered page: `## Date + Time Selection` yields
-    `date--time-selection` on fluttersdk.com, so punctuation is dropped and each
+    `date--time-selection` on anilcancakir.com, so punctuation is dropped and each
     surviving space becomes one hyphen. Whitespace is never collapsed.
     """
     text = re.sub(r'`([^`]*)`', r'\1', heading)
@@ -161,7 +162,7 @@ def iter_links(body: str) -> Iterator[tuple[int, str]]:
 def site_url_to_doc(url: str) -> Path | None:
     """Map a raw-markdown docs URL to its source file, or None when not one.
 
-    Only `.md` URLs are mapped. An extensionless URL such as `/wind/layout` may
+    Only `.md` URLs are mapped. An extensionless URL such as `/wind_kit/docs/layout` may
     be a section landing page the site generates without a backing file, so it
     is out of scope here.
 
@@ -262,9 +263,8 @@ def check_links(path: Path, body: str, fragments: dict[Path, set[str]]) -> list[
 def check_anchor_reachability(path: Path, body: str) -> list[Issue]:
     """Require every explicit anchor to be listed in the page's Table of Contents.
 
-    The ToC is the region above the first section anchor, which covers both page
-    shapes under `doc/`: ten pages carry an explicit `## Table of Contents`
-    heading, the rest open with a bare bullet list under the lead paragraph.
+    The ToC is the bare bullet list under the lead paragraph, the region above the
+    first section anchor.
 
     Scoping the check to that region is the point. Counting fragment links from
     the whole page would let a prose reference deeper in the body mark an anchor

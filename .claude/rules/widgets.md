@@ -22,8 +22,7 @@ class WFoo extends StatelessWidget {
     this.children,
     this.states,
     // ...feature props after the styling props
-  }) : assert(child != null || children != null,
-              'child XOR children, never both, never neither');
+  }) : assert(child == null || children == null, 'child XOR children, never both');
 }
 ```
 
@@ -34,18 +33,18 @@ class WFoo extends StatelessWidget {
 
 ## StatefulWidget exceptions (only when warranted)
 
-- `WInput` — manages `TextEditingController` + `FocusNode` lifecycle.
-- `WSelect<T>` — overlay open/close + filter state.
-- `WPopover` — overlay anchor state.
-- `WDatePicker` — month navigation + range selection.
-- `WKeyboardActions` — overlay toolbar visibility per focus change.
-- `WindAnimationWrapper` — `AnimationController` + `vsync`.
+- `WInput` - manages `TextEditingController` + `FocusNode` lifecycle.
+- `WSelect<T>` - overlay open/close + filter state.
+- `WPopover` - overlay anchor state.
+- `WDatePicker` - month navigation + range selection.
+- `WKeyboardActions` - overlay toolbar visibility per focus change.
+- `WindAnimationWrapper` - `AnimationController` + `vsync`.
 
 `WFormInput` / `WFormSelect` / `WFormCheckbox` / `WFormDatePicker` extend `FormField<T>` and delegate `build` to an internal `_W{Form*}Content` stateful widget. The outer `FormField` stays `const`-constructible; lifecycle lives in `_content`.
 
 ## Debug logger (mandatory in stateless widgets)
 
-Initialize early in `build`, after style resolution:
+Initialise early in `build`, after style resolution:
 
 ```dart
 final logger = WindLogger(debug: styles.debug, widgetName: runtimeType.toString());
@@ -55,7 +54,7 @@ logger.setCoreWidget(...);
 logger.printFinalCode();
 ```
 
-When `styles.debug == false` (the default), every logger method is a no-op — overhead is negligible. `WImage` is currently an outlier (logger initialized late); new widgets follow the canonical early-init pattern.
+When `styles.debug == false` (the default), every logger method is a no-op - overhead is negligible. `WImage` is currently an outlier (logger initialised late); new widgets follow the canonical early-init pattern.
 
 ## WAnchor auto-wrapping
 
@@ -85,6 +84,6 @@ WDiv's non-animated box is `_buildBox`, `Container.build`'s own primitives in it
 
 ## What never goes in `lib/src/widgets/`
 
-- Test helpers — those live in `test/`.
-- Pure parsing logic — that lives in `lib/src/parser/parsers/`.
-- Theme defaults — those live in `lib/src/theme/defaults/`.
+- Test helpers - those live in `test/`.
+- Pure parsing logic - that lives in `lib/src/parser/parsers/`.
+- Theme defaults - those live in `lib/src/theme/defaults/`.
