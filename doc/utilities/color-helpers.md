@@ -173,3 +173,5 @@ if (context.windIsDark) {
   // Do something specific for dark mode
 }
 ```
+
+> **Defaults:** every value on this page comes from `WindThemeData`; override it through the theme.
