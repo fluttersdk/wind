@@ -33,6 +33,8 @@ flutter pub add wind_kit material_ui
 
 Your app imports `material_ui` for its `MaterialApp`, so it declares the package itself rather than relying on `wind_kit` to bring it in.
 
+Existing apps that still import `package:flutter/material.dart` need extra steps. See the [upgrade guide](upgrade-guide.md#moving-to-material-ui) for the import change and for `MaterialUiCompatibilityBridge`, which covers legacy packages and subtrees.
+
 Alternatively, add both manually to your dependencies:
 
 ```yaml

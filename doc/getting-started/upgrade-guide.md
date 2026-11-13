@@ -53,15 +53,18 @@ import 'package:material_ui/material_ui.dart';
 - Wind input widgets throw "No MaterialLocalizations found".
 - `WindThemeData.toThemeData()` returns a `ThemeData` that does not match the `ThemeData` type the old `MaterialApp` expects.
 
-**Action required for an app that uses the `flutter_localizations` delegates.** Replace `GlobalMaterialLocalizations` and `GlobalCupertinoLocalizations` from `flutter_localizations` with the delegates from `material_ui`:
+**Action required for an app that uses the `flutter_localizations` delegates.** Replace `GlobalMaterialLocalizations` and `GlobalCupertinoLocalizations` from `flutter_localizations` with the delegates from `material_ui`, and remove the `package:flutter_localizations/flutter_localizations.dart` import from the same file: both libraries export a `GlobalMaterialLocalizations`, so keeping both makes the name ambiguous and the build fails. Keep your app's own delegates in the list:
 
 ```dart
 // Before: the delegates of GlobalMaterialLocalizations and GlobalCupertinoLocalizations
 // from package:flutter_localizations
 
-// After: the delegates from package:material_ui
+// After: the delegates from package:material_ui, next to your own
 MaterialApp(
-  localizationsDelegates: GlobalMaterialLocalizations.delegates,
+  localizationsDelegates: [
+    AppLocalizations.delegate, // Keep your app's own delegates.
+    ...GlobalMaterialLocalizations.delegates,
+  ],
 )
 ```
 
