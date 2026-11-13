@@ -167,7 +167,7 @@ WindRecipe(
 // Radius and border width do not: the variant restates every corner and side.
 WindRecipe(
   base: 'rounded-lg border-2',
-  variants: {'shape': {'pill': 'rounded-full', 'flat': 'rounded-none'}},
+  variants: {'shape': {'pill': 'rounded-full border-4', 'flat': 'rounded-none border-0'}},
 )
 ```
 

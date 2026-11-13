@@ -75,7 +75,7 @@ A colour needs a shade (`shadow-red-500`); only `shadow-white` and `shadow-black
 
 ```dart
 // The xl layers' own alpha decides the strength
-WDiv(className: 'shadow-xl shadow-red-500')
+WDiv(className: 'shadow-xl shadow-red-500 dark:shadow-red-400')
 ```
 
 ### Removing Shadows

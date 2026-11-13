@@ -25,7 +25,7 @@ WDiv(
 
 ### Setting a Background Image
 
-Use the `bg-[url(...)]` utility to set a background image. Wind supports asset paths and absolute file paths.
+Use the `bg-[url(...)]` utility to set a background image. Wind supports asset paths and absolute file paths. An absolute file path (a `/path` value) loads a `FileImage`, so it works only on platforms with `dart:io` file support: on web and WASM it produces no background image.
 
 ```dart
 // Asset image (shorthand for assets/)

@@ -94,11 +94,13 @@ If the built-in scale doesn't meet your needs, use bracket notation to apply cus
 
 ```dart
 // Fixed pixel value
-WText('Custom px', className: 'leading-[24px]')
+WText('Custom px', className: 'text-base leading-[24px]')
 
 // A bare number is also logical pixels
-WText('Custom bare number', className: 'leading-[24]')
+WText('Custom bare number', className: 'text-base leading-[24]')
 ```
+
+A fixed pixel line height needs a font size on the same widget (`text-base` above): Wind divides the pixels by that size to get Flutter's height factor, and without one the line height is not applied. A size inherited from a parent does not count.
 
 Arbitrary values are logical pixels, not a multiplier. `rem` is not converted: `leading-[1.8]` is 1.8 px and `leading-[3rem]` is 3 px.
 

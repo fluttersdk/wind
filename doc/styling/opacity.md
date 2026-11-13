@@ -2,6 +2,8 @@
 
 Utilities for controlling the opacity of an element.
 
+## Table of Contents
+
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
 - [Variants](#variants)

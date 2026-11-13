@@ -130,7 +130,7 @@ WindThemeData(
 )
 ```
 
-The map merges with the default palette, so the built-in colours stay available.
+The map merges with the default palette by name, so the built-in colours stay available. A name that matches a built-in palette (`blue`, say) replaces that whole palette, not shade by shade: list every shade you still use, or `text-blue-600` stops resolving.
 
 Then use them in your classes:
 
