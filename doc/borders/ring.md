@@ -24,6 +24,7 @@ WDiv(className: 'ring-4 ring-red-500')
 WDiv(className: 'ring-2 ring-offset-2')
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 Use `ring-{width}` utilities to draw a solid outline around an element. By default, this adds a 3px blue ring.
@@ -38,6 +39,7 @@ WDiv(
 )
 ```
 
+<a name="quick-reference"></a>
 ## Quick Reference
 
 | Class | Value | Description |
@@ -51,11 +53,12 @@ WDiv(
 | `ring-inset` | - | Forces ring to be on the inside |
 | `ring-offset-{width}` | - | Moves the ring out, leaving an unpainted gap |
 
+<a name="variants"></a>
 ## Variants
 
 ### Ring Color
 
-Use `ring-{color}` to set the color of the ring. You can also use opacity modifiers like `/50`.
+Use `ring-{color}` to set the colour of the ring. You can also use opacity modifiers like `/50`.
 
 <x-preview path="effects/ring_colors" size="md" source="example/lib/pages/effects/ring_colors.dart"></x-preview>
 
@@ -89,6 +92,7 @@ Use `ring-inset` to force the ring to render on the inside of the element instea
 WDiv(className: 'ring-2 ring-inset ring-pink-500')
 ```
 
+<a name="responsive-design"></a>
 ## Responsive Design
 
 Apply different ring utilities at different breakpoints using the standard `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
@@ -97,6 +101,7 @@ Apply different ring utilities at different breakpoints using the standard `sm:`
 WDiv(className: 'ring-2 md:ring-4 lg:ring-8')
 ```
 
+<a name="dark-mode"></a>
 ## Dark Mode
 
 Use the `dark:` prefix to apply different ring styles when the application is in dark mode.
@@ -105,6 +110,7 @@ Use the `dark:` prefix to apply different ring styles when the application is in
 WDiv(className: 'ring-slate-900/5 dark:ring-white/10')
 ```
 
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
 If the built-in scale doesn't meet your needs, use bracket notation to apply custom values directly.
@@ -118,8 +124,9 @@ WDiv(className: 'ring-[#50d71e]/50')
 ```
 
 > [!NOTE]
-> Currently, arbitrary values are supported for **colors only** (`ring-[#hex]`). Arbitrary widths (`ring-[10px]`) are not yet supported in the parser.
+> Currently, arbitrary values are supported for **colours only** (`ring-[#hex]`). Arbitrary widths (`ring-[10px]`) are not yet supported in the parser.
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
 To extend or override the default scale for rings, modify the `WindThemeData` in your app root.
@@ -147,6 +154,7 @@ WindTheme(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [Borders](./borders.md)

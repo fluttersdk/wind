@@ -33,7 +33,7 @@ WDiv(className: 'flex flex-col gap-2')
 <a name="basic-usage"></a>
 ## Basic Usage
 
-Flexbox in Wind mirrors CSS Flexbox behavior but maps to Flutter's `Row` and `Column` widgets. Use `flex` to initialize a flex container, then apply utilities to control direction, alignment, and spacing.
+Flexbox in Wind mirrors CSS Flexbox behaviour but maps to Flutter's `Row` and `Column` widgets. Use `flex` to initialise a flex container, then apply utilities to control direction, alignment, and spacing.
 
 ```dart
 WDiv(
@@ -112,7 +112,7 @@ WDiv(className: 'flex flex-col md:flex-row-reverse gap-4')
 
 Use `order-*` on individual flex children to override their paint order without changing the source order. The parent flex container stable-sorts children by their resolved `order` value before laying them out; children without `order-*` default to `0`.
 
-| Class | Behavior |
+| Class | Behaviour |
 |:------|:---------|
 | `order-0` .. `order-12` | Explicit index (integers only) |
 | `order-first` | Placed before everything else (sentinel `-9999`) |
@@ -152,7 +152,7 @@ When combined with `flex-*-reverse`, children are sorted by `order-*` first; the
 Use `wrap` to create a wrapping layout (Flutter's `Wrap` widget).
 
 > [!WARNING]
-> Flutter's `Row` and `Column` do **not** wrap. You must use the `wrap` class instead of `flex` if you want wrapping behavior.
+> Flutter's `Row` and `Column` do **not** wrap. You must use the `wrap` class instead of `flex` if you want wrapping behaviour.
 
 ```dart
 // Items wrap to the next line when they run out of space
@@ -210,9 +210,9 @@ Controls how children are distributed along the **cross axis** (Vertical for `ro
 WDiv(className: 'flex items-center h-20')
 ```
 
-> **Column cross-axis stretch (default AND explicit `items-stretch`).** A `flex flex-col` with no explicit `items-*` token, OR with an explicit `items-stretch`, stretches each `WDiv`, `WAnchor` (any child), and `WButton` child that does not control its own width to the column width, matching CSS `align-items: stretch`. Explicit `items-stretch` therefore equalizes child widths (every eligible child fills the column), closing the asymmetry with `grid ... items-stretch`. For `WAnchor`: when the anchor wraps a `WDiv`, the inner `WDiv`'s className decides (so `WAnchor > WDiv(w-32)` keeps 128 px; a `WAnchor > WDiv` with a self-flex token is excluded just as a direct self-flexing `WDiv` is); when the anchor wraps a `WText` or raw widget, the anchor stretches by policy so its tap surface fills the column. Left untouched: children with an explicit width (`w-*` / `min-w-*` / `max-w-*` / `w-full`, in any state/breakpoint variant), children that self-wrap in `Expanded`/`Flexible` (`grow`, `flex-grow`, `flex-auto`, `flex-initial`, `shrink`, `flex-shrink`, `flex-N`), `basis-*` children, absolute children, bare `WText` leaves, and raw Flutter widgets. `shrink-0` / `flex-none` children still stretch on the cross axis (`flex-shrink` is main-axis only, matching CSS). Add `items-start` / `items-center` / `items-end` to turn stretch off and let children size to content. Rows are never auto-stretched on the cross axis. When the column itself sits in an unbounded-width context (a bare `Row` slot, `UnconstrainedBox`, horizontal scroll), the stretch safely falls back to content-sized children instead of forcing an infinite width.
+> **Column cross-axis stretch (default and explicit `items-stretch`).** A `flex flex-col` with no explicit `items-*` token, or with an explicit `items-stretch`, stretches each `WDiv`, `WAnchor` (any child), and `WButton` child that does not control its own width to the column width, matching CSS `align-items: stretch`. Explicit `items-stretch` therefore equalises child widths (every eligible child fills the column), closing the asymmetry with `grid ... items-stretch`. For `WAnchor`: when the anchor wraps a `WDiv`, the inner `WDiv`'s className decides (so `WAnchor > WDiv(w-32)` keeps 128 px; a `WAnchor > WDiv` with a self-flex token is excluded just as a direct self-flexing `WDiv` is); when the anchor wraps a `WText` or raw widget, the anchor stretches by policy so its tap surface fills the column. Left untouched: children with an explicit width (`w-*` / `min-w-*` / `max-w-*` / `w-full`, in any state/breakpoint variant), children that self-wrap in `Expanded`/`Flexible` (`grow`, `flex-grow`, `flex-auto`, `flex-initial`, `shrink`, `flex-shrink`, `flex-N`), `basis-*` children, absolute children, bare `WText` leaves, and raw Flutter widgets. `shrink-0` / `flex-none` children still stretch on the cross axis (`flex-shrink` is main-axis only, matching CSS). Add `items-start` / `items-center` / `items-end` to turn stretch off and let children size to content. Rows are never auto-stretched on the cross axis. When the column itself sits in an unbounded-width context (a bare `Row` slot, `UnconstrainedBox`, horizontal scroll), the stretch safely falls back to content-sized children instead of forcing an infinite width.
 
-> **Layout stability: wind's flex is intrinsic-safe.** Flutter's `IntrinsicHeight` and `IntrinsicWidth` perform an intrinsic-dimension pass that reads child sizes mid-layout, and a `LayoutBuilder` on that path asserts `LayoutBuilder does not support returning intrinsic dimensions`. Wind's flex uses NO `LayoutBuilder`, and neither does `h-full` since it became the `WindFullHeightBox` render object: column cross-axis stretch is a real render object (`WindCrossStretch`), and `basis-*` resolves against the flex's own extent via a `WindMainExtentProvider` (see `lib/src/widgets/w_div.dart` and `wind_equal_height_row.dart`). So a `flex flex-col` (with or without `basis-*`) renders correctly inside an `items-stretch` grid cell, under an `IntrinsicHeight`/`IntrinsicWidth`, or in a `Table` cell without asserting. For a connector, rail, or divider that must fill the cross axis to match the tallest sibling, prefer a `Stack` with a `Positioned(top: 0, bottom: 0)` line, or use wind's own `items-stretch` column (also intrinsic-free and animation-safe).
+> **Layout stability: wind's flex is intrinsic-safe.** Flutter's `IntrinsicHeight` and `IntrinsicWidth` perform an intrinsic-dimension pass that reads child sizes mid-layout, and a `LayoutBuilder` on that path asserts `LayoutBuilder does not support returning intrinsic dimensions`. Wind's flex uses no `LayoutBuilder`, and neither does `h-full` since it became the `WindFullHeightBox` render object: column cross-axis stretch is a real render object (`WindCrossStretch`), and `basis-*` resolves against the flex's own extent via a `WindMainExtentProvider` (see `lib/src/widgets/w_div.dart` and `wind_equal_height_row.dart`). So a `flex flex-col` (with or without `basis-*`) renders correctly inside an `items-stretch` grid cell, under an `IntrinsicHeight`/`IntrinsicWidth`, or in a `Table` cell without asserting. For a connector, rail, or divider that must fill the cross axis to match the tallest sibling, prefer a `Stack` with a `Positioned(top: 0, bottom: 0)` line, or use wind's own `items-stretch` column (also intrinsic-free and animation-safe).
 >
 > ```dart
 > // Safe connector pattern: Stack + Positioned, no IntrinsicHeight
@@ -355,8 +355,8 @@ Need a specific gap or flex value not in the theme? Use bracket notation.
 // Specific 23px gap
 WDiv(className: 'flex gap-[23px]')
 
-// Specific pixel gap
-WDiv(className: 'flex gap-[1.5rem]')
+// Specific pixel gap (rem is not supported, so write px)
+WDiv(className: 'flex gap-[24px]')
 ```
 
 <a name="customizing-theme"></a>

@@ -75,7 +75,7 @@ WText(
 <a name="ellipsis--clip"></a>
 ## Ellipsis & Clip
 
-Use `text-ellipsis` or `text-clip` to control the visual overflow behavior specifically.
+Use `text-ellipsis` or `text-clip` to control the visual overflow behaviour specifically.
 
 - **text-ellipsis**: Renders an ellipsis (...) when text overflows.
 - **text-clip**: Simply cuts off the text at the boundary.
@@ -104,13 +104,9 @@ WText(
   'This is a long paragraph that needs to be clamped to a specific number of lines...',
   className: 'line-clamp-3',
 )
-
-// Resetting line clamp
-WText(
-  '...',
-  className: 'line-clamp-3 lg:line-clamp-none',
-)
 ```
+
+`line-clamp-none` and `whitespace-normal` cannot undo an earlier `line-clamp-*` / `truncate`; apply the clamp only where you want it (`md:line-clamp-3`).
 
 <a name="responsive-design"></a>
 ## Responsive Design
@@ -118,16 +114,16 @@ WText(
 Apply different overflow utilities at different breakpoints using standard responsive prefixes.
 
 ```dart
-// Truncate on mobile, allow wrapping on desktop
+// Single line from tablet up, wrapping on mobile
 WText(
-  'Responsive text behavior...',
-  className: 'truncate md:whitespace-normal',
+  'Responsive text behaviour...',
+  className: 'md:truncate',
 )
 
-// 2 lines on mobile, 4 lines on tablet, unlimited on desktop
+// 2 lines on mobile, 4 lines on tablet and up
 WText(
   'Responsive line clamping...',
-  className: 'line-clamp-2 md:line-clamp-4 lg:line-clamp-none',
+  className: 'line-clamp-2 md:line-clamp-4',
 )
 ```
 

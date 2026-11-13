@@ -1,6 +1,6 @@
 # Border Width, Color, & Radius
 
-Utilities for controlling border width, color, style, and border radius.
+Utilities for controlling border width, colour, style, and border radius.
 
 - [Basic Usage](#basic-usage)
 - [Quick Reference](#quick-reference)
@@ -104,7 +104,7 @@ WDiv(className: 'rounded-tl-md bg-blue-100')
 
 ### Color Opacity
 
-You can control the opacity of border colors using the color opacity modifier.
+You can control the opacity of border colours using the colour opacity modifier.
 
 ```dart
 // 50% opacity red border
@@ -146,15 +146,14 @@ WDiv(className: 'border-[3px]')
 
 // Specific hex color
 WDiv(className: 'border-[#1da1f2]')
-
-// Specific radius
-WDiv(className: 'rounded-[10px]')
 ```
+
+Border radius has no arbitrary form: `rounded-[10px]` is dropped silently. Pick a scale step (`rounded-lg`) or add the value to the theme's `borderRadius`.
 
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-Customize standard values in `WindThemeData`.
+Customise standard values in `WindThemeData`.
 
 ```dart
 WindThemeData(

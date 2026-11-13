@@ -58,7 +58,7 @@ WDiv(className: 'aspect-auto')
 
 | Class | Ratio | Description |
 |:------|:------|:------------|
-| `aspect-auto` | `null` | Default behavior (no ratio) |
+| `aspect-auto` | `null` | Default behaviour (no ratio) |
 | `aspect-square` | `1 / 1` | Square (1:1) |
 | `aspect-video` | `16 / 9` | Standard video (16:9) |
 

@@ -24,6 +24,7 @@ WDiv(
 )
 ```
 
+<a name="basic-usage"></a>
 ## Basic Usage
 
 Control the font weight of an element using the `font-{weight}` utilities.
@@ -33,6 +34,7 @@ WText('Most text uses font-normal', className: 'font-normal')
 WText('Important text uses font-bold', className: 'font-bold')
 ```
 
+<a name="quick-reference"></a>
 ## Quick Reference
 
 | Class | Weight | Description |
@@ -47,6 +49,7 @@ WText('Important text uses font-bold', className: 'font-bold')
 | `font-extrabold` | 800 | Extra Bold |
 | `font-black` | 900 | Black |
 
+<a name="variants"></a>
 ## Variants
 
 ### Font Style
@@ -65,6 +68,7 @@ WText('This text is normal.', className: 'not-italic')
 | `italic` | `FontStyle.italic` | Renders text in italics |
 | `not-italic` | `FontStyle.normal` | Renders text normally (useful for resetting) |
 
+<a name="responsive-design"></a>
 ## Responsive Design
 
 Apply different font weights at specific breakpoints using standard responsive prefixes.
@@ -74,6 +78,7 @@ Apply different font weights at specific breakpoints using standard responsive p
 WText('Responsive Weight', className: 'font-normal md:font-bold')
 ```
 
+<a name="dark-mode"></a>
 ## Dark Mode
 
 Adjust font weight based on the theme brightness. This is useful for maintaining legibility against dark backgrounds, where lighter weights might appear too thin.
@@ -83,6 +88,7 @@ Adjust font weight based on the theme brightness. This is useful for maintaining
 WText('Adaptive Weight', className: 'font-medium dark:font-normal')
 ```
 
+<a name="arbitrary-values"></a>
 ## Arbitrary Values
 
 If you need a specific font weight that isn't included in your theme, use square bracket notation.
@@ -93,9 +99,10 @@ WText('Custom Weight', className: 'font-[700]')
 WText('Variable Weight', className: 'font-[550]')
 ```
 
+<a name="customizing-theme"></a>
 ## Customizing Theme
 
-You can customize the `fontWeights` scale in your `WindThemeData` configuration.
+You can customise the `fontWeights` scale in your `WindThemeData` configuration.
 
 ```dart
 WindTheme(
@@ -111,8 +118,9 @@ WindTheme(
 )
 ```
 
+<a name="related-documentation"></a>
 ## Related Documentation
 
 - [Font Size](./font-size.md)
 - [Font Family](./font-family.md)
-- [Text Color](./text-color.md)
+- [Text Colour](./text-color.md)

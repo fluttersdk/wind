@@ -124,7 +124,7 @@ WDiv(
 <a name="min-width-scroll"></a>
 ## Fill on Desktop, Scroll on Narrow (Responsive Table)
 
-Compose `overflow-x-auto` on a wrapper with `w-full` (optionally `min-w-[Npx]`) on the inner content, the same pattern shadcn's `<Table>` uses. The inner content fills the viewport when it is wide and honors its minimum width (so the wrapper scrolls) when it is narrow:
+Compose `overflow-x-auto` on a wrapper with `w-full` (optionally `min-w-[Npx]`) on the inner content, the same pattern shadcn's `<Table>` uses. The inner content fills the viewport when it is wide and honours its minimum width (so the wrapper scrolls) when it is narrow:
 
 ```dart
 WDiv(
@@ -149,7 +149,7 @@ On a viewport wider than `600px` the row fills the container (no horizontal scro
 <a name="responsive-design"></a>
 ## Responsive Design
 
-Apply different overflow behaviors at different breakpoints using standard modifiers like `sm:`, `md:`, `lg:`, `xl:`, and `2xl:`.
+Apply different overflow behaviours at different breakpoints using standard modifiers like `sm:`, `md:`, `lg:`, `xl:`, and `2xl:`.
 
 ```dart
 // Scroll on mobile, but show full content on desktop
@@ -159,7 +159,7 @@ WDiv(className: 'overflow-scroll md:overflow-visible')
 <a name="dark-mode"></a>
 ## Dark Mode
 
-Change overflow behavior in dark mode using the `dark:` prefix.
+Change overflow behaviour in dark mode using the `dark:` prefix.
 
 ```dart
 WDiv(className: 'overflow-visible dark:overflow-hidden')
@@ -173,7 +173,7 @@ The overflow utility does not support arbitrary values. You must use one of the 
 <a name="customizing-theme"></a>
 ## Customizing Theme
 
-Overflow utilities are hardcoded behavior toggles and cannot be customized via `WindThemeData`.
+Overflow utilities are hardcoded behaviour toggles and cannot be customised via `WindThemeData`.
 
 <a name="related-documentation"></a>
 ## Related Documentation
