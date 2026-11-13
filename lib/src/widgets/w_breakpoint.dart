@@ -97,11 +97,11 @@ class WBreakpoint extends StatelessWidget {
 
   WidgetBuilder _resolve(WindContext ctx) {
     final builders = <String, WidgetBuilder>{
-      if (sm != null) 'sm': sm!,
-      if (md != null) 'md': md!,
-      if (lg != null) 'lg': lg!,
-      if (xl != null) 'xl': xl!,
-      if (xxl != null) '2xl': xxl!,
+      'sm': ?sm,
+      'md': ?md,
+      'lg': ?lg,
+      'xl': ?xl,
+      '2xl': ?xxl,
       ...custom,
     };
 

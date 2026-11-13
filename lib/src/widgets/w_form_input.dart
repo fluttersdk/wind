@@ -524,7 +524,7 @@ class _WFormInputContentState extends State<_WFormInputContent> {
             child: WText(widget.label!, className: widget.labelClassName),
           ),
         input,
-        if (bottomText != null) bottomText,
+        ?bottomText,
       ],
     );
   }

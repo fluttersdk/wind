@@ -318,7 +318,7 @@ class _WFormSelectContent<T> extends StatelessWidget {
       children: [
         if (label != null) WText(label!, className: labelClassName),
         select,
-        if (bottomText != null) bottomText,
+        ?bottomText,
       ],
     );
   }
@@ -655,7 +655,7 @@ class _WFormMultiSelectContent<T> extends StatelessWidget {
       children: [
         if (label != null) WText(label!, className: labelClassName),
         select,
-        if (bottomText != null) bottomText,
+        ?bottomText,
       ],
     );
   }

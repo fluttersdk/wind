@@ -184,6 +184,6 @@ class WindPerfCounters {
     _wTextBuilds = 0;
     _widgetBuilds.clear();
     _wrapperEmissions.clear();
-    _inheritedReads.updateAll((_, __) => 0);
+    _inheritedReads.updateAll((_, _) => 0);
   }
 }
