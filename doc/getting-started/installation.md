@@ -20,7 +20,7 @@ Before adding Wind to your project, ensure your environment meets these minimum 
 | Dependency | Minimum Version | Recommended |
 |:-----------|:----------------|:------------|
 | Flutter    | `>= 3.47.0`     | `3.50.0+`   |
-| Dart       | `>= 3.13.0`     | `3.13.0+`   |
+| Dart       | `>= 3.13.0`     | `3.14.0+`   |
 
 <a name="installation-step"></a>
 ## Installation

@@ -70,9 +70,13 @@ class _MyFormState extends State<MyForm> {
 
 > **The toolbar is hosted in the ROOT `Overlay`, not the nearest one.** It positions itself in screen terms (`bottom: viewInsets.bottom`, so it sits on top of the keyboard), and a nested `Overlay` is measured in its own box rather than the screen's. An app whose page host owns an `Overlay` inside a scroll view gives that overlay the height of the scrolled content, so a nearest-overlay toolbar would render hundreds of points below the viewport: present in the widget tree, absent from the screen. You need no `Overlay` of your own for this to work; `MaterialApp` and `CupertinoApp` both provide the root one.
 
-> **The toolbar needs `MaterialLocalizations`.** Its OK button label comes from `MaterialLocalizations.of(context).okButtonLabel`, so the app must provide them: a `MaterialApp` does. Under a bare `CupertinoApp` the toolbar throws "No MaterialLocalizations found" when a field takes focus; add `DefaultMaterialLocalizations.delegate` to the app's `localizationsDelegates`.
+> **The default close button needs `material_ui`'s `MaterialLocalizations`.** Its OK label comes from `MaterialLocalizations.of(context).okButtonLabel`, and `wind_kit` reads the `material_ui` type, so the app must provide that one: `material_ui`'s `MaterialApp` does. Flutter's own `MaterialApp` (from `package:flutter/material.dart`) provides a different type, so under it the toolbar throws "No MaterialLocalizations found" when a field takes focus; migrate the root to `material_ui`'s `MaterialApp`. Under a bare `WidgetsApp` or a `CupertinoApp`, add `DefaultMaterialLocalizations.delegate` from `material_ui` to the app's `localizationsDelegates`. A `closeWidgetBuilder` replaces the button and needs none of this.
 
 ```dart
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:wind_kit/wind_kit.dart';
+
 CupertinoApp(
   localizationsDelegates: const [
     DefaultMaterialLocalizations.delegate,
