@@ -125,4 +125,4 @@ Only the six named keys parse (`none`, `tight`, `snug`, `normal`, `relaxed`, `lo
 - [Font Size](./font-size.md) - Setting font size and line height together
 - [Letter Spacing](./letter-spacing.md) - Controlling tracking (letter spacing)
 
-> **Defaults:** `leading-normal` is 1.6 and `leading-loose` is 2.0.
+> **Defaults:** `leading-normal` is 1.5 and `leading-loose` is 2.0.
