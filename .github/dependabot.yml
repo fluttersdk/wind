@@ -1,24 +1,12 @@
-# Dependabot config for anilcancakir/wind_kit
-#
-# Three ecosystems in scope:
-#   1. pub        - runtime + dev deps in pubspec.yaml at the repo root
-#   2. pub (example/) - the showcase Flutter app (lower priority, monthly)
-#   3. github-actions - every workflow under .github/workflows/
-#
-# Grouping policy: minor + patch updates roll up into a single weekly PR per
-# logical bucket so the queue stays small. Major bumps open their own PR so
-# breaking changes get human review.
-#
-# Commit-message prefixes follow the repo's conventional-commit style
-# (chore(deps), chore(example-deps), chore(ci)). 'include: scope' appends
-# "(deps)" automatically - keep prefix parens-free.
+# Dependabot (REPO_SPEC.md Appendix B). Minor and patch updates roll up into one
+# pull request per ecosystem and week; a major opens its own pull request and
+# waits for review. The ecosystem's own 0.x packages are excluded from the group
+# (a 0.x minor bump is breaking in pub, yet Dependabot reports it as a minor),
+# so each opens its own pull request, which is never armed for auto-merge.
 
 version: 2
 
 updates:
-  # ─────────────────────────────────────────────────────────────────────
-  # Production package deps (pubspec.yaml at /)
-  # ─────────────────────────────────────────────────────────────────────
   - package-ecosystem: pub
     directory: /
     schedule:
@@ -36,64 +24,53 @@ updates:
       prefix: chore
       include: scope
     groups:
-      # The wind_kit family moves together: the diagnostics contracts and
-      # future companion packages. A contract bump gets its own bucket so a
-      # noisy contract bump does not mix with third-party updates.
-      wind-kit-family:
-        patterns:
-          - wind_kit_*
-        update-types:
-          - minor
-          - patch
-      # Third-party runtime + dev - flutter_svg, flutter_lints, etc.
-      third-party:
+      minor-and-patch:
         patterns:
           - "*"
         exclude-patterns:
-          - wind_kit_*
+          - magic
+          - "magic_*"
+          - "wind_kit*"
+          - tapir
+          - crumbs
+          - dowel
         update-types:
           - minor
           - patch
 
-  # ─────────────────────────────────────────────────────────────────────
-  # Example app deps (example/pubspec.yaml) - showcase only, monthly
-  # ─────────────────────────────────────────────────────────────────────
   - package-ecosystem: pub
     directory: /example
     schedule:
-      interval: monthly
+      interval: weekly
       day: monday
-    open-pull-requests-limit: 3
+      time: "06:00"
+      timezone: Europe/Istanbul
+    open-pull-requests-limit: 5
     labels:
       - dependencies
-      - example
+      - pub
     assignees:
       - anilcancakir
     commit-message:
-      prefix: chore(example-deps)
-      # No `include: scope` here: Dependabot appends its own `(deps)` when that
-      # is set, and this prefix already carries a scope. The pair produced
-      # `chore(example-deps)(deps): ...` on the first bump.
+      prefix: chore
+      include: scope
     groups:
-      example-minor-and-patch:
+      minor-and-patch:
         patterns:
           - "*"
+        exclude-patterns:
+          - magic
+          - "magic_*"
+          - "wind_kit*"
+          - tapir
+          - crumbs
+          - dowel
         update-types:
           - minor
           - patch
     ignore:
-      # The package itself (wind_kit) is the parent package, consumed through `path: ../` so
-      # the gallery always builds against the working tree. Dependabot reads
-      # the resolved version of that path package and proposes it as a
-      # `version:` pin, which is a hard equality constraint on a moving target:
-      # it goes stale on the next release and fails resolution outright
-      # ("depends on <package> X from path which doesn't match any
-      # versions"). See #159. There is no valid update here, so never track it.
       - dependency-name: wind_kit
 
-  # ─────────────────────────────────────────────────────────────────────
-  # GitHub Actions under .github/workflows/
-  # ─────────────────────────────────────────────────────────────────────
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -111,19 +88,9 @@ updates:
       prefix: ci
       include: scope
     groups:
-      # First-party actions (checkout, setup-node, upload-artifact, etc).
-      actions-official:
+      minor-and-patch:
         patterns:
-          - actions/*
-      # Release stack - codecov, dart-lang, subosito. Group them so the
-      # pipeline updates land in a single review.
-      release-stack:
-        patterns:
-          - codecov/*
-          - dart-lang/*
-          - subosito/*
-      # Dependabot helpers - keep separate so auto-merge logic stays
-      # predictable.
-      dependabot-helpers:
-        patterns:
-          - dependabot/*
+          - "*"
+        update-types:
+          - minor
+          - patch
