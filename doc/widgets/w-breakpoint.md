@@ -140,3 +140,8 @@ Custom keys participate in the same descending resolution as built-ins.
 - [Responsive Design](../core-concepts/responsive-design.md)
 - [Flexbox & Layout](../layout/flexbox.md)
 - [WindTheme](../core-concepts/theming.md)
+
+## Notes
+
+- `WBreakpoint` takes `className` as its first named parameter.
+- `WBreakpoint` is a `StatelessWidget` and keeps no state of its own.

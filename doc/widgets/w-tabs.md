@@ -129,3 +129,8 @@ WTabs(
 - [WAnchor](./w-anchor.md): each tab is wrapped in a `WAnchor` providing hover and focus state.
 - [WDiv](./w-div.md): renders the tab list and panel containers.
 - [WCheckbox](./w-checkbox.md): another controlled widget that drives state prefixes from a prop.
+
+## Notes
+
+- `WTabs` takes `className` as its first named parameter.
+- `WTabs` is a `StatelessWidget` and keeps no state of its own.

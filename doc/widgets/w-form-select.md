@@ -245,3 +245,8 @@ WFormSelect<String>(
 - [WSelect - Core Dropdown Widget](./w-select.md)
 - [WFormInput - Validated Text Input](./w-form-input.md)
 - [WFormCheckbox - Validated Checkbox](./w-form-checkbox.md)
+
+## Notes
+
+- `WFormSelect` takes `className` as its first named parameter.
+- `WFormSelect` is a `StatelessWidget` and keeps no state of its own.

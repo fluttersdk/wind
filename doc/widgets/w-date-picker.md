@@ -479,3 +479,8 @@ The calendar only reads shades `100` / `300` / `500` / `700` / `900`, so the par
 - [WSelect](./w-select.md) - Dropdown selection component
 - [WPopover](./w-popover.md) - The underlying overlay engine
 - [WInput](./w-input.md) - Standard text input widget
+
+## Notes
+
+- `WDatePicker` takes `className` as its first named parameter.
+- `WDatePicker` is a `StatelessWidget` and keeps no state of its own.

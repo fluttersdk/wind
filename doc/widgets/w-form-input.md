@@ -235,3 +235,8 @@ WindThemeData(
 - [WButton](./w-button.md) - Standard button for form submission.
 - [WFormCheckbox](./w-form-checkbox.md) - Form-integrated checkbox.
 - [WText](./w-text.md) - The underlying typography system.
+
+## Notes
+
+- `WFormInput` takes `className` as its first named parameter.
+- `WFormInput` is a `StatelessWidget` and keeps no state of its own.

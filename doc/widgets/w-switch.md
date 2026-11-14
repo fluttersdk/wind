@@ -130,3 +130,8 @@ WSwitch(
 - [WAnchor](./w-anchor.md): provides hover, focus, and gesture state propagation for the switch.
 - [WCheckbox](./w-checkbox.md): boolean input that mirrors the `checked:` state pattern.
 - [WDiv](./w-div.md): renders the track and thumb surfaces.
+
+## Notes
+
+- `WSwitch` takes `className` as its first named parameter.
+- `WSwitch` is a `StatelessWidget` and keeps no state of its own.

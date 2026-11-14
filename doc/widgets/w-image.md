@@ -216,3 +216,8 @@ WindThemeData(
 - [WDiv](./w-div.md) - The fundamental layout container.
 - [WSvg](./w-svg.md) - For vector-based graphics.
 - [WIcon](./w-icon.md) - For system and custom icons.
+
+## Notes
+
+- `WImage` takes `className` as its first named parameter.
+- `WImage` is a `StatelessWidget` and keeps no state of its own.

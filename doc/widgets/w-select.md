@@ -276,3 +276,8 @@ WindThemeData(
 - [WFormSelect](./w-form-select.md) - Form-integrated version with validation
 - [WPopover](./w-popover.md) - The underlying overlay engine
 - [WInput](./w-input.md) - Used for the internal search field
+
+## Notes
+
+- `WSelect` takes `className` as its first named parameter.
+- `WSelect` is a `StatelessWidget` and keeps no state of its own.

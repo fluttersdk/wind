@@ -217,3 +217,8 @@ Then use it as: `className: 'fill-brand-500'`.
 
 - [WIcon](./w-icon.md)
 - [WImage](./w-image.md)
+
+## Notes
+
+- `WSvg` takes `className` as its first named parameter.
+- `WSvg` is a `StatelessWidget` and keeps no state of its own.

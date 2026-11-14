@@ -184,3 +184,8 @@ WindThemeData(
 - [WDiv](./w-div.md) - For complex layouts and containers.
 - [Typography Settings](../typography/font-size.md) - Deep dive into font sizes and scales.
 - [State Management](../core-concepts/state-management.md) - How `hover:` and `focus:` work.
+
+## Notes
+
+- `WText` takes `className` as its first named parameter.
+- `WText` is a `StatelessWidget` and keeps no state of its own.

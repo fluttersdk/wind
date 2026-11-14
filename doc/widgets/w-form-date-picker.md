@@ -383,3 +383,8 @@ WindTheme(
 - [WFormSelect](./w-form-select.md) - Form-integrated dropdown
 - [WFormCheckbox](./w-form-checkbox.md) - Form-integrated checkbox
 - [WPopover](./w-popover.md) - The underlying overlay engine
+
+## Notes
+
+- `WFormDatePicker` takes `className` as its first named parameter.
+- `WFormDatePicker` is a `StatelessWidget` and keeps no state of its own.

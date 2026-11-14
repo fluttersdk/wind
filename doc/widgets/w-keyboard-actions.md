@@ -261,3 +261,8 @@ WKeyboardActions(
 - [WInput - The unstyled text input widget](./w-input.md)
 - [WFormInput - Form-bound WInput with validator](./w-form-input.md)
 - [WDiv - General-purpose container for laying out form fields](../widgets/w-div.md)
+
+## Notes
+
+- `WKeyboardActions` takes `className` as its first named parameter.
+- `WKeyboardActions` is a `StatelessWidget` and keeps no state of its own.

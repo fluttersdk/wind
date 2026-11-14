@@ -112,3 +112,8 @@ WindThemeData(
 - [Sizing Utilities](../layout/sizing.md)
 - [Spacing Utilities](../layout/spacing.md)
 - [Responsive Design](../core-concepts/responsive-design.md)
+
+## Notes
+
+- `WSpacer` takes `className` as its first named parameter.
+- `WSpacer` is a `StatelessWidget` and keeps no state of its own.

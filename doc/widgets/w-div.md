@@ -209,3 +209,8 @@ WindTheme(
 - [Interaction State Prefixes](../core-concepts/state-management.md)
 - [WAnchor Widget](./w-anchor.md)
 - [WSpacer Widget](./w-spacer.md)
+
+## Notes
+
+- `WDiv` takes `className` as its first named parameter.
+- `WDiv` is a `StatelessWidget` and keeps no state of its own.

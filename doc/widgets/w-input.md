@@ -268,3 +268,8 @@ WindThemeData(
 - [WFormInput](./w-form-input.md) - Form-integrated input with labels and validation.
 - [WButton](./w-button.md) - Interactive button component.
 - [WText](./w-text.md) - Typography component.
+
+## Notes
+
+- `WInput` takes `className` as its first named parameter.
+- `WInput` is a `StatelessWidget` and keeps no state of its own.

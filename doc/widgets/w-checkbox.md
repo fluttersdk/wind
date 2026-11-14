@@ -214,3 +214,8 @@ WindThemeData(
 - [WFormCheckbox](./w-form-checkbox.md) - Form-integrated checkbox with label and validation.
 - [WAnchor](./w-anchor.md) - The base interactive component used by WCheckbox.
 - [WIcon](./w-icon.md) - Documentation for the check icon styling.
+
+## Notes
+
+- `WCheckbox` takes `className` as its first named parameter.
+- `WCheckbox` is a `StatelessWidget` and keeps no state of its own.

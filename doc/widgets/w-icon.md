@@ -189,3 +189,8 @@ WindThemeData(
 - [WAnchor](./w-anchor.md) - For making icons interactive
 - [WSvg](./w-svg.md) - For custom vector illustrations
 - [WImage](./w-image.md) - For rasterised images
+
+## Notes
+
+- `WIcon` takes `className` as its first named parameter.
+- `WIcon` is a `StatelessWidget` and keeps no state of its own.

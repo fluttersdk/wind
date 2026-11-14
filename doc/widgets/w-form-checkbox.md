@@ -202,3 +202,8 @@ WindThemeData(
 - [WFormInput](./w-form-input.md) - Form-integrated text input.
 - [WAnchor](./w-anchor.md) - The wrapper used for label interactivity.
 - [WDiv](./w-div.md) - The container used for layout.
+
+## Notes
+
+- `WFormCheckbox` takes `className` as its first named parameter.
+- `WFormCheckbox` is a `StatelessWidget` and keeps no state of its own.

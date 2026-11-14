@@ -206,3 +206,8 @@ WindThemeData(
 - [Background Colour](../styling/background-color.md) - Colour utilities
 - [Text Colour](../typography/text-color.md) - Typography colour utilities
 - [Spacing](../layout/spacing.md) - Padding and margin utilities
+
+## Notes
+
+- `WButton` takes `className` as its first named parameter.
+- `WButton` is a `StatelessWidget` and keeps no state of its own.
