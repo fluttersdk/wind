@@ -398,3 +398,8 @@ At `base` the row scrolls horizontally and children keep their intrinsic width. 
 - [Grid Layout](./grid.md)
 - [Display Modes](./display.md)
 - [Sizing](../layout/sizing.md)
+
+## Notes
+
+- Every utility on this page is parsed from the `className` string at build time.
+- A class name the parser does not know is ignored without a warning.
