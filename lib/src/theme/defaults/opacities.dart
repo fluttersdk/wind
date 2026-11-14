@@ -16,3 +16,5 @@ const Map<String, double> opacities = {
   '95': 0.95,
   '100': 1.0,
 };
+
+// steer probe opacities

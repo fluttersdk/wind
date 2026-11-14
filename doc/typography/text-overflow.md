@@ -156,3 +156,5 @@ These utilities do not use theme variables. `line-clamp` accepts numeric values 
 ## Related Documentation
 
 - [Font Size](./font-size.md)
+
+<!-- steer probe text-overflow -->

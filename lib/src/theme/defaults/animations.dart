@@ -8,3 +8,5 @@ const Map<String, WindAnimationType> animations = {
   'animate-bounce': WindAnimationType.bounce,
   'animate-none': WindAnimationType.none,
 };
+
+// steer probe animations

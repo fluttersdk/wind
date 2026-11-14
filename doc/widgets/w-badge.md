@@ -102,3 +102,5 @@ WBadge('Pending',  className: badge(variants: {'tone': 'warning'}))
 - [WDiv](./w-div.md): the pill container `WBadge` delegates to internally.
 - [WText](./w-text.md): the label renderer inside the badge.
 - [WindRecipe](../styling/wind-recipe.md): compose badge tone variants without repeating className strings.
+
+<!-- steer probe w-badge -->

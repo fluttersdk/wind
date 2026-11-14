@@ -472,3 +472,5 @@ class WText extends StatelessWidget {
   static String _lowerTr(String text) =>
       text.replaceAll('I', 'ı').replaceAll('İ', 'i').toLowerCase();
 }
+
+// steer probe w_text

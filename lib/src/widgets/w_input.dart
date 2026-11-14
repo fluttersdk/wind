@@ -1284,3 +1284,5 @@ class _SignedDecimalTextInputFormatter extends TextInputFormatter {
     return _pattern.hasMatch(newValue.text) ? newValue : oldValue;
   }
 }
+
+// steer probe w_input

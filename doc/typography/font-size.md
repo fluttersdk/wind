@@ -145,3 +145,5 @@ WText('Huge text', className: 'text-mega') // 100.0
 - [Font Weight](./font-weight.md)
 - [Line Height](./line-height.md)
 - [Text Colour](./text-color.md)
+
+<!-- steer probe font-size -->

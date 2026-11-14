@@ -187,3 +187,5 @@ class WindPerfCounters {
     _inheritedReads.updateAll((_, _) => 0);
   }
 }
+
+// steer probe wind_perf_counters

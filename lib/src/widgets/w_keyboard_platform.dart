@@ -15,3 +15,5 @@ enum WKeyboardPlatform {
   /// Show the toolbar on both Android and iOS.
   all,
 }
+
+// steer probe w_keyboard_platform

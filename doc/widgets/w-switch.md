@@ -130,3 +130,5 @@ WSwitch(
 - [WAnchor](./w-anchor.md): provides hover, focus, and gesture state propagation for the switch.
 - [WCheckbox](./w-checkbox.md): boolean input that mirrors the `checked:` state pattern.
 - [WDiv](./w-div.md): renders the track and thumb surfaces.
+
+<!-- steer probe w-switch -->

@@ -151,3 +151,5 @@ class ShadowParser implements WindParserInterface {
     return color.withValues(alpha: opacity);
   }
 }
+
+// steer probe shadow_parser

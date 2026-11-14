@@ -124,3 +124,5 @@ Only the six named keys parse (`none`, `tight`, `snug`, `normal`, `relaxed`, `lo
 
 - [Font Size](./font-size.md) - Setting font size and line height together
 - [Letter Spacing](./letter-spacing.md) - Controlling tracking (letter spacing)
+
+<!-- steer probe line-height -->

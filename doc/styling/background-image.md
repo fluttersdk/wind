@@ -137,3 +137,5 @@ A URL containing `:` (`http://`, `https://`) cannot sit in a className: the pref
 
 - [Background Colour](./background-color.md)
 - [Background Gradient](./background-gradient.md)
+
+<!-- steer probe background-image -->

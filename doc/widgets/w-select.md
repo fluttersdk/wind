@@ -276,3 +276,5 @@ WindThemeData(
 - [WFormSelect](./w-form-select.md) - Form-integrated version with validation
 - [WPopover](./w-popover.md) - The underlying overlay engine
 - [WInput](./w-input.md) - Used for the internal search field
+
+<!-- steer probe w-select -->

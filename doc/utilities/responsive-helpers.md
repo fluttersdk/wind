@@ -129,3 +129,5 @@ print(wind.platform); // 'ios', 'android', 'web', 'macos', etc.
 ```
 
 For more details on responsive styling using class names, see the [Responsive Design](../core-concepts/responsive-design.md) guide.
+
+<!-- steer probe responsive-helpers -->

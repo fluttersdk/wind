@@ -245,3 +245,5 @@ WFormSelect<String>(
 - [WSelect - Core Dropdown Widget](./w-select.md)
 - [WFormInput - Validated Text Input](./w-form-input.md)
 - [WFormCheckbox - Validated Checkbox](./w-form-checkbox.md)
+
+<!-- steer probe w-form-select -->

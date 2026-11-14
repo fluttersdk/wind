@@ -127,3 +127,5 @@ WIcon(
 - [WIcon](./w-icon.md): Icon widget; wraps automatically in `WindAnimationWrapper` when className contains `animate-*`.
 - [Animation](../interactivity/animation.md): Full reference for the `animate-*` tokens.
 - [Transition](../interactivity/transition.md): Reference for `transition-*`, `duration-*`, and `ease-*` tokens.
+
+<!-- steer probe wind-animation-wrapper -->

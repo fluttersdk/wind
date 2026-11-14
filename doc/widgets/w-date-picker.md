@@ -479,3 +479,5 @@ The calendar only reads shades `100` / `300` / `500` / `700` / `900`, so the par
 - [WSelect](./w-select.md) - Dropdown selection component
 - [WPopover](./w-popover.md) - The underlying overlay engine
 - [WInput](./w-input.md) - Standard text input widget
+
+<!-- steer probe w-date-picker -->

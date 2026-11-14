@@ -138,3 +138,5 @@ WCard(
 - [WDiv](./w-div.md): the container `WCard` delegates all rendering to.
 - [WindRecipe](../styling/wind-recipe.md): drive card tone from variant axes without repeating className strings.
 - [WButton](./w-button.md): commonly used in the `footer` slot.
+
+<!-- steer probe w-card -->

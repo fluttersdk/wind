@@ -214,3 +214,5 @@ class RingParser implements WindParserInterface {
     );
   }
 }
+
+// steer probe ring_parser

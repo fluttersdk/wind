@@ -145,3 +145,5 @@ The map merges with the default palette by name, so the built-in colours stay av
 
 - [Text Colour](./text-color.md)
 - [Font Weight](./font-weight.md)
+
+<!-- steer probe text-decoration -->

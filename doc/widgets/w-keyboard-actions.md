@@ -261,3 +261,5 @@ WKeyboardActions(
 - [WInput - The unstyled text input widget](./w-input.md)
 - [WFormInput - Form-bound WInput with validator](./w-form-input.md)
 - [WDiv - General-purpose container for laying out form fields](../widgets/w-div.md)
+
+<!-- steer probe w-keyboard-actions -->

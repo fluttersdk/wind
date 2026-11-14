@@ -189,3 +189,5 @@ No action needed; these land automatically.
 - A conditional `prefix` / `suffix` (for example a clear button that appears once the field has text) no longer drops focus on the first keystroke, and an appearing suffix no longer changes the field height.
 - A disabled `WInput` (`enabled: false`) is fully non-interactive again and reports `isEnabled: false` to assistive technology.
 - `WInput` emits a single clean `textField` semantics node instead of the previous double node.
+
+<!-- steer probe upgrade-guide -->

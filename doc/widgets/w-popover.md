@@ -226,3 +226,5 @@ When `className` is `null`, the panel uses `bg-white dark:bg-gray-800 border bor
 - [WSelect - A high-level dropdown built using WPopover](./w-select.md)
 - [WDiv - The base container widget](../widgets/w-div.md)
 - [WAnchor - Useful for interactive elements inside the popover](./w-anchor.md)
+
+<!-- steer probe w-popover -->

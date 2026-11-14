@@ -416,3 +416,5 @@ bool _lintShorthandLonghand(List<String> parts) {
 
   return true;
 }
+
+// steer probe wind_recipe

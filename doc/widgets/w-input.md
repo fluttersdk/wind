@@ -268,3 +268,5 @@ WindThemeData(
 - [WFormInput](./w-form-input.md) - Form-integrated input with labels and validation.
 - [WButton](./w-button.md) - Interactive button component.
 - [WText](./w-text.md) - Typography component.
+
+<!-- steer probe w-input -->

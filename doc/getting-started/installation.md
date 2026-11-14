@@ -132,3 +132,5 @@ class HomePage extends StatelessWidget {
 ```
 
 If you see a blue card with white text, the installation is successful.
+
+<!-- steer probe installation -->

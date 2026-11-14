@@ -5,3 +5,5 @@ import 'package:flutter/widgets.dart' show ImageProvider;
 /// The io arm in file_image_io.dart is selected instead on native VM targets
 /// via the conditional import in background_parser.dart.
 ImageProvider<Object>? fileImageProvider(String path) => null;
+
+// steer probe file_image_stub

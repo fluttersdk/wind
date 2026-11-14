@@ -144,3 +144,5 @@ WText('Tahiti Color', className: 'text-tahiti-900')
 
 - [Background Colour](../styling/background-color.md)
 - [Text Decoration](./text-decoration.md#decoration-color)
+
+<!-- steer probe text-color -->

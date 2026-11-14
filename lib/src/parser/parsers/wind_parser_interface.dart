@@ -48,3 +48,5 @@ abstract class WindParserInterface {
   /// on the utility prefix or matching against a known set of utility names.
   bool canParse(String className);
 }
+
+// steer probe wind_parser_interface

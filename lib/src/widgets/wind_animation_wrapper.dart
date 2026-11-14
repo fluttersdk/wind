@@ -143,3 +143,5 @@ Widget wrapWithAnimation({
     child: child,
   );
 }
+
+// steer probe wind_animation_wrapper

@@ -48,3 +48,5 @@ class WindPlatformService {
     };
   }
 }
+
+// steer probe platform_service

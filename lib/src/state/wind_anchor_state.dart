@@ -96,3 +96,5 @@ class WindAnchorState {
       isDisabled.hashCode ^
       (customStates == null ? 0 : Object.hashAllUnordered(customStates!));
 }
+
+// steer probe wind_anchor_state

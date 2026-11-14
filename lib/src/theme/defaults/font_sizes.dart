@@ -10,3 +10,5 @@ const Map<String, double> fontSizes = {
   '5xl': 48.0,
   '6xl': 60.0,
 };
+
+// steer probe font_sizes

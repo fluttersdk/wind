@@ -90,3 +90,5 @@ WDiv(className: 'cursor-pointer bg-white dark:bg-gray-800')
 
 - [WAnchor](../widgets/w-anchor.md): exposes a `mouseCursor` constructor prop for fully imperative control.
 - [Transitions](./transition.md): smooth state changes on hover.
+
+<!-- steer probe cursor -->

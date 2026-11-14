@@ -125,3 +125,5 @@ Wind uses a syntax that matches Tailwind CSS, supporting standard values, arbitr
 | **Arbitrary** | `w-[350px]` | Uses exact values inside square brackets for one-off styles. |
 | **Opacity** | `bg-blue-500/50` | Appends a percentage to a colour to set alpha transparency. |
 | **Modifiers** | `md:flex-row` | Conditionally applies styles based on screen size or state. |
+
+<!-- steer probe utility-first -->

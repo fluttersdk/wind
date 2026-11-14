@@ -154,3 +154,5 @@ String expandAliases(
 /// tokenizes identically on both sides.
 Iterable<String> _tokenize(String value) =>
     value.split(RegExp(r'\s+')).where((s) => s.isNotEmpty);
+
+// steer probe alias_expander

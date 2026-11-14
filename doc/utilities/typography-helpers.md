@@ -123,3 +123,5 @@ Once defined, these custom keys are accessible just like the defaults:
 ```dart
 final displaySize = context.wFontSizeExt('display'); // 120.0
 ```
+
+<!-- steer probe typography-helpers -->

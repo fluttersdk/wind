@@ -189,3 +189,5 @@ WindThemeData(
 - [WAnchor](./w-anchor.md) - For making icons interactive
 - [WSvg](./w-svg.md) - For custom vector illustrations
 - [WImage](./w-image.md) - For rasterised images
+
+<!-- steer probe w-icon -->

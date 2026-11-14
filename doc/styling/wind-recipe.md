@@ -243,3 +243,5 @@ WCard(
 - [WBadge](../widgets/w-badge.md): a natural fit for a `WindRecipe` badge tone axis.
 - [WCard](../widgets/w-card.md): pairs with `WindSlotRecipe` for multi-slot card variants.
 - [WButton](../widgets/w-button.md): commonly driven by a `WindRecipe` for intent + size axes.
+
+<!-- steer probe wind-recipe -->

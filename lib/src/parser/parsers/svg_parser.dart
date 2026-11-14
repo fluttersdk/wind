@@ -113,3 +113,5 @@ class SvgParser implements WindParserInterface {
     return color;
   }
 }
+
+// steer probe svg_parser

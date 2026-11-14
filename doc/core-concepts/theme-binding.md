@@ -99,3 +99,5 @@ Three rows have a fallback. `colors['primary']` only repaints Material widgets w
 
 This mapping ensures that your utility-first styles and native widgets stay perfectly in sync.
 
+
+<!-- steer probe theme-binding -->

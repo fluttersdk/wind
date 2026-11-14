@@ -8,3 +8,5 @@ import 'package:flutter/widgets.dart' show FileImage, ImageProvider;
 /// is available. The stub arm in file_image_stub.dart is selected for
 /// web and WASM targets via the conditional import in background_parser.dart.
 ImageProvider<Object>? fileImageProvider(String path) => FileImage(File(path));
+
+// steer probe file_image_io

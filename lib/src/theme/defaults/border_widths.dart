@@ -8,3 +8,5 @@ const Map<String, double> borderWidths = {
   '4': 4.0,
   '8': 8.0,
 };
+
+// steer probe border_widths

@@ -115,3 +115,5 @@ export 'src/widgets/w_tabs.dart';
 export 'src/widgets/w_text.dart';
 export 'src/widgets/wind_animation_wrapper.dart';
 export 'src/wind_facade.dart';
+
+// steer probe wind_kit

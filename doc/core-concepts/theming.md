@@ -334,3 +334,5 @@ WDiv(className: 'row-c bg-white dark:bg-gray-800')
 `onThemeChanged` is a `WindTheme` widget parameter, not a `WindThemeData` field. It fires on every brightness change that does not come from the OS sync (`toggleTheme()`, `setTheme()`, `updateTheme(brightness:)`, `resetToSystem()`, and a new `data:` from a parent rebuild) and is documented in the [Theme Change Callbacks](#theme-change-callbacks) section above.
 
 For more details on how to sync these values with Flutter's standard Material components, check out the [Theme Binding](./theme-binding.md) guide.
+
+<!-- steer probe theming -->

@@ -16,3 +16,5 @@ class WindRingWidths {
     '8': 8.0,
   };
 }
+
+// steer probe ring_widths

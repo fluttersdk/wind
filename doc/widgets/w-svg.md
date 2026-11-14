@@ -217,3 +217,5 @@ Then use it as: `className: 'fill-brand-500'`.
 
 - [WIcon](./w-icon.md)
 - [WImage](./w-image.md)
+
+<!-- steer probe w-svg -->

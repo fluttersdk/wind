@@ -120,3 +120,5 @@ extension WindContextExtension on BuildContext {
   /// Shortcut for wStyle(context, className).
   WindStyle wStyleExt(String className) => wStyle(this, className);
 }
+
+// steer probe wind_extensions

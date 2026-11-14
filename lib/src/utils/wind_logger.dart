@@ -128,3 +128,5 @@ class WindLogger {
     debugPrint("   $step: $details");
   }
 }
+
+// steer probe wind_logger

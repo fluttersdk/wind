@@ -494,3 +494,5 @@ When max depth is exceeded, that branch renders a built-in red error box ("Error
 - [WSelect](./w-select.md) - Dropdown select widget
 - [State Management](../core-concepts/state-management.md) - State handling in Wind
 - [Dynamic Rendering](../core-concepts/dynamic-rendering.md) - Server-driven UI concepts
+
+<!-- steer probe w-dynamic -->

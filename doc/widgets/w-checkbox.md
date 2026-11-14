@@ -214,3 +214,5 @@ WindThemeData(
 - [WFormCheckbox](./w-form-checkbox.md) - Form-integrated checkbox with label and validation.
 - [WAnchor](./w-anchor.md) - The base interactive component used by WCheckbox.
 - [WIcon](./w-icon.md) - Documentation for the check icon styling.
+
+<!-- steer probe w-checkbox -->

@@ -202,3 +202,5 @@ WindThemeData(
 - [WFormInput](./w-form-input.md) - Form-integrated text input.
 - [WAnchor](./w-anchor.md) - The wrapper used for label interactivity.
 - [WDiv](./w-div.md) - The container used for layout.
+
+<!-- steer probe w-form-checkbox -->

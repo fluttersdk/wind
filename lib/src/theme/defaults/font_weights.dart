@@ -11,3 +11,5 @@ const Map<String, FontWeight> fontWeights = {
   'extrabold': FontWeight.w800,
   'black': FontWeight.w900,
 };
+
+// steer probe font_weights

@@ -247,3 +247,5 @@ if (!kReleaseMode) {
 A tool then reads `WindDebugRegistry.currentPerf?.stats()` and gets exactly nine keys: `cacheHits`, `cacheMisses`, `cacheBypasses`, `cacheSize`, `wDivBuilds`, `wTextBuilds` (all `int`), plus `widgetBuilds`, `wrapperEmissions`, `inheritedReads` (all `Map<String, int>`). The `null` when no resolver is registered is meaningful and worth passing through rather than flattening to zeros: it is what lets a caller tell "wind never installed one" from "the counters really are zero".
 
 `tapir` reads this during a `tapir:perf_begin` / `tapir:perf_end` session.
+
+<!-- steer probe debugging -->
