@@ -13,7 +13,7 @@ paths:
 
 - `WDynamicConfig.isAllowed(type)` resolves in this order: `config.builders[type]` (always allowed, even when listed in `denyWidgets`), then `denyWidgets`, then `defaultWindWidgets` and `defaultFlutterWidgets`. A custom builder is therefore trusted host code and bypasses the deny list; do not route an untrusted type name to one.
 - A new built-in type needs three edits that stay in step: the set in `w_dynamic_config.dart`, a `case` in `_buildByType`, and its `_build<Type>` method. A type in the set without a `case` renders the "No builder" error widget, and a `case` without the set entry is unreachable.
-- `maxDepth` (default 50) is the recursion-bomb guard. Keep it enforced on every nested build, and have the caller lower it or add `denyWidgets` for a surface a remote source must not reach.
+- `maxDepth` (default 50) is the recursion-bomb guard. Keep it enforced on every nested build, and have the caller lower it for a surface a remote source must not reach. `denyWidgets` alone does not block a type registered in `builders` (see above), so the control for such a surface is to leave the type out of `builders` and also deny it.
 - JSON is untrusted: `type`, `props` and `children` of the wrong shape must degrade (an `Unknown` type the allowlist rejects, empty props, no children), never throw out of `build()`.
 
 ## State and actions

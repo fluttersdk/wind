@@ -8,7 +8,7 @@ paths:
 
 ## Styling API
 
-- `className: String?` is the styling API. Parse it with `WindParser.parse(className!, context, states: activeStates)` inside `build`. The explicit props (`WDiv.backgroundColor`, `WText.foregroundColor`) override the parsed value and are for runtime colours only, since a colour interpolated into a className creates a cache entry per value.
+- `className: String?` is the styling API and is null by default. Parse it inside `build` only behind a null check, `className != null ? WindParser.parse(className!, context, states: activeStates) : const WindStyle()`, as `WDiv`, `WButton` and `WCheckbox` do: the bang is safe only behind that guard. A null `className` is not an error: it yields the empty `WindStyle`, inherited values in `WIcon`, an empty `SizedBox` in `WSpacer`, or just the base classes in `WSwitch` and `WBadge`. The explicit props (`WDiv.backgroundColor`, `WText.foregroundColor`) override the parsed value and are for runtime colours only, since a colour interpolated into a className creates a cache entry per value.
 - `states: Set<String>?` activates `hover:`, `focus:`, `disabled:`, `loading:`, `selected:` and custom prefixes. Merge the automatic flags (`hover`, `focus`, `disabled`) from `WindAnchorStateProvider` into `activeStates` before parsing, as `WDiv._buildImpl` does.
 - `super.key` is the first constructor parameter, except `WText`, whose positional `data` leads. A widget that takes both `child` and `children` asserts they are exclusive at construction, as `WDiv` does.
 

@@ -18,11 +18,12 @@ Call `WindParser.clearCache()` in `setUp()` of every test that goes through `Win
 
 - Each test file declares its own helpers: `wrapWithTheme(Widget child)` (a `MaterialApp` around a `WindTheme` and a `Scaffold`) in widget tests, and `createTestContext({...})` returning a `WindContext` in parser tests. Copy them between files; do not extract a shared `test/` utility, so a file can tweak its helper without touching the others.
 - Fake through constructor injection or a stub widget, not a mocking library (there is none). Set `debugDefaultTargetPlatformOverride` for `Platform.is*` paths and reset it to `null` in a `finally` inside the test body, so a failing expectation cannot leak the override into the next test.
-- The test binding answers every HTTP request with 400: assert tree shape only, and give a `WImage` an `errorBuilder` so the unavoidable load failure is swallowed.
+- The test binding answers every HTTP request with 400, so a `WImage` that loads from `src` through the default `Image.network` fails to load: in such a test assert tree shape only, and give the `WImage` an `errorBuilder` so the failure is swallowed. A test that passes an `ImageProvider` through `image` or supplies its own `errorBuilder` does not depend on the default response and may assert on what that provider or builder renders.
 
 ## Lifecycle
 
-- Register disposal at creation with `addTearDown(controller.dispose)` for each `FocusNode`, `TextEditingController` and `AnimationController`; the calls stack, so do not merge them.
+- Register disposal at creation with `addTearDown(controller.dispose)` for each `FocusNode` and `TextEditingController`; the calls stack, so do not merge them.
+- An `AnimationController` created with `vsync: tester` is the exception: a ticker still running when the test body ends fails the test before `addTearDown` runs. Dispose it inside the test body in a `try` / `finally`, like the semantics handle below.
 - Pair `tester.createGesture(kind: PointerDeviceKind.mouse)` with `addTearDown(gesture.removePointer)`, and a changed `tester.view.physicalSize` with `addTearDown(tester.view.reset)`.
 - `tester.ensureSemantics()` is the exception: dispose its `SemanticsHandle` inside the test body. flutter_test checks it in `_endOfTestVerifications`, which runs before both `tearDown` and `addTearDown`, so either one fails every test with "A SemanticsHandle was active at the end of the test". Wrap the body in `try` / `finally` as `testWidgetsWithSemantics` in `test/widgets/w_date_picker_test.dart` does, so a failing expectation is not masked by the leak report. `find.bySemanticsLabel` throws without `ensureSemantics()`, so dropping it is not an escape.
 
