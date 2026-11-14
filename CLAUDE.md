@@ -45,11 +45,11 @@ tool/                   # check-docs.py and coverage.sh
 
 ## Post-Change Checklist
 
-After ANY change under `lib/`, update every surface in the same change set, before reporting done. A change is not done while one of these is stale; "docs later" rots.
+After any change under `lib/`, update every surface in the same change set, before reporting done. A change is not done while one of these is stale; "docs later" rots.
 
 1. **`CHANGELOG.md`**: an entry under `[Unreleased]` in `Added`, `Changed`, `Fixed`, `Removed` (breaking), `Quality` or `Security`. Open with what a reader now gets, in bold, then what it cost to find out: the defect, what it was measured against, the alternative rejected and why. Close with the files touched in backticks, backtick every identifier and name the PR `(#207)`. One line is right where the change is one line.
-2. **`doc/`**: the matching page under `doc/widgets/`, `doc/layout/`, `doc/styling/` and so on, in the shape `.claude/rules/docs.md` describes. A new widget gets `doc/widgets/<w-name>.md` mirroring its nearest neighbour. Delete the page of a removed surface. `python3 tool/check-docs.py` must exit 0.
-3. **`example/lib/pages/`**: every `<x-preview source path>` in `doc/` points at a real example page and a route in `example/lib/routes.dart`. Page shape rules are in `.claude/rules/example-pages.md`. Keep page paths stable: the docs site embeds the gallery by path, and an unregistered route renders an empty frame with no error.
+2. **`doc/`**: the matching page under `doc/widgets/`, `doc/layout/`, `doc/styling/` and so on. A new widget gets `doc/widgets/<w-name>.md` mirroring its nearest neighbour. Delete the page of a removed surface. `python3 tool/check-docs.py` must exit 0.
+3. **`example/lib/pages/`**: every `<x-preview source path>` in `doc/` points at a real example page and a route in `example/lib/routes.dart`. Keep page paths stable: the docs site embeds the gallery by path, and an unregistered route renders an empty frame with no error.
 4. **`skills/wind-ui/`**: `SKILL.md` and the matching `references/<topic>.md` when a widget, token family, theme field or className semantic changes. The skill keeps its own `version:`, bumped when the surface changes; the registry (`anilcancakir/ai`) mirrors it after each release.
 5. **`README.md` and `llms.txt`**: only for overview-level changes (a widget added to the roster, a top-level feature, a public API added or removed). They state no counts on purpose, because a count goes stale the next time a widget or parser is added.
 6. **`CLAUDE.md` and `ARCHITECTURE.md`**: update the tree when files move.
@@ -64,7 +64,7 @@ No production code without a failing test first. Zero analyzer issues, no format
 
 ## Testing
 
-- Parser tests, and widget tests that pump className-styled widgets, call `WindParser.clearCache()` in `setUp()`: the cache persists between tests and gives false positives. The full discipline is in `.claude/rules/tests.md`.
+- Parser tests, and widget tests that pump className-styled widgets, call `WindParser.clearCache()` in `setUp()`: the cache persists between tests and gives false positives.
 - The 90% line-coverage gate is the floor, not the target. A change that drops it adds tests in the same change set; the threshold never moves.
 - `// coverage:ignore-line` only for lines unreachable from `flutter test` (kDebugMode-only branches, `Platform.is*` branches that do not match the CI host), on the same line as the statement with a one-line why above it.
 
@@ -86,12 +86,7 @@ No production code without a failing test first. Zero analyzer issues, no format
 2. After it merges, tag the merge commit with the bare version (`git tag 1.12.1 && git push origin 1.12.1`, no `v`). `publish.yml` runs from the tag; the pub.dev Admin tab holds repository `anilcancakir/wind_kit`, tag pattern `{{version}}` and push events only.
 3. A failed `Validate` is fixed forward: delete the tag (`git push --delete origin <tag>` and `git tag -d <tag>`), fix it on a PR and tag the new merge commit, because a re-run builds the same commit. If only `GitHub Release` fails after pub.dev accepted the version, use "Re-run failed jobs" (never "Re-run all jobs", where `publish` is rejected as a duplicate) or run `gh release create <tag> --title <tag> --latest --verify-tag --notes-file <file>`.
 
-The first publish under this name (1.12.0) is manual, since tag-triggered OIDC cannot create a package, so run the `Validate` gates yourself first (the version stamps: the tag, the `pubspec.yaml` version and the `blob/<tag>` link in `dartdoc_options.yaml` agree; format; analyze, and `cd example && flutter analyze --no-fatal-infos`; `./tool/coverage.sh 90`; dry-run; pana 0.23.19 with `--exit-code-threshold 0`, which must score 160/160 on the merged master; and a `## [1.12.0]` section in `CHANGELOG.md`). Then:
-
-1. `flutter pub publish --force` from a clean checkout of the merge commit.
-2. Push the tag, cancel the doomed `publish.yml` run (OIDC rejects a version pub.dev already has, so `github-release` never runs) and create the release by hand with `gh release create 1.12.0 --title 1.12.0 --latest --verify-tag --notes-file <section>`.
-3. Run the registry sync the cancelled run skipped: `gh workflow run dispatch-to-registry.yml --ref 1.12.0`.
-4. In the pub.dev Admin tab set the repository and tag pattern above, move the package to the `anilcancakir.com` publisher and disable manual publishing.
+Every release publishes through the tag workflow: the package is already on pub.dev with OIDC publishing configured, so a manual `flutter pub publish` is not part of a release.
 
 ## Branching
 
