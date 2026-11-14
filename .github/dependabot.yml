@@ -94,3 +94,8 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # The reusable workflow that publishes to pub.dev over OIDC runs only on a
+      # release tag, so no pull request check exercises a bump of it: it is
+      # reviewed and updated by hand.
+      - dependency-name: dart-lang/setup-dart/.github/workflows/publish.yml
